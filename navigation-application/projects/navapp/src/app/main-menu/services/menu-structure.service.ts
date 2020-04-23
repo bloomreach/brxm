@@ -238,10 +238,11 @@ export class MenuStructureService {
           new MenuItemLink('xm-systemupdater', this.translate('MENU_ITEM_XM_SYSTEM_UPDATER')),
         ]),
 
+        new MenuItemLink('setup/data-connect', this.translate('MENU_ITEM_SETUP_DATA_CONNECT')),
+
         new MenuItemContainer(this.translate('MENU_CONTAINER_DEVSTUDIO'), [
           new MenuItemLink('setup/devstudio/account-information', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_ACCOUNT_INFORMATION')),
           new MenuItemLink('setup/devstudio/pixel-monitor', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_PIXEL_MONITOR')),
-          new MenuItemLink('setup/devstudio/data-connect', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT')),
           new MenuItemContainer(this.translate('MENU_CONTAINER_FEED'), [
             new MenuItemLink('setup/devstudio/feed/configuration', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_FEED_CONFIGURATION')),
             new MenuItemLink('setup/devstudio/feed/status', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_FEED_STATUS')),
