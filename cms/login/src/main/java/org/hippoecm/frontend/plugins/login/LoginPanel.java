@@ -23,7 +23,6 @@ import java.util.MissingResourceException;
 
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -109,10 +108,6 @@ public class LoginPanel extends Panel {
 
         final char[] pwdAsChars = password == null ? new char[]{} : password.toCharArray();
         userSession.login(new UserCredentials(new SimpleCredentials(username, pwdAsChars)));
-
-        final HttpSession session = WebApplicationHelper.retrieveWebRequest().getContainerRequest().getSession(true);
-        ConcurrentLoginFilter.validateSession(session, username, false);
-
     }
 
     private boolean isDevMode() {

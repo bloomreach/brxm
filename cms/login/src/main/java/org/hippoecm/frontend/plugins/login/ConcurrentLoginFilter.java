@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,20 +18,18 @@ package org.hippoecm.frontend.plugins.login;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.hippoecm.frontend.model.UserCredentials;
 
+/**
+ * Backward compatibility code. To be completely removed in next major version
+ * @deprecated since 14.2.0
+ */
+@Deprecated
 public class ConcurrentLoginFilter implements Filter {
-
-    final private static String ATTRIBUTE_SESSIONMATCH = ConcurrentLoginFilter.class.getName() + ".match";
-
-    final private static String ATTRIBUTE_SESSIONUSER = ConcurrentLoginFilter.class.getName() + ".user";
 
     public void init(FilterConfig filterConfig) throws ServletException {
     }
@@ -40,63 +38,16 @@ public class ConcurrentLoginFilter implements Filter {
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws java.io.IOException, ServletException {
-        HttpServletRequest req = (HttpServletRequest)request;
-        HttpSession session = req.getSession(false);
-
-        if (session != null && session.getAttribute(ATTRIBUTE_SESSIONUSER) != null) {
-            ServletContext context = session.getServletContext();
-            String user = (String)session.getAttribute(ATTRIBUTE_SESSIONUSER);
-            String current = (String)session.getAttribute(ATTRIBUTE_SESSIONMATCH);
-            String match = (String)context.getAttribute(ATTRIBUTE_SESSIONMATCH + "." + user);
-            if (current == null || (!current.equals("*") && !current.equals(match))) {
-                session.invalidate();
-                //User credentials could be set as request attribute , such as for SSO functionality
-                req.removeAttribute(UserCredentials.class.getName());
-            }
-        }
-
-        chain.doFilter(req, response);
-    }
-
-    static boolean isConcurrentSession(HttpSession session, String user) {
-        ServletContext context = session.getServletContext();
-        String match = (String)context.getAttribute(ATTRIBUTE_SESSIONMATCH + "." + user);
-        String current = (String)session.getAttribute(ATTRIBUTE_SESSIONMATCH);
-        if (match != null) {
-            if (current == null || !(current.equals("*") || current.equals(match))) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
+        //Backward compatibility code. To be removed completely in next major version
+        chain.doFilter(request, response);
     }
 
     public static void validateSession(HttpSession session, String user, boolean allowConcurrent) {
-        ServletContext context = session.getServletContext();
-        String match = (String)context.getAttribute(ATTRIBUTE_SESSIONMATCH + "." + user);
-        if (allowConcurrent && match != null) {
-            session.setAttribute(ATTRIBUTE_SESSIONMATCH, "*");
-        } else {
-            String id = session.getId();
-            session.setAttribute(ATTRIBUTE_SESSIONMATCH, id);
-            context.setAttribute(ATTRIBUTE_SESSIONMATCH + "." + user, id);
-        }
-        session.setAttribute(ATTRIBUTE_SESSIONUSER, user);
+        //Backward compatibility code. To be completely removed in next major version
     }
 
     static void destroySession(HttpSession session) {
-        ServletContext context = session.getServletContext();
-        String user = (String)session.getAttribute(ATTRIBUTE_SESSIONUSER);
-        if (user != null) {
-            String current = (String)session.getAttribute(ATTRIBUTE_SESSIONMATCH);
-            String match = (String)context.getAttribute(ATTRIBUTE_SESSIONMATCH + "." + user);
-            if (current != null && current.equals(match)) {
-                context.removeAttribute(ATTRIBUTE_SESSIONMATCH + "." + user);
-            }
-        }
-        session.removeAttribute(ATTRIBUTE_SESSIONUSER);
-        session.removeAttribute(ATTRIBUTE_SESSIONMATCH);
+        //Backward compatibility code. To be completely removed in next major version
     }
 }
+

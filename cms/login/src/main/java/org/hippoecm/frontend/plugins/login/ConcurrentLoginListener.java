@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,17 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+
+/**
+ * Backward compatibility code. To be completely removed in next major version
+ * @deprecated since 14.2.0
+ */
+@Deprecated
 public class ConcurrentLoginListener implements  HttpSessionListener {
 
     public void sessionCreated(HttpSessionEvent evt) {
     }
 
     public void sessionDestroyed(HttpSessionEvent evt) {
-        HttpSession session = evt.getSession();
-        ConcurrentLoginFilter.destroySession(session);
     }
 }
