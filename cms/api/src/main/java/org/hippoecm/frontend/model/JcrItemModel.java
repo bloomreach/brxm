@@ -332,16 +332,16 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     @Override
     public String toString() {
-        if (!detaching) {
-            boolean isAttached = isAttached();
-            String string = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("path", getPath()).toString();
-            if (!isAttached) {
-                detach();
-            }
-            return string;
-        } else {
+        if (detaching) {
             return super.toString();
         }
+
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("attached", true)
+                .append("uuid", uuid)
+                .append("relativePath", relPath)
+                .append("absolutePath", absPath)
+                .toString();
     }
 
     @Override
