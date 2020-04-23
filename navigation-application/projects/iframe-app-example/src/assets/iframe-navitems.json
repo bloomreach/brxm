@@ -305,9 +305,9 @@
     "appPath": "setup/devstudio/pixel-monitor"
   },
   {
-    "id": "setup/devstudio/data-connect",
+    "id": "setup/data-connect",
     "appIframeUrl": "http://localhost:4201/brsm",
-    "appPath": "setup/devstudio/data-connect"
+    "appPath": "setup/data-connect"
   },
   {
     "id": "setup/devstudio/feed/configuration",
