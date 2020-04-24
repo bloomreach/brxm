@@ -19,6 +19,7 @@ import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Optional;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -48,6 +49,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResourceInterface;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.InvalidNodeTypeException;
@@ -72,6 +74,7 @@ import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_HOLDER;
 import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.DRAFT;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 @Path("/experiencepage/hst:containercomponent/")
@@ -104,40 +107,28 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
         final ContainerAction<Response> createContainerItem = () -> {
 
-            final HippoSession userSession = getSession();
-
-            // userSession is allowed to read the node since has XPAGE_REQUIRED_PRIVILEGE_NAME on the node
-            final Node handle = userSession.getNodeByIdentifier(getPageComposerContextService().getExperiencePageHandleUUID());
-
-            // TODO is 'default' the right document workflow??
-            // I think it is ...
-            final DocumentWorkflow documentWorkflow = (DocumentWorkflow) userSession.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
-
-            final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, DRAFT).orElse(null);
-            if ((draftNode != null)) {
-                final String draftHolder = getStringProperty(draftNode, HIPPOSTD_HOLDER, null);
-                final String userId = userSession.getUserID();
-                if (!userId.equals(draftHolder)) {
-                    return Response.status(Response.Status.BAD_REQUEST)
-                            .entity(String.format("Holder of draft '%s' is not equal to user from session '%s'", draftHolder, userId))
-                            .build();
-                }
-            }
-
-            checkoutCorrectBranch(documentWorkflow);
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession());
 
             // we need to write with the workflowSession. Make sure to use this workflowSession and not
             // impersonate to a workflowSession : This way we can make sure that the workflow manager also
             // persists the changes since the workflow manager will handle the  workflow session save (when we invoke
             // the document workflow
 
-            final Session workflowSession = documentWorkflow.getWorkflowContext().getInternalWorkflowSession();
+            final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
 
             // with workflowSession, we write directly to the unpublished variant
 
             final Node catalogItem = getContainerItem(workflowSession, catalogItemUUID);
+            if (!catalogItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(String.format("Value of path parameter itemUUID: '%s' is not of a catalog item", catalogItemUUID))
+                        .build();
+            }
 
-            final Node container = getPageComposerContextService().getRequestConfigNode("hst:abstractcomponent");
+            PageComposerContextService contextService = getPageComposerContextService();
+
+            final Node container = contextService.getRequestConfigNodeById(contextService.getRequestConfigIdentifier(),
+                    "hst:abstractcomponent", workflowSession);
 
             if (versionStamp != 0 && container.hasProperty(GENERAL_PROPERTY_LAST_MODIFIED)) {
                 long existingStamp = container.getProperty(GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
@@ -149,7 +140,8 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
                     throw new ClientException(msg, ClientError.ITEM_CHANGED);
                 }
             }
-            // update last modified
+            // update last modified for optimistic locking
+            // TODO Do we want this optimistic locking in this way?
             final Calendar updatedTimestamp = Calendar.getInstance();
             container.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, updatedTimestamp);
 
@@ -158,19 +150,14 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
             final String newItemNodeName = findNewName(catalogItem.getName(), container);
             final Node newItem = JcrUtils.copy(workflowSession, catalogItem.getPath(), container.getPath() + "/" + newItemNodeName);
 
-
-//            TODO
-            try {
-                documentWorkflow.saveUnpublished();
-            } catch (WorkflowException e) {
-                e.printStackTrace();
-            }
+            documentWorkflow.saveUnpublished();
 
             return respondNewContainerItemCreated(new ContainerItemImpl(newItem, updatedTimestamp.getTimeInMillis()));
 
         };
         return handleAction(createContainerItem);
     }
+
 
     @POST
     @Path("/{itemUUID}/{siblingItemUUID}")
@@ -218,8 +205,34 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
     public Response deleteContainerItem(final @PathParam("itemUUID") String itemUUID,
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         final ContainerAction<Response> deleteContainerItem = () -> {
-            xPageContainerComponentService.deleteContainerItem(getSession(), itemUUID, versionStamp);
-            return Response.status(Response.Status.OK).build();
+
+
+            HippoSession session = getSession();
+            try {
+                final Node containerItem = session.getNodeByIdentifier(itemUUID);
+
+                if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                    log.warn("The container component '{}' does not have the correct type. ", itemUUID);
+                    throw new InvalidNodeTypeException("The container component does not have the correct type.", itemUUID);
+                }
+
+                final Node container = getPageComposerContextService().getRequestConfigNode("hst:abstractcomponent");
+
+                if (!containerItem.getPath().startsWith(container.getPath() + "/")) {
+                    throw new ClientException("Cannot delete container item of other document", ClientError.INVALID_UUID);
+                }
+
+
+                DocumentWorkflow documentWorkflow = getDocumentWorkflow(session);
+
+                final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
+                internalWorkflowSession.getNodeByIdentifier(itemUUID).remove();
+                documentWorkflow.saveUnpublished();
+
+                return Response.status(Response.Status.OK).build();
+            } catch (ItemNotFoundException e) {
+                throw new ClientException("Item to delete not found", ClientError.INVALID_UUID);
+            }
         };
 
         return handleAction(deleteContainerItem);
@@ -260,14 +273,41 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
     }
 
 
-    private Document checkoutCorrectBranch(final DocumentWorkflow documentWorkflow) throws WorkflowException {
-        // TODO checkout the write branch which currently being edited in CM, this might be another one than currently
+    private DocumentWorkflow getDocumentWorkflow(final HippoSession userSession) throws RepositoryException, WorkflowException {
+
+        // userSession is allowed to read the node since has XPAGE_REQUIRED_PRIVILEGE_NAME on the node
+        final Node handle = userSession.getNodeByIdentifier(getPageComposerContextService().getExperiencePageHandleUUID());
+
+        // TODO is 'default' the right document workflow??
+        // I think it is ...
+        final DocumentWorkflow documentWorkflow = (DocumentWorkflow) userSession.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
+
+        final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, DRAFT).orElse(null);
+        if ((draftNode != null)) {
+            final String draftHolder = getStringProperty(draftNode, HIPPOSTD_HOLDER, null);
+            final String userId = userSession.getUserID();
+            if (!userId.equals(draftHolder)) {
+                throw new ClientException("Document being edited by another user", ClientError.ITEM_ALREADY_LOCKED);
+            }
+        }
+
+        checkoutCorrectBranch(documentWorkflow);
+        return documentWorkflow;
+    }
+
+    private Session getInternalWorkflowSession(final DocumentWorkflow documentWorkflow) {
+        return documentWorkflow.getWorkflowContext().getInternalWorkflowSession();
+    }
+
+
+    private void checkoutCorrectBranch(final DocumentWorkflow documentWorkflow) throws WorkflowException {
+        // TODO checkout the right branch which currently being edited in CM, this might be another one than currently
         // TODO the unpublished is......find current branch via CmsSessionContext
 
         try {
             if (!Boolean.TRUE.equals(documentWorkflow.hints().get("checkoutBranch"))) {
-                // only master branch
-                return documentWorkflow.getBranch(MASTER_BRANCH_ID, DRAFT);
+                // there is only master branch, so no need to check out a branch
+                return;
             }
         } catch (RemoteException | RepositoryException e) {
             throw new WorkflowException(e.getMessage());
@@ -276,7 +316,9 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
         final HttpSession httpSession = getPageComposerContextService().getRequestContext().getServletRequest().getSession();
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
 
-        return documentWorkflow.checkoutBranch(getBranchId(cmsSessionContext));
+        // TODO the CM should have been rendered with UUIDs from version history which should stay the same after
+        // TODO restoring a version from history
+        documentWorkflow.checkoutBranch(getBranchId(cmsSessionContext));
     }
 
     private String getBranchId(CmsSessionContext cmsSessionContext) {

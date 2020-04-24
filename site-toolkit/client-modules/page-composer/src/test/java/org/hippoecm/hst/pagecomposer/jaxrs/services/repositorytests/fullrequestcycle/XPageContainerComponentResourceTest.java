@@ -16,9 +16,11 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -27,11 +29,21 @@ import javax.jcr.Value;
 import javax.servlet.ServletException;
 import javax.ws.rs.core.Response;
 
-import org.junit.Ignore;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.junit.Test;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static javax.ws.rs.core.Response.Status.CREATED;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -42,7 +54,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         //creates the preview hst config
         startEdit(ADMIN_CREDENTIALS);
-        createAndDeleteAs(ADMIN_CREDENTIALS, true);
+        createAndDeleteItemAs(ADMIN_CREDENTIALS, true);
     }
 
     @Test
@@ -50,7 +62,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         //creates the preview
         startEdit(ADMIN_CREDENTIALS);
-        createAndDeleteAs(EDITOR_CREDENTIALS, true);
+        createAndDeleteItemAs(EDITOR_CREDENTIALS, true);
     }
 
 
@@ -63,7 +75,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         //creates the preview
         startEdit(ADMIN_CREDENTIALS);
         // author is not allowed to do a GET on ContainerItemComponentResource.getVariant()
-        createAndDeleteAs(AUTHOR_CREDENTIALS, true);
+        createAndDeleteItemAs(AUTHOR_CREDENTIALS, true);
     }
 
     /**
@@ -84,7 +96,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         try {
             startEdit(ADMIN_CREDENTIALS);
             // since author does not have privilege hippo:author anymore, expect a FORBIDDEN
-            createAndDeleteAs(AUTHOR_CREDENTIALS, false);
+            createAndDeleteItemAs(AUTHOR_CREDENTIALS, false);
         } finally {
             // restore privileges
             admin.getNode("/hippo:configuration/hippo:roles/author").setProperty("hipposys:privileges", before);
@@ -92,35 +104,63 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         }
     }
 
-    private void createAndDeleteAs(final SimpleCredentials creds, final boolean allowed) throws IOException, ServletException, RepositoryException {
+    private void createAndDeleteItemAs(final SimpleCredentials creds, final boolean allowed)
+            throws IOException, ServletException, RepositoryException, WorkflowException {
+
+        final Session session = createSession(ADMIN_CREDENTIALS);
+
+        try {
+            final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            final String containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final String catalogId = getNodeId("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(session);
+            // since document got published and nothing yet changed, should not be published
+
+            assertEquals("No changes yet in unpublished, hence not expected publication option",
+                    FALSE, documentWorkflow.hints().get("publish"));
+
+            final RequestResponseMock createRequestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + containerId + "./" + catalogId, null,
+                    "POST");
 
 
-        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+            final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, creds);
+            final Map<String, String> createResponseMap = mapper.readerFor(Map.class).readValue(createResponse.getContentAsString());
 
-        final String containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
-        final String catalogId = getNodeId("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
-
-
-        final RequestResponseMock createRequestResponse = mockGetRequestResponse(
-                "http", "localhost", "/_rp/" + containerId + "./" + catalogId, null,
-                "POST");
+            if (!allowed) {
+                assertEquals("FORBIDDEN", createResponseMap.get("errorCode"));
+                return;
+            }
 
 
-        final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, creds);
-        final Map<String, String> createResponseMap = mapper.readerFor(Map.class).readValue(createResponse.getContentAsString());
+            assertEquals(CREATED.getStatusCode(), createResponse.getStatus());
 
-        if (allowed) {
+            // assert modifying the preview did not create a draft variant!!! changes are directly on unpublished
+            assertNull(getVariant(handle, "draft"));
 
-            final Session session = createSession(ADMIN_CREDENTIALS);
-
-            assertEquals(Response.Status.CREATED.getStatusCode(), createResponse.getStatus());
             final String createdUUID = createResponseMap.get("id");
 
             // assertion on newly created item
             assertTrue(session.nodeExists(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
             assertTrue(session.getNodeByIdentifier(createdUUID) != null);
 
-            final RequestResponseMock  deleteRequestResponse = mockGetRequestResponse(
+            // assert document can now be published
+            assertEquals("Unpublished has changes, publication should be enabled",
+                    TRUE, documentWorkflow.hints().get("publish"));
+
+            assertEquals("Expected unpublished to have been last modified by current user", creds.getUserID(),
+                    unpublishedExpPageVariant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY).getString());
+
+            // now publish the document,
+            documentWorkflow.publish();
+            // assert that published variant now has extra container item 'testitem'
+            assertTrue(session.nodeExists(publishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
+
+
+            // now delete
+            final RequestResponseMock deleteRequestResponse = mockGetRequestResponse(
                     "http", "localhost", "/_rp/" + containerId + "./" + createdUUID, null,
                     "DELETE");
             final MockHttpServletResponse deleteResponse = render(mountId, deleteRequestResponse, creds);
@@ -133,10 +173,35 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
                 // expected
             }
 
-            session.logout();
+            // published variant still has the container item
+            assertTrue(session.nodeExists(publishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
 
-        } else {
-            assertEquals("FORBIDDEN", createResponseMap.get("errorCode"));
+            // after delete, the unpublished has become publishable again
+            assertEquals("Unpublished has changes, publication should be enabled",
+                    TRUE, documentWorkflow.hints().get("publish"));
+
+            documentWorkflow.publish();
+
+            // published variant should not have the container item any more
+            assertFalse(session.nodeExists(publishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
+
+            // now assert an existing component item (or catalog) not from the current XPAGE cannot be deleted via
+            // the container id
+
+            final RequestResponseMock deleteRequestResponseInvalid = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + containerId + "./" + catalogId, null,
+                    "DELETE");
+            final MockHttpServletResponse invalidResponse = render(mountId, deleteRequestResponseInvalid, creds);
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), invalidResponse.getStatus());
+
+        } finally {
+            session.logout();
         }
+
+    }
+
+    private DocumentWorkflow getDocumentWorkflow(final Session session) throws RepositoryException {
+        final WorkflowManager workflowManager = ((HippoSession) session).getWorkspace().getWorkflowManager();
+        return (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
     }
 }

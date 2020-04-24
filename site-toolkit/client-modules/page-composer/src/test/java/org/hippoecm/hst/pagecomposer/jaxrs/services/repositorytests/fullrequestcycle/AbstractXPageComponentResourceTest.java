@@ -43,6 +43,8 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
 
     private final static String EXPERIENCE_PAGE_HANDLE_PATH = "/unittestcontent/documents/unittestproject/experiences/expPage1";
 
+    protected Node handle;
+    protected Node publishedExpPageVariant;
     protected Node unpublishedExpPageVariant;
 
     @Before
@@ -54,15 +56,16 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
         JcrUtils.copy(session, EXPERIENCE_PAGE_HANDLE_PATH, "/expPage1");
 
         // make sure the unpublished variant exists (just by depublishing for now....)
-        WorkflowManager workflowManager = ((HippoSession) session).getWorkspace().getWorkflowManager();
+        final WorkflowManager workflowManager = ((HippoSession) session).getWorkspace().getWorkflowManager();
 
-        Node handle = session.getNode(EXPERIENCE_PAGE_HANDLE_PATH);
-        DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
+        handle = session.getNode(EXPERIENCE_PAGE_HANDLE_PATH);
+        final DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
         documentWorkflow.depublish();
+        // and publish again such that there is a live variant
+        documentWorkflow.publish();
 
-        // note the published variant still exists
+        publishedExpPageVariant = getVariant(handle, "published");
         unpublishedExpPageVariant = getVariant(handle, "unpublished");
-        assertNotNull(unpublishedExpPageVariant);
 
         // create a catalog item that can be put in the container
         String[] content = new String[] {
