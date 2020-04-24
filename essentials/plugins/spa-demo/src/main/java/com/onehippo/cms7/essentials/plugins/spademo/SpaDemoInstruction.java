@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
@@ -44,6 +45,7 @@ public class SpaDemoInstruction implements Instruction {
     public Status execute(final Map<String, Object> parameters) {
         final String namespace = settingsService.getSettings().getProjectNamespace();
         final String hstVirtualHostNode = String.format("/hst:%s/hst:hosts/dev-localhost/localhost", namespace);
+        final String hstChannelInfoNode = String.format("/hst:%s/hst:configurations/%s/hst:workspace/hst:channel/hst:channelinfo", namespace, namespace);
         final Session session = jcrService.createSession();
         if (session == null) {
             return Status.FAILED;
@@ -52,8 +54,9 @@ public class SpaDemoInstruction implements Instruction {
         try {
             // Configure Page Model API
             final Node virtualHost = session.getNode(hstVirtualHostNode);
+            final String localhost = "http://localhost:3000";
             virtualHost.setProperty(HstNodeTypes.VIRTUALHOST_ALLOWED_ORIGINS, new String[]{
-                    "http://localhost:3000"
+                    localhost
             });
             final Node root = virtualHost.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
             root.setProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_MODEL_API, "resourceapi");
@@ -61,17 +64,8 @@ public class SpaDemoInstruction implements Instruction {
                     "Access-Control-Allow-Origin: *"
             });
 
-            // Update URL Rewriter configuration
-            final Node urlRewriterConfig = session.getNode("/hippo:configuration/hippo:modules/urlrewriter/hippo:moduleconfig");
-            urlRewriterConfig.setProperty("urlrewriter:ignorecontextpath", false);
-            urlRewriterConfig.setProperty("urlrewriter:usequerystring", true);
-            urlRewriterConfig.setProperty("urlrewriter:skippedprefixes", new String[]{
-                    "/site/_cmsrest",
-                    "/site/_cmssessioncontext",
-                    "/site/_rp",
-                    "/site/_hn:",
-                    "/site/ping/"
-            });
+            final Node channelInfo = session.getNode(hstChannelInfoNode);
+            channelInfo.setProperty(ContainerConstants.PREVIEW_URL_PROPERTY_NAME, localhost);
 
             session.save();
         } catch (RepositoryException e) {
@@ -87,6 +81,5 @@ public class SpaDemoInstruction implements Instruction {
     @Override
     public void populateChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
         changeMessageQueue.accept(Type.EXECUTE, "Set up the Page Model API for the default channel.");
-        changeMessageQueue.accept(Type.EXECUTE, "Configure the URL Rewriter to work as a reverse proxy.");
     }
 }
