@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1970,5 +1970,83 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
 
     }
 
+    @Test
+    public void test_add_new_system_duplicate_values() throws Exception {
+        // verify defining new duplicate system values is supported
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: [a, a]\n";
+        ConfigurationModel baseline = applyDefinitions(baselineSource);
 
+        String[] testValues = JcrUtils.getMultipleStringProperty(testNode, "test", new String[0]);
+        assertArrayEquals(new String[]{"a", "a"}, testValues);
+
+        // verify adding duplicate values to an existing system value is supported
+        String updateSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: [a, a, b, b]\n";
+        baseline = applyDefinitions(updateSource, baseline);
+        testValues = JcrUtils.getMultipleStringProperty(testNode, "test", new String[0]);
+        assertArrayEquals(new String[]{"a", "a", "b", "b"}, testValues);
+
+        // verify adding duplicate values to an existing system value is supported
+        updateSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: [a, a, b, b, b]\n";
+        baseline = applyDefinitions(updateSource, baseline);
+        testValues = JcrUtils.getMultipleStringProperty(testNode, "test", new String[0]);
+        assertArrayEquals(new String[]{"a", "a", "b", "b"}, testValues);
+
+        // overwrite the test values
+        testNode.setProperty("test", new String[]{"c", "c"});
+        session.save();
+
+        // ensure add new-system-values retains duplicate existing values
+
+        updateSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: [c, e]\n";
+        applyDefinitions(updateSource, baseline);
+        testValues = JcrUtils.getMultipleStringProperty(testNode, "test", new String[0]);
+        assertArrayEquals(new String[]{"c", "c", "e"}, testValues);
+
+        // ensure add new-system-values supports adding and retaining duplicate existing values at the same time
+
+        updateSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: [f, f]\n";
+        applyDefinitions(updateSource, baseline);
+        testValues = JcrUtils.getMultipleStringProperty(testNode, "test", new String[0]);
+        assertArrayEquals(new String[]{"c", "c", "e", "f", "f"}, testValues);
+    }
 }

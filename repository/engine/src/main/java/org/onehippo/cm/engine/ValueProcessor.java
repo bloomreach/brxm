@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -363,10 +363,10 @@ public abstract class ValueProcessor {
         return new ValueImpl(uuid, ValueType.fromJcrType(jcrType), false, false);
     }
 
-    public static List<Value> determineVerifiedValues(final ModelProperty property, final Session session)
+    public static ArrayList<Value> determineVerifiedValues(final ModelProperty property, final Session session)
             throws RepositoryException {
 
-        final List<Value> verifiedValues = new ArrayList<>();
+        final ArrayList<Value> verifiedValues = new ArrayList<>();
         if (property.isMultiple()) {
             for (Value value : property.getValues()) {
                 collectVerifiedValue(property, value, verifiedValues, session);
@@ -377,7 +377,7 @@ public abstract class ValueProcessor {
         return verifiedValues;
     }
 
-    public static void collectVerifiedValue(final ModelProperty modelProperty, final Value value, final List<Value> modelValues, final Session session)
+    public static void collectVerifiedValue(final ModelProperty modelProperty, final Value value, final ArrayList<Value> modelValues, final Session session)
             throws RepositoryException {
         if (isReferenceTypeProperty(modelProperty)) {
             final String uuid = getVerifiedReferenceIdentifier(modelProperty, value, session);
