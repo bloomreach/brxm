@@ -21,10 +21,14 @@ import {
   TYPE_CONTAINER_BOX,
   TYPE_CONTAINER_INLINE,
   TYPE_CONTAINER_ORDERED_LIST,
+  TYPE_CONTAINER_UNORDERED_LIST,
 } from '@bloomreach/spa-sdk';
 import { BrContainerBoxComponent } from './br-container-box/br-container-box.component';
 import { BrContainerInlineComponent } from './br-container-inline/br-container-inline.component';
 import { BrContainerOrderedListComponent } from './br-container-ordered-list/br-container-ordered-list.component';
+import {
+  BrContainerUnorderedListComponent,
+} from './br-container-unordered-list/br-container-unordered-list.component';
 import { BrNodeContainerDirective } from './br-node-container.directive';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
@@ -32,6 +36,7 @@ import { BrPageComponent } from './br-page/br-page.component';
 Component({ selector: 'br-container-box', template: '' })(BrContainerBoxComponent);
 Component({ selector: 'br-container-inline', template: '' })(BrContainerInlineComponent);
 Component({ selector: 'br-container-ordered-list', template: '' })(BrContainerOrderedListComponent);
+Component({ selector: 'br-container-unordered-list', template: '' })(BrContainerUnorderedListComponent);
 
 @Component({
   selector: 'br-container-test',
@@ -44,12 +49,14 @@ class ContainerTestComponent {}
     BrContainerBoxComponent,
     BrContainerInlineComponent,
     BrContainerOrderedListComponent,
+    BrContainerUnorderedListComponent,
     ContainerTestComponent,
   ],
   entryComponents: [
     BrContainerBoxComponent,
     BrContainerInlineComponent,
     BrContainerOrderedListComponent,
+    BrContainerUnorderedListComponent,
     ContainerTestComponent,
   ],
 })
@@ -120,6 +127,13 @@ describe('BrNodeContainerDirective', () => {
 
     it('should render an ordered list container', () => {
       container.getType.mockReturnValue(TYPE_CONTAINER_ORDERED_LIST);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement).toMatchSnapshot();
+    });
+
+    it('should render an unordered list container', () => {
+      container.getType.mockReturnValue(TYPE_CONTAINER_UNORDERED_LIST);
       fixture.detectChanges();
 
       expect(fixture.nativeElement).toMatchSnapshot();

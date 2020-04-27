@@ -29,6 +29,15 @@ exports[`BrNodeContainerDirective getMapping should render an ordered list conta
 </div>
 `;
 
+exports[`BrNodeContainerDirective getMapping should render an unordered list container 1`] = `
+<div
+  id="root4"
+>
+  
+  <br-container-unordered-list />
+</div>
+`;
+
 exports[`BrNodeContainerDirective getMapping should render box container by default 1`] = `
 <div
   id="root1"

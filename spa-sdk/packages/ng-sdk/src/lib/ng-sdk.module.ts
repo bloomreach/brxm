@@ -22,6 +22,9 @@ import { BrContainerItemUndefinedComponent } from './br-container-item-undefined
 import { BrContainerBoxComponent } from './br-container-box/br-container-box.component';
 import { BrContainerInlineComponent } from './br-container-inline/br-container-inline.component';
 import { BrContainerOrderedListComponent } from './br-container-ordered-list/br-container-ordered-list.component';
+import {
+  BrContainerUnorderedListComponent,
+} from './br-container-unordered-list/br-container-unordered-list.component';
 import { BrComponentDirective } from './br-component.directive';
 import { BrManageContentButtonDirective } from './br-manage-content-button.directive';
 import { BrManageMenuButtonDirective } from './br-manage-menu-button.directive';
@@ -38,6 +41,7 @@ import { BrPageComponent } from './br-page/br-page.component';
     BrContainerBoxComponent,
     BrContainerInlineComponent,
     BrContainerOrderedListComponent,
+    BrContainerUnorderedListComponent,
     BrContainerItemUndefinedComponent,
     BrManageContentButtonDirective,
     BrManageMenuButtonDirective,
@@ -52,6 +56,7 @@ import { BrPageComponent } from './br-page/br-page.component';
     BrContainerBoxComponent,
     BrContainerInlineComponent,
     BrContainerOrderedListComponent,
+    BrContainerUnorderedListComponent,
     BrContainerItemUndefinedComponent,
   ],
   exports: [
