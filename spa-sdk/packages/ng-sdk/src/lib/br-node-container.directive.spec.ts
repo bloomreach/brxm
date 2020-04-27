@@ -16,16 +16,15 @@
 
 import { Component, Input, NgModule } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Container, TYPE_CONTAINER_BOX } from '@bloomreach/spa-sdk';
+import { Container, TYPE_CONTAINER_BOX, TYPE_CONTAINER_INLINE } from '@bloomreach/spa-sdk';
 import { BrContainerBoxComponent } from './br-container-box/br-container-box.component';
+import { BrContainerInlineComponent } from './br-container-inline/br-container-inline.component';
 import { BrNodeContainerDirective } from './br-node-container.directive';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
 
-Component({
-  selector: 'br-container-box',
-  template: '',
-})(BrContainerBoxComponent);
+Component({ selector: 'br-container-box', template: '' })(BrContainerBoxComponent);
+Component({ selector: 'br-container-inline', template: '' })(BrContainerInlineComponent);
 
 @Component({
   selector: 'br-container-test',
@@ -34,8 +33,16 @@ Component({
 class ContainerTestComponent {}
 
 @NgModule({
-  declarations: [BrContainerBoxComponent, ContainerTestComponent],
-  entryComponents: [BrContainerBoxComponent, ContainerTestComponent],
+  declarations: [
+    BrContainerBoxComponent,
+    BrContainerInlineComponent,
+    ContainerTestComponent,
+  ],
+  entryComponents: [
+    BrContainerBoxComponent,
+    BrContainerInlineComponent,
+    ContainerTestComponent,
+  ],
 })
 class TestModule {}
 
@@ -45,7 +52,7 @@ class TestComponent {
 }
 
 describe('BrNodeContainerDirective', () => {
-  let container: Container;
+  let container: jest.Mocked<Container>;
   let node: BrNodeDirective;
   let page: BrPageComponent;
   let component: TestComponent;
@@ -53,11 +60,11 @@ describe('BrNodeContainerDirective', () => {
 
   beforeEach(() => {
     container = {
-      getType: () => TYPE_CONTAINER_BOX,
-      getMeta: () => ({
+      getType: jest.fn(() => TYPE_CONTAINER_BOX),
+      getMeta: jest.fn(() => ({
         clear: jest.fn(),
         render: jest.fn(),
-      }),
+      })),
     } as unknown as typeof container;
     node = {} as typeof node;
     page = { mapping: {} } as typeof page;
@@ -90,6 +97,13 @@ describe('BrNodeContainerDirective', () => {
     });
 
     it('should render box container by default', () => {
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement).toMatchSnapshot();
+    });
+
+    it('should render an inline container', () => {
+      container.getType.mockReturnValue(TYPE_CONTAINER_INLINE);
       fixture.detectChanges();
 
       expect(fixture.nativeElement).toMatchSnapshot();

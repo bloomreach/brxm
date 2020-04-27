@@ -15,8 +15,9 @@
  */
 
 import { Directive, Type } from '@angular/core';
-import { Container } from '@bloomreach/spa-sdk';
+import { Container, TYPE_CONTAINER_INLINE } from '@bloomreach/spa-sdk';
 import { BrContainerBoxComponent } from './br-container-box/br-container-box.component';
+import { BrContainerInlineComponent } from './br-container-inline/br-container-inline.component';
 import { BrNodeComponentDirective } from './br-node-component.directive';
 import { BrProps } from './br-props.model';
 
@@ -32,6 +33,9 @@ export class BrNodeContainerDirective extends BrNodeComponentDirective<Container
       return this.page.mapping[type];
     }
 
-    return BrContainerBoxComponent;
+    switch (type) {
+      case TYPE_CONTAINER_INLINE: return BrContainerInlineComponent;
+      default: return BrContainerBoxComponent;
+    }
   }
 }
