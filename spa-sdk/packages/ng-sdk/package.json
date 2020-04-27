@@ -32,10 +32,12 @@
   "fesm5": "dist/fesm5/bloomreach-ng-sdk.js",
   "fesm2015": "dist/fesm2015/bloomreach-ng-sdk.js",
   "typings": "dist/bloomreach-ng-sdk.d.ts",
+  "metadata": "dist/bloomreach-ng-sdk.metadata.json",
   "sideEffects": false,
   "files": [
     "dist/*/**",
-    "dist/**/*.d.ts"
+    "dist/**/*.d.ts",
+    "dist/bloomreach-ng-sdk.metadata.json"
   ],
   "dependencies": {
     "@bloomreach/spa-sdk": "^14.2"
