@@ -21,6 +21,7 @@ import { NgModule } from '@angular/core';
 import { BrContainerItemUndefinedComponent } from './br-container-item-undefined/br-container-item-undefined.component';
 import { BrContainerBoxComponent } from './br-container-box/br-container-box.component';
 import { BrContainerInlineComponent } from './br-container-inline/br-container-inline.component';
+import { BrContainerOrderedListComponent } from './br-container-ordered-list/br-container-ordered-list.component';
 import { BrComponentDirective } from './br-component.directive';
 import { BrManageContentButtonDirective } from './br-manage-content-button.directive';
 import { BrManageMenuButtonDirective } from './br-manage-menu-button.directive';
@@ -36,6 +37,7 @@ import { BrPageComponent } from './br-page/br-page.component';
     BrComponentDirective,
     BrContainerBoxComponent,
     BrContainerInlineComponent,
+    BrContainerOrderedListComponent,
     BrContainerItemUndefinedComponent,
     BrManageContentButtonDirective,
     BrManageMenuButtonDirective,
@@ -49,6 +51,7 @@ import { BrPageComponent } from './br-page/br-page.component';
   entryComponents: [
     BrContainerBoxComponent,
     BrContainerInlineComponent,
+    BrContainerOrderedListComponent,
     BrContainerItemUndefinedComponent,
   ],
   exports: [

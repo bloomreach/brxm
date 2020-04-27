@@ -15,9 +15,10 @@
  */
 
 import { Directive, Type } from '@angular/core';
-import { Container, TYPE_CONTAINER_INLINE } from '@bloomreach/spa-sdk';
+import { Container, TYPE_CONTAINER_INLINE, TYPE_CONTAINER_ORDERED_LIST } from '@bloomreach/spa-sdk';
 import { BrContainerBoxComponent } from './br-container-box/br-container-box.component';
 import { BrContainerInlineComponent } from './br-container-inline/br-container-inline.component';
+import { BrContainerOrderedListComponent } from './br-container-ordered-list/br-container-ordered-list.component';
 import { BrNodeComponentDirective } from './br-node-component.directive';
 import { BrProps } from './br-props.model';
 
@@ -35,6 +36,7 @@ export class BrNodeContainerDirective extends BrNodeComponentDirective<Container
 
     switch (type) {
       case TYPE_CONTAINER_INLINE: return BrContainerInlineComponent;
+      case TYPE_CONTAINER_ORDERED_LIST: return BrContainerOrderedListComponent;
       default: return BrContainerBoxComponent;
     }
   }

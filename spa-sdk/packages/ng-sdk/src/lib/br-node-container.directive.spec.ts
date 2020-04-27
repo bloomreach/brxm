@@ -16,15 +16,22 @@
 
 import { Component, Input, NgModule } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Container, TYPE_CONTAINER_BOX, TYPE_CONTAINER_INLINE } from '@bloomreach/spa-sdk';
+import {
+  Container,
+  TYPE_CONTAINER_BOX,
+  TYPE_CONTAINER_INLINE,
+  TYPE_CONTAINER_ORDERED_LIST,
+} from '@bloomreach/spa-sdk';
 import { BrContainerBoxComponent } from './br-container-box/br-container-box.component';
 import { BrContainerInlineComponent } from './br-container-inline/br-container-inline.component';
+import { BrContainerOrderedListComponent } from './br-container-ordered-list/br-container-ordered-list.component';
 import { BrNodeContainerDirective } from './br-node-container.directive';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
 
 Component({ selector: 'br-container-box', template: '' })(BrContainerBoxComponent);
 Component({ selector: 'br-container-inline', template: '' })(BrContainerInlineComponent);
+Component({ selector: 'br-container-ordered-list', template: '' })(BrContainerOrderedListComponent);
 
 @Component({
   selector: 'br-container-test',
@@ -36,11 +43,13 @@ class ContainerTestComponent {}
   declarations: [
     BrContainerBoxComponent,
     BrContainerInlineComponent,
+    BrContainerOrderedListComponent,
     ContainerTestComponent,
   ],
   entryComponents: [
     BrContainerBoxComponent,
     BrContainerInlineComponent,
+    BrContainerOrderedListComponent,
     ContainerTestComponent,
   ],
 })
@@ -104,6 +113,13 @@ describe('BrNodeContainerDirective', () => {
 
     it('should render an inline container', () => {
       container.getType.mockReturnValue(TYPE_CONTAINER_INLINE);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement).toMatchSnapshot();
+    });
+
+    it('should render an ordered list container', () => {
+      container.getType.mockReturnValue(TYPE_CONTAINER_ORDERED_LIST);
       fixture.detectChanges();
 
       expect(fixture.nativeElement).toMatchSnapshot();

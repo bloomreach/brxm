@@ -20,6 +20,15 @@ exports[`BrNodeContainerDirective getMapping should render an inline container 1
 </div>
 `;
 
+exports[`BrNodeContainerDirective getMapping should render an ordered list container 1`] = `
+<div
+  id="root3"
+>
+  
+  <br-container-ordered-list />
+</div>
+`;
+
 exports[`BrNodeContainerDirective getMapping should render box container by default 1`] = `
 <div
   id="root1"
