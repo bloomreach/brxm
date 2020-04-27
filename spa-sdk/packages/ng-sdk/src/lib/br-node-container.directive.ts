@@ -18,6 +18,7 @@ import { Directive, Type } from '@angular/core';
 import {
   Container,
   TYPE_CONTAINER_INLINE,
+  TYPE_CONTAINER_NO_MARKUP,
   TYPE_CONTAINER_ORDERED_LIST,
   TYPE_CONTAINER_UNORDERED_LIST,
 } from '@bloomreach/spa-sdk';
@@ -46,6 +47,7 @@ export class BrNodeContainerDirective extends BrNodeComponentDirective<Container
       case TYPE_CONTAINER_INLINE: return BrContainerInlineComponent;
       case TYPE_CONTAINER_ORDERED_LIST: return BrContainerOrderedListComponent;
       case TYPE_CONTAINER_UNORDERED_LIST: return BrContainerUnorderedListComponent;
+      case TYPE_CONTAINER_NO_MARKUP: return;
       default: return BrContainerBoxComponent;
     }
   }

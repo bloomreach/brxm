@@ -20,6 +20,7 @@ import {
   Container,
   TYPE_CONTAINER_BOX,
   TYPE_CONTAINER_INLINE,
+  TYPE_CONTAINER_NO_MARKUP,
   TYPE_CONTAINER_ORDERED_LIST,
   TYPE_CONTAINER_UNORDERED_LIST,
 } from '@bloomreach/spa-sdk';
@@ -76,6 +77,7 @@ describe('BrNodeContainerDirective', () => {
 
   beforeEach(() => {
     container = {
+      getChildren: jest.fn(() => []),
       getType: jest.fn(() => TYPE_CONTAINER_BOX),
       getMeta: jest.fn(() => ({
         clear: jest.fn(),
@@ -137,6 +139,14 @@ describe('BrNodeContainerDirective', () => {
       fixture.detectChanges();
 
       expect(fixture.nativeElement).toMatchSnapshot();
+    });
+
+    it('should render a no markup container', () => {
+      container.getType.mockReturnValue(TYPE_CONTAINER_NO_MARKUP);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement).toMatchSnapshot();
+      expect(container.getChildren).toBeCalled();
     });
   });
 });

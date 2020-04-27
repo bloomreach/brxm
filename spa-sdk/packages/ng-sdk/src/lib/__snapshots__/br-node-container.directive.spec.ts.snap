@@ -11,6 +11,14 @@ exports[`BrNodeContainerDirective getMapping should render a mapped container 1`
 </div>
 `;
 
+exports[`BrNodeContainerDirective getMapping should render a no markup container 1`] = `
+<div
+  id="root5"
+>
+  
+</div>
+`;
+
 exports[`BrNodeContainerDirective getMapping should render an inline container 1`] = `
 <div
   id="root2"
