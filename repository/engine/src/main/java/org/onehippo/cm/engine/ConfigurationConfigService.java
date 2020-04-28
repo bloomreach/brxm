@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -868,7 +868,7 @@ public class ConfigurationConfigService {
 
         // pre-process the values of the property to address reference type values
         final Session session = jcrNode.getSession();
-        final List<Value> verifiedUpdateValues = determineVerifiedValues(updateProperty, session);
+        final ArrayList<Value> verifiedUpdateValues = determineVerifiedValues(updateProperty, session);
 
         javax.jcr.Value[] newSystemValues = null;
         // in case of a system property with meta add-new-values set, determine the *new* values to be added
@@ -876,13 +876,13 @@ public class ConfigurationConfigService {
                 // only needed when not changing the type/multiplicity of a property because then it will be recreated
                 baselineProperty.isMultiple() && updateProperty.getValueType() == baselineProperty.getValueType()) {
 
-            final List<? extends Value> baselineValues = baselineProperty.getValues();
+            final ArrayList<Value> baselineValues = new ArrayList<>(baselineProperty.getValues());
 
-            // remove all equal values
             for (int i = verifiedUpdateValues.size() -1; i > -1; i--) {
-                for (Value baselineValue : baselineValues) {
-                    if (valueIsIdentical(verifiedUpdateValues.get(i), baselineValue)) {
+                for (int j = baselineValues.size()-1; j > -1; j--) {
+                    if (valueIsIdentical(verifiedUpdateValues.get(i), baselineValues.get(j))) {
                         verifiedUpdateValues.remove(i);
+                        baselineValues.remove(j);
                         break;
                     }
                 }
@@ -896,12 +896,15 @@ public class ConfigurationConfigService {
             if (jcrProperty != null && jcrProperty.isMultiple() &&
                     updateProperty.getValueType().ordinal() == jcrProperty.getType()) {
                 final javax.jcr.Value[] jcrValues = jcrProperty.getValues();
+                final ArrayList<javax.jcr.Value> jcrValuesList = new ArrayList<>(Arrays.asList(jcrValues));
 
                 // remove all equal values
                 for (int i = verifiedUpdateValues.size()-1; i > -1; i--) {
-                    for (final javax.jcr.Value jcrValue : jcrValues) {
-                        if (valueIsIdentical(updateProperty, verifiedUpdateValues.get(i), jcrValue)) {
+                    for (int j = jcrValuesList.size()-1; j > -1; j--) {
+                        if (valueIsIdentical(updateProperty, verifiedUpdateValues.get(i), jcrValuesList.get(j))) {
                             verifiedUpdateValues.remove(i);
+                            jcrValuesList.remove(j);
+                            break;
                         }
                     }
                 }
