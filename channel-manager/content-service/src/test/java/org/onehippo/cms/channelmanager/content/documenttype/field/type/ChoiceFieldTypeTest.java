@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,13 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -57,6 +60,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.ValidateAndWrite.validateAndWriteTo;
 import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertViolations;
 import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertZeroViolations;
 import static org.powermock.api.easymock.PowerMock.createMock;
@@ -430,7 +434,7 @@ public class ChoiceFieldTypeTest {
         replayAll();
 
         try {
-            choice.writeTo(node, Optional.of(Collections.singletonList(choiceValue)));
+            validateAndWriteTo(node, choice, Collections.singletonList(choiceValue));
             fail("No Exception");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
@@ -565,9 +569,15 @@ public class ChoiceFieldTypeTest {
     }
 
     @Test
-    public void validateNone() {
+    public void validateEmptyList() {
         final CompoundContext context = new CompoundContext(MockNode.root(), null, null, null);
-        assertZeroViolations(choice.validate(Collections.emptyList(), context));
+        try {
+            choice.validate(Collections.emptyList(), context);
+            fail("Exception not thrown");
+        }
+        catch ( BadRequestException e){
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
     }
 
     @Test
@@ -577,6 +587,7 @@ public class ChoiceFieldTypeTest {
         final MockNode root = MockNode.root();
         final CompoundContext context = createMock(CompoundContext.class);
         expect(context.getNode()).andReturn(root).anyTimes();
+        expect(context.getDocument()).andReturn(root).anyTimes();
 
         final MockNode choiceNode1 = root.addNode("choice", "compound1");
         final FieldValue choiceValue1 = mockChoiceValue(compound1, "compound1", 0, choiceNode1, context);
@@ -597,6 +608,7 @@ public class ChoiceFieldTypeTest {
         final MockNode root = MockNode.root();
         final CompoundContext context = createMock(CompoundContext.class);
         expect(context.getNode()).andReturn(root).anyTimes();
+        expect(context.getDocument()).andReturn(root).anyTimes();
 
         final MockNode choiceNode1 = root.addNode("choice", "compound1");
         final FieldValue choiceValue1 = mockChoiceValue(compound1, "compound1", 1, choiceNode1, context);
@@ -617,6 +629,7 @@ public class ChoiceFieldTypeTest {
         final MockNode root = MockNode.root();
         final CompoundContext context = createMock(CompoundContext.class);
         expect(context.getNode()).andReturn(root).anyTimes();
+        expect(context.getDocument()).andReturn(root).anyTimes();
 
         final MockNode choiceNode1 = root.addNode("choice", "compound1");
         final FieldValue choiceValue1 = mockChoiceValue(compound1, "compound1", 0, choiceNode1, context);
@@ -637,6 +650,7 @@ public class ChoiceFieldTypeTest {
         final MockNode root = MockNode.root();
         final CompoundContext context = createMock(CompoundContext.class);
         expect(context.getNode()).andReturn(root).anyTimes();
+        expect(context.getDocument()).andReturn(root).anyTimes();
 
         final MockNode choiceNode1 = root.addNode("choice", "compound1");
         final FieldValue choiceValue1 = mockChoiceValue(compound1, "compound1", 1, choiceNode1, context);
@@ -657,6 +671,7 @@ public class ChoiceFieldTypeTest {
         final MockNode root = MockNode.root();
         final CompoundContext context = createMock(CompoundContext.class);
         expect(context.getNode()).andReturn(root).anyTimes();
+        expect(context.getDocument()).andReturn(root).anyTimes();
 
         final FieldValue compoundValue1 = new FieldValue("value of compound 1");
         final FieldValue choiceValue1 = new FieldValue("compound1", compoundValue1);

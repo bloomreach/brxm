@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.repository.mock.MockNode;
@@ -212,7 +213,9 @@ public class NodeLinkFieldTypeTest {
     @Test(expected = BadRequestException.class)
     public void writeMissingValues() throws Exception {
         linkFieldType.setId("my:documentlink");
-        linkFieldType.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
+        final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("1234"));
+        linkFieldType.validate(fieldValues, new CompoundContext(null, documentNode, null, null));
+        linkFieldType.writeValues(documentNode, Optional.of(fieldValues), true);
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.ValidateAndWrite.validateAndWriteTo;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -69,7 +70,7 @@ public class LongFieldTypeTest {
         node.setProperty(PROPERTY, oldValue);
 
         try {
-            fieldType.writeTo(node, Optional.empty());
+            validateAndWriteTo(node, fieldType, Collections.singletonList(null));
             fail("Must not be missing");
         } catch (final BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
@@ -77,20 +78,20 @@ public class LongFieldTypeTest {
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("" + oldValue));
 
         try {
-            fieldType.writeTo(node, Optional.of(Collections.emptyList()));
+            validateAndWriteTo(node, fieldType, Collections.emptyList());
             fail("Must have 1 entry");
         } catch (final BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
         }
 
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("11"), valueOf("12"))));
+            validateAndWriteTo(node, fieldType, Arrays.asList(valueOf("11"), valueOf("12")));
             fail("Must have 1 entry");
         } catch (final BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
         }
 
-        fieldType.writeTo(node, Optional.of(listOf(valueOf("" + newValue))));
+        validateAndWriteTo(node, fieldType, listOf(valueOf("" + newValue)));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("" + newValue));
     }
 
@@ -105,7 +106,7 @@ public class LongFieldTypeTest {
         fieldType.setJcrType(PropertyType.TYPENAME_LONG);
         node.setProperty(PROPERTY, oldValue);
 
-        fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue))));
+        validateAndWriteTo(node, fieldType, listOf(valueOf(invalidValue)));
         assertThat(node.getProperty(PROPERTY).getLong(), equalTo(oldValue));
     }
 
@@ -125,7 +126,7 @@ public class LongFieldTypeTest {
 
         final String invalidValue1 = "foo";
         final List<FieldValue> es = Arrays.asList(valueOf(invalidValue1), valueOf(oldValue2 + ""));
-        fieldType.writeTo(node, Optional.of(es));
+        validateAndWriteTo(node, fieldType, es);
 
         final Value[] values = node.getProperty(PROPERTY).getValues();
         assertThat(values[0].getLong(), equalTo(oldValue1));

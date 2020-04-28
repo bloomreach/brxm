@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
@@ -66,8 +66,8 @@ public abstract class NodeFieldType extends AbstractFieldType implements BaseFie
         try {
             final NodeIterator children = node.getNodes(nodeName);
             final List<FieldValue> values = new ArrayList<>((int) children.getSize());
-            for (final Node child : new NodeIterable(children)) {
-                final FieldValue value = readValue(child);
+            while (children.hasNext()){
+                final FieldValue value = readValue(children.nextNode());
                 // Note: we add the valueMap to the values even if it is empty, because we need to
                 // maintain the 1-to-1 mapping between exposed values and internal nodes.
                 values.add(value);
@@ -87,26 +87,16 @@ public abstract class NodeFieldType extends AbstractFieldType implements BaseFie
     protected abstract FieldValue readValue(final Node node);
 
     @Override
-    public void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean checkCardinality) {
+    public void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues) {
         final String valueName = getId();
         final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
 
-        if (checkCardinality) {
-            FieldTypeUtils.checkCardinality(this, values);
-        }
-
         try {
             final NodeIterator children = node.getNodes(valueName);
-            final long count = children.getSize();
+            final Iterator<FieldValue> fieldValues = values.iterator();
 
-            // additional cardinality check to prevent creating new values or remove a subset of the old values
-            if (!values.isEmpty() && values.size() != count && count <= getMaxValues()) {
-                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
-            }
-
-            for (final FieldValue value : values) {
-                final Node child = children.nextNode();
-                writeValue(child, value);
+            while (children.hasNext() && fieldValues.hasNext() ){
+                writeValue(children.nextNode(), fieldValues.next());
             }
 
             // delete excess nodes to match field type
@@ -152,20 +142,41 @@ public abstract class NodeFieldType extends AbstractFieldType implements BaseFie
     public int validate(final List<FieldValue> values, final CompoundContext context) {
         final String valueName = getId();
 
-        try {
-            final NodeIterator children = context.getNode().getNodes(valueName);
 
+        Node document = context.getDocument();
+        Node node = context.getNode();
+        if (node == null){
+            throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
+        }
+        try {
+            Node compoundOrDocument = document != null ? document : node;
+            if (validatePropertyOfCompound(valueName, document, node)) {
+                compoundOrDocument = node;
+            }
+            final NodeIterator children = compoundOrDocument.getNodes(valueName);
             final long count = children.getSize();
+
+            // additional cardinality check to prevent creating new values or remove a subset of the old values
+            if (!values.isEmpty() && values.size() != count && count <= getMaxValues()) {
+                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
+            }
+
+
             if (values.size() != count) {
                 throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
             }
+            FieldTypeUtils.checkCardinality(this, values);
+
 
             int violationCount = 0;
 
-            for (final FieldValue value : values) {
+            final Iterator<FieldValue> valueIterator = values.iterator();
+
+            while (valueIterator.hasNext() && children.hasNext()){
                 final Node child = children.nextNode();
                 final CompoundContext childContext = context.getChildContext(child);
-                violationCount += validateValue(value, childContext);
+                violationCount += validateValue(valueIterator.next(), childContext);
+
             }
 
             return violationCount;
@@ -173,6 +184,12 @@ public abstract class NodeFieldType extends AbstractFieldType implements BaseFie
             log.warn("Failed to validate {} field '{}'", getType(), valueName, e);
             throw new InternalServerErrorException();
         }
+    }
+
+    private boolean validatePropertyOfCompound(final String valueName, final Node document, final Node node) throws RepositoryException {
+        return document != null && node != null
+                && !document.getIdentifier().equals(node.getIdentifier())
+                && !node.getName().equals(valueName);
     }
 
     /**

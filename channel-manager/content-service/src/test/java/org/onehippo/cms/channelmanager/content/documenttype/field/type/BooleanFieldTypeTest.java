@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
@@ -43,6 +42,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.ValidateAndWrite.validateAndWriteTo;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -69,7 +69,7 @@ public class BooleanFieldTypeTest {
         node.setProperty(PROPERTY, oldValue);
 
         try {
-            fieldType.writeTo(node, Optional.empty());
+            validateAndWriteTo(node, fieldType, Arrays.asList((FieldValue) null));
             fail("Must not be missing");
         } catch (final BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
@@ -77,20 +77,20 @@ public class BooleanFieldTypeTest {
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("" + oldValue));
 
         try {
-            fieldType.writeTo(node, Optional.of(Collections.emptyList()));
+            validateAndWriteTo(node, fieldType, Collections.emptyList());
             fail("Must have 1 entry");
         } catch (final BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
         }
 
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("true"), valueOf("false"))));
+            validateAndWriteTo(node, fieldType, Arrays.asList(valueOf("true"), valueOf("false")));
             fail("Must have 1 entry");
         } catch (final BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
         }
 
-        fieldType.writeTo(node, Optional.of(listOf(valueOf("" + newValue))));
+        validateAndWriteTo(node, fieldType, listOf(valueOf("" + newValue)));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("" + newValue));
     }
 
@@ -105,7 +105,7 @@ public class BooleanFieldTypeTest {
         fieldType.setJcrType(PropertyType.TYPENAME_BOOLEAN);
         node.setProperty(PROPERTY, oldValue);
 
-        fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue))));
+        validateAndWriteTo(node, fieldType, listOf(valueOf(invalidValue)));
         assertThat(node.getProperty(PROPERTY).getBoolean(), equalTo(oldValue));
     }
 
@@ -125,7 +125,7 @@ public class BooleanFieldTypeTest {
 
         final String invalidValue1 = "foo";
         final List<FieldValue> es = Arrays.asList(valueOf(invalidValue1), valueOf(oldValue2 + ""));
-        fieldType.writeTo(node, Optional.of(es));
+        validateAndWriteTo(node, fieldType, es);
 
         final Value[] values = node.getProperty(PROPERTY).getValues();
         assertThat(values[0].getBoolean(), equalTo(oldValue1));
