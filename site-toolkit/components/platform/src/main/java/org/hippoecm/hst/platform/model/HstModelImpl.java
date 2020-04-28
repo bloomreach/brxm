@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,22 +16,15 @@
 package org.hippoecm.hst.platform.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.BiPredicate;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
-import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstConfigurationAugmenter;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -50,10 +43,8 @@ import org.hippoecm.hst.core.linking.ResourceContainer;
 import org.hippoecm.hst.core.linking.RewriteContextResolver;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
-import org.hippoecm.hst.platform.configuration.RuntimeVirtualHost;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.channel.ChannelManagerImpl;
@@ -108,66 +99,6 @@ public class HstModelImpl implements InternalHstModel {
 
     private InvalidationMonitor invalidationMonitor;
     private final HstSiteMapItemHandlerRegistryImpl siteMapItemHandlerRegistry = new HstSiteMapItemHandlerRegistryImpl();
-
-    // map of hostName as key and Pair left is the source HostGroupName and right the targetHostGroupName
-    private Map<String, RuntimeHostConfiguration> runtimeHosts = new HashMap<>();
-
-    public static class RuntimeHostConfiguration {
-        private String hostName;
-        private String sourceHostGroupName;
-        private String targetHostGroupName;
-        private String scheme;
-        private boolean isPortInUrl;
-        private Integer portNumber;
-
-        public String getHostName() {
-            return hostName;
-        }
-
-        public void setHostName(String hostName) {
-            this.hostName = hostName;
-        }
-
-        public String getSourceHostGroupName() {
-            return sourceHostGroupName;
-        }
-
-        public void setSourceHostGroupName(String sourceHostGroupName) {
-            this.sourceHostGroupName = sourceHostGroupName;
-        }
-
-        public String getTargetHostGroupName() {
-            return targetHostGroupName;
-        }
-
-        public void setTargetHostGroupName(String targetHostGroupName) {
-            this.targetHostGroupName = targetHostGroupName;
-        }
-
-        public String getScheme() {
-            return scheme;
-        }
-
-        public void setScheme(String scheme) {
-            this.scheme = scheme;
-        }
-
-        public boolean isPortInUrl() {
-            return isPortInUrl;
-        }
-
-        public void setPortInUrl(boolean isPortInUrl) {
-            this.isPortInUrl = isPortInUrl;
-        }
-
-        public Integer getPortNumber() {
-            return portNumber;
-        }
-
-        public void setPortNumber(Integer portNumber) {
-            this.portNumber = portNumber;
-        }
-    }
 
     public HstModelImpl(final Session session,
                         final ServletContext servletContext,
@@ -241,39 +172,6 @@ public class HstModelImpl implements InternalHstModel {
         oldComponentRegistry.setAwaitingTermination(true);
     }
 
-
-    public void addRuntime(final String hostName, final String sourceHostGroupName, final String autoHostTemplateURL,
-            final String targetHostGroupName) {
-        synchronized (this) {
-            if (!runtimeHosts.containsKey(hostName)) {
-                runtimeHosts.put(hostName, createRuntimeHostConfiguration(hostName, autoHostTemplateURL,
-                        sourceHostGroupName, targetHostGroupName));
-                invalidate();
-            }
-        }
-    }
-
-    /**
-     * A runtime host configuration that contains configuration options for runtime virtual host
-     */
-    private RuntimeHostConfiguration createRuntimeHostConfiguration(final String hostName,
-            final String autoHostTemplateURL, final String sourceHostGroupName, final String targetHostGroupName) {
-        final RuntimeHostConfiguration configuration = new RuntimeHostConfiguration();
-        configuration.setHostName(hostName);
-        configuration.setSourceHostGroupName(sourceHostGroupName);
-        configuration.setTargetHostGroupName(targetHostGroupName);
-
-        final String portNumberValue = StringUtils.substringAfter(StringUtils.substringAfter(autoHostTemplateURL, "://"), ":");
-        final boolean isPortInUrl = (StringUtils.isNotEmpty(portNumberValue)) ? true : false;
-        final Integer portNumber = (isPortInUrl) ? Integer.valueOf(portNumberValue) : null;
-        final String scheme = (autoHostTemplateURL.startsWith(HTTPS_SCHEME)) ? HTTPS_SCHEME : HTTP_SCHEME;
-
-        configuration.setPortInUrl(isPortInUrl);
-        configuration.setPortNumber(portNumber);
-        configuration.setScheme(scheme);
-        return configuration;
-    }
-
     @Override
     public VirtualHosts getVirtualHosts() {
         VirtualHosts vhosts = virtualHosts;
@@ -319,12 +217,6 @@ public class HstModelImpl implements InternalHstModel {
                 virtualHosts.setComponentRegistry(hstComponentRegistry);
 
                 augment(virtualHosts);
-
-                final boolean added = addRuntimeHosts(virtualHosts);
-                if (added) {
-                    // reload the channels map
-                    virtualHosts.loadChannelsMap();
-                }
 
                 this.virtualHosts = virtualHosts;
 
@@ -372,72 +264,6 @@ public class HstModelImpl implements InternalHstModel {
             log.debug("Currently loaded model does not have the page composer (host augmenters)");
         }
     }
-
-    // returns true if at least one runtime host was added
-    private boolean addRuntimeHosts(final VirtualHostsService virtualHosts) {
-
-        boolean added = false;
-        for (Iterator<Map.Entry<String, RuntimeHostConfiguration>> iterator = runtimeHosts.entrySet().iterator(); iterator.hasNext();) {
-            final Entry<String, RuntimeHostConfiguration> entry = iterator.next();
-            final String hostName = entry.getKey();
-            final RuntimeHostConfiguration runtimeHostConfiguration = entry.getValue();
-
-            final ResolvedMount existing = virtualHosts.matchMount(hostName, "");
-            if (existing != null) {
-                // remove from runtimeHosts
-                iterator.remove();
-                continue;
-            }
-
-            final Map<String, VirtualHost> sourceHostGroupHosts = virtualHosts.getRootVirtualHostsByGroup().get(runtimeHostConfiguration.getSourceHostGroupName());
-            if (sourceHostGroupHosts == null || sourceHostGroupHosts.size() != 1) {
-                log.warn("Cannot add runtime hosts '{}' for '{}' since the source host group '{}' does not define a single " +
-                        "host which is required", hostName, websiteServletContext, runtimeHostConfiguration.getSourceHostGroupName());
-                continue;
-            }
-
-            if (sourceHostGroupHosts.values().size() != 1) {
-                log.warn("Cannot add runtime hosts '{}' for '{}' since the source host group '{}' does not define a single " +
-                        "host but non or more than 1", hostName, websiteServletContext, runtimeHostConfiguration.getSourceHostGroupName());
-                continue;
-            }
-            final VirtualHost virtualHost = sourceHostGroupHosts.values().iterator().next();
-            if (!virtualHost.getChildHosts().isEmpty()) {
-                log.warn("Cannot add runtime hosts '{}' for '{}' since the source host group '{}' does not define a single " +
-                        "host without child hosts which is required", hostName, websiteServletContext, runtimeHostConfiguration.getSourceHostGroupName());
-                continue;
-            }
-
-            if (virtualHost.getPortMount(0) == null || virtualHost.getPortMount(0).getRootMount() == null) {
-                log.warn("Cannot add runtime hosts '{}' for '{}' since the source host group '{}' does not have a host " +
-                        "with an hst:root mount below it", hostName, websiteServletContext, runtimeHostConfiguration.getSourceHostGroupName());
-                continue;
-            }
-
-            // create runtime host
-            RuntimeVirtualHost runtimeHost = new RuntimeVirtualHost(virtualHost, runtimeHostConfiguration);
-
-            virtualHosts.addVirtualHost(runtimeHost);
-
-            final ResolvedMount resolvedMount = virtualHosts.matchMount(hostName, "");
-            if (resolvedMount == null) {
-                log.warn("Expected runtime added virtualhost '{}' to have a root mount", hostName);
-                continue;
-            }
-
-            final Mount rootMount = resolvedMount.getMount();
-            addMounts(virtualHosts, rootMount);
-
-            added = true;
-        }
-        return added;
-    }
-
-    private void addMounts(final VirtualHostsService virtualHosts, final Mount mount) {
-        virtualHosts.addMount(mount);
-        mount.getChildMounts().forEach(child -> addMounts(virtualHosts, child));
-    }
-
 
     @Override
     public ComponentManager getComponentManager() {

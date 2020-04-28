@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.hst.container;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.jcr.Repository;
 import javax.servlet.FilterChain;
@@ -61,11 +60,7 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
-import org.hippoecm.hst.platform.model.HstModel;
-import org.hippoecm.hst.platform.model.HstModelRegistry;
-import org.hippoecm.hst.platform.model.RuntimeHostService;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
@@ -88,7 +83,6 @@ import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRemoteAddr;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
 import static org.hippoecm.hst.util.HstRequestUtils.getRenderingHost;
-
 
 public class HstDelegateeFilterBean extends AbstractFilterBean implements ServletContextAware, InitializingBean {
 
@@ -270,17 +264,10 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     log.debug("'{}' can not be matched to a host. Skip HST Filter and request processing since most likely it " +
                             "is a hosting environment internal request, like a pinger. ", containerRequest);
                 } else {
-
-                    resolvedVirtualHost = resolveVirtualHostFromRuntimeHosts(hostName, contextPath);
-
-                    if (resolvedVirtualHost == null) {
-                        log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
-                    }
+                    log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
                 }
-                if (resolvedVirtualHost == null) {
-                    chain.doFilter(request, response);
-                    return;
-                }
+                chain.doFilter(request, response);
+                return;
             }
 
             log.debug("{} matched to host '{}'", containerRequest, resolvedVirtualHost.getVirtualHost());
@@ -914,36 +901,5 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         }
 
         return null;
-    }
-
-    private ResolvedVirtualHost resolveVirtualHostFromRuntimeHosts(String hostName, String contextPath) {
-        ResolvedVirtualHost resolvedVirtualHost = HippoWebappContextRegistry.get().getEntries()
-            .filter(hippoWebappContextServiceHolder -> {
-                final HippoWebappContext.Type contextType = hippoWebappContextServiceHolder.getServiceObject().getType();
-                return contextType == HippoWebappContext.Type.CMS || contextType == HippoWebappContext.Type.PLATFORM;
-            })
-            .findFirst()
-            .map(platformWebappContextServiceHolder -> {
-                final HippoWebappContext ctx = platformWebappContextServiceHolder.getServiceObject();
-                final String platformContextPath = ctx.getServletContext().getContextPath();
-                final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-                final HstModel hstModel = hstModelRegistry.getHstModel(platformContextPath);
-
-                final Map<String, String> resolvedAutoHostTemplate = hstModel.getVirtualHosts().matchAutoHostTemplate(hostName);
-                ResolvedVirtualHost virtualHost = null;
-                if (resolvedAutoHostTemplate != null) {
-                    Entry<String, String> entry = resolvedAutoHostTemplate.entrySet().iterator().next();
-                    final String resolvedAutoHostTemplateGroupName = entry.getKey();
-                    final String resolvedAutoHostTemplateURL = entry.getValue();
-
-                    VirtualHosts virtualHosts = HippoServiceRegistry.getService(RuntimeHostService.class).create(hostName,
-                        resolvedAutoHostTemplateGroupName, resolvedAutoHostTemplateURL, contextPath);
-                    virtualHost = virtualHosts.matchVirtualHost(hostName);
-                }
-                return virtualHost;
-            })
-            .orElse(null);
-
-        return resolvedVirtualHost;
     }
 }
