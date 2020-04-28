@@ -17,9 +17,11 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequest
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -32,6 +34,7 @@ import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -51,7 +54,6 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
     public void modifying_live_or_draft_variants_not_allowed() throws Exception {
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-
         final String catalogId = getNodeId("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
 
         final String containerId = getNodeId(publishedExpPageVariant.getPath() + "/hst:page/body/container");
@@ -63,7 +65,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
         documentWorkflow.obtainEditableInstance();
 
-        Node draft = getVariant(handle, "draft");
+        final Node draft = getVariant(handle, "draft");
 
         final String containerIdDraft = getNodeId(draft.getPath() + "/hst:page/body/container");
 
@@ -237,4 +239,86 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         final WorkflowManager workflowManager = ((HippoSession) session).getWorkspace().getWorkflowManager();
         return (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
     }
+
+    @Test
+    public void create_item_before() throws Exception {
+
+        final Session adminSession = createSession(ADMIN_CREDENTIALS);
+
+        try {
+            final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            final String containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final String beforeItemId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+            final String catalogId = getNodeId("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+
+            final RequestResponseMock createRequestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + containerId + "./" + catalogId + "/" + beforeItemId, null,
+                    "POST");
+
+            final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, ADMIN_CREDENTIALS);
+
+            assertEquals(CREATED.getStatusCode(), createResponse.getStatus());
+
+            final Node container = adminSession.getNodeByIdentifier(containerId);
+
+            final NodeIterator nodes = container.getNodes();
+            assertEquals("Expected testitem to be created before banner", "testitem", nodes.nextNode().getName());
+            assertEquals("Expected testitem to be created before banner", "banner", nodes.nextNode().getName());
+
+        } finally {
+            adminSession.logout();
+        }
+    }
+
+    @Test
+    public void create_item_before_non_existing_item_results_in_error() throws Exception {
+
+        final String beforeItemId = UUID.randomUUID().toString();
+        final String expectedMessage = String.format("Cannot find container item '%s'", beforeItemId);
+        notAllowedcreateBeforeItem(beforeItemId, expectedMessage);
+    }
+
+    /**
+     * the 'before item' is an item of another experience page
+     * @throws Exception
+     */
+    @Test
+    public void create_item_before_item_of_other_container_results_in_error() throws Exception {
+
+        final String beforeItemId = getNodeId( EXPERIENCE_PAGE_2_HANDLE_PATH + "/expPage2/hst:page/body/container/banner");
+        final String expectedMessage = String.format(String.format("Order before container item '%s' is of other experience page", beforeItemId));
+        notAllowedcreateBeforeItem(beforeItemId, expectedMessage);
+    }
+
+    @Test
+    public void create_item_before_node_not_of_type_container_item_results_in_error() throws Exception {
+        final String beforeItemId = unpublishedExpPageVariant.getIdentifier();
+        final String expectedMessage = String.format(String.format("The container item '%s' does not have the correct type", beforeItemId));
+        notAllowedcreateBeforeItem(beforeItemId, expectedMessage);
+    }
+
+
+    private void notAllowedcreateBeforeItem(final String beforeItemId, final String expectedMessage) throws RepositoryException, IOException, ServletException {
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+        final String containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+
+        final String catalogId = getNodeId("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+
+
+        final RequestResponseMock createRequestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + containerId + "./" + catalogId + "/" + beforeItemId, null,
+                "POST");
+
+        final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, ADMIN_CREDENTIALS);
+
+        final Map<String, String> createResponseMap = mapper.readerFor(Map.class).readValue(createResponse.getContentAsString());
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), createResponse.getStatus());
+        assertEquals(false, createResponseMap.get("success"));
+
+        assertEquals(expectedMessage , createResponseMap.get("message"));
+    }
+
 }

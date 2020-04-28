@@ -42,6 +42,7 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
     protected final static SimpleCredentials AUTHOR_CREDENTIALS = new SimpleCredentials("author", "author".toCharArray());
 
     private final static String EXPERIENCE_PAGE_HANDLE_PATH = "/unittestcontent/documents/unittestproject/experiences/expPage1";
+    protected final static String EXPERIENCE_PAGE_2_HANDLE_PATH = "/unittestcontent/documents/unittestproject/experiences/expPage2";
 
     protected Node handle;
     protected Node publishedExpPageVariant;
@@ -93,9 +94,17 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
     public void tearDown() throws Exception {
         final Session session = createSession("admin", "admin");
         // restore experience page
-        JcrUtils.copy(session, "/expPage1", EXPERIENCE_PAGE_HANDLE_PATH);
+        session.getNode(EXPERIENCE_PAGE_HANDLE_PATH).remove();
         session.save();
+
+
+        session.getNode("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage").remove();
+        session.save();
+
+
+        session.getWorkspace().move("/expPage1", EXPERIENCE_PAGE_HANDLE_PATH);
         session.logout();
+
         super.tearDown();
     }
 

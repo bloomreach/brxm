@@ -91,58 +91,9 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
     @PrivilegesAllowed(XPAGE_REQUIRED_PRIVILEGE_NAME)
     public Response createContainerItem(final @PathParam("itemUUID") String catalogItemUUID,
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) {
-        if (!isValidUUID(catalogItemUUID)) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(String.format("Value of path parameter itemUUID: '%s' is not a valid UUID", catalogItemUUID))
-                    .build();
-        }
 
-        final ContainerAction<Response> createContainerItem = () -> {
+        return createContainerItemAndAddBefore(catalogItemUUID, null, versionStamp);
 
-            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession());
-
-            // we need to write with the workflowSession. Make sure to use this workflowSession and not
-            // impersonate to a workflowSession : This way we can make sure that the workflow manager also
-            // persists the changes since the workflow manager will handle the  workflow session save (when we invoke
-            // the document workflow
-
-            final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
-
-            // with workflowSession, we write directly to the unpublished variant
-
-            final Node catalogItem = getContainerItem(workflowSession, catalogItemUUID);
-
-            PageComposerContextService contextService = getPageComposerContextService();
-
-            final Node container = contextService.getRequestConfigNodeById(contextService.getRequestConfigIdentifier(),
-                    "hst:abstractcomponent", workflowSession);
-
-            if (versionStamp != 0 && container.hasProperty(GENERAL_PROPERTY_LAST_MODIFIED)) {
-                long existingStamp = container.getProperty(GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
-                if (existingStamp != versionStamp) {
-                    String msg = String.format("Node '%s' has been modified wrt versionStamp. Someone else might have " +
-                            "made concurrent changes, page must be reloaded. This can happen due to optimistic locking",
-                            getNodePathQuietly(container));
-                    log.info(msg);
-                    throw new ClientException(msg, ClientError.ITEM_CHANGED);
-                }
-            }
-            // update last modified for optimistic locking
-            // TODO Do we want this optimistic locking in this way?
-            final Calendar updatedTimestamp = Calendar.getInstance();
-            container.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, updatedTimestamp);
-
-            // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
-            // containerNode. Find a correct newName and create a new node.
-            final String newItemNodeName = findNewName(catalogItem.getName(), container);
-            final Node newItem = JcrUtils.copy(workflowSession, catalogItem.getPath(), container.getPath() + "/" + newItemNodeName);
-
-            documentWorkflow.saveUnpublished();
-
-            return respondNewContainerItemCreated(new ContainerItemImpl(newItem, updatedTimestamp.getTimeInMillis()));
-
-        };
-        return handleAction(createContainerItem);
     }
 
 
@@ -159,15 +110,57 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
                     .entity(String.format("Value of path parameter itemUUID: '%s' is not a valid UUID", itemUUID))
                     .build();
         }
-        if (!isValidUUID(siblingItemUUID)) {
+        if (siblingItemUUID != null && !isValidUUID(siblingItemUUID)) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(String.format("Value of path parameter siblingItemUUID: '%s' is not a valid UUID", siblingItemUUID))
                     .build();
         }
-        return handleAction(() -> {
-            final ContainerItem newContainerItem = xPageContainerComponentService.createContainerItem(getSession(), itemUUID, siblingItemUUID, versionStamp);
-            return respondNewContainerItemCreated(newContainerItem);
-        });
+
+        final ContainerAction<Response> createContainerItem = () -> {
+
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession());
+
+            // we need to write with the workflowSession. Make sure to use this workflowSession and not
+            // impersonate to a workflowSession : This way we can make sure that the workflow manager also
+            // persists the changes since the workflow manager will handle the  workflow session save (when we invoke
+            // the document workflow
+
+            final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
+
+            // with workflowSession, we write directly to the unpublished variant
+
+            final Node catalogItem = getContainerItem(workflowSession, itemUUID);
+
+            PageComposerContextService contextService = getPageComposerContextService();
+
+            final Node containerNode = getContainer(versionStamp, workflowSession, contextService);
+
+            // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
+            // containerNode. Find a correct newName and create a new node.
+            final String newItemNodeName = findNewName(catalogItem.getName(), containerNode);
+            final Node newItem = JcrUtils.copy(workflowSession, catalogItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
+
+            if (siblingItemUUID != null) {
+                final Node siblingItem = getContainerItem(workflowSession, siblingItemUUID);
+                if (!siblingItem.getPath().startsWith(containerNode.getPath() + "/")) {
+                    throw new ClientException(String.format("Order before container item '%s' is of other experience page",
+                            siblingItemUUID), ClientError.INVALID_UUID);
+                }
+                containerNode.orderBefore(newItem.getName(), siblingItem.getName());
+            }
+
+            documentWorkflow.saveUnpublished();
+
+            // update last modified for optimistic locking
+            // TODO Do we want this optimistic locking in this way?
+            final Calendar updatedTimestamp = Calendar.getInstance();
+            containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, updatedTimestamp);
+
+            return respondNewContainerItemCreated(new ContainerItemImpl(newItem, updatedTimestamp.getTimeInMillis()));
+
+        };
+
+        return handleAction(createContainerItem);
     }
 
 
@@ -224,23 +217,13 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
     }
 
     private Response handleAction(final ContainerAction<Response> action) {
-        final Response.Status httpStatusCode;
-        final ErrorStatus errorStatus;
-
         try {
             return action.apply();
         } catch (ClientException e) {
-            errorStatus = e.getErrorStatus();
-            httpStatusCode = Response.Status.BAD_REQUEST;
+            return clientError(e.getMessage(), e.getErrorStatus());
         } catch (RepositoryException | WorkflowException | IllegalArgumentException e) {
-            errorStatus = ErrorStatus.unknown(e.getMessage());
-            httpStatusCode = Response.Status.INTERNAL_SERVER_ERROR;
+            return error(e.getMessage(), ErrorStatus.unknown(e.getMessage()));
         }
-        return createErrorResponse(httpStatusCode, errorStatus);
-    }
-
-    private Response createErrorResponse(final Response.Status httpStatusCode, final ErrorStatus errorStatus) {
-        return Response.status(httpStatusCode).entity(errorStatus).build();
     }
 
     private Response respondNewContainerItemCreated(ContainerItem newContainerItem) throws RepositoryException {
@@ -309,15 +292,41 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
     }
 
     private Node getContainerItem(final Session session, final String itemUUID) throws RepositoryException {
-        final Node containerItem = session.getNodeByIdentifier(itemUUID);
 
-        if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
-            log.warn("The container component '{}' does not have the correct type. ", itemUUID);
-            throw new ClientException(String.format("The container item '%s' does not have the correct type.",
-                    itemUUID), ClientError.INVALID_NODE_TYPE);
+        try {
+            final Node containerItem = session.getNodeByIdentifier(itemUUID);
+
+            if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                log.info("The container component '{}' does not have the correct type. ", itemUUID);
+                throw new ClientException(String.format("The container item '%s' does not have the correct type",
+                        itemUUID), ClientError.INVALID_NODE_TYPE);
+            }
+            return containerItem;
+        } catch (ItemNotFoundException e) {
+            log.info("Cannot find container item '{}'.", itemUUID);
+            throw new ClientException(String.format("Cannot find container item '%s'",
+                    itemUUID), ClientError.INVALID_UUID);
         }
-        return containerItem;
     }
+
+
+    private Node getContainer(final @QueryParam("lastModifiedTimestamp") long versionStamp, final Session workflowSession, final PageComposerContextService contextService) throws RepositoryException {
+        final Node container = contextService.getRequestConfigNodeById(contextService.getRequestConfigIdentifier(),
+                "hst:abstractcomponent", workflowSession);
+
+        if (versionStamp != 0 && container.hasProperty(GENERAL_PROPERTY_LAST_MODIFIED)) {
+            long existingStamp = container.getProperty(GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
+            if (existingStamp != versionStamp) {
+                String msg = String.format("Node '%s' has been modified wrt versionStamp. Someone else might have " +
+                                "made concurrent changes, page must be reloaded. This can happen due to optimistic locking",
+                        getNodePathQuietly(container));
+                log.info(msg);
+                throw new ClientException(msg, ClientError.ITEM_CHANGED);
+            }
+        }
+        return container;
+    }
+
 
     private static String findNewName(String base, Node parent) throws RepositoryException {
         String newName = base;

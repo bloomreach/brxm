@@ -243,6 +243,40 @@ definitions:
                         hst:componentclassname: org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent
                         hst:parameternames: [path]
                         hst:parametervalues: [/content/document]
+            /expPage2:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /expPage2:
+                jcr:primaryType: unittestproject:newspage
+                jcr:mixinTypes: ['mix:versionable', 'hst:page']
+                hippo:availability: [preview]
+                hippostd:holder: admin
+                hippostd:state: unpublished
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                unittestproject:summary: Summary about Experience Page 2
+                unittestproject:title: My Experience Page 2
+                /unittestproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: My Experience Page 2
+                /hst:page:
+                  jcr:primaryType: hst:component
+                  hst:referencecomponent: hst:abstractpages/basepage
+                  /body:
+                    jcr:primaryType: hst:component
+                    hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+                    hst:template: detail
+                    /container:
+                      jcr:primaryType: hst:containercomponent
+                      hst:xtype: hst.vbox
+                      /banner:
+                        jcr:primaryType: hst:containeritemcomponent
+                        hst:componentclassname: org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent
+                        hst:parameternames: [path]
+                        hst:parametervalues: [/content/document]
           /News:
             jcr:primaryType: hippostd:folder
             jcr:mixinTypes: ['mix:referenceable']
