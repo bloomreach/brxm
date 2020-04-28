@@ -20,7 +20,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.Main;
-import org.hippoecm.frontend.NavAppToAppHeaderItem;
+import org.hippoecm.frontend.NavAppBridgeHeaderItem;
 import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
@@ -35,18 +35,21 @@ public class ActiveLogoutPlugin extends Component {
 
     private final int maxInactiveIntervalMinutes;
     private final LogoutBehavior logoutBehavior;
+    private final int iframesConnectionTimeout;
 
     /**
      * @param id                         the Wicket ID of this component
      * @param maxInactiveIntervalMinutes the number of minutes a user has to be inactive before being logged out.
      *                                   A value of zero or less means means 'infinite' and will disable the active logout.
      * @param logoutService              the service to use for logging out a user.
+     * @param iframesConnectionTimeout   maximum time to wait for an iframe to connect
      */
-    public ActiveLogoutPlugin(final String id, final int maxInactiveIntervalMinutes, final ILogoutService logoutService) {
+    public ActiveLogoutPlugin(final String id, final int maxInactiveIntervalMinutes, final ILogoutService logoutService, final int iframesConnectionTimeout) {
         super(id);
 
         this.maxInactiveIntervalMinutes = maxInactiveIntervalMinutes;
         logoutBehavior = new LogoutBehavior(logoutService);
+        this.iframesConnectionTimeout = iframesConnectionTimeout;
 
         add(logoutBehavior);
         setRenderBodyOnly(true);
@@ -62,7 +65,7 @@ public class ActiveLogoutPlugin extends Component {
 
         final IHeaderResponse header = container.getHeaderResponse();
         if (Main.isCmsApplication()) {
-            header.render(new NavAppToAppHeaderItem(getLogoutCallbackUrl()));
+            header.render(new NavAppBridgeHeaderItem(getLogoutCallbackUrl(), iframesConnectionTimeout));
         }
 
         if (isActive()) {

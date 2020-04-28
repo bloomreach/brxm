@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.hippoecm.frontend.plugins.yui.layout.PageLayoutSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.hippoecm.frontend.service.ILogoutService;
+import org.hippoecm.frontend.service.INavAppSettingsService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
@@ -89,8 +90,15 @@ public class RootPlugin extends RenderPlugin {
     }
 
     private void addActiveLogout() {
-        final ILogoutService logoutService = getPluginContext().getService(ILogoutService.SERVICE_ID, ILogoutService.class);
-        add(new ActiveLogoutPlugin("activeLogout", getMaxInactiveIntervalMinutes(), logoutService));
+        final IPluginContext context = getPluginContext();
+        final ILogoutService logoutService =
+                context.getService(ILogoutService.SERVICE_ID, ILogoutService.class);
+        final INavAppSettingsService navAppSettingsService =
+                context.getService(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.class);
+        final ActiveLogoutPlugin activeLogoutPlugin =
+                new ActiveLogoutPlugin("activeLogout", getMaxInactiveIntervalMinutes()
+                        , logoutService, navAppSettingsService.getIframesConnectionTimeout());
+        add(activeLogoutPlugin);
     }
 
     private Integer getMaxInactiveIntervalMinutes() {

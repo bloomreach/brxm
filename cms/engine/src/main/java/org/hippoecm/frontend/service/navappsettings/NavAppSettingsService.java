@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,6 +122,11 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         };
     }
 
+    @Override
+    public int getIframesConnectionTimeout() {
+        return getPluginConfig().getInt(IFRAMES_CONNECTION_TIMEOUT, 60_000);
+    }
+
     private String convertLegacyDocumentParameters(final Request request) {
         final StringValue uuid = request.getQueryParameters().getParameterValue(UUID_PARAM);
         if (!uuid.isEmpty()) {
@@ -186,7 +191,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
             logoutResources.addAll(navAppResourceService.getLogoutResources());
         }
 
-        final int iframesConnectionTimeout = readIframesConnectionTimeout();
+        final int iframesConnectionTimeout = getIframesConnectionTimeout();
         final NgxLoggerLevel ngxLoggerLevel = readLogLevel(logLevelQueryParamString);
         final boolean usageStaticsticsEnabled = UsageStatisticsSettings.get().isEnabled();
 
@@ -237,10 +242,6 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
                 return usageStaticsticsEnabled;
             }
         };
-    }
-
-    private int readIframesConnectionTimeout() {
-        return getPluginConfig().getInt(IFRAMES_CONNECTION_TIMEOUT, 60_000);
     }
 
     private NgxLoggerLevel readLogLevel(String logLevelQueryParamString) {
