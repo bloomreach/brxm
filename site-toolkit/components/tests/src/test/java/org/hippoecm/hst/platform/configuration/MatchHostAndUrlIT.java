@@ -43,7 +43,6 @@ import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
-import org.hippoecm.hst.platform.model.RuntimeHostService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.PreviewDecoratorImpl;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
@@ -1102,47 +1101,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
-        } finally {
-            restoreHstConfigBackup(session);
-            session.logout();
-        }
-    }
-
-    @Test
-    public void fetch_runtime_sitemap_item_when_auto_host_template_is_set_and_matched() throws Exception {
-        final Session session = createSession();
-        createHstConfigBackup(session);
-
-        session.getNode("/hst:platform/hst:hosts/dev-localhost").setProperty(
-                HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, new String[] { "https://cms.example.org" });
-        session.save();
-        Thread.sleep(100);
-
-        HippoServiceRegistry.getService(RuntimeHostService.class).create("cms.example.org", "dev-localhost",
-                "https://cms.example.org", "/site");
-
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setScheme("https");
-        request.setServerName("cms.example.org");
-        request.addHeader("Host", "cms.example.org");
-        setRequestInfo(request, "/site", "/news/2019/April/AprilNewsArticle.html");
-        final GenericHttpServletRequestWrapper containerRequest = new HstContainerRequestImpl(request, hstSitesManager.getPathSuffixDelimiter());
-
-        try {
-            final ResolvedMount mount = hstSitesManager.getVirtualHosts().matchMount(
-                    HstRequestUtils.getFarthestRequestHost(containerRequest),
-                    HstRequestUtils.getRequestPath(containerRequest));
-            setHstServletPath(containerRequest, mount);
-
-            final HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest,
-                    response, mount);
-            final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
-
-            assertEquals(
-                    "Expected hstSiteMapItem class type is RuntimeHstSiteMapItem because the runtime virtual host configuration is set",
-                    RuntimeHstSiteMapItem.class, resolvedSiteMapItem.getHstSiteMapItem().getClass());
-
         } finally {
             restoreHstConfigBackup(session);
             session.logout();
