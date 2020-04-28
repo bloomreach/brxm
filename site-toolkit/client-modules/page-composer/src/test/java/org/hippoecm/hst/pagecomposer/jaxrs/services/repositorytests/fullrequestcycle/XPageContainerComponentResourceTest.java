@@ -16,11 +16,9 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -42,7 +40,6 @@ import static java.lang.Boolean.TRUE;
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -52,17 +49,15 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
     @Test
     public void create_and_delete_container_item_as_admin() throws Exception {
 
-        //creates the preview hst config
-        startEdit(ADMIN_CREDENTIALS);
         createAndDeleteItemAs(ADMIN_CREDENTIALS, true);
+
     }
 
     @Test
     public void create_and_delete_container_item_as_editor() throws Exception {
 
-        //creates the preview
-        startEdit(ADMIN_CREDENTIALS);
         createAndDeleteItemAs(EDITOR_CREDENTIALS, true);
+
     }
 
 
@@ -72,8 +67,6 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
     @Test
     public void create_and_delete_container_item_as_author() throws Exception {
 
-        //creates the preview
-        startEdit(ADMIN_CREDENTIALS);
         // author is not allowed to do a GET on ContainerItemComponentResource.getVariant()
         createAndDeleteItemAs(AUTHOR_CREDENTIALS, true);
     }
@@ -104,10 +97,14 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         }
     }
 
+    /**
+     * The 'creds' are used to invoke the HST pipeline, the adminSession is used to invoke workflow from here (like
+     * publish)
+     */
     private void createAndDeleteItemAs(final SimpleCredentials creds, final boolean allowed)
             throws IOException, ServletException, RepositoryException, WorkflowException {
 
-        final Session session = createSession(ADMIN_CREDENTIALS);
+        final Session adminSession = createSession(ADMIN_CREDENTIALS);
 
         try {
             final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
@@ -115,7 +112,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             final String containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
             final String catalogId = getNodeId("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
 
-            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(session);
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(adminSession);
             // since document got published and nothing yet changed, should not be published
 
             assertEquals("No changes yet in unpublished, hence not expected publication option",
@@ -143,8 +140,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             final String createdUUID = createResponseMap.get("id");
 
             // assertion on newly created item
-            assertTrue(session.nodeExists(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
-            assertTrue(session.getNodeByIdentifier(createdUUID) != null);
+            assertTrue(adminSession.nodeExists(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
+            assertTrue(adminSession.getNodeByIdentifier(createdUUID) != null);
 
             // assert document can now be published
             assertEquals("Unpublished has changes, publication should be enabled",
@@ -156,7 +153,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             // now publish the document,
             documentWorkflow.publish();
             // assert that published variant now has extra container item 'testitem'
-            assertTrue(session.nodeExists(publishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
+            assertTrue(adminSession.nodeExists(publishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
 
 
             // now delete
@@ -167,14 +164,14 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             assertEquals(Response.Status.OK.getStatusCode(), deleteResponse.getStatus());
 
             try {
-                session.getNodeByIdentifier(createdUUID);
+                adminSession.getNodeByIdentifier(createdUUID);
                 fail("Item expected to have been deleted again");
             } catch (ItemNotFoundException e) {
                 // expected
             }
 
             // published variant still has the container item
-            assertTrue(session.nodeExists(publishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
+            assertTrue(adminSession.nodeExists(publishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
 
             // after delete, the unpublished has become publishable again
             assertEquals("Unpublished has changes, publication should be enabled",
@@ -183,7 +180,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             documentWorkflow.publish();
 
             // published variant should not have the container item any more
-            assertFalse(session.nodeExists(publishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
+            assertFalse(adminSession.nodeExists(publishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
 
             // now assert an existing component item (or catalog) not from the current XPAGE cannot be deleted via
             // the container id
@@ -195,7 +192,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), invalidResponse.getStatus());
 
         } finally {
-            session.logout();
+            adminSession.logout();
         }
 
     }
