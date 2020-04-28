@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 package org.hippoecm.hst.platform.configuration.hosting;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,8 +25,6 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -74,14 +70,9 @@ import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
-
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_NOCHANNELINFO;
-import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE;
-import static org.onehippo.cms7.services.context.HippoWebappContext.Type.CMS;
-import static org.onehippo.cms7.services.context.HippoWebappContext.Type.PLATFORM;
 
 public class VirtualHostsService implements MutableVirtualHosts {
 
@@ -89,15 +80,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     private final static String WILDCARD = "_default_";
     private final static String CHANNEL_PARAMETERS_TRANSLATION_LOCATION = "hippo:hst.channelparameters";
-    public final static String AUTOHOST_URL_SCHEME_REGEX = "(https?)://";
-    public final static String AUTOHOST_URL_ASTERIX_REGEX = "(([-a-zA-Z0-9]*)?((?=[*]).{1})?([-a-zA-Z0-9]*))?";
-    public final static String AUTOHOST_URL_HOST_REGEX = "(((?=[.]).{1})([-a-zA-Z0-9]+))+";
-    public final static String AUTOHOST_URL_PORT_NUMBER_REGEX = "((?=[:]).{1}(\\d{2,5}))?";
-    public final static String AUTO_HOST_TEMPLATE_URL_REGEX = "^" + AUTOHOST_URL_SCHEME_REGEX
-            + AUTOHOST_URL_ASTERIX_REGEX + AUTOHOST_URL_HOST_REGEX + AUTOHOST_URL_PORT_NUMBER_REGEX + "$";
-    public final static String AUTO_HOST_TEMPLATE_URL_ASTERIX_REGEX = "([-a-zA-Z0-9]*)";
-
-    public final static Pattern PATTERN = Pattern.compile(AUTO_HOST_TEMPLATE_URL_REGEX, Pattern.LITERAL);
 
     private final String contextPath;
     private HstNodeLoadingCache hstNodeLoadingCache;
@@ -195,7 +177,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private boolean bluePrintsPrototypeChecked;
     private String[] hstFilterPrefixExclusions;
     private String[] hstFilterSuffixExclusions;
-    private final Map<String, List<String>> autoHostTemplates;
 
     private HstComponentRegistry componentRegistry;
 
@@ -310,8 +291,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         defaultResourceBundleIds = StringUtils.split(vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID), " ,\t\f\r\n");
 
-        Map<String, List<String>> hostTemplates = new HashMap<>();
-
         // now we loop through the hst:hostgroup nodes first:
         for(HstNode hostGroupNode : vhostsNode.getNodes()) {
             // assert node is of type virtualhostgroup
@@ -334,22 +313,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 defaultPort = longDefaultPort.intValue();
             }
 
-            String[] autoHostTemplate = hostGroupNode.getValueProvider().getStrings(VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE);
-            if (autoHostTemplate.length > 0) {
-                final HippoWebappContext.Type type = HippoWebappContextRegistry.get().getContext(contextPath).getType();
-                if (type == PLATFORM || type == CMS) {
-                    if (hostTemplates.isEmpty()) {
-                        hostTemplates.put(hostGroupNode.getValueProvider().getName(), Arrays.asList(autoHostTemplate));
-                    } else {
-                        log.error("Property '{}' is not allowed on multiple host groups in hst:platform",
-                                VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE);
-                    }
-                } else {
-                    log.error("Property '{}' is not allowed on hst configurations other than hst:platform, remove it from" +
-                            "'{}'.", VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, hostGroupNode.getValueProvider().getPath());
-                }
-            }
-
             for(HstNode virtualHostNode : hostGroupNode.getNodes()) {
 
                 try {
@@ -368,8 +331,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
                }
             }
         }
-
-        autoHostTemplates = Collections.unmodifiableMap(hostTemplates);
 
         long startChannelLoading = System.currentTimeMillis();
         loadChannelsMap();
@@ -1077,51 +1038,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
 
         return null;
-    }
-
-    @Override
-    public Map<String, String> matchAutoHostTemplate(String hostName) {
-        if (autoHostTemplates.size() == 0) {
-            return null;
-        } else if (autoHostTemplates.size() > 1) {
-            log.warn("There are more than one hst:autohosttemplate property in virtual host definitions.");
-        }
-
-        return autoHostTemplates.entrySet()
-                .stream()
-                .filter(entry -> entry.getValue().stream().anyMatch(url -> matchHostTemplateURL(url, hostName)))
-                .sorted(Comparator.comparing(Entry::getKey))
-                .findFirst()
-                .map(entry -> {
-                    final String runtimeHostURL = entry.getValue()
-                        .stream()
-                        .filter(url -> matchHostTemplateURL(url, hostName))
-                        .findFirst()
-                        .get();
-
-                    return ImmutableMap.of(entry.getKey(), runtimeHostURL);
-                })
-                .orElse(null);
-    }
-
-    /**
-     * matches hostname to auto host template url by using regex validations 
-     */
-    private boolean matchHostTemplateURL(String templateHostURL, String hostName) {
-
-        if (PATTERN.matcher(templateHostURL).matches()) {
-            log.warn("Auto host template url pattern of {} is not correct. It should be in http(s)://(*.)example.org(:port) pattern.",
-                    templateHostURL);
-            return false;
-        }
-
-        // create a new pattern from auto host template url to match the hostName
-        String runtimeHostName = StringUtils.substringBefore(StringUtils.substringAfter(templateHostURL, "://"), ":");
-        Pattern runtimePattern = Pattern.compile(runtimeHostName.replace("*", AUTO_HOST_TEMPLATE_URL_ASTERIX_REGEX));
-
-        String hostNameNoPort = StringUtils.substringBefore(hostName, ":");
-
-        return runtimePattern.matcher(hostNameNoPort).matches();
     }
 
 }
