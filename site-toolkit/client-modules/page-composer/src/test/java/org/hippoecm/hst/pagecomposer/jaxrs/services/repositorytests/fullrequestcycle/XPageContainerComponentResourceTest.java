@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -45,6 +46,42 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class XPageContainerComponentResourceTest extends AbstractXPageComponentResourceTest {
+
+    @Test
+    public void modifying_live_or_draft_variants_not_allowed() throws Exception {
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+
+        final String catalogId = getNodeId("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+
+        final String containerId = getNodeId(publishedExpPageVariant.getPath() + "/hst:page/body/container");
+
+        failCreateAssertions(mountId, catalogId, containerId);
+
+
+        final Session admin = createSession(ADMIN_CREDENTIALS);
+        DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
+        documentWorkflow.obtainEditableInstance();
+
+        Node draft = getVariant(handle, "draft");
+
+        final String containerIdDraft = getNodeId(draft.getPath() + "/hst:page/body/container");
+
+        failCreateAssertions(mountId, containerIdDraft, containerId);
+    }
+
+    private void failCreateAssertions(final String mountId, final String catalogId, final String containerId) throws IOException, ServletException {
+        final RequestResponseMock createRequestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + containerId + "./" + catalogId, null,
+                "POST");
+
+        final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, ADMIN_CREDENTIALS);
+        final Map<String, String> createResponseMap = mapper.readerFor(Map.class).readValue(createResponse.getContentAsString());
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), createResponse.getStatus());
+        assertEquals(false, createResponseMap.get("success"));
+        assertTrue(createResponseMap.get("message").contains("Does not below to unpublished variant of Experience Page."));
+    }
 
     @Test
     public void create_and_delete_container_item_as_admin() throws Exception {
@@ -87,7 +124,6 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         admin.save();
 
         try {
-            startEdit(ADMIN_CREDENTIALS);
             // since author does not have privilege hippo:author anymore, expect a FORBIDDEN
             createAndDeleteItemAs(AUTHOR_CREDENTIALS, false);
         } finally {

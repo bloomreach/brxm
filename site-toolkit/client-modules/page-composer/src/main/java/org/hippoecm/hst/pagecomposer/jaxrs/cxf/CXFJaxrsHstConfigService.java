@@ -38,6 +38,8 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils;
 import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
@@ -65,6 +67,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
     public static final String REQUEST_CONFIG_NODE_IDENTIFIER = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.contentNode.identifier";
     public static final String REQUEST_ERROR_MESSAGE_ATTRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.exception.message";
+    public static final String REQUEST_CLIENT_EXCEPTION_ATTRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.client.exception";
     public static final String REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.isExpPage";
     public static final String REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.expPageHandleUUID";
     public static final String REQUEST_EXPERIENCE_PAGE_HANDLE_UUID_ATRRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.expPageUnpulbishedUUID";
@@ -141,6 +144,10 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             log.debug("Invoking JAX-RS endpoint {}: {} for uuid {}", method, adjustedPath, uuid);
             return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), adjustedPath);
 
+        } catch (ClientException e) {
+            log.info("Client Exception happened, delegate to exception resource : {}", uuid, e);
+            request.setAttribute(REQUEST_CLIENT_EXCEPTION_ATTRIBUTE, e);
+            return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), "/hst:exception/clientexception/");
         } catch (ItemNotFoundException e) {
             log.info("Configuration node with uuid {} does not exist any more : {}", uuid, e);
             return setErrorMessageAndReturn(requestContext, request, e.toString());
@@ -213,8 +220,8 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             if (UNPUBLISHED.equals(JcrUtils.getStringProperty(unpublished, HIPPOSTD_STATE, null))) {
                 return unpublished;
             } else {
-                throw new IllegalStateException(String.format("There is no unpublished variant for the Experience Page '%s'. " +
-                        "Not yet supported. Todo, see CMS-13262", node.getPath()));
+                throw new ClientException(String.format("'%s' Does not below to unpublished variant of Experience Page.",
+                        node.getPath()), ClientError.INVALID_UUID);
             }
         }
 
