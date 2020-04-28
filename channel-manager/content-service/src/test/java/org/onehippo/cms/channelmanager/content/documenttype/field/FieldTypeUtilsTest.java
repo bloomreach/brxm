@@ -1118,7 +1118,7 @@ public class FieldTypeUtilsTest {
         }
 
         @Override
-        public void writeValues(Node node, Optional<List<FieldValue>> optionalValue, boolean checkCardinality) {
+        public void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues) {
         }
 
         @Override

@@ -105,10 +105,9 @@ public class ChoiceFieldType extends NodeFieldType {
 
     @Override
     public void writeValues(final Node node,
-                               final Optional<List<FieldValue>> optionalValues,
-                               final boolean checkCardinality) {
+                               final Optional<List<FieldValue>> optionalValues) {
         final List<FieldValue> values = mergeUnsupportedValues(node, optionalValues.orElse(Collections.emptyList()));
-        super.writeValues(node, Optional.of(values), checkCardinality);
+        super.writeValues(node, Optional.of(values));
     }
 
     private List<FieldValue> mergeUnsupportedValues(final Node node, final List<FieldValue> supportedValues) {

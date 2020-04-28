@@ -241,7 +241,7 @@ public class ImageLinkFieldTypeTest {
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("1234"));
         CompoundContext compoundContext = new CompoundContext(null, documentNode, null, null);
         imageLink.validate(fieldValues, compoundContext);
-        imageLink.writeValues(documentNode, Optional.of(fieldValues), true);
+        imageLink.writeValues(documentNode, Optional.of(fieldValues));
     }
 
     @Test
@@ -250,7 +250,7 @@ public class ImageLinkFieldTypeTest {
         imageLink.setMinValues(0);
         imageLink.setMaxValues(1);
         final MockNode documentNode = MockNode.root();
-        imageLink.writeValues(documentNode, Optional.of(Collections.emptyList()), true);
+        imageLink.writeValues(documentNode, Optional.of(Collections.emptyList()));
     }
 
     @Test
@@ -259,7 +259,7 @@ public class ImageLinkFieldTypeTest {
         final MockNode documentNode = MockNode.root();
         final MockNode imageLinkNode = documentNode.addNode("my:imagelink", "hippogallypicker:imagelink");
 
-        imageLink.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
+        imageLink.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue("1234"))));
 
         assertThat(imageLinkNode.getProperty(HIPPO_DOCBASE).getString(), equalTo("1234"));
     }
@@ -270,7 +270,7 @@ public class ImageLinkFieldTypeTest {
         final MockNode documentNode = MockNode.root();
         final MockNode imageLinkNode = documentNode.addNode("my:imagelink", "hippogallypicker:imagelink");
 
-        imageLink.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue(""))), true);
+        imageLink.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue(""))));
 
         assertThat(imageLinkNode.getProperty(HIPPO_DOCBASE).getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
     }
@@ -285,7 +285,7 @@ public class ImageLinkFieldTypeTest {
         final MockNode imageLinkNode1 = documentNode.addNode("my:imagelink", "hippogallypicker:imagelink");
         final MockNode imageLinkNode2 = documentNode.addNode("my:imagelink", "hippogallypicker:imagelink");
 
-        imageLink.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue(""), new FieldValue(""))), true);
+        imageLink.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue(""), new FieldValue(""))));
 
         assertThat(imageLinkNode1.getProperty(HIPPO_DOCBASE).getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
         assertThat(imageLinkNode2.getProperty(HIPPO_DOCBASE).getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
@@ -301,7 +301,7 @@ public class ImageLinkFieldTypeTest {
         final MockNode imageLinkNode1 = documentNode.addNode("my:imagelink", "hippogallypicker:imagelink");
         final MockNode imageLinkNode2 = documentNode.addNode("my:imagelink", "hippogallypicker:imagelink");
 
-        imageLink.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue("1234"), new FieldValue(""))), true);
+        imageLink.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue("1234"), new FieldValue(""))));
 
         assertThat(imageLinkNode1.getProperty(HIPPO_DOCBASE).getString(), equalTo("1234"));
         assertThat(imageLinkNode2.getProperty(HIPPO_DOCBASE).getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
@@ -315,6 +315,6 @@ public class ImageLinkFieldTypeTest {
         expect(node.getNodes(anyString())).andThrow(new RepositoryException());
         replayAll();
 
-        imageLink.writeValues(node, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
+        imageLink.writeValues(node, Optional.of(Collections.singletonList(new FieldValue("1234"))));
     }
 }
