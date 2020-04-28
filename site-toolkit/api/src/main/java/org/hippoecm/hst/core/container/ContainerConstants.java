@@ -215,4 +215,6 @@ public interface ContainerConstants {
     String EXTRA_SEARCH_ENGINE_OR_BOT_USER_AGENT_PATTERNS = "search.engine.or.bot.user.agent.patterns.extra";
 
     String PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE = "org.hippoecm.hst.container.access.preview_token";
+
+    String PREVIEW_URL_PROPERTY_NAME = "org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo_url";
 }

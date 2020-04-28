@@ -84,7 +84,7 @@
 
     <javadoc.base.version>13.1</javadoc.base.version>
 
-    <hippo.jackrabbit.version>2.18.3-h2</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
     <hippo.commons.version>14.2.0-SNAPSHOT</hippo.commons.version>
     <hippo.repository.version>14.2.0-Experience-Pages-SNAPSHOT</hippo.repository.version>
     <hippo.configuration-management.version>14.2.0-SNAPSHOT</hippo.configuration-management.version>
