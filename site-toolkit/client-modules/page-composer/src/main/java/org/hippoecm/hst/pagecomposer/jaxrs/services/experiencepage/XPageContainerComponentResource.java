@@ -23,7 +23,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -33,7 +32,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -52,16 +50,11 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.InvalidNodeTypeException;
-import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
-import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +67,6 @@ import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_HOLDER;
 import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.DRAFT;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 @Path("/experiencepage/hst:containercomponent/")
@@ -119,6 +111,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
             // with workflowSession, we write directly to the unpublished variant
 
             final Node catalogItem = getContainerItem(workflowSession, catalogItemUUID);
+
             if (!catalogItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity(String.format("Value of path parameter itemUUID: '%s' is not of a catalog item", catalogItemUUID))
@@ -211,17 +204,11 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
             try {
                 final Node containerItem = session.getNodeByIdentifier(itemUUID);
 
-                if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
-                    log.warn("The container component '{}' does not have the correct type. ", itemUUID);
-                    throw new InvalidNodeTypeException("The container component does not have the correct type.", itemUUID);
-                }
-
                 final Node container = getPageComposerContextService().getRequestConfigNode("hst:abstractcomponent");
 
                 if (!containerItem.getPath().startsWith(container.getPath() + "/")) {
                     throw new ClientException("Cannot delete container item of other document", ClientError.INVALID_UUID);
                 }
-
 
                 DocumentWorkflow documentWorkflow = getDocumentWorkflow(session);
 
@@ -332,7 +319,8 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
         if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
             log.warn("The container component '{}' does not have the correct type. ", itemUUID);
-            throw new InvalidNodeTypeException("The container component does not have the correct type.", itemUUID);
+            throw new ClientException(String.format("The container item '%s' does not have the correct type.",
+                    itemUUID), ClientError.INVALID_NODE_TYPE);
         }
         return containerItem;
     }
