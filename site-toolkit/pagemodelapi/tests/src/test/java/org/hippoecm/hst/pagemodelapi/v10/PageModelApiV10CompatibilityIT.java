@@ -360,8 +360,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
             String actual = getActualJson("/_cmsinternal/spa/resourceapi", "1.0", null, EDITOR_CREDS);
 
-            System.out.println(actual);
-
             InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("preview_channel_mgr_pma_spec_cdn_and_hst_url_prefix.json");
 
             assertions(actual, expected);

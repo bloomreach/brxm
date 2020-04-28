@@ -82,8 +82,6 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiITCases 
 
         String actual = getActualJson("/_cmsinternal/spa/resourceapi", "0.9", null, EDITOR_CREDS);
 
-        System.out.println(actual);
-
         InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("preview_channel_mgr_pma_spec_homepage.json");
 
         String expected = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
