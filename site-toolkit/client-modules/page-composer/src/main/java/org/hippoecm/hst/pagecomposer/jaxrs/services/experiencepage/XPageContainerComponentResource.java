@@ -112,12 +112,6 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             final Node catalogItem = getContainerItem(workflowSession, catalogItemUUID);
 
-            if (!catalogItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(String.format("Value of path parameter itemUUID: '%s' is not of a catalog item", catalogItemUUID))
-                        .build();
-            }
-
             PageComposerContextService contextService = getPageComposerContextService();
 
             final Node container = contextService.getRequestConfigNodeById(contextService.getRequestConfigIdentifier(),
