@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.TestUserContext;
+import org.onehippo.cms.channelmanager.content.ValidateAndWrite;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -300,7 +301,7 @@ public class RichTextFieldTypeTest {
     public void writeLessValuesThanMinimum() throws Exception {
         final RichTextFieldType field = initField();
         // default minimum is 1
-        field.writeTo(document, Optional.of(Collections.emptyList()));
+        ValidateAndWrite.validateAndWriteTo(document, field, Collections.emptyList());
     }
 
     @Test(expected = BadRequestException.class)
@@ -309,7 +310,7 @@ public class RichTextFieldTypeTest {
         // default maximum is 1
         final FieldValue newValue1 = new FieldValue("<p>one</p>");
         final FieldValue newValue2 = new FieldValue("<p>two</p>");
-        field.writeTo(document, Optional.of(Arrays.asList(newValue1, newValue2)));
+        ValidateAndWrite.validateAndWriteTo(document, field, Arrays.asList(newValue1, newValue2));
     }
 
     @Test

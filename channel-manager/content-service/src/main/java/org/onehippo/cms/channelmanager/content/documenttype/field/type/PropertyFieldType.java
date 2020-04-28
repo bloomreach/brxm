@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -32,9 +34,8 @@ import javax.jcr.ValueFormatException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,47 +92,55 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
     }
 
     @Override
-    public final void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean checkCardinality) throws ErrorWithPayloadException {
+    public final void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean checkCardinality) {
         final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
 
         beforeWriteValues(values);
 
-        if (checkCardinality) {
-            FieldTypeUtils.checkCardinality(this, values);
-        }
-
-        final String propertyName = getId();
         try {
             if (values.isEmpty()) {
-                if (hasProperty(node, propertyName)) {
-                    node.getProperty(propertyName).remove();
-                }
-            } else {
-                final String[] strings = new String[values.size()];
-                for (int i = 0; i < strings.length; i++) {
-                    final Optional<String> value = values.get(i).findValue();
-
-                    strings[i] = checkCardinality ? value.orElseThrow(FieldTypeUtils.INVALID_DATA) : value.orElse(null);
-
-                    if (checkCardinality) {
-                        fieldSpecificValidations(strings[i]);
-                    }
-                }
-
-                // make sure we can set the new property value
-                if (node.hasProperty(propertyName)) {
-                    final Property property = node.getProperty(propertyName);
-                    if (isMultiple() != property.isMultiple()) {
-                        property.remove();
-                    }
-                }
-
-                writeProperty(node, propertyName, strings);
+                removeProperty(node);
+                return;
             }
+            if (isMultiplicityOutOfSync(node)) {
+                removeProperty(node);
+            }
+            final Stream<String> stringStream = getStrings(values);
+            if (stringStream.allMatch(Objects::isNull)){
+                removeProperty(node);
+                return;
+            }
+            final String[] strings = getStrings(values).toArray(String[]::new);
+            writeProperty(node, strings);
         } catch (final RepositoryException e) {
-            log.warn("Failed to write value(s) to property {}", propertyName, e);
+            log.warn("Failed to write value(s) to property {}", getId(), e);
             throw new InternalServerErrorException();
         }
+    }
+
+    private Stream<String> getStrings(final List<FieldValue> values) {
+        return values.stream()
+                .map(value -> value == null ? null : value.findValue().orElse(null));
+    }
+
+    private void removeProperty(final Node node) throws RepositoryException {
+        if (hasProperty(node, getId())){
+            node.getProperty(getId()).remove();
+        }
+    }
+
+    private final boolean isMultiplicityOutOfSync(final Node node) throws RepositoryException {
+        String propertyName = getId();
+        if (node == null) {
+            return false;
+        }
+        if (hasProperty(node, getId())) {
+            final Property property = node.getProperty(propertyName);
+            if (isMultiple() != property.isMultiple()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -142,7 +151,8 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
         // by default do nothing
     }
 
-    private void writeProperty(final Node node, final String propertyName, final String[] strings) throws RepositoryException {
+    private void writeProperty(final Node node, final String[] strings) throws RepositoryException {
+        final String propertyName = getId();
         try {
             final int jcrPropertyType = PropertyType.valueFromName(getJcrType());
             if (isMultiple()) {
@@ -157,7 +167,14 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
 
     @Override
     public final int validate(final List<FieldValue> valueList, final CompoundContext context) {
-        return valueList.stream()
+        List<FieldValue> values = valueList == null ? Collections.emptyList() : valueList;
+        FieldTypeUtils.checkCardinality(this, values);
+        if (values.stream().allMatch(Objects::isNull)){
+            throw FieldTypeUtils.INVALID_DATA.get();
+        }
+        values.stream().filter(Objects::nonNull)
+                .forEach(value -> fieldSpecificValidations(value.findValue().orElseThrow(FieldTypeUtils.INVALID_DATA)));
+        return values.stream()
                 .mapToInt(value -> validateValue(value, context))
                 .sum();
     }
@@ -181,7 +198,7 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
         return convertedStrings.toArray(new String[0]);
     }
 
-    protected void fieldSpecificValidations(final String validatedField) throws ErrorWithPayloadException {
+    protected void fieldSpecificValidations(final String validatedField) {
         // empty on purpose
     }
 
