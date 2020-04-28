@@ -92,7 +92,7 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
     }
 
     @Override
-    public final void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean checkCardinality) {
+    public final void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues) {
         final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
 
         beforeWriteValues(values);
