@@ -19,7 +19,7 @@
     const errorElement = jqXHR.responseXML.documentElement;
     const errorType = (errorElement && errorElement.getAttribute('type'));
     const message = (errorElement && errorElement.textContent) || 'The server did not respond';
-    Hippo.onError({
+    Hippo.navapp.onError({
       errorCode: window.bloomreach['navapp-communication'].ClientErrorCodes.InternalError,
       errorType,
       message,

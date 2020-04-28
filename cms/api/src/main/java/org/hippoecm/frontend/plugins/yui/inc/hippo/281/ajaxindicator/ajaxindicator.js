@@ -73,7 +73,7 @@
 
     show: function() {
       if (!this.body.hasClass(this.waitClass)){
-        window.Hippo.showBusyIndicator();
+        window.Hippo.navapp.showBusyIndicator();
         this.body.addClass(this.waitClass);
       }
 
@@ -108,7 +108,7 @@
       }
       if (this.body.hasClass(this.waitClass)){
         this.body.removeClass(this.waitClass);
-        window.Hippo.hideBusyIndicator();
+        window.Hippo.navapp.hideBusyIndicator();
       }
     },
 
