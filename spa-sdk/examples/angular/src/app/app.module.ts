@@ -28,6 +28,8 @@ import { BannerComponent } from './banner/banner.component';
 import { ContentComponent } from './content/content.component';
 import { MenuComponent } from './menu/menu.component';
 import { ParseUrlPipe } from './parse-url.pipe';
+import { NewsListComponent } from './news-list/news-list.component';
+import { NewsItemComponent } from './news-item/news-item.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -39,12 +41,15 @@ import { ParseUrlPipe } from './parse-url.pipe';
     IsExternalLinkPipe,
     IsInternalLinkPipe,
     MenuComponent,
+    NewsItemComponent,
+    NewsListComponent,
     ParseUrlPipe,
   ],
   entryComponents: [
     BannerComponent,
     ContentComponent,
     MenuComponent,
+    NewsListComponent,
   ],
   imports: [
     BrowserModule,

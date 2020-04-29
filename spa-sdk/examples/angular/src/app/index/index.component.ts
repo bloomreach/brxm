@@ -23,6 +23,7 @@ import { BrPageComponent } from '@bloomreach/ng-sdk';
 import { BannerComponent } from '../banner/banner.component';
 import { ContentComponent } from '../content/content.component';
 import { MenuComponent } from '../menu/menu.component';
+import { NewsListComponent } from '../news-list/news-list.component';
 
 export const CMS_BASE_URL = new InjectionToken<string>('brXM Base URL');
 export const SPA_BASE_URL = new InjectionToken<string>('SPA Base URL');
@@ -39,6 +40,7 @@ export class IndexComponent implements OnInit {
     menu: MenuComponent,
     Banner: BannerComponent,
     Content: ContentComponent,
+    'News List': NewsListComponent,
   };
 
   private navigationEnd: Observable<NavigationEnd>;
