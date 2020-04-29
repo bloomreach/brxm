@@ -27,10 +27,6 @@
     },
     {
       "pluginId": "newsPlugin"
-    },
-    {
-      "pluginId": "urlrewriterPlugin",
-      "minInstallStateForInstalling": "installed"
     }
   ]
 }
