@@ -35,13 +35,15 @@ public class SpaDemoInstruction implements Instruction {
 
     private static Logger log = LoggerFactory.getLogger(SpaDemoInstruction.class);
 
-    @Inject private JcrService jcrService;
-    @Inject private SettingsService settingsService;
+    @Inject
+    private JcrService jcrService;
+    @Inject
+    private SettingsService settingsService;
 
     @Override
     public Status execute(final Map<String, Object> parameters) {
         final String namespace = settingsService.getSettings().getProjectNamespace();
-        final String hstRootNode = String.format("/hst:%s/hst:hosts/dev-localhost/localhost/hst:root", namespace);
+        final String hstVirtualHostNode = String.format("/hst:%s/hst:hosts/dev-localhost/localhost", namespace);
         final Session session = jcrService.createSession();
         if (session == null) {
             return Status.FAILED;
@@ -49,13 +51,14 @@ public class SpaDemoInstruction implements Instruction {
 
         try {
             // Configure Page Model API
-            final Node root = session.getNode(hstRootNode);
-            root.setProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_MODEL_API, "resourceapi");
-            root.setProperty(HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS, new String[] {
-                    "Access-Control-Allow-Origin: *"
-            });
-            root.setProperty(HstNodeTypes.VIRTUALHOST_ALLOWED_ORIGINS, new String[] {
+            final Node virtualHost = session.getNode(hstVirtualHostNode);
+            virtualHost.setProperty(HstNodeTypes.VIRTUALHOST_ALLOWED_ORIGINS, new String[]{
                     "http://localhost:3000"
+            });
+            final Node root = virtualHost.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
+            root.setProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_MODEL_API, "resourceapi");
+            root.setProperty(HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS, new String[]{
+                    "Access-Control-Allow-Origin: *"
             });
 
             // Update URL Rewriter configuration
