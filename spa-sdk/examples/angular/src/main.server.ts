@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { IndexComponent } from './index/index.component';
+import { enableProdMode } from '@angular/core';
 
-const routes: Routes = [
-  { path: '**', component: IndexComponent },
-];
+import { environment } from './environments/environment';
 
-@NgModule({
-  imports: [RouterModule.forRoot(routes, { initialNavigation: 'enabled' })],
-  exports: [RouterModule],
-})
-export class AppRoutingModule { }
+if (environment.production) {
+  enableProdMode();
+}
+
+export { AppServerModule } from './app/app.server.module';
+export { renderModule, renderModuleFactory } from '@angular/platform-server';

@@ -52,7 +52,7 @@ import { NewsItemComponent } from './news-item/news-item.component';
     NewsListComponent,
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'brxm-angular-spa' }),
     NgSdkModule,
     AppRoutingModule,
   ],
