@@ -30,6 +30,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.InvalidNodeTypeException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ItemNotFoundException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
@@ -57,7 +58,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
 
             // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
             // containerNode. Find a correct newName and create a new node.
-            final String newItemNodeName = findNewName(catalogItem.getName(), containerNode);
+            final String newItemNodeName = ContainerUtils.findNewName(catalogItem.getName(), containerNode);
             final Node newItem = JcrUtils.copy(session, catalogItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
 
             HstConfigurationUtils.persistChanges(session);
@@ -207,7 +208,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
             // error occurs already
             containerHelper.acquireLock(childNode.getParent(), 0);
             String name = childPath.substring(childPath.lastIndexOf('/') + 1);
-            name = findNewName(name, parent);
+            name = ContainerUtils.findNewName(name, parent);
             String newChildPath = parentPath + "/" + name;
             log.debug("Move needed from '{}' to '{}'.", childPath, newChildPath);
             session.move(childPath, newChildPath);
@@ -216,13 +217,4 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
         }
     }
 
-    private static String findNewName(String base, Node parent) throws RepositoryException {
-        String newName = base;
-        int counter = 0;
-        while (parent.hasNode(newName)) {
-            newName = base + ++counter;
-        }
-        log.debug("New child name '{}' for parent '{}'", newName, parent.getPath());
-        return newName;
-    }
 }

@@ -50,6 +50,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
@@ -137,7 +138,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
             // containerNode. Find a correct newName and create a new node.
-            final String newItemNodeName = findNewName(catalogItem.getName(), containerNode);
+            final String newItemNodeName = ContainerUtils.findNewName(catalogItem.getName(), containerNode);
             final Node newItem = JcrUtils.copy(workflowSession, catalogItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
 
             if (siblingItemUUID != null) {
@@ -325,17 +326,6 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
             }
         }
         return container;
-    }
-
-
-    private static String findNewName(String base, Node parent) throws RepositoryException {
-        String newName = base;
-        int counter = 0;
-        while (parent.hasNode(newName)) {
-            newName = base + ++counter;
-        }
-        log.debug("New child name '{}' for parent '{}'", newName, parent.getPath());
-        return newName;
     }
 
 }
