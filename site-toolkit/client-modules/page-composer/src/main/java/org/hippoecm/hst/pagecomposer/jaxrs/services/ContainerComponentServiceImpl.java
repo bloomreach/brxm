@@ -26,9 +26,8 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.InvalidNodeTypeException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ItemNotFoundException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
@@ -53,7 +52,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     public ContainerItem createContainerItem(final Session session, final String catalogItemUUID, final long versionStamp)
             throws RepositoryException {
         try {
-            final Node catalogItem = getContainerItem(session, catalogItemUUID);
+            final Node catalogItem = ContainerUtils.getContainerItem(session, catalogItemUUID);
             final Node containerNode = lockAndGetContainer(versionStamp);
 
             // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
@@ -76,7 +75,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
 
         final ContainerItem containerItem = createContainerItem(session, catalogItemUUID, versionStamp);
         final String newItemName = containerItem.getContainerItem().getName();
-        final Node siblingItem = getContainerItem(session, siblingItemUUID);
+        final Node siblingItem = ContainerUtils.getContainerItem(session, siblingItemUUID);
         final String siblingItemName = siblingItem.getName();
 
         final Node containerNode = lockAndGetContainer(versionStamp);
@@ -106,7 +105,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     @Override
     public void deleteContainerItem(final Session session, final String itemUUID, final long versionStamp) throws RepositoryException {
         try {
-            final Node containerItem = getContainerItem(session, itemUUID);
+            final Node containerItem = ContainerUtils.getContainerItem(session, itemUUID);
 
             lockAndGetContainer(versionStamp);
             containerItem.remove();
@@ -142,7 +141,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
                     }
                     --index;
                 }
-            } catch (ItemNotFoundException e) {
+            } catch (javax.jcr.ItemNotFoundException e) {
                 log.warn("ItemNotFoundException: Cannot update containerNode '{}'.", containerNode.getPath());
                 throw e;
             }
@@ -163,7 +162,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
         final Node containerNode = pageComposerContextService.getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
         if (containerNode == null) {
             log.warn("Exception during creating new container item : Could not find container node to add item to.");
-            throw new ItemNotFoundException("Could not find container node to add item to");
+            throw new ClientException("Could not find container node to add item to", ClientError.ITEM_NOT_FOUND);
         }
         try {
             // the acquireLock also checks all ancestors whether they are not locked by someone else
@@ -173,16 +172,6 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
             throw e;
         }
         return containerNode;
-    }
-
-    private Node getContainerItem(final Session session, final String itemUUID) throws RepositoryException {
-        final Node containerItem = session.getNodeByIdentifier(itemUUID);
-
-        if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
-            log.warn("The container component '{}' does not have the correct type. ", itemUUID);
-            throw new InvalidNodeTypeException("The container component does not have the correct type.", itemUUID);
-        }
-        return containerItem;
     }
 
     /**

@@ -61,7 +61,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_HOLDER;
@@ -130,7 +129,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             // with workflowSession, we write directly to the unpublished variant
 
-            final Node catalogItem = getContainerItem(workflowSession, itemUUID);
+            final Node catalogItem = ContainerUtils.getContainerItem(workflowSession, itemUUID);
 
             PageComposerContextService contextService = getPageComposerContextService();
 
@@ -142,7 +141,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
             final Node newItem = JcrUtils.copy(workflowSession, catalogItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
 
             if (siblingItemUUID != null) {
-                final Node siblingItem = getContainerItem(workflowSession, siblingItemUUID);
+                final Node siblingItem = ContainerUtils.getContainerItem(workflowSession, siblingItemUUID);
                 if (!siblingItem.getPath().startsWith(containerNode.getPath() + "/")) {
                     throw new ClientException(String.format("Order before container item '%s' is of other experience page",
                             siblingItemUUID), ClientError.INVALID_UUID);
@@ -292,26 +291,10 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
                 .orElse(MASTER_BRANCH_ID);
     }
 
-    private Node getContainerItem(final Session session, final String itemUUID) throws RepositoryException {
 
-        try {
-            final Node containerItem = session.getNodeByIdentifier(itemUUID);
+    private Node getContainer(final long versionStamp, final Session workflowSession,
+                              final PageComposerContextService contextService) throws RepositoryException {
 
-            if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
-                log.info("The container component '{}' does not have the correct type. ", itemUUID);
-                throw new ClientException(String.format("The container item '%s' does not have the correct type",
-                        itemUUID), ClientError.INVALID_NODE_TYPE);
-            }
-            return containerItem;
-        } catch (ItemNotFoundException e) {
-            log.info("Cannot find container item '{}'.", itemUUID);
-            throw new ClientException(String.format("Cannot find container item '%s'",
-                    itemUUID), ClientError.INVALID_UUID);
-        }
-    }
-
-
-    private Node getContainer(final @QueryParam("lastModifiedTimestamp") long versionStamp, final Session workflowSession, final PageComposerContextService contextService) throws RepositoryException {
         final Node container = contextService.getRequestConfigNodeById(contextService.getRequestConfigIdentifier(),
                 "hst:abstractcomponent", workflowSession);
 
@@ -327,5 +310,6 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
         }
         return container;
     }
+
 
 }
