@@ -120,20 +120,13 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession());
 
-            // we need to write with the workflowSession. Make sure to use this workflowSession and not
-            // impersonate to a workflowSession : This way we can make sure that the workflow manager also
-            // persists the changes since the workflow manager will handle the  workflow session save (when we invoke
-            // the document workflow
-
             final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
 
             // with workflowSession, we write directly to the unpublished variant
 
             final Node catalogItem = ContainerUtils.getContainerItem(workflowSession, itemUUID);
 
-            PageComposerContextService contextService = getPageComposerContextService();
-
-            final Node containerNode = getContainer(versionStamp, workflowSession, contextService);
+            final Node containerNode = getContainer(versionStamp, workflowSession);
 
             // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
             // containerNode. Find a correct newName and create a new node.
@@ -171,6 +164,12 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
     @PrivilegesAllowed(XPAGE_REQUIRED_PRIVILEGE_NAME)
     public Response updateContainer(final ContainerRepresentation container) {
         final ContainerAction<Response> updateContainer = () -> {
+
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession());
+
+            final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
+            final Node containerNode = getContainer(container.getLastModifiedTimestamp(), workflowSession);
+
             xPageContainerComponentService.updateContainer(getSession(), container);
             return Response.status(Response.Status.OK).entity(container).build();
         };
@@ -259,6 +258,12 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
         return documentWorkflow;
     }
 
+
+    /**
+     * we need to write with the workflowSession. Make sure to use this workflowSession and not impersonate to a
+     * workflowSession : This way we can make sure that the workflow manager also persists the changes since the
+     * workflow manager will handle the  workflow session save (when we invoke the document workflow
+     */
     private Session getInternalWorkflowSession(final DocumentWorkflow documentWorkflow) {
         return documentWorkflow.getWorkflowContext().getInternalWorkflowSession();
     }
@@ -292,11 +297,12 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
     }
 
 
-    private Node getContainer(final long versionStamp, final Session workflowSession,
-                              final PageComposerContextService contextService) throws RepositoryException {
+    private Node getContainer(final long versionStamp, final Session session) throws RepositoryException {
+
+        final PageComposerContextService contextService = getPageComposerContextService();
 
         final Node container = contextService.getRequestConfigNodeById(contextService.getRequestConfigIdentifier(),
-                "hst:abstractcomponent", workflowSession);
+                "hst:abstractcomponent", session);
 
         if (versionStamp != 0 && container.hasProperty(GENERAL_PROPERTY_LAST_MODIFIED)) {
             long existingStamp = container.getProperty(GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
