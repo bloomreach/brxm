@@ -14,6 +14,25 @@
  * limitations under the License.
  */
 
+interface DocumentModels {
+  document?: import('@bloomreach/spa-sdk').Reference;
+}
+
+interface DocumentData {
+  author: string;
+  content: DocumentContent;
+  date: number;
+  image: import('@bloomreach/spa-sdk').Reference;
+  introduction: string;
+  title: string;
+
+  [property: string]: any;
+}
+
+interface DocumentContent {
+  value: string;
+}
+
 interface MenuModels {
   menu?: import('@bloomreach/spa-sdk').Menu;
 }
