@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console;
 
+
 import javax.jcr.Node;
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,7 +38,6 @@ import org.hippoecm.frontend.plugins.yui.layout.PageLayoutSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.hippoecm.frontend.service.ILogoutService;
-import org.hippoecm.frontend.service.INavAppSettingsService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
@@ -93,11 +93,8 @@ public class RootPlugin extends RenderPlugin {
         final IPluginContext context = getPluginContext();
         final ILogoutService logoutService =
                 context.getService(ILogoutService.SERVICE_ID, ILogoutService.class);
-        final INavAppSettingsService navAppSettingsService =
-                context.getService(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.class);
         final ActiveLogoutPlugin activeLogoutPlugin =
-                new ActiveLogoutPlugin("activeLogout", getMaxInactiveIntervalMinutes()
-                        , logoutService, navAppSettingsService.getIframesConnectionTimeout());
+                new ActiveLogoutPlugin("activeLogout", getMaxInactiveIntervalMinutes(), logoutService);
         add(activeLogoutPlugin);
     }
 
