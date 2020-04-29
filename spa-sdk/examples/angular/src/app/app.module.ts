@@ -25,6 +25,7 @@ import { IndexComponent, CMS_BASE_URL, SPA_BASE_URL } from './index/index.compon
 import { IsExternalLinkPipe } from './is-external-link.pipe';
 import { IsInternalLinkPipe } from './is-internal-link.pipe';
 import { BannerComponent } from './banner/banner.component';
+import { ContentComponent } from './content/content.component';
 import { MenuComponent } from './menu/menu.component';
 import { ParseUrlPipe } from './parse-url.pipe';
 
@@ -34,6 +35,7 @@ import { ParseUrlPipe } from './parse-url.pipe';
     AppComponent,
     IndexComponent,
     BannerComponent,
+    ContentComponent,
     IsExternalLinkPipe,
     IsInternalLinkPipe,
     MenuComponent,
@@ -41,6 +43,7 @@ import { ParseUrlPipe } from './parse-url.pipe';
   ],
   entryComponents: [
     BannerComponent,
+    ContentComponent,
     MenuComponent,
   ],
   imports: [
