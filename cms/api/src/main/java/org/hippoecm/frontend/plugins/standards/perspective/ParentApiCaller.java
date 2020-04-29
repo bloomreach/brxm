@@ -27,7 +27,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
  */
 public class ParentApiCaller implements ParentApi {
 
-    static final String JAVA_SCRIPT_TEMPLATE = "Hippo.navapp.updateNavLocation(%s)";
+    static final String JAVA_SCRIPT_TEMPLATE = "Hippo.navapp.updateNavLocation({ path: '%s' })";
     private Supplier<IPartialPageRequestHandler> targetSupplier;
 
     public ParentApiCaller() {
