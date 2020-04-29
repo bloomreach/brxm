@@ -15,13 +15,13 @@
 #  limitations under the License.
 
 locales="nl de fr zh es"
-release="14.1.0"
-branch="release/14.1"
+release="14.2.0"
+branch="release/14.2"
 
 mkdir target
 
-git clone -b ${branch} git@code.onehippo.org:cms-community-dev/hippo-cms-translations.git target/hippo-cms-translations
-git clone -b ${branch} git@code.onehippo.org:cms-enterprise/hippo-cms-enterprise-translations.git target/hippo-cms-enterprise-translations
+git clone -b ${branch} https://code.onehippo.org/cms-community-dev/hippo-cms-translations target/hippo-cms-translations
+git clone -b ${branch} https://code.onehippo.org/cms-enterprise/hippo-cms-enterprise-translations target/hippo-cms-enterprise-translations
 
 modules="hippo-cms-translations hippo-cms-enterprise-translations"
 
