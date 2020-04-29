@@ -16,19 +16,27 @@
 
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { NgSdkModule } from '@bloomreach/ng-sdk';
 
+import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { IndexComponent, CMS_BASE_URL, SPA_BASE_URL } from './index/index.component';
 
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [
     AppComponent,
+    IndexComponent,
   ],
   imports: [
     BrowserModule,
+    NgSdkModule,
     AppRoutingModule,
   ],
-  providers: [],
+  providers: [
+    { provide: CMS_BASE_URL, useValue: environment.cmsBaseUrl },
+    { provide: SPA_BASE_URL, useValue: environment.spaBaseUrl },
+  ],
 })
 export class AppModule { }
