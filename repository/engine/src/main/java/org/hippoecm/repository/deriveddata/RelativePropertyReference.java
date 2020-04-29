@@ -31,8 +31,17 @@ import org.hippoecm.repository.util.JcrUtils;
 
 public class RelativePropertyReference extends PropertyReference {
 
+    private static final String HIPPOSYS_MULTIVALUE_PROP_NAME = "hipposys:multivalue";
+    public static final String HIPPOSYS_REL_PATH_PROP_NAME = "hipposys:relPath";
+    private boolean multiValue = false;
+
     public RelativePropertyReference(final Node node, final FunctionDescription function) {
         super(node, function);
+        try {
+            multiValue = node.hasProperty(HIPPOSYS_MULTIVALUE_PROP_NAME) && node.getProperty(HIPPOSYS_MULTIVALUE_PROP_NAME).getBoolean();
+        } catch (RepositoryException e) {
+            DerivedDataEngine.log.warn("cannot access configuration property", e);
+        }
     }
 
     @Override
@@ -94,7 +103,7 @@ public class RelativePropertyReference extends PropertyReference {
     }
 
     private String getRelativePath() throws RepositoryException {
-        return node.getProperty("hipposys:relPath").getString();
+        return node.getProperty(HIPPOSYS_REL_PATH_PROP_NAME).getString();
     }
 
 
@@ -156,7 +165,10 @@ public class RelativePropertyReference extends PropertyReference {
         if (targetModifiedNodetype != null) {
             derivedPropDef = getPropertyDefinition(targetModifiedNodetype, targetModifiedPropertyPath);
         }
-        if (derivedPropDef == null || !derivedPropDef.isMultiple()) {
+
+        boolean useSingleProperty = !isMultiValue() && (derivedPropDef == null || !derivedPropDef.isMultiple());
+
+        if (useSingleProperty) {
             if (values != null && values.length >= 1) {
                 try {
                     if (!targetModifiedNode.isCheckedOut()) {
@@ -195,4 +207,7 @@ public class RelativePropertyReference extends PropertyReference {
         return null;
     }
 
+    public boolean isMultiValue() {
+        return multiValue;
+    }
 }
