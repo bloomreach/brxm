@@ -236,6 +236,7 @@
 
 [hipposys:relativepropertyreference] > hipposys:propertyreference
   - hipposys:relPath (string) mandatory
+  - hipposys:multivalue (boolean)
 
 [hipposys:request] > mix:versionable, hippo:request
   - * (string) multiple
