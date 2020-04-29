@@ -48,7 +48,7 @@
   });
 
   Wicket.Window.prototype.initialize = function () {
-    Hippo && Hippo.navapp.showMask && Hippo.navapp.showMask();
+    Hippo && Hippo.navapp && Hippo.navapp.showMask && Hippo.navapp.showMask();
     _super.initialize.apply(this, arguments);
     this.settings.isFullscreen = false;
 
@@ -64,7 +64,7 @@
 
   Wicket.Window.prototype.close = function () {
     _super.close.apply(this, arguments);
-    Hippo && Hippo.navapp.hideMask && Hippo.navapp.hideMask();
+    Hippo && Hippo.navapp && Hippo.navapp.hideMask && Hippo.navapp.hideMask();
   };
 
   Wicket.Window.prototype.onWindowResize = function (e) {
