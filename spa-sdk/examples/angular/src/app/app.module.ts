@@ -24,6 +24,7 @@ import { AppComponent } from './app.component';
 import { IndexComponent, CMS_BASE_URL, SPA_BASE_URL } from './index/index.component';
 import { IsExternalLinkPipe } from './is-external-link.pipe';
 import { IsInternalLinkPipe } from './is-internal-link.pipe';
+import { MenuComponent } from './menu/menu.component';
 import { ParseUrlPipe } from './parse-url.pipe';
 
 @NgModule({
@@ -33,7 +34,11 @@ import { ParseUrlPipe } from './parse-url.pipe';
     IndexComponent,
     IsExternalLinkPipe,
     IsInternalLinkPipe,
+    MenuComponent,
     ParseUrlPipe,
+  ],
+  entryComponents: [
+    MenuComponent,
   ],
   imports: [
     BrowserModule,

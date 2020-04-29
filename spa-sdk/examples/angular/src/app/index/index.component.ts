@@ -20,6 +20,8 @@ import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { BrPageComponent } from '@bloomreach/ng-sdk';
 
+import { MenuComponent } from '../menu/menu.component';
+
 export const CMS_BASE_URL = new InjectionToken<string>('brXM Base URL');
 export const SPA_BASE_URL = new InjectionToken<string>('SPA Base URL');
 
@@ -31,7 +33,9 @@ export const SPA_BASE_URL = new InjectionToken<string>('SPA Base URL');
 export class IndexComponent implements OnInit {
   configuration: BrPageComponent['configuration'];
 
-  mapping = {};
+  mapping = {
+    menu: MenuComponent,
+  };
 
   private navigationEnd: Observable<NavigationEnd>;
 
