@@ -15,5 +15,7 @@
  */
 
 export const environment = {
-  production: true
+  cmsBaseUrl: 'http://localhost:8080/site',
+  spaBaseUrl: '',
+  production: true,
 };
