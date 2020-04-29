@@ -14,6 +14,7 @@
     "moduleResolution": "node",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
+    "strict": true,
     "target": "es2015"
   },
   "angularCompilerOptions": {
