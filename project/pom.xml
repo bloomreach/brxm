@@ -291,6 +291,7 @@
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-core</artifactId>
+        <version>${cxf.version}</version>
         <exclusions>
           <exclusion>
             <groupId>jakarta.activation</groupId>
@@ -301,6 +302,7 @@
       <dependency>
         <groupId>com.fasterxml.jackson.module</groupId>
         <artifactId>jackson-module-jaxb-annotations</artifactId>
+        <version>${jackson2.version}</version>
         <exclusions>
           <exclusion>
             <groupId>jakarta.activation</groupId>
