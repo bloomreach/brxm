@@ -22,6 +22,7 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { IndexComponent, CMS_BASE_URL, SPA_BASE_URL } from './index/index.component';
+import { IsExternalLinkPipe } from './is-external-link.pipe';
 import { ParseUrlPipe } from './parse-url.pipe';
 
 @NgModule({
@@ -29,6 +30,7 @@ import { ParseUrlPipe } from './parse-url.pipe';
   declarations: [
     AppComponent,
     IndexComponent,
+    IsExternalLinkPipe,
     ParseUrlPipe,
   ],
   imports: [
