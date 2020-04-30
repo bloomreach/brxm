@@ -87,12 +87,12 @@ public class IsModifiedTask extends AbstractDocumentTask {
 
             final Node unpublishedNode = findUnpublishedCompareTo(unpublished, draft);
 
-            return !equals(draftNode, unpublishedNode);
+            return !equals(draftNode, unpublishedNode, 0);
         }
         return null;
     }
 
-    protected boolean equals(Node a, Node b) throws RepositoryException {
+    protected boolean equals(Node a, Node b, int depth) throws RepositoryException {
         final boolean virtualA = JcrUtils.isVirtual(a);
         if (virtualA != JcrUtils.isVirtual(b)) {
             return false;
@@ -100,7 +100,7 @@ public class IsModifiedTask extends AbstractDocumentTask {
             return true;
         }
 
-        if (b.isNodeType(HippoStdNodeType.MIXIN_SKIPDRAFT)) {
+        if (depth == 0 && b.isNodeType(HippoStdNodeType.MIXIN_SKIPDRAFT)) {
             return true;
         }
 
@@ -126,7 +126,10 @@ public class IsModifiedTask extends AbstractDocumentTask {
         while (aIter.hasNext()) {
             Node aChild = aIter.nextNode();
             Node bChild = bIter.nextNode();
-            if (!equals(aChild, bChild)) {
+            while (depth == 0 && bChild.isNodeType(HippoStdNodeType.MIXIN_SKIPDRAFT)){
+                bChild = bIter.nextNode();
+            }
+            if (!equals(aChild, bChild, depth + 1)) {
                 return false;
             }
         }
