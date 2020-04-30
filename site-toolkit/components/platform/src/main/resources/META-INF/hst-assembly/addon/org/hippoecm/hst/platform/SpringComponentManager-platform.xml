@@ -38,7 +38,7 @@
     <property name="allowedHeaders">
       <list>
         <value>${jwt.token.authorization.header}</value>
-        <value>${cluster.node.affinity.param}</value>
+        <value>${cluster.node.affinity.header.name}</value>
       </list>
     </property>
   </bean>

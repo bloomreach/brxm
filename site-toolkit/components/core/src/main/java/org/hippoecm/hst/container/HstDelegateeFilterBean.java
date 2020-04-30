@@ -139,7 +139,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     private String jwtTokenParam;
     private String jwtTokenAuthorizationHeader;
 
-    private String clusterNodeAffinityParam;
+    private String clusterNodeAffinityCookieName;
+    private String clusterNodeAffinityHeaderName;
+    private String clusterNodeAffinityQueryParam;
 
     @Override
     public void setServletContext(ServletContext servletContext) {
@@ -178,8 +180,15 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         this.jwtTokenParam = jwtTokenParam;
     }
 
-    public void setClusterNodeAffinityParam(final String clusterNodeAffinityParam) {
-        this.clusterNodeAffinityParam = clusterNodeAffinityParam;
+    public void setClusterNodeAffinityCookieName(final String clusterNodeAffinityCookieName) {
+        this.clusterNodeAffinityCookieName = clusterNodeAffinityCookieName;
+    }
+
+    public void setClusterNodeAffinityHeaderName(final String clusterNodeAffinityHeaderName) {
+        this.clusterNodeAffinityHeaderName = clusterNodeAffinityHeaderName;
+    }
+    public void setClusterNodeAffinityQueryParam(final String clusterNodeAffinityQueryParam) {
+        this.clusterNodeAffinityQueryParam = clusterNodeAffinityQueryParam;
     }
 
     @Override
@@ -435,11 +444,11 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                             final URI uri = new URI(previewURL);
 
                             final JwtTokenService jwtTokenService = HippoServiceRegistry.getService(JwtTokenService.class);
-                            final String clusterNodeAffinityId = getClusterNodeAffinityId(req, clusterNodeAffinityParam);
+                            final String clusterNodeAffinityId = getClusterNodeAffinityId(req, clusterNodeAffinityCookieName, clusterNodeAffinityHeaderName);
                             final String location = previewURL +
                                     (uri.getQuery() == null ? "?" : "&")
                                     + jwtTokenParam + "=" + jwtTokenService.createToken(req, emptyMap()) +
-                                    (StringUtils.isNotBlank(clusterNodeAffinityId) ? "&" + clusterNodeAffinityParam + "=" + clusterNodeAffinityId : "");
+                                    (StringUtils.isNotBlank(clusterNodeAffinityId) ? "&" + clusterNodeAffinityQueryParam + "=" + clusterNodeAffinityId : "");
                             res.sendRedirect(location);
                             return;
 
