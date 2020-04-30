@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package org.hippoecm.frontend.plugins.gallery.imageutil;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.sanselan.ImageInfo;
-import org.apache.sanselan.ImageReadException;
-import org.apache.sanselan.Sanselan;
+import org.apache.commons.imaging.ImageInfo;
+import org.apache.commons.imaging.ImageReadException;
 import org.apache.wicket.util.io.IOUtils;
 import org.junit.Test;
 
+import static org.apache.commons.imaging.Imaging.getImageInfo;
 import static org.junit.Assert.assertTrue;
 
 public class ImageUtilTest {
@@ -45,32 +45,12 @@ public class ImageUtilTest {
         assertTrue(isRGB(rgb, "test-YCCK.jpg"));
     }
 
-    @Test
-    @Deprecated
-    public void convertYCCKtoRGBUsingDeprecatedMethod() throws Exception {
-        InputStream ycck = getClass().getResourceAsStream("/test-YCCK.jpg");
-        InputStream rgb = ImageUtils.convertToRGB(ycck, ImageMetaData.ColorModel.YCCK);
-
-        assertTrue(isRGB(rgb, "test-YCCK.jpg"));
-    }
-
-    @Test
-    @Deprecated
-    public void convertCMYKToRGBUsingDeprecatedMethod() throws Exception {
-        InputStream cmyk = getClass().getResourceAsStream("/test-CMYK.jpg");
-        InputStream rgb = ImageUtils.convertToRGB(cmyk, ImageMetaData.ColorModel.CMYK);
-
-        assertTrue(isRGB(rgb, "test-CMYK.jpg"));
-    }
-
     public static boolean isRGB(final InputStream stream, final String fileName) throws IOException, ImageReadException {
         try {
-            ImageInfo info = Sanselan.getImageInfo(stream, fileName);
-            return ImageInfo.COLOR_TYPE_RGB == info.getColorType();
+            ImageInfo info = getImageInfo(stream, fileName);
+            return ImageInfo.ColorType.RGB == info.getColorType() || ImageInfo.ColorType.YCbCr == info.getColorType();
         } finally {
             IOUtils.closeQuietly(stream);
         }
     }
-
-
 }

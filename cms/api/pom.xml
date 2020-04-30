@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -70,11 +70,6 @@
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-jcr-commons</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.drewnoakes</groupId>
-      <artifactId>metadata-extractor</artifactId>
-      <version>${drewnoakes-extractor.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.wicket</groupId>
@@ -131,6 +126,12 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-imaging</artifactId>
+      <version>${commons-imaging.version}</version>
+    </dependency>
+    <!-- keep sanselan dependency for downstream backwards compatibility: in v14 this will be removed -->
     <dependency>
       <groupId>org.apache.sanselan</groupId>
       <artifactId>sanselan</artifactId>
