@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, BrowserTransferStateModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { NgSdkModule } from '@bloomreach/ng-sdk';
 
@@ -53,6 +53,7 @@ import { NewsItemComponent } from './news-item/news-item.component';
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'brxm-angular-spa' }),
+    BrowserTransferStateModule,
     NgSdkModule,
     AppRoutingModule,
   ],
