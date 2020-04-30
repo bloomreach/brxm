@@ -19,7 +19,7 @@ import { UrlBuilder } from '../url';
 import { HttpClientConfig, HttpClient, HttpRequest } from './http';
 
 const DEFAULT_AUTHORIZATION_HEADER = 'Authorization';
-const DEFAULT_SERVER_ID_HEADER = 'X-Server-Id';
+const DEFAULT_SERVER_ID_HEADER = 'Server-Id';
 
 export interface ApiOptions {
   /**
@@ -47,7 +47,7 @@ export interface ApiOptions {
 
   /**
    * Header identifying the current cluster node.
-   * By default, `X-Server-Id` will be used.
+   * By default, `Server-Id` will be used.
    */
   serverIdHeader?: string;
 
