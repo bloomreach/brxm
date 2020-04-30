@@ -100,6 +100,10 @@ public class IsModifiedTask extends AbstractDocumentTask {
             return true;
         }
 
+        if (b.isNodeType(HippoStdNodeType.MIXIN_SKIPDRAFT)) {
+            return true;
+        }
+
         final Map<String, Property> aProperties = getPropertyMap(a);
         final Map<String, Property> bProperties = getPropertyMap(b);
 
@@ -113,12 +117,12 @@ public class IsModifiedTask extends AbstractDocumentTask {
                 return false;
             }
         }
+        if (countChildren(a) != countChildren(b)) {
+            return false;
+        }
 
         NodeIterator aIter = a.getNodes();
         NodeIterator bIter = b.getNodes();
-        if (aIter.getSize() != bIter.getSize()) {
-            return false;
-        }
         while (aIter.hasNext()) {
             Node aChild = aIter.nextNode();
             Node bChild = bIter.nextNode();
@@ -127,6 +131,17 @@ public class IsModifiedTask extends AbstractDocumentTask {
             }
         }
         return true;
+    }
+
+    private long countChildren(Node node) throws RepositoryException {
+        long count = 0;
+        final NodeIterator childNodeIterator = node.getNodes();
+        while (childNodeIterator.hasNext()) {
+            if (!childNodeIterator.nextNode().isNodeType(HippoStdNodeType.MIXIN_SKIPDRAFT)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     private boolean equals(final Property bProp, final Property aProp) throws RepositoryException {
