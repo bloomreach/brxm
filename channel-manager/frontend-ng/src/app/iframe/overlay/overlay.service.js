@@ -15,6 +15,7 @@
  */
 
 import MutationSummary from 'mutation-summary';
+
 import contentLinkSvg from '../../../images/html/edit-document.svg?sprite';
 import flaskSvg from '../../../images/html/flask.svg?sprite';
 import lockSvg from '../../../images/html/lock.svg?sprite';
@@ -23,8 +24,8 @@ import dropSvg from '../../../images/html/add.svg?sprite';
 import disabledSvg from '../../../images/html/not-allowed.svg?sprite';
 import plusSvg from '../../../images/html/plus.svg?sprite';
 import searchSvg from '../../../images/html/search.svg?sprite';
-import chevronUp from '../../../images/html/chevron-up.svg?sprite';
 import iframeCss from '../../../styles/string/hippo-iframe.scss?url';
+import directionalDropSvg from '../../../images/html/directional-drop.svg?sprite';
 
 export default class OverlayService {
   constructor(
@@ -364,10 +365,9 @@ export default class OverlayService {
   _createComponentDropIcons(container) {
     return angular.element('<div>')
       .addClass('hippo-overlay-element-component-drop-area-icons')
-      .append(this.SvgService.getSvg(chevronUp))
       .append(this.SvgService.getSvg(container.isDisabled()
         ? disabledSvg
-        : dropSvg));
+        : directionalDropSvg));
   }
 
   _addDropIcon(container, overlayElement) {
