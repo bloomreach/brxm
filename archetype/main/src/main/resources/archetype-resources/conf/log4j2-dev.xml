@@ -141,6 +141,10 @@
       <AppenderRef ref="messages"/>
     </Logger>
 
+    <!-- Dynamic beans logging -->
+    <Logger name="org.hippoecm.hst.content.beans.dynamic" level="info"/>
+    <Logger name="org.hippoecm.hst.content.beans.builder" level="info"/>
+
     <!-- project logging -->
     <Logger name="${package}" level="debug"/>
 
