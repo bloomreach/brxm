@@ -19,9 +19,7 @@ package org.hippoecm.frontend.plugins.gallery.imageutil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
@@ -36,12 +34,6 @@ import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.imaging.jpeg.JpegSegmentData;
-import com.drew.imaging.jpeg.JpegSegmentReader;
-import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.StreamReader;
 
 import static org.apache.commons.imaging.Imaging.getImageInfo;
 import static org.apache.commons.imaging.ImagingConstants.PARAM_KEY_READ_THUMBNAILS;

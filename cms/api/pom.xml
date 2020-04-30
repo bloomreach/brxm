@@ -66,11 +66,6 @@
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-jcr-commons</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.drewnoakes</groupId>
-      <artifactId>metadata-extractor</artifactId>
-      <version>${drewnoakes-extractor.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.wicket</groupId>
