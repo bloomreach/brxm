@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-import { Component, InjectionToken, Inject, OnInit } from '@angular/core';
+import { Component, InjectionToken, Inject, OnInit, Optional } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { Response, Request } from 'express';
 import { BrPageComponent } from '@bloomreach/ng-sdk';
+import { Page } from '@bloomreach/spa-sdk';
 
+import { RESPONSE, REQUEST } from '../app.server.module';
 import { BannerComponent } from '../banner/banner.component';
 import { ContentComponent } from '../content/content.component';
 import { MenuComponent } from '../menu/menu.component';
@@ -27,6 +30,8 @@ import { NewsListComponent } from '../news-list/news-list.component';
 
 export const CMS_BASE_URL = new InjectionToken<string>('brXM Base URL');
 export const SPA_BASE_URL = new InjectionToken<string>('SPA Base URL');
+
+const VISITOR_COOKIE = '_v';
 
 @Component({
   selector: 'br-index',
@@ -49,11 +54,14 @@ export class IndexComponent implements OnInit {
     router: Router,
     @Inject(CMS_BASE_URL) cmsBaseUrl: string,
     @Inject(SPA_BASE_URL) spaBaseUrl: string,
+    @Inject(REQUEST) @Optional() private request?: Request,
+    @Inject(RESPONSE) @Optional() private response?: Response,
   ) {
     this.configuration = {
       cmsBaseUrl,
       spaBaseUrl,
       request: { path: router.url },
+      visitor: this.getVisitor(),
     } as BrPageComponent['configuration'];
 
     this.navigationEnd = router.events.pipe(
@@ -68,5 +76,29 @@ export class IndexComponent implements OnInit {
         request: { path: event.url },
       };
     });
+  }
+
+  private getVisitor() {
+    const [header, id] = this.request?.cookies[VISITOR_COOKIE]?.split('|') || [];
+
+    if (!header || !id) {
+      return;
+    }
+
+    return { header, id };
+  }
+
+  setVisitor(page?: Page) {
+    const visitor = page?.getVisitor();
+
+    if (!visitor) {
+      return;
+    }
+
+    this.configuration.visitor = visitor;
+    this.response?.setHeader(
+      'Set-Cookie',
+      `${VISITOR_COOKIE}=${visitor.header}|${visitor.id}; Max-Age=${365 * 24 * 60 * 60}; Path=/; HttpOnly`,
+    );
   }
 }
