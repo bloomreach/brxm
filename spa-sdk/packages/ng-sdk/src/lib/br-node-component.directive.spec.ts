@@ -21,6 +21,7 @@ import { BrComponentContext } from './br-component.directive';
 import { BrNodeComponentDirective } from './br-node-component.directive';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'br-component-test',
@@ -80,9 +81,7 @@ describe('BrNodeComponentDirective', () => {
     node = {} as BrNodeDirective;
     page = {
       mapping: {},
-      state: {
-        getTitle: () => 'Some Page',
-      },
+      state: new BehaviorSubject({ getTitle: () => 'Some Page' }),
     } as unknown as typeof page;
   });
 

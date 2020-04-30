@@ -51,6 +51,8 @@ describe('BrPageComponent', () => {
     } as unknown as jest.Mocked<Page>;
 
     jest.resetAllMocks();
+
+    mocked(isPage).mockImplementation((value) => value === page);
   });
 
   describe('context', () => {
@@ -59,13 +61,13 @@ describe('BrPageComponent', () => {
     });
 
     it('should be undefined when there is no root component', () => {
-      component.state = page;
+      component.state.next(page);
 
       expect(component.context).toBeUndefined();
     });
 
     it('should be undefined when there is no root component', () => {
-      component.state = page;
+      component.state.next(page);
 
       expect(component.context).toBeUndefined();
     });
@@ -73,7 +75,7 @@ describe('BrPageComponent', () => {
     it('should contain a root component', () => {
       const root = {} as Component;
       page.getComponent.mockReturnValue(root);
-      component.state = page;
+      component.state.next(page);
 
       expect(component.context?.$implicit).toBe(root);
       expect(component.context?.component).toBe(root);
@@ -81,7 +83,7 @@ describe('BrPageComponent', () => {
 
     it('should contain a page object', () => {
       page.getComponent.mockReturnValue({} as Component);
-      component.state = page;
+      component.state.next(page);
 
       expect(component.context?.page).toBe(page);
     });
@@ -89,18 +91,18 @@ describe('BrPageComponent', () => {
 
   describe('ngAfterContentChecked', () => {
     it('should sync a page', () => {
-      component.state = page;
+      component.state.next(page);
       component.ngAfterContentChecked();
 
-      expect(component.state.sync).toBeCalled();
+      expect(page.sync).toBeCalled();
     });
 
     it('should not sync a page twice', () => {
-      component.state = page;
+      component.state.next(page);
       component.ngAfterContentChecked();
       component.ngAfterContentChecked();
 
-      expect(component.state.sync).toBeCalledTimes(1);
+      expect(page.sync).toBeCalledTimes(1);
     });
 
     it('should not fail if the page is not ready', () => {
@@ -110,7 +112,6 @@ describe('BrPageComponent', () => {
 
   describe('ngOnChanges', () => {
     it('should use a page instance from inputs when configuraton is changed', () => {
-      mocked(isPage).mockReturnValueOnce(true);
       component.configuration = {} as Configuration;
       component.page = page;
       component.ngOnChanges({
@@ -119,16 +120,17 @@ describe('BrPageComponent', () => {
       });
 
       expect(initialize).not.toBeCalled();
-      expect(component.state).toBe(component.page);
+      expect(component.state.getValue()).toBe(component.page);
     });
 
     it('should destroy a previous page', () => {
       const previousPage = {} as Page;
 
-      mocked(isPage).mockReturnValueOnce(true);
+      mocked(isPage).mockImplementation(Array.prototype.includes.bind([page, previousPage]));
       component.configuration = {} as Configuration;
       component.page = page;
-      component.state = previousPage;
+      component.state.next(previousPage);
+
       component.ngOnChanges({
         configuration: new SimpleChange({}, component.configuration, false),
         page: new SimpleChange(previousPage, component.page, false),
@@ -140,7 +142,7 @@ describe('BrPageComponent', () => {
     it('should initialize a new page when a page input was not changed', () => {
       mocked(initialize).mockResolvedValueOnce(page);
       component.configuration = {} as Configuration;
-      component.page = page
+      component.page = page;
       component.ngOnChanges({
         configuration: new SimpleChange({}, component.configuration, false),
       });
@@ -149,14 +151,13 @@ describe('BrPageComponent', () => {
     });
 
     it('should use a page instance from inputs when configuration was not changed', () => {
-      mocked(isPage).mockReturnValueOnce(true);
       component.page = page;
       component.ngOnChanges({
         page: new SimpleChange(undefined, component.page, true),
       });
 
       expect(initialize).not.toBeCalled();
-      expect(component.state).toBe(component.page);
+      expect(component.state.getValue()).toBe(component.page);
     });
 
     it('should initialize a page from the configuration', async () => {
@@ -175,7 +176,7 @@ describe('BrPageComponent', () => {
         }),
         undefined,
       );
-      expect(component.state).toBe(page);
+      expect(component.state.getValue()).toBe(page);
     });
 
     it('should initialize a page from the page model', async () => {
@@ -190,7 +191,7 @@ describe('BrPageComponent', () => {
       await new Promise(process.nextTick);
 
       expect(initialize).toBeCalledWith(expect.any(Object), component.page);
-      expect(component.state).toBe(page);
+      expect(component.state.getValue()).toBe(page);
     });
 
     it('should pass a compatible http client', () => {
@@ -221,7 +222,7 @@ describe('BrPageComponent', () => {
 
   describe('ngOnDestroy', () => {
     it('should destroy a stored page', () => {
-      component.state = page;
+      component.state.next(page);
       component.ngOnDestroy();
 
       expect(destroy).toBeCalledWith(page);

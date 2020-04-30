@@ -79,7 +79,7 @@ export class BrNodeComponentDirective<T extends Component> implements OnChanges,
     const embeddedViewRef = this.container.createEmbeddedView(this.node.template!, {
       $implicit: this.component,
       component: this.component,
-      page: this.page.state!,
+      page: this.page.state.getValue()!,
     });
     // tslint:enable: no-non-null-assertion
     const [head] = embeddedViewRef.rootNodes;
@@ -93,7 +93,7 @@ export class BrNodeComponentDirective<T extends Component> implements OnChanges,
       .map(component => this.container.createEmbeddedView(this.page.node, {
         component,
         $implicit: component,
-        page: this.page.state!, // tslint:disable-line: no-non-null-assertion
+        page: this.page.state.getValue()!, // tslint:disable-line: no-non-null-assertion
       }))
       .flatMap(view => view.rootNodes);
 
@@ -108,7 +108,7 @@ export class BrNodeComponentDirective<T extends Component> implements OnChanges,
     const componentRef = this.container.createComponent(componentFactory, undefined, this.injector);
 
     componentRef.instance.component = this.component;
-    componentRef.instance.page = this.page.state;
+    componentRef.instance.page = this.page.state.getValue();
 
     return {
       head: componentRef.location.nativeElement,

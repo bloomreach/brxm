@@ -80,15 +80,17 @@ export class BrComponentDirective implements OnChanges, OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    if (!this.page?.state) {
+    const page = this.page?.state.getValue();
+
+    if (!page) {
       return;
     }
 
     // tslint:disable: no-non-null-assertion
     this.components?.forEach((component) => this.container.createEmbeddedView(this.page!.node, {
       component,
+      page,
       $implicit: component,
-      page: this.page!.state!,
       template: this.template,
     }));
     // tslint:enable: no-non-null-assertion
@@ -99,7 +101,7 @@ export class BrComponentDirective implements OnChanges, OnDestroy, OnInit {
       return this.node.component;
     }
 
-    return this.page?.state?.getComponent();
+    return this.page?.state.getValue()?.getComponent();
   }
 
   private get components(): Component[] | undefined {

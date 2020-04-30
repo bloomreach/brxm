@@ -33,6 +33,7 @@ import {
 import { BrNodeContainerDirective } from './br-node-container.directive';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
+import { BehaviorSubject } from 'rxjs';
 
 Component({ selector: 'br-container-box', template: '' })(BrContainerBoxComponent);
 Component({ selector: 'br-container-inline', template: '' })(BrContainerInlineComponent);
@@ -85,7 +86,10 @@ describe('BrNodeContainerDirective', () => {
       })),
     } as unknown as typeof container;
     node = {} as typeof node;
-    page = { mapping: {} } as typeof page;
+    page = {
+      mapping: {},
+      state: new BehaviorSubject(undefined),
+    } as typeof page;
   });
 
   beforeEach(async(() => {

@@ -17,6 +17,7 @@
 import { mocked } from 'ts-jest/utils';
 import { Component, Input, NgModule } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { BehaviorSubject } from 'rxjs';
 import { ContainerItem } from '@bloomreach/spa-sdk';
 import {
   BrContainerItemUndefinedComponent,
@@ -68,7 +69,7 @@ describe('BrNodeContainerItemDirective', () => {
     node = {} as typeof node;
     page = {
       mapping: {},
-      state: { sync: jest.fn() },
+      state: new BehaviorSubject({ sync: jest.fn() }),
     } as unknown as typeof page;
   });
 
@@ -114,7 +115,7 @@ describe('BrNodeContainerItemDirective', () => {
       onUpdate({});
       fixture.detectChanges();
 
-      expect(page.state?.sync).toBeCalled();
+      expect(page.state.getValue()?.sync).toBeCalled();
       expect(fixture.nativeElement).toMatchSnapshot();
     });
 

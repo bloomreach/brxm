@@ -68,7 +68,7 @@ implements OnChanges, OnDestroy {
 
   private onUpdate(): void {
     this.changeDetectorRef.markForCheck();
-    this.page.state?.sync();
+    this.page.state.getValue()?.sync();
   }
 
   protected getMapping(): Type<BrProps> | undefined {

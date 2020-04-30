@@ -17,6 +17,7 @@
 import { mocked } from 'ts-jest/utils';
 import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { BehaviorSubject } from 'rxjs';
 import { Component as SpaComponent, Page, isComponent } from '@bloomreach/spa-sdk';
 import { BrComponentContext, BrComponentDirective } from './br-component.directive';
 import { BrNodeDirective } from './br-node.directive';
@@ -67,7 +68,7 @@ describe('BrComponentDirective', () => {
     TestBed.configureTestingModule({
       declarations: [ BrComponentDirective, TemplateComponent, TestComponent ],
       providers: [
-        { provide: BrPageComponent, useFactory: () => ({ node: template, state: page }) },
+        { provide: BrPageComponent, useFactory: () => ({ node: template, state: new BehaviorSubject(page) }) },
         { provide: TemplateRef, useValue: 'Some Template' },
       ],
     })
@@ -108,7 +109,7 @@ describe('BrComponentDirective', () => {
 
   describe('ngOnInit', () => {
     it('should render nothing if the page component is not ready', () => {
-      delete fixture.debugElement.injector.get(BrPageComponent).state;
+      fixture.debugElement.injector.get(BrPageComponent).state.next(undefined);
       fixture.detectChanges();
 
       expect(fixture.nativeElement).toMatchSnapshot();
@@ -162,7 +163,7 @@ describe('BrComponentDirective', () => {
         declarations: [ BrComponentDirective, TemplateComponent, TestComponent ],
         providers: [
           { provide: BrNodeDirective, useValue: { component } },
-          { provide: BrPageComponent, useValue: { node: template, state: page } },
+          { provide: BrPageComponent, useValue: { node: template, state: new BehaviorSubject(page) } },
           { provide: TemplateRef, useValue: 'Some Template' },
         ],
       })

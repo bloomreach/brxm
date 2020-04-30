@@ -23,15 +23,17 @@ import {
   Input,
   OnChanges,
   OnDestroy,
+  OnInit,
+  Output,
   SimpleChanges,
   TemplateRef,
   Type,
   ViewChild,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { from, BehaviorSubject, Subject } from 'rxjs';
+import { filter, map, mapTo, pairwise, pluck, switchMap, take } from 'rxjs/operators';
 import { destroy, initialize, isPage, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
-import { from } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { BrComponentContext } from '../br-component.directive';
 import { BrProps } from '../br-props.model';
 
@@ -47,7 +49,7 @@ interface BrNodeContext extends BrComponentContext {
   selector: 'br-page',
   templateUrl: './br-page.component.html',
 })
-export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestroy {
+export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestroy, OnInit {
   /**
    * The configuration of the SPA SDK.
    * @see https://www.npmjs.com/package/@bloomreach/spa-sdk#configuration
@@ -65,80 +67,82 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
    */
   @Input() page?: Page | PageModel;
 
+  /**
+   * The current state of the page component.
+   */
+  @Output() state = new BehaviorSubject<Page | undefined>(undefined);
+
   @ViewChild('brNode') node!: TemplateRef<BrNodeContext>;
+
   @ContentChild(TemplateRef) private template?: TemplateRef<BrComponentContext>;
 
-  private instance?: Page = undefined;
-  private isSynced = false;
+  private afterContentChecked$ = new Subject();
 
   constructor(private changeDetectorRef: ChangeDetectorRef, private httpClient: HttpClient) {
     this.request = this.request.bind(this);
   }
 
   get context(): BrNodeContext | undefined {
-    const component = this.state?.getComponent();
+    const page = this.state.getValue();
+    const component = page?.getComponent();
 
-    if (!component) {
+    if (!page || !component) {
       return;
     }
 
     return {
       component,
+      page,
       $implicit: component,
-      // tslint:disable-next-line: no-non-null-assertion
-      page: this.state!,
       template: this.template,
     };
-  }
-
-  ngAfterContentChecked(): void {
-    if (this.isSynced) {
-      return;
-    }
-
-    this.state?.sync();
-    this.isSynced = true;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.configuration?.currentValue !== changes.configuration?.previousValue
       || changes.page?.currentValue !== changes.page?.previousValue
     ) {
-      this.ngOnDestroy();
       this.initialize(changes.page?.currentValue === changes.page?.previousValue);
     }
   }
 
-  ngOnDestroy() {
-    if (!this.instance) {
-      return;
-    }
+  ngOnInit(): void {
+    this.state.pipe(
+      pairwise(),
+      pluck(0),
+      filter(isPage),
+    )
+    .subscribe(destroy);
 
-    destroy(this.instance);
-    delete this.instance;
+    this.state.pipe(
+      filter(isPage),
+      switchMap((page) => this.afterContentChecked$.pipe(take(1), mapTo(page))),
+    )
+    .subscribe((page) => page.sync());
   }
 
-  get state(): Page | undefined {
-    return this.instance;
+  ngAfterContentChecked(): void {
+    this.afterContentChecked$.next();
   }
 
-  set state(value: Page | undefined) {
-    this.instance = value;
-    this.isSynced = false;
+  ngOnDestroy(): void {
+    this.state.next(undefined);
+    this.state.complete();
+    this.afterContentChecked$.complete();
   }
 
   private initialize(force: boolean): void {
     const page = force ? undefined : this.page;
 
     if (isPage(page)) {
-      this.state = page;
+      this.state.next(page);
 
       return;
     }
 
     from(initialize({ httpClient: this.request, ...this.configuration } as Configuration, page))
       .subscribe(state => {
-        this.state = state;
+        this.state.next(state);
         this.changeDetectorRef.detectChanges();
       });
   }

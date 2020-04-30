@@ -16,6 +16,7 @@
 
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { BehaviorSubject } from 'rxjs';
 import { Menu, MetaCollection, Page } from '@bloomreach/spa-sdk';
 import { BrManageMenuButtonDirective } from './br-manage-menu-button.directive';
 import { BrPageComponent } from './br-page/br-page.component';
@@ -46,7 +47,7 @@ describe('BrManageMenuButtonDirective', () => {
     TestBed.configureTestingModule({
       declarations: [ BrManageMenuButtonDirective, TestComponent ],
       providers: [
-        { provide: BrPageComponent, useValue: { state: page } },
+        { provide: BrPageComponent, useValue: { state: new BehaviorSubject(page) } },
       ]
     })
     .compileComponents();

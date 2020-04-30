@@ -32,6 +32,6 @@ export class BrManageMenuButtonDirective extends BrMetaDirective implements OnCh
   }
 
   ngOnChanges(): void {
-    this.meta = this.menu._meta && this.page?.state?.getMeta(this.menu._meta);
+    this.meta = this.menu._meta && this.page?.state.getValue()?.getMeta(this.menu._meta);
   }
 }
