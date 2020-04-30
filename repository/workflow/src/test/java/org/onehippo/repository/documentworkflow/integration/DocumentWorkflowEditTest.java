@@ -372,6 +372,10 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         workflow.publish();
 
         assertThat(published.hasNode("compound1")).isTrue();
+        assertThat(published.hasNode("compound1/subCompound1"))
+                .as("even though compound1/subCompound1 is of nodetype hippo:skipdraft, it should still be copied " +
+                        "to published variant")
+                .isTrue();
         assertThat(published.hasNode("compound2"))
                 .as("even though compound2 is of nodetype hippo:skipdraft, it should still be copied " +
                         "to published variant")
@@ -391,11 +395,14 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
 
         unpublished = getVariant("unpublished");
         assertThat(unpublished.hasNode("compound1")).isTrue();
+        assertThat(unpublished.hasNode("compound1/subCompound1")).isTrue();
         assertThat(unpublished.hasNode("compound2")).isTrue();
         assertThat(unpublished.hasNode("compound3")).isTrue();
+        assertThat(unpublished.hasNode("compound3/subCompound3")).isTrue();
 
         final Node draft = getVariant("draft");
         assertThat(draft.hasNode("compound1")).isTrue();
+        assertThat(draft.hasNode("compound1/subCompound1")).isTrue();
         assertThat(draft.hasNode("compound2")).isFalse();
         assertThat(draft.hasNode("compound3")).isFalse();
 
