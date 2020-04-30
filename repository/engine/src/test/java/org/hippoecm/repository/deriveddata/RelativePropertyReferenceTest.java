@@ -51,18 +51,18 @@ public class RelativePropertyReferenceTest extends RepositoryTestCase {
             "      hipposys:relPath: relativePropertyReferenceTest:testprop\n" +
             "  /hipposys:derived:\n" +
             "    jcr:primaryType: hipposys:propertyreferences\n" +
-            "    /testderivedprop:\n" +
+            "    /derivedprop:\n" +
             "      jcr:primaryType: hipposys:relativepropertyreference\n" +
-            "      hipposys:relPath: relativePropertyReferenceTest:testderivedprop\n" +
-            "    /testderivedpropmultivalued:\n" +
+            "      hipposys:relPath: relativePropertyReferenceTest:derivedprop\n" +
+            "    /derivedpropmultivalued:\n" +
             "      jcr:primaryType: hipposys:relativepropertyreference\n" +
-            "      hipposys:relPath: relativePropertyReferenceTest:testderivedpropmultivalued\n" +
+            "      hipposys:relPath: relativePropertyReferenceTest:derivedpropmultivalued\n" +
             "      hipposys:multivalue: true\n" +
-            "    /testregisteredmultiplederivedprop:\n" +
+            "    /registeredmultiplederivedprop:\n" +
             "      jcr:primaryType: hipposys:relativepropertyreference\n" +
-            "      hipposys:relPath: relativePropertyReferenceTest:testregisteredmultiplederivedprop\n";
+            "      hipposys:relPath: relativePropertyReferenceTest:registeredmultiplederivedprop\n";
 
-    private String testContent = "/testcontentrelativepropertytest:\n" +
+    private String testContent = "/relativepropertytestcontent:\n" +
             "  jcr:primaryType: relativePropertyReferenceTest:basedocument\n" +
             "  jcr:mixinTypes: ['mix:versionable']\n" +
             "  relativePropertyReferenceTest:testprop: testvalue";
@@ -72,7 +72,7 @@ public class RelativePropertyReferenceTest extends RepositoryTestCase {
             "<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>\n" +
             "\n" +
             "[relativePropertyReferenceTest:basedocument] > hippo:document, hippostd:relaxed \n" +
-            "  - relativePropertyReferenceTest:testregisteredmultiplederivedprop (string) multiple \n";
+            "  - relativePropertyReferenceTest:registeredmultiplederivedprop (string) multiple \n";
 
     @Override
     public void setUp() throws Exception {
@@ -93,8 +93,8 @@ public class RelativePropertyReferenceTest extends RepositoryTestCase {
 
     @Override
     public void tearDown() throws Exception {
-        if (session.nodeExists("/testcontentrelativepropertytest")) {
-            session.getNode("/testcontentrelativepropertytest").remove();
+        if (session.nodeExists("/relativepropertytestcontent")) {
+            session.getNode("/relativepropertytestcontent").remove();
         }
         if (session.nodeExists("/hippo:configuration/hippo:derivatives/test-relative-dd")) {
             session.getNode("/hippo:configuration/hippo:derivatives/test-relative-dd").remove();
@@ -106,28 +106,28 @@ public class RelativePropertyReferenceTest extends RepositoryTestCase {
     @Test
     public void test_relativepropertyreference_deriveddata_with_multivalue_config() throws RepositoryException {
 
-        final Node testContent = session.getNode("/testcontentrelativepropertytest");
+        final Node testContent = session.getNode("/relativepropertytestcontent");
         testContent.setProperty("relativePropertyReferenceTest:testprop", "new test value");
         session.save();
 
         //Backwards compatibility, when 'hipposys:multivalue' isn't set, generated property is single  
-        assertTrue("Derived property is not set", testContent.hasProperty("relativePropertyReferenceTest:testderivedprop"));
-        assertFalse("Derived property is multiple", testContent.getProperty("relativePropertyReferenceTest:testderivedprop").isMultiple());
-        assertEquals("Derived property doesn't have expected value", "new test value", testContent.getProperty("relativePropertyReferenceTest:testderivedprop").getString());
+        assertTrue("Derived property is not set", testContent.hasProperty("relativePropertyReferenceTest:derivedprop"));
+        assertFalse("Derived property is multiple", testContent.getProperty("relativePropertyReferenceTest:derivedprop").isMultiple());
+        assertEquals("Derived property doesn't have expected value", "new test value", testContent.getProperty("relativePropertyReferenceTest:derivedprop").getString());
 
         //Backwards compatibility, when 'hipposys:multivalue' isn't set, but the derived property is registered in the cnd and marked as multiple, then generated prop is multiple
-        assertTrue("CND registered derived property is not set", testContent.hasProperty("relativePropertyReferenceTest:testregisteredmultiplederivedprop"));
-        assertTrue("CND registered derived property is not multiple", testContent.getProperty("relativePropertyReferenceTest:testregisteredmultiplederivedprop").isMultiple());
+        assertTrue("CND registered derived property is not set", testContent.hasProperty("relativePropertyReferenceTest:registeredmultiplederivedprop"));
+        assertTrue("CND registered derived property is not multiple", testContent.getProperty("relativePropertyReferenceTest:registeredmultiplederivedprop").isMultiple());
         assertEquals("CND registered derived property doesn't have expected values",
                 Arrays.asList("new test value", "new test value second", "new test value third"),
-                JcrUtils.getStringListProperty(testContent, "relativePropertyReferenceTest:testregisteredmultiplederivedprop", Collections.emptyList()));
+                JcrUtils.getStringListProperty(testContent, "relativePropertyReferenceTest:registeredmultiplederivedprop", Collections.emptyList()));
 
         //Test new feature: the derived property can be configured to be multiple 
-        assertTrue("Multivalue derived property is not set", testContent.hasProperty("relativePropertyReferenceTest:testderivedpropmultivalued"));
-        assertTrue("Multivalue derived property is not multiple", testContent.getProperty("relativePropertyReferenceTest:testderivedpropmultivalued").isMultiple());
+        assertTrue("Multivalue derived property is not set", testContent.hasProperty("relativePropertyReferenceTest:derivedpropmultivalued"));
+        assertTrue("Multivalue derived property is not multiple", testContent.getProperty("relativePropertyReferenceTest:derivedpropmultivalued").isMultiple());
         assertEquals("Multivalue derived property doesn't have expected values",
                 Arrays.asList("new test value", "new test value second", "new test value third"),
-                JcrUtils.getStringListProperty(testContent, "relativePropertyReferenceTest:testderivedpropmultivalued", Collections.emptyList()));
+                JcrUtils.getStringListProperty(testContent, "relativePropertyReferenceTest:derivedpropmultivalued", Collections.emptyList()));
     }
 
     static class MultiplePythagoreanTheorem extends DerivedDataFunction {
@@ -141,9 +141,9 @@ public class RelativePropertyReferenceTest extends RepositoryTestCase {
                         getValueFactory().createValue(a + " second"),
                         getValueFactory().createValue(a + " third")};
 
-                parameters.put("testderivedprop", values);
-                parameters.put("testderivedpropmultivalued", values);
-                parameters.put("testregisteredmultiplederivedprop", values);
+                parameters.put("derivedprop", values);
+                parameters.put("derivedpropmultivalued", values);
+                parameters.put("registeredmultiplederivedprop", values);
             } catch (RepositoryException e) {
                 e.printStackTrace();
             }
