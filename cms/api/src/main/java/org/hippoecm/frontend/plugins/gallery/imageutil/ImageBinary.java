@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,14 @@ package org.hippoecm.frontend.plugins.gallery.imageutil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.sanselan.ImageInfo;
-import org.apache.sanselan.ImageReadException;
-import org.apache.sanselan.Sanselan;
+import org.apache.commons.imaging.ImageInfo;
+import org.apache.commons.imaging.ImageReadException;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
@@ -38,15 +35,12 @@ import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.imaging.jpeg.JpegSegmentData;
-import com.drew.imaging.jpeg.JpegSegmentReader;
-import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.StreamReader;
+import static org.apache.commons.imaging.Imaging.getImageInfo;
+import static org.apache.commons.imaging.ImagingConstants.PARAM_KEY_READ_THUMBNAILS;
 
 /**
  * This class extends a {@link Binary} class with extra information regarding images: filename, mimetype and
- * color model. It uses the Sanselan library to figure out the mimetype if none is provided. For SVG images
+ * color model. It uses the commons-imaging (formerly Sanselan) library to figure out the mimetype if none is provided. For SVG images
  * (which Sanselan does not recognize) the mimetype auto-detection is skipped and the color model is set to UNKNOWN.
  *
  * Furthermore it converts YCCK and CMYK input into the RGB color model so it can be used by the JPEGImageReader. See
@@ -122,11 +116,11 @@ public class ImageBinary implements Binary {
 
             //If an image contains a corrupt thumbnail it will throw an error reading metadata, so skip it.
             //See https://issues.apache.org/jira/browse/IMAGING-50?focusedCommentId=13162306&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-13162306
-            params.put(Sanselan.PARAM_KEY_READ_THUMBNAILS, Boolean.FALSE);
+            params.put(PARAM_KEY_READ_THUMBNAILS, Boolean.FALSE);
             stream = getStream();
-            return Sanselan.getImageInfo(stream, fileName, params);
+            return getImageInfo(stream, fileName, params);
         } catch (ImageReadException | IOException | RepositoryException e) {
-            die("Failed to create Sanselan image info", e);
+            die("Failed to create commons-imaging image info", e);
         } finally {
             IOUtils.closeQuietly(stream);
         }
@@ -141,38 +135,24 @@ public class ImageBinary implements Binary {
     private ColorModel parseColorModel(final ImageInfo info) throws RepositoryException {
         if (MimeTypeHelper.isJpegMimeType(mimeType)) {
             switch(info.getColorType()) {
-                case ImageInfo.COLOR_TYPE_RGB:
+                case RGB:
                     return ColorModel.RGB;
-                case ImageInfo.COLOR_TYPE_BW:
+                case BW:
                     return ColorModel.RGB;
-                case ImageInfo.COLOR_TYPE_GRAYSCALE:
+                case GRAYSCALE:
                     return ColorModel.RGB;
-                case ImageInfo.COLOR_TYPE_CMYK:
-                    //Sanselan detects YCCK as CMYK so do a custom check
-                    return isYCCK() ? ColorModel.YCCK : ColorModel.CMYK;
+                case YCbCr:
+                    return ColorModel.RGB;
+                case CMYK:
+                    return ColorModel.CMYK;
+                case YCCK:
+                    return ColorModel.YCCK;
                 default:
                     return ColorModel.UNKNOWN;
             }
         } else {
             return ColorModel.RGB;
         }
-    }
-
-    //TODO: When Sanselan 1.0 is released we can remove this custom check. See https://issues.apache.org/jira/browse/IMAGING-89
-    private boolean isYCCK() throws RepositoryException {
-        InputStream stream = getStream();
-        try {
-            Set<JpegSegmentType> segmentTypes = new HashSet<>();
-            segmentTypes.add(JpegSegmentType.APPE);
-            JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(stream), segmentTypes);
-            byte[] appe = segmentData.getSegment(JpegSegmentType.APPE);
-            return appe != null && appe[11] == 2;
-        } catch (IOException | JpegProcessingException e1) {
-            log.warn("Unable to read color space", e1);
-        } finally {
-            IOUtils.closeQuietly(stream);
-        }
-        return false;
     }
 
     private void die(String message, Exception e) throws GalleryException {
