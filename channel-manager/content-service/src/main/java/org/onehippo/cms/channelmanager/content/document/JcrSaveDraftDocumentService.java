@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
+import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspectorImpl;
 import org.onehippo.cms.channelmanager.content.document.util.HintsUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
@@ -39,10 +40,18 @@ import static org.onehippo.cms.channelmanager.content.document.util.DocumentHand
 public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocumentService {
 
 
-    private final HintsInspectorImpl hintsInspector;
+    private HintsInspector hintsInspector;
 
     public JcrSaveDraftDocumentService() {
-        hintsInspector = new HintsInspectorImpl();
+        this.hintsInspector =  new HintsInspectorImpl();
+    }
+
+    public HintsInspector getHintsInspector() {
+        return hintsInspector;
+    }
+
+    public void setHintsInspector(final HintsInspector hintsInspector) {
+        this.hintsInspector = hintsInspector;
     }
 
     @Override
@@ -78,7 +87,7 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
 
     @Override
     protected Map<String, Serializable> getHints(final String identifier, final UserContext userContext) {
-        return HintsUtils.getHints(getWorkflow(identifier, userContext), "master");
+        return HintsUtils.getHints(getWorkflow(identifier, userContext), null);
     }
 
     private DocumentWorkflow getWorkflow(final String identifier, final UserContext userContext) {

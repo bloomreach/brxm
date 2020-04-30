@@ -98,9 +98,11 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
 
     private HintsInspector hintsInspector;
     private BranchingService branchingService;
+    private JcrSaveDraftDocumentService jcrSaveDraftDocumentService = new JcrSaveDraftDocumentService();
 
     public void setHintsInspector(final HintsInspector hintsInspector) {
         this.hintsInspector = hintsInspector;
+        this.jcrSaveDraftDocumentService.setHintsInspector(hintsInspector);
     }
 
     public void setBranchingService(final BranchingService branchingService) {
@@ -196,7 +198,7 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
     public Document obtainEditableDocument(final String uuid, final String branchId, final UserContext userContext) {
 
         if (canEditDraft(uuid, userContext)) {
-            editDraft(uuid, userContext);
+            return editDraft(uuid, userContext);
         }
 
         final Session session = userContext.getSession();
@@ -299,7 +301,8 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
 
     @Override
     public Document editDraft(final String uuid, final UserContext userContext) {
-        return new JcrSaveDraftDocumentService().editDraft(uuid, userContext);
+
+        return jcrSaveDraftDocumentService.editDraft(uuid, userContext);
     }
 
     @Override
