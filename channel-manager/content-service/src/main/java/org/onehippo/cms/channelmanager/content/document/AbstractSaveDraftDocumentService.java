@@ -38,7 +38,7 @@ import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils
 
 public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocumentService {
 
-    private static Logger log = LoggerFactory.getLogger(AbstractSaveDraftDocumentService.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractSaveDraftDocumentService.class);
 
     @Override
     public final Document editDraft(final String identifier, final UserContext userContext) {
@@ -53,7 +53,7 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
 
     public final DocumentInfo addDocumentInfo(final String identifier, final UserContext userContext, final Document document) {
         final Map<String, Serializable> hints = getHints(identifier, userContext);
-        DocumentInfo documentInfo = document.getInfo();
+        final DocumentInfo documentInfo = document.getInfo();
         documentInfo.setDirty(isDocumentDirty(identifier, userContext, document));
         documentInfo.setCanPublish(isHintActionTrue(hints, HINT_PUBLISH));
         documentInfo.setCanRequestPublication(isHintActionTrue(hints, HINT_REQUEST_PUBLICATION));
@@ -61,7 +61,8 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
     }
 
     public final DocumentType getDocumentType(final String identifier, final UserContext userContext) {
-        String id = getVariantNodeType(identifier, userContext).orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST)));
+        final String id = getVariantNodeType(identifier, userContext).orElseThrow(
+                () -> new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST)));
 
         try {
             return getDocumentTypeByNodeTypeIdentifier(userContext, id);
@@ -74,7 +75,6 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
     public final boolean canEditDraft(final Map<String, Serializable> hints) {
         return EditingUtils.isHintActionTrue(hints == null ? Collections.emptyMap() : hints, "editDraft");
     }
-
 
     abstract boolean isDocumentDirty(String identifier, UserContext userContext, Document document);
 
@@ -91,7 +91,7 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
     abstract Map<String, Serializable> getHints(String identifier, UserContext userContext);
 
     private void validateEditDraft(final String identifier, final UserContext userContext) {
-        Map<String, Serializable> hints = getHints(identifier, userContext);
+        final Map<String, Serializable> hints = getHints(identifier, userContext);
         if (!canEditDraft(hints)) {
             throw determineEditingFailure(hints, userContext)
                     .map(errorInfo -> withDocumentInfo(errorInfo, identifier, userContext))
@@ -99,11 +99,10 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
                     .orElseGet(() -> new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR)));
         }
 
-        DocumentType docType = getDocumentType(identifier, userContext);
+        final DocumentType docType = getDocumentType(identifier, userContext);
         if (docType.isReadOnlyDueToUnsupportedValidator()) {
-            throw new ForbiddenException(
-                    withDisplayName(new ErrorInfo(ErrorInfo.Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR), identifier, userContext)
-            );
+            final ErrorInfo errorInfo = new ErrorInfo(ErrorInfo.Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR);
+            throw new ForbiddenException(withDisplayName(errorInfo, identifier, userContext));
         }
     }
 
