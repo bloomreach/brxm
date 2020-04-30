@@ -143,9 +143,7 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
     }
 
     @Override
-    public Document branchDocument(final String uuid, final String branchId, final UserContext userContext)
-            {
-
+    public Document branchDocument(final String uuid, final String branchId, final UserContext userContext) {
         final Node handle = getHandle(uuid, userContext.getSession());
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         final Map<String, Serializable> hints = HintsUtils.getHints(workflow, branchId);
@@ -346,8 +344,7 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
     }
 
     @Override
-    public void discardEditableDocument(final String uuid, final String branchId, final UserContext userContext)
-            {
+    public void discardEditableDocument(final String uuid, final String branchId, final UserContext userContext) {
         final Node handle = getHandle(uuid, userContext.getSession());
         final EditableWorkflow workflow = getEditableWorkflow(handle);
 
@@ -600,6 +597,5 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
         return hintsInspector.determineEditingFailure(branchId, hints, session)
                 .orElseGet(() -> new ErrorInfo(ErrorInfo.Reason.NO_HOLDER));
     }
-
 
 }
