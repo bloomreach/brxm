@@ -15,9 +15,11 @@
  */
 
 import { mocked } from 'ts-jest/utils';
+import * as angular from '@angular/common';
 import { SimpleChange, NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, getTestBed, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
+import { TransferState } from '@angular/platform-browser';
 import { destroy, initialize, isPage, Component, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
 
 import { BrNodeTypePipe } from '../br-node-type.pipe';
@@ -27,14 +29,18 @@ jest.mock('@bloomreach/spa-sdk');
 
 describe('BrPageComponent', () => {
   let component: BrPageComponent;
+  let isPlatformBrowserSpy: jasmine.Spy;
+  let isPlatformServerSpy: jasmine.Spy;
   let httpMock: HttpTestingController;
   let fixture: ComponentFixture<BrPageComponent>;
   let page: jest.Mocked<Page>;
+  let transferState: jest.Mocked<TransferState>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ BrNodeTypePipe, BrPageComponent ],
       imports: [ HttpClientTestingModule ],
+      providers: [{ provide: TransferState, useFactory: () => transferState }],
       schemas: [ NO_ERRORS_SCHEMA ],
     })
     .compileComponents();
@@ -42,12 +48,22 @@ describe('BrPageComponent', () => {
 
   beforeEach(() => {
     httpMock = getTestBed().get(HttpTestingController);
+    isPlatformBrowserSpy = spyOn(angular, 'isPlatformBrowser').and.callThrough();
+    isPlatformServerSpy = spyOn(angular, 'isPlatformServer').and.callThrough();
+    transferState = {
+      hasKey: jest.fn(),
+      get: jest.fn(),
+      remove: jest.fn(),
+      set: jest.fn(),
+    } as unknown as typeof transferState;
+
     fixture = TestBed.createComponent(BrPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
     page = {
       getComponent: jest.fn(),
       sync: jest.fn(),
+      toJSON: jest.fn(),
     } as unknown as jest.Mocked<Page>;
 
     jest.resetAllMocks();
@@ -192,6 +208,93 @@ describe('BrPageComponent', () => {
 
       expect(initialize).toBeCalledWith(expect.any(Object), component.page);
       expect(component.state.getValue()).toBe(page);
+    });
+
+    it('should initialize a page from the transferred state', async () => {
+      const state = {};
+
+      mocked(initialize).mockResolvedValueOnce(page);
+      mocked(isPlatformBrowserSpy).and.returnValue(true);
+      transferState.hasKey.mockReturnValueOnce(true);
+      transferState.get.mockReturnValueOnce(state);
+
+      component.configuration = {} as Configuration;
+      component.ngOnChanges({
+        configuration: new SimpleChange(undefined, component.configuration, true),
+      });
+
+      await new Promise(process.nextTick);
+
+      expect(transferState.get).toBeCalledWith(component.stateKey, undefined);
+      expect(transferState.remove).toBeCalledWith(component.stateKey);
+      expect(initialize).toBeCalledWith(expect.any(Object), state);
+      expect(component.state.getValue()).toBe(page);
+    });
+
+    it('should initialize a page using the page model from the inputs instead of the transferred state', async () => {
+      mocked(initialize).mockResolvedValueOnce(page);
+      mocked(isPlatformBrowserSpy).and.returnValue(true);
+      transferState.hasKey.mockReturnValueOnce(true);
+
+      component.configuration = {} as Configuration;
+      component.page = {} as PageModel;
+      component.ngOnChanges({
+        configuration: new SimpleChange(undefined, component.configuration, true),
+        page: new SimpleChange(undefined, component.page, true),
+      });
+
+      await new Promise(process.nextTick);
+
+      expect(transferState.remove).toBeCalledWith(component.stateKey);
+      expect(initialize).toBeCalledWith(expect.any(Object), component.page);
+    });
+
+    it('should not initialize from the transferred state if the stateKey is false', async () => {
+      mocked(initialize).mockResolvedValueOnce(page);
+      mocked(isPlatformBrowserSpy).and.returnValue(true);
+
+      component.configuration = {} as Configuration;
+      component.stateKey = false;
+      component.ngOnChanges({
+        configuration: new SimpleChange(undefined, component.configuration, true),
+      });
+
+      await new Promise(process.nextTick);
+
+      expect(transferState.hasKey).not.toBeCalled();
+      expect(transferState.get).not.toBeCalled();
+      expect(transferState.remove).not.toBeCalled();
+      expect(initialize).toBeCalledWith(expect.any(Object), undefined);
+    });
+
+    it('should update a page in the transferred state', () => {
+      const model = {} as PageModel;
+
+      mocked(isPlatformServerSpy).and.returnValue(true);
+      page.toJSON.mockReturnValue(model);
+
+      component.configuration = {} as Configuration;
+      component.page = page;
+      component.ngOnChanges({
+        configuration: new SimpleChange(undefined, component.configuration, true),
+        page: new SimpleChange(undefined, component.page, true),
+      });
+      component.ngOnInit();
+
+      expect(transferState.set).toBeCalledWith(component.stateKey, model);
+    });
+
+    it('should update the transfered state on the stateKey update', () => {
+      mocked(isPlatformServerSpy).and.returnValue(true);
+      transferState.hasKey.mockReturnValueOnce(true);
+      transferState.get.mockReturnValueOnce('state');
+
+      component.ngOnChanges({
+        stateKey: new SimpleChange('old-key', 'new-key', true),
+      });
+
+      expect(transferState.set).toBeCalledWith('new-key', 'state');
+      expect(transferState.remove).toBeCalledWith('old-key');
     });
 
     it('should pass a compatible http client', () => {

@@ -45,6 +45,7 @@
   "peerDependencies": {
     "@angular/common": "^9.1",
     "@angular/core": "^9.1",
+    "@angular/platform-browser": "^9.1",
     "tslib": "^1.11"
   },
   "devDependencies": {

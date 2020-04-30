@@ -20,17 +20,22 @@ import {
   ChangeDetectionStrategy,
   Component,
   ContentChild,
+  Inject,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
   Output,
+  Optional,
+  PLATFORM_ID,
   SimpleChanges,
   TemplateRef,
   Type,
   ViewChild,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { makeStateKey, StateKey, TransferState } from '@angular/platform-browser';
 import { from, BehaviorSubject, Subject } from 'rxjs';
 import { filter, map, mapTo, pairwise, pluck, switchMap, take } from 'rxjs/operators';
 import { destroy, initialize, isPage, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
@@ -68,6 +73,13 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
   @Input() page?: Page | PageModel;
 
   /**
+   * The TransferState key is used to transfer the state from the server-side to the client-side.
+   * By default, it equals to `brPage`.
+   * If `false` is passed then the state transferring feature will be disabled.
+   */
+  @Input() stateKey: StateKey<PageModel | undefined> | false = makeStateKey('brPage');
+
+  /**
    * The current state of the page component.
    */
   @Output() state = new BehaviorSubject<Page | undefined>(undefined);
@@ -78,7 +90,12 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
 
   private afterContentChecked$ = new Subject();
 
-  constructor(private changeDetectorRef: ChangeDetectorRef, private httpClient: HttpClient) {
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef,
+    private httpClient: HttpClient,
+    @Inject(PLATFORM_ID) private platform: any,
+    @Optional() private transferState?: TransferState,
+  ) {
     this.request = this.request.bind(this);
   }
 
@@ -99,10 +116,19 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.configuration?.currentValue !== changes.configuration?.previousValue
-      || changes.page?.currentValue !== changes.page?.previousValue
-    ) {
-      this.initialize(changes.page?.currentValue === changes.page?.previousValue);
+    if (changes.configuration || changes.page) {
+      this.initialize(changes.page?.currentValue);
+    }
+
+    if (changes.stateKey?.previousValue && isPlatformServer(this.platform)) {
+      if (changes.stateKey.currentValue && this.transferState?.hasKey(changes.stateKey.previousValue)) {
+        this.transferState?.set(
+          changes.stateKey.currentValue,
+          this.transferState?.get(changes.stateKey.previousValue, undefined),
+        );
+      }
+
+      this.transferState?.remove(changes.stateKey.previousValue);
     }
   }
 
@@ -119,6 +145,11 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
       switchMap((page) => this.afterContentChecked$.pipe(take(1), mapTo(page))),
     )
     .subscribe((page) => page.sync());
+
+    if (isPlatformServer(this.platform)) {
+      this.state.pipe(filter(isPage))
+        .subscribe((page) => this.stateKey && this.transferState?.set(this.stateKey, page.toJSON()));
+    }
   }
 
   ngAfterContentChecked(): void {
@@ -131,13 +162,16 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
     this.afterContentChecked$.complete();
   }
 
-  private initialize(force: boolean): void {
-    const page = force ? undefined : this.page;
-
+  private initialize(page: Page | PageModel | undefined): void {
     if (isPage(page)) {
       this.state.next(page);
 
       return;
+    }
+
+    if (this.stateKey && isPlatformBrowser(this.platform) && this.transferState?.hasKey(this.stateKey)) {
+      page = page ?? this.transferState?.get(this.stateKey, undefined);
+      this.transferState?.remove(this.stateKey);
     }
 
     from(initialize({ httpClient: this.request, ...this.configuration } as Configuration, page))
