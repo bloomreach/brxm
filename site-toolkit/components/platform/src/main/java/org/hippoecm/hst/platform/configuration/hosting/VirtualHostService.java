@@ -369,7 +369,12 @@ public class VirtualHostService implements MutableVirtualHost {
                     VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, defaultPort, hstNodeLoadingCache, hstConfigurationLoadingCache);
                     attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
                 } catch (ModelLoadingException e) {
-                    log.error("Skipping incorrect virtual host for node '"+child.getValueProvider().getPath()+"'" ,e);
+                    if (e.isMissingEnvironmentVariable()) {
+                        log.info("Skip virtualhost with name '{}'because missing environment variable.",
+                                virtualHostNode.getValueProvider().getName(), e);
+                    } else {
+                        log.error("Skipping incorrect virtual host for node '{}'", child.getValueProvider().getPath(), e);
+                    }
                 }
 
             } else if (HstNodeTypes.NODETYPE_HST_PORTMOUNT.equals(child.getNodeTypeName())){
