@@ -29,18 +29,20 @@ import javax.jcr.security.Privilege;
 
 import org.hippoecm.repository.util.JcrUtils;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_MULTIVALUE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_REL_PATH;
+import static org.onehippo.repository.util.JcrConstants.MIX_REFERENCEABLE;
+
 public class RelativePropertyReference extends PropertyReference {
 
-    private static final String HIPPOSYS_MULTIVALUE_PROP_NAME = "hipposys:multivalue";
-    public static final String HIPPOSYS_REL_PATH_PROP_NAME = "hipposys:relPath";
     private boolean multiValue = false;
 
     public RelativePropertyReference(final Node node, final FunctionDescription function) {
         super(node, function);
         try {
-            multiValue = node.hasProperty(HIPPOSYS_MULTIVALUE_PROP_NAME) && node.getProperty(HIPPOSYS_MULTIVALUE_PROP_NAME).getBoolean();
+            multiValue = JcrUtils.getBooleanProperty(node, HIPPOSYS_MULTIVALUE, false);
         } catch (RepositoryException e) {
-            DerivedDataEngine.log.warn("cannot access configuration property", e);
+            DerivedDataEngine.log.error("cannot access configuration property", e);
         }
     }
 
@@ -48,7 +50,7 @@ public class RelativePropertyReference extends PropertyReference {
     Value[] getPropertyValues(Node modified, Collection<String> dependencies) throws RepositoryException {
         final Property property = JcrUtils.getPropertyIfExists(modified, getRelativePath());
         if (property != null) {
-            if (property.getParent().isNodeType("mix:referenceable")) {
+            if (property.getParent().isNodeType(MIX_REFERENCEABLE)) {
                 dependencies.add(property.getParent().getIdentifier());
             }
             if (!property.getDefinition().isMultiple()) {
@@ -103,7 +105,7 @@ public class RelativePropertyReference extends PropertyReference {
     }
 
     private String getRelativePath() throws RepositoryException {
-        return node.getProperty(HIPPOSYS_REL_PATH_PROP_NAME).getString();
+        return node.getProperty(HIPPOSYS_REL_PATH).getString();
     }
 
 
