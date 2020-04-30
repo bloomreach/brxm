@@ -42,8 +42,7 @@ public interface DocumentsService {
      *
      * @throws ErrorWithPayloadException If reading the document failed
      */
-    Document getDocument(final String uuid, final String branchId, final UserContext userContext)
-            throws ErrorWithPayloadException;
+    Document getDocument(final String uuid, final String branchId, final UserContext userContext);
 
     /**
      * Branches a document.
@@ -58,8 +57,7 @@ public interface DocumentsService {
      *
      * @throws ErrorWithPayloadException If branching the document failed
      */
-    Document branchDocument(final String uuid, final String branchId, final UserContext userContext)
-            throws ErrorWithPayloadException;
+    Document branchDocument(final String uuid, final String branchId, final UserContext userContext);
 
 
     /**
@@ -75,8 +73,7 @@ public interface DocumentsService {
      *
      * @throws ErrorWithPayloadException If obtaining the editable instance failed
      */
-    Document obtainEditableDocument(final String uuid, final String branchId, final UserContext userContext)
-            throws ErrorWithPayloadException;
+    Document obtainEditableDocument(final String uuid, final String branchId, final UserContext userContext);
 
     /**
      * Updates the editable version of a document, and keep it locked for further editing.
@@ -94,8 +91,7 @@ public interface DocumentsService {
      *
      * @throws ErrorWithPayloadException If updating the editable document failed
      */
-    Document updateEditableDocument(final String uuid, final Document document, final UserContext userContext)
-            throws ErrorWithPayloadException;
+    Document updateEditableDocument(final String uuid, final Document document, final UserContext userContext);
 
     /**
      * Update a single field value in the editable version of a document.
@@ -116,8 +112,7 @@ public interface DocumentsService {
      * @throws ErrorWithPayloadException If updating the field failed
      */
     List<FieldValue> updateEditableField(final String uuid, final String branchId, final FieldPath fieldPath,
-                                         final List<FieldValue> fieldValues, final UserContext userContext)
-            throws ErrorWithPayloadException;
+                                         final List<FieldValue> fieldValues, final UserContext userContext);
 
     /**
      * Discard the editable version of a document, such that it is available for others to edit. The changes that were
@@ -130,8 +125,7 @@ public interface DocumentsService {
      *
      * @throws ErrorWithPayloadException If releasing the editable instance failed
      */
-    void discardEditableDocument(final String uuid, final String branchId, final UserContext userContext)
-            throws ErrorWithPayloadException;
+    void discardEditableDocument(final String uuid, final String branchId, final UserContext userContext);
 
     /**
      * Creates a new document. In case of a bad request, changes may be pending.
@@ -141,8 +135,7 @@ public interface DocumentsService {
      *
      * @return the created document
      */
-    Document createDocument(final NewDocumentInfo newDocumentInfo, final UserContext userContext)
-            throws ErrorWithPayloadException;
+    Document createDocument(final NewDocumentInfo newDocumentInfo, final UserContext userContext);
 
     /**
      * Updates the display name and URL name of a document. In case of a bad request, changes may be pending.
@@ -154,8 +147,7 @@ public interface DocumentsService {
      * @throws ErrorWithPayloadException if the display name and/or URL name already exists, or changing the names fails.
      */
     Document updateDocumentNames(final String uuid, final String branchId, final Document document,
-                                 final UserContext userContext)
-            throws ErrorWithPayloadException;
+                                 final UserContext userContext);
 
     /**
      * Deletes a document. In case of a bad request, changes may be pending.
@@ -166,6 +158,5 @@ public interface DocumentsService {
      *
      * @throws ErrorWithPayloadException If deleting the document failed
      */
-    void deleteDocument(final String uuid, final String branchId, final UserContext userContext)
-            throws ErrorWithPayloadException;
+    void deleteDocument(final String uuid, final String branchId, final UserContext userContext);
 }
