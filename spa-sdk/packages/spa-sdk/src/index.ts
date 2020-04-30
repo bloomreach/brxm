@@ -51,7 +51,7 @@ import { Events } from './events';
 import { UrlBuilderImpl, appendSearchParams, extractSearchParams, isMatched, parseUrl } from './url';
 
 const DEFAULT_AUTHORIZATION_PARAMETER = 'token';
-const DEFAULT_SERVER_ID_PARAMETER = 'serverid';
+const DEFAULT_SERVER_ID_PARAMETER = 'server-id';
 
 const eventBus = new emittery.Typed<Events>();
 const postMessage = new PostMessage();

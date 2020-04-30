@@ -55,7 +55,7 @@ export interface ConfigurationWithJwt extends ApiOptions, CmsOptions, UrlBuilder
 
   /**
    * The query string parameter used to pass a cluster node identifier.
-   * By default, `serverid` parameter is used.
+   * By default, `server-id` parameter is used.
    */
   serverIdQueryParameter?: string;
 }
