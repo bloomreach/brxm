@@ -81,7 +81,7 @@ describe('ContentEditorService', () => {
           id: 'ns:testdocument',
         },
         publicationState: 'live',
-        retainable: 'false',
+        retainable: false,
       },
       fields: {
         'ns:string': [

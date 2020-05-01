@@ -52,19 +52,20 @@ class EditContentToolsCtrl {
 
   uiCanExit() {
     if (this.exitToContentEditor) {
-      if (this.ContentEditor.isRetainable()) {
-        return this.ContentEditor.keepDraft()
-          .then(() => this._viewContent())
-          .finally(this._clear());
-      }
-      return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_TO_DOCUMENT')
-        .then(() => this.ContentEditor.discardChanges())
+      return this._saveContentEditor()
         .then(() => this._viewContent())
         .finally(this._clear());
     }
     // yes, the UI can exit. Return something to make ESLint happy.
     this._clear();
     return true;
+  }
+
+  _saveContentEditor() {
+    return this.ContentEditor.isRetainable()
+      ? this.ContentEditor.keepDraft()
+      : this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_TO_DOCUMENT')
+        .then(() => this.ContentEditor.discardChanges());
   }
 
   _viewContent() {
