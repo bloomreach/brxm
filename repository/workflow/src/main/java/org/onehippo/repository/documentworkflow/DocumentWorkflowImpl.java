@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import javax.jcr.version.Version;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
@@ -44,6 +45,7 @@ import org.onehippo.cms7.services.lock.LockResource;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_ID;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_NAME;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.DATE;
@@ -197,6 +199,10 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         Map<String, Serializable> hints = super.hints();
         hints.putAll(workflowExecutor.getContext().getFeedback());
         hints.putAll(workflowExecutor.getContext().getActions());
+
+        // Because documentworkflow.scxml can't be modified in a minor release this hint is added programmatically
+        addSaveUnpublishedHint(hints);
+
         for (Map.Entry<String, Serializable> entry : hints.entrySet()) {
             if (entry.getValue() instanceof Collection) {
                 // protect against modifications
@@ -433,6 +439,12 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     @Override
+    public void saveUnpublished() throws WorkflowException {
+        // Because documentworkflow.scxml can't be modified in a minor release this action is implemented in code only
+        triggerSaveUnpublishedAction();
+    }
+
+    @Override
     public Object triggerAction(final WorkflowAction action) throws WorkflowException {
         if (!(action instanceof DocumentWorkflowAction)) {
             throw new IllegalArgumentException(String.format("action class must be of type '%s' for document workflow but " +
@@ -474,4 +486,41 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         }
     }
 
+    private void addSaveUnpublishedHint(final Map<String, Serializable> hints) throws WorkflowException {
+        try {
+            final DocumentHandle documentHandle = workflowExecutor.getData();
+            if (!documentHandle.getDocuments().isEmpty()) {
+                // Only add the hint if there is at least one variant to comply with no-document state in scxml.
+                hints.put(DocumentWorkflowAction.saveUnpublished().getAction(), isUnpublishedModifiedInWorkflow(documentHandle));
+            }
+        } catch (RepositoryException e) {
+            final String message = String.format("Workflow %s execution failed", getScxmlId());
+            throw new WorkflowException(message, e);
+        }
+    }
+
+    private void triggerSaveUnpublishedAction() throws WorkflowException {
+        try {
+            final DocumentHandle documentHandle = workflowExecutor.getData();
+            if (!isUnpublishedModifiedInWorkflow(documentHandle)) {
+                final String message = String.format(
+                        "Cannot invoke workflow %s action %s: action not allowed or undefined",
+                        getScxmlId(), DocumentWorkflowAction.saveUnpublished().getAction());
+                throw new WorkflowException(message);
+            }
+            documentHandle.getDocuments().get(UNPUBLISHED).setModified(getWorkflowContext().getUserIdentity());
+        } catch (RepositoryException e) {
+            final String message = String.format("Workflow %s execution failed", getScxmlId());
+            throw new WorkflowException(message, e);
+        }
+    }
+
+    private boolean isUnpublishedModifiedInWorkflow(DocumentHandle documentHandle) throws RepositoryException {
+        final DocumentVariant unpublishedVariant = documentHandle.getDocuments().get(UNPUBLISHED);
+        if (unpublishedVariant == null) {
+            return false;
+        }
+        final HippoSession internalWorkflowSession = (HippoSession) getWorkflowContext().getInternalWorkflowSession();
+        return internalWorkflowSession.pendingChanges(unpublishedVariant.getNode(), null).hasNext();
+    }
 }

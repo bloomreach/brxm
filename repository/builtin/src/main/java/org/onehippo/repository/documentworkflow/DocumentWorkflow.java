@@ -673,4 +673,16 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
     default Object triggerAction(final WorkflowAction action) throws WorkflowException {
         throw new UnsupportedOperationException("Action has not been defined for this instance.");
     }
+
+    /**
+     * If the unpublished variant or any of it's descendants has pending changes on the current workflow (i.e. there
+     * are pending changes on the internal workflow session) then
+     * - the lastModifiedBy of the unpublished variant is set to the id of the userSession
+     * - the lastModificationDate of the unpublished variant  is set to now
+     * - the internal workflow session is saved to persist the changes.
+     * If there are no changes then calling this method will throw a {@link WorkflowException}.
+     *
+     * @throws WorkflowException if this action is not allowed based on the hints or if saving the changes fails
+     */
+    void saveUnpublished() throws WorkflowException;
 }
