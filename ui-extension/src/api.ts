@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -317,6 +317,14 @@ export interface DocumentScope {
    * @returns A Promise that resolves with [[DocumentProperties]] of the current document.
    */
   get(): Promise<DocumentProperties>;
+
+  /**
+   * Opens a document by id in the content perspective.
+   * @since 14.2
+   * @param id The document id.
+   * @returns A Promise that resolves when the document is opened.
+   */
+  open(id: string): Promise<void>;
 
   /**
    * API for the current field of the current document.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,6 +120,7 @@ interface DocumentParent extends UiParent {
   getDocument: ParentMethod<DocumentProperties>;
   getFieldValue: ParentMethod<string>;
   getFieldCompareValue: ParentMethod<string>;
+  openDocument: ParentMethod<void, [string]>;
   setFieldValue: ParentMethod<void, [string]>;
   setFieldHeight: ParentMethod<void, [Height]>;
 }
@@ -166,6 +167,10 @@ class Document extends Scope<DocumentParent> implements DocumentScope {
 
   get(): Promise<DocumentProperties> {
     return this[PARENT].call('getDocument');
+  }
+
+  open(id: string): Promise<void> {
+    return this[PARENT].call('openDocument', id);
   }
 }
 

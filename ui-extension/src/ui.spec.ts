@@ -147,6 +147,15 @@ describe('Ui.init()', () => {
     });
   });
 
+  describe('ui.document.open()', () => {
+    it('opens a document by id', async () => {
+      parentConnection.call = jest.fn().mockResolvedValue(undefined);
+      await ui.document.open('id');
+
+      expect(parentConnection.call).toHaveBeenCalledWith('openDocument', 'id');
+    });
+  });
+
   describe('ui.document.field', () => {
     beforeEach(() => { ui.document.field; });
 
