@@ -6,12 +6,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --prod && ng run example-angular:server:production",
     "test": "ng test  --passWithNoTests",
     "lint": "ng lint",
     "dev:ssr": "ng run example-angular:serve-ssr",
     "start:ssr": "node dist/server/main.js",
-    "build:ssr": "ng build --prod && ng run example-angular:server:production",
     "prerender": "ng run example-angular:prerender"
   },
   "dependencies": {
