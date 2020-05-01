@@ -33,7 +33,6 @@ public final class HintsUtils {
 
     private static final Logger log = LoggerFactory.getLogger(HintsUtils.class);
 
-
     private HintsUtils() {
     }
 

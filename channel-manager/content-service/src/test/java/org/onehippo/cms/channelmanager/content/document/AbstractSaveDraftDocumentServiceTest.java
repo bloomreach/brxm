@@ -24,7 +24,6 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
@@ -37,10 +36,11 @@ import org.onehippo.cms.channelmanager.content.error.InternalServerErrorExceptio
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.document.AbstractSaveDraftDocumentService.EDIT_DRAFT;
+import static org.onehippo.cms.channelmanager.content.document.AbstractSaveDraftDocumentService.SAVE_DRAFT;
 
 /**
  * <p>Test the business logics of the DocumentService</p>
@@ -69,7 +69,7 @@ public class AbstractSaveDraftDocumentServiceTest {
     @Test
     public void editDraft() {
         Map<String, Serializable> hints = new HashMap<>();
-        hints.put("editDraft", Boolean.TRUE);
+        hints.put(EDIT_DRAFT, Boolean.TRUE);
         testSaveDraftDocumentService.setHints(hints);
         final Document expected = new Document();
         expected.setId("id");
@@ -80,7 +80,7 @@ public class AbstractSaveDraftDocumentServiceTest {
     @Test
     public void editDraft_info_nonRetainable() {
         Map<String, Serializable> hints = new HashMap<>();
-        hints.put("editDraft", Boolean.TRUE);
+        hints.put(EDIT_DRAFT, Boolean.TRUE);
         testSaveDraftDocumentService.setHints(hints);
         final Document actual = documentsService.editDraft("id", null);
         final Document expected = new Document();
@@ -91,8 +91,8 @@ public class AbstractSaveDraftDocumentServiceTest {
     @Test
     public void editDraft_info_Retainable() {
         Map<String, Serializable> hints = new HashMap<>();
-        hints.put("editDraft", Boolean.TRUE);
-        hints.put("saveDraft", Boolean.TRUE);
+        hints.put(EDIT_DRAFT, Boolean.TRUE);
+        hints.put(SAVE_DRAFT, Boolean.TRUE);
         testSaveDraftDocumentService.setHints(hints);
         persistedDraft.getInfo().setRetainable(true);
         final Document actual = documentsService.editDraft("id", null);
@@ -116,7 +116,7 @@ public class AbstractSaveDraftDocumentServiceTest {
     @Test
     public void editDraftNoDocumentType() throws Exception {
         Map<String, Serializable> hints = new HashMap<>();
-        hints.put("editDraft", Boolean.TRUE);
+        hints.put(EDIT_DRAFT, Boolean.TRUE);
         testSaveDraftDocumentService.setHints(hints);
         testSaveDraftDocumentService.associateDocumentWithNodeType("id", "other");
 
@@ -131,7 +131,7 @@ public class AbstractSaveDraftDocumentServiceTest {
     @Test
     public void editDraftUnkownValidator() throws Exception {
         Map<String, Serializable> hints = new HashMap<>();
-        hints.put("editDraft", Boolean.TRUE);
+        hints.put(EDIT_DRAFT, Boolean.TRUE);
         testSaveDraftDocumentService.setHints(hints);
         documentType.setReadOnlyDueToUnsupportedValidator(true);
         final ErrorInfo documentInfo = new ErrorInfo(ErrorInfo.Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR);
@@ -151,7 +151,7 @@ public class AbstractSaveDraftDocumentServiceTest {
     @Test
     public void editDraftFailed() throws Exception {
         Map<String, Serializable> hints = new HashMap<>();
-        hints.put("editDraft", Boolean.TRUE);
+        hints.put(EDIT_DRAFT, Boolean.TRUE);
         testSaveDraftDocumentService.setHints(hints);
         testSaveDraftDocumentService.setDraft(null);
         try {
@@ -176,7 +176,7 @@ public class AbstractSaveDraftDocumentServiceTest {
     @Test
     public void saveDraft_EditAllowed_SaveNotAllowed() throws Exception {
         Map<String, Serializable> hints = new HashMap<>();
-        hints.put("editDraft", Boolean.TRUE);
+        hints.put(EDIT_DRAFT, Boolean.TRUE);
         testSaveDraftDocumentService.setHints(hints);
         try {
             documentsService.saveDraft("id", null, new Document());
@@ -189,8 +189,8 @@ public class AbstractSaveDraftDocumentServiceTest {
     @Test
     public void saveDraft() throws Exception {
         Map<String, Serializable> hints = new HashMap<>();
-        hints.put("editDraft", Boolean.TRUE);
-        hints.put("saveDraft", Boolean.TRUE);
+        hints.put(EDIT_DRAFT, Boolean.TRUE);
+        hints.put(SAVE_DRAFT, Boolean.TRUE);
         Document input = new Document();
         input.setId("id");
         testSaveDraftDocumentService.setHints(hints);
@@ -212,8 +212,8 @@ public class AbstractSaveDraftDocumentServiceTest {
         input.setId("id");
         input.setFields(Collections.singletonMap("key", Collections.singletonList(new FieldValue("value"))));
         Map<String, Serializable> hints = new HashMap<>();
-        hints.put("editDraft", Boolean.TRUE);
-        hints.put("saveDraft", Boolean.TRUE);
+        hints.put(EDIT_DRAFT, Boolean.TRUE);
+        hints.put(SAVE_DRAFT, Boolean.TRUE);
         // publish and request publication are not added to the document info
         // because they are always false when a document is transferable
         hints.put(EditingUtils.HINT_PUBLISH, Boolean.TRUE);

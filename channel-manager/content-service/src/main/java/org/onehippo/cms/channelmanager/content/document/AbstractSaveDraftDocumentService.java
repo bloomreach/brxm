@@ -35,7 +35,9 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocumentService {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractSaveDraftDocumentService.class);
-    public static final String SAVE_DRAFT = "saveDraft";
+
+    static final String EDIT_DRAFT = "editDraft";
+    static final String SAVE_DRAFT = "saveDraft";
 
     @Override
     public final Document editDraft(final String identifier, final UserContext userContext) {
@@ -90,7 +92,7 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
     }
 
     public final boolean canEditDraft(final Map<String, Serializable> hints) {
-        return isHintActionTrue(hints, "editDraft");
+        return isHintActionTrue(hints, EDIT_DRAFT);
     }
 
     public final boolean canSaveDraft(final Map<String, Serializable> hints) {
@@ -128,8 +130,8 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
         validateDocType(identifier, userContext);
     }
 
-    private void throwException(final String identifier, final UserContext userContext
-            , final Map<String, Serializable> hints) {
+    private void throwException(final String identifier, final UserContext userContext,
+                                final Map<String, Serializable> hints) {
         throw determineEditingFailure(hints, userContext)
                 .map(errorInfo -> withDocumentInfo(errorInfo, identifier, userContext))
                 .map(ForbiddenException::new)
@@ -137,17 +139,15 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
     }
 
     private void validateDocType(final String identifier, final UserContext userContext) {
-        DocumentType docType = getDocumentType(identifier, userContext);
+        final DocumentType docType = getDocumentType(identifier, userContext);
         if (docType.isReadOnlyDueToUnsupportedValidator()) {
-            throw new ForbiddenException(
-                    withDisplayName(new ErrorInfo(ErrorInfo.Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR)
-                            , identifier, userContext)
-            );
+            final ErrorInfo errorInfo = new ErrorInfo(ErrorInfo.Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR);
+            throw new ForbiddenException(withDisplayName(errorInfo, identifier, userContext));
         }
     }
 
     private void validateSaveDraft(final String identifier, final UserContext userContext) {
-        Map<String, Serializable> hints = getHints(identifier, userContext);
+        final Map<String, Serializable> hints = getHints(identifier, userContext);
         if (!canSaveDraft(hints)) {
             throwException(identifier, userContext, hints);
         }
