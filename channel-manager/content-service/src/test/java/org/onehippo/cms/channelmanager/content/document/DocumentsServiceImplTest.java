@@ -133,6 +133,11 @@ public class DocumentsServiceImplTest {
             public boolean shouldSaveDraft(final Document document) {
                 return false;
             }
+
+            @Override
+            void addDocumentInfo(final String uuid, final UserContext userContext, final Document document) {
+                // do nothing ( tested in AbstractKeepDraftDocumentServiceTest
+            }
         };
         documentsService.setHintsInspector(hintsInspector);
         branchingService = createMock(BranchingService.class);
