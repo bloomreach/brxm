@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ import { Ui } from './ui';
 import UiExtension from './ui-extension'; // tslint:disable-line:import-name
 
 jest.mock('./parent');
-
-window['MutationObserver'] = class {};
 
 afterEach(() => {
   (connect as jest.Mock).mockClear();

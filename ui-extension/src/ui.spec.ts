@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,14 +27,16 @@ import { Ui } from './ui';
 const observe = jest.fn();
 const disconnect = jest.fn();
 
-window['MutationObserver'] = class {
-  constructor(callback: () => {}) {}
-  observe(element: HTMLElement, init: MutationObserverInit) {
-    observe(element, init);
-    return () => this.disconnect();
-  }
-  disconnect() { disconnect(); }
-};
+beforeEach(() => {
+  spyOn(MutationObserver.prototype, 'observe').and.callFake(
+    function (this: MutationObserver, element: HTMLElement, init: MutationObserverInit) {
+      observe(element, init);
+      return () => this.disconnect();
+    },
+  );
+
+  spyOn(MutationObserver.prototype, 'disconnect').and.callFake(disconnect);
+});
 
 afterEach(() => {
   observe.mockClear();
