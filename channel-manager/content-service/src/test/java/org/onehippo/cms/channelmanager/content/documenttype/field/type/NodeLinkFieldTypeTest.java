@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.repository.mock.MockNode;
@@ -212,7 +213,9 @@ public class NodeLinkFieldTypeTest {
     @Test(expected = BadRequestException.class)
     public void writeMissingValues() throws Exception {
         linkFieldType.setId("my:documentlink");
-        linkFieldType.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
+        final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("1234"));
+        linkFieldType.validate(fieldValues, new CompoundContext(null, documentNode, null, null));
+        linkFieldType.writeValues(documentNode, Optional.of(fieldValues));
     }
 
     @Test
@@ -220,7 +223,7 @@ public class NodeLinkFieldTypeTest {
         linkFieldType.setId("my:documentlink");
         linkFieldType.setMinValues(0);
         linkFieldType.setMaxValues(1);
-        linkFieldType.writeValues(documentNode, Optional.of(Collections.emptyList()), true);
+        linkFieldType.writeValues(documentNode, Optional.of(Collections.emptyList()));
     }
 
     @Test
@@ -228,7 +231,7 @@ public class NodeLinkFieldTypeTest {
         linkFieldType.setId("my:documentlink");
         final MockNode documentLinkNode = documentNode.addNode("my:documentlink", "hippo:mirror");
 
-        linkFieldType.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
+        linkFieldType.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue("1234"))));
 
         assertThat(documentLinkNode.getProperty("hippo:docbase").getString(), equalTo("1234"));
     }
@@ -238,7 +241,7 @@ public class NodeLinkFieldTypeTest {
         linkFieldType.setId("my:documentlink");
         final MockNode documentLinkNode = documentNode.addNode("my:documentlink", "hippo:mirror");
 
-        linkFieldType.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue(""))), true);
+        linkFieldType.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue(""))));
 
         assertThat(documentLinkNode.getProperty("hippo:docbase").getString(),
                 equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
@@ -253,8 +256,7 @@ public class NodeLinkFieldTypeTest {
         final MockNode documentLinkNode1 = documentNode.addNode("my:documentlink", "hippo:mirror");
         final MockNode documentLinkNode2 = documentNode.addNode("my:documentlink", "hippo:mirror");
 
-        linkFieldType.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue(""), new FieldValue(""))),
-                true);
+        linkFieldType.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue(""), new FieldValue(""))));
 
         assertThat(documentLinkNode1.getProperty("hippo:docbase").getString(),
                 equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
@@ -271,8 +273,7 @@ public class NodeLinkFieldTypeTest {
         final MockNode documentLinkNode1 = documentNode.addNode("my:documentlink", "hippo:mirror");
         final MockNode documentLinkNode2 = documentNode.addNode("my:documentlink", "hippo:mirror");
 
-        linkFieldType.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue("1234"), new FieldValue(""))),
-                true);
+        linkFieldType.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue("1234"), new FieldValue(""))));
 
         assertThat(documentLinkNode1.getProperty("hippo:docbase").getString(), equalTo("1234"));
         assertThat(documentLinkNode2.getProperty("hippo:docbase").getString(),
@@ -287,6 +288,6 @@ public class NodeLinkFieldTypeTest {
         expect(node.getNodes(anyString())).andThrow(new RepositoryException());
         replayAll();
 
-        linkFieldType.writeValues(node, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
+        linkFieldType.writeValues(node, Optional.of(Collections.singletonList(new FieldValue("1234"))));
     }
 }

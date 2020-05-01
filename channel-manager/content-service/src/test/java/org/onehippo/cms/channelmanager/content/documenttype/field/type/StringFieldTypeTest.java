@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.ValidateAndWrite.validateAndWriteTo;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -113,14 +114,14 @@ public class StringFieldTypeTest {
         node.setProperty(PROPERTY, "Old Value");
 
         try {
-            fieldType.writeTo(node, Optional.of(Collections.singletonList(valueOf("Too longggg"))));
+            validateAndWriteTo(node, fieldType, Collections.singletonList(valueOf("Too longggg")));
             fail("Must not be too long");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
         }
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
 
-        fieldType.writeTo(node, Optional.of(Collections.singletonList(valueOf("New Value!"))));
+        validateAndWriteTo(node, fieldType, Collections.singletonList(valueOf("New Value!")));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value!"));
     }
 
@@ -134,7 +135,7 @@ public class StringFieldTypeTest {
         fieldType.setMultiple(true);
 
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("okay"), valueOf("Too longggg"))));
+            validateAndWriteTo(node, fieldType, Arrays.asList(valueOf("okay"), valueOf("Too longggg")));
             fail("Must not be too long");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
@@ -142,7 +143,7 @@ public class StringFieldTypeTest {
         assertFalse(node.hasProperty(PROPERTY));
 
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("Too longggg"), valueOf("okay"))));
+            validateAndWriteTo(node, fieldType, Arrays.asList(valueOf("Too longggg"), valueOf("okay")));
             fail("Must not be too long");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
@@ -150,14 +151,14 @@ public class StringFieldTypeTest {
         assertFalse(node.hasProperty(PROPERTY));
 
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("Too longggg"), valueOf("Too longggg"))));
+            validateAndWriteTo(node, fieldType, Arrays.asList(valueOf("Too longggg"), valueOf("Too longggg")));
             fail("Must not be too long");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
         }
         assertFalse(node.hasProperty(PROPERTY));
 
-        fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("New Value!"), valueOf("New Value!"))));
+        validateAndWriteTo(node, fieldType, Arrays.asList(valueOf("New Value!"), valueOf("New Value!")));
         assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(2));
     }
 
