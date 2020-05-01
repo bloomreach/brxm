@@ -17,12 +17,17 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
@@ -36,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 
 public class ContainerComponentServiceImpl implements ContainerComponentService {
     private static Logger log = LoggerFactory.getLogger(ContainerComponentServiceImpl.class);
@@ -62,7 +68,8 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
 
             HstConfigurationUtils.persistChanges(session);
 
-            final long newVersionStamp = getVersionStamp(containerNode);
+            final long newVersionStamp =  JcrUtils.getLongProperty(containerNode, HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, 0L);
+
             return new ContainerItemImpl(newItem, newVersionStamp);
         } catch (RepositoryException e) {
             log.warn("Exception during creating new container item: {}", catalogItemUUID);
@@ -92,9 +99,17 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     @Override
     public void updateContainer(final Session session, final ContainerRepresentation container) throws RepositoryException {
         try {
-            final Node containerNode = lockAndGetContainer(container.getLastModifiedTimestamp());
 
-            updateContainerOrder(session, container.getChildren(), containerNode);
+            validateContainerItems(session, container.getChildren());
+
+            final Node containerNode = lockAndGetContainer(container.getLastModifiedTimestamp());
+            ContainerUtils.updateContainerOrder(session, container.getChildren(), containerNode, nodeToBeLocked -> {
+                try {
+                    containerHelper.acquireLock(nodeToBeLocked, 0);
+                } catch (RepositoryException e) {
+                    throw new RuntimeRepositoryException(e);
+                }
+            });
             HstConfigurationUtils.persistChanges(session);
         } catch (RepositoryException e) {
             log.warn("Exception during updating container item: {}", container);
@@ -116,48 +131,6 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
         }
     }
 
-    private void updateContainerOrder(final Session session,
-                                      final List<String> children,
-                                      final Node containerNode) throws RepositoryException {
-        int childCount = (children != null ? children.size() : 0);
-        if (childCount > 0) {
-            try {
-                for (String childId : children) {
-                    moveIfNeeded(containerNode, childId, session);
-                }
-                int index = childCount - 1;
-
-                while (index > -1) {
-                    String childId = children.get(index);
-                    Node childNode = session.getNodeByIdentifier(childId);
-                    String nodeName = childNode.getName();
-
-                    int next = index + 1;
-                    if (next == childCount) {
-                        containerNode.orderBefore(nodeName, null);
-                    } else {
-                        Node nextChildNode = session.getNodeByIdentifier(children.get(next));
-                        containerNode.orderBefore(nodeName, nextChildNode.getName());
-                    }
-                    --index;
-                }
-            } catch (javax.jcr.ItemNotFoundException e) {
-                log.warn("ItemNotFoundException: Cannot update containerNode '{}'.", containerNode.getPath());
-                throw e;
-            }
-        }
-    }
-
-    private long getVersionStamp(final Node node) throws RepositoryException {
-        final long versionStamp;
-        if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED)) {
-            versionStamp = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
-        } else {
-            versionStamp = 0;
-        }
-        return versionStamp;
-    }
-
     private Node lockAndGetContainer(final long versionStamp) throws RepositoryException {
         final Node containerNode = pageComposerContextService.getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
         if (containerNode == null) {
@@ -175,35 +148,41 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     }
 
     /**
-     * Move the node identified by {@code childId} to node {@code parent} if it has a different parent.
+     * <p>
+     *     All the childIds that should be placed below this container MUST be part of the current HST configuration its
+     *     hst:workspsace! It is not allowed to move container items from
+     *     <ul>
+     *         <li>outside the hst:workspace</li>
+     *         <li>other HST Configurations </li>
+     *         <li>XPages</li>
+     *     </ul>
+     *     to the current container
+     * </p>
+     * @throws ClientException in case the {@code childsIds} are not valid
      */
-    private void moveIfNeeded(final Node parent,
-                              final String childId,
-                              final Session session) throws RepositoryException {
-        String parentPath = parent.getPath();
-        Node childNode = session.getNodeByIdentifier(childId);
-        if (!childNode.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
-            final String msg = String.format("Expected a move of a node of type '%s' but was '%s'.", NODETYPE_HST_CONTAINERITEMCOMPONENT,
-                    childNode.getPrimaryNodeType().getName());
-            throw new IllegalArgumentException(msg);
+    private void validateContainerItems(final Session session, final List<String> childIds) throws RepositoryException, ClientException {
+        final String requiredWorkspacePrefix = pageComposerContextService.getEditingPreviewConfigurationPath() + "/hst:workspace/";
+
+        for (String childId : childIds) {
+            if (!isValidUUID(childId)) {
+                throw new ClientException(String.format("Invalid child id '%s'", childId), ClientError.INVALID_UUID);
+            }
+            try {
+                final Node componentItem = session.getNodeByIdentifier(childId);
+                if (!componentItem.getPath().startsWith(requiredWorkspacePrefix)) {
+                    throw new ClientException(String.format("Child '%s' is not allowed to be moved to a different " +
+                                    "hst:workspace",
+                            componentItem.getPath()), ClientError.ITEM_NOT_CORRECT_LOCATION);
+                }
+                if (!componentItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                    throw new ClientException(String.format("Child '%s' has not a valid nodetype for a container",
+                            componentItem.getPath()), ClientError.INVALID_NODE_TYPE);
+                }
+            } catch (ItemNotFoundException e) {
+                throw new ClientException("Could not find one of the children in the container", ClientError.INVALID_UUID);
+            }
         }
-        String childPath = childNode.getPath();
-        String childParentPath = childPath.substring(0, childPath.lastIndexOf('/'));
-        if (!parentPath.equals(childParentPath)) {
-            // lock the container from which the node gets removed
-            // note that the 'timestamp' check must not be the timestamp of the 'target' container
-            // since this one can be different. We do not need a 'source' timestamp check, since, if the source
-            // has changed it is either locked, or if the child item does not exist any more on the server, another
-            // error occurs already
-            containerHelper.acquireLock(childNode.getParent(), 0);
-            String name = childPath.substring(childPath.lastIndexOf('/') + 1);
-            name = ContainerUtils.findNewName(name, parent);
-            String newChildPath = parentPath + "/" + name;
-            log.debug("Move needed from '{}' to '{}'.", childPath, newChildPath);
-            session.move(childPath, newChildPath);
-        } else {
-            log.debug("No Move needed for '{}' below '{}'", childId, parentPath);
-        }
+
     }
 
 }

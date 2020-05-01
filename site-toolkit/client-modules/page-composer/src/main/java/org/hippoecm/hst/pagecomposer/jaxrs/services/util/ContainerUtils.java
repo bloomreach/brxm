@@ -15,13 +15,20 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.util;
 
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +67,73 @@ public class ContainerUtils {
         }
         log.debug("New child name '{}' for parent '{}'", newName, parent.getPath());
         return newName;
+    }
+
+
+    public static void updateContainerOrder(final Session session,
+                                            final List<String> children,
+                                            final Node containerNode,
+                                            final Consumer<Node> locker) throws RepositoryException {
+        int childCount = (children != null ? children.size() : 0);
+        if (childCount > 0) {
+            try {
+                for (String childId : children) {
+                    moveIfNeeded(containerNode, childId, session, locker);
+                }
+                int index = childCount - 1;
+
+                while (index > -1) {
+                    String childId = children.get(index);
+                    Node childNode = session.getNodeByIdentifier(childId);
+                    String nodeName = childNode.getName();
+
+                    int next = index + 1;
+                    if (next == childCount) {
+                        containerNode.orderBefore(nodeName, null);
+                    } else {
+                        Node nextChildNode = session.getNodeByIdentifier(children.get(next));
+                        containerNode.orderBefore(nodeName, nextChildNode.getName());
+                    }
+                    --index;
+                }
+            } catch (javax.jcr.ItemNotFoundException e) {
+                log.warn("ItemNotFoundException: Cannot update containerNode '{}'.", containerNode.getPath());
+                throw e;
+            }
+        }
+    }
+
+    /**
+     * Move the node identified by {@code childId} to node {@code targetParent} if it has a different targetParent.
+     */
+    public static void moveIfNeeded(final Node targetParent,
+                                    final String childId,
+                                    final Session session,
+                                    final Consumer<Node> locker) throws RepositoryException {
+        final String parentPath = targetParent.getPath();
+        final Node childNode = session.getNodeByIdentifier(childId);
+        if (!childNode.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+            final String msg = String.format("Expected a move of a node of type '%s' but was '%s'.", NODETYPE_HST_CONTAINERITEMCOMPONENT,
+                    childNode.getPrimaryNodeType().getName());
+            throw new IllegalArgumentException(msg);
+        }
+        final String childPath = childNode.getPath();
+        final String childParentPath = childPath.substring(0, childPath.lastIndexOf('/'));
+        if (!parentPath.equals(childParentPath)) {
+            // lock the container from which the node gets removed
+            // note that the 'timestamp' check must not be the timestamp of the 'target' container
+            // since this one can be different. We do not need a 'source' timestamp check, since, if the source
+            // has changed it is either locked, or if the child item does not exist any more on the server, another
+            // error occurs already
+            locker.accept(childNode.getParent());
+            String name = childPath.substring(childPath.lastIndexOf('/') + 1);
+            name = findNewName(name, targetParent);
+            String newChildPath = parentPath + "/" + name;
+            log.debug("Move needed from '{}' to '{}'.", childPath, newChildPath);
+            session.move(childPath, newChildPath);
+        } else {
+            log.debug("No Move needed for '{}' below '{}'", childId, parentPath);
+        }
     }
 
 }

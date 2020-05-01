@@ -92,20 +92,28 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
 
     @After
     public void tearDown() throws Exception {
-        final Session session = createSession("admin", "admin");
-        // restore experience page
-        session.getNode(EXPERIENCE_PAGE_HANDLE_PATH).remove();
-        session.save();
+        try {
+            final Session session = createSession("admin", "admin");
 
+            if (session.nodeExists("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage")) {
+                session.getNode("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage").remove();
+            } else {
+                // hst config backup has already been restored potentially, see for example
+                // XPageContainerComponentResourceTest#move_container_item_from_hst_config_to_XPage_is_not_allowed()
+            }
+            // restore experience page
+            if (session.nodeExists(EXPERIENCE_PAGE_HANDLE_PATH)) {
+                session.getNode(EXPERIENCE_PAGE_HANDLE_PATH).remove();
+            }
+            if (session.nodeExists("/expPage1")) {
+                session.move("/expPage1", EXPERIENCE_PAGE_HANDLE_PATH);
+            }
 
-        session.getNode("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage").remove();
-        session.save();
-
-
-        session.getWorkspace().move("/expPage1", EXPERIENCE_PAGE_HANDLE_PATH);
-        session.logout();
-
-        super.tearDown();
+            session.save();
+            session.logout();
+        } finally {
+            super.tearDown();
+        }
     }
 
 }

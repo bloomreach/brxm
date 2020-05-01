@@ -30,6 +30,8 @@ public abstract class AbstractComponentResourceTest extends AbstractFullRequestC
     protected final SimpleCredentials EDITOR_CREDENTIALS = new SimpleCredentials("editor", "editor".toCharArray());
     protected final SimpleCredentials AUTHOR_CREDENTIALS = new SimpleCredentials("author", "author".toCharArray());
 
+    protected static final String PREVIEW_CONTAINER_TEST_PAGE_PATH = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/containertestpage";
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -47,7 +49,9 @@ public abstract class AbstractComponentResourceTest extends AbstractFullRequestC
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main/container/banner", "hst:containeritemcomponent",
                   "hst:componentclassname", "org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent",
                   "hst:parameternames", "path",
-                  "hst:parametervalues", "/content/document"
+                  "hst:parametervalues", "/content/document",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main/container2", "hst:containercomponent",
+                  "hst:xtype", "hst.vbox",
         };
 
         RepositoryTestCase.build(content, session);
@@ -58,10 +62,13 @@ public abstract class AbstractComponentResourceTest extends AbstractFullRequestC
 
     @After
     public void tearDown() throws Exception {
-        final Session session = createSession("admin", "admin");
-        AbstractPageComposerTest.restoreHstConfigBackup(session);
-        session.logout();
-        super.tearDown();
+        try {
+            final Session session = createSession("admin", "admin");
+            AbstractPageComposerTest.restoreHstConfigBackup(session);
+            session.logout();
+        } finally {
+            super.tearDown();
+        }
     }
 
 }

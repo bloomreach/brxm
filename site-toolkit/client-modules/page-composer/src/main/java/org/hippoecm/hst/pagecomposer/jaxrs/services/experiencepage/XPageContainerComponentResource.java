@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage;
 
 import java.rmi.RemoteException;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.ItemNotFoundException;
@@ -46,7 +47,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResourceInterface;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -61,6 +61,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED;
+import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_HOLDER;
@@ -72,12 +73,6 @@ import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 @Path("/experiencepage/hst:containercomponent/")
 public class XPageContainerComponentResource extends AbstractConfigResource implements ContainerComponentResourceInterface {
     private static Logger log = LoggerFactory.getLogger(XPageContainerComponentResource.class);
-
-    private ContainerComponentService xPageContainerComponentService;
-
-    public void setXPageContainerComponentService(ContainerComponentService xPageContainerComponentService) {
-        this.xPageContainerComponentService = xPageContainerComponentService;
-    }
 
     @FunctionalInterface
     interface ContainerAction<R> {
@@ -122,8 +117,8 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
 
-            // with workflowSession, we write directly to the unpublished variant
-
+            // with workflowSession, we write directly to the unpublished variant : the container from the request
+            // is of the 'preview' variant (mind you, this can be the preview of a branch loaded from version history!)
             final Node catalogItem = ContainerUtils.getContainerItem(workflowSession, itemUUID);
 
             final Node containerNode = getContainer(versionStamp, workflowSession);
@@ -141,19 +136,23 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
                 }
                 containerNode.orderBefore(newItem.getName(), siblingItem.getName());
             }
+            final Calendar updatedTimestamp = updateTimestamp(containerNode);
 
             documentWorkflow.saveUnpublished();
-
-            // update last modified for optimistic locking
-            // TODO Do we want this optimistic locking in this way?
-            final Calendar updatedTimestamp = Calendar.getInstance();
-            containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, updatedTimestamp);
 
             return respondNewContainerItemCreated(new ContainerItemImpl(newItem, updatedTimestamp.getTimeInMillis()));
 
         };
 
         return handleAction(createContainerItem);
+    }
+
+    private Calendar updateTimestamp(final Node containerNode) throws RepositoryException {
+        // update last modified for optimistic locking
+        // TODO Do we want this optimistic locking in this way?
+        final Calendar updatedTimestamp = Calendar.getInstance();
+        containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, updatedTimestamp);
+        return updatedTimestamp;
     }
 
 
@@ -170,11 +169,58 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
             final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
             final Node containerNode = getContainer(container.getLastModifiedTimestamp(), workflowSession);
 
-            xPageContainerComponentService.updateContainer(getSession(), container);
+            validateContainerItems(workflowSession, container.getChildren());
+
+            ContainerUtils.updateContainerOrder(workflowSession, container.getChildren(), containerNode, node -> {
+                // no locking needed for XPages;
+            });
+
+            // update last modified for optimistic locking
+            // TODO Do we want this optimistic locking in this way?
+            updateTimestamp(containerNode);
+
+            documentWorkflow.saveUnpublished();
+
             return Response.status(Response.Status.OK).entity(container).build();
         };
 
         return handleAction(updateContainer);
+    }
+
+    /**
+     * assert all children are of type 'hst:containeritemcomponent' and that they are ALL descendants of the currently
+     * edited XPage : it is not allowed to move children from outside the current XPage into this XPage
+     *
+     * @throws ClientException in case the {@code childsIds} are not valid
+     */
+    private void validateContainerItems(final Session workflowSession, final List<String> childIds) throws RepositoryException, ClientException {
+
+        final String unpublishedId = (String) getPageComposerContextService().getRequestContext().getAttribute(REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE);
+
+        final Node unpublished = workflowSession.getNodeByIdentifier(unpublishedId);
+
+        final String pathPrefix = unpublished.getPath() + "/";
+
+        for (String childId : childIds) {
+            if (!isValidUUID(childId)) {
+                throw new ClientException(String.format("Invalid child id '%s'", childId), ClientError.INVALID_UUID);
+            }
+            try {
+                final Node componentItem = workflowSession.getNodeByIdentifier(childId);
+                if (!componentItem.getPath().startsWith(pathPrefix)) {
+                    throw new ClientException(String.format("Child '%s' is not allowed to be moved within the XPage '%s' " +
+                                    "because it is not a descendant of the XPage",
+                            componentItem.getPath(), unpublished.getPath()), ClientError.ITEM_NOT_CORRECT_LOCATION);
+                }
+                if (!componentItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                    throw new ClientException(String.format("Child '%s' has not a valid nodetype for a container",
+                            componentItem.getPath()), ClientError.INVALID_NODE_TYPE);
+                }
+            } catch (ItemNotFoundException e) {
+                throw new ClientException("Could not find one of the children in the container", ClientError.INVALID_UUID);
+            }
+        }
+
     }
 
     @DELETE

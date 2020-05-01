@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,11 +53,15 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
 
         assertEquals("documents", representation.getPickerType());
         assertFalse(representation.isCollapsed());
-        assertEquals("expected 'common' and 'News' folder", 2, representation.getItems().size());
+        assertEquals("expected 'common', 'experiences' and 'News' folder", 3, representation.getItems().size());
+
+        // experiences folder should not be expanded!
+        assertEquals("Folder experiences should not be loaded/expanded ", 0, representation.getItems().get(1).getItems().size());
+        assertTrue(representation.getItems().get(1).isCollapsed());
 
         // news folder should not be expanded!
-        assertEquals("Folder News' should not be loaded/expanded ", 0, representation.getItems().get(1).getItems().size());
-        assertTrue(representation.getItems().get(1).isCollapsed());
+        assertEquals("Folder News' should not be loaded/expanded ", 0, representation.getItems().get(2).getItems().size());
+        assertTrue(representation.getItems().get(2).isCollapsed());
 
         // 'common' should be expanded
         final AbstractTreePickerRepresentation commonFolderRepresentation = representation.getItems().get(0);
@@ -109,16 +113,20 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
         assertTrue(representation instanceof DocumentTreePickerRepresentation);
 
         assertFalse(representation.isCollapsed());
-        assertEquals("expected 'common' and 'News' folder", 2, representation.getItems().size());
+        assertEquals("expected 'common', 'experiences' and 'News' folder", 3, representation.getItems().size());
 
         // 'common' should not be expanded
         final AbstractTreePickerRepresentation commonFolderRepresentation = representation.getItems().get(0);
         assertTrue(commonFolderRepresentation.isCollapsed());
 
-        // news folder should not be expanded but should be selected!
+        // experiences folder should not be expanded
         assertEquals("Folder News' should not be loaded/expanded ", 0, representation.getItems().get(1).getItems().size());
         assertTrue(representation.getItems().get(1).isCollapsed());
-        assertTrue(representation.getItems().get(1).isSelected());
+
+        // news folder should not be expanded but should be selected!
+        assertEquals("Folder News' should not be loaded/expanded ", 0, representation.getItems().get(2).getItems().size());
+        assertTrue(representation.getItems().get(2).isCollapsed());
+        assertTrue(representation.getItems().get(2).isSelected());
     }
 
     @Test
@@ -248,15 +256,20 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
 
         assertEquals("unittestproject",representation.getNodeName());
         assertFalse(representation.isCollapsed());
-        assertEquals("expected 'common' and 'News' folder", 2, representation.getItems().size());
+        assertEquals("expected 'common', 'experiences' and 'News' folder", 3, representation.getItems().size());
 
         // 'common' should not be expanded
         final AbstractTreePickerRepresentation commonFolderRepresentation = representation.getItems().get(0);
         assertEquals("common", commonFolderRepresentation.getDisplayName());
         assertTrue(commonFolderRepresentation.isCollapsed());
 
+        // 'experiences' folder should not be expanded
+        final AbstractTreePickerRepresentation experienceRepresentation = representation.getItems().get(1);
+        assertEquals("experiences", experienceRepresentation.getDisplayName());
+        assertTrue(experienceRepresentation.isCollapsed());
+
         // news folder should be selected *but* not expanded!!
-        final AbstractTreePickerRepresentation newsRepresentation = representation.getItems().get(1);
+        final AbstractTreePickerRepresentation newsRepresentation = representation.getItems().get(2);
         assertEquals("News", newsRepresentation.getDisplayName());
         assertTrue("News folder should be selected", newsRepresentation.isSelected());
         assertTrue("News folder should be collapsed since selected", newsRepresentation.isCollapsed());

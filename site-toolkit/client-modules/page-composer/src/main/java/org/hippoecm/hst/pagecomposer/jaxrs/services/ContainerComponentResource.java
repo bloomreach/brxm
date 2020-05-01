@@ -144,7 +144,7 @@ public class ContainerComponentResource extends AbstractConfigResource implement
         } catch (ClientException e) {
             errorStatus = e.getErrorStatus();
             httpStatusCode = Response.Status.BAD_REQUEST;
-        } catch (RepositoryException | IllegalArgumentException e) {
+        } catch (Exception e) {
             errorStatus = ErrorStatus.unknown(e.getMessage());
             httpStatusCode = Response.Status.INTERNAL_SERVER_ERROR;
         }

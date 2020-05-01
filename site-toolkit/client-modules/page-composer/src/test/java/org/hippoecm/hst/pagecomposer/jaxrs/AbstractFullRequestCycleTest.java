@@ -97,11 +97,19 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
         return repository.login(creds);
     }
 
+    /**
+     * the identifier of the node at jcrPath. If possible use {@link #getNodeId(Session, String)} since this one first
+     * needs to login a session
+     */
     public String getNodeId(final String jcrPath) throws RepositoryException {
         final Session admin = createSession("admin", "admin");
-        final String mountId = admin.getNode(jcrPath).getIdentifier();
+        final String identifier = admin.getNode(jcrPath).getIdentifier();
         admin.logout();
-        return mountId;
+        return identifier;
+    }
+
+    public String getNodeId(final Session session, final String jcrPath) throws RepositoryException {
+        return session.getNode(jcrPath).getIdentifier();
     }
 
     public MockHttpServletResponse render(final String mountId, final RequestResponseMock requestResponse, final Credentials authenticatedCmsUser) throws IOException, ServletException {

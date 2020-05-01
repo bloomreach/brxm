@@ -18,6 +18,8 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequest
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -30,18 +32,25 @@ import javax.jcr.Value;
 import javax.servlet.ServletException;
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.junit.Ignore;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static javax.ws.rs.core.Response.Status.CREATED;
+import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -49,6 +58,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class XPageContainerComponentResourceTest extends AbstractXPageComponentResourceTest {
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     public void modifying_live_or_draft_variants_not_allowed() throws Exception {
@@ -145,10 +156,10 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         final Session adminSession = createSession(ADMIN_CREDENTIALS);
 
         try {
-            final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+            final String mountId = getNodeId(adminSession,"/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final String containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
-            final String catalogId = getNodeId("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+            final String containerId = getNodeId(adminSession,unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final String catalogId = getNodeId(adminSession,"/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
 
             final DocumentWorkflow documentWorkflow = getDocumentWorkflow(adminSession);
             // since document got published and nothing yet changed, should not be published
@@ -246,11 +257,11 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         final Session adminSession = createSession(ADMIN_CREDENTIALS);
 
         try {
-            final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+            final String mountId = getNodeId(adminSession, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final String containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
-            final String beforeItemId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
-            final String catalogId = getNodeId("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+            final String containerId = getNodeId(adminSession, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final String beforeItemId = getNodeId(adminSession, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+            final String catalogId = getNodeId(adminSession, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
 
             final RequestResponseMock createRequestResponse = mockGetRequestResponse(
                     "http", "localhost", "/_rp/" + containerId + "./" + catalogId + "/" + beforeItemId, null,
@@ -321,4 +332,262 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         assertEquals(expectedMessage , createResponseMap.get("message"));
     }
 
+
+    @Test
+    public void move_container_item_within_container() throws Exception {
+        final Session session = createSession(ADMIN_CREDENTIALS);
+
+        try {
+
+            JcrUtils.copy(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner",
+                    unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner2");
+            session.save();
+
+            final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            final String containerId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final String itemId1 = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+            final String itemId2 = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner2");
+
+            final RequestResponseMock updateRequestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + containerId, null,
+                    "PUT");
+
+            final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
+
+            containerRepresentation.setId(containerId);
+            // move item2 before item1
+            containerRepresentation.setChildren(Stream.of(itemId2, itemId1).collect(Collectors.toList()));
+
+            updateRequestResponse.getRequest().setContent(objectMapper.writeValueAsBytes(containerRepresentation));
+            updateRequestResponse.getRequest().setContentType("application/json;charset=UTF-8");
+
+            final MockHttpServletResponse updateResponse = render(mountId, updateRequestResponse, ADMIN_CREDENTIALS);
+
+            assertEquals(Response.Status.OK.getStatusCode(), updateResponse.getStatus());
+
+            // assert container items have been flipped
+            final Node container = session.getNodeByIdentifier(containerId);
+
+            final NodeIterator children = container.getNodes();
+
+            assertEquals("banner2", children.nextNode().getName());
+            assertEquals("banner", children.nextNode().getName());
+
+            // assert 'container node' is not locked
+            assertNull("Container nodes for experience pages should never get locked",
+                    getStringProperty(container, HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, null));
+
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(session);
+
+            assertEquals("Unpublished has changes, publication should be enabled",
+                    TRUE, documentWorkflow.hints().get("publish"));
+
+        } finally {
+            session.logout();
+        }
+    }
+
+    @Test
+    public void move_container_item_between_container_of_same_XPage() throws Exception {
+        final Session session = createSession(ADMIN_CREDENTIALS);
+
+        try {
+             // first create a second container
+            JcrUtils.copy(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container",
+                    unpublishedExpPageVariant.getPath() + "/hst:page/body/container2");
+            session.save();
+
+            final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            final String targetContainerId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container2");
+            final String itemId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+
+            final RequestResponseMock updateRequestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + targetContainerId, null,
+                    "PUT");
+
+            final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
+
+            containerRepresentation.setId(targetContainerId);
+            // move item to other container
+            containerRepresentation.setChildren(Stream.of(itemId).collect(Collectors.toList()));
+
+            updateRequestResponse.getRequest().setContent(objectMapper.writeValueAsBytes(containerRepresentation));
+            updateRequestResponse.getRequest().setContentType("application/json;charset=UTF-8");
+
+            final MockHttpServletResponse updateResponse = render(mountId, updateRequestResponse, ADMIN_CREDENTIALS);
+
+            assertEquals(Response.Status.OK.getStatusCode(), updateResponse.getStatus());
+
+            // assert  second container now has the item
+            final Node targetContainer = session.getNodeByIdentifier(targetContainerId);
+
+            final NodeIterator children = targetContainer.getNodes();
+            // the container already got an item 'banner'
+            assertEquals("banner", children.nextNode().getName());
+            // the extra item moved into it should have a postfix to its name
+            assertEquals("Expected postfix '1' to banner moved to container to avoid same name",
+                    "banner1", children.nextNode().getName());
+
+            final Node sourceContainer = session.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            assertEquals(0l, sourceContainer.getNodes().getSize());
+
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(session);
+
+            assertEquals("Unpublished has changes, publication should be enabled",
+                    TRUE, documentWorkflow.hints().get("publish"));
+
+        } finally {
+            session.logout();
+        }
+    }
+
+
+    @Test
+    public void move_container_item_between_container_of_different_XPages_is_now_allowed() throws Exception {
+        final Session session = createSession(ADMIN_CREDENTIALS);
+        try {
+            final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            // Container of a different XPage than itemId
+            final String targetContainerId = getNodeId(session, "/unittestcontent/documents/unittestproject/experiences/expPage2/expPage2/hst:page/body/container");
+            final String itemId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+
+            final RequestResponseMock updateRequestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + targetContainerId, null,
+                    "PUT");
+
+            final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
+
+            containerRepresentation.setId(targetContainerId);
+            // move item to other container
+            containerRepresentation.setChildren(Stream.of(itemId).collect(Collectors.toList()));
+
+            updateRequestResponse.getRequest().setContent(objectMapper.writeValueAsBytes(containerRepresentation));
+            updateRequestResponse.getRequest().setContentType("application/json;charset=UTF-8");
+
+            final MockHttpServletResponse updateResponse = render(mountId, updateRequestResponse, ADMIN_CREDENTIALS);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), updateResponse.getStatus());
+
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(session);
+
+            assertEquals("Unpublished should not have changes",
+                    FALSE, documentWorkflow.hints().get("publish"));
+        } finally {
+            session.logout();
+        }
+    }
+
+
+    /**
+     * <p>
+     *     It is not allowed to move a container item from HST Configuration to an XPage: A document has a different life
+     *     cycle than HST configuration, thus if we would support such a move, we'd get problems if either the XPage or
+     *     HST Config gets published
+     * </p>
+     * <p>
+     *     This tests covers the move of an an HST Config container item to XPage container. The reverse test is covered in
+     *     {@link ContainerComponentResourceTest}
+     * </p>
+     */
+    @Test
+    public void move_container_item_from_hst_config_to_XPage_is_not_allowed() throws Exception {
+
+        // FIRST add a container item to HST CONFIG
+        Session session = backupHstAndCreateWorkspace();
+
+        try {
+            // create a container and container item  in workspace
+            String[] content = new String[]{
+                    "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage", "hst:component",
+                    "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main", "hst:component",
+                    "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main/container", "hst:containercomponent",
+                      "hst:xtype", "hst.vbox",
+                    "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main/container/banner", "hst:containeritemcomponent",
+                      "hst:componentclassname", "org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent",
+            };
+
+            RepositoryTestCase.build(content, session);
+
+            session.save();
+
+            final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            final String targetContainerId = getNodeId(session,unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+
+            final String itemFromHstConfig = getNodeId(session,"/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main/container/banner");
+
+            final RequestResponseMock updateContainerReqRes = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + targetContainerId, null, "PUT");
+
+            final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
+
+            containerRepresentation.setId(targetContainerId);
+            // try to move itemFromXPage to other container
+            containerRepresentation.setChildren(Stream.of(itemFromHstConfig).collect(Collectors.toList()));
+
+            updateContainerReqRes.getRequest().setContent(objectMapper.writeValueAsBytes(containerRepresentation));
+            updateContainerReqRes.getRequest().setContentType("application/json;charset=UTF-8");
+
+            final MockHttpServletResponse updateResponse = render(mountId, updateContainerReqRes, ADMIN_CREDENTIALS);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), updateResponse.getStatus());
+
+        } finally {
+            AbstractPageComposerTest.restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    @Test
+    public void move_container_item_which_does_not_exist_is_bad_request() throws Exception {
+
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+        final String containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+
+        final RequestResponseMock updateRequestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + containerId, null,
+                "PUT");
+
+        final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
+
+        containerRepresentation.setId(containerId);
+        // move non existing item
+        containerRepresentation.setChildren(Stream.of(UUID.randomUUID().toString()).collect(Collectors.toList()));
+
+        updateRequestResponse.getRequest().setContent(objectMapper.writeValueAsBytes(containerRepresentation));
+        updateRequestResponse.getRequest().setContentType("application/json;charset=UTF-8");
+
+        final MockHttpServletResponse updateResponse = render(mountId, updateRequestResponse, ADMIN_CREDENTIALS);
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), updateResponse.getStatus());
+    }
+
+    @Test
+    public void move_invalid_container_item_id_is_bad_request() throws Exception {
+
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+        final String containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+
+        final RequestResponseMock updateRequestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + containerId, null,
+                "PUT");
+
+        final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
+
+        containerRepresentation.setId(containerId);
+        // move non existing item
+        containerRepresentation.setChildren(Stream.of("invalid-UUID").collect(Collectors.toList()));
+
+        updateRequestResponse.getRequest().setContent(objectMapper.writeValueAsBytes(containerRepresentation));
+        updateRequestResponse.getRequest().setContentType("application/json;charset=UTF-8");
+
+        final MockHttpServletResponse updateResponse = render(mountId, updateRequestResponse, ADMIN_CREDENTIALS);
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), updateResponse.getStatus());
+    }
 }

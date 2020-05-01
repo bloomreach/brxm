@@ -60,6 +60,7 @@ import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivilege
 public class XPageContainerItemComponentResource extends AbstractConfigResource implements ContainerItemComponentResourceInterface {
     private static Logger log = LoggerFactory.getLogger(XPageContainerItemComponentResource.class);
 
+    // TODO GET RID OF THIS ContainerItemComponentService
     private ContainerItemComponentService xPageContainerItemComponentService;
 
     public void setXpageContainerItemComponentService(final ContainerItemComponentService containerItemComponentService) {
