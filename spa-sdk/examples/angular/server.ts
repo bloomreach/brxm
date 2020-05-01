@@ -25,6 +25,8 @@ import { AppServerModule, RESPONSE, REQUEST } from './src/main.server';
 import { APP_BASE_HREF } from '@angular/common';
 import { existsSync } from 'fs';
 
+const ARG_PORT = '--port';
+
 // The Express app is exported so that it can be used by serverless Functions.
 export function app() {
   const server = express();
@@ -61,7 +63,9 @@ export function app() {
 }
 
 function run() {
-  const port = process.env.PORT || 4000;
+  const port = process.env.PORT
+    || process.argv.find((arg) => arg.startsWith(`${ARG_PORT}=`))?.substring(ARG_PORT.length + 1)
+    || 4000;
 
   // Start up the Node server
   const server = app();
