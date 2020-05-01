@@ -385,6 +385,11 @@
 
   .hippo-overlay-element-container-disabled {
     cursor: not-allowed;
+    pointer-events: all;
+
+    .hippo-overlay-icon {
+      fill: $bloomreach-red;
+    }
   }
 
   .hippo-overlay-element-component-drop-area {
