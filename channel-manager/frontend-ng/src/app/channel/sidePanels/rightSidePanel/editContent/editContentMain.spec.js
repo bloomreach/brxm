@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,15 +42,18 @@ describe('EditContentMainCtrl', () => {
         'confirmSaveOrDiscardChanges',
         'discardChanges',
         'getDocument',
-        'getDocumentId',
-        'getDocumentType',
         'getDocumentDisplayName',
         'getDocumentErrorMessages',
+        'getDocumentId',
+        'getDocumentType',
         'isDocumentDirty',
         'isEditing',
-        'isPublishAllowed',
         'isEditing',
+        'isKeepDraftAllowed',
         'isPristine',
+        'isPublishAllowed',
+        'isRetainable',
+        'keepDraft',
         'publish',
         'save',
       ]);
@@ -212,6 +215,30 @@ describe('EditContentMainCtrl', () => {
     });
   });
 
+  it('knows when keep draft is shown', () => {
+    [true, false].forEach((keepDraftAllowed) => {
+      ContentEditor.isKeepDraftAllowed.and.returnValue(keepDraftAllowed);
+      expect($ctrl.isKeepDraftShown()).toBe(keepDraftAllowed);
+    });
+  });
+
+  it('knows when it is retainable', () => {
+    [true, false].forEach((retainable) => {
+      ContentEditor.isRetainable.and.returnValue(retainable);
+      expect($ctrl.isRetainable()).toBe(retainable);
+    });
+  });
+
+  it('knows when keep draft is enabled', () => {
+    [true, false].forEach((editing) => {
+      [true, false].forEach((dirty) => {
+        ContentEditor.isEditing.and.returnValue(editing);
+        ContentEditor.isDocumentDirty.and.returnValue(dirty);
+        expect($ctrl.isKeepDraftEnabled()).toBe(editing && dirty);
+      });
+    });
+  });
+
   describe('publish', () => {
     it('shows a confirmation dialog', () => {
       ContentEditor.confirmPublication.and.returnValue($q.resolve());
@@ -299,6 +326,17 @@ describe('EditContentMainCtrl', () => {
 
   describe('ui-router state exit', () => {
     describe('when opening another document', () => {
+      it('succeeds when document is retainable', (done) => {
+        ContentEditor.isRetainable.and.returnValue(true);
+        ContentEditor.keepDraft.and.returnValue($q.resolve());
+        $ctrl.uiCanExit().then(() => {
+          expect(ContentEditor.keepDraft).toHaveBeenCalled();
+          expect(ContentEditor.close).toHaveBeenCalled();
+          expect(HippoIframeService.reload).toHaveBeenCalled();
+          done();
+        });
+        $scope.$digest();
+      });
       it('succeeds when saving changes and reloads the iframe', (done) => {
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('SAVE'));
         ContentEditor.discardChanges.and.returnValue($q.resolve());

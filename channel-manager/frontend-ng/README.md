@@ -36,6 +36,11 @@ gulp tasks via `npm run` or simply stick with the predefined `npm start` and
         cd <your project>
         mvn -Pcargo.run -Dcargo.jvm.args='-Dwicket.configuration=development -Dresource.proxies=angular/hippo-cm@http://localhost:9090'
 
+4. If besides frontend code you are developing the server side channel manager code as well, speed up your build time by excluding
+   the code is already updated by the Webpack dev server.
+
+        mvn verify -pl '!org.onehippo.cms7:hippo-addon-channel-manager-frontend-ng'
+
 Mind that if the Webpack dev server has not been started, users see an empty CM perspective without any error message.
 
 # Installation

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,11 @@ class EditContentToolsCtrl {
 
   uiCanExit() {
     if (this.exitToContentEditor) {
+      if (this.ContentEditor.isRetainable()) {
+        return this.ContentEditor.keepDraft()
+          .then(() => this._viewContent())
+          .finally(this._clear());
+      }
       return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_TO_DOCUMENT')
         .then(() => this.ContentEditor.discardChanges())
         .then(() => this._viewContent())

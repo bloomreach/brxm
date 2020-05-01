@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,6 +81,7 @@ describe('ContentEditorService', () => {
           id: 'ns:testdocument',
         },
         publicationState: 'live',
+        retainable: 'false',
       },
       fields: {
         'ns:string': [
@@ -478,6 +479,26 @@ describe('ContentEditorService', () => {
     expect(ContentEditor.isDocumentDirty()).toBeFalsy();
     ContentEditor.markDocumentDirty();
     expect(ContentEditor.isDocumentDirty()).toBe(true);
+  });
+
+  describe('keepDraft', () => {
+    it('sets the retainable property', () => {
+      const savedDoc = {
+        id: '123',
+      };
+      ContentService.saveDocument.and.returnValue($q.resolve(savedDoc));
+      ContentEditor.document = testDocument;
+      ContentEditor.markDocumentDirty();
+      ContentEditor.keepDraft();
+
+      expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
+      expect(testDocument.info.retainable).toBe(true);
+
+      $rootScope.$digest();
+
+      expect(ContentEditor.getDocument()).toEqual(savedDoc);
+      expect(ContentEditor.isDocumentDirty()).toBeFalsy();
+    });
   });
 
   describe('save', () => {

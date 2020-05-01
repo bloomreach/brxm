@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+  ~ Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -34,6 +34,13 @@
     </div>
   </md-subheader>
 
+  <md-subheader ng-if="$ctrl.isRetainable()"
+                class="qa-feedback hippo-info">
+    <div class="qa-feedback-message">
+      {{ ::'DOCUMENT_HAS_DRAFT_CHANGES' | translate }}
+    </div>
+  </md-subheader>
+
   <content-editor flex="grow"
                   layout="column"
                   on-switch-editor="$ctrl.switchEditor()"
@@ -55,6 +62,14 @@
                ng-if="$ctrl.isPublishAllowed()"
                ng-click="$ctrl.publish()">
       {{ ::'PUBLISH' | translate }}
+    </md-button>
+
+    <md-button class="qa-keep-draft"
+               md-no-ink
+               ng-if="$ctrl.isKeepDraftShown()"
+               ng-disabled="!$ctrl.isKeepDraftEnabled()"
+               ng-click="$ctrl.keepDraft()">
+      {{ ::'KEEP_DRAFT' | translate }}
     </md-button>
 
     <md-button class="qa-save"

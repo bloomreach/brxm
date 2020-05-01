@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ describe('EditContentToolsCtrl', () => {
         'getError',
         'getPublicationState',
         'isEditing',
+        'isRetainable',
       ]);
       EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
 
@@ -100,6 +101,7 @@ describe('EditContentToolsCtrl', () => {
     it('succeeds', (done) => {
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
       ContentEditor.discardChanges.and.returnValue($q.resolve());
+      ContentEditor.isRetainable.and.returnValue(false);
 
       $ctrl.uiCanExit().then(() => {
         expectSuccess();
@@ -110,6 +112,7 @@ describe('EditContentToolsCtrl', () => {
 
     it('fails because save/discard changes is canceled', (done) => {
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
+      ContentEditor.isRetainable.and.returnValue(false);
 
       $ctrl.uiCanExit().catch(() => {
         expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
@@ -121,6 +124,7 @@ describe('EditContentToolsCtrl', () => {
     it('fails because the changes cannot be discarded', (done) => {
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
       ContentEditor.discardChanges.and.returnValue($q.reject());
+      ContentEditor.isRetainable.and.returnValue(false);
 
       $ctrl.uiCanExit().catch(() => {
         expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
@@ -131,6 +135,7 @@ describe('EditContentToolsCtrl', () => {
     });
 
     it('succeeds after a previous attempt failed because save/discard changes was canceled', (done) => {
+      ContentEditor.isRetainable.and.returnValue(false);
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
       $ctrl.uiCanExit().catch(() => {
         $ctrl.openContentEditor('view');
