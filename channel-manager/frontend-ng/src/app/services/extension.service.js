@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-function isAbsoluteUrl(url) {
-  return url.startsWith('http://') || url.startsWith('https://');
-}
-
 export default class ExtensionService {
   constructor($window, ConfigService, PathService) {
     'ngInject';
@@ -49,9 +45,11 @@ export default class ExtensionService {
   }
 
   getExtensionUrl(extension) {
-    return isAbsoluteUrl(extension.url)
-      ? this._getAbsoluteUrl(extension.url)
-      : this._getUrlRelativeToCmsLocation(extension.url);
+    const baseUrl = `${this.$window.location.origin}${this.ConfigService.getCmsContextPath() || ''}`;
+    const url = new URL(extension.url, baseUrl);
+    this._addQueryParameters(url);
+
+    return url.href;
   }
 
   getExtensionRelativeUrl(extension, relativeUrl) {
@@ -64,21 +62,5 @@ export default class ExtensionService {
   _addQueryParameters(url) {
     url.searchParams.append('br.antiCache', this.ConfigService.antiCache);
     url.searchParams.append('br.parentOrigin', this.$window.location.origin);
-  }
-
-  _getAbsoluteUrl(extensionUrl) {
-    const url = new URL(extensionUrl);
-    this._addQueryParameters(url);
-    return url.href;
-  }
-
-  _getUrlRelativeToCmsLocation(extensionUrl) {
-    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), extensionUrl);
-    // The current location should be the default value for the second parameter of the URL() constructor,
-    // but Chrome needs it explicitly otherwise it will throw an error.
-    const url = new URL(path, this.$window.location.origin);
-    this._addQueryParameters(url);
-
-    return url.href;
   }
 }
