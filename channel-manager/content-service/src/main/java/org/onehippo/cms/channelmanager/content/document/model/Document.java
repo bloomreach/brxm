@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.document.model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -113,5 +114,46 @@ public class Document {
 
     public void setState(final String state) {
         this.state = state;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Document)) {
+            return false;
+        }
+        final Document document = (Document) o;
+        return Objects.equals(getId(), document.getId()) &&
+                Objects.equals(getVariantId(), document.getVariantId()) &&
+                Objects.equals(getBranchId(), document.getBranchId()) &&
+                Objects.equals(getDisplayName(), document.getDisplayName()) &&
+                Objects.equals(getUrlName(), document.getUrlName()) &&
+                Objects.equals(getRepositoryPath(), document.getRepositoryPath()) &&
+                Objects.equals(getInfo(), document.getInfo()) &&
+                Objects.equals(getFields(), document.getFields()) &&
+                Objects.equals(getState(), document.getState());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getVariantId(), getBranchId(), getDisplayName(), getUrlName(), getRepositoryPath(), getInfo(), getFields(), getState());
+    }
+
+
+    @Override
+    public String toString() {
+        return "Document{" +
+                "id='" + id + '\'' +
+                ", variantId='" + variantId + '\'' +
+                ", branchId='" + branchId + '\'' +
+                ", displayName='" + displayName + '\'' +
+                ", urlName='" + urlName + '\'' +
+                ", repositoryPath='" + repositoryPath + '\'' +
+                ", info=" + info +
+                ", fields=" + fields +
+                ", state='" + state + '\'' +
+                '}';
     }
 }

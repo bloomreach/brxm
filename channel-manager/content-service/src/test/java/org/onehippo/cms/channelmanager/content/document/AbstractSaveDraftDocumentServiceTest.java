@@ -16,13 +16,19 @@
 package org.onehippo.cms.channelmanager.content.document;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
+import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
@@ -31,6 +37,8 @@ import org.onehippo.cms.channelmanager.content.error.InternalServerErrorExceptio
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -42,20 +50,20 @@ public class AbstractSaveDraftDocumentServiceTest {
 
     private TestSaveDraftDocumentService testSaveDraftDocumentService;
     private AbstractSaveDraftDocumentService documentsService;
-    private Document expected;
+    private Document persistedDraft;
     private DocumentType documentType;
 
     @Before
     public void setUp() throws Exception {
         testSaveDraftDocumentService = new TestSaveDraftDocumentService();
         documentsService = testSaveDraftDocumentService;
-        expected = new Document();
-        expected.setId("id");
+        persistedDraft = new Document();
+        persistedDraft.setId("id");
         documentType = new DocumentType();
         documentType.setId("docTypeId");
         testSaveDraftDocumentService.addDocumentType("docTypeId", documentType);
         testSaveDraftDocumentService.associateDocumentWithNodeType("id", "docTypeId");
-        testSaveDraftDocumentService.setDraft(expected);
+        testSaveDraftDocumentService.setDraft(persistedDraft);
     }
 
     @Test
@@ -63,7 +71,35 @@ public class AbstractSaveDraftDocumentServiceTest {
         Map<String, Serializable> hints = new HashMap<>();
         hints.put("editDraft", Boolean.TRUE);
         testSaveDraftDocumentService.setHints(hints);
+        final Document expected = new Document();
+        expected.setId("id");
         final Document actual = documentsService.editDraft("id", null);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void editDraft_info_nonRetainable() {
+        Map<String, Serializable> hints = new HashMap<>();
+        hints.put("editDraft", Boolean.TRUE);
+        testSaveDraftDocumentService.setHints(hints);
+        final Document actual = documentsService.editDraft("id", null);
+        final Document expected = new Document();
+        expected.setId("id");
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void editDraft_info_Retainable() {
+        Map<String, Serializable> hints = new HashMap<>();
+        hints.put("editDraft", Boolean.TRUE);
+        hints.put("saveDraft", Boolean.TRUE);
+        testSaveDraftDocumentService.setHints(hints);
+        persistedDraft.getInfo().setRetainable(true);
+        final Document actual = documentsService.editDraft("id", null);
+        final Document expected = new Document();
+        expected.getInfo().setCanKeepDraft(true);
+        expected.getInfo().setRetainable(true);
+        expected.setId("id");
         Assert.assertEquals(expected, actual);
     }
 
@@ -124,6 +160,76 @@ public class AbstractSaveDraftDocumentServiceTest {
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(ErrorInfo.Reason.SERVER_ERROR));
         }
+    }
+
+    @Test
+    public void saveDraft_EditNotAllowed() throws Exception {
+        testSaveDraftDocumentService.setHints(Collections.emptyMap());
+        try {
+            documentsService.saveDraft("id", null, new Document());
+            fail("Save draft should throw and exception");
+        } catch (final ForbiddenException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(ErrorInfo.Reason.SERVER_ERROR));
+        }
+    }
+
+    @Test
+    public void saveDraft_EditAllowed_SaveNotAllowed() throws Exception {
+        Map<String, Serializable> hints = new HashMap<>();
+        hints.put("editDraft", Boolean.TRUE);
+        testSaveDraftDocumentService.setHints(hints);
+        try {
+            documentsService.saveDraft("id", null, new Document());
+            fail("Save draft should throw and exception");
+        } catch (final ForbiddenException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(ErrorInfo.Reason.SERVER_ERROR));
+        }
+    }
+
+    @Test
+    public void saveDraft() throws Exception {
+        Map<String, Serializable> hints = new HashMap<>();
+        hints.put("editDraft", Boolean.TRUE);
+        hints.put("saveDraft", Boolean.TRUE);
+        Document input = new Document();
+        input.setId("id");
+        testSaveDraftDocumentService.setHints(hints);
+        final Map<String, List<FieldValue>> fields = Collections.singletonMap("propertyName", Collections.singletonList(new FieldValue("propertyValue")));
+        input.setFields(fields);
+        Document expected = new Document();
+        expected.setId("id");
+        expected.getInfo().setCanKeepDraft(true);
+        expected.getInfo().setRetainable(true);
+        expected.getInfo().setDirty(false);
+        expected.setFields(fields);
+        Document actual = documentsService.saveDraft("id", null, input);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void addDocumentInfo() throws Exception{
+        Document input = new Document();
+        input.setId("id");
+        input.setFields(Collections.singletonMap("key", Collections.singletonList(new FieldValue("value"))));
+        Map<String, Serializable> hints = new HashMap<>();
+        hints.put("editDraft", Boolean.TRUE);
+        hints.put("saveDraft", Boolean.TRUE);
+        // publish and request publication are not added to the document info
+        // because they are always false when a document is transferable
+        hints.put(EditingUtils.HINT_PUBLISH, Boolean.TRUE);
+        hints.put(EditingUtils.HINT_REQUEST_PUBLICATION, Boolean.TRUE);
+        testSaveDraftDocumentService.setHints(hints);
+        persistedDraft.getInfo().setRetainable(true);
+        final DocumentInfo actual = testSaveDraftDocumentService.addDocumentInfo("id", null, input);
+        final DocumentInfo expected =  new DocumentInfo();
+        expected.setDirty(true);
+        expected.setRetainable(true);
+        expected.setCanPublish(false);
+        expected.setCanRequestPublication(false);
+        expected.setCanKeepDraft(true);
+        assertEquals(expected, actual);
+
+
     }
 
 

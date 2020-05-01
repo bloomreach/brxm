@@ -17,19 +17,22 @@ package org.onehippo.cms.channelmanager.content.document;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 
-public final class TestSaveDraftDocumentService extends AbstractSaveDraftDocumentService {
+public class TestSaveDraftDocumentService extends AbstractSaveDraftDocumentService {
 
 
+    public static final String DISPLAY_NAME = "displayName";
     private Document document;
     private String displayName;
     private String publicationState;
@@ -47,7 +50,7 @@ public final class TestSaveDraftDocumentService extends AbstractSaveDraftDocumen
     }
 
     public ErrorInfo setDisplayName(ErrorInfo errorInfo, final String displayName) {
-        errorInfo.addParam("displayName", displayName);
+        errorInfo.addParam(DISPLAY_NAME, displayName);
         return errorInfo;
     }
 
@@ -73,19 +76,34 @@ public final class TestSaveDraftDocumentService extends AbstractSaveDraftDocumen
     }
 
     @Override
+    protected void updateDraft(final String identifier, final UserContext userContext, final Document document) {
+        this.document =  document;
+        this.document.getInfo().setRetainable(true);
+
+    }
+
+    @Override
+    protected boolean isDocumentRetainable(final String identifier, final UserContext userContext) {
+        return document.getInfo().isRetainable();
+    }
+
+    @Override
     protected boolean isDocumentDirty(final String identifier, final UserContext userContext, final Document updatedDocument) {
-        return updatedDocument.getFields().equals(this.document.getFields());
+        final Map<String, List<FieldValue>> updatedFields = updatedDocument.getFields();
+        final Map<String, List<FieldValue>> fields = document.getFields();
+        return !updatedFields.entrySet().stream()
+                .allMatch(e -> e.getValue().equals(fields.get(e.getKey())));
     }
 
     @Override
     ErrorInfo withDisplayName(final ErrorInfo errorInfo, final String identifier, final UserContext context) {
-        errorInfo.addParam("displayName", displayName);
+        errorInfo.addParam(DISPLAY_NAME, displayName);
         return errorInfo;
     }
 
     @Override
     protected ErrorInfo withDocumentInfo(final ErrorInfo errorInfo, final String identifier, final UserContext userContext) {
-        errorInfo.addParam("displayName", displayName);
+        errorInfo.addParam(DISPLAY_NAME, displayName);
         errorInfo.addParam("publicationState", publicationState);
         return errorInfo;
     }

@@ -32,33 +32,50 @@ import org.onehippo.cms.channelmanager.content.error.InternalServerErrorExceptio
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_PUBLISH;
-import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_REQUEST_PUBLICATION;
-import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionTrue;
-
 public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocumentService {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractSaveDraftDocumentService.class);
+    public static final String SAVE_DRAFT = "saveDraft";
 
     @Override
     public final Document editDraft(final String identifier, final UserContext userContext) {
         validateEditDraft(identifier, userContext);
-        return getDraft(identifier, userContext);
+        final Document draft = getDraft(identifier, userContext);
+        addDocumentInfo(identifier, userContext, draft);
+        return draft;
     }
+
+    @Override
+    public Document saveDraft(final String identifier, final UserContext userContext, final Document document) {
+        validateSaveDraft(identifier, userContext);
+        updateDraft(identifier, userContext, document);
+        final Document updatedDocument = editDraft(identifier, userContext);
+        addDocumentInfo(identifier, userContext, updatedDocument);
+        return updatedDocument;
+    }
+
+    protected abstract void updateDraft(final String identifier, final UserContext userContext, final Document document);
 
     @Override
     public final boolean canEditDraft(final String identifier, final UserContext userContext) {
         return canEditDraft(getHints(identifier, userContext));
     }
 
+    @Override
+    public boolean canSaveDraft(final String identifier, final UserContext userContext, final Document document) {
+        return false;
+    }
+
     public final DocumentInfo addDocumentInfo(final String identifier, final UserContext userContext, final Document document) {
         final Map<String, Serializable> hints = getHints(identifier, userContext);
         final DocumentInfo documentInfo = document.getInfo();
         documentInfo.setDirty(isDocumentDirty(identifier, userContext, document));
-        documentInfo.setCanPublish(isHintActionTrue(hints, HINT_PUBLISH));
-        documentInfo.setCanRequestPublication(isHintActionTrue(hints, HINT_REQUEST_PUBLICATION));
+        documentInfo.setRetainable(isDocumentRetainable(identifier, userContext));
+        documentInfo.setCanKeepDraft(isHintActionTrue(hints, SAVE_DRAFT));
         return documentInfo;
     }
+
+    protected abstract boolean isDocumentRetainable(final String identifier, final UserContext userContext);
 
     public final DocumentType getDocumentType(final String identifier, final UserContext userContext) {
         final String id = getVariantNodeType(identifier, userContext).orElseThrow(
@@ -73,7 +90,20 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
     }
 
     public final boolean canEditDraft(final Map<String, Serializable> hints) {
-        return EditingUtils.isHintActionTrue(hints == null ? Collections.emptyMap() : hints, "editDraft");
+        return isHintActionTrue(hints, "editDraft");
+    }
+
+    public final boolean canSaveDraft(final Map<String, Serializable> hints) {
+        return isHintActionTrue(hints, SAVE_DRAFT);
+    }
+
+    @Override
+    public boolean shouldSaveDraft(final Document document) {
+        return document.getInfo().isRetainable();
+    }
+
+    private boolean isHintActionTrue(final Map<String, Serializable> hints, final String key) {
+        return EditingUtils.isHintActionTrue(hints == null ? Collections.emptyMap() : hints, key);
     }
 
     abstract boolean isDocumentDirty(String identifier, UserContext userContext, Document document);
@@ -93,17 +123,35 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
     private void validateEditDraft(final String identifier, final UserContext userContext) {
         final Map<String, Serializable> hints = getHints(identifier, userContext);
         if (!canEditDraft(hints)) {
-            throw determineEditingFailure(hints, userContext)
-                    .map(errorInfo -> withDocumentInfo(errorInfo, identifier, userContext))
-                    .map(ForbiddenException::new)
-                    .orElseGet(() -> new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR)));
+            throwException(identifier, userContext, hints);
         }
+        validateDocType(identifier, userContext);
+    }
 
-        final DocumentType docType = getDocumentType(identifier, userContext);
+    private void throwException(final String identifier, final UserContext userContext
+            , final Map<String, Serializable> hints) {
+        throw determineEditingFailure(hints, userContext)
+                .map(errorInfo -> withDocumentInfo(errorInfo, identifier, userContext))
+                .map(ForbiddenException::new)
+                .orElseGet(() -> new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR)));
+    }
+
+    private void validateDocType(final String identifier, final UserContext userContext) {
+        DocumentType docType = getDocumentType(identifier, userContext);
         if (docType.isReadOnlyDueToUnsupportedValidator()) {
-            final ErrorInfo errorInfo = new ErrorInfo(ErrorInfo.Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR);
-            throw new ForbiddenException(withDisplayName(errorInfo, identifier, userContext));
+            throw new ForbiddenException(
+                    withDisplayName(new ErrorInfo(ErrorInfo.Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR)
+                            , identifier, userContext)
+            );
         }
+    }
+
+    private void validateSaveDraft(final String identifier, final UserContext userContext) {
+        Map<String, Serializable> hints = getHints(identifier, userContext);
+        if (!canSaveDraft(hints)) {
+            throwException(identifier, userContext, hints);
+        }
+        validateDocType(identifier, userContext);
     }
 
     abstract Document getDraft(String identifier, UserContext userContext);

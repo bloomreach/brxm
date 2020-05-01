@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.document.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 
@@ -35,7 +36,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(value = {"errorCount", "errorMessages"}, allowGetters = true)
 public class DocumentInfo {
 
-    // enveloped reference to document type: { id: "namespace:typename" }
+    /**
+     * enveloped reference to document type: { id: "namespace:typename" }
+     */
     private Type type;
 
     // whether this document has auto-drafted changes that have not been saved to the preview variant yet
@@ -54,13 +57,27 @@ public class DocumentInfo {
     private boolean canPublish;
     private boolean canRequestPublication;
     private String locale;
-    
+    private boolean canKeepDraft;
+    private boolean retainable;
+
+    public boolean isRetainable() {
+        return retainable;
+    }
+
     public Type getType() {
         return type;
     }
 
     public void setTypeId(final String id) {
         type = new Type(id);
+    }
+
+    public void setCanKeepDraft(final boolean saveDraft) {
+        this.canKeepDraft = saveDraft;
+    }
+
+    public void setRetainable(final boolean retainable) {
+        this.retainable = retainable;
     }
 
     public static class Type {
@@ -113,6 +130,10 @@ public class DocumentInfo {
         return canPublish;
     }
 
+    public boolean isCanKeepDraft(){
+        return canKeepDraft;
+    }
+
     public boolean isCanRequestPublication() {
         return canRequestPublication;
     }
@@ -131,5 +152,48 @@ public class DocumentInfo {
 
     public void setLocale(final String locale) {
         this.locale = locale;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DocumentInfo)) {
+            return false;
+        }
+        final DocumentInfo that = (DocumentInfo) o;
+        return isDirty() == that.isDirty() &&
+                getErrorCount() == that.getErrorCount() &&
+                isCanPublish() == that.isCanPublish() &&
+                isCanRequestPublication() == that.isCanRequestPublication() &&
+                isCanKeepDraft() == that.isCanKeepDraft() &&
+                isRetainable() == that.isRetainable() &&
+                Objects.equals(getType(), that.getType()) &&
+                Objects.equals(getErrorMessages(), that.getErrorMessages()) &&
+                getPublicationState() == that.getPublicationState() &&
+                Objects.equals(getLocale(), that.getLocale());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getType(), isDirty(), getErrorCount(), getErrorMessages(), getPublicationState(), isCanPublish(), isCanRequestPublication(), getLocale(), isCanKeepDraft(), isRetainable());
+    }
+
+
+    @Override
+    public String toString() {
+        return "DocumentInfo{" +
+                "type=" + type +
+                ", dirty=" + dirty +
+                ", errorCount=" + errorCount +
+                ", errorMessages=" + errorMessages +
+                ", publicationState=" + publicationState +
+                ", canPublish=" + canPublish +
+                ", canRequestPublication=" + canRequestPublication +
+                ", locale='" + locale + '\'' +
+                ", canKeepDraft=" + canKeepDraft +
+                ", retainable=" + retainable +
+                '}';
     }
 }

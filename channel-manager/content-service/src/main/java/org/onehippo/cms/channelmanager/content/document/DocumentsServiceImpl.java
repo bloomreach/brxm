@@ -235,6 +235,7 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
         document.getInfo().setDirty(isDocumentDirty(handle, docType, document));
         document.getInfo().setCanPublish(isHintActionTrue(hints, HINT_PUBLISH));
         document.getInfo().setCanRequestPublication(isHintActionTrue(hints, HINT_REQUEST_PUBLICATION));
+        jcrSaveDraftDocumentService.addDocumentInfo(uuid, userContext, document);
 
         return document;
     }
@@ -242,6 +243,9 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
     @Override
     public Document updateEditableDocument(final String uuid, final Document document, final UserContext userContext) {
 
+        if (shouldSaveDraft(document)){
+            return saveDraft(uuid, userContext, document);
+        }
         final Session session = userContext.getSession();
         final String branchId = document.getBranchId();
         final Node handle = getHandle(uuid, session);
@@ -300,14 +304,28 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
     }
 
     @Override
-    public Document editDraft(final String uuid, final UserContext userContext) {
+    public boolean shouldSaveDraft(final Document document) {
+        return jcrSaveDraftDocumentService.shouldSaveDraft(document);
+    }
 
+    @Override
+    public Document saveDraft(final String identifier, final UserContext userContext, final Document document) {
+        return jcrSaveDraftDocumentService.saveDraft(identifier, userContext, document);
+    }
+
+    @Override
+    public Document editDraft(final String uuid, final UserContext userContext) {
         return jcrSaveDraftDocumentService.editDraft(uuid, userContext);
     }
 
     @Override
     public boolean canEditDraft(final String identifier, final UserContext userContext) {
-       return new JcrSaveDraftDocumentService().canEditDraft(identifier, userContext);
+       return jcrSaveDraftDocumentService.canEditDraft(identifier, userContext);
+    }
+
+    @Override
+    public boolean canSaveDraft(final String identifier, final UserContext userContext, final Document document) {
+        return jcrSaveDraftDocumentService.canSaveDraft(identifier,userContext, document);
     }
 
     @Override
