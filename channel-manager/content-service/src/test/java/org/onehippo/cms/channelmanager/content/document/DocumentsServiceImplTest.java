@@ -128,6 +128,11 @@ public class DocumentsServiceImplTest {
             public boolean canEditDraft(final String identifier, final UserContext userContext) {
                 return false;
             }
+
+            @Override
+            public boolean shouldSaveDraft(final Document document) {
+                return false;
+            }
         };
         documentsService.setHintsInspector(hintsInspector);
         branchingService = createMock(BranchingService.class);

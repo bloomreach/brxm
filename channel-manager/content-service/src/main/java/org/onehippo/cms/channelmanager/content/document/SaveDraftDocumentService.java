@@ -20,7 +20,13 @@ import org.onehippo.cms.channelmanager.content.document.model.Document;
 
 public interface SaveDraftDocumentService {
 
+    Document saveDraft(String identifier, UserContext userContext, Document document);
+
     Document editDraft(String identifier, UserContext userContext);
 
     boolean canEditDraft(String identifier, UserContext userContext);
+
+    boolean canSaveDraft(String identifier, UserContext userContext, Document document);
+
+    boolean shouldSaveDraft(Document document);
 }
