@@ -15,24 +15,20 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
-import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getDocumentWorkflow;
-import static org.onehippo.cms.channelmanager.content.document.util.DocumentHandleUtils.getHandle;
-import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionFalse;
-
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Optional;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
-import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
-import org.onehippo.cms.channelmanager.content.document.util.HintsInspectorImpl;
 import org.onehippo.cms.channelmanager.content.document.util.HintsUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -45,24 +41,13 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getDocumentWorkflow;
+import static org.onehippo.cms.channelmanager.content.document.util.DocumentHandleUtils.getHandle;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionFalse;
 
 public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocumentService {
 
-
-    private HintsInspector hintsInspector;
     private static final Logger log = LoggerFactory.getLogger(JcrSaveDraftDocumentService.class);
-
-    public JcrSaveDraftDocumentService() {
-        this.hintsInspector =  new HintsInspectorImpl();
-    }
-
-    public HintsInspector getHintsInspector() {
-        return hintsInspector;
-    }
-
-    public void setHintsInspector(final HintsInspector hintsInspector) {
-        this.hintsInspector = hintsInspector;
-    }
 
     @Override
     protected void updateDraft(final String identifier, final UserContext userContext, final Document document) {
@@ -110,12 +95,14 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
 
     @Override
     protected boolean isDocumentDirty(final String identifier, final UserContext userContext, final Document document) {
-        return DocumentsServiceImpl.isDocumentDirty(getHandle(identifier, userContext.getSession()), getDocumentType(identifier, userContext), document);
+        return DocumentsServiceImpl.isDocumentDirty(getHandle(identifier, userContext.getSession()),
+                getDocumentType(identifier, userContext), document);
     }
 
     @Override
     ErrorInfo withDisplayName(final ErrorInfo errorInfo, final String identifier, final UserContext context) {
-        return ErrorInfo.withDisplayName(new ErrorInfo(ErrorInfo.Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR), getHandle(identifier, context.getSession()));
+        return ErrorInfo.withDisplayName(new ErrorInfo(ErrorInfo.Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR),
+                getHandle(identifier, context.getSession()));
     }
 
     @Override
@@ -136,7 +123,7 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
 
     @Override
     Optional<ErrorInfo> determineEditingFailure(final Map<String, Serializable> hints, final UserContext userContext) {
-        if (isHintActionFalse(hints, "editDraft")) {
+        if (isHintActionFalse(hints, EDIT_DRAFT)) {
             return Optional.of(new ErrorInfo(ErrorInfo.Reason.NOT_EDITABLE, null));
         }
         return Optional.empty();
@@ -144,7 +131,7 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
 
     @Override
     protected Map<String, Serializable> getHints(final String identifier, final UserContext userContext) {
-        return HintsUtils.getHints(getWorkflow(identifier, userContext),null );
+        return HintsUtils.getHints(getWorkflow(identifier, userContext), null);
     }
 
     private DocumentWorkflow getWorkflow(final String identifier, final UserContext userContext) {
@@ -161,7 +148,6 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
         final DocumentType documentType = getDocumentType(identifier, userContext);
         final Document document = DocumentsServiceImpl.assembleDocument(identifier, handle, draftNode, documentType);
         FieldTypeUtils.readFieldValues(draftNode, documentType.getFields(), document.getFields());
-
 
         return document;
     }

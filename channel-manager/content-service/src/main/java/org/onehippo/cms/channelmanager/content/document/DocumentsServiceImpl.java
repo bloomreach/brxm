@@ -98,11 +98,11 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
 
     private HintsInspector hintsInspector;
     private BranchingService branchingService;
-    private JcrSaveDraftDocumentService jcrSaveDraftDocumentService = new JcrSaveDraftDocumentService();
+
+    private final JcrSaveDraftDocumentService jcrSaveDraftDocumentService = new JcrSaveDraftDocumentService();
 
     public void setHintsInspector(final HintsInspector hintsInspector) {
         this.hintsInspector = hintsInspector;
-        this.jcrSaveDraftDocumentService.setHintsInspector(hintsInspector);
     }
 
     public void setBranchingService(final BranchingService branchingService) {
@@ -151,12 +151,10 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
         final Map<String, Serializable> hints = HintsUtils.getHints(workflow, branchId);
         final Set<String> existingBranches = getExistingBranches(workflow);
 
-        final Optional<ForbiddenException> forbiddenException = hintsInspector.canBranchDocument(branchId, hints, existingBranches)
-                .map(errorInfo -> withDocumentInfo(errorInfo, handle))
-                .map(ForbiddenException::new);
-        if (forbiddenException.isPresent()) {
-            throw forbiddenException.get();
-        }
+        hintsInspector.canBranchDocument(branchId, hints, existingBranches)
+                .ifPresent(errorInfo -> {
+                    throw new ForbiddenException(withDocumentInfo(errorInfo, handle));
+                });
 
         final DocumentType docType = getDocumentType(handle, userContext);
         if (docType.isReadOnlyDueToUnsupportedValidator()) {
@@ -243,7 +241,7 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
     @Override
     public Document updateEditableDocument(final String uuid, final Document document, final UserContext userContext) {
 
-        if (shouldSaveDraft(document)){
+        if (shouldSaveDraft(document)) {
             return saveDraft(uuid, userContext, document);
         }
         final Session session = userContext.getSession();
@@ -282,15 +280,17 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
         try {
             workflow.commitEditableInstance();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            throw new InternalServerErrorException(errorInfoFromHintsOrNoHolder(branchId, HintsUtils.getHints(workflow, branchId),
-                    session));
+            throw new InternalServerErrorException(
+                    errorInfoFromHintsOrNoHolder(branchId, HintsUtils.getHints(workflow, branchId),
+                            session));
         }
 
         // Get the workflow hints before obtaining an editable instance again, see the class level javadoc.
         final DocumentWorkflow newWorkflow = getDocumentWorkflow(handle);
         final Map<String, Serializable> newHints = HintsUtils.getHints(newWorkflow, branchId);
 
-        final Node newDraftNode = EditingUtils.getEditableDocumentNode(workflow, branchId, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
+        final Node newDraftNode = EditingUtils.getEditableDocumentNode(workflow, branchId, session).orElseThrow(
+                () -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
 
         setDocumentPublicationState(document.getInfo(), newDraftNode);
 
@@ -320,12 +320,12 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
 
     @Override
     public boolean canEditDraft(final String identifier, final UserContext userContext) {
-       return jcrSaveDraftDocumentService.canEditDraft(identifier, userContext);
+        return jcrSaveDraftDocumentService.canEditDraft(identifier, userContext);
     }
 
     @Override
     public boolean canSaveDraft(final String identifier, final UserContext userContext, final Document document) {
-        return jcrSaveDraftDocumentService.canSaveDraft(identifier,userContext, document);
+        return jcrSaveDraftDocumentService.canSaveDraft(identifier, userContext, document);
     }
 
     @Override
@@ -349,7 +349,8 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
         }
 
         // Write field value to draft node
-        final CompoundContext documentContext = new CompoundContext(draftNode, draftNode, userContext.getLocale(), userContext.getTimeZone());
+        final CompoundContext documentContext = new CompoundContext(draftNode, draftNode, userContext.getLocale(),
+                userContext.getTimeZone());
         if (FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, docType.getFields(), documentContext)) {
             try {
                 session.save();
@@ -386,7 +387,8 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
     public Document createDocument(final NewDocumentInfo newDocumentInfo, final UserContext userContext) {
         final String name = checkNotBlank("name", newDocumentInfo.getName());
         final String slug = checkNotBlank("slug", newDocumentInfo.getSlug());
-        final String documentTemplateQuery = checkNotBlank("documentTemplateQuery", newDocumentInfo.getDocumentTemplateQuery());
+        final String documentTemplateQuery = checkNotBlank("documentTemplateQuery",
+                newDocumentInfo.getDocumentTemplateQuery());
         final String folderTemplateQuery = newDocumentInfo.getFolderTemplateQuery();
         final String documentTypeId = checkNotBlank("documentTypeId", newDocumentInfo.getDocumentTypeId());
         final String rootPath = checkNotBlank("rootPath", newDocumentInfo.getRootPath());
@@ -542,7 +544,7 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
         }
     }
 
-    private static String checkNotBlank(final String propName, final String propValue){
+    private static String checkNotBlank(final String propName, final String propValue) {
         if (StringUtils.isBlank(propValue)) {
             final String errorMessage = "Property '" + propName + "' cannot be blank or null";
             log.warn(errorMessage);
@@ -552,7 +554,8 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
     }
 
     static DocumentType getDocumentType(final Node handle, final UserContext userContext) {
-        final String id = getVariantNodeType(handle).orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
+        final String id = getVariantNodeType(handle).orElseThrow(
+                () -> new InternalServerErrorException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
 
         try {
             return getDocumentTypeByNodeTypeIdentifier(userContext, id);

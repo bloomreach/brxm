@@ -54,10 +54,11 @@ import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils
  */
 public class HintsInspectorImpl implements HintsInspector {
 
+    private static final Logger log = LoggerFactory.getLogger(HintsInspectorImpl.class);
+
     private static final String HINT_IN_USE_BY = "inUseBy";
     private static final String HINT_REQUESTS = "requests";
 
-    private static final Logger log = LoggerFactory.getLogger(HintsInspectorImpl.class);
     private static final ErrorInfo NOT_BRANCHEABLE = new ErrorInfo(ErrorInfo.Reason.NOT_BRANCHEABLE);
 
     @Override
