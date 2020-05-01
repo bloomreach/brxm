@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.ValidateAndWrite;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
@@ -56,12 +57,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.ValidateAndWrite.validateAndWriteTo;
 import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertViolation;
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertViolations;
 import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertZeroViolations;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
+import static org.powermock.api.support.membermodification.MemberMatcher.field;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -187,7 +191,7 @@ public class PropertyFieldTypeTest {
         node.setProperty(PROPERTY, "Old Value");
 
         try {
-            fieldType.writeTo(node, Optional.empty());
+            validateAndWriteTo(node, fieldType, Collections.singletonList(null));
             fail("Must not be missing");
         } catch (final BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
@@ -195,20 +199,20 @@ public class PropertyFieldTypeTest {
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
 
         try {
-            fieldType.writeTo(node, Optional.of(Collections.emptyList()));
+            validateAndWriteTo(node, fieldType, Collections.emptyList());
             fail("Must have 1 entry");
         } catch (final BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
         }
 
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("One"), valueOf("Two"))));
+
+            validateAndWriteTo(node, fieldType, Arrays.asList(valueOf("One"), valueOf("Two")));
             fail("Must have 1 entry");
         } catch (final BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
         }
-
-        fieldType.writeTo(node, Optional.of(listOf(valueOf("New Value"))));
+        validateAndWriteTo(node, fieldType, listOf(valueOf("New Value")));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value"));
     }
 
@@ -228,7 +232,7 @@ public class PropertyFieldTypeTest {
         node.setProperty(PROPERTY, "Old Value");
 
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("one"), valueOf("two"))));
+            validateAndWriteTo(node, fieldType, Arrays.asList(valueOf("one"), valueOf("two")));
             fail("Must have length 1");
         } catch (final BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
@@ -252,7 +256,7 @@ public class PropertyFieldTypeTest {
         assertFalse(node.hasProperty(PROPERTY));
 
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("one"), valueOf("two"))));
+            validateAndWriteTo(node, fieldType, Arrays.asList(valueOf("one"), valueOf("two")));
             fail("Must have length 1");
         } catch (final BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(Reason.INVALID_DATA));
@@ -482,13 +486,19 @@ public class PropertyFieldTypeTest {
 
     @Test
     public void validateEmpty() {
-        assertZeroViolations(fieldType.validate(Collections.emptyList(), null));
+        try {
+            validateAndWriteTo(node, fieldType, Collections.singletonList(null));
+            fail("Must not be missing");
+        } catch (final BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
     }
 
     @Test
     public void validateGood() {
         assertZeroViolations(fieldType.validate(listOf(valueOf("")), null));
         assertZeroViolations(fieldType.validate(listOf(valueOf("blabla")), null));
+        fieldType.setMaxValues(2);
         assertZeroViolations(fieldType.validate(Arrays.asList(valueOf("one"), valueOf("two")), null));
     }
 

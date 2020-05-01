@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.ValidateAndWrite.validateAndWriteTo;
 import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertViolation;
 import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertViolations;
 import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertZeroViolations;
@@ -221,10 +222,11 @@ public class CompoundFieldTypeTest {
 
     @Test
     public void writeToSinglePresentCompound() throws Exception {
-        node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value");
+        final Node compound = node.addNode(NODE_NAME, "compound:type");
+        compound.setProperty(STRING_PROPERTY_1, "Old Value");
 
         try {
-            fieldType.writeTo(node, Optional.empty());
+            validateAndWriteTo(compound, node, fieldType,Collections.singletonList(null) );
             fail("Must have value");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
@@ -232,7 +234,7 @@ public class CompoundFieldTypeTest {
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
         try {
-            fieldType.writeTo(node, Optional.of(Collections.emptyList()));
+            validateAndWriteTo(compound, node, fieldType, Collections.emptyList());
             fail("Must have value");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
@@ -246,7 +248,7 @@ public class CompoundFieldTypeTest {
     @Test
     public void writeToSingleAbsentCompound() throws Exception {
         try {
-            fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
+            validateAndWriteTo(node, fieldType, listOf(valueOf(validCompound())));
             fail("Unable to create compound node");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
@@ -269,6 +271,7 @@ public class CompoundFieldTypeTest {
     @Test
     public void writeToOptionalPresentCompound() throws Exception {
         fieldType.setMinValues(0);
+        fieldType.setMaxValues(Integer.MAX_VALUE);
 
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value");
 
@@ -280,25 +283,25 @@ public class CompoundFieldTypeTest {
         assertFalse(node.hasNode(NODE_NAME));
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value");
 
-        Map<String, List<FieldValue>> map = new HashMap<>();
+        final Map<String, List<FieldValue>> map = new HashMap<>();
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf(map), valueOf(map))));
+            validateAndWriteTo(node.getNode(NODE_NAME), node, fieldType, Arrays.asList(valueOf(map), valueOf(map)));
             fail("Must not be more than 1 value");
         } catch (BadRequestException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
         }
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
+        validateAndWriteTo(node.getNode(NODE_NAME), node, fieldType,listOf(valueOf(map)));
+        assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
+
+        validateAndWriteTo(node.getNode(NODE_NAME), node, fieldType, listOf(valueOf(validCompound())));
         try {
-            fieldType.writeTo(node, Optional.of(listOf(valueOf(map))));
-            fail("Map values must be accepted by sub-fields");
+            validateAndWriteTo(node.getNode(NODE_NAME), node, fieldType, Arrays.asList(valueOf(map), valueOf(map)));
+            fail("Must not be more than 1 value");
         } catch (BadRequestException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
         }
-        assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
-
-        fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
-        assertTrue(isWrittenSuccessfully(node.getNode(NODE_NAME)));
     }
 
     @Test
@@ -312,7 +315,7 @@ public class CompoundFieldTypeTest {
         assertFalse(node.hasNode(NODE_NAME));
 
         try {
-            fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
+            validateAndWriteTo(node, fieldType, listOf(valueOf(validCompound())));
             fail("Can't create new node");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
@@ -339,7 +342,8 @@ public class CompoundFieldTypeTest {
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
 
-        node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value");
+        final Node compound = node.addNode(NODE_NAME, "compound:type");
+        compound.setProperty(STRING_PROPERTY_1, "Old Value");
 
         fieldType.writeTo(node, Optional.empty());
         assertFalse(node.hasNode(NODE_NAME));
@@ -351,7 +355,7 @@ public class CompoundFieldTypeTest {
 
         Map<String, List<FieldValue>> map = new HashMap<>();
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf(map), valueOf(map))));
+            validateAndWriteTo(compound, node, fieldType, Arrays.asList(valueOf(map), valueOf(map)));
             fail("Must not be more than 1 value");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
@@ -359,12 +363,13 @@ public class CompoundFieldTypeTest {
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
         try {
-            fieldType.writeTo(node, Optional.of(listOf(valueOf(map))));
+            validateAndWriteTo(compound, node, fieldType, Arrays.asList(valueOf(map), valueOf(map)));
             fail("Map values must be accepted by sub-fields");
         } catch (BadRequestException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
         }
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
+
 
         fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
         assertTrue(isWrittenSuccessfully(node.getNode(NODE_NAME)));
@@ -382,7 +387,7 @@ public class CompoundFieldTypeTest {
         assertFalse(node.hasNode(NODE_NAME));
 
         try {
-            fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
+            validateAndWriteTo(node, fieldType, listOf(valueOf(validCompound())));
             fail("Cannot create node");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
@@ -395,20 +400,21 @@ public class CompoundFieldTypeTest {
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
 
-        node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value 1");
+        final Node compound = node.addNode(NODE_NAME, "compound:type");
+        compound.setProperty(STRING_PROPERTY_1, "Old Value 1");
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value 2");
 
         Map<String, List<FieldValue>> map = validCompound();
 
         try {
-            fieldType.writeTo(node, Optional.of(listOf(valueOf(map))));
+            validateAndWriteTo(compound, node, fieldType, listOf(valueOf(map)));
             fail("Cardinality too low");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
         }
 
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf(map), valueOf(map), valueOf(map))));
+            validateAndWriteTo(compound, node, fieldType, Arrays.asList(valueOf(map), valueOf(map), valueOf(map)));
             fail("Cardinality too high");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
@@ -593,6 +599,7 @@ public class CompoundFieldTypeTest {
     @Test
     public void validateEmpty() {
         final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
+        fieldType.setMinValues(0);
         assertZeroViolations(fieldType.validate(Collections.emptyList(), nodeContext));
     }
 
@@ -642,6 +649,7 @@ public class CompoundFieldTypeTest {
         final Map<String, List<FieldValue>> valueA = validCompound();
         final Map<String, List<FieldValue>> valueB = validCompound();
 
+        fieldType.setMaxValues(2);
         assertZeroViolations(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB)), nodeContext));
 
         verifyAll();
@@ -662,6 +670,8 @@ public class CompoundFieldTypeTest {
 
         valueA.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
 
+        fieldType.setMinValues(2);
+        fieldType.setMaxValues(2);
         assertViolation(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB)), nodeContext));
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertErrorFromValidator(valueA.get(STRING_PROPERTY_2).get(0), "non-empty");
@@ -686,6 +696,8 @@ public class CompoundFieldTypeTest {
 
         valueB.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
 
+        fieldType.setMinValues(0);
+        fieldType.setMaxValues(2);
         assertViolation(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB)), nodeContext));
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertFalse(valueA.get(STRING_PROPERTY_2).get(0).hasErrorInfo());
@@ -711,6 +723,8 @@ public class CompoundFieldTypeTest {
         valueA.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
         valueB.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
 
+        fieldType.setMinValues(0);
+        fieldType.setMaxValues(2);
         assertViolations(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB)), nodeContext), 2);
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertErrorFromValidator(valueA.get(STRING_PROPERTY_2).get(0), "non-empty");

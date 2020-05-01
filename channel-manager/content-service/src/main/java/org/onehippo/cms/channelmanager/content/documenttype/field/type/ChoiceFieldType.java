@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,15 +105,17 @@ public class ChoiceFieldType extends NodeFieldType {
 
     @Override
     public void writeValues(final Node node,
-                               final Optional<List<FieldValue>> optionalValues,
-                               final boolean checkCardinality) {
+                               final Optional<List<FieldValue>> optionalValues) {
         final List<FieldValue> values = mergeUnsupportedValues(node, optionalValues.orElse(Collections.emptyList()));
-        super.writeValues(node, Optional.of(values), checkCardinality);
+        super.writeValues(node, Optional.of(values));
     }
 
     private List<FieldValue> mergeUnsupportedValues(final Node node, final List<FieldValue> supportedValues) {
         final List<FieldValue> values = new LinkedList<>();
 
+        if (node == null){
+            return values;
+        }
         try {
             final NodeIterator nodes = node.getNodes(getId());
             int supportedIndex = 0;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -220,7 +220,7 @@ public abstract class AbstractFieldType implements BaseFieldType {
 
     @Override
     public final void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues) {
-        writeValues(node, optionalValues, true);
+        writeValues(node, optionalValues);
     }
 
     protected static boolean hasProperty(final Node node, final String propertyName) throws RepositoryException {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ public interface BaseFieldType extends FieldType {
     List<FieldValue> readValues(final Node node);
 
     /**
+     * @deprecated Replaced by {@link #writeValues(Node, Optional)}
      * Writes the optional value(s) of this field to the provided JCR node.
      *
      * We purposefully pass in the value as an optional, because the validation of the cardinality constraint
@@ -52,7 +53,20 @@ public interface BaseFieldType extends FieldType {
      * @throws ErrorWithPayloadException
      *                      indicates that writing the provided value ran into an unrecoverable error
      */
-    void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean checkCardinality);
+    @Deprecated
+    default void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean checkCardinality){
+        writeValues(node, optionalValues);
+    }
+
+    /**
+     * Writes the optional value(s) of this field to the provided JCR node.
+     *
+     * @param node          JCR node to store the value on
+     * @param optionalValues value to write, or nothing, wrapped in an Optional
+     * @throws ErrorWithPayloadException
+     *                      indicates that writing the provided value ran into an unrecoverable error
+     */
+    void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues);
 
     /**
      * Validates a single value.
