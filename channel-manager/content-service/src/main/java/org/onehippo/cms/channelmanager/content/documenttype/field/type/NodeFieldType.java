@@ -137,6 +137,37 @@ public abstract class NodeFieldType extends AbstractFieldType implements BaseFie
         return FieldTypeUtils.writeChoiceFieldValue(fieldPath, values, this, context);
     }
 
+    /**
+     * <p>Validates the multiplicity and the individual values of a property.</p>
+     * <p>Throws a {@link BadRequestException} with the following {@link ErrorInfo.Reason}'s:
+     * <ul>
+     *     <li>{@link ErrorInfo.Reason#CARDINALITY_CHANGE} if the multiplicity of the values does not
+     *     match that of the property and the number of properties are smaller that {@link #getMaxValues()}</li>
+     *     <li>{@link ErrorInfo.Reason#INVALID_DATA} if:
+     *     <ul>
+     *         <li>the multiplicity of the values does not match that of the property</li>
+     *         <li>the field is required, but there are not values</li>
+     *         <li>the multiplicity is outside the range {@link #getMaxValues()} - {@link #getMaxValues()}</li>
+     *     </ul>
+     * </ul>
+     * <p>The {@link ErrorInfo.Reason#CARDINALITY_CHANGE} is dominant.</p>
+     * <p></p>
+     *
+     * <p>The {@link CompoundContext} has a {@link CompoundContext#getNode()}
+     * and a {@link CompoundContext#getDocument()} method.
+     *
+     * <p>In case the property of a compound is validated, {@link #getId()} ( the path of the property or node )
+     * matches the name of the compound node ({@link CompoundContext#getNode()}). In that case
+     * {@link CompoundContext#getNode()} is used to determine the multiplicity of the backing property
+     * ( the node is a compound node ). </p>
+     * <p>If the {@link CompoundContext#getDocument()} is {@code null}, the node is used.</p>
+     * <p>In most cases {@link CompoundContext#getDocument()} and {@link CompoundContext#getNode()} reference
+     * the same node, the document node.</p>
+     *
+     * @param values {@Link List} of {@link FieldValue}'s
+     * @param context context of this field
+     * @return The number of values that have an invalid value
+     */
     @Override
     public int validate(final List<FieldValue> values, final CompoundContext context) {
         final String valueName = getId();
