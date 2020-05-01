@@ -233,9 +233,13 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
         document.getInfo().setDirty(isDocumentDirty(handle, docType, document));
         document.getInfo().setCanPublish(isHintActionTrue(hints, HINT_PUBLISH));
         document.getInfo().setCanRequestPublication(isHintActionTrue(hints, HINT_REQUEST_PUBLICATION));
-        jcrSaveDraftDocumentService.addDocumentInfo(uuid, userContext, document);
+        addDocumentInfo(uuid, userContext, document);
 
         return document;
+    }
+
+    void addDocumentInfo(String uuid, UserContext userContext, Document document){
+       jcrSaveDraftDocumentService.addDocumentInfo(uuid, userContext, document);
     }
 
     @Override
