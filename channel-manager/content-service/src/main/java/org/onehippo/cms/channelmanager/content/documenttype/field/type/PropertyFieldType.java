@@ -85,6 +85,7 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
 
     /**
      * Hook method for sub-classes to post-process read values.
+     *
      * @param values the read values
      */
     protected void afterReadValues(final List<FieldValue> values) {
@@ -102,11 +103,13 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
                 removeProperty(node);
                 return;
             }
+
             if (isMultiplicityOutOfSync(node)) {
                 removeProperty(node);
             }
+
             final Stream<String> stringStream = getStrings(values);
-            if (stringStream.allMatch(Objects::isNull)){
+            if (stringStream.allMatch(Objects::isNull)) {
                 removeProperty(node);
                 return;
             }
@@ -124,27 +127,27 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
     }
 
     private void removeProperty(final Node node) throws RepositoryException {
-        if (hasProperty(node, getId())){
+        if (hasProperty(node, getId())) {
             node.getProperty(getId()).remove();
         }
     }
 
-    private final boolean isMultiplicityOutOfSync(final Node node) throws RepositoryException {
-        String propertyName = getId();
+    private boolean isMultiplicityOutOfSync(final Node node) throws RepositoryException {
         if (node == null) {
             return false;
         }
-        if (hasProperty(node, getId())) {
-            final Property property = node.getProperty(propertyName);
-            if (isMultiple() != property.isMultiple()) {
-                return true;
-            }
+
+        if (!node.hasProperty(getId())) {
+            return false;
         }
-        return false;
+
+        final Property property = node.getProperty(getId());
+        return isMultiple() != property.isMultiple();
     }
 
     /**
      * Hook for sub-classes to process values before writing them. The default implementation does nothing.
+     *
      * @param values the values to process
      */
     protected void beforeWriteValues(final List<FieldValue> values) {
@@ -167,13 +170,19 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
 
     @Override
     public final int validate(final List<FieldValue> valueList, final CompoundContext context) {
-        List<FieldValue> values = valueList == null ? Collections.emptyList() : valueList;
+        final List<FieldValue> values = valueList == null ? Collections.emptyList() : valueList;
+
         FieldTypeUtils.checkCardinality(this, values);
-        if (values.stream().allMatch(Objects::isNull)){
+
+        if (values.stream().allMatch(Objects::isNull)) {
             throw FieldTypeUtils.INVALID_DATA.get();
         }
-        values.stream().filter(Objects::nonNull)
-                .forEach(value -> fieldSpecificValidations(value.findValue().orElseThrow(FieldTypeUtils.INVALID_DATA)));
+
+        values.stream()
+                .filter(Objects::nonNull)
+                .map(value -> value.findValue().orElseThrow(FieldTypeUtils.INVALID_DATA))
+                .forEach(this::fieldSpecificValidations);
+
         return values.stream()
                 .mapToInt(value -> validateValue(value, context))
                 .sum();
@@ -184,7 +193,7 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
     }
 
     private String convertToSpecificType(final String input) throws ValueFormatException {
-        if(input != null) {
+        if (input != null) {
             return fieldSpecificConversion(input);
         }
         throw new ValueFormatException("Trying to convert null value");
