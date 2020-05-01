@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,8 +152,24 @@ class EditContentMainCtrl {
     return this.ContentEditor.isPublishAllowed() && !this.isDocumentDirty();
   }
 
+  isRetainable() {
+    return this.ContentEditor.isRetainable();
+  }
+
   isSaveAllowed() {
     return this.isEditing() && this.isDocumentDirty() && this.form.$valid;
+  }
+
+  isKeepDraftShown() {
+    return this.ContentEditor.isKeepDraftAllowed();
+  }
+
+  keepDraft() {
+    this.ContentEditor.keepDraft();
+  }
+
+  isKeepDraftEnabled() {
+    return this.isEditing() && this.isDocumentDirty();
   }
 
   switchEditor() {
@@ -163,6 +179,12 @@ class EditContentMainCtrl {
   }
 
   uiCanExit() {
+    if (this.isRetainable()) {
+      return this.ContentEditor.keepDraft().then(this.HippoIframeService.reload()).catch(() => {
+        // ignore errors of discardChanges: if it fails (e.g. because an admin unlocked the document)
+        // the editor should still be closed.
+      }).finally(() => this.ContentEditor.close());
+    }
     return this._confirmExit()
       .then(() => this.ContentEditor.discardChanges()
         .catch(() => {
