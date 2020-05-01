@@ -48,7 +48,6 @@ describe('EditContentMainCtrl', () => {
         'getDocumentType',
         'isDocumentDirty',
         'isEditing',
-        'isEditing',
         'isKeepDraftAllowed',
         'isPristine',
         'isPublishAllowed',

@@ -274,7 +274,7 @@ class ContentEditorService {
     this.canPublish = document.info && document.info.canPublish;
     this.canRequestPublication = document.info && document.info.canRequestPublication;
     this.publicationState = document.info && document.info.publicationState;
-    this.canKeepDraft = document && document.info && document.info.canKeepDraft;
+    this.canKeepDraft = document.info && document.info.canKeepDraft;
     this.retainable = document.info && document.info.retainable;
 
     delete this.error;
@@ -344,7 +344,7 @@ class ContentEditorService {
           errorKey = count !== 1
             ? 'DOCUMENT_CONTAINS_MULTIPLE_ERRORS'
             : 'DOCUMENT_CONTAINS_ONE_ERROR';
-          params = {name: response.data.displayName, count};
+          params = { name: response.data.displayName, count };
         }
 
         if (isErrorInfo(response.data)) {
