@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,6 +111,13 @@ public class DocumentWorkflowIsModifiedTest  extends AbstractDocumentWorkflowInt
         workflow.publish();
 
         assertFalse("draft 'foo' should be compared with unpublished frozen node of 'foo' and be the same",
+                workflow.isModified());
+
+        // Now modify the draft so that it is different from the unpublished frozen
+        getVariant(HippoStdNodeType.DRAFT).setProperty("title", "title bar");
+        session.save();
+
+        assertTrue("draft 'foo' should be compared with unpublished frozen node of 'foo' and be different",
                 workflow.isModified());
     }
 
