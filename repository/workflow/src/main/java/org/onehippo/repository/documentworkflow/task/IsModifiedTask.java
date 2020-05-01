@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,17 +31,18 @@ import javax.jcr.version.VersionManager;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
+import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 
 /**
  * Custom workflow task for determining if current draft is modified compared to the unpublished variant.
@@ -52,7 +53,23 @@ public class IsModifiedTask extends AbstractDocumentTask {
 
     private static final Logger log = LoggerFactory.getLogger(IsModifiedTask.class);
 
-    private static final String[] IGNORED_PROPERTIES = new String[] { HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE };
+    private static final String[] IGNORED_PROPERTIES = {
+            HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE
+    };
+
+    private static final String[] IGNORED_FROZEN_PROPERTIES = {
+            JcrConstants.JCR_UUID,
+            JcrConstants.JCR_PRIMARY_TYPE,
+            JcrConstants.JCR_FROZEN_MIXIN_TYPES,
+            JcrConstants.JCR_FROZEN_PRIMARY_TYPE,
+            JcrConstants.JCR_FROZEN_UUID
+    };
+
+    static {
+        // Sort arrays to be able to do binary search
+        Arrays.sort(IGNORED_PROPERTIES);
+        Arrays.sort(IGNORED_FROZEN_PROPERTIES);
+    }
 
     @Override
     public Object doExecute() throws RepositoryException {
@@ -83,43 +100,15 @@ public class IsModifiedTask extends AbstractDocumentTask {
             return true;
         }
 
-        final PropertyIterator aProperties = a.getProperties();
-        final PropertyIterator bProperties = b.getProperties();
+        final Map<String, Property> aProperties = getPropertyMap(a);
+        final Map<String, Property> bProperties = getPropertyMap(b);
 
-        Map<String, Property> properties = new HashMap<>();
-        for (Property property : new PropertyIterable(aProperties)) {
-            final String name = property.getName();
-            if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
-                continue;
-            }
-            if (Arrays.binarySearch(IGNORED_PROPERTIES, name) >= 0) {
-                continue;
-            }
-            if (property.getDefinition().isProtected()) {
-                continue;
-            }
-            if (!b.hasProperty(name)) {
-                return false;
-            }
-
-            properties.put(name, property);
+        if (!aProperties.keySet().equals(bProperties.keySet())) {
+            return false;
         }
-        for (Property bProp : new PropertyIterable(bProperties)) {
-            final String name = bProp.getName();
-            if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
-                continue;
-            }
-            if (Arrays.binarySearch(IGNORED_PROPERTIES, name) >= 0) {
-                continue;
-            }
-            if (bProp.getDefinition().isProtected()) {
-                continue;
-            }
-            if (!properties.containsKey(name)) {
-                return false;
-            }
-
-            Property aProp = properties.get(name);
+        for (Map.Entry<String, Property> aEntries : aProperties.entrySet()) {
+            final Property aProp = aEntries.getValue();
+            final Property bProp = bProperties.get(aEntries.getKey());
             if (!equals(bProp, aProp)) {
                 return false;
             }
@@ -209,5 +198,39 @@ public class IsModifiedTask extends AbstractDocumentTask {
             return unpublished;
         }
         return versionHistory.getVersionByLabel(versionLabel).getFrozenNode();
+    }
+
+    private Map<String, Property> getPropertyMap(final Node node) throws RepositoryException {
+        final PropertyFilter filter = node.isNodeType(NT_FROZEN_NODE)
+                ? this::includeFrozenForComparison
+                : this::includeForComparison;
+        final Map<String, Property> propertyMap = new HashMap<>();
+        final PropertyIterator propertyIterator = node.getProperties();
+        while (propertyIterator.hasNext()) {
+            final Property property = propertyIterator.nextProperty();
+            if (filter.test(property)) {
+                propertyMap.put(property.getName(), property);
+            }
+        }
+        return propertyMap;
+    }
+
+    private boolean includeForComparison(final Property property) throws RepositoryException {
+        final String name = property.getName();
+        return Arrays.binarySearch(PROTECTED_PROPERTIES, name) < 0
+                && Arrays.binarySearch(IGNORED_PROPERTIES, name) < 0
+                && !property.getDefinition().isProtected();
+    }
+
+    private boolean includeFrozenForComparison(final Property property) throws RepositoryException {
+        final String name = property.getName();
+        return Arrays.binarySearch(PROTECTED_PROPERTIES, name) < 0
+                && Arrays.binarySearch(IGNORED_PROPERTIES, name) < 0
+                && Arrays.binarySearch(IGNORED_FROZEN_PROPERTIES, name) < 0;
+    }
+
+    @FunctionalInterface
+    private interface PropertyFilter {
+        boolean test(Property property) throws RepositoryException;
     }
 }
