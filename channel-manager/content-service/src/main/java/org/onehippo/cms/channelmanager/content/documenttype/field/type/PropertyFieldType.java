@@ -174,7 +174,7 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
 
         FieldTypeUtils.checkCardinality(this, values);
 
-        if (values.stream().allMatch(Objects::isNull)) {
+        if (values.stream().anyMatch(Objects::isNull)) {
             throw FieldTypeUtils.INVALID_DATA.get();
         }
 
@@ -196,7 +196,7 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
         if (input != null) {
             return fieldSpecificConversion(input);
         }
-        throw new ValueFormatException("Trying to convert null value");
+        return null;
     }
 
     private String[] convertToSpecificTypeArray(final String[] strings) throws ValueFormatException {
