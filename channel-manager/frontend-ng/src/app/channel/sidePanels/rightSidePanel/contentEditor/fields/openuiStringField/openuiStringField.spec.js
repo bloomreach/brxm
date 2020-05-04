@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,11 @@ describe('OpenuiStringField', () => {
   let $componentController;
   let $ctrl;
   let $element;
+  let $q;
+  let $rootScope;
   let mdInputContainer;
   let ngModel;
+  let CmsService;
   let ContentEditor;
   let ExtensionService;
   let OpenUiService;
@@ -31,11 +34,17 @@ describe('OpenuiStringField', () => {
 
     inject((
       _$componentController_,
+      _$q_,
+      _$rootScope_,
+      _CmsService_,
       _ContentEditor_,
       _ExtensionService_,
       _OpenUiService_,
     ) => {
       $componentController = _$componentController_;
+      $q = _$q_;
+      $rootScope = _$rootScope_;
+      CmsService = _CmsService_;
       ContentEditor = _ContentEditor_;
       ExtensionService = _ExtensionService_;
       OpenUiService = _OpenUiService_;
@@ -49,6 +58,9 @@ describe('OpenuiStringField', () => {
       ngModel,
       value: 'test-value',
     });
+    spyOn(CmsService, 'publish');
+    spyOn(ContentEditor, 'confirmClose');
+    spyOn(ContentEditor, 'isDocumentDirty');
     spyOn(ContentEditor, 'getDocument');
 
     extension = {
@@ -208,6 +220,33 @@ describe('OpenuiStringField', () => {
       it('is set to the id of the document variant', () => {
         expect($ctrl.getDocument().variant.id).toBe('variant-id');
       });
+    });
+  });
+
+  describe('openDocument', () => {
+    it('should open a document', () => {
+      $ctrl.openDocument('something');
+
+      expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'something', 'view');
+    });
+
+    it('should save an edited document', () => {
+      ContentEditor.isDocumentDirty.and.returnValue(true);
+      $ctrl.openDocument('something');
+
+      expect(ContentEditor.confirmClose).toHaveBeenCalled();
+    });
+
+    it('should save an edited document', (done) => {
+      ContentEditor.isDocumentDirty.and.returnValue(true);
+      ContentEditor.confirmClose.and.returnValue($q.reject());
+
+      $ctrl.openDocument('something').catch((error) => {
+        expect(error).toEqual(jasmine.any(Error));
+        done();
+      });
+
+      $rootScope.$digest();
     });
   });
 });
