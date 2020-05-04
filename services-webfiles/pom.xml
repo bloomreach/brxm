@@ -26,7 +26,7 @@
 
   <name>Hippo CMS7 Services - webfiles</name>
   <artifactId>hippo-services-webfiles</artifactId>
-  <version>14.2.0</version>
+  <version>14.2.1-SNAPSHOT</version>
 
   <inceptionYear>2014</inceptionYear>
 
