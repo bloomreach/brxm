@@ -52,7 +52,7 @@
     <hippo.commons.version>14.2.0</hippo.commons.version>
     <hippo.cms.version>14.2.0</hippo.cms.version>
     <hippo.hst.version>14.2.0</hippo.hst.version>
-    <hippo.packages.version>14.2.0-SNAPSHOT</hippo.packages.version>
+    <hippo.packages.version>14.2.0</hippo.packages.version>
     <hippo.repository.version>14.2.0</hippo.repository.version>
     <hippo.services.version>14.2.0</hippo.services.version>
     <hippo.services.autoreload.version>14.2.0</hippo.services.autoreload.version>
