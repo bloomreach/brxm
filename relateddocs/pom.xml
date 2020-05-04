@@ -42,10 +42,10 @@
   </scm>
 
   <properties>
-    <hippo.services.version>14.2.0</hippo.services.version>
-    <hippo.cms.version>14.2.0</hippo.cms.version>
-    <hippo.repository.version>14.2.0</hippo.repository.version>
-    <hippo.hst.version>14.2.0</hippo.hst.version>
+    <hippo.services.version>14.2.1-SNAPSHOT</hippo.services.version>
+    <hippo.cms.version>14.2.1-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>14.2.1-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>14.2.1-SNAPSHOT</hippo.hst.version>
   </properties>
 
   <repositories>
