@@ -147,6 +147,15 @@ describe('Ui.init()', () => {
     });
   });
 
+  describe('ui.document.navigate()', () => {
+    it('navigates a document by path', async () => {
+      parentConnection.call = jest.fn().mockResolvedValue(undefined);
+      await ui.document.navigate('path');
+
+      expect(parentConnection.call).toHaveBeenCalledWith('navigateDocument', 'path');
+    });
+  });
+
   describe('ui.document.open()', () => {
     it('opens a document by id', async () => {
       parentConnection.call = jest.fn().mockResolvedValue(undefined);

@@ -319,6 +319,14 @@ export interface DocumentScope {
   get(): Promise<DocumentProperties>;
 
   /**
+   * Navigates a document path in the content perspective.
+   * @since 14.2
+   * @param id The document path.
+   * @returns A Promise that resolves when the document is opened.
+   */
+  navigate(path: string): Promise<void>;
+
+  /**
    * Opens a document by id in the content perspective.
    * @since 14.2
    * @param id The document id.

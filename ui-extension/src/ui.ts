@@ -120,6 +120,7 @@ interface DocumentParent extends UiParent {
   getDocument: ParentMethod<DocumentProperties>;
   getFieldValue: ParentMethod<string>;
   getFieldCompareValue: ParentMethod<string>;
+  navigateDocument: ParentMethod<void, [string]>;
   openDocument: ParentMethod<void, [string]>;
   setFieldValue: ParentMethod<void, [string]>;
   setFieldHeight: ParentMethod<void, [Height]>;
@@ -167,6 +168,10 @@ class Document extends Scope<DocumentParent> implements DocumentScope {
 
   get(): Promise<DocumentProperties> {
     return this[PARENT].call('getDocument');
+  }
+
+  navigate(path: string): Promise<void> {
+    return this[PARENT].call('navigateDocument', path);
   }
 
   open(id: string): Promise<void> {
