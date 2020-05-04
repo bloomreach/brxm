@@ -31,6 +31,9 @@ public class ContainerUtils {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerUtils.class);
 
+    private ContainerUtils() {
+    }
+
     public static Node getContainerItem(final Session session, final String itemUUID) throws RepositoryException {
 
         try {
