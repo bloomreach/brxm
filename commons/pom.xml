@@ -30,7 +30,7 @@
   <inceptionYear>2012</inceptionYear>
 
   <artifactId>hippo-cms7-commons</artifactId>
-  <version>14.2.0</version>
+  <version>14.2.1-SNAPSHOT</version>
 
   <properties>
     <junit.version>4.12</junit.version>
