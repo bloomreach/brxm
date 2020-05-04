@@ -61,6 +61,7 @@ export default class OpenuiStringFieldController {
       methods: {
         getDocument: this.getDocument.bind(this),
         getFieldValue: this.getValue.bind(this),
+        navigateDocument: this.navigateDocument.bind(this),
         openDocument: this.openDocument.bind(this),
         setFieldValue: this.setValue.bind(this),
         setFieldHeight: this.setHeight.bind(this),
@@ -109,6 +110,18 @@ export default class OpenuiStringFieldController {
         id: document.variantId,
       },
     };
+  }
+
+  async navigateDocument(path) {
+    if (this.ContentEditor.isDocumentDirty()) {
+      try {
+        await this.ContentEditor.confirmClose('SAVE_CHANGES_TO_DOCUMENT');
+      } catch (error) {
+        throw new Error('Failed to close the unsaved document.');
+      }
+    }
+
+    this.CmsService.publish('open-content-path', path, 'view');
   }
 
   async openDocument(id) {

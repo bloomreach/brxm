@@ -249,4 +249,31 @@ describe('OpenuiStringField', () => {
       $rootScope.$digest();
     });
   });
+
+  describe('navigateDocument', () => {
+    it('should navigate to a document', () => {
+      $ctrl.navigateDocument('something');
+
+      expect(CmsService.publish).toHaveBeenCalledWith('open-content-path', 'something', 'view');
+    });
+
+    it('should save an edited document', () => {
+      ContentEditor.isDocumentDirty.and.returnValue(true);
+      $ctrl.navigateDocument('something');
+
+      expect(ContentEditor.confirmClose).toHaveBeenCalled();
+    });
+
+    it('should save an edited document', (done) => {
+      ContentEditor.isDocumentDirty.and.returnValue(true);
+      ContentEditor.confirmClose.and.returnValue($q.reject());
+
+      $ctrl.navigateDocument('something').catch((error) => {
+        expect(error).toEqual(jasmine.any(Error));
+        done();
+      });
+
+      $rootScope.$digest();
+    });
+  });
 });
