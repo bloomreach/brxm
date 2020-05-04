@@ -27,7 +27,7 @@
   <groupId>org.onehippo</groupId>
   <artifactId>spa-sdk</artifactId>
   <name>Bloomreach SPA SDK</name>
-  <version>14.2.0-SNAPSHOT</version>
+  <version>14.3.0-SNAPSHOT</version>
 
   <inceptionYear>2019</inceptionYear>
 
