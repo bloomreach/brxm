@@ -220,7 +220,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             if (UNPUBLISHED.equals(JcrUtils.getStringProperty(unpublished, HIPPOSTD_STATE, null))) {
                 return unpublished;
             } else {
-                throw new ClientException(String.format("'%s' Does not below to unpublished variant of Experience Page.",
+                throw new ClientException(String.format("'%s' Does not belong to unpublished variant of Experience Page.",
                         node.getPath()), ClientError.INVALID_UUID);
             }
         }
