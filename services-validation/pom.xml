@@ -28,7 +28,7 @@
 
   <name>Hippo CMS7 Services - validation</name>
   <artifactId>hippo-services-validation</artifactId>
-  <version>14.2.0</version>
+  <version>14.2.1-SNAPSHOT</version>
 
   <inceptionYear>2019</inceptionYear>
 
