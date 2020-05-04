@@ -28,7 +28,7 @@
   <packaging>jar</packaging>
 
   <artifactId>hippo-cms-testutils</artifactId>
-  <version>14.2.0</version>
+  <version>14.2.1-SNAPSHOT</version>
 
   <inceptionYear>2017</inceptionYear>
 
