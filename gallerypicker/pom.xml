@@ -27,7 +27,7 @@
   <description>Hippo Plugin Gallery Picker</description>
   <artifactId>hippo-plugin-gallerypicker</artifactId>
   <packaging>jar</packaging>
-  <version>14.2.0</version>
+  <version>14.2.1-SNAPSHOT</version>
 
   <inceptionYear>2008</inceptionYear>
 
