@@ -42,10 +42,10 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Poll</notice.project.name>
 
-    <hippo.cms.version>13.4.3</hippo.cms.version>
-    <hippo.repository.version>13.4.3</hippo.repository.version>
-    <hippo.hst.version>13.4.3</hippo.hst.version>
-    <hippo.commons.version>13.4.3</hippo.commons.version>
+    <hippo.cms.version>13.4.4-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>13.4.4-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>13.4.4-SNAPSHOT</hippo.hst.version>
+    <hippo.commons.version>13.4.4-SNAPSHOT</hippo.commons.version>
   </properties>
 
   <repositories>
