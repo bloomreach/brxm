@@ -69,7 +69,7 @@
     <hippo.essentials-components.version>13.4.3</hippo.essentials-components.version>
     <hippo.plugin.content-blocks.version>13.4.3-SNAPSHOT</hippo.plugin.content-blocks.version>
     <hippo.plugin.content-tagging.version>13.4.3</hippo.plugin.content-tagging.version>
-    <hippo.plugin.dashboard-document-wizard.version>13.4.3-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
+    <hippo.plugin.dashboard-document-wizard.version>13.4.3</hippo.plugin.dashboard-document-wizard.version>
     <hippo.plugin.gallerypicker.version>13.4.3</hippo.plugin.gallerypicker.version>
     <hippo.plugin.poll.version>13.4.3-SNAPSHOT</hippo.plugin.poll.version>
     <hippo.plugin.relateddocs.version>13.4.3-SNAPSHOT</hippo.plugin.relateddocs.version>
