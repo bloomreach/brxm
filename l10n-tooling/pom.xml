@@ -26,7 +26,7 @@
   <name>Hippo CMS l10n Tooling Project</name>
   <groupId>org.onehippo.cms.l10n</groupId>
   <artifactId>hippo-cms-l10n-tooling-project</artifactId>
-  <version>13.4.3</version>
+  <version>13.4.4-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
