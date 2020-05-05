@@ -39,8 +39,8 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>5.6.10</hippo.repository.version>
-    <hippo.cms.version>5.6.10</hippo.cms.version>
+    <hippo.repository.version>5.6.11-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.6.11-SNAPSHOT</hippo.cms.version>
   </properties>
 
   <repositories>
