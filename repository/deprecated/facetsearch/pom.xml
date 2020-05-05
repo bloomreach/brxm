@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-repository-deprecated</artifactId>
-    <version>13.4.3</version>
+    <version>13.4.4-SNAPSHOT</version>
   </parent>
 
   <name>Repository Deprecated Facetsearch</name>
