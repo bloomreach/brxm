@@ -36,7 +36,7 @@
   </scm>
 
   <properties>
-    <hippo.cms.version>13.4.3</hippo.cms.version>
+    <hippo.cms.version>13.4.4-SNAPSHOT</hippo.cms.version>
   </properties>
 
   <repositories>
