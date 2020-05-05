@@ -56,7 +56,7 @@
     <hippo.repository.version>13.4.3</hippo.repository.version>
     <hippo.services.version>13.4.3</hippo.services.version>
     <hippo.services.autoreload.version>13.4.3</hippo.services.autoreload.version>
-    <hippo.services.contenttype.version>13.4.3-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.services.contenttype.version>13.4.3</hippo.services.contenttype.version>
     <hippo.services.eventbus.version>13.4.3</hippo.services.eventbus.version>
     <hippo.services.validation.version>13.4.3</hippo.services.validation.version>
     <hippo.services.webfiles.version>13.4.3</hippo.services.webfiles.version>
