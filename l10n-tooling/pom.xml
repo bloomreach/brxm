@@ -31,7 +31,7 @@
 
   <properties>
 
-    <hippo.configuration-management.version>1.6.10</hippo.configuration-management.version>
+    <hippo.configuration-management.version>1.6.11-SNAPSHOT</hippo.configuration-management.version>
 
     <commons-io.version>2.6</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
