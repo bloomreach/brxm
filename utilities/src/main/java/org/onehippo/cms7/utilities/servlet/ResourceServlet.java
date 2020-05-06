@@ -195,10 +195,13 @@ public class ResourceServlet extends HttpServlet {
 
     private static final Pattern WEBAPP_PROTECTED_PATH = Pattern.compile("/?WEB-INF/.*");
 
-    private static final String HTTP_IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
-    private static final String HTTP_LAST_MODIFIED_HEADER = "Last-Modified";
-    private static final String HTTP_EXPIRES_HEADER = "Expires";
-    private static final String HTTP_CACHE_CONTROL_HEADER = "Cache-Control";
+    public static final String HTTP_IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
+    public static final String HTTP_LAST_MODIFIED_HEADER = "Last-Modified";
+    public static final String HTTP_EXPIRES_HEADER = "Expires";
+    public static final String HTTP_CACHE_CONTROL_HEADER = "Cache-Control";
+    public static final String CACHE_CONTROL_BROWSER_ONLY = "private";
+    public static final String CACHE_CONTROL_ALL = "public";
+    public static final String CACHE_CONTROL_IMMUTABLE = "immutable";
 
     private static final int CACHE_TIME_OUT_1_YEAR_IN_SECONDS = 31556926;
 
