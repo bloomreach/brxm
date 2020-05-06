@@ -244,14 +244,14 @@
     },
 
     showMask: function () {
-      if (Hippo && Hippo.showMask) {
-        Hippo.showMask();
+      if (Hippo && Hippo.navapp.showMask) {
+        Hippo.navapp.showMask();
       }
     },
 
     hideMask: function () {
-      if (Hippo && Hippo.hideMask) {
-        Hippo.hideMask();
+      if (Hippo && Hippo.navapp.hideMask) {
+        Hippo.navapp.hideMask();
       }
     },
 

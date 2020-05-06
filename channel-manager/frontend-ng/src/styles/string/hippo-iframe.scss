@@ -301,7 +301,7 @@
       }
 
       .hippo-overlay-element-component-drop-area-icons svg {
-        transform: rotate(-90deg);
+        transform: rotate(90deg);
       }
     }
 
@@ -317,7 +317,7 @@
         flex-direction: row-reverse;
 
         svg {
-          transform: rotate(90deg);
+          transform: rotate(-90deg);
         }
       }
     }
@@ -336,6 +336,10 @@
 
       .hippo-overlay-element-component-drop-area-icons {
         flex-direction: column;
+
+        svg {
+          transform: rotate(180deg);
+        }
       }
     }
 
@@ -349,10 +353,6 @@
 
       .hippo-overlay-element-component-drop-area-icons {
         flex-direction: column-reverse;
-
-        svg {
-          transform: rotate(180deg);
-        }
       }
     }
   }
@@ -385,6 +385,11 @@
 
   .hippo-overlay-element-container-disabled {
     cursor: not-allowed;
+    pointer-events: all;
+
+    .hippo-overlay-icon {
+      fill: $bloomreach-red;
+    }
   }
 
   .hippo-overlay-element-component-drop-area {
