@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,51 +38,46 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Model for JCR {@link Item}s.  The model tracks the Item as well as it can, using the
- * first referenceable ancestor plus a relative path as the identification/retrieval method.
- * When the Item (or one of its ancestors) is moved, this is transparent.
+ * Model for JCR {@link Item}s.  The model tracks the Item as well as it can, using the first referenceable ancestor
+ * plus a relative path as the identification/retrieval method. When the Item (or one of its ancestors) is moved, this
+ * is transparent.
  * <p>
  * In development, when the model is serialized, it checks whether it has been detached properly.
  */
 public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
-
-    private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(JcrItemModel.class);
 
     // the leading id of the item is the (uuid,relPath) tuple.
     private String uuid;
     private String relPath;
-    private int hash;
-    private boolean property;
-    private String userId;
-
     // the path of the item, used to retrieve the item when the uuid has not been
     // determined yet or the uuid cannot be resolved.
-    private String absPath = null;
+    private String absPath;
+    private boolean isProperty;
+    private int hash;
+
+    private final String userId;
 
     // recursion detection
     private transient boolean detaching = false;
 
-    // constructors
-
-    public JcrItemModel(T item) {
+    public JcrItemModel(final T item) {
         super(item);
-        setUserId();
-        relPath = null;
-        uuid = null;
+
+        userId = UserSession.get().getJcrSession().getUserID();
+
         if (item != null) {
             TraceMonitor.track(item);
-            property = !item.isNode();
+            isProperty = !item.isNode();
             doSave();
         }
     }
 
-    public JcrItemModel(String path, boolean property) {
-        setUserId();
-        uuid = null;
+    public JcrItemModel(final String path, final boolean property) {
         absPath = path;
-        this.property = property;
+        isProperty = property;
+        userId = UserSession.get().getJcrSession().getUserID();
     }
 
     /**
@@ -112,15 +107,16 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
      */
     public String getPath() {
         checkLiveJcrSession();
-        Item item = getObject();
+
+        final Item item = getObject();
         if (item != null) {
             try {
                 absPath = item.getPath();
                 return absPath;
-            } catch (InvalidItemStateException e) {
+            } catch (final InvalidItemStateException e) {
                 // ignore, item has been removed
                 log.debug("Item " + absPath + " no longer exists", e);
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 log.error(e.getMessage(), e);
             }
         }
@@ -145,30 +141,32 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
      * @return the parent JcrItemModel
      */
     public JcrItemModel<Node> getParentModel() {
-        String path = getPath();
-        if (path != null) {
-            int idx = path.lastIndexOf('/');
-            if (idx > 0) {
-                String parent = path.substring(0, path.lastIndexOf('/'));
-                return new JcrItemModel<Node>(parent, false);
-            } else if (idx == 0) {
-                if (path.equals("/")) {
-                    return null;
-                }
-                return new JcrItemModel<Node>("/", false);
-            } else {
-                log.error("Unrecognised path " + path);
-            }
+        final String path = getPath();
+        if (path == null) {
+            return null;
         }
-        return null;
+
+        if (path.equals("/")) {
+            return null;
+        }
+
+        final int indexOfLastSlash = path.lastIndexOf('/');
+        if (indexOfLastSlash == -1) {
+            log.error("Unrecognised path " + path);
+            return null;
+        }
+
+        if (indexOfLastSlash == 0) {
+            return new JcrItemModel<>("/", false);
+        }
+
+        final String parentPath = path.substring(0, indexOfLastSlash);
+        return new JcrItemModel<>(parentPath, false);
     }
 
-    // LoadableDetachableModel
-
-    @SuppressWarnings("unchecked")
     @Override
     protected T load() {
-        T object = loadModel();
+        final T object = loadModel();
         if (object != null) {
             TraceMonitor.track(object);
         }
@@ -177,69 +175,51 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     @SuppressWarnings("unchecked")
     protected T loadModel() {
+        final javax.jcr.Session session = UserSession.get().getJcrSession();
+        if (!session.isLive()) {
+            log.warn("session no longer exists");
+            return null;
+        }
+
+        if (uuid == null && (absPath == null || absPath.isEmpty())) {
+            log.debug("Neither path nor uuid present for item model, returning null");
+            return null;
+        }
+
         try {
-            javax.jcr.Session session = UserSession.get().getJcrSession();
-            if (!session.isLive()) {
-                log.warn("session no longer exists");
-                return null;
-            }
             if (uuid != null) {
-                Node node;
                 try {
-                    node = session.getNodeByIdentifier(uuid);
+                    final Node node = session.getNodeByIdentifier(uuid);
                     if (relPath == null) {
                         absPath = node.getPath();
-                        return (T) node;
-                    }
-                    if (node.isSame(session.getRootNode())) {
+                    } else if (node.isSame(session.getRootNode())) {
                         absPath = "/" + relPath;
                     } else {
                         absPath = node.getPath() + "/" + relPath;
                     }
-                    if (property) {
-                        return (T) session.getProperty(absPath);
-                    } else {
-                        return (T) session.getNode(absPath);
-                    }
-                } catch (InvalidItemStateException ex) {
-                   if (absPath != null) {
-                       uuid = null;
-                       relPath = null;
-                       if (property) {
-                           return (T) session.getProperty(absPath);
-                       } else {
-                           return (T) session.getNode(absPath);
-                       }
-                    } else {
+
+                    return isProperty
+                            ? (T) session.getProperty(absPath)
+                            : (T) session.getNode(absPath);
+
+                } catch (final InvalidItemStateException | ItemNotFoundException ex) {
+                    if (absPath == null) {
                         throw ex;
                     }
-                } catch (ItemNotFoundException ex) {
-                    if (absPath != null) {
-                        uuid = null;
-                        relPath = null;
-                        if (property) {
-                            return (T) session.getProperty(absPath);
-                        } else {
-                            return (T) session.getNode(absPath);
-                        }
-                    } else {
-                        throw ex;
-                    }
+
+                    uuid = null;
+                    relPath = null;
                 }
-            } else if (absPath != null && !absPath.isEmpty()) {
-                if (property) {
-                    return (T) session.getProperty(absPath);
-                } else {
-                    return (T) session.getNode(absPath);
-                }
-            } else {
-                log.debug("Neither path nor uuid present for item model, returning null");
             }
-        } catch (ItemNotFoundException e) {
+
+            return isProperty
+                    ? (T) session.getProperty(absPath)
+                    : (T) session.getNode(absPath);
+        } catch (final ItemNotFoundException e) {
             log.info("ItemNotFoundException while loading JcrItemModel for uuid: {}", uuid);
-        } catch (PathNotFoundException e) {
+        } catch (final PathNotFoundException e) {
             log.info("PathNotFoundException while loading JcrItemModel: {}", e.getMessage());
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to load JcrItemModel", e);
         }
         return null;
@@ -248,7 +228,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     @Override
     public void detach() {
         if (isAttached()) {
-            T object = this.getObject();
+            final T object = this.getObject();
             if (object != null) {
                 TraceMonitor.release(object);
             }
@@ -269,13 +249,14 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
         if (!isValidSession()) {
             return;
         }
+
         try {
             relPath = null;
             Node node = null;
-            PrependingStringBuffer spb = new PrependingStringBuffer();
+            final PrependingStringBuffer spb = new PrependingStringBuffer();
 
             // if we have an item, use it to update the path
-            Item item = getObject();
+            final Item item = getObject();
             if (item != null) {
                 try {
                     absPath = item.getPath();
@@ -286,7 +267,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
                         spb.prepend(item.getName());
                         spb.prepend('/');
                     }
-                } catch (InvalidItemStateException ex) {
+                } catch (final InvalidItemStateException ex) {
                     // ignore; item doesn't exist anymore
                     super.detach();
                 }
@@ -294,25 +275,25 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
             // no node was found, use path to resolve an ancestor
             if (node == null) {
-                if (absPath != null) {
-                    Session session = UserSession.get().getJcrSession();
-                    String path = absPath;
-                    while (path.lastIndexOf('/') > 0) {
-                        spb.prepend(path.substring(path.lastIndexOf('/')));
-                        path = path.substring(0, path.lastIndexOf('/'));
-                        try {
-                            node = (Node) session.getItem(path);
-                            break;
-                        } catch (PathNotFoundException ignored) {
-                        }
-                    }
-                } else {
+                if (absPath == null) {
                     log.debug("Neither path nor uuid present");
                     return;
                 }
+
+                final Session session = UserSession.get().getJcrSession();
+                String path = absPath;
+                while (path.lastIndexOf('/') > 0) {
+                    spb.prepend(path.substring(path.lastIndexOf('/')));
+                    path = path.substring(0, path.lastIndexOf('/'));
+                    try {
+                        node = (Node) session.getItem(path);
+                        break;
+                    } catch (final PathNotFoundException ignored) {
+                    }
+                }
             }
 
-            while (node != null && JcrHelper.isVirtualNode(node)) {
+            while (JcrHelper.isVirtualNode(node)) {
                 if (node.getIndex() > 1) {
                     spb.prepend(']');
                     spb.prepend(Integer.toString(node.getIndex()));
@@ -329,16 +310,16 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
                     relPath = spb.toString().substring(1);
                 }
             }
-        } catch (RepositoryException ex) {
+        } catch (final RepositoryException ex) {
             log.error(ex.toString());
         }
     }
 
 
-    private void writeObject(ObjectOutputStream output) throws IOException {
+    private void writeObject(final ObjectOutputStream output) throws IOException {
         if (isAttached()) {
-            log.warn("Undetached JcrItemModel "+getPath());
-            T object = this.getObject();
+            log.warn("Undetached JcrItemModel " + getPath());
+            final T object = this.getObject();
             if (object != null) {
                 TraceMonitor.trace(object);
             }
@@ -349,69 +330,70 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
         output.defaultWriteObject();
     }
 
-    // override Object
-
     @Override
     public String toString() {
-        if (!detaching) {
-            boolean isAttached = isAttached();
-            String string = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("path", getPath()).toString();
-            if (!isAttached) {
-                detach();
-            }
-            return string;
-        } else {
+        if (detaching) {
             return super.toString();
         }
+
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("attached", true)
+                .append("uuid", uuid)
+                .append("relativePath", relPath)
+                .append("absolutePath", absPath)
+                .build();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (!(object instanceof JcrItemModel)) {
             return false;
         }
+
         if (this == object) {
             return true;
         }
-        JcrItemModel that = (JcrItemModel) object;
-        
+
+        @SuppressWarnings("unchecked") final JcrItemModel<T> that = (JcrItemModel<T>) object;
         // Two Objects that compare as equals must generate the same hash code,
         // but two Objects with the same hash code do not have to be equal.
         // this implicitly calls the save method when needed
-        if (this.hashCode() != that.hashCode()) {
-            return false;
-        } 
-
-        if (this.uuid != null && !this.uuid.equals(that.uuid)) {
+        if (hashCode() != that.hashCode()) {
             return false;
         }
 
-        if (this.relPath == null && that.relPath == null) {
+        if (uuid != null && !uuid.equals(that.uuid)) {
+            return false;
+        }
+
+        if (relPath == null && that.relPath == null) {
             return true;
-        } else {
-            return this.relPath != null && this.relPath.equals(that.relPath);
         }
+
+        return relPath != null && relPath.equals(that.relPath);
     }
 
     @Override
     public int hashCode() {
-        if (hash == 0) {
-            if (uuid == null) {
-                // try to retrieve uuid
-                save();
-            }
-            // prefer uuid over path
-            if (uuid != null) {
-                if (relPath == null) {
-                    hash = uuid.hashCode();
-                } else {
-                    hash = uuid.hashCode() + relPath.hashCode();
-                }
+        if (hash != 0) {
+            return hash;
+        }
+
+        if (uuid == null) {
+            // try to retrieve uuid
+            save();
+        }
+
+        // prefer uuid over path
+        if (uuid != null) {
+            if (relPath == null) {
+                hash = uuid.hashCode();
             } else {
-                // no node found
-                hash = -1;
+                hash = uuid.hashCode() + relPath.hashCode();
             }
+        } else {
+            // no node found
+            hash = -1;
         }
         return hash;
     }
@@ -419,10 +401,6 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     private boolean isValidSession() {
         final Session session = UserSession.get().getJcrSession();
         return session.getUserID().equals(userId);
-    }
-
-    private void setUserId() {
-        userId = UserSession.get().getJcrSession().getUserID();
     }
 
     private void checkLiveJcrSession() {

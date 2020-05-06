@@ -61,6 +61,7 @@ import org.apache.wicket.pageStore.IPageStore;
 import org.apache.wicket.protocol.http.BufferedWebResponse;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.protocol.http.servlet.ServletWebResponse;
+import org.apache.wicket.request.IExceptionMapper;
 import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.IRequestParameters;
@@ -84,6 +85,7 @@ import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.settings.ExceptionSettings;
 import org.apache.wicket.settings.ResourceSettings;
 import org.apache.wicket.util.IContextProvider;
+import org.apache.wicket.util.IProvider;
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.IResourceStream;
@@ -92,6 +94,7 @@ import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener;
+import org.hippoecm.frontend.errors.NavAppExceptionMapper;
 import org.hippoecm.frontend.http.CsrfPreventionRequestCycleListener;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -200,7 +203,7 @@ public class Main extends PluginApplication {
     protected String repositoryFallbackUsername;
     protected String repositoryFallbackPassword;
     private WicketFaviconService wicketFaviconService;
-
+    private IProvider<IExceptionMapper> exceptionMapperProvider;
 
     protected void initializeFallBackCredentials() {
         repositoryFallbackUsername = getConfigurationParameter(REPOSITORY_USERNAME_PARAM, null);
@@ -502,8 +505,9 @@ public class Main extends PluginApplication {
             // don't throw on missing resource
             resourceSettings.setThrowExceptionOnMissingResource(false);
 
-            // don't show exception page
-            getExceptionSettings().setUnexpectedExceptionDisplay(ExceptionSettings.SHOW_NO_EXCEPTION_PAGE);
+            // Unexpected exceptions will be rendered by the nav-app
+            getExceptionSettings().setUnexpectedExceptionDisplay(ExceptionSettings.SHOW_EXCEPTION_PAGE);
+            exceptionMapperProvider = NavAppExceptionMapper::new;
 
             final long timeout = NumberUtils.toLong(getConfigurationParameter(DEPLOYMENT_REQUEST_TIMEOUT_PARAM, null));
 
@@ -553,6 +557,13 @@ public class Main extends PluginApplication {
         }
 
         addHeaderResponseDecorator();
+    }
+
+    @Override
+    public IProvider<IExceptionMapper> getExceptionMapperProvider() {
+        return exceptionMapperProvider != null
+            ? exceptionMapperProvider
+            : super.getExceptionMapperProvider();
     }
 
     protected IPackageResourceGuard createPackageResourceGuard() {

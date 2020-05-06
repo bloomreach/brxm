@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
-import org.hippoecm.frontend.wicketevents.AjaxCallFailureHeaderItem;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.logout.ActiveLogoutPlugin;
@@ -53,6 +52,7 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.hippoecm.frontend.service.ILogoutService;
+import org.hippoecm.frontend.service.INavAppSettingsService;
 import org.hippoecm.frontend.service.INestedBrowserContextService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IconSize;
@@ -63,6 +63,7 @@ import org.hippoecm.frontend.usagestatistics.UsageStatisticsHeaderItem;
 import org.hippoecm.frontend.useractivity.MonitorExtUserActivityHeaderItem;
 import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
 import org.hippoecm.frontend.util.WebApplicationHelper;
+import org.hippoecm.frontend.wicketevents.AjaxCallFailureHeaderItem;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.frontend.widgets.Pinger;
 import org.onehippo.repository.security.SessionUser;
@@ -194,11 +195,16 @@ public class RootPlugin extends TabsPlugin {
     }
 
     private void addUserMenu() {
-        final ILogoutService logoutService = getPluginContext().getService(ILogoutService.SERVICE_ID, ILogoutService.class);
+        final IPluginContext context = getPluginContext();
+        final ILogoutService logoutService = context.getService(ILogoutService.SERVICE_ID, ILogoutService.class);
         final UserMenu userMenu = new UserMenu("userMenu", getCurrentUser(), logoutService);
         userMenu.setVisible(!hidePerspectiveMenu());
         add(userMenu);
-        add(new ActiveLogoutPlugin("activeLogout", getMaxInactiveIntervalMinutes(), logoutService));
+        final INavAppSettingsService navAppSettingsService =
+                context.getService(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.class);
+        final ActiveLogoutPlugin activeLogout = new ActiveLogoutPlugin("activeLogout"
+                , getMaxInactiveIntervalMinutes(), logoutService, navAppSettingsService.getIframesConnectionTimeout());
+        add(activeLogout);
     }
 
     private boolean hidePerspectiveMenu() {

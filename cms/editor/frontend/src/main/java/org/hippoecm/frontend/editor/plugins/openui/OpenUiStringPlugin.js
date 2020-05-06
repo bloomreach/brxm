@@ -39,6 +39,8 @@ class OpenUiStringPlugin {
   getMethods() {
     return {
       getDocument: this.getDocumentProperties.bind(this),
+      navigateDocument: this.navigateDocument.bind(this),
+      openDocument: this.openDocument.bind(this),
       getFieldValue: this.getFieldValue.bind(this),
       setFieldValue: this.setFieldValue.bind(this),
       getFieldCompareValue: this.getFieldCompareValue.bind(this),
@@ -57,6 +59,14 @@ class OpenUiStringPlugin {
         id: this.parameters.documentVariantId
       }
     }
+  }
+
+  navigateDocument(path) {
+    Hippo.openDocumentByPath(path, 'view');
+  }
+
+  openDocument(id) {
+    Hippo.openDocumentById(id, 'view');
   }
 
   getFieldValue() {

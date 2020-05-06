@@ -90,7 +90,8 @@ window.OpenUi = new class {
   }
 
   _getIframeUrl(extensionUrl, extensionDialogUrl) {
-    extensionUrl = this._getExtensionUrl(extensionUrl, this.cmsOrigin);
+    extensionUrl = this._getExtensionUrl(extensionUrl, this.cmsBaseUrl);
+
     return extensionDialogUrl
       ? this._getExtensionUrl(extensionDialogUrl, extensionUrl.href)
       : extensionUrl;

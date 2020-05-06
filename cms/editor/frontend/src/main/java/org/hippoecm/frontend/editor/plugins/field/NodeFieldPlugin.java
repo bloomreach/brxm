@@ -60,12 +60,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     public NodeFieldPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        final IModel<String> caption = helper.getCaptionModel(this);
-        final IModel<String> hint = helper.getHintModel(this);
-        final FieldTitle fieldTitle = new FieldTitle("field-title", caption, hint, helper.isRequired());
-        fieldTitle.setVisible(!helper.isCompoundField());
-        add(fieldTitle);
-
+        add(createFieldTitle());
         add(createNrItemsLabel());
         add(createAddLink());
 
@@ -93,6 +88,16 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
                 add(ClassAttribute.append("hippo-editor-compound-field"));
             }
         }
+    }
+
+    private Component createFieldTitle() {
+        final IModel<String> caption = helper.getCaptionModel(this);
+        final IModel<String> hint = helper.getHintModel(this);
+        final boolean required = helper.isRequired();
+
+        return helper.isCompoundField()
+            ? new CollapsibleFieldTitle("field-title", caption, hint, required, null)
+            : new FieldTitle("field-title", caption, hint, required);
     }
 
     private String cssClassName(final String name) {
@@ -136,10 +141,29 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         redraw();
     }
 
+    /**
+     * Compound fields should only show the field-title component if there are no compound nodes. If there are 1 or
+     * more compound nodes, the field-title is rendered by the FieldContainers, see
+     * {@link #populateViewItem(Item, JcrNodeModel)} and {@link #populateEditItem(Item, JcrNodeModel)}.
+     */
+    private void updateCompoundFieldTitleVisibility() {
+        if (!helper.isCompoundField()) {
+            return;
+        }
+
+        if (mode == IEditor.Mode.COMPARE) {
+            get("field-title").setVisible(oldProvider.size() == 0 && newProvider.size() == 0);
+        } else {
+            get("field-title").setVisible(provider.size() == 0);
+        }
+    }
+
     @Override
     protected void onBeforeRender() {
         replace(createAddLink());
         super.onBeforeRender();
+
+        updateCompoundFieldTitleVisibility();
     }
 
     @Override
