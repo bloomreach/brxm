@@ -465,6 +465,8 @@ describe('OverlayService', () => {
   });
 
   it('syncs the position of overlay elements in edit mode', async () => {
+    const minimalOverlayBoxHeight = 50;
+
     OverlayService.toggleComponentsOverlay(true);
     OverlayService.toggleContentsOverlay(false);
     await loadIframeFixture();
@@ -493,10 +495,10 @@ describe('OverlayService', () => {
     expect(componentB.css('height')).toBe('200px');
 
     const emptyContainer = $document.find('.hippo-overlay > .hippo-overlay-element-container').eq(2);
-    expect(emptyContainer.css('top')).toBe(`${400 + 96 + 4}px`);
+    expect(emptyContainer.css('top')).toBe(`${400 + minimalOverlayBoxHeight + 4}px`);
     expect(emptyContainer.css('left')).toBe('0px');
     expect(emptyContainer.css('width')).toBe('200px');
-    expect(emptyContainer.css('height')).toBe('96px'); // minimum height of empty container
+    expect(emptyContainer.css('height')).toBe(`${minimalOverlayBoxHeight}px`); // minimum height of empty container
   });
 
   it('takes the scroll position of the iframe into account when positioning overlay elements', async () => {

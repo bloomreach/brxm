@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@
       this.iframeToHost.subscribe('show-link-picker', this._showLinkPicker, this);
       this.iframeToHost.subscribe('show-rich-text-link-picker', this._showRichTextLinkPicker, this);
       this.iframeToHost.subscribe('show-rich-text-image-picker', this._showRichTextImagePicker, this);
+      this.iframeToHost.subscribe('open-content-path', this._openContentPath, this);
       this.iframeToHost.subscribe('open-content', this._openContent, this);
       this.iframeToHost.subscribe('close-content', this._closeContent, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
@@ -145,6 +146,10 @@
         this.componentPropertiesWindow.destroy();
       }
       delete this.componentPropertiesWindow;
+    },
+
+    _openContentPath: function(path, mode) {
+      Hippo.openDocumentByPath(path, mode);
     },
 
     _openContent: function(uuid, mode) {
@@ -280,14 +285,14 @@
     },
 
     _maskSurroundings: function() {
-      if (Hippo && Hippo.showMask) {
-        Hippo.showMask();
+      if (Hippo && Hippo.navapp.showMask) {
+        Hippo.navapp.showMask();
       }
     },
 
     _unmaskSurroundings: function() {
-      if (Hippo && Hippo.hideMask) {
-        Hippo.hideMask();
+      if (Hippo && Hippo.navapp.hideMask) {
+        Hippo.navapp.hideMask();
       }
     },
 
