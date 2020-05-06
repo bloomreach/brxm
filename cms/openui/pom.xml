@@ -18,7 +18,7 @@
   <parent>
     <artifactId>hippo-cms</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>14.2.0-keep-draft-SNAPSHOT</version>
+    <version>14.3.0-keep-draft-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
