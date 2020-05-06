@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.cache.CacheElement;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.cache.webfiles.CacheableWebFile;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.webfiles.WhitelistReader;
 import org.hippoecm.hst.util.WebFileUtils;
@@ -47,6 +48,12 @@ import org.onehippo.cms7.services.webfiles.WebFileTagNotFoundException;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cms7.utilities.servlet.ResourceServlet.CACHE_CONTROL_PUBLIC;
+import static org.onehippo.cms7.utilities.servlet.ResourceServlet.CACHE_CONTROL_PRIVATE;
+import static org.onehippo.cms7.utilities.servlet.ResourceServlet.CACHE_CONTROL_IMMUTABLE;
+import static org.onehippo.cms7.utilities.servlet.ResourceServlet.HTTP_CACHE_CONTROL_HEADER;
+import static org.onehippo.cms7.utilities.servlet.ResourceServlet.HTTP_EXPIRES_HEADER;
 
 public class WebFileValve extends AbstractBaseOrderableValve {
 
@@ -243,8 +250,12 @@ public class WebFileValve extends AbstractBaseOrderableValve {
         response.setContentType(webFile.getMimeType());
         if (includeCacheHeaders) {
             // one year ahead max, see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21
-            response.setDateHeader("Expires", ONE_YEAR_MILLISECONDS + System.currentTimeMillis());
-            response.setHeader("Cache-Control", "max-age=" + ONE_YEAR_SECONDS);
+            response.setDateHeader(HTTP_EXPIRES_HEADER, ONE_YEAR_MILLISECONDS + System.currentTimeMillis());
+            HstRequestContext requestContext = RequestContextProvider.get();
+            boolean isPreview = requestContext != null && requestContext.isPreview();
+            response.setHeader(HTTP_CACHE_CONTROL_HEADER,
+                    (isPreview ? CACHE_CONTROL_PRIVATE : CACHE_CONTROL_PUBLIC) +
+                            ", " + CACHE_CONTROL_IMMUTABLE + ", max-age=" + ONE_YEAR_SECONDS);
         }
     }
 
