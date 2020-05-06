@@ -103,12 +103,12 @@
           border-bottom: none;
           padding: 0;
         }
+
+        &.collapsed > .hippo-editor-field-title.collapsed {
+          margin-bottom: 0;
+        }
       }
     }
-  }
-
-  .hippo-node-field-multiple > .hippo-editor-field > .hippo-editor-field-subfield > .hippo-editor-field-title {
-    margin-bottom: 0;
   }
 
   .hippo-property-field-type-string.hippo-property-field-multiple .hippo-editor-field-value {

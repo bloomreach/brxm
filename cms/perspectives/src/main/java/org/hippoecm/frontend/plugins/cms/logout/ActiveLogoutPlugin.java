@@ -15,12 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.cms.logout;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.Main;
-import org.hippoecm.frontend.NavAppToAppHeaderItem;
+import org.hippoecm.frontend.NavAppBridgeHeaderItem;
 import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
@@ -32,9 +34,29 @@ import org.slf4j.LoggerFactory;
 public class ActiveLogoutPlugin extends Component {
 
     private static final Logger log = LoggerFactory.getLogger(ActiveLogoutPlugin.class);
+    private static final int CONNECTION_TIMEOUT_NOT_SET = -1;
 
     private final int maxInactiveIntervalMinutes;
     private final LogoutBehavior logoutBehavior;
+    private final int iframesConnectionTimeout;
+
+    /**
+     * @param id                         the Wicket ID of this component
+     * @param maxInactiveIntervalMinutes the number of minutes a user has to be inactive before being logged out.
+     *                                   A value of zero or less means means 'infinite' and will disable the active logout.
+     * @param logoutService              the service to use for logging out a user.
+     * @param iframesConnectionTimeout   maximum time to wait for an iframe to connect
+     */
+    public ActiveLogoutPlugin(final String id, final int maxInactiveIntervalMinutes, final ILogoutService logoutService, final int iframesConnectionTimeout) {
+        super(id);
+
+        this.maxInactiveIntervalMinutes = maxInactiveIntervalMinutes;
+        logoutBehavior = new LogoutBehavior(logoutService);
+        this.iframesConnectionTimeout = iframesConnectionTimeout;
+
+        add(logoutBehavior);
+        setRenderBodyOnly(true);
+    }
 
     /**
      * @param id                         the Wicket ID of this component
@@ -43,13 +65,7 @@ public class ActiveLogoutPlugin extends Component {
      * @param logoutService              the service to use for logging out a user.
      */
     public ActiveLogoutPlugin(final String id, final int maxInactiveIntervalMinutes, final ILogoutService logoutService) {
-        super(id);
-
-        this.maxInactiveIntervalMinutes = maxInactiveIntervalMinutes;
-        logoutBehavior = new LogoutBehavior(logoutService);
-
-        add(logoutBehavior);
-        setRenderBodyOnly(true);
+        this(id, maxInactiveIntervalMinutes, logoutService, CONNECTION_TIMEOUT_NOT_SET);
     }
 
     private boolean isActive() {
@@ -60,16 +76,26 @@ public class ActiveLogoutPlugin extends Component {
     public void internalRenderHead(final HtmlHeaderContainer container) {
         super.internalRenderHead(container);
 
-        final IHeaderResponse header = container.getHeaderResponse();
-        if (Main.isCmsApplication()) {
-            header.render(new NavAppToAppHeaderItem(getLogoutCallbackUrl()));
-        }
-
         if (isActive()) {
             log.info("Inactive user sessions will be logged out automatically after {}", Duration.minutes(maxInactiveIntervalMinutes));
         } else {
             log.info("Inactive user sessions will not be logged out automatically");
         }
+
+        final IHeaderResponse header = container.getHeaderResponse();
+
+
+
+        if (Main.isCmsApplication()) {
+            if (iframesConnectionTimeout == CONNECTION_TIMEOUT_NOT_SET){
+                log.warn("iframesConnectionTimeout has not been set, please set it to a valid number by using" +
+                        " the constructor parameter");
+                return;
+            }
+            header.render(new NavAppBridgeHeaderItem(getLogoutCallbackUrl(), iframesConnectionTimeout));
+        }
+
+
     }
 
     @Override

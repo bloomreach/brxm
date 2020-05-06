@@ -40,19 +40,20 @@ public class CollapsibleFieldTitle extends FieldTitle {
 
         this.isCollapsed = isCollapsed;
 
-        collapsingComponent.add(ClassAttribute.append("collapsible"));
-
         final ReadOnlyModel<String> collapsedModel = ReadOnlyModel.of(() -> isCollapsed ? "collapsed" : StringUtils.EMPTY);
-        collapsingComponent.add(ClassAttribute.append(collapsedModel));
         h3.add(ClassAttribute.append(collapsedModel));
 
         final HippoIcon expandCollapseIcon = HippoIcon.fromSprite("expand-collapse-icon", Icon.CHEVRON_DOWN);
         expandCollapseIcon.addCssClass("expand-collapse-icon");
         h3.add(expandCollapseIcon);
 
-        final String labelSelector = "#"  + h3.getMarkupId();
-        final String fieldSelector = "#" + collapsingComponent.getMarkupId();
-        h3.add(new CollapseBehavior(labelSelector, fieldSelector));
+        if (collapsingComponent != null) {
+            collapsingComponent.add(ClassAttribute.append("collapsible"), ClassAttribute.append(collapsedModel));
+
+            final String labelSelector = "#" + h3.getMarkupId();
+            final String fieldSelector = "#" + collapsingComponent.getMarkupId();
+            h3.add(new CollapseBehavior(labelSelector, fieldSelector));
+        }
     }
 
     protected void onCollapse(final boolean isCollapsed) {
@@ -74,14 +75,14 @@ public class CollapsibleFieldTitle extends FieldTitle {
 
             final String toggleScript = String.format(
                     "(function() {" +
-                            "  const label = $('%s');" +
-                            "  const field = $('%s');" +
-                            "  label.on('click', function() {" +
-                            "    label.toggleClass('collapsed');" +
-                            "    field.toggleClass('collapsed');" +
-                            "    %s" +
-                            "  });" +
-                            "})();",
+                    "  const label = $('%s');" +
+                    "  const field = $('%s');" +
+                    "  label.on('click', function() {" +
+                    "    label.toggleClass('collapsed');" +
+                    "    field.toggleClass('collapsed');" +
+                    "    %s" +
+                    "  });" +
+                    "})();",
                     labelSelector, fieldSelector, getCallbackScript());
             response.render(OnDomReadyHeaderItem.forScript(toggleScript));
         }
