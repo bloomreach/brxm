@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@ package org.hippoecm.repository.jackrabbit;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
@@ -48,13 +49,16 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.ObservationDispatcher;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.query.QueryHandler;
+import org.apache.jackrabbit.core.query.lucene.CachingMultiIndexReader;
 import org.apache.jackrabbit.core.query.lucene.ConsistencyCheck;
-import org.apache.jackrabbit.core.query.lucene.ConsistencyCheckError;
+import org.apache.jackrabbit.core.query.lucene.FieldNames;
+import org.apache.jackrabbit.core.query.lucene.FieldSelectors;
 import org.apache.jackrabbit.core.security.JackrabbitSecurityManager;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.ISMLocking;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
+import org.apache.lucene.document.Document;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.jmx.RepositoryStat;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
@@ -93,25 +97,13 @@ public class RepositoryImpl extends ExtendedJackrabbitRepositoryImpl implements 
         try {
             final ServicingSearchIndex searchIndex = (ServicingSearchIndex) getSearchManager("default").getQueryHandler();
             if (searchIndex.getServicingConsistencyCheckEnabled()) {
-                final ConsistencyCheck consistencyCheck = searchIndex.runConsistencyCheck();
-                List<ConsistencyCheckError> errors = consistencyCheck.getErrors();
-                if (!errors.isEmpty()) {
-                    consistencyCheck.doubleCheckErrors();
-                    errors = consistencyCheck.getErrors();
-                    if (!errors.isEmpty()) {
-                        if (searchIndex.getAutoRepair()) {
-                            consistencyCheck.repair(true);
-                        } else {
-                            for (ConsistencyCheckError error : errors) {
-                                log.warn(error.toString());
-                            }
-                        }
-                    } else {
-                        log.info("No errors detected");
-                    }
-                } else {
-                    log.info("No errors detected");
-                }
+                // regardless searchIndex.getAutoRepair() true or false, we repair the index : there is no point in
+                // expensive check without fixing the index
+                searchIndex.repairInconsistencies();
+            } else {
+                // as a minimum on any new startup, always repair duplicates as this is a cheap fix that does not require
+                // any database interaction for finding duplicates
+                searchIndex.repairDuplicates();
             }
         } catch (IOException e) {
             log.error("Search index consistency check failed", e);
@@ -189,7 +181,7 @@ public class RepositoryImpl extends ExtendedJackrabbitRepositoryImpl implements 
         final SearchManager searchManager = ((HippoWorkspaceInfo) getWorkspaceInfo(workspaceName)).getSearchManager();
         if (searchManager != null) {
             final QueryHandler queryHandler = searchManager.getQueryHandler();
-            if (queryHandler instanceof  HippoQueryHandler) {
+            if (queryHandler instanceof HippoQueryHandler) {
                 return (HippoQueryHandler) queryHandler;
             }
         }
@@ -258,6 +250,7 @@ public class RepositoryImpl extends ExtendedJackrabbitRepositoryImpl implements 
     /**
      * Create a HippoClusterNode which provides special handling (ignore) of initial cluster sync events for the
      * NodeTypeRegistry, NamespaceRegistry and PrivilegeRegistry when they are persisted in the database.
+     *
      * @return HippoClusterNode instead of (Jackrabbit)ClusterNode
      * @throws RepositoryException
      */
@@ -302,6 +295,7 @@ public class RepositoryImpl extends ExtendedJackrabbitRepositoryImpl implements 
 
     /**
      * Get the root/system session for a workspace
+     *
      * @param workspaceName if the workspaceName equals null the default namespace is taken
      * @return Session the rootSession
      * @throws RepositoryException

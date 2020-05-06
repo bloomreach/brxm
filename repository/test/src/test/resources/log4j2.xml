@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-  Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -97,6 +97,9 @@
       <AppenderRef ref="console"/>
     </Logger>
     <Logger additivity="false" name="org.hippoecm.repository.quartz.JCRJobStore" level="warn">
+      <AppenderRef ref="console"/>
+    </Logger>
+    <Logger additivity="false" name="org.hippoecm.repository.jackrabbit.IndexRepairer" level="warn">
       <AppenderRef ref="console"/>
     </Logger>
 
