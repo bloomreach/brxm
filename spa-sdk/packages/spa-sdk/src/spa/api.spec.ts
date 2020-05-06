@@ -155,7 +155,7 @@ describe('ApiImpl', () => {
 
       expect(config.httpClient).toBeCalledWith(expect.objectContaining({
         headers: {
-          'X-Server-Id': 'some',
+          'Server-Id': 'some',
         },
       }));
     });
