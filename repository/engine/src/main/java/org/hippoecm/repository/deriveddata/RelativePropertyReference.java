@@ -109,7 +109,7 @@ public class RelativePropertyReference extends PropertyReference {
     }
 
 
-    private void updateProperty(Value[] values, final PropertyUpdateLogger pul, Property property, Node modified) throws RepositoryException {
+    private void updateProperty(final Value[] values, final PropertyUpdateLogger pul, Property property, Node modified) throws RepositoryException {
         if (!property.getDefinition().isMultiple()) {
             if (values != null && values.length > 0) {
                 if (!property.getValue().equals(values[0])) {
@@ -135,11 +135,16 @@ public class RelativePropertyReference extends PropertyReference {
                 }
             }
         } else {
+            //Backwards compatibility: if a deriveddata function returns null instead of an empty Value[],
+            //we *do not* remove the existing property (we do that for single value properties, see code above).
+            //Up to now the code was throwing an NPE if values == null, and thus was not removing the property
+            Value[] checkedValues = (values == null) ? new Value[0] : values;
+
             boolean changed = false;
-            if (values.length == property.getValues().length) {
+            if (checkedValues.length == property.getValues().length) {
                 Value[] oldValues = property.getValues();
-                for (int i = 0; i < values.length; i++) {
-                    if (!values[i].equals(oldValues[i])) {
+                for (int i = 0; i < checkedValues.length; i++) {
+                    if (!checkedValues[i].equals(oldValues[i])) {
                         changed = true;
                         break;
                     }
@@ -157,7 +162,7 @@ public class RelativePropertyReference extends PropertyReference {
                     pul.failed();
                 }
             } else {
-                pul.unchanged(values);
+                pul.unchanged(checkedValues);
             }
         }
     }
