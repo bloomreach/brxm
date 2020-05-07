@@ -49,6 +49,9 @@ export interface BrComponentContext {
   page: Page;
 }
 
+/**
+ * The brXM component.
+ */
 @Directive({ selector: '[brComponent]' })
 export class BrComponentDirective implements OnChanges, OnDestroy, OnInit {
   /**

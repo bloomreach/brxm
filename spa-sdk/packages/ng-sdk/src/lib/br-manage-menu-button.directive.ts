@@ -19,8 +19,14 @@ import { Menu } from '@bloomreach/spa-sdk';
 import { BrMetaDirective } from './br-meta.directive';
 import { BrPageComponent } from './br-page/br-page.component';
 
+/**
+ * The button directive that opens a menu editor.
+ */
 @Directive({ selector: '[brManageMenuButton]' })
 export class BrManageMenuButtonDirective extends BrMetaDirective implements OnChanges {
+  /**
+   * The related menu model.
+   */
   @Input('brManageMenuButton') menu!: Menu;
 
   constructor(
