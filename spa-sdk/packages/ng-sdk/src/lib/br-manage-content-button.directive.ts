@@ -18,8 +18,14 @@ import { Directive, Input } from '@angular/core';
 import { Content } from '@bloomreach/spa-sdk';
 import { BrMetaDirective } from './br-meta.directive';
 
+/**
+ * The button direcrtive that opens for editing a content.
+ */
 @Directive({ selector: '[brManageContentButton]' })
 export class BrManageContentButtonDirective extends BrMetaDirective {
+  /**
+   * The content entity to open for editing.
+   */
   @Input('brManageContentButton') content!: Content;
 
   protected get meta() {
