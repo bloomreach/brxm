@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
