@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export * from './lib/ng-sdk.module';
+export * from './lib/br-sdk.module';
 export * from './lib/br-component.directive';
 export * from './lib/br-manage-content-button.directive';
 export * from './lib/br-manage-menu-button.directive';

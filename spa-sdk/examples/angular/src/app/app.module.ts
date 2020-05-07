@@ -16,7 +16,7 @@
 
 import { BrowserModule, BrowserTransferStateModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { NgSdkModule } from '@bloomreach/ng-sdk';
+import { BrSdkModule } from '@bloomreach/ng-sdk';
 
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
@@ -54,7 +54,7 @@ import { NewsItemComponent } from './news-item/news-item.component';
   imports: [
     BrowserModule.withServerTransition({ appId: 'brxm-angular-spa' }),
     BrowserTransferStateModule,
-    NgSdkModule,
+    BrSdkModule,
     AppRoutingModule,
   ],
   providers: [
