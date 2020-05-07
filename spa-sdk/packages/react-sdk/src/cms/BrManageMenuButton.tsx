@@ -21,7 +21,7 @@ import { BrPageContext } from '../page/BrPageContext';
 
 interface BrManageMenuButtonProps {
   /**
-   * The related menu component.
+   * The related menu model.
    */
   menu: Menu;
 }
