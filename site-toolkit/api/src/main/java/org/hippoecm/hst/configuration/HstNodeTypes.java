@@ -170,7 +170,6 @@ public interface HstNodeTypes {
     String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITE_AUTHENTICATION_SKIPPED = "hst:channelmanagersiteauthenticationskipped";
 
     String VIRTUALHOSTGROUP_PROPERTY_DEFAULT_PORT = "hst:defaultport";
-    String VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE = "hst:autohosttemplate";
 
     String VIRTUALHOST_PROPERTY_SCHEME = "hst:scheme";
     String VIRTUALHOST_PROPERTY_SITENAME = "hst:sitename";

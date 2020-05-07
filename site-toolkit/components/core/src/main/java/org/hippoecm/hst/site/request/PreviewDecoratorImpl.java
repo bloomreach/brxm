@@ -909,11 +909,6 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         public HstComponentRegistry getComponentRegistry() {
             return delegatee.getComponentRegistry();
         }
-
-        @Override
-        public Map<String, String> matchAutoHostTemplate(String hostName) {
-            return delegatee.matchAutoHostTemplate(hostName);
-        }
     }
 
     private static class PreviewDecoratedResolvedVirtualHost implements ResolvedVirtualHost {

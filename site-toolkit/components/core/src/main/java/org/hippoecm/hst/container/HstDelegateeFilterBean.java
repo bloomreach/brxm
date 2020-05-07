@@ -21,7 +21,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 import javax.jcr.Repository;
@@ -70,9 +69,6 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
-import org.hippoecm.hst.platform.model.HstModel;
-import org.hippoecm.hst.platform.model.HstModelRegistry;
-import org.hippoecm.hst.platform.model.RuntimeHostService;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
@@ -143,7 +139,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     private String jwtTokenParam;
     private String jwtTokenAuthorizationHeader;
 
-    private String clusterNodeAffinityParam;
+    private String clusterNodeAffinityCookieName;
+    private String clusterNodeAffinityHeaderName;
+    private String clusterNodeAffinityQueryParam;
 
     @Override
     public void setServletContext(ServletContext servletContext) {
@@ -182,8 +180,15 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         this.jwtTokenParam = jwtTokenParam;
     }
 
-    public void setClusterNodeAffinityParam(final String clusterNodeAffinityParam) {
-        this.clusterNodeAffinityParam = clusterNodeAffinityParam;
+    public void setClusterNodeAffinityCookieName(final String clusterNodeAffinityCookieName) {
+        this.clusterNodeAffinityCookieName = clusterNodeAffinityCookieName;
+    }
+
+    public void setClusterNodeAffinityHeaderName(final String clusterNodeAffinityHeaderName) {
+        this.clusterNodeAffinityHeaderName = clusterNodeAffinityHeaderName;
+    }
+    public void setClusterNodeAffinityQueryParam(final String clusterNodeAffinityQueryParam) {
+        this.clusterNodeAffinityQueryParam = clusterNodeAffinityQueryParam;
     }
 
     @Override
@@ -315,17 +320,10 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     log.debug("'{}' can not be matched to a host. Skip HST Filter and request processing since most likely it " +
                             "is a hosting environment internal request, like a pinger. ", containerRequest);
                 } else {
-
-                    resolvedVirtualHost = resolveVirtualHostFromRuntimeHosts(hostName, contextPath);
-
-                    if (resolvedVirtualHost == null) {
-                        log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
-                    }
+                    log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
                 }
-                if (resolvedVirtualHost == null) {
-                    chain.doFilter(request, response);
-                    return;
-                }
+                chain.doFilter(request, response);
+                return;
             }
 
             log.debug("{} matched to host '{}'", containerRequest, resolvedVirtualHost.getVirtualHost());
@@ -446,11 +444,11 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                             final URI uri = new URI(previewURL);
 
                             final JwtTokenService jwtTokenService = HippoServiceRegistry.getService(JwtTokenService.class);
-                            final String clusterNodeAffinityId = getClusterNodeAffinityId(req, clusterNodeAffinityParam);
+                            final String clusterNodeAffinityId = getClusterNodeAffinityId(req, clusterNodeAffinityCookieName, clusterNodeAffinityHeaderName);
                             final String location = previewURL +
                                     (uri.getQuery() == null ? "?" : "&")
                                     + jwtTokenParam + "=" + jwtTokenService.createToken(req, emptyMap()) +
-                                    (StringUtils.isNotBlank(clusterNodeAffinityId) ? "&" + clusterNodeAffinityParam + "=" + clusterNodeAffinityId : "");
+                                    (StringUtils.isNotBlank(clusterNodeAffinityId) ? "&" + clusterNodeAffinityQueryParam + "=" + clusterNodeAffinityId : "");
                             res.sendRedirect(location);
                             return;
 
@@ -1006,37 +1004,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         }
 
         return null;
-    }
-
-    private ResolvedVirtualHost resolveVirtualHostFromRuntimeHosts(String hostName, String contextPath) {
-        ResolvedVirtualHost resolvedVirtualHost = HippoWebappContextRegistry.get().getEntries()
-            .filter(hippoWebappContextServiceHolder -> {
-                final HippoWebappContext.Type contextType = hippoWebappContextServiceHolder.getServiceObject().getType();
-                return contextType == HippoWebappContext.Type.CMS || contextType == HippoWebappContext.Type.PLATFORM;
-            })
-            .findFirst()
-            .map(platformWebappContextServiceHolder -> {
-                final HippoWebappContext ctx = platformWebappContextServiceHolder.getServiceObject();
-                final String platformContextPath = ctx.getServletContext().getContextPath();
-                final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-                final HstModel hstModel = hstModelRegistry.getHstModel(platformContextPath);
-
-                final Map<String, String> resolvedAutoHostTemplate = hstModel.getVirtualHosts().matchAutoHostTemplate(hostName);
-                ResolvedVirtualHost virtualHost = null;
-                if (resolvedAutoHostTemplate != null) {
-                    Entry<String, String> entry = resolvedAutoHostTemplate.entrySet().iterator().next();
-                    final String resolvedAutoHostTemplateGroupName = entry.getKey();
-                    final String resolvedAutoHostTemplateURL = entry.getValue();
-
-                    VirtualHosts virtualHosts = HippoServiceRegistry.getService(RuntimeHostService.class).create(hostName,
-                        resolvedAutoHostTemplateGroupName, resolvedAutoHostTemplateURL, contextPath);
-                    virtualHost = virtualHosts.matchVirtualHost(hostName);
-                }
-                return virtualHost;
-            })
-            .orElse(null);
-
-        return resolvedVirtualHost;
     }
 
 }

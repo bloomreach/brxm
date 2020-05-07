@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>components</artifactId>
-    <version>14.2.0-Experience-Pages-SNAPSHOT</version>
+    <version>14.3.0-Experience-Pages-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Content Api</name>

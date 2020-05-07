@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.content.beans.builder;
 
+import java.util.Arrays;
+
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanUtils;
 import org.slf4j.Logger;
@@ -148,9 +150,10 @@ public abstract class AbstractBeanBuilderService {
     private CmsFieldType getCmsFieldType(final String type, final String cmsType) {
         CmsFieldType cmsFieldType = CmsFieldType.getCmsFieldType(type);
 
-        // if a cms field type is a string type, then the cms/item type check
+        // if a cms field type is a string or boolean type, then the cms/item type check
         // should be made to figure out the actual type of the document
-        if (cmsFieldType == CmsFieldType.STRING) {
+        // selection:BooleanRadioGroup field type has boolean type and custom cms type
+        if (cmsFieldType == CmsFieldType.STRING || cmsFieldType == CmsFieldType.BOOLEAN) {
             cmsFieldType = CmsFieldType.getCmsFieldType(cmsType);
         }
 

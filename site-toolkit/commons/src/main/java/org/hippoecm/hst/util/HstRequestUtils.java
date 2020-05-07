@@ -785,28 +785,30 @@ public class HstRequestUtils {
 
     /**
      * <p>
-     *     If present for this request, returns the cluster node affinity id for parameter
-     *     {@code clusterNodeAffinityParam}, which is typically 'serverid'. The {@code clusterNodeAffinityParam} lookup
-     *     is done from a cookie and if not found, a header will be checked. The following logic is applied
+     *     If present for this request, returns the cluster node affinity id for cookie
+     *     {@code clusterNodeAffinityCookieName}, which is typically 'serverid'. The {@code clusterNodeAffinityCookieName}
+     *     lookup is done from a cookie and if not found, the header clusterNodeAffinityHeaderName will be checked.
+     *     The following logic is applied
      *     <ul>
-     *         <li>if cookie present with case-insensitive name {@code clusterNodeAffinityParam}, return the cookie value</li>
-     *         <li>else if the (case insensitive by spec) header '{@code clusterNodeAffinityParam} exists, return the
+     *         <li>if cookie present with case-insensitive name {@code clusterNodeAffinityCookieName}, return the cookie value</li>
+     *         <li>else if the (case insensitive by spec) header '{@code clusterNodeAffinityHeaderName} exists, return the
      *         value of the header</li>
      *         <li>else return {@code null}</li>
      *     </ul>
      * </p>
      * @param request the {@link HttpServletRequest} to find the server id from
      */
-    public static String getClusterNodeAffinityId(final HttpServletRequest request, final String clusterNodeAffinityParam) {
+    public static String getClusterNodeAffinityId(final HttpServletRequest request, final String clusterNodeAffinityCookieName,
+                                                  final String clusterNodeAffinityHeaderName) {
         final Cookie[] cookies = request.getCookies();
         if (cookies != null) {
-            Optional<String> serverId = Arrays.stream(cookies).filter(cookie -> clusterNodeAffinityParam.equalsIgnoreCase(cookie.getName()))
+            Optional<String> serverId = Arrays.stream(cookies).filter(cookie -> clusterNodeAffinityCookieName.equalsIgnoreCase(cookie.getName()))
                     .map(cookie -> cookie.getValue()).findFirst();
             if (serverId.isPresent()) {
                 return serverId.get();
             }
         }
-        return request.getHeader(clusterNodeAffinityParam);
+        return request.getHeader(clusterNodeAffinityHeaderName);
 
     }
 

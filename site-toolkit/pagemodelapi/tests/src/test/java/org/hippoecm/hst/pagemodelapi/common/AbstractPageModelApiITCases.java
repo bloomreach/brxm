@@ -37,6 +37,7 @@ import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.mock.core.request.MockCmsSessionContext;
 import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
@@ -49,11 +50,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
 
 import static org.apache.commons.lang3.StringUtils.substringAfter;
@@ -69,6 +72,7 @@ public abstract class AbstractPageModelApiITCases {
     public static final String SPA_MOUNT_JCR_PATH = LOCALHOST_JCR_PATH + "/hst:root/spa";
     public static final String ANNOTATED_CLASSES_CONFIGURATION_PARAM = "classpath*:org/hippoecm/hst/pagemodelapi/common/**/*.class";
 
+    protected static final SimpleCredentials EDITOR_CREDS = new SimpleCredentials("editor", "editor".toCharArray());
     protected SpringComponentManager componentManager;
     protected final MockServletContext servletContext = new MockServletContext();
     protected HippoWebappContext webappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, servletContext);
@@ -89,6 +93,8 @@ public abstract class AbstractPageModelApiITCases {
         // below is handy such that during integration tests, the PMA response is nicely formatted (if you do a
         // sysout)
         configuration.addProperty("pagemodelapi.v10.pretty.print", true);
+
+        configuration.addProperty("cms.default.cmspreviewprefix", "_cmsinternal");
 
         componentManager = new SpringComponentManager(configuration);
         componentManager.setConfigurationResources(getConfigurations());
@@ -168,6 +174,34 @@ public abstract class AbstractPageModelApiITCases {
         return response;
     }
 
+    public MockHttpServletResponse renderChannelMgrPreview(final RequestResponseMock requestResponse,
+                                          final Credentials authenticatedCmsUser) throws IOException, ServletException {
+        final MockHttpServletRequest request = requestResponse.getRequest();
+
+        final MockHttpSession mockHttpSession;
+        if (request.getSession(false) == null) {
+            mockHttpSession = new MockHttpSession();
+            request.setSession(mockHttpSession);
+        } else {
+            mockHttpSession = (MockHttpSession)request.getSession();
+        }
+
+        final MockCmsSessionContext cmsSessionContext = new MockCmsSessionContext(authenticatedCmsUser);
+        mockHttpSession.setAttribute(CmsSessionContext.SESSION_KEY, cmsSessionContext);
+
+        final MockHttpServletResponse response = requestResponse.getResponse();
+
+        filter.doFilter(request, response, new MockFilterChain(new HttpServlet() {
+            @Override
+            protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+                super.doGet(req, resp);
+            }
+        }, filter));
+
+
+        return response;
+    }
+
     /**
      * @param scheme      http or https
      * @param hostAndPort eg localhost:8080 or www.example.com
@@ -196,7 +230,11 @@ public abstract class AbstractPageModelApiITCases {
         }
         request.setServerName(host);
         request.addHeader("Host", hostAndPort);
-        request.setPathInfo(pathInfo);
+
+        // for full request tests, we mimic the HstFilter: for a servlet filter, the servlet path is equal to the pathInfo
+        // and the pathInfo is null : HstDelegateeFilterBean later on sets these values correct
+        request.setServletPath(pathInfo);
+        request.setPathInfo(null);
         request.setContextPath("/site");
         request.setRequestURI("/site" + pathInfo);
         request.setMethod("GET");
@@ -235,15 +273,36 @@ public abstract class AbstractPageModelApiITCases {
     }
 
     public String getActualJson(final String pathInfo, final String apiVersion) throws IOException, ServletException {
-        return getActualJson(pathInfo, apiVersion, null);
+        return getActualJson(pathInfo, apiVersion, null, null);
     }
 
     public String getActualJson(final String pathInfo, final String apiVersion, final String queryString) throws IOException, ServletException {
+        return getActualJson(pathInfo, apiVersion, queryString, null);
+    }
+
+    /**
+     *
+     * @param pathInfo
+     * @param apiVersion
+     * @param queryString
+     * @param authenticatedUser if not null, a preview Channel Manager PMA request will be done on behalf of these
+     *                          credentials
+     * @return
+     * @throws IOException
+     * @throws ServletException
+     */
+    public String getActualJson(final String pathInfo, final String apiVersion, final String queryString,
+                                final Credentials authenticatedUser) throws IOException, ServletException {
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", pathInfo, queryString);
 
         requestResponse.getRequest().addHeader(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION, apiVersion);
-        final MockHttpServletResponse response = render(requestResponse);
+        final MockHttpServletResponse response;
+        if (authenticatedUser != null) {
+            response = renderChannelMgrPreview(requestResponse, authenticatedUser);
+        } else {
+            response = render(requestResponse);
+        }
 
         return response.getContentAsString();
     }

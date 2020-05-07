@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.hippoecm.hst.core.component;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
+
+import org.hippoecm.hst.core.request.ResolvedMount;
 
 /**
  * The <CODE>HstURL</CODE> interface represents a URL
@@ -88,11 +90,20 @@ public interface HstURL {
      * @param parameters
      */
     void setParameters(Map<String, String[]> parameters);
-    
+
     /**
      * Returns string representation of this url.
      */
     String toString();
+
+    /**
+     *  Returns String representation of url, possibly depending on whether {@code containerResource} is
+     *  true or false : Container resources in specific cases need to return a different url. For example the URL
+     *  for a container resource in case of the PageModelAPI should never include
+     *  {@link ResolvedMount#getMatchingIgnoredPrefix()} : typically this value in the preview CM is _cmsinternal, but
+     *  for PageModelApi responses this should never be included for container resources
+     */
+    String toString(boolean containerResource);
     
     /**
      * Returns the parameter map of this url.

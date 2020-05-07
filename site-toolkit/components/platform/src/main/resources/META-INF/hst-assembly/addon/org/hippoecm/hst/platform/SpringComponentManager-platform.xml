@@ -32,15 +32,13 @@
 
   <bean id="org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider" class="org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider"/>
 
-  <bean class="org.hippoecm.hst.platform.model.RuntimeHostServiceImpl" init-method="init" destroy-method="destroy"/>
-
   <bean class="org.hippoecm.hst.platform.services.AccessControlAllowHeadersServiceImpl" init-method="init" destroy-method="destroy">
     <!-- the : below implies default value for extra.access.control.allowed.headers is empty string, keep the : -->
     <property name="extraAllowedHeaders" value="${extra.access.control.allowed.headers:}"/>
     <property name="allowedHeaders">
       <list>
         <value>${jwt.token.authorization.header}</value>
-        <value>${cluster.node.affinity.param}</value>
+        <value>${cluster.node.affinity.header.name}</value>
       </list>
     </property>
   </bean>

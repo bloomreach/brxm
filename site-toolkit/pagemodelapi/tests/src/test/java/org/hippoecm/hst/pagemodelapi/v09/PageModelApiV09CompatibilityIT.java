@@ -78,6 +78,18 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiITCases 
     }
 
     @Test
+    public void channel_manager_preview_homepage_api_compatibility_v09_assertion() throws Exception {
+
+        String actual = getActualJson("/_cmsinternal/spa/resourceapi", "0.9", null, EDITOR_CREDS);
+
+        InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("preview_channel_mgr_pma_spec_homepage.json");
+
+        String expected = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+
+        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
+    }
+
+    @Test
     public void newspage_api_compatibility_v09_assertion() throws Exception {
 
         String actual = getActualJson("/spa/resourceapi/news/News1");

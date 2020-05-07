@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -140,13 +140,13 @@ public interface HstContainerURLProvider {
      * @throws ContainerException
      */
     String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException;
-    
+
     /**
      * Stringifying the containerURL as a full URL string.
      * <P>
      * By this method, you can specify the context path such as '/mycontext'.
      * </P>
-     * 
+     *
      * @param containerURL
      * @param requestContext
      * @param contextPath
@@ -154,5 +154,21 @@ public interface HstContainerURLProvider {
      * @throws ContainerException
      */
     String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException;
+
+
+    /**
+     * Stringifying the containerURL as a full URL string.
+     * <P>
+     * By this method, you can specify the context path such as '/mycontext'.
+     * </P>
+     *
+     * @param containerURL
+     * @param requestContext
+     * @param contextPath
+     * @param containerResource {@code true} if the toURLString is meant for a container resource (like a binary)
+     * @throws UnsupportedEncodingException
+     * @throws ContainerException
+     */
+    String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath, boolean containerResource) throws UnsupportedEncodingException, ContainerException;
 
 }
