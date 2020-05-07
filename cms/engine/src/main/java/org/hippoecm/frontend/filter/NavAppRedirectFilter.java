@@ -35,11 +35,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.frontend.Main;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.nCopies;
 import static java.util.stream.Collectors.joining;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class NavAppRedirectFilter implements Filter {
+
+    private static final Logger log = LoggerFactory.getLogger(NavAppRedirectFilter.class);
 
     public static final String INITIAL_PATH_QUERY_PARAMETER = "initialPath";
 
@@ -62,7 +67,6 @@ public class NavAppRedirectFilter implements Filter {
             "/oidc"
     );
 
-
     @Override
     public void init(FilterConfig filterConfig) {
         // This filter is stateless and has no init parameters.
@@ -84,13 +88,28 @@ public class NavAppRedirectFilter implements Filter {
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (isWhiteListed(request)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Chaining '{}' to the next filter", getRequestAsString(request));
+            }
             chain.doFilter(request, response);
         } else {
             final String relativePath = getRelativePath(request);
             final String queryParameters = getQueryParameterString(request);
             final String redirectUrl = "./" + relativePath + queryParameters;
+
+            if (log.isDebugEnabled()) {
+                log.debug("Redirecting '{}' to '{}'", getRequestAsString(request), redirectUrl);
+            }
             response.sendRedirect(redirectUrl);
         }
+    }
+
+    private static String getRequestAsString(final HttpServletRequest request) {
+        final StringBuffer url = request.getRequestURL();
+        if (isNotBlank(request.getQueryString())) {
+            url.append("?").append(request.getQueryString());
+        }
+        return url.toString();
     }
 
     private String getRelativePath(HttpServletRequest request) {
