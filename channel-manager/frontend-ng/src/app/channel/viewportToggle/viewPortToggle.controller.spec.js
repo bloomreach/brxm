@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ describe('ViewportToggleCtrl', () => {
         phone: 256,
       };
       spyOn($translate, 'instant');
-      spyOn(ChannelService, 'getChannel').and.returnValue({ viewportMap });
+      spyOn(ChannelService, 'getChannel').and.returnValue({ defaultDevice: 'default', viewportMap });
       spyOn(ViewportService, 'setWidth');
 
       $ctrl = _$componentController_('viewportToggle', {}, { ngModel });
@@ -53,6 +53,13 @@ describe('ViewportToggleCtrl', () => {
 
       expect($ctrl.value).toBe('ANY_DEVICE');
       expect(ViewportService.setWidth).toHaveBeenCalledWith(0);
+    });
+
+    it("should select a channel's default device", () => {
+      ChannelService.getChannel.and.returnValue({ defaultDevice: 'tablet', viewportMap });
+      $ctrl.$onInit();
+
+      expect($ctrl.value).toBe('TABLET');
     });
 
     it('should set the viewport widths from the backend', () => {
