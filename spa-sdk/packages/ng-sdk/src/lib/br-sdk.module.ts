@@ -67,4 +67,4 @@ import { BrPageComponent } from './br-page/br-page.component';
   ],
   imports: [ CommonModule, HttpClientModule ],
 })
-export class NgSdkModule { }
+export class BrSdkModule { }
