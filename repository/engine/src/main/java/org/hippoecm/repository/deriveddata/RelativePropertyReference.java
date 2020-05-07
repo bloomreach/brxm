@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,17 +29,28 @@ import javax.jcr.security.Privilege;
 
 import org.hippoecm.repository.util.JcrUtils;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_MULTIVALUE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_REL_PATH;
+import static org.onehippo.repository.util.JcrConstants.MIX_REFERENCEABLE;
+
 public class RelativePropertyReference extends PropertyReference {
+
+    private boolean multiValue = false;
 
     public RelativePropertyReference(final Node node, final FunctionDescription function) {
         super(node, function);
+        try {
+            multiValue = JcrUtils.getBooleanProperty(node, HIPPOSYS_MULTIVALUE, false);
+        } catch (RepositoryException e) {
+            DerivedDataEngine.log.error("cannot access configuration property", e);
+        }
     }
 
     @Override
     Value[] getPropertyValues(Node modified, Collection<String> dependencies) throws RepositoryException {
         final Property property = JcrUtils.getPropertyIfExists(modified, getRelativePath());
         if (property != null) {
-            if (property.getParent().isNodeType("mix:referenceable")) {
+            if (property.getParent().isNodeType(MIX_REFERENCEABLE)) {
                 dependencies.add(property.getParent().getIdentifier());
             }
             if (!property.getDefinition().isMultiple()) {
@@ -94,7 +105,7 @@ public class RelativePropertyReference extends PropertyReference {
     }
 
     private String getRelativePath() throws RepositoryException {
-        return node.getProperty("hipposys:relPath").getString();
+        return node.getProperty(HIPPOSYS_REL_PATH).getString();
     }
 
 
@@ -156,7 +167,10 @@ public class RelativePropertyReference extends PropertyReference {
         if (targetModifiedNodetype != null) {
             derivedPropDef = getPropertyDefinition(targetModifiedNodetype, targetModifiedPropertyPath);
         }
-        if (derivedPropDef == null || !derivedPropDef.isMultiple()) {
+
+        boolean useSingleProperty = !isMultiValue() && (derivedPropDef == null || !derivedPropDef.isMultiple());
+
+        if (useSingleProperty) {
             if (values != null && values.length >= 1) {
                 try {
                     if (!targetModifiedNode.isCheckedOut()) {
@@ -195,4 +209,7 @@ public class RelativePropertyReference extends PropertyReference {
         return null;
     }
 
+    public boolean isMultiValue() {
+        return multiValue;
+    }
 }
