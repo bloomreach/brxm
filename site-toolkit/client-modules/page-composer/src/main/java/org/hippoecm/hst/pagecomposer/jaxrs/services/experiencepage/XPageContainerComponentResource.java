@@ -62,6 +62,10 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED;
 import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.checkoutCorrectBranch;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getContainer;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getDocumentWorkflow;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getInternalWorkflowSession;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_HOLDER;
@@ -113,7 +117,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
         final ContainerAction<Response> createContainerItem = () -> {
 
-            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession());
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession(), getPageComposerContextService());
 
             final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
 
@@ -121,7 +125,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
             // is of the 'preview' variant (mind you, this can be the preview of a branch loaded from version history!)
             final Node catalogItem = ContainerUtils.getContainerItem(workflowSession, itemUUID);
 
-            final Node containerNode = getContainer(versionStamp, workflowSession);
+            final Node containerNode = getContainer(versionStamp, workflowSession, getPageComposerContextService());
 
             // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
             // containerNode. Find a correct newName and create a new node.
@@ -164,10 +168,10 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
     public Response updateContainer(final ContainerRepresentation container) {
         final ContainerAction<Response> updateContainer = () -> {
 
-            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession());
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession(), getPageComposerContextService());
 
             final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
-            final Node containerNode = getContainer(container.getLastModifiedTimestamp(), workflowSession);
+            final Node containerNode = getContainer(container.getLastModifiedTimestamp(), workflowSession, getPageComposerContextService());
 
             validateContainerItems(workflowSession, container.getChildren());
 
@@ -242,7 +246,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
                     throw new ClientException("Cannot delete container item of other document", ClientError.INVALID_UUID);
                 }
 
-                DocumentWorkflow documentWorkflow = getDocumentWorkflow(session);
+                DocumentWorkflow documentWorkflow = getDocumentWorkflow(session, getPageComposerContextService());
 
                 final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
                 internalWorkflowSession.getNodeByIdentifier(itemUUID).remove();
@@ -279,88 +283,6 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
         return Response.status(Response.Status.CREATED)
                 .entity(containerItemRepresentation)
                 .build();
-    }
-
-
-    private DocumentWorkflow getDocumentWorkflow(final HippoSession userSession) throws RepositoryException, WorkflowException {
-
-        // userSession is allowed to read the node since has XPAGE_REQUIRED_PRIVILEGE_NAME on the node
-        final Node handle = userSession.getNodeByIdentifier(getPageComposerContextService().getExperiencePageHandleUUID());
-
-        // TODO is 'default' the right document workflow??
-        // I think it is ...
-        final DocumentWorkflow documentWorkflow = (DocumentWorkflow) userSession.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
-
-        final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, DRAFT).orElse(null);
-        if ((draftNode != null)) {
-            final String draftHolder = getStringProperty(draftNode, HIPPOSTD_HOLDER, null);
-            final String userId = userSession.getUserID();
-            if (!userId.equals(draftHolder)) {
-                throw new ClientException("Document being edited by another user", ClientError.ITEM_ALREADY_LOCKED);
-            }
-        }
-
-        checkoutCorrectBranch(documentWorkflow);
-        return documentWorkflow;
-    }
-
-
-    /**
-     * we need to write with the workflowSession. Make sure to use this workflowSession and not impersonate to a
-     * workflowSession : This way we can make sure that the workflow manager also persists the changes since the
-     * workflow manager will handle the  workflow session save (when we invoke the document workflow
-     */
-    private Session getInternalWorkflowSession(final DocumentWorkflow documentWorkflow) {
-        return documentWorkflow.getWorkflowContext().getInternalWorkflowSession();
-    }
-
-
-    private void checkoutCorrectBranch(final DocumentWorkflow documentWorkflow) throws WorkflowException {
-        // TODO checkout the right branch which currently being edited in CM, this might be another one than currently
-        // TODO the unpublished is......find current branch via CmsSessionContext
-
-        try {
-            if (!Boolean.TRUE.equals(documentWorkflow.hints().get("checkoutBranch"))) {
-                // there is only master branch, so no need to check out a branch
-                return;
-            }
-        } catch (RemoteException | RepositoryException e) {
-            throw new WorkflowException(e.getMessage());
-        }
-
-        final HttpSession httpSession = getPageComposerContextService().getRequestContext().getServletRequest().getSession();
-        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
-
-        // TODO the CM should have been rendered with UUIDs from version history which should stay the same after
-        // TODO restoring a version from history
-        documentWorkflow.checkoutBranch(getBranchId(cmsSessionContext));
-    }
-
-    private String getBranchId(CmsSessionContext cmsSessionContext) {
-        return Optional.ofNullable(cmsSessionContext.getContextPayload())
-                .map(contextPayload -> contextPayload.get(ContainerConstants.RENDER_BRANCH_ID).toString())
-                .orElse(MASTER_BRANCH_ID);
-    }
-
-
-    private Node getContainer(final long versionStamp, final Session session) throws RepositoryException {
-
-        final PageComposerContextService contextService = getPageComposerContextService();
-
-        final Node container = contextService.getRequestConfigNodeById(contextService.getRequestConfigIdentifier(),
-                "hst:abstractcomponent", session);
-
-        if (versionStamp != 0 && container.hasProperty(GENERAL_PROPERTY_LAST_MODIFIED)) {
-            long existingStamp = container.getProperty(GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
-            if (existingStamp != versionStamp) {
-                String msg = String.format("Node '%s' has been modified wrt versionStamp. Someone else might have " +
-                                "made concurrent changes, page must be reloaded. This can happen due to optimistic locking",
-                        getNodePathQuietly(container));
-                log.info(msg);
-                throw new ClientException(msg, ClientError.ITEM_CHANGED);
-            }
-        }
-        return container;
     }
 
 

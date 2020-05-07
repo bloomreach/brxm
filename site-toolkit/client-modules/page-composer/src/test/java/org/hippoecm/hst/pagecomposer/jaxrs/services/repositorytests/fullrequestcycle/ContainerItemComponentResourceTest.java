@@ -63,6 +63,7 @@ public class ContainerItemComponentResourceTest extends AbstractComponentResourc
 
             Map<String, String> propertyRepresentation = properties.get(0);
 
+            assertEquals("path", propertyRepresentation.get("name"));
             assertEquals("/some/default", propertyRepresentation.get("defaultValue"));
             assertEquals("/content/document", propertyRepresentation.get("value"));
         } else {

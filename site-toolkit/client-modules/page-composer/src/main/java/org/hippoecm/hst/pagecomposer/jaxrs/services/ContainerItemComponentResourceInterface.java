@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -65,7 +65,7 @@ public interface ContainerItemComponentResourceInterface {
      * @param params     the parameters to store
      * @return whether saving the parameters went successfully or not.
      */
-    Response moveAndUpdateVariant(String variantId, String  newVariantId, long versionStamp, final MultivaluedMap<String, String> params);
+    Response moveAndUpdateVariant(String variantId, String  newVariantId, long versionStamp, final MultivaluedHashMap<String, String> params);
 
     /**
      * <p> Creates new variant with all values from the 'default' variant. Note that <b>only</b> the values of 'default'

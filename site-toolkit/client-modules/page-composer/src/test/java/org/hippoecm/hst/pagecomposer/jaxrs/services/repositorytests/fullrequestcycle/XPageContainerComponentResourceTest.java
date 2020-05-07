@@ -246,10 +246,6 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
     }
 
-    private DocumentWorkflow getDocumentWorkflow(final Session session) throws RepositoryException {
-        final WorkflowManager workflowManager = ((HippoSession) session).getWorkspace().getWorkflowManager();
-        return (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
-    }
 
     @Test
     public void create_item_before() throws Exception {

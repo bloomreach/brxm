@@ -116,4 +116,9 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
         }
     }
 
+    protected DocumentWorkflow getDocumentWorkflow(final Session session) throws RepositoryException {
+        final WorkflowManager workflowManager = ((HippoSession) session).getWorkspace().getWorkflowManager();
+        return (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
+    }
+
 }

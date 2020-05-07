@@ -241,8 +241,9 @@ definitions:
                       /banner:
                         jcr:primaryType: hst:containeritemcomponent
                         hst:componentclassname: org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent
-                        hst:parameternames: [path]
-                        hst:parametervalues: [/content/document]
+                        hst:parameternameprefixes: ['', variant1]
+                        hst:parameternames: [path, path]
+                        hst:parametervalues: [/content/document, /content/variant1]
             /expPage2:
               jcr:primaryType: hippo:handle
               jcr:mixinTypes: ['mix:referenceable']

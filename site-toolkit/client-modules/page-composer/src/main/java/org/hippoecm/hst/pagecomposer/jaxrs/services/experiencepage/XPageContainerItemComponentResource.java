@@ -31,7 +31,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +60,6 @@ import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivilege
 public class XPageContainerItemComponentResource extends AbstractConfigResource implements ContainerItemComponentResourceInterface {
     private static Logger log = LoggerFactory.getLogger(XPageContainerItemComponentResource.class);
 
-    // TODO GET RID OF THIS ContainerItemComponentService
     private ContainerItemComponentService xPageContainerItemComponentService;
 
     public void setXpageContainerItemComponentService(final ContainerItemComponentService containerItemComponentService) {
@@ -109,9 +108,14 @@ public class XPageContainerItemComponentResource extends AbstractConfigResource 
     public Response retainVariants(final String[] variants,
                                    final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
         try {
+
             final HashSet<String> retainedVariants = new HashSet<>(Arrays.asList(variants));
             final Set<String> removedVariants = this.xPageContainerItemComponentService.retainVariants(retainedVariants, versionStamp);
+
             return ok("Removed variants:", removedVariants);
+        } catch (ClientException e) {
+            log.error("Unable to cleanup the variants of the component", e);
+            return clientError(e.getMessage(), e.getErrorStatus());
         } catch (RepositoryException e) {
             log.error("Unable to cleanup the variants of the component", e);
             return error("Unable to cleanup the variants of the component", ErrorStatus.unknown(e.getMessage()));
@@ -165,7 +169,7 @@ public class XPageContainerItemComponentResource extends AbstractConfigResource 
     public Response moveAndUpdateVariant(final @PathParam("variantId") String variantId,
                                          final @HeaderParam("Move-To") String  newVariantId,
                                          final @HeaderParam("lastModifiedTimestamp") long versionStamp,
-                                         final MultivaluedMap<String, String> params) {
+                                         final MultivaluedHashMap<String, String> params) {
         try {
             if (StringUtils.isEmpty(newVariantId)) {
                 this.xPageContainerItemComponentService.updateVariant(variantId, versionStamp, params);

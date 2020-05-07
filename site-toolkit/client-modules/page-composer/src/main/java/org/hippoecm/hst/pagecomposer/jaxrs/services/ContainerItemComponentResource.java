@@ -31,6 +31,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
@@ -161,7 +162,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
     public Response moveAndUpdateVariant(final @PathParam("variantId") String variantId,
                                          final @HeaderParam("Move-To") String  newVariantId,
                                          final @HeaderParam("lastModifiedTimestamp") long versionStamp,
-                                         final MultivaluedMap<String, String> params) {
+                                         final MultivaluedHashMap<String, String> params) {
         try {
             if (StringUtils.isEmpty(newVariantId)) {
                 this.containerItemComponentService.updateVariant(variantId, versionStamp, params);
