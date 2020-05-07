@@ -155,7 +155,7 @@ export default function Menu() {
 
 ### Reference
 The React SDK is using [Bloomreach SPA SDK](https://www.npmjs.com/package/@bloomreach/spa-sdk#reference) to interact with the brXM.
-The complete reference of the exposed JavaScript objects can be found [here](https://javadoc.onehippo.org/14.0/bloomreach-spa-sdk/).
+The complete reference of the exposed JavaScript objects can be found [here](https://javadoc.onehippo.org/14.3/bloomreach-spa-sdk/).
 
 #### BrPage
 This is the entry point to the page model.
@@ -165,7 +165,7 @@ The component also sets the page object into `BrPageContext`.
 Property | Required | Description
 --- | :---: | ---
 `configuration` | _yes_ | The [configuration](#configuration) of the SPA SDK.
-`mapping` | _yes_ | The brXM and React components [mapping](#inline-mapping).
+`mapping` | _yes_ | The brXM and React components [mapping](#mapping).
 `page` | _no_ | Preinitialized page instance or prefetched page model. Mostly that should be used to transfer state from the server-side to the client-side.
 
 #### BrComponent
@@ -181,7 +181,7 @@ The button will only be shown in preview mode.
 
 Property | Required | Description
 --- | :---: | ---
-content | _yes_ | The content entity to open for editing.
+`content` | _yes_ | The content entity to open for editing.
 
 #### BrManageMenuButton
 This component places a button on the page that opens the linked menu in the menu editor.
@@ -189,7 +189,7 @@ The button will only be shown in preview mode.
 
 Property | Required | Description
 --- | :---: | ---
-content | _yes_ | The related menu component.
+`menu` | _yes_ | The related menu model.
 
 #### BrComponentContext
 The [React Context](https://reactjs.org/docs/context.html) holding the current brXM [Component](https://www.npmjs.com/package/@bloomreach/spa-sdk#component).
