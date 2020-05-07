@@ -1,24 +1,54 @@
 # brXM + Angular = ♥️
 
-Example React SPA using the Bloomreach Experience [Angular SDK](https://www.npmjs.com/package/@bloomreach/ng-sdk).
+Example Angular SPA using the Bloomreach Experience [Angular SDK](https://www.npmjs.com/package/@bloomreach/ng-sdk).
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli).
 
-## Development server
+## Install and run
+Run [Docker](https://hub.docker.com/repository/docker/bloomreach/xm-spa-example) container with the configured brXM instance:
+```bash
+docker run --net=host bloomreach/xm-spa-example
+```
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Then, update `src/environments/environment.ts` and `src/environments/environment.prod.ts` files to specify the brXM instance to fetch the page model from:
+```
+export const environment = {
+  cmsBaseUrl: 'http://localhost:8080/site',
+  // ...
+};
+```
 
-## Code scaffolding
+Finally, build and run the Angular app as follows:
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```bash
+yarn
+yarn start
+```
 
-## Build
+The CMS should now be accessible at <http://localhost:8080/cms>, and it should render the Angular app in preview mode in the Experience Manager.
+The SPA itself can be accessed directly via <http://localhost:4200>.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## Available scripts
 
-## Running unit tests
+In the project directory, you can run:
 
-Run `ng test` to execute the unit tests.
+### Development server
 
-## Further help
+Run `yarn start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+For Angular Universal application, you can use `yarn dev:ssr`.
+
+### Code scaffolding
+
+Run `yarn ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+
+### Build
+
+Run `yarn build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+
+### Launch
+
+Run `yarn start:ssr` to start Angular Universal application.
+
+### Running unit tests
+
+Run `yarn test` to execute the unit tests.
