@@ -14,11 +14,28 @@
  * limitations under the License.
  */
 
-const DEFAULT_VIEWPORT_WIDTHS = {
-  desktop: 1280,
-  tablet: 720,
-  phone: 320,
-};
+const DEFAULT_VIEWPORTS = [
+  {
+    id: 'any_device',
+    icon: 'any-device',
+    width: 0,
+  },
+  {
+    id: 'desktop',
+    icon: 'desktop',
+    width: 1280,
+  },
+  {
+    id: 'tablet',
+    icon: 'tablet',
+    width: 720,
+  },
+  {
+    id: 'phone',
+    icon: 'phone',
+    width: 320,
+  },
+];
 
 class ViewportToggleCtrl {
   constructor($translate, ChannelService, ViewportService) {
@@ -31,33 +48,15 @@ class ViewportToggleCtrl {
 
   $onInit() {
     const { defaultDevice, viewportMap } = this.ChannelService.getChannel();
-    const widths = Object.assign({}, DEFAULT_VIEWPORT_WIDTHS, viewportMap);
 
-    this.values = [
-      {
-        id: 'any_device',
-        icon: 'any-device',
-        width: 0,
-      },
-      {
-        id: 'desktop',
-        icon: 'desktop',
-        width: widths.desktop,
-      },
-      {
-        id: 'tablet',
-        icon: 'tablet',
-        width: widths.tablet,
-      },
-      {
-        id: 'phone',
-        icon: 'phone',
-        width: widths.phone,
-      },
-    ];
+    this.values = DEFAULT_VIEWPORTS
+      .map((viewport) => {
+        const width = viewportMap[viewport.id] || viewport.width;
+        return { ...viewport, width };
+      });
 
-    const selectedDevice = this.value || defaultDevice.toLowerCase();
-    this.value = this.values.some(item => item.id === selectedDevice) ? selectedDevice : this.values[0].id;
+    const selectedViewport = this.value || defaultDevice.toLowerCase();
+    this.value = this.values.some(item => item.id === selectedViewport) ? selectedViewport : this.values[0].id;
 
     this._updateViewport();
   }
