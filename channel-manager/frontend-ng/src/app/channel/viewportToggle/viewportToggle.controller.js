@@ -17,22 +17,22 @@
 const DEFAULT_VIEWPORTS = [
   {
     id: 'any_device',
-    icon: 'any-device',
+    icon: 'mdi-cellphone-link',
     width: 0,
   },
   {
     id: 'desktop',
-    icon: 'desktop',
+    icon: 'mdi-monitor',
     width: 1280,
   },
   {
     id: 'tablet',
-    icon: 'tablet',
+    icon: 'mdi-tablet',
     width: 720,
   },
   {
     id: 'phone',
-    icon: 'phone',
+    icon: 'mdi-cellphone',
     width: 320,
   },
 ];
