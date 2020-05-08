@@ -15,16 +15,13 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage;
 
-import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
@@ -38,7 +35,6 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemImpl;
@@ -47,32 +43,22 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResourceInterface;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.WorkflowUtils;
-import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED;
 import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.checkoutCorrectBranch;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getContainer;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getDocumentWorkflow;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getInternalWorkflowSession;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
-import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_HOLDER;
-import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
-import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.DRAFT;
-import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 @Path("/experiencepage/hst:containercomponent/")
 public class XPageContainerComponentResource extends AbstractConfigResource implements ContainerComponentResourceInterface {
@@ -202,28 +188,9 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
         final String unpublishedId = (String) getPageComposerContextService().getRequestContext().getAttribute(REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE);
 
         final Node unpublished = workflowSession.getNodeByIdentifier(unpublishedId);
-
         final String pathPrefix = unpublished.getPath() + "/";
 
-        for (String childId : childIds) {
-            if (!isValidUUID(childId)) {
-                throw new ClientException(String.format("Invalid child id '%s'", childId), ClientError.INVALID_UUID);
-            }
-            try {
-                final Node componentItem = workflowSession.getNodeByIdentifier(childId);
-                if (!componentItem.getPath().startsWith(pathPrefix)) {
-                    throw new ClientException(String.format("Child '%s' is not allowed to be moved within the XPage '%s' " +
-                                    "because it is not a descendant of the XPage",
-                            componentItem.getPath(), unpublished.getPath()), ClientError.ITEM_NOT_CORRECT_LOCATION);
-                }
-                if (!componentItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
-                    throw new ClientException(String.format("Child '%s' has not a valid nodetype for a container",
-                            componentItem.getPath()), ClientError.INVALID_NODE_TYPE);
-                }
-            } catch (ItemNotFoundException e) {
-                throw new ClientException("Could not find one of the children in the container", ClientError.INVALID_UUID);
-            }
-        }
+        ContainerUtils.validateChildren(workflowSession, childIds, pathPrefix);
 
     }
 

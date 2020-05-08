@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 
 public class ContainerUtils {
 
@@ -135,5 +136,27 @@ public class ContainerUtils {
             log.debug("No Move needed for '{}' below '{}'", childId, parentPath);
         }
     }
+
+    public static void validateChildren(final Session session, final List<String> childIds, final String pathPrefix) throws RepositoryException {
+        for (String childId : childIds) {
+            if (!isValidUUID(childId)) {
+                throw new ClientException(String.format("Invalid child id '%s'", childId), ClientError.INVALID_UUID);
+            }
+            try {
+                final Node componentItem = session.getNodeByIdentifier(childId);
+                if (!componentItem.getPath().startsWith(pathPrefix)) {
+                    throw new ClientException(String.format("Child '%s' is not allowed to be moved because does not start " +
+                            "with '%s'", componentItem.getPath(), pathPrefix), ClientError.ITEM_NOT_CORRECT_LOCATION);
+                }
+                if (!componentItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                    throw new ClientException(String.format("Child '%s' has not a valid nodetype for a container",
+                            componentItem.getPath()), ClientError.INVALID_NODE_TYPE);
+                }
+            } catch (ItemNotFoundException e) {
+                throw new ClientException("Could not find one of the children in the container", ClientError.INVALID_UUID);
+            }
+        }
+    }
+
 
 }

@@ -71,7 +71,6 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         failCreateAssertions(mountId, catalogId, containerId);
 
-
         final Session admin = createSession(ADMIN_CREDENTIALS);
         DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
         documentWorkflow.obtainEditableInstance();

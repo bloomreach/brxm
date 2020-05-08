@@ -17,14 +17,10 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
@@ -39,9 +35,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
-import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 
 public class ContainerComponentServiceImpl implements ContainerComponentService {
     private static Logger log = LoggerFactory.getLogger(ContainerComponentServiceImpl.class);
@@ -163,26 +156,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     private void validateContainerItems(final Session session, final List<String> childIds) throws RepositoryException, ClientException {
         final String requiredWorkspacePrefix = pageComposerContextService.getEditingPreviewConfigurationPath() + "/hst:workspace/";
 
-        for (String childId : childIds) {
-            if (!isValidUUID(childId)) {
-                throw new ClientException(String.format("Invalid child id '%s'", childId), ClientError.INVALID_UUID);
-            }
-            try {
-                final Node componentItem = session.getNodeByIdentifier(childId);
-                if (!componentItem.getPath().startsWith(requiredWorkspacePrefix)) {
-                    throw new ClientException(String.format("Child '%s' is not allowed to be moved to a different " +
-                                    "hst:workspace",
-                            componentItem.getPath()), ClientError.ITEM_NOT_CORRECT_LOCATION);
-                }
-                if (!componentItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
-                    throw new ClientException(String.format("Child '%s' has not a valid nodetype for a container",
-                            componentItem.getPath()), ClientError.INVALID_NODE_TYPE);
-                }
-            } catch (ItemNotFoundException e) {
-                throw new ClientException("Could not find one of the children in the container", ClientError.INVALID_UUID);
-            }
-        }
-
+        ContainerUtils.validateChildren(session, childIds, requiredWorkspacePrefix);
     }
 
 }
