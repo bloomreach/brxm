@@ -90,7 +90,7 @@
 
     <!-- docker related configuration -->
     <!-- used for basic docker interactions -->
-    <docker.maven.plugin.version>0.28.0</docker.maven.plugin.version>
+    <docker.maven.plugin.version>0.33.0</docker.maven.plugin.version>
 
     <!-- Open source JDBC drivers included in docker image -->
     <mysql.connector.version>8.0.16</mysql.connector.version>
