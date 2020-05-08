@@ -150,6 +150,9 @@
     <!-- GID is set as 1000 by default to avoid getting permission error on most Linux systems in the local development-->
     <docker.brxm.container.dev.gid>1000</docker.brxm.container.dev.gid>
     <docker.brxm.container.dev.uid>1000</docker.brxm.container.dev.uid>
+
+    <!-- This property is empty by default, can be used to set the tcp docker daemon -->
+    <docker.daemon.host></docker.daemon.host>
   </properties>
 
   <repositories>
@@ -1368,6 +1371,7 @@
               </execution>
             </executions>
             <configuration>
+              <dockerHost>${docker.daemon.host}</dockerHost>
               <images combine.children="append">
                 <image>
                   <name>${project.groupId}/${project.artifactId}:dev-${project.version}</name>
@@ -1488,6 +1492,18 @@
         <docker.db.envRun.POSTGRES_DB>${docker.db.schema}</docker.db.envRun.POSTGRES_DB>
         <docker.db.envRun.POSTGRES_USER>${docker.db.username}</docker.db.envRun.POSTGRES_USER>
         <docker.db.envRun.POSTGRES_PASSWORD>${docker.db.password}</docker.db.envRun.POSTGRES_PASSWORD>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>docker.windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <docker.daemon.host>tcp://localhost:2375</docker.daemon.host>
       </properties>
     </profile>
   </profiles>
