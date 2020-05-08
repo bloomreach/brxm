@@ -48,10 +48,10 @@ describe('ViewportToggleCtrl', () => {
   });
 
   describe('$onInit', () => {
-    it('selects the "ANY_DEVICE" viewport and uses it to set the viewport', () => {
+    it('selects the "any_device" viewport and uses it to set the viewport', () => {
       $ctrl.$onInit();
 
-      expect($ctrl.value).toBe('ANY_DEVICE');
+      expect($ctrl.value).toBe('any_device');
       expect(ViewportService.setWidth).toHaveBeenCalledWith(0);
     });
 
@@ -59,19 +59,19 @@ describe('ViewportToggleCtrl', () => {
       ChannelService.getChannel.and.returnValue({ defaultDevice: 'tablet', viewportMap });
       $ctrl.$onInit();
 
-      expect($ctrl.value).toBe('TABLET');
+      expect($ctrl.value).toBe('tablet');
     });
 
     it('should set the viewport widths from the backend', () => {
       $ctrl.$onInit();
 
-      expect($ctrl.values[0].id).toBe('ANY_DEVICE');
+      expect($ctrl.values[0].id).toBe('any_device');
       expect($ctrl.values[0].width).toBe(0);
-      expect($ctrl.values[1].id).toBe('DESKTOP');
+      expect($ctrl.values[1].id).toBe('desktop');
       expect($ctrl.values[1].width).toBe(1167);
-      expect($ctrl.values[2].id).toBe('TABLET');
+      expect($ctrl.values[2].id).toBe('tablet');
       expect($ctrl.values[2].width).toBe(678);
-      expect($ctrl.values[3].id).toBe('PHONE');
+      expect($ctrl.values[3].id).toBe('phone');
       expect($ctrl.values[3].width).toBe(256);
     });
 
@@ -79,13 +79,13 @@ describe('ViewportToggleCtrl', () => {
       Object.keys(viewportMap).forEach(key => delete viewportMap[key]);
       $ctrl.$onInit();
 
-      expect($ctrl.values[0].id).toBe('ANY_DEVICE');
+      expect($ctrl.values[0].id).toBe('any_device');
       expect($ctrl.values[0].width).toBe(0);
-      expect($ctrl.values[1].id).toBe('DESKTOP');
+      expect($ctrl.values[1].id).toBe('desktop');
       expect($ctrl.values[1].width).toBe(1280);
-      expect($ctrl.values[2].id).toBe('TABLET');
+      expect($ctrl.values[2].id).toBe('tablet');
       expect($ctrl.values[2].width).toBe(720);
-      expect($ctrl.values[3].id).toBe('PHONE');
+      expect($ctrl.values[3].id).toBe('phone');
       expect($ctrl.values[3].width).toBe(320);
     });
   });
@@ -93,12 +93,12 @@ describe('ViewportToggleCtrl', () => {
   describe('onChange', () => {
     beforeEach(() => {
       $ctrl.$onInit();
-      $ctrl.value = 'TABLET';
+      $ctrl.value = 'tablet';
       $ctrl.onChange();
     });
 
     it('should update the model', () => {
-      expect(ngModel.$setViewValue).toHaveBeenCalledWith('TABLET');
+      expect(ngModel.$setViewValue).toHaveBeenCalledWith('tablet');
     });
 
     it('should update the viewport width', () => {
@@ -108,9 +108,9 @@ describe('ViewportToggleCtrl', () => {
 
   describe('getDisplayName', () => {
     it('should return the display name', () => {
-      $ctrl.getDisplayName({ id: 'TEST' });
+      $ctrl.getDisplayName({ id: 'phone' });
 
-      expect($translate.instant).toHaveBeenCalledWith('VIEWPORT_TEST');
+      expect($translate.instant).toHaveBeenCalledWith('VIEWPORT_PHONE');
     });
   });
 });

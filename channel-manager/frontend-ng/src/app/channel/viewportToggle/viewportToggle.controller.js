@@ -35,28 +35,28 @@ class ViewportToggleCtrl {
 
     this.values = [
       {
-        id: 'ANY_DEVICE',
+        id: 'any_device',
         icon: 'any-device',
         width: 0,
       },
       {
-        id: 'DESKTOP',
+        id: 'desktop',
         icon: 'desktop',
         width: widths.desktop,
       },
       {
-        id: 'TABLET',
+        id: 'tablet',
         icon: 'tablet',
         width: widths.tablet,
       },
       {
-        id: 'PHONE',
+        id: 'phone',
         icon: 'phone',
         width: widths.phone,
       },
     ];
 
-    const selectedDevice = this.value || defaultDevice.toUpperCase();
+    const selectedDevice = this.value || defaultDevice.toLowerCase();
     this.value = this.values.some(item => item.id === selectedDevice) ? selectedDevice : this.values[0].id;
 
     this._updateViewport();
@@ -76,7 +76,7 @@ class ViewportToggleCtrl {
   }
 
   getDisplayName(viewport) {
-    return this.$translate.instant(`VIEWPORT_${viewport.id}`);
+    return this.$translate.instant(`VIEWPORT_${viewport.id.toUpperCase()}`);
   }
 }
 
