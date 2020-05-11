@@ -18,10 +18,12 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ViewportToggleCtrl', () => {
-  let ngModel;
-  let viewportMap;
   let $ctrl;
   let $translate;
+  let channel;
+  let devices;
+  let ngModel;
+  let viewportMap;
   let ChannelService;
   let ViewportService;
 
@@ -34,14 +36,16 @@ describe('ViewportToggleCtrl', () => {
       ViewportService = _ViewportService_;
 
       ngModel = jasmine.createSpyObj('NgModelCtrl', ['$setViewValue']);
+      devices = [];
       viewportMap = {
         desktop: 1167,
         tablet: 678,
         phone: 256,
       };
-      spyOn($translate, 'instant');
-      spyOn(ChannelService, 'getChannel').and.returnValue({ defaultDevice: 'default', viewportMap });
+      channel = { defaultDevice: 'default', devices, viewportMap };
+      spyOn(ChannelService, 'getChannel').and.returnValue(channel);
       spyOn(ViewportService, 'setWidth');
+      spyOn($translate, 'instant');
 
       $ctrl = _$componentController_('viewportToggle', {}, { ngModel });
     });
@@ -55,11 +59,49 @@ describe('ViewportToggleCtrl', () => {
       expect(ViewportService.setWidth).toHaveBeenCalledWith(0);
     });
 
-    it("should select a channel's default device", () => {
-      ChannelService.getChannel.and.returnValue({ defaultDevice: 'tablet', viewportMap });
+    it("selects a channel's default device", () => {
+      channel.defaultDevice = 'tablet';
       $ctrl.$onInit();
 
       expect($ctrl.value).toBe('tablet');
+    });
+
+    it('allows for a custom viewport', () => {
+      devices.push('{ "id": "custom-id", "icon": "custom-icon", "width": 320 }');
+      $ctrl.$onInit();
+
+      expect($ctrl.values).toHaveLength(5);
+      expect($ctrl.values[4]).toEqual({ id: 'custom-id', icon: 'custom-icon', width: 320 });
+    });
+
+    it('ensures a custom viewport has a default icon and lowercase id', () => {
+      devices.push('{ "id": "CUSTOM-ID", "width": 320 }');
+      $ctrl.$onInit();
+
+      expect($ctrl.values[4].id).toEqual('custom-id');
+      expect($ctrl.values[4].icon).not.toBeEmpty();
+    });
+
+    it('allows the default viewports to be customized', () => {
+      devices.push('{ "id": "tablet", "width": 4000, "icon": "ipad" }');
+      $ctrl.$onInit();
+
+      expect($ctrl.values[2].id).toBe('tablet');
+      expect($ctrl.values[2].width).toBe(4000);
+      expect($ctrl.values[2].icon).toBe('ipad');
+    });
+
+    it('should not choke on improper configuration values for custom viewports', () => {
+      devices.push(null);
+      devices.push(undefined);
+      devices.push('');
+      devices.push(' ');
+      devices.push('tablet:786px');
+      devices.push('{ id: "id-with-missing-double-quotes" }');
+
+      $ctrl.$onInit();
+
+      expect($ctrl.values).toHaveLength(4);
     });
 
     it('should set the viewport widths from the backend', () => {
