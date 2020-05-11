@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class ProxyFilter implements Filter {
      * Location and cookie headers are marked as ignore headers as well because the proxy does not (yet) do anything
      * special with them.
      */
-    private static final Set<String> IGNORE_HEADERS = Stream.of(
+    private static final Set<String> IGNORED_RESPONSE_HEADERS = Stream.of(
             "Connection",
             "Keep-Alive",
             "Proxy-Authenticate",
@@ -65,6 +66,11 @@ public class ProxyFilter implements Filter {
             "Location",
             "Set-Cookie",
             "Set-Cookie2"
+    ).collect(toSet());
+
+    private static final Set<String> IGNORED_REQUEST_HEADERS = Stream.of(
+            "Cookie",
+            "Host"
     ).collect(toSet());
 
     private Map<String, String> proxies;
@@ -113,6 +119,7 @@ public class ProxyFilter implements Filter {
             if (url.isPresent()) {
                 final URL resource = new URL(addIndexHtmlIfNeeded(url.get()));
                 final HttpURLConnection urlConnection = (HttpURLConnection) resource.openConnection();
+                copyRequestHeaders((HttpServletRequest) request, urlConnection);
                 httpServletResponse.setStatus(urlConnection.getResponseCode());
                 if (urlConnection.getResponseCode() == 200) {
                     log.debug("Proxying {} to {}", resourcePath, url);
@@ -129,9 +136,21 @@ public class ProxyFilter implements Filter {
     private void copyResponseHeaders(final HttpServletResponse httpServletResponse, final HttpURLConnection urlConnection) {
         urlConnection.getHeaderFields().entrySet().stream()
                 .filter(e ->
-                        e.getKey() != null && !IGNORE_HEADERS.contains(e.getKey()))
+                        e.getKey() != null && !IGNORED_RESPONSE_HEADERS.contains(e.getKey()))
                 .forEach(e ->
                         e.getValue().forEach(value -> httpServletResponse.addHeader(e.getKey(), value)));
+    }
+
+    private void copyRequestHeaders(final HttpServletRequest httpServletRequest, final HttpURLConnection urlConnection) {
+        final Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
+
+        while (headerNames.hasMoreElements()) {
+            final String header = headerNames.nextElement();
+
+            if (!IGNORED_REQUEST_HEADERS.contains(header)) {
+                urlConnection.setRequestProperty(header, httpServletRequest.getHeader(header));
+            }
+        }
     }
 
     private void proxy(ServletResponse response, final URLConnection urlConnection) throws IOException {
