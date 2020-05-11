@@ -172,7 +172,7 @@ public class EditingUtils {
      */
     public static boolean isHintActionTrue(final Map<String, Serializable> hints, final String action) {
         final Serializable value = hints.get(action);
-        if (!(value instanceof Boolean)) {
+        if (value != null && !(value instanceof Boolean)) {
             log.warn("Value of hint action '{}' is expected to be boolean but it was '{}'", action, value);
         }
         return Boolean.TRUE.equals(value);
