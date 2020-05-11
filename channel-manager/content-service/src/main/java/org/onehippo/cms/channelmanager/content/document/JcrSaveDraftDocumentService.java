@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.UserContext;
@@ -71,6 +72,7 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
         }
 
         final DocumentWorkflow workflow = getWorkflow(identifier, userContext);
+        refreshInternalWorkflowSession(workflow);
         try {
             workflow.saveDraft();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
@@ -131,7 +133,9 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
 
     @Override
     protected Map<String, Serializable> getHints(final String identifier, final UserContext userContext) {
-        return HintsUtils.getHints(getWorkflow(identifier, userContext), null);
+        final DocumentWorkflow workflow = getWorkflow(identifier, userContext);
+        refreshInternalWorkflowSession(workflow);
+        return HintsUtils.getHints(workflow, null);
     }
 
     private DocumentWorkflow getWorkflow(final String identifier, final UserContext userContext) {
@@ -140,10 +144,23 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
         return getDocumentWorkflow(handle);
     }
 
+    private void refreshInternalWorkflowSession(DocumentWorkflow documentWorkflow){
+        try {
+            final WorkflowContext workflowContext = documentWorkflow.getWorkflowContext();
+                workflowContext.getInternalWorkflowSession().refresh(false);
+        } catch (RepositoryException e) {
+            log.warn("Could not refresh interal workflow session");
+            throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
+        }
+    }
+
+
     @Override
     Document getDraft(final String identifier, final UserContext userContext) {
         final Node handle = getHandle(identifier, userContext.getSession());
-        final Node draftNode = EditingUtils.getDraftNode(getDocumentWorkflow(handle), userContext.getSession())
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
+        refreshInternalWorkflowSession(documentWorkflow);
+        final Node draftNode = EditingUtils.getDraftNode(documentWorkflow, userContext.getSession())
                 .orElseThrow(() -> new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR)));
         final DocumentType documentType = getDocumentType(identifier, userContext);
         final Document document = DocumentsServiceImpl.assembleDocument(identifier, handle, draftNode, documentType);

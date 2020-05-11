@@ -180,10 +180,7 @@ class EditContentMainCtrl {
 
   uiCanExit() {
     if (this.isRetainable()) {
-      return this.ContentEditor.keepDraft().then(this.HippoIframeService.reload()).catch(() => {
-        // ignore errors of discardChanges: if it fails (e.g. because an admin unlocked the document)
-        // the editor should still be closed.
-      }).finally(() => this.ContentEditor.close());
+      return this.ContentEditor.close();
     }
     return this._confirmExit()
       .then(() => this.ContentEditor.discardChanges()
