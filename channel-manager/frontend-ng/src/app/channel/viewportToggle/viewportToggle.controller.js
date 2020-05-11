@@ -54,23 +54,25 @@ class ViewportToggleCtrl {
 
     this.values = DEFAULT_VIEWPORTS
       .map((viewport) => {
+        const label = this._getViewportLabel(viewport.id);
         const width = viewportMap[viewport.id] || viewport.width;
-        return { ...viewport, width };
+        return { ...viewport, label, width };
       });
 
     this._parseJSON(devices)
       .forEach((customViewport) => {
+        const viewport = this.values.find(vp => vp.id === customViewport.id.toLowerCase());
+        if (viewport) {
+          Object.assign(viewport, customViewport);
+          return;
+        }
+
+        customViewport.label = this._getViewportLabel(customViewport.id);
         customViewport.id = customViewport.id.toLowerCase();
         if (!customViewport.icon) {
           customViewport.icon = DEFAULT_VIEWPORT_ICON;
         }
-
-        const viewport = this.values.find(vp => vp.id === customViewport.id);
-        if (!viewport) {
-          this.values.push(customViewport);
-        } else {
-          Object.assign(viewport, customViewport);
-        }
+        this.values.push(customViewport);
       });
 
     const selectedViewport = this.value || defaultDevice.toLowerCase();
@@ -114,8 +116,14 @@ class ViewportToggleCtrl {
     this.ViewportService.setWidth(width);
   }
 
-  getDisplayName(viewport) {
-    return this.$translate.instant(`VIEWPORT_${viewport.id.toUpperCase()}`);
+  /**
+   * If the translated value is the same as the lookup key, we assume there is no translation
+   * and use the id instead.
+   */
+  _getViewportLabel(id) {
+    const key = `VIEWPORT_${id.toUpperCase()}`;
+    const translation = this.$translate.instant(key);
+    return translation !== key ? translation : id;
   }
 }
 
