@@ -37,22 +37,40 @@ const DEFAULT_VIEWPORTS = [
   },
 ];
 
+const DEFAULT_VIEWPORT_ICON = 'mdi-devices';
+
 class ViewportToggleCtrl {
-  constructor($translate, ChannelService, ViewportService) {
+  constructor($log, $translate, ChannelService, ViewportService) {
     'ngInject';
 
+    this.$log = $log;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.ViewportService = ViewportService;
   }
 
   $onInit() {
-    const { defaultDevice, viewportMap } = this.ChannelService.getChannel();
+    const { defaultDevice, devices, viewportMap } = this.ChannelService.getChannel();
 
     this.values = DEFAULT_VIEWPORTS
       .map((viewport) => {
         const width = viewportMap[viewport.id] || viewport.width;
         return { ...viewport, width };
+      });
+
+    this._parseJSON(devices)
+      .forEach((customViewport) => {
+        customViewport.id = customViewport.id.toLowerCase();
+        if (!customViewport.icon) {
+          customViewport.icon = DEFAULT_VIEWPORT_ICON;
+        }
+
+        const viewport = this.values.find(vp => vp.id === customViewport.id);
+        if (!viewport) {
+          this.values.push(customViewport);
+        } else {
+          Object.assign(viewport, customViewport);
+        }
       });
 
     const selectedViewport = this.value || defaultDevice.toLowerCase();
@@ -66,6 +84,28 @@ class ViewportToggleCtrl {
     if (this.ngModel) {
       this.ngModel.$setViewValue(this.value);
     }
+  }
+
+  _parseJSON(values) {
+    return values
+      .map((value) => {
+        if (!value || !value.trim) {
+          return null;
+        }
+
+        value = value.trim();
+        if (!value.startsWith('{') || !value.endsWith('}')) {
+          return null;
+        }
+
+        try {
+          return JSON.parse(value);
+        } catch (e) {
+          this.$log.error('Failed to parse viewport JSON blob', value, e);
+          return null;
+        }
+      })
+      .filter(Boolean);
   }
 
   _updateViewport() {
