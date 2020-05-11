@@ -401,6 +401,14 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 requestContext.setPageModelApiRequest(true);
             }
 
+
+            log.debug("{} matched to mount '{}'", containerRequest, resolvedMount.getMount());
+
+            // sets filterChain for ValveContext to be able to retrieve...
+            req.setAttribute(ContainerConstants.HST_FILTER_CHAIN, chain);
+            setHstServletPath(containerRequest, resolvedMount);
+            HstContainerURL hstContainerUrl = createOrGetContainerURL(containerRequest, hstManager, requestContext, resolvedMount, res);
+
             if (isRequestForChannelManagerPreview(vHosts, renderingHost, req)) {
                 requestContext.setRenderHost(renderingHost);
                 if (!authenticated) {
@@ -438,14 +446,20 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
                     final Channel channel = hstSite.getChannel();
                     if (StringUtils.isNotBlank((String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME))) {
-                        String previewURL = (String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME);
+                        final String previewURL = (String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME);
+                        final String redirect;
+                        if (!StringUtils.isBlank(hstContainerUrl.getPathInfo())) {
+                            redirect = previewURL + hstContainerUrl.getPathInfo();
+                        } else {
+                            redirect = previewURL;
+                        }
                         try {
                             // parse the preview url
-                            final URI uri = new URI(previewURL);
+                            final URI uri = new URI(redirect);
 
                             final JwtTokenService jwtTokenService = HippoServiceRegistry.getService(JwtTokenService.class);
                             final String clusterNodeAffinityId = getClusterNodeAffinityId(req, clusterNodeAffinityCookieName, clusterNodeAffinityHeaderName);
-                            final String location = previewURL +
+                            final String location = redirect +
                                     (uri.getQuery() == null ? "?" : "&")
                                     + jwtTokenParam + "=" + jwtTokenService.createToken(req, emptyMap()) +
                                     (StringUtils.isNotBlank(clusterNodeAffinityId) ? "&" + clusterNodeAffinityQueryParam + "=" + clusterNodeAffinityId : "");
@@ -460,15 +474,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     }
                 }
             }
-
-            log.debug("{} matched to mount '{}'", containerRequest, resolvedMount.getMount());
-
-            // sets filterChain for ValveContext to be able to retrieve...
-            req.setAttribute(ContainerConstants.HST_FILTER_CHAIN, chain);
-
-            setHstServletPath((GenericHttpServletRequestWrapper) containerRequest, resolvedMount);
-
-            HstContainerURL hstContainerUrl = createOrGetContainerURL(containerRequest, hstManager, requestContext, resolvedMount, res);
 
             final String farthestRequestScheme = getFarthestRequestScheme(req);
 
