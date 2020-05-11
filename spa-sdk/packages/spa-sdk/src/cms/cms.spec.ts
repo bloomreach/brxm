@@ -138,7 +138,10 @@ describe('CmsImpl', () => {
 
       await new Promise(process.nextTick);
 
-      expect(window.document.querySelector('script[src="url1"]')).not.toBeNull();
+      const script = window.document.querySelector('script[src="url1"]');
+
+      expect(script).not.toBeNull();
+      expect(script).toMatchSnapshot();
     });
 
     it('should resolve a promise on load event', async () => {
