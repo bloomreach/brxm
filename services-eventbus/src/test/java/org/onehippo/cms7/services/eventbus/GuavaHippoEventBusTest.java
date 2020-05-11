@@ -54,4 +54,40 @@ public class GuavaHippoEventBusTest {
         assertFalse(listener.fired);
     }
 
+    @Test
+    public void testObjectOfSameClassAfterUnregister() throws InterruptedException {
+        // initialize
+        HippoEventBus eventBus = new GuavaHippoEventBus();
+        Listener listener = new Listener();
+        Listener listener2 = new Listener();
+        HippoEventListenerRegistry.get().register(listener);
+        HippoEventListenerRegistry.get().register(listener2);
+        eventBus.post(new Object());
+        synchronized (this) {
+            wait(500);
+        }
+
+        // verify both work
+        assertTrue(listener.fired);
+        assertTrue(listener2.fired);
+
+        //reset
+        listener.fired = false;
+        listener2.fired = false;
+
+        // unregister one
+        HippoEventListenerRegistry.get().unregister(listener);
+        eventBus.post(new Object());
+        synchronized (this) {
+            wait(500);
+        }
+        // verify the unregistered one didn't fire, but the other did
+        assertFalse(listener.fired);
+        assertTrue(listener2.fired);
+
+        //reset
+        listener2.fired = false;
+        HippoEventListenerRegistry.get().unregister(listener2);
+    }
+
 }
