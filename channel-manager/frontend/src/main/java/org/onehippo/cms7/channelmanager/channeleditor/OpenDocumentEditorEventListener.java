@@ -32,7 +32,9 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.WorkflowException;
 import org.json.JSONArray;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
 import org.wicketstuff.js.ext.util.ExtEventListener;
 
@@ -81,15 +83,19 @@ class OpenDocumentEditorEventListener extends ExtEventListener {
 
         final IEditorManager editorManager = context.getService(editorManagerServiceId, IEditorManager.class);
         try {
-            final Node documentHandle = UserSession.get().getJcrSession().getNodeByIdentifier(documentHandleUuid);
-            if (!documentHandle.isNodeType(NT_HANDLE)) {
+            final Node handle = UserSession.get().getJcrSession().getNodeByIdentifier(documentHandleUuid);
+            if (!handle.isNodeType(NT_HANDLE)) {
                 throw new IllegalArgumentException(String.format("Node with id '%s' is not of type %s", documentHandleUuid, NT_HANDLE));
             }
-            BranchIdModel.initialize(context, documentHandle);
-            final JcrNodeModel documentHandleModel = new JcrNodeModel(documentHandle);
+            BranchIdModel.initialize(context, handle);
+            final JcrNodeModel documentHandleModel = new JcrNodeModel(handle);
             IEditor<?> editor = editorManager.getEditor(documentHandleModel);
             if (editor == null) {
                 editor = editorManager.openEditor(documentHandleModel);
+            }
+            DocumentHandle documentHandle = new DocumentHandle(handle);
+            if (documentHandle.isRetainable() && IEditor.Mode.VIEW == mode) {
+                editor.saveDraft();
             }
             if (mode == IEditor.Mode.EDIT && editor.getMode() != IEditor.Mode.EDIT) {
                 editor.setMode(mode);
@@ -97,7 +103,7 @@ class OpenDocumentEditorEventListener extends ExtEventListener {
             editor.focus();
         } catch (ItemNotFoundException e) {
             ChannelEditor.log.warn("Could not find document with uuid '{}'", documentHandleUuid, e);
-        } catch (EditorException | RepositoryException | ServiceException e) {
+        } catch (WorkflowException | EditorException | RepositoryException | ServiceException e) {
             ChannelEditor.log.warn("Failed to open editor in '{}' mode for document with uuid '{}'", mode, documentHandleUuid, e);
         }
     }

@@ -70,6 +70,7 @@ class EditContentToolsCtrl {
 
   _viewContent() {
     this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'view');
+    this.ContentEditor.stopEditing();
     this.ContentEditor.close();
     const statisticEventName = this._getPublicationStateValue(
       REPORT_USAGE_STATISTIC_EVENT_NAMES,
