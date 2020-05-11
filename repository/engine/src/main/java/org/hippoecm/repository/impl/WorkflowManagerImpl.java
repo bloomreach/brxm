@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.rmi.Remote;
 import java.security.AccessControlException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -377,7 +378,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
             try {
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
                 returnObject = targetMethod.invoke(upstream, args);
-                if (objectPersist && !targetMethod.getName().equals("hints")) {
+                final boolean saveRequiredForMethod = !Arrays.asList("hints","getWorkflowContext")
+                        .contains(targetMethod);
+                if (objectPersist && saveRequiredForMethod){
                     workflowSession.save();
                 }
                 if (returnObject instanceof Document) {
