@@ -22,9 +22,10 @@ import static org.apache.commons.lang.StringUtils.substringBefore;
 
 public class RequestUtils {
 
-    public static final String ORIGIN = "Origin";
+    private static final String ORIGIN = "Origin";
+    private static final String REFERER = "Referer";
 
-    private RequestUtils(){
+    private RequestUtils() {
 
     }
 
@@ -41,11 +42,11 @@ public class RequestUtils {
 
         // if so check the Origin HTTP header and if the Origin header is missing check the referer (Origin misses for
         // CORS or POST requests from firefox, see CMS-12155)
-        final String referer = servletRequest.getHeader("Referer");
+        final String referer = servletRequest.getHeader(REFERER);
         if (referer != null) {
             final String scheme = substringBefore(referer, "://");
             // host possibly including port
-            final String host = substringBefore(substringAfter(referer,scheme + "://"), "/");
+            final String host = substringBefore(substringAfter(referer, scheme + "://"), "/");
             return scheme + "://" + host;
         }
 
