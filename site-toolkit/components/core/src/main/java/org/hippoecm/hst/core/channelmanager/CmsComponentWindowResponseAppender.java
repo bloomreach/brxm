@@ -38,6 +38,7 @@ import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_EXPERIENCE_PAGE_COMPONENT;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
 
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
@@ -84,7 +85,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         pageMetaData.put(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
         // provide info for CM that the page is an experience page: The top hst component for experience pages
         // always has compConfig.isExperiencePageComponent() = true
-        pageMetaData.put(ChannelManagerConstants.HST_EXPERIENCE_PAGE,  Boolean.valueOf(compConfig.isExperiencePageComponent()).toString());
+        pageMetaData.put(ChannelManagerConstants.HST_EXPERIENCE_PAGE,  String.valueOf(compConfig.isExperiencePageComponent()));
 
         final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
         if (resolvedSiteMapItem != null) {
@@ -141,6 +142,9 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             final Map<String, String> preambleAttributes = new HashMap<>();
             final Map<String, String> epilogueAttributes = new HashMap<>();
             populateAttributes(window, request, preambleAttributes, epilogueAttributes);
+
+            preambleAttributes.put(HST_EXPERIENCE_PAGE_COMPONENT, String.valueOf(config.isExperiencePageComponent()));
+
             response.addPreamble(createCommentWithAttr(preambleAttributes, response));
             response.addEpilogue(createCommentWithAttr(epilogueAttributes, response));
         } else {
