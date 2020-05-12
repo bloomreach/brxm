@@ -24,10 +24,11 @@ import javax.jcr.SimpleCredentials;
 
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
-public  class MockCmsSessionContext implements CmsSessionContext {
+public class MockCmsSessionContext implements CmsSessionContext {
 
     private SimpleCredentials credentials;
     private Map<String, Serializable> contextPayload = new HashMap<>();
+    private String id;
 
     public MockCmsSessionContext(Credentials credentials) {
         this.credentials = (SimpleCredentials)credentials;
@@ -35,7 +36,11 @@ public  class MockCmsSessionContext implements CmsSessionContext {
 
     @Override
     public String getId() {
-        return null;
+        return id;
+    }
+
+    public void setId(final String id) {
+        this.id = id;
     }
 
     @Override
