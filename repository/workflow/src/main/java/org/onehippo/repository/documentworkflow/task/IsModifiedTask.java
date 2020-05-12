@@ -96,15 +96,19 @@ public class IsModifiedTask extends AbstractDocumentTask {
         return equals(a, b, 0);
     }
 
-    protected boolean equals(Node a, Node b, int depth) throws RepositoryException {
+    private boolean equals(Node a, Node b, int depth) throws RepositoryException {
+        if (depth == 0) {
+            final DocumentVariant draft = getDocumentHandle().getDocuments().get(HippoStdNodeType.DRAFT);
+            if (draft != null && draft.getIdentity().equals(b.getIdentifier())) {
+                // make sure draft always comes first
+                return equals(b, a, depth);
+            }
+        }
+
         final boolean virtualA = JcrUtils.isVirtual(a);
         if (virtualA != JcrUtils.isVirtual(b)) {
             return false;
         } else if (virtualA) {
-            return true;
-        }
-
-        if (depth == 0 && b.isNodeType(HippoStdNodeType.MIXIN_SKIPDRAFT)) {
             return true;
         }
 
@@ -121,7 +125,7 @@ public class IsModifiedTask extends AbstractDocumentTask {
                 return false;
             }
         }
-        if (countChildren(a) != countChildren(b)) {
+        if (countChildren(a, depth) != countChildren(b, depth)) {
             return false;
         }
 
@@ -130,7 +134,7 @@ public class IsModifiedTask extends AbstractDocumentTask {
         while (aIter.hasNext()) {
             Node aChild = aIter.nextNode();
             Node bChild = bIter.nextNode();
-            while (depth == 0 && bChild.isNodeType(HippoStdNodeType.MIXIN_SKIPDRAFT)){
+            while (depth == 0 && bChild.isNodeType(HippoStdNodeType.MIXIN_SKIPDRAFT)) {
                 bChild = bIter.nextNode();
             }
             if (!equals(aChild, bChild, depth + 1)) {
@@ -140,7 +144,10 @@ public class IsModifiedTask extends AbstractDocumentTask {
         return true;
     }
 
-    private long countChildren(Node node) throws RepositoryException {
+    private long countChildren(Node node, int depth) throws RepositoryException {
+        if (depth > 0) {
+            return node.getNodes().getSize();
+        }
         long count = 0;
         final NodeIterator childNodeIterator = node.getNodes();
         while (childNodeIterator.hasNext()) {
