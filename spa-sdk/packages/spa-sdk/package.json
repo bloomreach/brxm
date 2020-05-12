@@ -49,25 +49,25 @@
     "@babel/plugin-transform-object-assign": "^7.8",
     "@babel/polyfill": "^7.8",
     "@babel/preset-env": "^7.9",
-    "@types/jest": "^25.1",
+    "@types/jest": "^25.2",
     "@types/xmldom": "^0.1",
     "babel-plugin-transform-async-to-promises": "^0.8",
-    "dts-bundle-generator": "^4.0",
-    "jest": "^25.2",
-    "js-beautify": "^1.10",
+    "dts-bundle-generator": "^4.3",
+    "jest": "^26.0",
+    "js-beautify": "^1.11",
     "minicat": "^1.0",
-    "rollup": "^2.3",
+    "rollup": "^2.10",
     "rollup-plugin-babel": "^4.4",
     "rollup-plugin-terser": "^5.3",
     "rollup-plugin-typescript2": "^0.27",
-    "ts-jest": "^25.3",
+    "ts-jest": "^26.0",
     "tslint": "^6.1",
     "tslint-config-airbnb": "^5.11",
     "typedoc": "^0.17",
     "typescript": "^3.8"
   },
   "dependencies": {
-    "emittery": "^0.6",
+    "emittery": "^0.7",
     "xmldom": "^0.3"
   }
 }
