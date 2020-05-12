@@ -26,5 +26,8 @@
     "docs": "yarn workspaces run docs",
     "lint": "yarn workspaces run lint",
     "test": "yarn workspaces run test"
+  },
+  "resolutions": {
+    "typescript": "~3.8"
   }
 }
