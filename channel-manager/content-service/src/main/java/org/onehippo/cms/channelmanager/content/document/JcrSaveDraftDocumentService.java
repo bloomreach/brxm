@@ -135,7 +135,7 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
     protected Map<String, Serializable> getHints(final String identifier, final UserContext userContext) {
         final DocumentWorkflow workflow = getWorkflow(identifier, userContext);
         refreshInternalWorkflowSession(workflow);
-        return HintsUtils.getHints(workflow, null);
+        return HintsUtils.getHints(workflow, "master");
     }
 
     private DocumentWorkflow getWorkflow(final String identifier, final UserContext userContext) {
