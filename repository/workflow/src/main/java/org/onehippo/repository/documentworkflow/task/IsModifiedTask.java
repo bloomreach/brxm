@@ -92,6 +92,10 @@ public class IsModifiedTask extends AbstractDocumentTask {
         return null;
     }
 
+    protected boolean equals(Node a, Node b) throws RepositoryException {
+        return equals(a, b, 0);
+    }
+
     protected boolean equals(Node a, Node b, int depth) throws RepositoryException {
         final boolean virtualA = JcrUtils.isVirtual(a);
         if (virtualA != JcrUtils.isVirtual(b)) {
