@@ -15,10 +15,13 @@
  */
 package org.onehippo.repository.documentworkflow.task;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -37,6 +40,7 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdNodeType.MIXIN_SKIPDRAFT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
@@ -125,37 +129,21 @@ public class IsModifiedTask extends AbstractDocumentTask {
                 return false;
             }
         }
-        if (countChildren(a, depth) != countChildren(b, depth)) {
+
+        final List<Node> aChildNodes = getChildNodes(a, depth);
+        final List<Node> bChildNodes = getChildNodes(b, depth);
+
+        if (aChildNodes.size() != bChildNodes.size()) {
             return false;
         }
-
-        NodeIterator aIter = a.getNodes();
-        NodeIterator bIter = b.getNodes();
-        while (aIter.hasNext()) {
-            Node aChild = aIter.nextNode();
-            Node bChild = bIter.nextNode();
-            while (depth == 0 && bChild.isNodeType(HippoStdNodeType.MIXIN_SKIPDRAFT)) {
-                bChild = bIter.nextNode();
-            }
+        for (int i = 0; i < aChildNodes.size(); i++) {
+            final Node aChild = aChildNodes.get(i);
+            final Node bChild = bChildNodes.get(i);
             if (!equals(aChild, bChild, depth + 1)) {
                 return false;
             }
         }
         return true;
-    }
-
-    private long countChildren(Node node, int depth) throws RepositoryException {
-        if (depth > 0) {
-            return node.getNodes().getSize();
-        }
-        long count = 0;
-        final NodeIterator childNodeIterator = node.getNodes();
-        while (childNodeIterator.hasNext()) {
-            if (!childNodeIterator.nextNode().isNodeType(HippoStdNodeType.MIXIN_SKIPDRAFT)) {
-                count++;
-            }
-        }
-        return count;
     }
 
     private boolean equals(final Property bProp, final Property aProp) throws RepositoryException {
@@ -230,7 +218,7 @@ public class IsModifiedTask extends AbstractDocumentTask {
     }
 
     private Map<String, Property> getPropertyMap(final Node node) throws RepositoryException {
-        final PropertyFilter filter = node.isNodeType(NT_FROZEN_NODE)
+        final ItemFilter<Property> filter = node.isNodeType(NT_FROZEN_NODE)
                 ? this::includeFrozenForComparison
                 : this::includeForComparison;
         final Map<String, Property> propertyMap = new HashMap<>();
@@ -258,8 +246,23 @@ public class IsModifiedTask extends AbstractDocumentTask {
                 && Arrays.binarySearch(IGNORED_FROZEN_PROPERTIES, name) < 0;
     }
 
+    private List<Node> getChildNodes(Node node, int depth) throws RepositoryException {
+        final ItemFilter<Node> childNodeFilter = depth == 0
+                ? n -> !n.isNodeType(MIXIN_SKIPDRAFT)
+                : n -> true;
+        final List<Node> filtered = new ArrayList<>();
+        final NodeIterator nodes = node.getNodes();
+        while (nodes.hasNext()) {
+            final Node next = nodes.nextNode();
+            if (childNodeFilter.test(next)) {
+                filtered.add(next);
+            }
+        }
+        return filtered;
+    }
+
     @FunctionalInterface
-    private interface PropertyFilter {
-        boolean test(Property property) throws RepositoryException;
+    private interface ItemFilter<I extends Item> {
+        boolean test(I item) throws RepositoryException;
     }
 }
