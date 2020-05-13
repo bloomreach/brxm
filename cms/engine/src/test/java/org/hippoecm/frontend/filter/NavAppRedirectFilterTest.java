@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.jcr.RepositoryException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,64 +31,69 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.wicket.ThreadContext;
 import org.easymock.Capture;
+import org.easymock.EasyMockRunner;
+import org.easymock.Mock;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.navigation.NavigationItem;
 import org.hippoecm.frontend.navigation.NavigationItemService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoSession;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.mock.MockSession;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.createNiceMock;
-import static org.powermock.api.easymock.PowerMock.mockStatic;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
 
-@PowerMockIgnore("javax.management.*")
-@PrepareForTest({HippoServiceRegistry.class})
-@RunWith(PowerMockRunner.class)
+@RunWith(EasyMockRunner.class)
 public class NavAppRedirectFilterTest {
 
     private NavAppRedirectFilter filter;
+
+    @Mock
     private FilterChain chain;
+    @Mock
     private HttpServletRequest request;
+    @Mock
     private HttpServletResponse response;
+    @Mock
+    private NavigationItemService navigationItemService;
 
     @Before
-    public void setUp() throws RepositoryException {
+    public void setUp() {
         filter = new NavAppRedirectFilter();
+        HippoServiceRegistry.register(navigationItemService, NavigationItemService.class);
+    }
 
-        chain = createNiceMock(FilterChain.class);
-        request = createNiceMock(HttpServletRequest.class);
-        response = createNiceMock(HttpServletResponse.class);
+    @After
+    public void tearDown() {
+        HippoServiceRegistry.unregister(navigationItemService, NavigationItemService.class);
     }
 
     @Test
     public void urls_with_put_method_dont_redirect() throws IOException, ServletException {
 
         expect(request.getMethod()).andReturn("PUT");
+        replay(request);
 
         chain.doFilter(request, response);
         expectLastCall();
-        replayAll();
+        replay(chain);
 
         filter.doFilter(request, response, chain);
 
-        verifyAll();
+        verify(request, chain);
     }
 
     @Test
@@ -97,14 +101,15 @@ public class NavAppRedirectFilterTest {
 
         expect(request.getMethod()).andReturn("GET");
         expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn("");
+        replay(request);
 
         chain.doFilter(request, response);
         expectLastCall();
-        replayAll();
+        replay(chain);
 
         filter.doFilter(request, response, chain);
 
-        verifyAll();
+        verify(request, chain);
     }
 
     @Test
@@ -114,14 +119,15 @@ public class NavAppRedirectFilterTest {
         expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn(null);
         expect(request.getRequestURI()).andReturn("/foo/" + NavAppRedirectFilter.WHITE_LISTED_PATH_PREFIXES.get(0));
         expect(request.getContextPath()).andReturn("/foo");
+        replay(request);
 
         chain.doFilter(request, response);
         expectLastCall();
-        replayAll();
+        replay(chain);
 
         filter.doFilter(request, response, chain);
 
-        verifyAll();
+        verify(request, chain);
     }
 
     @Test
@@ -132,14 +138,15 @@ public class NavAppRedirectFilterTest {
         expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn(null);
         expect(request.getContextPath()).andReturn("/foo");
         expect(request.getRequestURI()).andReturn("/foo/experience-manager");
+        replay(request);
 
         chain.doFilter(request, response);
         expectLastCall();
-        replayAll();
+        replay(chain);
 
         filter.doFilter(request, response, chain);
 
-        verifyAll();
+        verify(request, chain, navigationItemService);
     }
 
     @Test
@@ -152,11 +159,12 @@ public class NavAppRedirectFilterTest {
         expect(request.getContextPath()).andStubReturn("/foo");
         expect(request.getRequestURI()).andStubReturn("/foo" + path);
         expect(request.getParameterMap()).andReturn(Collections.emptyMap());
+        replay(request);
 
         final Capture<String> location = Capture.newInstance();
         response.sendRedirect(capture(location));
         expectLastCall();
-        replayAll();
+        replay(response);
 
         filter.doFilter(request, response, chain);
 
@@ -164,7 +172,7 @@ public class NavAppRedirectFilterTest {
         assertThat(capturedLocation, startsWith("./?"));
         assertThat(capturedLocation, containsString(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER + "=" + path));
 
-        verifyAll();
+        verify(request, response, navigationItemService);
     }
 
     @Test
@@ -181,11 +189,12 @@ public class NavAppRedirectFilterTest {
         expect(request.getContextPath()).andStubReturn("/foo");
         expect(request.getRequestURI()).andStubReturn("/foo" + path);
         expect(request.getParameterMap()).andReturn(parameterMap);
+        replay(request);
 
         final Capture<String> location = Capture.newInstance();
         response.sendRedirect(capture(location));
         expectLastCall();
-        replayAll();
+        replay(response);
 
         filter.doFilter(request, response, chain);
 
@@ -196,7 +205,7 @@ public class NavAppRedirectFilterTest {
         assertThat(capturedLocation, containsString("qux=1"));
         assertThat(capturedLocation, containsString(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER + "=" + path));
 
-        verifyAll();
+        verify(request, response, navigationItemService);
     }
 
     @Test
@@ -213,11 +222,12 @@ public class NavAppRedirectFilterTest {
         expect(request.getContextPath()).andStubReturn("/foo");
         expect(request.getRequestURI()).andStubReturn("/foo" + path);
         expect(request.getParameterMap()).andReturn(parameterMap);
+        replay(request);
 
         final Capture<String> location = Capture.newInstance();
         response.sendRedirect(capture(location));
         expectLastCall();
-        replayAll();
+        replay(response);
 
         filter.doFilter(request, response, chain);
 
@@ -228,7 +238,7 @@ public class NavAppRedirectFilterTest {
         assertThat(capturedLocation, containsString("qux"));
         assertThat(capturedLocation, containsString(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER + "=" + path));
 
-        verifyAll();
+        verify(request, response, navigationItemService);
     }
 
     @Test
@@ -245,11 +255,12 @@ public class NavAppRedirectFilterTest {
         expect(request.getContextPath()).andStubReturn("/foo");
         expect(request.getRequestURI()).andStubReturn("/foo" + path);
         expect(request.getParameterMap()).andReturn(parameterMap);
+        replay(request);
 
         final Capture<String> location = Capture.newInstance();
         response.sendRedirect(capture(location));
         expectLastCall();
-        replayAll();
+        replay(response);
 
         filter.doFilter(request, response, chain);
 
@@ -260,7 +271,7 @@ public class NavAppRedirectFilterTest {
         assertThat(capturedLocation, containsString("qux=1"));
         assertThat(capturedLocation, containsString(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER + "=" + path));
 
-        verifyAll();
+        verify(request, response, navigationItemService);
     }
 
     @Test
@@ -277,11 +288,12 @@ public class NavAppRedirectFilterTest {
         expect(request.getContextPath()).andStubReturn("");
         expect(request.getRequestURI()).andStubReturn(path);
         expect(request.getParameterMap()).andReturn(parameterMap);
+        replay(request);
 
         final Capture<String> location = Capture.newInstance();
         response.sendRedirect(capture(location));
         expectLastCall();
-        replayAll();
+        replay(response);
 
         filter.doFilter(request, response, chain);
 
@@ -292,18 +304,14 @@ public class NavAppRedirectFilterTest {
         assertThat(capturedLocation, containsString("qux=1"));
         assertThat(capturedLocation, containsString(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER + "=" + path));
 
-        verifyAll();
+        verify(request, response, navigationItemService);
     }
 
-    private static void mockNavigationService(final String... appPaths) {
-        mockStatic(HippoServiceRegistry.class);
-        final NavigationItemService navigationItemService = createNiceMock(NavigationItemService.class);
-        expect(HippoServiceRegistry.getService(NavigationItemService.class)).andReturn(navigationItemService);
-
+    private void mockNavigationService(final String... appPaths) {
         final List<NavigationItem> items = Stream.of(appPaths)
                 .map(path -> {
-                    final NavigationItem item = createMock(NavigationItem.class);
-                    expect(item.getAppPath()).andReturn(path);
+                    final NavigationItem item = new NavigationItem();
+                    item.setAppPath(path);
                     return item;
                 })
                 .collect(Collectors.toList());
@@ -311,10 +319,12 @@ public class NavAppRedirectFilterTest {
         final HippoSession jcrSession = new MockSession(null);
         final Locale locale = Locale.ENGLISH;
         final UserSession userSession = createMock(UserSession.class);
-        expect(userSession.getJcrSession()).andReturn(jcrSession).anyTimes();
-        expect(userSession.getLocale()).andReturn(locale).anyTimes();
+        expect(userSession.getJcrSession()).andStubReturn(jcrSession);
+        expect(userSession.getLocale()).andStubReturn(locale);
         ThreadContext.setSession(userSession);
+        replay(userSession);
 
         expect(navigationItemService.getNavigationItems(jcrSession, locale)).andReturn(items);
+        replay(navigationItemService);
     }
 }
