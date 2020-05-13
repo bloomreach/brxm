@@ -34,6 +34,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.navigation.NavigationItem;
+import org.hippoecm.frontend.navigation.NavigationItemService;
+import org.hippoecm.frontend.session.UserSession;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +117,19 @@ public class NavAppRedirectFilter implements Filter {
         }
 
         final String segment = getSegmentAfterContextPath(request);
-        return WHITE_LISTED_PATH_PREFIXES.stream().noneMatch(segment::equals);
+        if (WHITE_LISTED_PATH_PREFIXES.stream().anyMatch(segment::equals)) {
+            return false;
+        }
+
+        final List<NavigationItem> navigationItems = getNavigationItems();
+        if (navigationItems.isEmpty()) { // not logged in yet
+            return true;
+        }
+
+        return navigationItems.stream()
+                .map(NavigationItem::getAppPath)
+                .anyMatch(segment::equals);
+
     }
 
     private String getSegmentAfterContextPath(final HttpServletRequest request) {
@@ -162,5 +178,11 @@ public class NavAppRedirectFilter implements Filter {
 
     private String getPathAfterContextPath(HttpServletRequest request) {
         return request.getRequestURI().replaceFirst(request.getContextPath(), "");
+    }
+
+    private static List<NavigationItem> getNavigationItems() {
+        final NavigationItemService navigationItemService = HippoServiceRegistry.getService(NavigationItemService.class);
+        final UserSession userSession = UserSession.get();
+        return navigationItemService.getNavigationItems(userSession.getJcrSession(), userSession.getLocale());
     }
 }
