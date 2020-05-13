@@ -100,7 +100,7 @@ public class NavAppRedirectFilterTest {
 
         expect(request.getMethod()).andReturn("GET");
         expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn(null);
-        expect(request.getRequestURI()).andReturn("/foo" + NavAppRedirectFilter.WHITE_LISTED_PATH_PREFIXES.get(0));
+        expect(request.getRequestURI()).andReturn("/foo/" + NavAppRedirectFilter.WHITE_LISTED_PATH_PREFIXES.get(0));
         expect(request.getContextPath()).andReturn("/foo");
 
         chain.doFilter(request, response);
