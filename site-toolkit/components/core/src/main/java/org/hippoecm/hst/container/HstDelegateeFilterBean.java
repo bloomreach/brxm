@@ -620,16 +620,12 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     + jwtTokenParam + "=" + jwtTokenService.createToken(req, emptyMap()) +
                     (isNotBlank(clusterNodeAffinityId) ? "&" + clusterNodeAffinityQueryParam + "=" + clusterNodeAffinityId : "");
             res.sendRedirect(location);
-            return;
-
         } catch (URISyntaxException e) {
             res.sendError(HttpServletResponse.SC_FORBIDDEN);
             log.warn("Configured preview URL '{}'is not valid", previewURL);
-            return;
         } catch (IllegalStateException e) {
             res.sendError(HttpServletResponse.SC_FORBIDDEN);
             log.info("Cannot create redirect URL (token)", e.getMessage());
-            return;
         }
     }
 
