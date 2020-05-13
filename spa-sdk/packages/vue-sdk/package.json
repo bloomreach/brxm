@@ -1,0 +1,70 @@
+{
+  "name": "@bloomreach/vue-sdk",
+  "version": "14.2.2",
+  "description": "Bloomreach SPA SDK for Vue.js",
+  "keywords": [
+    "bloomreach",
+    "sdk",
+    "vue"
+  ],
+  "author": "Bloomreach B.V.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
+    "directory": "packages/vue-sdk"
+  },
+  "bugs": {
+    "url": "https://issues.onehippo.com/projects/CMS/issues"
+  },
+  "main": "dist/index.common.js",
+  "browser": "dist/index.umd.js",
+  "files": [
+    "dist/*.js*"
+  ],
+  "scripts": {
+    "build": "vue-cli-service build --filename index --formats commonjs,umd --name BloomreachVueSdk --target lib src/main.ts",
+    "lint": "vue-cli-service lint --no-fix",
+    "prepare": "$npm_execpath run build",
+    "test": "vue-cli-service test:unit --coverage --passWithNoTests"
+  },
+  "browserslist": [
+    "last 1 chrome version",
+    "last 1 firefox version",
+    "last 1 safari version",
+    "last 1 edge version"
+  ],
+  "dependencies": {
+    "vue-class-component": "^7.2",
+    "vue-property-decorator": "^8.4"
+  },
+  "peerDependencies": {
+    "vue": "^2.6"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.2",
+    "@typescript-eslint/eslint-plugin": "^2.34",
+    "@typescript-eslint/parser": "^2.34",
+    "@vue/cli-plugin-babel": "~4.3",
+    "@vue/cli-plugin-eslint": "~4.3",
+    "@vue/cli-plugin-typescript": "~4.3",
+    "@vue/cli-plugin-unit-jest": "~4.3",
+    "@vue/cli-service": "~4.3",
+    "@vue/eslint-config-airbnb": "^5.0",
+    "@vue/eslint-config-prettier": "^6.0",
+    "@vue/eslint-config-typescript": "^5.0",
+    "@vue/test-utils": "^1.0",
+    "core-js": "^3.6",
+    "eslint": "^6.8",
+    "eslint-plugin-import": "^2.20",
+    "eslint-plugin-prettier": "^3.1",
+    "eslint-plugin-vue": "^6.2",
+    "prettier": "^2.0",
+    "typescript": "^3.8",
+    "vue": "^2.6",
+    "vue-template-compiler": "^2.6"
+  },
+  "jest": {
+    "preset": "@vue/cli-plugin-unit-jest/presets/typescript"
+  }
+}
