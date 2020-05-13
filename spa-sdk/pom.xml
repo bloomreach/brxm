@@ -170,8 +170,8 @@
                 <exclude>Procfile</exclude>
                 <exclude>yarn.lock</exclude>
                 <exclude>packages/**/__snapshots__/*.snap</exclude>
+                <exclude>packages/*/.*</exclude>
                 <exclude>packages/spa-sdk/src/docs/*.md</exclude>
-                <exclude>packages/spa-sdk/.*</exclude>
                 <exclude>examples/react-ssr/next-env.d.ts</exclude>
                 <exclude>examples/xm/**</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
