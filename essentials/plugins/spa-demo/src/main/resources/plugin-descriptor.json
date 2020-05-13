@@ -27,6 +27,9 @@
     },
     {
       "pluginId": "newsPlugin"
+    },
+    {
+      "pluginId": "enterpriseProject"
     }
   ]
 }
