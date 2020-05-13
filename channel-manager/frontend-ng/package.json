@@ -78,7 +78,7 @@
     "throttle-debounce": "2.1.0"
   },
   "devDependencies": {
-    "@bloomreach/frontend-build": "11.0.0",
+    "@bloomreach/frontend-build": "11.1.0",
     "angular-mocks": "1.7.9",
     "babel-plugin-transform-async-to-promises": "0.8.15",
     "string-replace-loader": "2.2.0"
