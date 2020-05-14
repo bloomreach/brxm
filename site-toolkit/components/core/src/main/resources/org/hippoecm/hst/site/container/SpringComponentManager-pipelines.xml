@@ -62,6 +62,7 @@
   <bean id="cmsSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsSecurityValve">
     <property name="valveName" value="cmsSecurityValve"/>
     <property name="sessionSecurityDelegation" ref="org.hippoecm.hst.core.jcr.SessionSecurityDelegation"/>
+    <property name="delegatingRepository" ref="javax.jcr.Repository.delegating"/>
   </bean>
 
   <!-- Generic no-cache response headers setting valve -->

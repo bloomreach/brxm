@@ -16,14 +16,16 @@
 package org.hippoecm.hst.core.container;
 
 import javax.jcr.LoginException;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
-import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
+import org.hippoecm.hst.core.jcr.SessionSecurityDelegationImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.repository.api.HippoSession;
@@ -31,6 +33,7 @@ import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.CMS_USER_SESSION_ATTR_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 
 /**
@@ -47,11 +50,19 @@ import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_
 public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
     public static final String HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION = CmsSecurityValve.class.getName() + ".CmsPreviewSession";
+    public static final String HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_SESSION = CmsSecurityValve.class.getName() + ".CmsSession";
 
-    private SessionSecurityDelegation sessionSecurityDelegation;
+    private SessionSecurityDelegationImpl sessionSecurityDelegation;
 
-    public void setSessionSecurityDelegation(SessionSecurityDelegation sessionSecurityDelegation) {
+    // non-pooled repository
+    private Repository delegatingRepository;
+
+    public void setSessionSecurityDelegation(SessionSecurityDelegationImpl sessionSecurityDelegation) {
         this.sessionSecurityDelegation = sessionSecurityDelegation;
+    }
+
+    public void setDelegatingRepository(final Repository delegatingRepository) {
+        this.delegatingRepository = delegatingRepository;
     }
 
     @Override
@@ -71,29 +82,24 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             // render on behalf of authorized user
             log.debug("Request '{}' is invoked with a valid token for user '{}'", accessToken);
             cmsUserCredentials = accessToken.getCmsSessionContext().getRepositoryCredentials();
-            Session jcrSession = null;
+            Session previewCmsUserSession = null;
+            Session cmsUser = null;
             try {
-                jcrSession = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsUserCredentials, false);
-                if (jcrSession != null) {
-                    ((HstMutableRequestContext) requestContext).setSession(jcrSession);
-                }
+                Pair<Session, Session> pair = sessionSecurityDelegation.createCmsUserAndChannelMgrPreviewUser(cmsUserCredentials);
+
+                previewCmsUserSession = pair.getLeft();
+                cmsUser = pair.getRight();
+
+                ((HstMutableRequestContext) requestContext).setSession(previewCmsUserSession);
+                requestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, cmsUser);
+
                 context.invokeNext();
             } catch (RepositoryException e) {
                 log.warn("RepositoryException : {}", e.toString());
                 throw new ContainerException(e);
             } finally {
-                if (jcrSession != null) {
-                    try {
-                        if (jcrSession.isLive() && jcrSession.hasPendingChanges()) {
-                            log.error("JcrSession '{}' had pending changes at the end of the request. This should never be " +
-                                    "the case. Removing the changes now because the session will be reused.", jcrSession.getUserID());
-                        }
-                    } catch (RepositoryException e) {
-                        log.error("RepositoryException while checking jcr session.", e);
-                        throw new ContainerException(e);
-                    }
-                    jcrSession.logout();
-                }
+                logoutSession(previewCmsUserSession);
+                logoutSession(cmsUser);
             }
 
         } else {
@@ -110,22 +116,26 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             cmsUserCredentials = cmsSessionContext.getRepositoryCredentials();
             // We synchronize on http session to disallow concurrent requests for the Channel manager.
             synchronized (httpSession) {
-                Session jcrSession = null;
+                Session previewCmsUserSession = null;
+                Session cmsUser = null;
                 try {
                     // request preview website, for example in channel manager. The request is not
                     // a REST call
                     if (sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
-                        jcrSession = getOrCreateCmsPreviewSession(httpSession, cmsUserCredentials);
+                        previewCmsUserSession = getOrCreateCmsPreviewSession(httpSession, cmsUserCredentials);
                     } else {
                         // do not yet create a session. just use the one that the HST container will create later
                     }
 
-                    if (jcrSession != null) {
-                        ((HstMutableRequestContext) requestContext).setSession(jcrSession);
+                    cmsUser = getOrCreateCmsSession(httpSession, cmsUserCredentials);
+                    requestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, cmsUser);
+
+                    if (previewCmsUserSession != null) {
+                        ((HstMutableRequestContext) requestContext).setSession(previewCmsUserSession);
                     }
                     context.invokeNext();
 
-                    if (jcrSession != null && jcrSession.hasPendingChanges()) {
+                    if (previewCmsUserSession != null && previewCmsUserSession.hasPendingChanges()) {
                         log.warn("Request to {} triggered changes in JCR session that were not saved - they will be lost",
                                 servletRequest.getPathInfo());
                     }
@@ -139,23 +149,43 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                     log.warn("RepositoryException : {}", e.toString());
                     throw new ContainerException(e);
                 } finally {
-                    if (jcrSession != null) {
-                        try {
-                            if (jcrSession.isLive() && jcrSession.hasPendingChanges()) {
-                                log.error("JcrSession '{}' had pending changes at the end of the request. This should never be " +
-                                        "the case. Removing the changes now because the session will be reused.", jcrSession.getUserID());
-                            }
-                            if (jcrSession instanceof HippoSession) {
-                                ((HippoSession) jcrSession).localRefresh();
-                            } else {
-                                jcrSession.refresh(false);
-                            }
-                        } catch (RepositoryException e) {
-                            log.error("RepositoryException while checking / clearing jcr session.", e);
-                            throw new ContainerException(e);
-                        }
-                    }
+                    validatePristine(previewCmsUserSession);
+                    validatePristine(cmsUser);
                 }
+            }
+        }
+    }
+
+    private void logoutSession(final Session session) throws ContainerException {
+        if (session != null) {
+            try {
+                if (session.isLive() && session.hasPendingChanges()) {
+                    log.error("JcrSession '{}' had pending changes at the end of the request. This should never be " +
+                            "the case. Removing the changes now because the session will be reused.", session.getUserID());
+                }
+            } catch (RepositoryException e) {
+                log.error("RepositoryException while checking jcr session.", e);
+                throw new ContainerException(e);
+            }
+            session.logout();
+        }
+    }
+
+    private void validatePristine(final Session previewCmsUserSession) throws ContainerException {
+        if (previewCmsUserSession != null) {
+            try {
+                if (previewCmsUserSession.isLive() && previewCmsUserSession.hasPendingChanges()) {
+                    log.error("Session '{}' had pending changes at the end of the request. This should never be " +
+                            "the case. Removing the changes now because the session will be reused.", previewCmsUserSession.getUserID());
+                }
+                if (previewCmsUserSession instanceof HippoSession) {
+                    ((HippoSession) previewCmsUserSession).localRefresh();
+                } else {
+                    previewCmsUserSession.refresh(false);
+                }
+            } catch (RepositoryException e) {
+                log.error("RepositoryException while checking / clearing jcr session.", e);
+                throw new ContainerException(e);
             }
         }
     }
@@ -166,6 +196,21 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
             final Session session = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION,
                     httpSession, cmsUserCred, credentials -> sessionSecurityDelegation.createPreviewSecurityDelegate(credentials, false));
+            log.debug("Acquiring security delegate session took '{}' ms.", (System.currentTimeMillis() - start));
+            return session;
+        } catch (LoginException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ContainerException("Failed to create Session based on SSO.", e);
+        }
+    }
+
+    private Session getOrCreateCmsSession(final HttpSession httpSession, final SimpleCredentials cmsUserCred) throws LoginException, ContainerException {
+        long start = System.currentTimeMillis();
+        try {
+
+            final Session session = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_SESSION,
+                    httpSession, cmsUserCred, credentials -> delegatingRepository.login(credentials));
             log.debug("Acquiring security delegate session took '{}' ms.", (System.currentTimeMillis() - start));
             return session;
         } catch (LoginException e) {
