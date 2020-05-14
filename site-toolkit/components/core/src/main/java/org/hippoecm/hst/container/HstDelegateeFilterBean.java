@@ -84,6 +84,7 @@ import static java.lang.Boolean.TRUE;
 import static java.util.Collections.emptyMap;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_URL_PROPERTY_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMSSESSIONCONTEXT_BINDING_PATH;
@@ -284,7 +285,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             if (isCmsSessionContextBindingRequest(req)) {
                 if (CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)) {
                     log.info("Already authenticated");
-                    ((HttpServletResponse) response).setStatus(SC_NO_CONTENT);
+                    res.setStatus(SC_NO_CONTENT);
                     return;
                 }
 
@@ -401,10 +402,18 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 requestContext.setPageModelApiRequest(true);
             }
 
+
+            log.debug("{} matched to mount '{}'", containerRequest, resolvedMount.getMount());
+
+            // sets filterChain for ValveContext to be able to retrieve...
+            req.setAttribute(ContainerConstants.HST_FILTER_CHAIN, chain);
+            setHstServletPath(containerRequest, resolvedMount);
+            HstContainerURL hstContainerUrl = createOrGetContainerURL(containerRequest, hstManager, requestContext, resolvedMount, res);
+
             if (isRequestForChannelManagerPreview(vHosts, renderingHost, req)) {
                 requestContext.setRenderHost(renderingHost);
                 if (!authenticated) {
-                    ((HttpServletResponse) response).sendError(SC_UNAUTHORIZED);
+                    res.sendError(SC_UNAUTHORIZED);
                     log.warn("Attempted Channel Manager preview request without being authenticated");
                     return;
                 }
@@ -437,38 +446,14 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                         && !requestContext.isPageModelApiRequest()) {
 
                     final Channel channel = hstSite.getChannel();
-                    if (StringUtils.isNotBlank((String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME))) {
-                        String previewURL = (String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME);
-                        try {
-                            // parse the preview url
-                            final URI uri = new URI(previewURL);
+                    if (isNotBlank((String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME))) {
 
-                            final JwtTokenService jwtTokenService = HippoServiceRegistry.getService(JwtTokenService.class);
-                            final String clusterNodeAffinityId = getClusterNodeAffinityId(req, clusterNodeAffinityCookieName, clusterNodeAffinityHeaderName);
-                            final String location = previewURL +
-                                    (uri.getQuery() == null ? "?" : "&")
-                                    + jwtTokenParam + "=" + jwtTokenService.createToken(req, emptyMap()) +
-                                    (StringUtils.isNotBlank(clusterNodeAffinityId) ? "&" + clusterNodeAffinityQueryParam + "=" + clusterNodeAffinityId : "");
-                            res.sendRedirect(location);
-                            return;
-
-                        } catch (URISyntaxException e) {
-                            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN);
-                            log.warn("Configured preview URL for Channel {} is not valid", channel);
-                            return;
-                        }
+                        final String previewURL = (String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME);
+                        doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), previewURL);
+                        return;
                     }
                 }
             }
-
-            log.debug("{} matched to mount '{}'", containerRequest, resolvedMount.getMount());
-
-            // sets filterChain for ValveContext to be able to retrieve...
-            req.setAttribute(ContainerConstants.HST_FILTER_CHAIN, chain);
-
-            setHstServletPath((GenericHttpServletRequestWrapper) containerRequest, resolvedMount);
-
-            HstContainerURL hstContainerUrl = createOrGetContainerURL(containerRequest, hstManager, requestContext, resolvedMount, res);
 
             final String farthestRequestScheme = getFarthestRequestScheme(req);
 
@@ -610,6 +595,37 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             if (rootTask != null) {
                 HDC.cleanUp();
             }
+        }
+    }
+
+    void doRedirectPreviewURL(final HttpServletRequest req,
+                              final HttpServletResponse res,
+                              final String pathInfo,
+                              final String previewURL) throws IOException {
+
+        try {
+            // parse the preview url
+            final URI uri = new URI(previewURL);
+
+            String redirect = StringUtils.substringBefore(previewURL, "?");
+
+            if (isNotBlank(pathInfo)) {
+                redirect = redirect + pathInfo;
+            }
+
+            final JwtTokenService jwtTokenService = HippoServiceRegistry.getService(JwtTokenService.class);
+            final String clusterNodeAffinityId = getClusterNodeAffinityId(req, clusterNodeAffinityCookieName, clusterNodeAffinityHeaderName);
+            final String location = redirect + "?" +
+                    (uri.getQuery() == null ? "" :  uri.getQuery() + "&")
+                    + jwtTokenParam + "=" + jwtTokenService.createToken(req, emptyMap()) +
+                    (isNotBlank(clusterNodeAffinityId) ? "&" + clusterNodeAffinityQueryParam + "=" + clusterNodeAffinityId : "");
+            res.sendRedirect(location);
+        } catch (URISyntaxException e) {
+            res.sendError(HttpServletResponse.SC_FORBIDDEN);
+            log.warn("Configured preview URL '{}'is not valid", previewURL);
+        } catch (IllegalStateException e) {
+            res.sendError(HttpServletResponse.SC_FORBIDDEN);
+            log.info("Cannot create redirect URL (token)", e.getMessage());
         }
     }
 
