@@ -30,7 +30,7 @@
         <exclude>*/.env</exclude>
         <exclude>*/node_modules/**</exclude>
         <exclude>*/README.md</exclude>
-        <exclude>angular/dist/**</exclude>
+        <exclude>*/dist/**</exclude>
         <exclude>react-csr/build/**</exclude>
         <exclude>react-ssr/.next/**</exclude>
         <exclude>xm/**</exclude>
