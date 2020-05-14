@@ -151,7 +151,7 @@ describe('MetaCollectionImpl', () => {
     });
 
     it('should not render on document node', () => {
-      const node = document.body.parentNode?.parentNode as Element;
+      const node = document.body.parentNode?.parentNode as Node;
 
       collection.render(node, node);
 

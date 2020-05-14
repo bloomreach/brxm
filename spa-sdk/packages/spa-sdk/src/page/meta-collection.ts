@@ -41,7 +41,7 @@ export interface MetaCollection extends Array<Meta> {
    * @param head The heading node of the page fragment.
    * @param tail The tailing node of the page fragment.
    */
-  render(head: Element | Text, tail: Element | Text): void;
+  render(head: Node, tail: Node): void;
 }
 
 export class MetaCollectionImpl extends Array<Meta> implements MetaCollection {
@@ -59,7 +59,7 @@ export class MetaCollectionImpl extends Array<Meta> implements MetaCollection {
     this.comments.splice(0).forEach(comment => comment.remove());
   }
 
-  render(head: Element | Text, tail: Element | Text) {
+  render(head: Node, tail: Node) {
     const document = head.ownerDocument ?? tail.ownerDocument;
     if (!document) {
       return;
