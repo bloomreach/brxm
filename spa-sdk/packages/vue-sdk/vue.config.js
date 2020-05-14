@@ -17,6 +17,11 @@
 module.exports = {
   configureWebpack: {
     externals: {
+      '@bloomreach/spa-sdk': {
+        commonjs: '@bloomreach/spa-sdk',
+        commonjs2: '@bloomreach/spa-sdk',
+        root: 'BloomreachSpaSdk',
+      },
       'vue-class-component': {
         commonjs: 'vue-class-component',
         commonjs2: 'vue-class-component',

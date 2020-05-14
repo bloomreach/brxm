@@ -37,6 +37,7 @@
     "last 1 edge version"
   ],
   "dependencies": {
+    "@bloomreach/spa-sdk": "^14.3",
     "vue-class-component": "^7.2",
     "vue-property-decorator": "^8.4"
   },
