@@ -101,13 +101,6 @@ public class IsModifiedTask extends AbstractDocumentTask {
     }
 
     private boolean equals(Node a, Node b, int depth) throws RepositoryException {
-        if (depth == 0) {
-            final DocumentVariant draft = getDocumentHandle().getDocuments().get(HippoStdNodeType.DRAFT);
-            if (draft != null && draft.getIdentity().equals(b.getIdentifier())) {
-                // make sure draft always comes first
-                return equals(b, a, depth);
-            }
-        }
 
         final boolean virtualA = JcrUtils.isVirtual(a);
         if (virtualA != JcrUtils.isVirtual(b)) {

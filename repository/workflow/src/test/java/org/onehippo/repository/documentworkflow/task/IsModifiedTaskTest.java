@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 import org.assertj.core.api.Assertions;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.junit.Before;
@@ -101,6 +102,15 @@ public class IsModifiedTaskTest {
         // now draft also has the sub-compound, but not the mixin.
         // draft and unpublished are now equal because mixins are NOT part of equality check!
         assertEqualCommutes(draft, unpublished, true);
+
+        final MockNode dSkippedCompound = draft.addNode("skipped-compound", HippoNodeType.NT_COMPOUND);
+        dSkippedCompound.addMixin(MIXIN_SKIPDRAFT);
+        dSkippedCompound.setProperty("p", "v");
+        // It doesn't matter which variant has skipDraft children, they're ignored for comparison
+        assertEqualCommutes(draft, unpublished, true);
+
+        dSkippedCompound.removeMixin(MIXIN_SKIPDRAFT);
+        assertEqualCommutes(draft, unpublished, false);
     }
 
     @Test
