@@ -15,8 +15,65 @@
   -->
 
 <template>
-  <div id="app" class="d-flex flex-column"></div>
+  <div id="app" class="d-flex flex-column">
+    <br-page :configuration="configuration" :mapping="mapping">
+      <template v-slot:default="props">
+        <header>
+          <nav class="navbar navbar-expand-sm navbar-dark sticky-top bg-dark" role="navigation">
+            <div class="container">
+              <router-link :to="props.page.getUrl('/')" class="navbar-brand">
+                {{ props.page.getTitle() || 'brXM + Vue.js = ♥' }}
+              </router-link>
+              <div class="collapse navbar-collapse">
+                <br-component component="menu" />
+              </div>
+            </div>
+          </nav>
+        </header>
+        <section class="container flex-fill pt-3">
+          <br-component component="main" />
+        </section>
+        <footer class="bg-dark text-light py-3">
+          <div class="container clearfix">
+            <div class="float-left pr-3">&copy; Bloomreach</div>
+            <div class="overflow-hidden">
+              <br-component component="footer" />
+            </div>
+          </div>
+        </footer>
+      </template>
+    </br-page>
+  </div>
 </template>
+
+<script lang="ts">
+import axios from 'axios';
+import { Configuration } from '@bloomreach/spa-sdk';
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Route } from 'vue-router';
+
+@Component({
+  data: () => ({
+    configuration: {
+      httpClient: axios,
+      cmsBaseUrl: process.env.VUE_APP_CMS_BASE_URL,
+      spaBaseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
+      request: {},
+    },
+    mapping: {},
+  }),
+})
+export default class App extends Vue {
+  configuration!: Configuration;
+
+  $route!: Route;
+
+  @Watch('$route', { immediate: true, deep: true })
+  navigate() {
+    this.$set(this.configuration, 'request', { path: this.$route.fullPath });
+  }
+}
+</script>
 
 <style>
 #app {
