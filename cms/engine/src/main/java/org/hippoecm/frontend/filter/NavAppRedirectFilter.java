@@ -41,6 +41,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.nCopies;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -181,8 +182,12 @@ public class NavAppRedirectFilter implements Filter {
     }
 
     private static List<NavigationItem> getNavigationItems() {
-        final NavigationItemService navigationItemService = HippoServiceRegistry.getService(NavigationItemService.class);
+        if (!UserSession.exists()) {
+            return emptyList();
+        }
+
         final UserSession userSession = UserSession.get();
+        final NavigationItemService navigationItemService = HippoServiceRegistry.getService(NavigationItemService.class);
         return navigationItemService.getNavigationItems(userSession.getJcrSession(), userSession.getLocale());
     }
 }
