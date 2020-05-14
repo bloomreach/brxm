@@ -12,9 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-
 package org.hippoecm.frontend.filter;
 
 import java.io.IOException;
@@ -34,7 +32,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.navigation.NavigationItem;
+import org.hippoecm.frontend.navigation.NavigationItemService;
+import org.hippoecm.frontend.session.UserSession;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,20 +54,20 @@ public class NavAppRedirectFilter implements Filter {
     private static final String HTTP_METHOD_GET = "GET";
 
     static final List<String> WHITE_LISTED_PATH_PREFIXES = Arrays.asList(
-            "/angular",
-            "/auth",
-            "/ckeditor",
-            "/console",
-            "/logging",
-            "/navapp-assets",
-            "/ping",
-            "/repository",
-            "/site",
-            "/skin",
-            "/wicket",
-            "/ws",
-            "/binaries",
-            "/oidc"
+            "angular",
+            "auth",
+            "ckeditor",
+            "console",
+            "logging",
+            "navapp-assets",
+            "ping",
+            "repository",
+            "site",
+            "skin",
+            "wicket",
+            "ws",
+            "binaries",
+            "oidc"
     );
 
     @Override
@@ -87,12 +90,7 @@ public class NavAppRedirectFilter implements Filter {
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (isWhiteListed(request)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Chaining '{}' to the next filter", getRequestAsString(request));
-            }
-            chain.doFilter(request, response);
-        } else {
+        if (shouldRedirectToCMS(request)) {
             final String relativePath = getRelativePath(request);
             final String queryParameters = getQueryParameterString(request);
             final String redirectUrl = "./" + relativePath + queryParameters;
@@ -101,7 +99,49 @@ public class NavAppRedirectFilter implements Filter {
                 log.debug("Redirecting '{}' to '{}'", getRequestAsString(request), redirectUrl);
             }
             response.sendRedirect(redirectUrl);
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Chaining '{}' to the next filter", getRequestAsString(request));
+            }
+            chain.doFilter(request, response);
         }
+    }
+
+    private boolean shouldRedirectToCMS(final HttpServletRequest request) {
+        if (!HTTP_METHOD_GET.equalsIgnoreCase(request.getMethod())) {
+            return false;
+        }
+
+        if (request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER) != null) {
+            return false;
+        }
+
+        final String segment = getSegmentAfterContextPath(request);
+        if (WHITE_LISTED_PATH_PREFIXES.stream().anyMatch(segment::equals)) {
+            return false;
+        }
+
+        final List<NavigationItem> navigationItems = getNavigationItems();
+        if (navigationItems.isEmpty()) { // not logged in yet
+            return true;
+        }
+
+        return navigationItems.stream()
+                .map(NavigationItem::getAppPath)
+                .anyMatch(segment::equals);
+
+    }
+
+    private String getSegmentAfterContextPath(final HttpServletRequest request) {
+        final String pathAfterContextPath = getPathAfterContextPath(request);
+        if (StringUtils.isEmpty(pathAfterContextPath)) {
+            return StringUtils.EMPTY;
+        }
+
+        final String[] segments = pathAfterContextPath.split("/");
+        return segments.length < 2
+                ? StringUtils.EMPTY
+                : segments[1];
     }
 
     private static String getRequestAsString(final HttpServletRequest request) {
@@ -136,18 +176,13 @@ public class NavAppRedirectFilter implements Filter {
                 .collect(joining("&", "?", ""));
     }
 
-    private boolean isWhiteListed(HttpServletRequest request) {
-        return !HTTP_METHOD_GET.equalsIgnoreCase(request.getMethod())
-                || request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER) != null
-                || matchesAWhiteListedPrefix(request);
-    }
-
-    private boolean matchesAWhiteListedPrefix(HttpServletRequest request) {
-        final String path = getPathAfterContextPath(request);
-        return WHITE_LISTED_PATH_PREFIXES.stream().anyMatch(path::startsWith);
-    }
-
     private String getPathAfterContextPath(HttpServletRequest request) {
         return request.getRequestURI().replaceFirst(request.getContextPath(), "");
+    }
+
+    private static List<NavigationItem> getNavigationItems() {
+        final NavigationItemService navigationItemService = HippoServiceRegistry.getService(NavigationItemService.class);
+        final UserSession userSession = UserSession.get();
+        return navigationItemService.getNavigationItems(userSession.getJcrSession(), userSession.getLocale());
     }
 }
