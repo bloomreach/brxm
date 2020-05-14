@@ -72,7 +72,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
              */
             @Override
             public boolean isVisible() {
-                return StringUtils.isNotEmpty(inUseBy) || transferable;
+                return StringUtils.isNotEmpty(inUseBy);
             }
 
             @Override
@@ -85,9 +85,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
                 final StringResourceModel inUseBy =
                         new StringResourceModel("in-use-by", this).setModel(null).setParameters(
                                 new PropertyModel(AbstractPreviewWorkflowPlugin.this, "inUseBy"));
-                final StringResourceModel draftChanges =
-                        new StringResourceModel("draft-changes", this);
-                return transferable ? draftChanges : inUseBy;
+                return inUseBy;
             }
 
             @Override

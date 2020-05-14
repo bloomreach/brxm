@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -38,6 +40,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.workflow.CopyNameHelper;
 import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
+import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.ReadOnlyModel;
@@ -58,6 +61,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
@@ -66,6 +70,20 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     public static final String DOCUMENT = "document";
     public static final String UNAVAILABLE_TIP = "unavailable-tip";
     public static final String DELETE = "delete";
+    /** workflow action key, that determines the visibility of the "Keep draft" button
+     * and if the documentInfo shows "draft changes" */
+    private static final String EDIT_DRAFT = "editDraft";
+    /** workflow action key, that determines the visibility of the "Publish" button
+     * and if the documentInfo show "unpublished changes"  */
+    private static final String PUBLISH = "publish";
+    /** workflow action key, that determinites if the visibility of the "Unpublish" button
+     * and if the documentInfo shows "offline" or "live"  */
+    private static final String DEPUBLISH = "depublish";
+    /**
+     * Id and name of the document Info.
+     * The id should start with "info", see MenuHierarchy.
+     */
+    private static final String INFO_DOCUMENT_INFO = "infoDocumentInfo";
 
     private StdWorkflow deleteAction;
     private StdWorkflow renameAction;
@@ -73,6 +91,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     private StdWorkflow moveAction;
     private StdWorkflow whereUsedAction;
     private StdWorkflow historyAction;
+    private BranchIdModel branchIdModel;
+
 
     public DocumentWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -371,6 +391,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
+        addBranchInfo();
+
         Map<String, Serializable> info = getHints();
         hideOrDisable(info, DELETE, deleteAction);
         hideOrDisable(info, "rename", renameAction);
@@ -378,6 +400,43 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
         hideOrDisable(info, "copy", copyAction);
         hideOrDisable(info, "listVersions", historyAction);
+    }
+
+    private void addBranchInfo() {
+        addOrReplace(new StdWorkflow<DocumentWorkflow>(INFO_DOCUMENT_INFO
+                , INFO_DOCUMENT_INFO) {
+
+            @Override
+            public String getSubMenu() {
+                return "info";
+            }
+
+            @Override
+            protected IModel<String> getTitle() {
+                final UnaryOperator<String> resolver = key ->
+                        new StringResourceModel(key, DocumentWorkflowPlugin.this).getString();
+                final Map<String, Serializable> hints = getHints();
+                final String info = new BranchInfoBuilder(resolver, getBranchNameResolver())
+                        .draftChanges(isActionAllowed(hints, EDIT_DRAFT))
+                        .unpublishedChanges(isActionAllowed(hints, PUBLISH))
+                        .live(isActionAllowed(hints, DEPUBLISH))
+                        .build();
+                return new Model<>(info);
+            }
+
+            @Override
+            protected void invoke() {
+                // do not invoke workflow
+            }
+        });
+    }
+
+    /**
+     * @return the branchName of the current branch or {@link BranchConstants#MASTER_BRANCH_ID} if there isn't any
+     * current branch
+     */
+    protected Supplier<String> getBranchNameResolver() {
+        return () -> BranchConstants.MASTER_BRANCH_ID;
     }
 
     private static boolean isDocumentAllowedInFolder(final WorkflowDescriptorModel documentModel, IModel<Node> destinationFolder) {
