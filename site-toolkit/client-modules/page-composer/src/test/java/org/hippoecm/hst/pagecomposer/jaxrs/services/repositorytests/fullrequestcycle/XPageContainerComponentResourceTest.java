@@ -93,7 +93,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), createResponse.getStatus());
         assertEquals(false, createResponseMap.get("success"));
-        assertTrue(createResponseMap.get("message").contains("Does not below to unpublished variant of Experience Page."));
+        assertTrue(createResponseMap.get("message").contains("Does not belong to unpublished variant of Experience Page."));
     }
 
     @Test
