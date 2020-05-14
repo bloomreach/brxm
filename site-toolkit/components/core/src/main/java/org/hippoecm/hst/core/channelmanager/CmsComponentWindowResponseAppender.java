@@ -142,9 +142,6 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             final Map<String, String> preambleAttributes = new HashMap<>();
             final Map<String, String> epilogueAttributes = new HashMap<>();
             populateAttributes(window, request, preambleAttributes, epilogueAttributes);
-
-            preambleAttributes.put(HST_EXPERIENCE_PAGE_COMPONENT, String.valueOf(config.isExperiencePageComponent()));
-
             response.addPreamble(createCommentWithAttr(preambleAttributes, response));
             response.addEpilogue(createCommentWithAttr(epilogueAttributes, response));
         } else {

@@ -34,6 +34,7 @@ public interface ChannelManagerConstants {
     String HST_RENDER_VARIANT = "HST-Render-Variant";
     String HST_SITE_HAS_PREVIEW_CONFIG = "HST-Site-HasPreviewConfig";
     String HST_END_MARKER = "HST-End";
+    String HST_COMPONENT_EDITABLE = "HST-Component-Editable";
 
     // below used outside HST
     String HST_PAGE_REQUEST_VARIANTS = "HST-Page-Request-Variants";
