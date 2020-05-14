@@ -41,7 +41,6 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.frontend.util.DocumentUtils;
 
 public class BrowserPerspective extends Perspective {
 
@@ -126,7 +125,7 @@ public class BrowserPerspective extends Perspective {
             String getDocumentName(IModel<Node> model) {
                 try {
                     final IModel<String> nameModel = DocumentUtils.getDocumentNameModel(model);
-                    
+
                     return nameModel != null ? nameModel.getObject() : "";
                 } catch (RepositoryException e) {
                     return "";
