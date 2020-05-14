@@ -15,10 +15,12 @@
  */
 
 import Vue from 'vue';
+import { BrSdk } from '@bloomreach/vue-sdk';
 import App from './App.vue';
 import router from './router';
 
 Vue.config.productionTip = false;
+Vue.use(BrSdk);
 
 new Vue({
   router,
