@@ -15,5 +15,21 @@
   -->
 
 <template>
-  <div id="app"></div>
+  <div id="app" class="d-flex flex-column"></div>
 </template>
+
+<style>
+#app {
+  padding-bottom: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+    'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  height: 100vh;
+}
+
+#app .has-edit-button {
+  position: relative;
+}
+</style>
