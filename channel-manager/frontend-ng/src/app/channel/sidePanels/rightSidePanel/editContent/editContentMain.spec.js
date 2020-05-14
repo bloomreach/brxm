@@ -329,9 +329,7 @@ describe('EditContentMainCtrl', () => {
         ContentEditor.isRetainable.and.returnValue(true);
         ContentEditor.keepDraft.and.returnValue($q.resolve());
         $ctrl.uiCanExit().then(() => {
-          expect(ContentEditor.keepDraft).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
-          expect(HippoIframeService.reload).toHaveBeenCalled();
           done();
         });
         $scope.$digest();
