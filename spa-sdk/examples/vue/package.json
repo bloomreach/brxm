@@ -18,6 +18,7 @@
   "dependencies": {
     "@bloomreach/spa-sdk": "^14.2",
     "@bloomreach/vue-sdk": "^14.2",
+    "axios": "^0.19",
     "core-js": "^3.6",
     "vue": "^2.6",
     "vue-class-component": "^7.2",
