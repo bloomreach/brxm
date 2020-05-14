@@ -5,6 +5,6 @@ node_modules/
 /packages/*/dist/
 /packages/*/docs/
 /examples/*/.env
-/examples/angular/dist
+/examples/*/dist
 /examples/react-csr/build
 /examples/react-ssr/.next
