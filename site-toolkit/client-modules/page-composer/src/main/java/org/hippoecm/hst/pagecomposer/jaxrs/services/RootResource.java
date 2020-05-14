@@ -312,7 +312,10 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
             final boolean canManageChanges = isChannelAdmin && !isConfigurationLocked;
 
             HandshakeResponse response = new HandshakeResponse();
-            response.setCanWrite(isWebmaster);
+            // TODO this is a temporal hack to make sure everybody can potentially modify a page in the
+            // TODO channel manager. We should get rid of the UI using 'can write' completely
+            // TODO See CMS-13208
+            response.setCanWrite(isWebmaster || true);
             response.setCanManageChanges(canManageChanges);
             response.setCanDeleteChannel(canDeleteChannel);
             response.setCrossChannelPageCopySupported(isCrossChannelPageCopySupported);
