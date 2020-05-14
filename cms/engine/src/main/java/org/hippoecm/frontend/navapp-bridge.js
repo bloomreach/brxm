@@ -139,6 +139,13 @@
 
     if (appPath === 'content') {
       if (pathElements.length === 0) {
+        if (triggeredBy === 'Breadcrumbs') {
+          await contentPerspectiveLoaded;
+          Hippo.openRootFolder();
+
+          return;
+        }
+
         return Promise.resolve();
       }
 

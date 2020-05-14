@@ -125,7 +125,7 @@ public class BrowserPerspective extends Perspective {
             String getDocumentName(IModel<Node> model) {
                 try {
                     final IModel<String> nameModel = DocumentUtils.getDocumentNameModel(model);
-                    
+
                     return nameModel != null ? nameModel.getObject() : "";
                 } catch (RepositoryException e) {
                     return "";
