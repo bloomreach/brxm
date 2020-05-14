@@ -62,6 +62,9 @@ public interface ContainerItemComponentResourceInterface {
      * @param variantId the variant to update parameters of, or (if a newVariantId is provided) remove.
      * @param newVariantId the new variant to store parameters for. Can be null, in which case only the given
      *                     variant is updated.
+     * @param versionStamp the version (time) stamp against used for optimistic locking: in case the {@code versionStamp}
+     *                     argument does not match the stored versionStamp on the container item, an error response will
+     *                     be returned
      * @param params     the parameters to store
      * @return whether saving the parameters went successfully or not.
      */

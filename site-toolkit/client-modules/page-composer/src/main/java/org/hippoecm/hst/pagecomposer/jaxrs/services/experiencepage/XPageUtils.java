@@ -43,7 +43,7 @@ import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.DRAFT;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
-public class XPageUtils {
+class XPageUtils {
 
     private static final Logger log = LoggerFactory.getLogger(XPageUtils.class);
 
@@ -51,24 +51,24 @@ public class XPageUtils {
 
     }
 
-    protected static DocumentWorkflow getDocumentWorkflow(final HippoSession userSession,
+    static DocumentWorkflow getDocumentWorkflow(final HippoSession userSession,
                                                           final PageComposerContextService contextService) throws RepositoryException, WorkflowException {
 
         // userSession is allowed to read the node since has XPAGE_REQUIRED_PRIVILEGE_NAME on the node
         final Node handle = userSession.getNodeByIdentifier(contextService.getExperiencePageHandleUUID());
 
-        // TODO is 'default' the right document workflow??
-        // I think it is ...
-        final DocumentWorkflow documentWorkflow = (DocumentWorkflow) userSession.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
-
         final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, DRAFT).orElse(null);
-        if ((draftNode != null)) {
+        if (draftNode != null) {
             final String draftHolder = getStringProperty(draftNode, HIPPOSTD_HOLDER, null);
             final String userId = userSession.getUserID();
             if (!userId.equals(draftHolder)) {
                 throw new ClientException("Document being edited by another user", ClientError.ITEM_ALREADY_LOCKED);
             }
         }
+
+        // TODO is 'default' the right document workflow??
+        // I think it is ...
+        final DocumentWorkflow documentWorkflow = (DocumentWorkflow) userSession.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
 
         checkoutCorrectBranch(documentWorkflow, contextService);
         return documentWorkflow;
@@ -80,11 +80,11 @@ public class XPageUtils {
      * workflowSession : This way we can make sure that the workflow manager also persists the changes since the
      * workflow manager will handle the  workflow session save (when we invoke the document workflow
      */
-    protected static Session getInternalWorkflowSession(final DocumentWorkflow documentWorkflow) {
+    static Session getInternalWorkflowSession(final DocumentWorkflow documentWorkflow) {
         return documentWorkflow.getWorkflowContext().getInternalWorkflowSession();
     }
 
-    protected static void checkoutCorrectBranch(final DocumentWorkflow documentWorkflow,
+    static void checkoutCorrectBranch(final DocumentWorkflow documentWorkflow,
                                                 final PageComposerContextService contextService) throws WorkflowException {
         // TODO checkout the right branch which currently being edited in CM, this might be another one than currently
         // TODO the unpublished is......find current branch via CmsSessionContext
@@ -106,13 +106,13 @@ public class XPageUtils {
         documentWorkflow.checkoutBranch(getBranchId(cmsSessionContext));
     }
 
-    protected static String getBranchId(CmsSessionContext cmsSessionContext) {
+    static String getBranchId(CmsSessionContext cmsSessionContext) {
         return Optional.ofNullable(cmsSessionContext.getContextPayload())
                 .map(contextPayload -> contextPayload.get(ContainerConstants.RENDER_BRANCH_ID).toString())
                 .orElse(MASTER_BRANCH_ID);
     }
 
-    protected static Node getContainer(final long versionStamp, final Session session,
+    static Node getContainer(final long versionStamp, final Session session,
                                        final PageComposerContextService contextService) throws RepositoryException {
 
         final Node container = contextService.getRequestConfigNodeById(contextService.getRequestConfigIdentifier(),
@@ -122,9 +122,9 @@ public class XPageUtils {
         return container;
     }
 
-    protected static void validateTimestamp(final long versionStamp, final Node container) throws RepositoryException {
+    static void validateTimestamp(final long versionStamp, final Node container) throws RepositoryException {
         if (versionStamp != 0 && container.hasProperty(GENERAL_PROPERTY_LAST_MODIFIED)) {
-            long existingStamp = container.getProperty(GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
+            long existingStamp = container.getProperty(GENERAL_PROPERTY_LAST_MODIFIED).getLong();
             if (existingStamp != versionStamp) {
                 String msg = String.format("Node '%s' has been modified wrt versionStamp. Someone else might have " +
                                 "made concurrent changes, page must be reloaded. This can happen due to optimistic locking",

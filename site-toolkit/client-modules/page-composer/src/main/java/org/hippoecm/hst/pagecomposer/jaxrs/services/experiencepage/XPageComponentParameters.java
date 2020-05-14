@@ -20,9 +20,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.AbstractHstComponentParameters;
 
-public class XPageComponentParameters extends HstComponentParameters {
+public class XPageComponentParameters extends AbstractHstComponentParameters {
 
     public XPageComponentParameters(final Node node, final ContainerItemHelper containerItemHelper) throws RepositoryException {
         super(node, containerItemHelper);
@@ -32,18 +32,4 @@ public class XPageComponentParameters extends HstComponentParameters {
         super.setNodeChanges();
     }
 
-    @Override
-    public void save(final long versionStamp) throws RepositoryException, IllegalStateException {
-        throw new IllegalStateException("#save should never be invoked from Experience Pages context");
-    }
-
-    @Override
-    public void lock(final long versionStamp) throws RepositoryException, IllegalStateException {
-        throw new IllegalStateException("#lock should never be invoked from Experience Pages context");
-    }
-
-    @Override
-    public void unlock() throws RepositoryException {
-        throw new IllegalStateException("#lock should never be invoked from Experience Pages context");
-    }
 }

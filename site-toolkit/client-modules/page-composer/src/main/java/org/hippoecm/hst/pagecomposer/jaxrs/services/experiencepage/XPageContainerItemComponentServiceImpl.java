@@ -44,7 +44,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.UnknownClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.PageComposerUtil;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.hippoecm.repository.api.HippoSession;
@@ -79,7 +78,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
     @Override
     public Set<String> getVariants() throws RepositoryException {
         final Node currentContainerItem = getContainerItem(0L, pageComposerContextService.getRequestContext().getSession());
-        final HstComponentParameters componentParameters = getCurrentHstComponentParameters(currentContainerItem);
+        final XPageComponentParameters componentParameters = getCurrentHstComponentParameters(currentContainerItem);
         return componentParameters.getPrefixes();
     }
 
@@ -128,7 +127,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
             final Node containerItem = getContainerItem(versionStamp, internalWorkflowSession);
 
-            final HstComponentParameters componentParameters = new XPageComponentParameters(containerItem, containerItemHelper);
+            final XPageComponentParameters componentParameters = new XPageComponentParameters(containerItem, containerItemHelper);
             if (componentParameters.hasPrefix(variantId)) {
                 throw new ClientException("Cannot create variant '" + variantId + "' because it already exists", ClientError.ITEM_EXISTS);
             }
@@ -169,7 +168,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
             Node containerItem = getContainerItem(versionStamp, internalWorkflowSession);
 
-            final HstComponentParameters componentParameters = getCurrentHstComponentParameters(containerItem);
+            final XPageComponentParameters componentParameters = getCurrentHstComponentParameters(containerItem);
             if (!componentParameters.hasPrefix(variantId)) {
                 throw new ClientException(String.format("Cannot delete variantId with id='%s'", variantId) , ClientError.ITEM_NOT_FOUND);
             }
@@ -202,7 +201,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
             Node containerItem = getContainerItem(versionStamp, internalWorkflowSession);
 
-            final HstComponentParameters componentParameters = getCurrentHstComponentParameters(containerItem);
+            final XPageComponentParameters componentParameters = getCurrentHstComponentParameters(containerItem);
             setParameters(componentParameters, variantId, params);
 
             // trigger the changes on unpublished node to be set
@@ -232,7 +231,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
 
             Node containerItem = getContainerItem(versionStamp, internalWorkflowSession);
 
-            final HstComponentParameters componentParameters = new XPageComponentParameters(containerItem, containerItemHelper);
+            final XPageComponentParameters componentParameters = new XPageComponentParameters(containerItem, containerItemHelper);
             componentParameters.removePrefix(oldVariantId);
             componentParameters.removePrefix(newVariantId);
             setParameters(componentParameters, newVariantId, params);
@@ -255,7 +254,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
     }
 
 
-    private HstComponentParameters getCurrentHstComponentParameters(final Node containerItem) throws RepositoryException {
+    private XPageComponentParameters getCurrentHstComponentParameters(final Node containerItem) throws RepositoryException {
         return new XPageComponentParameters(containerItem, containerItemHelper);
     }
 
@@ -281,14 +280,14 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
      * @param variantId           the variantId to remove
      * @throws IllegalStateException when the variantId is the 'default' variantId
      */
-    private void deleteVariant(final HstComponentParameters componentParameters, final String variantId)
+    private void deleteVariant(final XPageComponentParameters componentParameters, final String variantId)
             throws IllegalStateException {
         if (!componentParameters.removePrefix(variantId)) {
             throw new IllegalStateException("Variant '" + variantId + "' could not be removed");
         }
     }
 
-    private void setParameters(final HstComponentParameters componentParameters,
+    private void setParameters(final XPageComponentParameters componentParameters,
                                final String prefix,
                                final MultivaluedMap<String, String> parameters) throws IllegalStateException {
         for (String parameterName : parameters.keySet()) {
@@ -355,7 +354,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
      * @throws RepositoryException when something went wrong in the repository
      */
     private void doCreateVariant(final Node containerItem,
-                         final HstComponentParameters componentParameters,
+                         final XPageComponentParameters componentParameters,
                          final String variantId) throws RepositoryException, IllegalStateException {
 
         Map<String, String> annotatedParameters = PageComposerUtil.getAnnotatedDefaultValues(containerItem);
@@ -380,7 +379,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
         final Set<String> keepVariants = new HashSet<>();
         keepVariants.addAll(variants);
 
-        final HstComponentParameters componentParameters = new XPageComponentParameters(containerItem, containerItemHelper);
+        final XPageComponentParameters componentParameters = new XPageComponentParameters(containerItem, containerItemHelper);
         final Set<String> removed = new HashSet<>();
 
         for (String variant : componentParameters.getPrefixes()) {
