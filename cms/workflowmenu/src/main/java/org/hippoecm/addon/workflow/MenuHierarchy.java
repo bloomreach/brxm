@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.addon.workflow;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -147,14 +148,14 @@ class MenuHierarchy implements Serializable {
                 }
             }
 
-            if (submenus.containsKey("info")) {
-                MenuHierarchy info = submenus.get("info");
-                for (ActionDescription item : info.items) {
-                    if (item.getId().startsWith("info")) {
-                        list.add(new MenuLabel("item", item));
-                    }
-                }
-            }
+            submenus.entrySet().stream()
+                    .filter(entry -> entry.getKey().equals("info"))
+                    .map(Map.Entry::getValue)
+                    .map(menuHierarchy -> menuHierarchy.items)
+                    .flatMap(Collection::stream)
+                    .filter(actionDescription -> actionDescription.getId().startsWith("info"))
+                    .map(actionDescription -> new MenuLabel("item", actionDescription))
+                    .forEach(list::add);
         } else {
             for (ActionDescription item : items) {
                 list.add(new MenuItem("item", item, form));
