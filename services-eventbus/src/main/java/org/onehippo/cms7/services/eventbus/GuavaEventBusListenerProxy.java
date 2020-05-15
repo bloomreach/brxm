@@ -71,6 +71,7 @@ public abstract class GuavaEventBusListenerProxy implements Cloneable {
         try {
             GuavaEventBusListenerProxy clone = (GuavaEventBusListenerProxy)super.clone();
             clone.listener = listener;
+            clone.methods = methods.clone();
             return clone;
         } catch (CloneNotSupportedException e) {
             // will never happen
