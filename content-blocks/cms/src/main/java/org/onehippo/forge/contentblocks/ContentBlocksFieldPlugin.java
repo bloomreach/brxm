@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -81,6 +83,8 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
+import org.hippoecm.frontend.validation.ModelPath;
+import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.frontend.validation.ViolationUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.forge.contentblocks.model.ContentBlockComparer;
@@ -126,8 +130,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
     public ContentBlocksFieldPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-
-        final FieldPluginHelper helper = new FieldPluginHelper(context, config);
 
         final String configuredCompoundList = config.getString(COMPOUND_LIST);
         compoundList = compoundListFromConfiguration(configuredCompoundList);
@@ -219,7 +221,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
      * @param cpItemTypeDescriptor type descriptor
      * @param path                 Target node to which the prototype needs to be added.
      */
-
     private void addCompoundType(final ITypeDescriptor cpItemTypeDescriptor, final String path) throws RepositoryException {
         if (log.isDebugEnabled()) {
             log.debug("copying {} prototype to {}", cpItemTypeDescriptor.getName(), path);
@@ -232,7 +233,9 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         final Session session = UserSession.get().getJcrSession();
         JcrUtils.copy(session, prototype.getNode().getPath(), destination);
 
-        validateModelObjects();
+        if (hasViolations()) {
+            validateModelObjects();
+        }
     }
 
     @Override
@@ -462,25 +465,37 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     @Override
     public void onMoveItemUp(final JcrNodeModel model, final AjaxRequestTarget target) {
         super.onMoveItemUp(model, target);
-        validateModelObjects();
+
+        if (hasViolations()) {
+            validateModelObjects();
+        }
     }
 
     @Override
     public void onRemoveItem(final JcrNodeModel childModel, final AjaxRequestTarget target) {
         super.onRemoveItem(childModel, target);
-        validateModelObjects();
+
+        if (hasViolations()) {
+            validateModelObjects();
+        }
     }
 
     @Override
     public void onMoveItemToTop(final JcrNodeModel model) {
         super.onMoveItemToTop(model);
-        validateModelObjects();
+
+        if (hasViolations()) {
+            validateModelObjects();
+        }
     }
 
     @Override
     public void onMoveItemToBottom(final JcrNodeModel model) {
         super.onMoveItemToBottom(model);
-        validateModelObjects();
+
+        if (hasViolations()) {
+            validateModelObjects();
+        }
     }
 
     /**
@@ -531,6 +546,24 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         public void onClick() {
             //do nothing
         }
+    }
+
+    private boolean hasViolations() {
+        final IValidationResult result = helper.getValidationModel().getObject();
+        final Set<Violation> violations = result.getViolations();
+
+        return violations.stream()
+                .anyMatch(this::hasMatchingField);
+    }
+
+    private boolean hasMatchingField(final Violation violation) {
+        return violation.getDependentPaths().stream()
+                .anyMatch(this::hasMatchingField);
+    }
+
+    private boolean hasMatchingField(final ModelPath modelPath) {
+        return Stream.of(modelPath.getElements())
+                .anyMatch(modelPathElement -> helper.getField().equals(modelPathElement.getField()));
     }
 
     /**
