@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,6 +56,10 @@ public class BrowseStateTest {
         state = new BrowseState();
         state.onCollapse();
         assertTrue(state.isDirty());
+
+        state = new BrowseState();
+        state.onLastVisitedChanged(new LastVisited("path", "label"));
+        assertTrue(state.isDirty());
     }
 
     @Test
@@ -82,6 +86,11 @@ public class BrowseStateTest {
 
         state = new BrowseState();
         state.onCollapse();
+        state.reset();
+        assertFalse(state.isDirty());
+
+        state = new BrowseState();
+        state.onLastVisitedChanged(new LastVisited("path", "label"));
         state.reset();
         assertFalse(state.isDirty());
     }
