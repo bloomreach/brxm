@@ -55,6 +55,6 @@ public class MenuHierarchyTest {
                 .stream()
                 .filter(component -> component instanceof MenuLabel)
                 .collect(Collectors.toList());
-        assertEquals(2, actual.size());
+        assertEquals(1, actual.size());
     }
 }
