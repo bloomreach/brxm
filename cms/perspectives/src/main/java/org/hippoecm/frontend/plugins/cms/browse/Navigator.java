@@ -19,6 +19,7 @@ import javax.jcr.Node;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.OpenRootFolderBehavior;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -56,7 +57,12 @@ public class Navigator extends RenderPlugin {
         clusterStarted = true;
 
         final JcrNodeModel defaultRootPath = new JcrNodeModel(config.getString("model.default.path", "/"));
-        final BrowseService browseService = new BrowseService(context, config, defaultRootPath) {
+
+        final boolean isPicker = Strings.isEqual(getVariation(), "picker");
+        final ObservableModel<LastVisited> lastVisitedModel = !isPicker
+                ? ObservableModel.from(context, LastVisited.MODEL_ID)
+                : null;
+        final BrowseService browseService = new BrowseService(context, config, defaultRootPath, lastVisitedModel) {
 
             @Override
             public void browse(final IModel<Node> model) {

@@ -54,6 +54,7 @@ public class BrowserPerspective extends Perspective {
     private IExpandableCollapsable listing;
     private TabsPlugin tabs;
     private ObservableModel<String> sectionModel;
+    private ObservableModel<LastVisited> lastVisitedModel;
     private ModelService<Node> nodeService;
     private BrowseState state;
 
@@ -109,6 +110,20 @@ public class BrowserPerspective extends Perspective {
             public void onEvent(final Iterator<? extends IEvent<ObservableModel<String>>> events) {
                 state.onSectionChanged(sectionModel.getObject());
             }
+        }, IObserver.class.getName());
+
+        lastVisitedModel = ObservableModel.from(context, LastVisited.MODEL_ID);
+        context.registerService(new IObserver<ObservableModel<LastVisited>>() {
+            @Override
+            public ObservableModel<LastVisited> getObservable() {
+                return lastVisitedModel;
+            }
+
+            @Override
+            public void onEvent(final Iterator<? extends IEvent<ObservableModel<LastVisited>>> events) {
+                state.onLastVisitedChanged(lastVisitedModel.getObject());
+            }
+
         }, IObserver.class.getName());
 
         nodeService = new ModelService<Node>(config.getString(MODEL_DOCUMENT)) {
@@ -181,6 +196,10 @@ public class BrowserPerspective extends Perspective {
             if (state.isRestoreSelection()) {
                 nodeService.setModel(new JcrNodeModel(state.getTab()));
             }
+            if (state.isUpdateLastVisited()) {
+                final LastVisited lastVisited = state.getLastVisited();
+                updateNavLocation(lastVisited.getPath(), lastVisited.getLabel());
+            }
         }
         state.reset();
 
@@ -191,6 +210,7 @@ public class BrowserPerspective extends Perspective {
     protected void onDetach() {
         sectionModel.detach();
         nodeService.detach();
+        lastVisitedModel.detach();
 
         super.onDetach();
     }
