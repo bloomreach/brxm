@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,10 +28,12 @@ import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
+import org.hippoecm.frontend.model.ObservableModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.browse.LastVisited;
 import org.hippoecm.frontend.plugins.cms.browse.model.BrowserSections;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection.DocumentCollectionType;
@@ -62,16 +64,24 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable {
 
     private static final Logger log = LoggerFactory.getLogger(BrowseService.class);
+
     private final DocumentCollectionModel collectionModel;
     private final DocumentModelService documentService;
     private final BrowserSections sections;
+    private final ObservableModel<LastVisited> lastVisitedModel;
     private FolderModelService folderService;
 
     public BrowseService(final IPluginContext context, final IPluginConfig config, final JcrNodeModel document) {
+        this(context, config, document, null);
+    }
+
+    public BrowseService(final IPluginContext context, final IPluginConfig config, final JcrNodeModel document, final ObservableModel<LastVisited> lastVisitedModel) {
         documentService = new DocumentModelService(config, context);
         documentService.init(context);
 
         collectionModel = new DocumentCollectionModel(null);
+
+        this.lastVisitedModel = lastVisitedModel;
 
         if (config.containsKey("model.folder")) {
             folderService = new FolderModelService(config);
@@ -192,6 +202,12 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
     protected void onBrowse() {
     }
 
+    private void onModelChanged(final LastVisited lastVisited) {
+        if (lastVisitedModel != null) {
+            lastVisitedModel.setObject(lastVisited);
+        }
+    }
+
     public void selectSection(final IModel<IBrowserSection> model) {
         documentService.updateModel(model.getObject().getCollection().getFolder());
     }
@@ -256,6 +272,11 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
 
         public void updateModel(final IModel<Node> model) {
             super.setModel(updateModelForFrozenNodeWithCurrentBranchId(model));
+
+            onModelChanged(LastVisited.document(model));
+            if (lastVisitedModel != null) {
+                lastVisitedModel.setObject(LastVisited.document(model));
+            }
         }
 
         @Override
@@ -319,8 +340,6 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         private boolean isFrozenNode(final Node node) throws RepositoryException {
             return node.isNodeType(JcrConstants.NT_FROZEN_NODE);
         }
-
-
     }
 
     private class FolderModelService extends ModelReference<Node> {
@@ -331,6 +350,8 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
 
         public void updateModel(final IModel<Node> model) {
             super.setModel(model);
+
+            onModelChanged(LastVisited.folder(model));
         }
 
         @Override

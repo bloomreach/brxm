@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.wicket.util.io.IClusterable;
@@ -26,6 +28,7 @@ public class BrowseState implements IClusterable {
     private boolean tabChanged;
     private boolean listingChanged;
     private boolean expandChanged;
+    private boolean lastVisitedChanged;
 
     // render actions
     private boolean expandDefault;
@@ -42,6 +45,7 @@ public class BrowseState implements IClusterable {
     private String section;
     private boolean expanded;
     private Selection last;
+    private LastVisited lastVisited;
 
     public void onSectionChanged(final String newSection) {
         sectionChanged = true;
@@ -55,6 +59,13 @@ public class BrowseState implements IClusterable {
 
     public void onListingChanged() {
         listingChanged = true;
+    }
+
+    public void onLastVisitedChanged(final LastVisited newLastVisited) {
+        if (!Objects.equals(lastVisited, newLastVisited)) {
+            lastVisitedChanged = true;
+            lastVisited = newLastVisited;
+        }
     }
 
     public void onExpand() {
@@ -130,7 +141,7 @@ public class BrowseState implements IClusterable {
 
     private boolean renderStateIsDirty() {
         return expandDefault || collapseAll || collapseListing || expandListing || focusTabs || blurTabs ||
-                restoreSelection || shelveSelection;
+                restoreSelection || shelveSelection || lastVisitedChanged;
     }
 
     private boolean currentSectionMatchesLastSection() {
@@ -138,7 +149,7 @@ public class BrowseState implements IClusterable {
     }
 
     public boolean isDirty() {
-        return sectionChanged || tabChanged || listingChanged || expandChanged;
+        return sectionChanged || tabChanged || listingChanged || expandChanged || lastVisitedChanged;
     }
 
     public void reset() {
@@ -146,6 +157,7 @@ public class BrowseState implements IClusterable {
         tabChanged = false;
         listingChanged = false;
         expandChanged = false;
+        lastVisitedChanged = false;
 
         expandDefault = false;
         collapseAll = false;
@@ -163,6 +175,10 @@ public class BrowseState implements IClusterable {
 
     public String getTab() {
         return last == null ? null : last.tab;
+    }
+
+    public LastVisited getLastVisited() {
+        return lastVisited;
     }
 
     // Render state
@@ -196,6 +212,10 @@ public class BrowseState implements IClusterable {
 
     public boolean isRestoreSelection() {
         return restoreSelection;
+    }
+
+    public boolean isUpdateLastVisited() {
+        return lastVisitedChanged;
     }
 
     @Override
