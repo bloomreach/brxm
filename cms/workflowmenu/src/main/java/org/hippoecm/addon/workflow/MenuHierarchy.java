@@ -153,6 +153,7 @@ class MenuHierarchy implements Serializable {
                     .map(Map.Entry::getValue)
                     .map(menuHierarchy -> menuHierarchy.items)
                     .flatMap(Collection::stream)
+                    .distinct()
                     .filter(actionDescription -> actionDescription.getId().startsWith("info"))
                     .map(actionDescription -> new MenuLabel("item", actionDescription))
                     .forEach(list::add);
