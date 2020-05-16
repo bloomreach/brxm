@@ -139,7 +139,7 @@
   </distributionManagement>
 
   <repositories>
-   <repository>
+    <repository>
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
       <url>https://maven.onehippo.com/maven2/</url>
@@ -459,7 +459,7 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-builtin</artifactId>
         <version>${hippo.repository.version}</version>
-         <scope>provided</scope>
+        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -568,6 +568,10 @@
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
 
@@ -627,7 +631,7 @@
         <scope>test</scope>
       </dependency>
       <!-- byte buddy dependency -->
-      
+
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
