@@ -8,14 +8,14 @@
   <parent>
     <groupId>com.onehippo</groupId>
     <artifactId>bloomreach-xm</artifactId>
-    <version>100.4.0-SNAPSHOT</version>
+    <version>14.3.0-SNAPSHOT</version>
   </parent>
 
   <groupId>com.onehippo</groupId>
   <artifactId>bloomreach-xm-community</artifactId>
   <name>bloomreach XM</name>
   <description>Bloomreach Experience Manager</description>
-  <version>100.4.0-SNAPSHOT</version>
+  <version>14.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
