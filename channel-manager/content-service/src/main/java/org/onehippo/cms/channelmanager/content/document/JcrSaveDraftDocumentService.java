@@ -50,8 +50,8 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
 
     private static final Logger log = LoggerFactory.getLogger(JcrSaveDraftDocumentService.class);
 
-    public JcrSaveDraftDocumentService(final String identifier, final UserContext userContext) {
-        super(identifier, userContext);
+    public JcrSaveDraftDocumentService(final String identifier, final String branchId, final UserContext userContext) {
+        super(identifier, branchId, userContext);
     }
 
     @Override
@@ -141,7 +141,7 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
     protected Map<String, Serializable> getHints() {
         final DocumentWorkflow workflow = getWorkflow(getIdentifier(), getUserContext());
         refreshInternalWorkflowSession(workflow);
-        return HintsUtils.getHints(workflow, "master");
+        return HintsUtils.getHints(workflow, getBranchId());
     }
 
     private DocumentWorkflow getWorkflow(final String identifier, final UserContext userContext) {

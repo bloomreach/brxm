@@ -40,6 +40,7 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
     static final String SAVE_DRAFT = "saveDraft";
 
     private final String identifier;
+    private final String branchId;
 
     public String getIdentifier() {
         return identifier;
@@ -49,11 +50,17 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
         return userContext;
     }
 
+    public String getBranchId() {
+        return branchId;
+    }
+
     private final UserContext userContext;
 
 
-    public AbstractSaveDraftDocumentService(final String identifier, final UserContext userContext) {
+    public AbstractSaveDraftDocumentService(final String identifier, final String branchId
+            , final UserContext userContext) {
         this.identifier = identifier;
+        this.branchId = branchId;
         this.userContext = userContext;
     }
 
