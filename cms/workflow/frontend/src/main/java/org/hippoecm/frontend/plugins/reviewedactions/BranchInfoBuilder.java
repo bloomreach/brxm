@@ -15,13 +15,7 @@
 
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang.StringUtils;
-import org.onehippo.repository.branch.BranchConstants;
 
 public final class BranchInfoBuilder {
 
@@ -48,10 +42,6 @@ public final class BranchInfoBuilder {
     /**
      * Translation key.
      */
-    public static final String BRANCH_INFO_KEY = "branch-info";
-    /**
-     * Returns the translations associated with the translations keys.
-     */
     private final UnaryOperator<String> propertyResolver;
     /**
      * {@code true} is document is live, otherwise {@code false}.
@@ -72,26 +62,27 @@ public final class BranchInfoBuilder {
     /**
      * The name of the branch currently associated with this document.
      */
-    private String branchName;
+    private String branchInfo;
 
     /**
      * <p>Creates a new instance. It has the following default values:
      * <ul>
-     *     <li>branchName: {@link BranchConstants#MASTER_BRANCH_ID}</li>
      *     <li>live, draftChanges, unpublishedChanges : {@code false}</li>
      * </ul>
      * </p>
      *
      * @param resolver {@link UnaryOperator} that looks up the
      *                 translations by key.
+     * @param branchInfo The translated text that is the suffix of the message
      */
-    public BranchInfoBuilder(final UnaryOperator<String> resolver, Supplier<String> branchNameSupplier) {
+    public BranchInfoBuilder(final UnaryOperator<String> resolver, final String branchInfo) {
         propertyResolver = resolver;
-        branchName = branchNameSupplier.get();
+        this.branchInfo = branchInfo;
     }
 
     /**
      * <p>Sets the publication state to "live".</p>
+     *
      * @param live {@code true} is document is live
      * @return {@link BranchInfoBuilder}
      */
@@ -104,8 +95,8 @@ public final class BranchInfoBuilder {
      * <p>Set the unpublished state to "unpublished changes".</p>
      *
      * @param changes {@code true} if document has unpublished changes
-     *                            ( differences between unpublished and
-     *                            published variant )
+     *                ( differences between unpublished and
+     *                published variant )
      * @return {@link BranchInfoBuilder}
      */
     public BranchInfoBuilder unpublishedChanges(boolean changes) {
@@ -117,8 +108,8 @@ public final class BranchInfoBuilder {
      * <p>Sets the draft state to "draft changes".</p>
      *
      * @param changes {@link true} is document has draft changes
-     *                            (differences between draft and unpublished
-     *                            variant )
+     *                (differences between draft and unpublished
+     *                variant )
      * @return {@link BranchInfoBuilder}
      */
     public BranchInfoBuilder draftChanges(boolean changes) {
@@ -148,36 +139,19 @@ public final class BranchInfoBuilder {
      * @return Translated info string.
      */
     public String build() {
-        String documentState = Stream.of(getPublicationStateKey(),
-                getDraftChangesKey(),
-                live ? getUnpublishedChangesKey() : StringUtils.EMPTY)
-                .filter(StringUtils::isNotEmpty)
-                .map(this::getValue)
-                .limit(2)
-                .collect(Collectors.joining(", "));
-        return String.format("%s (%s)", getBranchInfo(), documentState);
+        final String publicationState = live
+                ? propertyResolver.apply(LIVE_KEY)
+                : propertyResolver.apply(OFFLINE_KEY);
+
+        if (draftChanges) {
+            return String.format("%s (%s, %s)", branchInfo, publicationState
+                    , propertyResolver.apply(DRAFT_CHANGES_KEY));
+        }
+        if (live && unpublishedChanges) {
+            return String.format("%s (%s, %s)", branchInfo, publicationState
+                    , propertyResolver.apply(UNPUBLISHED_CHANGES_KEY));
+        }
+        return String.format("%s (%s)", branchInfo, publicationState);
     }
 
-    private String getBranchInfo() {
-        return BranchConstants.MASTER_BRANCH_ID.equals(branchName)
-                ? getValue(CORE_DOCUMENT_KEY)
-                : String.format("%s '%s'", getValue(BRANCH_INFO_KEY),
-                branchName);
-    }
-
-    private String getUnpublishedChangesKey() {
-        return unpublishedChanges ? UNPUBLISHED_CHANGES_KEY : StringUtils.EMPTY;
-    }
-
-    private String getDraftChangesKey() {
-        return draftChanges ? DRAFT_CHANGES_KEY : StringUtils.EMPTY;
-    }
-
-    private String getPublicationStateKey() {
-        return live ? LIVE_KEY : OFFLINE_KEY;
-    }
-
-    private String getValue(final String key) {
-        return key == null ? null : this.propertyResolver.apply(key);
-    }
 }
