@@ -155,7 +155,7 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
             final WorkflowContext workflowContext = documentWorkflow.getWorkflowContext();
                 workflowContext.getInternalWorkflowSession().refresh(false);
         } catch (RepositoryException e) {
-            log.warn("Could not refresh interal workflow session");
+            log.warn("Could not refresh internal workflow session", e);
             throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
         }
     }
