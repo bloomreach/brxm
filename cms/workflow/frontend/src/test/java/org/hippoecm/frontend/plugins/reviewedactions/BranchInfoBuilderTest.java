@@ -82,11 +82,11 @@ public class BranchInfoBuilderTest {
                         .draftChanges(true)
                         .unpublishedChanges(true)
                         , "Core document (offline, draft changes)"},
-                {new BranchInfoBuilder(propertyResolver, () -> "q")
+                {new BranchInfoBuilder(propertyResolver, "Arbitrary branch text for 'q'")
                         .draftChanges(true)
                         .unpublishedChanges(true)
-                        , "Project version 'q' (offline, draft changes)"},
-                {new BranchInfoBuilder(propertyResolver, () -> "master")
+                        , "Arbitrary branch text for 'q' (offline, draft changes)"},
+                {new BranchInfoBuilder(propertyResolver, "Core document")
                         .draftChanges(true)
                         .unpublishedChanges(true)
                         , "Core document (offline, draft changes)"},
@@ -95,7 +95,7 @@ public class BranchInfoBuilderTest {
 
     @NotNull
     private static BranchInfoBuilder getUserInfoBuilder() {
-        return new BranchInfoBuilder(propertyResolver, () -> BranchConstants.MASTER_BRANCH_ID);
+        return new BranchInfoBuilder(propertyResolver, propertyResolver.apply("core-document"));
     }
 
     @Before

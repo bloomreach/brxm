@@ -416,7 +416,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 final UnaryOperator<String> resolver = key ->
                         new StringResourceModel(key, DocumentWorkflowPlugin.this).getString();
                 final Map<String, Serializable> hints = getHints();
-                final String info = new BranchInfoBuilder(resolver, getBranchNameResolver())
+                final String info = new BranchInfoBuilder(resolver, getBranchInfo(resolver))
                         .draftChanges(isActionAllowed(hints, EDIT_DRAFT))
                         .unpublishedChanges(isActionAllowed(hints, PUBLISH))
                         .live(isActionAllowed(hints, DEPUBLISH))
@@ -432,11 +432,10 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     }
 
     /**
-     * @return the branchName of the current branch or {@link BranchConstants#MASTER_BRANCH_ID} if there isn't any
-     * current branch
+     * @return the branchInfo for the current branch.
      */
-    protected Supplier<String> getBranchNameResolver() {
-        return () -> BranchConstants.MASTER_BRANCH_ID;
+    protected String getBranchInfo(final UnaryOperator<String> resolver) {
+        return resolver.apply(BranchInfoBuilder.CORE_DOCUMENT_KEY);
     }
 
     private static boolean isDocumentAllowedInFolder(final WorkflowDescriptorModel documentModel, IModel<Node> destinationFolder) {
