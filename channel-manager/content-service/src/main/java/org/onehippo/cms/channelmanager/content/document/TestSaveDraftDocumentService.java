@@ -41,6 +41,10 @@ public class TestSaveDraftDocumentService extends AbstractSaveDraftDocumentServi
     private ErrorInfo editingFailure;
     private Map<String, Serializable> hints;
 
+    public TestSaveDraftDocumentService(String identifier, UserContext userContext) {
+        super(identifier, userContext);
+    }
+
     public void setDraft(final Document document) {
         this.document = document;
     }
@@ -76,19 +80,19 @@ public class TestSaveDraftDocumentService extends AbstractSaveDraftDocumentServi
     }
 
     @Override
-    protected void updateDraft(final String identifier, final UserContext userContext, final Document document) {
+    protected void updateDraft(final Document document) {
         this.document =  document;
         this.document.getInfo().setRetainable(true);
 
     }
 
     @Override
-    protected boolean isDocumentRetainable(final String identifier, final UserContext userContext) {
+    protected boolean isDocumentRetainable() {
         return document.getInfo().isRetainable();
     }
 
     @Override
-    protected boolean isDocumentDirty(final String identifier, final UserContext userContext, final Document updatedDocument) {
+    protected boolean isDocumentDirty(final Document updatedDocument) {
         final Map<String, List<FieldValue>> updatedFields = updatedDocument.getFields();
         final Map<String, List<FieldValue>> fields = document.getFields();
         return !updatedFields.entrySet().stream()
@@ -96,26 +100,26 @@ public class TestSaveDraftDocumentService extends AbstractSaveDraftDocumentServi
     }
 
     @Override
-    ErrorInfo withDisplayName(final ErrorInfo errorInfo, final String identifier, final UserContext context) {
+    ErrorInfo withDisplayName(final ErrorInfo errorInfo) {
         errorInfo.addParam(DISPLAY_NAME, displayName);
         return errorInfo;
     }
 
     @Override
-    protected ErrorInfo withDocumentInfo(final ErrorInfo errorInfo, final String identifier, final UserContext userContext) {
+    protected ErrorInfo withDocumentInfo(final ErrorInfo errorInfo) {
         errorInfo.addParam(DISPLAY_NAME, displayName);
         errorInfo.addParam("publicationState", publicationState);
         return errorInfo;
     }
 
     @Override
-    Optional<String> getVariantNodeType(final String identifier, final UserContext userContext) {
+    Optional<String> getVariantNodeType() {
         // Each document it's own document type for test purposes
-        return Optional.ofNullable(this.documentIdentifierToNodeTypeIdentifier.get(identifier));
+        return Optional.ofNullable(this.documentIdentifierToNodeTypeIdentifier.get(getIdentifier()));
     }
 
     @Override
-    DocumentType getDocumentTypeByNodeTypeIdentifier(final UserContext context, final String nodeTypeIdentifier) {
+    DocumentType getDocumentTypeByNodeTypeIdentifier(final String nodeTypeIdentifier) {
         if (this.documentTypeMap.containsKey(nodeTypeIdentifier)) {
             return this.documentTypeMap.get(nodeTypeIdentifier);
         }
@@ -123,17 +127,17 @@ public class TestSaveDraftDocumentService extends AbstractSaveDraftDocumentServi
     }
 
     @Override
-    Optional<ErrorInfo> determineEditingFailure(final Map<String, Serializable> hints, final UserContext userContext) {
+    Optional<ErrorInfo> determineEditingFailure() {
         return Optional.ofNullable(editingFailure);
     }
 
     @Override
-    protected Map<String, Serializable> getHints(final String identifier, final UserContext userContext) {
+    protected Map<String, Serializable> getHints() {
         return hints;
     }
 
     @Override
-    Document getDraft(final String identifier, final UserContext userContext) {
+    Document getDraft() {
         if (document == null) {
             throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
         }

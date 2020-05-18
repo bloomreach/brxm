@@ -17,16 +17,17 @@ package org.onehippo.cms.channelmanager.content.document;
 
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
+import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 
 public interface SaveDraftDocumentService {
 
-    Document saveDraft(String identifier, UserContext userContext, Document document);
-
-    Document editDraft(String identifier, UserContext userContext);
-
-    boolean canEditDraft(String identifier, UserContext userContext);
-
-    boolean canSaveDraft(String identifier, UserContext userContext, Document document);
+    boolean canEditDraft();
 
     boolean shouldSaveDraft(Document document);
+
+    Document editDraft();
+
+    DocumentInfo addDocumentInfo(Document document);
+
+    Document saveDraft(Document document);
 }

@@ -37,6 +37,7 @@ import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.hippoecm.repository.util.WorkflowUtils.Variant;
+import org.jetbrains.annotations.NotNull;
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
@@ -92,14 +93,13 @@ import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
  * editable instance of a document will not give the correct available workflow actions. This implementation takes
  * that situation into account by retrieving the workflow actions from a Document that is not yet in edit mode.
  */
-public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocumentService {
+public class DocumentsServiceImpl implements DocumentsService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
 
     private HintsInspector hintsInspector;
     private BranchingService branchingService;
 
-    private final JcrSaveDraftDocumentService jcrSaveDraftDocumentService = new JcrSaveDraftDocumentService();
 
     public void setHintsInspector(final HintsInspector hintsInspector) {
         this.hintsInspector = hintsInspector;
@@ -195,8 +195,9 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
     @Override
     public Document obtainEditableDocument(final String uuid, final String branchId, final UserContext userContext) {
 
-        if (canEditDraft(uuid, userContext)) {
-            return editDraft(uuid, userContext);
+        SaveDraftDocumentService jcrSaveDraftDocumentService = getJcrSaveDraftDocumentService(uuid, userContext);
+        if (jcrSaveDraftDocumentService.canEditDraft()) {
+            return jcrSaveDraftDocumentService.editDraft();
         }
 
         final Session session = userContext.getSession();
@@ -233,20 +234,20 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
         document.getInfo().setDirty(isDocumentDirty(handle, docType, document));
         document.getInfo().setCanPublish(isHintActionTrue(hints, HINT_PUBLISH));
         document.getInfo().setCanRequestPublication(isHintActionTrue(hints, HINT_REQUEST_PUBLICATION));
-        addDocumentInfo(uuid, userContext, document);
+        jcrSaveDraftDocumentService.addDocumentInfo(document);
 
         return document;
     }
 
-    void addDocumentInfo(String uuid, UserContext userContext, Document document){
-       jcrSaveDraftDocumentService.addDocumentInfo(uuid, userContext, document);
+    SaveDraftDocumentService getJcrSaveDraftDocumentService(final String uuid, final UserContext userContext) {
+        return new JcrSaveDraftDocumentService(uuid, userContext);
     }
 
     @Override
     public Document updateEditableDocument(final String uuid, final Document document, final UserContext userContext) {
-
-        if (shouldSaveDraft(document)) {
-            return saveDraft(uuid, userContext, document);
+        SaveDraftDocumentService jcrSaveDraftDocumentService = getJcrSaveDraftDocumentService(uuid, userContext);
+        if (jcrSaveDraftDocumentService.shouldSaveDraft(document)) {
+            return jcrSaveDraftDocumentService.saveDraft(document);
         }
         final Session session = userContext.getSession();
         final String branchId = document.getBranchId();
@@ -305,31 +306,6 @@ public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocument
         document.getInfo().setCanRequestPublication(isHintActionTrue(newHints, HINT_REQUEST_PUBLICATION));
 
         return document;
-    }
-
-    @Override
-    public boolean shouldSaveDraft(final Document document) {
-        return jcrSaveDraftDocumentService.shouldSaveDraft(document);
-    }
-
-    @Override
-    public Document saveDraft(final String identifier, final UserContext userContext, final Document document) {
-        return jcrSaveDraftDocumentService.saveDraft(identifier, userContext, document);
-    }
-
-    @Override
-    public Document editDraft(final String uuid, final UserContext userContext) {
-        return jcrSaveDraftDocumentService.editDraft(uuid, userContext);
-    }
-
-    @Override
-    public boolean canEditDraft(final String identifier, final UserContext userContext) {
-        return jcrSaveDraftDocumentService.canEditDraft(identifier, userContext);
-    }
-
-    @Override
-    public boolean canSaveDraft(final String identifier, final UserContext userContext, final Document document) {
-        return jcrSaveDraftDocumentService.canSaveDraft(identifier, userContext, document);
     }
 
     @Override
