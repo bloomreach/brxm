@@ -17,7 +17,6 @@ package org.hippoecm.addon.workflow;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -69,7 +68,9 @@ class MenuHierarchy implements Serializable {
     }
 
     private void put(ActionDescription action) {
-        items.add(action);
+        if (!(items.contains(action) && action.getId().startsWith("info"))) {
+            items.add(action);
+        }
     }
 
     public void restructure() {
@@ -148,15 +149,14 @@ class MenuHierarchy implements Serializable {
                 }
             }
 
-            submenus.entrySet().stream()
-                    .filter(entry -> entry.getKey().equals("info"))
-                    .map(Map.Entry::getValue)
-                    .map(menuHierarchy -> menuHierarchy.items)
-                    .flatMap(Collection::stream)
-                    .distinct()
-                    .filter(actionDescription -> actionDescription.getId().startsWith("info"))
-                    .map(actionDescription -> new MenuLabel("item", actionDescription))
-                    .forEach(list::add);
+            if (submenus.containsKey("info")) {
+                MenuHierarchy info = submenus.get("info");
+                for (ActionDescription item : info.items) {
+                    if (item.getId().startsWith("info")) {
+                        list.add(new MenuLabel("item", item));
+                    }
+                }
+            }
         } else {
             for (ActionDescription item : items) {
                 list.add(new MenuItem("item", item, form));
