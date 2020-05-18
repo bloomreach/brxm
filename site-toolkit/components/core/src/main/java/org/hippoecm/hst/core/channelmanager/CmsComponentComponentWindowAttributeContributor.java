@@ -22,11 +22,8 @@ import java.util.Map;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.security.Privilege;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
-
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -140,8 +137,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
 
         return Arrays.stream(cmsUser.getAccessControlManager()
                 .getPrivileges(compConfig.getCanonicalStoredLocation()))
-                .filter((Predicate<Privilege>) privilege -> privilege.getName()
-                        .equals(requiredPrivilege))
+                .filter(privilege -> privilege.getName().equals(requiredPrivilege))
                 .findFirst()
                 .isPresent();
 
@@ -157,7 +153,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
 
     private String getLabel(HstComponentConfiguration config) {
         String label = config.getLabel();
-        if (Strings.isNullOrEmpty(label)) {
+        if (StringUtils.isBlank(label)) {
             label = config.getName();
         }
         return label;

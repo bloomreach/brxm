@@ -184,9 +184,7 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
             }
             combinedSession = ((HippoSession) session1).createSecurityDelegate(delegateeSession, domainExtensions);
         } finally {
-            if (session1 != null) {
-                session1.logout();
-            }
+            session1.logout();
             if (delegateeSession != null && !keepDelegateSession) {
                 delegateeSession.logout();
             }

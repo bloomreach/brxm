@@ -31,6 +31,7 @@ import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
+import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder.JcrSessionCreator;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_USER_SESSION_ATTR_NAME;
@@ -83,15 +84,15 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             log.debug("Request '{}' is invoked with a valid token for user '{}'", accessToken);
             cmsUserCredentials = accessToken.getCmsSessionContext().getRepositoryCredentials();
             Session previewCmsUserSession = null;
-            Session cmsUser = null;
+            Session cmsUserSession = null;
             try {
                 Pair<Session, Session> pair = sessionSecurityDelegation.createCmsUserAndChannelMgrPreviewUser(cmsUserCredentials);
 
                 previewCmsUserSession = pair.getLeft();
-                cmsUser = pair.getRight();
+                cmsUserSession = pair.getRight();
 
                 ((HstMutableRequestContext) requestContext).setSession(previewCmsUserSession);
-                requestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, cmsUser);
+                requestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, cmsUserSession);
 
                 context.invokeNext();
             } catch (RepositoryException e) {
@@ -99,7 +100,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 throw new ContainerException(e);
             } finally {
                 logoutSession(previewCmsUserSession);
-                logoutSession(cmsUser);
+                logoutSession(cmsUserSession);
             }
 
         } else {
@@ -117,18 +118,21 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             // We synchronize on http session to disallow concurrent requests for the Channel manager.
             synchronized (httpSession) {
                 Session previewCmsUserSession = null;
-                Session cmsUser = null;
+                Session cmsUserSession = null;
                 try {
                     // request preview website, for example in channel manager. The request is not
                     // a REST call
                     if (sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
-                        previewCmsUserSession = getOrCreateCmsPreviewSession(httpSession, cmsUserCredentials);
+                        previewCmsUserSession = getOrCreateHttpSessionBoundJcrSession(httpSession, cmsUserCredentials,
+                                HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION,
+                                credentials -> sessionSecurityDelegation.createPreviewSecurityDelegate(credentials, false));
                     } else {
                         // do not yet create a session. just use the one that the HST container will create later
                     }
 
-                    cmsUser = getOrCreateCmsSession(httpSession, cmsUserCredentials);
-                    requestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, cmsUser);
+                    cmsUserSession = getOrCreateHttpSessionBoundJcrSession(httpSession, cmsUserCredentials,
+                            HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_SESSION, credentials -> delegatingRepository.login(credentials));
+                    requestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, cmsUserSession);
 
                     if (previewCmsUserSession != null) {
                         ((HstMutableRequestContext) requestContext).setSession(previewCmsUserSession);
@@ -150,7 +154,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                     throw new ContainerException(e);
                 } finally {
                     validatePristine(previewCmsUserSession);
-                    validatePristine(cmsUser);
+                    validatePristine(cmsUserSession);
                 }
             }
         }
@@ -190,13 +194,21 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         }
     }
 
-    private Session getOrCreateCmsPreviewSession(final HttpSession httpSession, final SimpleCredentials cmsUserCred) throws LoginException, ContainerException {
+    /**
+     * <p>
+     *     Returns a JCR Session that gets automatically logged out when the http session gets invalidated
+     * </p>
+     */
+    private Session getOrCreateHttpSessionBoundJcrSession(final HttpSession httpSession,
+                                                          final SimpleCredentials cmsUserCred,
+                                                          final String httpSessionAttrName,
+                                                          final JcrSessionCreator jcrSessionCreator) throws LoginException, ContainerException {
         long start = System.currentTimeMillis();
         try {
 
-            final Session session = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION,
-                    httpSession, cmsUserCred, credentials -> sessionSecurityDelegation.createPreviewSecurityDelegate(credentials, false));
-            log.debug("Acquiring security delegate session took '{}' ms.", (System.currentTimeMillis() - start));
+            final Session session = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(httpSessionAttrName,
+                    httpSession, cmsUserCred, credentials -> jcrSessionCreator.login(credentials));
+            log.debug("Acquiring session took '{}' ms.", (System.currentTimeMillis() - start));
             return session;
         } catch (LoginException e) {
             throw e;
@@ -205,18 +217,4 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         }
     }
 
-    private Session getOrCreateCmsSession(final HttpSession httpSession, final SimpleCredentials cmsUserCred) throws LoginException, ContainerException {
-        long start = System.currentTimeMillis();
-        try {
-
-            final Session session = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_SESSION,
-                    httpSession, cmsUserCred, credentials -> delegatingRepository.login(credentials));
-            log.debug("Acquiring security delegate session took '{}' ms.", (System.currentTimeMillis() - start));
-            return session;
-        } catch (LoginException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ContainerException("Failed to create Session based on SSO.", e);
-        }
-    }
 }
