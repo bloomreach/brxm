@@ -41,8 +41,8 @@ public class TestSaveDraftDocumentService extends AbstractSaveDraftDocumentServi
     private ErrorInfo editingFailure;
     private Map<String, Serializable> hints;
 
-    public TestSaveDraftDocumentService(String identifier, UserContext userContext) {
-        super(identifier, userContext);
+    public TestSaveDraftDocumentService(String identifier, String branchId, UserContext userContext) {
+        super(identifier, branchId, userContext);
     }
 
     public void setDraft(final Document document) {

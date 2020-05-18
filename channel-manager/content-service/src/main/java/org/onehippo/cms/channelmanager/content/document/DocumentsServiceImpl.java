@@ -195,7 +195,8 @@ public class DocumentsServiceImpl implements DocumentsService {
     @Override
     public Document obtainEditableDocument(final String uuid, final String branchId, final UserContext userContext) {
 
-        SaveDraftDocumentService jcrSaveDraftDocumentService = getJcrSaveDraftDocumentService(uuid, userContext);
+        SaveDraftDocumentService jcrSaveDraftDocumentService = getJcrSaveDraftDocumentService(uuid, branchId
+                , userContext);
         if (jcrSaveDraftDocumentService.canEditDraft()) {
             return jcrSaveDraftDocumentService.editDraft();
         }
@@ -239,18 +240,20 @@ public class DocumentsServiceImpl implements DocumentsService {
         return document;
     }
 
-    SaveDraftDocumentService getJcrSaveDraftDocumentService(final String uuid, final UserContext userContext) {
-        return new JcrSaveDraftDocumentService(uuid, userContext);
+    SaveDraftDocumentService getJcrSaveDraftDocumentService(final String uuid, final String branchId
+            , final UserContext userContext) {
+        return new JcrSaveDraftDocumentService(uuid, branchId, userContext);
     }
 
     @Override
     public Document updateEditableDocument(final String uuid, final Document document, final UserContext userContext) {
-        SaveDraftDocumentService jcrSaveDraftDocumentService = getJcrSaveDraftDocumentService(uuid, userContext);
+        final String branchId = document.getBranchId();
+        SaveDraftDocumentService jcrSaveDraftDocumentService =
+                getJcrSaveDraftDocumentService(uuid, branchId, userContext);
         if (jcrSaveDraftDocumentService.shouldSaveDraft(document)) {
             return jcrSaveDraftDocumentService.saveDraft(document);
         }
         final Session session = userContext.getSession();
-        final String branchId = document.getBranchId();
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
         final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)

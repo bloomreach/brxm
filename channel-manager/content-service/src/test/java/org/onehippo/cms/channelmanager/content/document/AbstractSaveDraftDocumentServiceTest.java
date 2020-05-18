@@ -55,7 +55,7 @@ public class AbstractSaveDraftDocumentServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        testSaveDraftDocumentService = new TestSaveDraftDocumentService("id", null);
+        testSaveDraftDocumentService = new TestSaveDraftDocumentService("id", "master", null);
         documentsService = testSaveDraftDocumentService;
         persistedDraft = new Document();
         persistedDraft.setId("id");

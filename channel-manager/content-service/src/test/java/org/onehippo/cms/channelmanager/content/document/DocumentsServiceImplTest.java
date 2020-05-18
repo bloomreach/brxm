@@ -126,7 +126,8 @@ public class DocumentsServiceImplTest {
         hintsInspector = createMock(HintsInspector.class);
         documentsService = new DocumentsServiceImpl(){
             @Override
-            SaveDraftDocumentService getJcrSaveDraftDocumentService(final String uuid, final UserContext userContext) {
+            SaveDraftDocumentService getJcrSaveDraftDocumentService(final String uuid, final String branchId
+                    , final UserContext userContext) {
                 return new SaveDraftDocumentService(){
 
                     @Override
