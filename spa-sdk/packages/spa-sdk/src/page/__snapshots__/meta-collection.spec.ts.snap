@@ -7,7 +7,7 @@ exports[`MetaCollectionImpl clear should remove rendered comments 1`] = `
 `;
 
 exports[`MetaCollectionImpl constructor should hold meta-data items 1`] = `
-MetaCollectionImpl [
+Array [
   Object {
     "data": "meta1",
   },
