@@ -52,7 +52,12 @@ export class MetaCollectionImpl extends Array<Meta> implements MetaCollection {
       ...(model.beginNodeSpan || []).map(model => factory.create(model, META_POSITION_BEGIN)),
       ...(model.endNodeSpan || []).map(model => factory.create(model, META_POSITION_END)),
     );
-    Object.setPrototypeOf(this, Object.create(MetaCollectionImpl.prototype));
+
+    const prototype = Object.create(MetaCollectionImpl.prototype);
+    prototype.constructor = Array.prototype.constructor;
+
+    Object.setPrototypeOf(this, prototype);
+    Object.freeze(this);
   }
 
   clear() {
