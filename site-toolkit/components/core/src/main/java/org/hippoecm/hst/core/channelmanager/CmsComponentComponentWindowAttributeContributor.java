@@ -137,10 +137,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
 
         return Arrays.stream(cmsUser.getAccessControlManager()
                 .getPrivileges(compConfig.getCanonicalStoredLocation()))
-                .filter(privilege -> privilege.getName().equals(requiredPrivilege))
-                .findFirst()
-                .isPresent();
-
+                .anyMatch(privilege -> privilege.getName().equals(requiredPrivilege));
     }
 
     @Override
