@@ -42,6 +42,7 @@ import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.TestUserContext;
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
+import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.PublicationState;
@@ -125,19 +126,36 @@ public class DocumentsServiceImplTest {
         hintsInspector = createMock(HintsInspector.class);
         documentsService = new DocumentsServiceImpl(){
             @Override
-            public boolean canEditDraft(final String identifier, final UserContext userContext) {
-                return false;
+            SaveDraftDocumentService getJcrSaveDraftDocumentService(final String uuid, final UserContext userContext) {
+                return new SaveDraftDocumentService(){
+
+                    @Override
+                    public boolean canEditDraft() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean shouldSaveDraft(final Document document) {
+                        return false;
+                    }
+
+                    @Override
+                    public Document editDraft() {
+                        return null;
+                    }
+
+                    @Override
+                    public DocumentInfo addDocumentInfo(final Document document) {
+                        return null;
+                    }
+
+                    @Override
+                    public Document saveDraft(final Document document) {
+                        return null;
+                    }
+                };
             }
 
-            @Override
-            public boolean shouldSaveDraft(final Document document) {
-                return false;
-            }
-
-            @Override
-            void addDocumentInfo(final String uuid, final UserContext userContext, final Document document) {
-                // do nothing ( tested in AbstractKeepDraftDocumentServiceTest
-            }
         };
         documentsService.setHintsInspector(hintsInspector);
         branchingService = createMock(BranchingService.class);

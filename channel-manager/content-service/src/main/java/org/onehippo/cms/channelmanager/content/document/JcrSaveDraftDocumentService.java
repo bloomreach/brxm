@@ -50,10 +50,16 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
 
     private static final Logger log = LoggerFactory.getLogger(JcrSaveDraftDocumentService.class);
 
+    public JcrSaveDraftDocumentService(final String identifier, final UserContext userContext) {
+        super(identifier, userContext);
+    }
+
     @Override
-    protected void updateDraft(final String identifier, final UserContext userContext, final Document document) {
+    protected void updateDraft(final Document document) {
+        final UserContext userContext = getUserContext();
+        final String identifier = getIdentifier();
         final Session session = userContext.getSession();
-        final DocumentType docType = getDocumentType(identifier, userContext);
+        final DocumentType docType = getDocumentType();
         try {
             final Node handle = session.getNodeByIdentifier(identifier);
             final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
@@ -82,10 +88,10 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
     }
 
     @Override
-    protected boolean isDocumentRetainable(final String identifier, final UserContext userContext) {
-        final Session session = userContext.getSession();
+    protected boolean isDocumentRetainable() {
+        final Session session = getUserContext().getSession();
         try {
-            final Node handle = session.getNodeByIdentifier(identifier);
+            final Node handle = session.getNodeByIdentifier(getIdentifier());
             final DocumentHandle documentHandle = new DocumentHandle(handle);
             documentHandle.initialize();
             return documentHandle.isRetainable();
@@ -96,44 +102,44 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
     }
 
     @Override
-    protected boolean isDocumentDirty(final String identifier, final UserContext userContext, final Document document) {
-        return DocumentsServiceImpl.isDocumentDirty(getHandle(identifier, userContext.getSession()),
-                getDocumentType(identifier, userContext), document);
+    protected boolean isDocumentDirty(final Document document) {
+        return DocumentsServiceImpl.isDocumentDirty(getHandle(getIdentifier(), getUserContext().getSession()),
+                getDocumentType(),document);
     }
 
     @Override
-    ErrorInfo withDisplayName(final ErrorInfo errorInfo, final String identifier, final UserContext context) {
+    ErrorInfo withDisplayName(final ErrorInfo errorInfo) {
         return ErrorInfo.withDisplayName(new ErrorInfo(ErrorInfo.Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR),
-                getHandle(identifier, context.getSession()));
+                getHandle(getIdentifier(), getUserContext().getSession()));
     }
 
     @Override
-    protected ErrorInfo withDocumentInfo(final ErrorInfo errorInfo, final String identifier, final UserContext userContext) {
-        return DocumentsServiceImpl.withDocumentInfo(errorInfo, getHandle(identifier, userContext.getSession()));
+    protected ErrorInfo withDocumentInfo(final ErrorInfo errorInfo) {
+        return DocumentsServiceImpl.withDocumentInfo(errorInfo, getHandle(getIdentifier(), getUserContext().getSession()));
     }
 
 
     @Override
-    Optional<String> getVariantNodeType(final String identifier, final UserContext userContext) {
-        return DocumentsServiceImpl.getVariantNodeType(getHandle(identifier, userContext.getSession()));
+    Optional<String> getVariantNodeType() {
+        return DocumentsServiceImpl.getVariantNodeType(getHandle(getIdentifier(), getUserContext().getSession()));
     }
 
     @Override
-    DocumentType getDocumentTypeByNodeTypeIdentifier(final UserContext context, final String nodeTypeIdentifier) {
-        return DocumentsServiceImpl.getDocumentTypeByNodeTypeIdentifier(context, nodeTypeIdentifier);
+    DocumentType getDocumentTypeByNodeTypeIdentifier(final String nodeTypeIdentifier) {
+        return DocumentsServiceImpl.getDocumentTypeByNodeTypeIdentifier(getUserContext(), nodeTypeIdentifier);
     }
 
     @Override
-    Optional<ErrorInfo> determineEditingFailure(final Map<String, Serializable> hints, final UserContext userContext) {
-        if (isHintActionFalse(hints, EDIT_DRAFT)) {
+    Optional<ErrorInfo> determineEditingFailure() {
+        if (isHintActionFalse(getHints(), EDIT_DRAFT)) {
             return Optional.of(new ErrorInfo(ErrorInfo.Reason.NOT_EDITABLE, null));
         }
         return Optional.empty();
     }
 
     @Override
-    protected Map<String, Serializable> getHints(final String identifier, final UserContext userContext) {
-        final DocumentWorkflow workflow = getWorkflow(identifier, userContext);
+    protected Map<String, Serializable> getHints() {
+        final DocumentWorkflow workflow = getWorkflow(getIdentifier(), getUserContext());
         refreshInternalWorkflowSession(workflow);
         return HintsUtils.getHints(workflow, "master");
     }
@@ -156,13 +162,15 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
 
 
     @Override
-    Document getDraft(final String identifier, final UserContext userContext) {
+    Document getDraft() {
+        String identifier = getIdentifier();
+        UserContext userContext = getUserContext();
         final Node handle = getHandle(identifier, userContext.getSession());
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
         refreshInternalWorkflowSession(documentWorkflow);
         final Node draftNode = EditingUtils.getDraftNode(documentWorkflow, userContext.getSession())
                 .orElseThrow(() -> new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR)));
-        final DocumentType documentType = getDocumentType(identifier, userContext);
+        final DocumentType documentType = getDocumentType();
         final Document document = DocumentsServiceImpl.assembleDocument(identifier, handle, draftNode, documentType);
         FieldTypeUtils.readFieldValues(draftNode, documentType.getFields(), document.getFields());
 

@@ -55,7 +55,7 @@ public class AbstractSaveDraftDocumentServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        testSaveDraftDocumentService = new TestSaveDraftDocumentService();
+        testSaveDraftDocumentService = new TestSaveDraftDocumentService("id", null);
         documentsService = testSaveDraftDocumentService;
         persistedDraft = new Document();
         persistedDraft.setId("id");
@@ -73,7 +73,7 @@ public class AbstractSaveDraftDocumentServiceTest {
         testSaveDraftDocumentService.setHints(hints);
         final Document expected = new Document();
         expected.setId("id");
-        final Document actual = documentsService.editDraft("id", null);
+        final Document actual = documentsService.editDraft();
         Assert.assertEquals(expected, actual);
     }
 
@@ -82,7 +82,7 @@ public class AbstractSaveDraftDocumentServiceTest {
         Map<String, Serializable> hints = new HashMap<>();
         hints.put(EDIT_DRAFT, Boolean.TRUE);
         testSaveDraftDocumentService.setHints(hints);
-        final Document actual = documentsService.editDraft("id", null);
+        final Document actual = documentsService.editDraft();
         final Document expected = new Document();
         expected.setId("id");
         Assert.assertEquals(expected, actual);
@@ -95,7 +95,7 @@ public class AbstractSaveDraftDocumentServiceTest {
         hints.put(SAVE_DRAFT, Boolean.TRUE);
         testSaveDraftDocumentService.setHints(hints);
         persistedDraft.getInfo().setRetainable(true);
-        final Document actual = documentsService.editDraft("id", null);
+        final Document actual = documentsService.editDraft();
         final Document expected = new Document();
         expected.getInfo().setCanKeepDraft(true);
         expected.getInfo().setRetainable(true);
@@ -106,7 +106,7 @@ public class AbstractSaveDraftDocumentServiceTest {
     @Test
     public void editDraftNotEditable() throws Exception {
         try {
-            documentsService.editDraft("id", null);
+            documentsService.editDraft();
             fail("No exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(ErrorInfo.Reason.SERVER_ERROR));
@@ -121,7 +121,7 @@ public class AbstractSaveDraftDocumentServiceTest {
         testSaveDraftDocumentService.associateDocumentWithNodeType("id", "other");
 
         try {
-            documentsService.editDraft("id", null);
+            documentsService.editDraft();
             fail("No exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(ErrorInfo.Reason.SERVER_ERROR));
@@ -138,7 +138,7 @@ public class AbstractSaveDraftDocumentServiceTest {
         testSaveDraftDocumentService.setDisplayName("Display name");
         testSaveDraftDocumentService.setPublicationState("unpublished");
         try {
-            documentsService.editDraft("id", null);
+            documentsService.editDraft();
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -155,7 +155,7 @@ public class AbstractSaveDraftDocumentServiceTest {
         testSaveDraftDocumentService.setHints(hints);
         testSaveDraftDocumentService.setDraft(null);
         try {
-            documentsService.editDraft("id", null);
+            documentsService.editDraft();
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(ErrorInfo.Reason.SERVER_ERROR));
@@ -166,7 +166,7 @@ public class AbstractSaveDraftDocumentServiceTest {
     public void saveDraft_EditNotAllowed() throws Exception {
         testSaveDraftDocumentService.setHints(Collections.emptyMap());
         try {
-            documentsService.saveDraft("id", null, new Document());
+            documentsService.saveDraft(new Document());
             fail("Save draft should throw and exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(ErrorInfo.Reason.SERVER_ERROR));
@@ -179,7 +179,7 @@ public class AbstractSaveDraftDocumentServiceTest {
         hints.put(EDIT_DRAFT, Boolean.TRUE);
         testSaveDraftDocumentService.setHints(hints);
         try {
-            documentsService.saveDraft("id", null, new Document());
+            documentsService.saveDraft(new Document());
             fail("Save draft should throw and exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(ErrorInfo.Reason.SERVER_ERROR));
@@ -202,7 +202,7 @@ public class AbstractSaveDraftDocumentServiceTest {
         expected.getInfo().setRetainable(true);
         expected.getInfo().setDirty(false);
         expected.setFields(fields);
-        Document actual = documentsService.saveDraft("id", null, input);
+        Document actual = documentsService.saveDraft(input);
         assertEquals(expected, actual);
     }
 
@@ -220,7 +220,7 @@ public class AbstractSaveDraftDocumentServiceTest {
         hints.put(EditingUtils.HINT_REQUEST_PUBLICATION, Boolean.TRUE);
         testSaveDraftDocumentService.setHints(hints);
         persistedDraft.getInfo().setRetainable(true);
-        final DocumentInfo actual = testSaveDraftDocumentService.addDocumentInfo("id", null, input);
+        final DocumentInfo actual = testSaveDraftDocumentService.addDocumentInfo(input);
         final DocumentInfo expected =  new DocumentInfo();
         expected.setDirty(true);
         expected.setRetainable(true);
