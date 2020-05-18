@@ -46,8 +46,8 @@ class EditContentToolsCtrl {
 
   openContentEditor() {
     this.publicationStateOnExit = this.ContentEditor.getPublicationState();
-    this.EditContentService.stopEditing();
     this.exitToContentEditor = true;
+    this.EditContentService.stopEditing();
   }
 
   uiCanExit() {
