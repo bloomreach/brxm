@@ -28,7 +28,7 @@
   <name>Hippo Plugin Content Blocks Root</name>
   <description>Hippo Plugin Content Blocks Root</description>
   <artifactId>hippo-plugin-content-blocks-root</artifactId>
-  <version>14.2.1</version>
+  <version>14.2.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <scm>
