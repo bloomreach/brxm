@@ -34,7 +34,7 @@
 
   <groupId>org.onehippo.cms7.hst</groupId>
   <artifactId>hst</artifactId>
-  <version>14.2.1</version>
+  <version>14.2.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
   <issueManagement>
