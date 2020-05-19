@@ -28,7 +28,7 @@
 
   <name>Hippo CMS7 Services - validation</name>
   <artifactId>hippo-services-validation</artifactId>
-  <version>14.2.1-SNAPSHOT</version>
+  <version>14.2.1</version>
 
   <inceptionYear>2019</inceptionYear>
 
@@ -37,8 +37,8 @@
     <notice.project.name>Hippo CMS7 Services - validation</notice.project.name>
 
     <!-- runtime dependencies -->
-    <hippo.repository.version>14.2.1-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>14.2.1-SNAPSHOT</hippo.services.version>
+    <hippo.repository.version>14.2.1</hippo.repository.version>
+    <hippo.services.version>14.2.1</hippo.services.version>
     <commons-lang.version>2.6</commons-lang.version>
 
     <!-- test dependencies -->
