@@ -59,7 +59,7 @@
     <hippo.services.contenttype.version>14.2.1-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.services.eventbus.version>14.2.1</hippo.services.eventbus.version>
     <hippo.services.validation.version>14.2.1</hippo.services.validation.version>
-    <hippo.services.webfiles.version>14.2.1-SNAPSHOT</hippo.services.webfiles.version>
+    <hippo.services.webfiles.version>14.2.1</hippo.services.webfiles.version>
     <hippo.services.htmlprocessor.version>14.2.1-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.utilities.version>14.2.1</hippo.utilities.version>
     <hippo.testutils.version>14.2.1</hippo.testutils.version>
