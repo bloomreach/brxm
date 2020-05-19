@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.attributes.AjaxCallListener;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.ajax.AjaxDisableComponentListener;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
@@ -81,20 +81,13 @@ public class ButtonWrapper implements IClusterable {
                 @Override
                 protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
                     super.updateAjaxAttributes(attributes);
-                    attributes.getAjaxCallListeners().add(new AjaxCallListener(){
-                        @Override
-                        public CharSequence getBeforeHandler(final Component component) {
-                            return String.format("$('#%s').prop('disabled', true);", getMarkupId());
-                        }
 
-                        @Override
-                        public CharSequence getCompleteHandler(final Component component) {
-                            return String.format("$('#%s').prop('disabled', false);", getMarkupId());
-                        }
-                    });
+                    attributes.getAjaxCallListeners().add(new AjaxDisableComponentListener());
+
                     ButtonWrapper.this.onUpdateAjaxAttributes(attributes);
                 }
             };
+            button.setOutputMarkupId(true);
         } else {
             button = new Button(DialogConstants.BUTTON) {
                 @Override
