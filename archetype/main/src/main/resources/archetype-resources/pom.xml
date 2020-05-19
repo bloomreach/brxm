@@ -75,6 +75,8 @@
 
     <development-module-deploy-dir>shared/lib</development-module-deploy-dir>
 
+    <docker.postgres.bind.1>${project.basedir}/target/postgres-data:/var/lib/postgresql/data</docker.postgres.bind.1>
+
     <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
     <buildNumber>${maven.build.timestamp}</buildNumber>
   </properties>
@@ -257,10 +259,17 @@
     <profile>
       <id>docker.postgres</id>
       <properties>
-        <docker.db.bind.1>${project.basedir}/target/postgres-data:/var/lib/postgresql/data</docker.db.bind.1>
+        <docker.db.bind.1>${docker.postgres.bind.1}</docker.db.bind.1>
         <docker.db.bind.2>${project.basedir}/db-bootstrap:/docker-entrypoint-initdb.d</docker.db.bind.2>
 
         <docker.brxm.envRun.POSTGRES_DB_HOST>${dollar}{docker.container.db.net.${artifactId}-network.ip}</docker.brxm.envRun.POSTGRES_DB_HOST>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>docker.windows</id>
+      <properties>
+        <docker.postgres.bind.1>${artifactId}-postgres-data:/var/lib/postgresql/data</docker.postgres.bind.1>
       </properties>
     </profile>
 
