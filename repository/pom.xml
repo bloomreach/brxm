@@ -26,7 +26,7 @@
   <name>Repository</name>
   <description>Hippo Repository</description>
   <artifactId>hippo-repository</artifactId>
-  <version>14.2.1-SNAPSHOT</version>
+  <version>14.2.1</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2007</inceptionYear>
@@ -75,12 +75,12 @@
     <javadoc.base.version>13.1</javadoc.base.version>
 
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
-    <hippo.configuration-management.version>14.2.1-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.commons.version>14.2.1-SNAPSHOT</hippo.commons.version>
-    <hippo.services.version>14.2.1-SNAPSHOT</hippo.services.version>
-    <hippo.services.eventbus.version>14.2.1-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.utilities.version>14.2.1-SNAPSHOT</hippo.utilities.version>
-    <hippo.testutils.version>14.2.1-SNAPSHOT</hippo.testutils.version>
+    <hippo.configuration-management.version>14.2.1</hippo.configuration-management.version>
+    <hippo.commons.version>14.2.1</hippo.commons.version>
+    <hippo.services.version>14.2.1</hippo.services.version>
+    <hippo.services.eventbus.version>14.2.1</hippo.services.eventbus.version>
+    <hippo.utilities.version>14.2.1</hippo.utilities.version>
+    <hippo.testutils.version>14.2.1</hippo.testutils.version>
 
     <!-- Test dependencies  -->
     <junit.version>4.12</junit.version>
