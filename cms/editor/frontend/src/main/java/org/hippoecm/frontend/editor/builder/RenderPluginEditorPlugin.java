@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -38,9 +37,10 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.ajax.NoDoubleClickAjaxLink;
+import org.hippoecm.frontend.ajax.NoDoubleClickBehavior;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.attributes.TitleAttribute;
-import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.builder.EditorContext.Mode;
@@ -124,7 +124,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
             @Override
             protected void populateItem(final Item<ILayoutTransition> item) {
                 final ILayoutTransition transition = item.getModelObject();
-                final AjaxLink<Void> link = new AjaxLink<Void>("link") {
+                final AjaxLink<Void> link = new NoDoubleClickAjaxLink<Void>("link") {
 
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
@@ -134,7 +134,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                     @Override
                     protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
                         super.updateAjaxAttributes(attributes);
-                        attributes.getAjaxCallListeners().add(new EventStoppingDecorator());
+                        attributes.setEventPropagation(AjaxRequestAttributes.EventPropagation.STOP);
                     }
 
                 };
@@ -151,7 +151,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
         });
 
-        final AjaxLink removeLink = new AjaxLink("remove") {
+        final AjaxLink<Void> removeLink = new NoDoubleClickAjaxLink<Void>("remove") {
 
             @Override
             public void onClick(final AjaxRequestTarget target) {
@@ -163,7 +163,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
             @Override
             protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
                 super.updateAjaxAttributes(attributes);
-                attributes.getAjaxCallListeners().add(new EventStoppingDecorator());
+                attributes.setEventPropagation(AjaxRequestAttributes.EventPropagation.STOP);
             }
 
         };
@@ -173,8 +173,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
 
         if (editable) {
-            add(new AjaxEventBehavior("click") {
-
+            add(new NoDoubleClickBehavior() {
                 @Override
                 protected void onEvent(final AjaxRequestTarget target) {
                     builderContext.focus();
@@ -183,7 +182,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                 @Override
                 protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
                     super.updateAjaxAttributes(attributes);
-                    attributes.getAjaxCallListeners().add(new EventStoppingDecorator());
+                    attributes.setEventPropagation(AjaxRequestAttributes.EventPropagation.STOP);
                 }
             });
 

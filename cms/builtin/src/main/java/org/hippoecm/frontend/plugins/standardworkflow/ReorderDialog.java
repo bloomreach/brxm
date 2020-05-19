@@ -39,6 +39,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.addon.workflow.WorkflowDialog;
+import org.hippoecm.frontend.ajax.BrLink;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeNameModel;
@@ -277,7 +278,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             updateListDataTable();
             add(dataTable);
 
-            top = new AjaxLink<Void>("top") {
+            top = new BrLink<Void>("top") {
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
                     final IModel<ListItem> selection = dataTable.getModel();
@@ -292,7 +293,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             topIcon.addCssClass("hi-rotate-90");
             top.add(topIcon);
 
-            up = new AjaxLink<Void>("up") {
+            up = new BrLink<Void>("up") {
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
                     final IModel<ListItem> selection = dataTable.getModel();
@@ -305,7 +306,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             add(up);
             up.add(HippoIcon.fromSprite("icon", Icon.CHEVRON_UP));
 
-            down = new AjaxLink<Void>("down") {
+            down = new BrLink<Void>("down") {
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
                     final IModel<ListItem> selection = dataTable.getModel();
@@ -318,7 +319,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             add(down);
             down.add(HippoIcon.fromSprite("icon", Icon.CHEVRON_DOWN));
 
-            bottom = new AjaxLink<Void>("bottom") {
+            bottom = new BrLink<Void>("bottom") {
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
                     final IModel<ListItem> selection = dataTable.getModel();
