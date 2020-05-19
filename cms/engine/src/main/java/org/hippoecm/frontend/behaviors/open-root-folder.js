@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,12 @@
  *
  */
 
-package org.hippoecm.frontend.plugins.standards.perspective;
+(function () {
+  "use strict";
 
-/**
- * This interface is the java alternative of the NavLocation typescript interface
- * defined in the bloomreach navigation application.
- * <p>
- * See projects/navapp-communication/src/lib/parent-api.ts of the @bloomreach/navapp-communication dependency
- * in the package.json of the engine module.
- */
-public interface ParentApi {
+  Hippo.openRootFolder = function() {
+    Wicket.Ajax.get({ u: '${callbackUrl}' });
+  };
 
-    void updateNavLocation(String path, String breadcrumbLabel);
-}
+}());
+//# sourceURL=open-root-folder.js

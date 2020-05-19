@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -38,6 +39,7 @@ import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.ServiceTracker;
+import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
 
 public class BrowserPerspective extends Perspective {
@@ -113,8 +115,21 @@ public class BrowserPerspective extends Perspective {
             @Override
             void onUpdateModel(final IModel<Node> oldModel, final IModel<Node> newModel) {
                 final String newTab = JcrUtils.getNodePathQuietly(newModel.getObject());
-                updateNavLocation(newTab);
+                final String documentName = getDocumentName(newModel);
+
+                updateNavLocation(newTab, documentName);
+
                 state.onTabChanged(newTab);
+            }
+
+            String getDocumentName(IModel<Node> model) {
+                try {
+                    final IModel<String> nameModel = DocumentUtils.getDocumentNameModel(model);
+
+                    return nameModel != null ? nameModel.getObject() : "";
+                } catch (RepositoryException e) {
+                    return "";
+                }
             }
         };
 
@@ -184,7 +199,7 @@ public class BrowserPerspective extends Perspective {
     protected void onActivated() {
         super.onActivated();
         tabs.focusRecentTabUnlessHidden();
-        updateNavLocation(tabs.getSelectedTabPath());
+        updateNavLocation(tabs.getSelectedTabPath(), null);
     }
 
     @Override
@@ -275,11 +290,11 @@ public class BrowserPerspective extends Perspective {
 
     }
 
-    private void updateNavLocation(String selectedTabPath) {
+    private void updateNavLocation(String selectedTabPath, String breadcrumbLabel) {
         final String appPath = getAppPath();
         final String path = Optional.ofNullable(selectedTabPath)
                 .map(tabPath -> String.format("%s/path%s", appPath, tabPath))
                 .orElse(appPath);
-        new ParentApiCaller().updateNavLocation(path);
+        new ParentApiCaller().updateNavLocation(path, breadcrumbLabel);
     }
 }
