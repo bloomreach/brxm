@@ -79,7 +79,7 @@
     <hippo.plugin.seo-support.version>14.2.1-SNAPSHOT</hippo.plugin.seo-support.version>
     <hippo.plugin.sitemap.version>14.2.1-SNAPSHOT</hippo.plugin.sitemap.version>
     <hippo.plugin.taxonomy.version>14.2.1-SNAPSHOT</hippo.plugin.taxonomy.version>
-    <hippo.addon-crisp.version>14.2.1-SNAPSHOT</hippo.addon-crisp.version>
+    <hippo.addon-crisp.version>14.2.1</hippo.addon-crisp.version>
     <hippo.spa-sdk.version>14.2.1-SNAPSHOT</hippo.spa-sdk.version>
     <hippo.ui-extension.version>14.2.1-SNAPSHOT</hippo.ui-extension.version>
 
