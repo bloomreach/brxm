@@ -148,6 +148,8 @@
 
     <!-- This property is empty by default, can be used to set the tcp docker daemon -->
     <docker.daemon.host></docker.daemon.host>
+
+    <docker.image.pull.policy>Always</docker.image.pull.policy>
   </properties>
 
   <repositories>
@@ -1103,6 +1105,9 @@
           <groupId>io.fabric8</groupId>
           <artifactId>docker-maven-plugin</artifactId>
           <version>${docker.maven.plugin.version}</version>
+          <configuration>
+            <imagePullPolicy>${docker.image.pull.policy}</imagePullPolicy>
+          </configuration>
         </plugin>
 
       </plugins>
@@ -1383,6 +1388,7 @@
                       <name>maven/</name>
                       <descriptor>${docker.dev.assembly.descriptor}</descriptor>
                     </assembly>
+                    <imagePullPolicy>IfNotPresent</imagePullPolicy>
                   </build>
                   <run>
                     <ports>
@@ -1401,6 +1407,7 @@
                     <log>
                       <enabled>true</enabled>
                     </log>
+                    <imagePullPolicy>IfNotPresent</imagePullPolicy>
                   </run>
                 </image>
                 <image>
