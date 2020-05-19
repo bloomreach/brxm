@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,10 @@ package org.hippoecm.frontend.plugins.cms.browse;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.behaviors.OpenRootFolderBehavior;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ObservableModel;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -52,8 +54,9 @@ public class Navigator extends RenderPlugin {
 
         // pretend that cluster has already been started to prevent it's creation in the BrowseService constructor
         clusterStarted = true;
-        final BrowseService browseService = new BrowseService(context, config,
-                new JcrNodeModel(config.getString("model.default.path", "/"))) {
+
+        final JcrNodeModel defaultRootPath = new JcrNodeModel(config.getString("model.default.path", "/"));
+        final BrowseService browseService = new BrowseService(context, config, defaultRootPath) {
 
             @Override
             public void browse(final IModel<Node> model) {
@@ -69,6 +72,13 @@ public class Navigator extends RenderPlugin {
             }
         };
         clusterStarted = false;
+
+        add(new OpenRootFolderBehavior() {
+            @Override
+            protected void onOpenRootFolder(final AjaxRequestTarget target) {
+                browseService.browse(defaultRootPath);
+            }
+        });
 
         final IModel<DocumentCollection> collectionModel = browseService.getCollectionModel();
         docView = new DocumentCollectionView("documents", context, config, collectionModel, this) {

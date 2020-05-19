@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.standards.perspective;
 import java.util.function.Supplier;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.request.cycle.RequestCycle;
 
@@ -27,7 +28,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
  */
 public class ParentApiCaller implements ParentApi {
 
-    static final String JAVA_SCRIPT_TEMPLATE = "Hippo.navapp.updateNavLocation({ path: '%s' })";
+    static final String JAVA_SCRIPT_TEMPLATE = "Hippo.navapp.updateNavLocation(%s)";
     private Supplier<IPartialPageRequestHandler> targetSupplier;
 
     public ParentApiCaller() {
@@ -41,11 +42,27 @@ public class ParentApiCaller implements ParentApi {
     }
 
     @Override
-    public void updateNavLocation(final String path) {
+    public void updateNavLocation(final String path, final String breadcrumbLabel) {
         final IPartialPageRequestHandler target = targetSupplier.get();
-        if (target != null) {
-            target.appendJavaScript(String.format(JAVA_SCRIPT_TEMPLATE, path));
+
+        if (target == null) {
+            return;
         }
+
+        String script = this.prepareJS(path, breadcrumbLabel);
+
+        target.appendJavaScript(script);
+    }
+
+    private String prepareJS(final String path, final String breadcrumbLabel) {
+        final JSONObject params = new JSONObject();
+        params.put("path", path);
+
+        if (breadcrumbLabel != null && breadcrumbLabel.length() > 0) {
+            params.put("breadcrumbLabel", breadcrumbLabel);
+        }
+
+        return String.format(JAVA_SCRIPT_TEMPLATE, params);
     }
 
 }
