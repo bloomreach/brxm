@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxChannel;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
@@ -34,7 +33,6 @@ import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.FeedbackMessagesModel;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.DefaultMarkupCacheKeyProvider;
 import org.apache.wicket.markup.DefaultMarkupResourceStreamProvider;
 import org.apache.wicket.markup.IMarkupCacheKeyProvider;
@@ -299,19 +297,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
             @Override
             protected Button decorate(final Button button) {
-                button.add(new AjaxEventBehavior("click") {
-
-                    @Override
-                    protected void onComponentTag(final ComponentTag tag) {
-                        super.onComponentTag(tag);
-                        tag.put("type", "button");
-                    }
-
-                    @Override
-                    protected void onEvent(final AjaxRequestTarget target) {
-                        onSubmit();
-                    }
-                });
                 button.setDefaultFormProcessing(false);
                 return super.decorate(button);
             }
