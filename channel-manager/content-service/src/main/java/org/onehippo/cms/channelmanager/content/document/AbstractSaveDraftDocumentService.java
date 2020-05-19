@@ -32,6 +32,11 @@ import org.onehippo.cms.channelmanager.content.error.InternalServerErrorExceptio
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Defines the business logic related to the "Keep draft" functionality. The class intends to be persistence layer
+ * agnostic to unit test without the need for mocks or backing repository.
+ * The class is not thread safe, so for each request a new instance should be created.
+ */
 public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocumentService {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractSaveDraftDocumentService.class);
