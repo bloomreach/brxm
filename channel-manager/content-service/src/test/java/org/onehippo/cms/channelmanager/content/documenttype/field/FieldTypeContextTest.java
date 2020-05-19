@@ -52,7 +52,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 @PrepareForTest({ContentTypeContext.class, NamespaceUtils.class, LegacyValidatorMapper.class})
 public class FieldTypeContextTest {
 

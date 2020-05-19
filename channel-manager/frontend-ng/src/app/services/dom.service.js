@@ -59,6 +59,7 @@ class DomService {
   addCssLinks(window, files) {
     return this.$q.all(files.map(file => this.$q((resolve, reject) => {
       const link = angular.element('<link>', {
+        crossOrigin: 'use-credentials',
         rel: 'stylesheet',
         href: file,
       });
@@ -76,6 +77,7 @@ class DomService {
       const script = window.document.createElement('script');
       script.type = 'text/javascript';
       script.src = url;
+      script.crossOrigin = 'use-credentials';
       script.addEventListener('load', () => this.$rootScope.$apply(resolve));
       script.addEventListener('error', () => this.$rootScope.$apply(reject));
       window.document.body.appendChild(script);

@@ -54,7 +54,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 @PrepareForTest({ContentTypeContext.class, HippoServiceRegistry.class, LocalizationUtils.class, NamespaceUtils.class})
 public class ContentTypeContextTest {
 

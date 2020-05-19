@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ class ViewportToggleCtrl {
   }
 
   $onInit() {
-    const { viewportMap } = this.ChannelService.getChannel();
+    const { defaultDevice, viewportMap } = this.ChannelService.getChannel();
     const widths = Object.assign({}, DEFAULT_VIEWPORT_WIDTHS, viewportMap);
 
     this.values = [
@@ -56,9 +56,8 @@ class ViewportToggleCtrl {
       },
     ];
 
-    if (!this.values.some(item => item.id === this.value)) {
-      this.value = this.values[0].id;
-    }
+    const selectedDevice = this.value || defaultDevice.toUpperCase();
+    this.value = this.values.some(item => item.id === selectedDevice) ? selectedDevice : this.values[0].id;
 
     this._updateViewport();
   }
