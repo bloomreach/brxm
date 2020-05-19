@@ -46,7 +46,7 @@
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
     <hippo.cargo-extensions.version>13.0.0</hippo.cargo-extensions.version>
 
-    <hippo.configuration-management.version>14.2.1-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.configuration-management.version>14.2.1</hippo.configuration-management.version>
     <hippo.addon-channel-manager.version>14.2.1-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>14.2.1-SNAPSHOT</hippo.addon-search-service.version>
     <hippo.commons.version>14.2.1</hippo.commons.version>
