@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>14.2.1</version>
+  <version>14.2.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 
