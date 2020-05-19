@@ -70,7 +70,7 @@
     <hippo.plugin.content-blocks.version>14.2.1-SNAPSHOT</hippo.plugin.content-blocks.version>
     <hippo.plugin.content-tagging.version>14.2.1-SNAPSHOT</hippo.plugin.content-tagging.version>
     <hippo.plugin.dashboard-document-wizard.version>14.2.1-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
-    <hippo.plugin.gallerypicker.version>14.2.1-SNAPSHOT</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.gallerypicker.version>14.2.1</hippo.plugin.gallerypicker.version>
     <hippo.plugin.poll.version>14.2.1-SNAPSHOT</hippo.plugin.poll.version>
     <hippo.plugin.relateddocs.version>14.2.1-SNAPSHOT</hippo.plugin.relateddocs.version>
     <hippo.plugin.resourcebundle-editor.version>14.2.1-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
