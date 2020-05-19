@@ -27,7 +27,7 @@
   <name>Hippo Essentials Components</name>
   <description>Hippo Essentials Components</description>
   <artifactId>hippo-essentials-components</artifactId>
-  <version>14.2.1-SNAPSHOT</version>
+  <version>14.2.1</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2016</inceptionYear>
@@ -36,10 +36,10 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Essentials Components</notice.project.name>
 
-    <hippo.repository.version>14.2.1-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>14.2.1-SNAPSHOT</hippo.services.version>
-    <hippo.commons.version>14.2.1-SNAPSHOT</hippo.commons.version>
-    <hippo.hst.version>14.2.1-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>14.2.1</hippo.repository.version>
+    <hippo.services.version>14.2.1</hippo.services.version>
+    <hippo.commons.version>14.2.1</hippo.commons.version>
+    <hippo.hst.version>14.2.1</hippo.hst.version>
     <commons-lang3.version>3.9</commons-lang3.version>
     <findbugs.jsr305.version>1.3.9</findbugs.jsr305.version>
     <jsoup.version>1.11.2</jsoup.version>
