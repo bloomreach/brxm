@@ -15,14 +15,23 @@
   -->
 
 <template>
-  <component :is="mapping[component.getType()]" :component="component" :page="page" />
+  <component
+    v-if="component.getType() in mapping"
+    :is="mapping[component.getType()]"
+    :component="component"
+    :page="page"
+  />
+
+  <br-container-item-undefined v-else :component="component" :page="page" />
 </template>
 
 <script lang="ts">
 import { ContainerItem, Page } from '@bloomreach/spa-sdk';
 import { Component, InjectReactive, Inject, Vue, Watch } from 'vue-property-decorator';
+import BrContainerItemUndefined from './BrContainerItemUndefined.vue';
 
 @Component({
+  components: { BrContainerItemUndefined },
   computed: {
     component(this: BrNodeContainerItem) {
       return this.component$();
