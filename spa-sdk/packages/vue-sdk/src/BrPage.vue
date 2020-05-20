@@ -15,13 +15,13 @@
   -->
 
 <template>
-  <br-node-component v-if="page" :component="root">
-    <slot :component="root" :page="page" />
+  <br-node-component v-if="state" :component="root">
+    <slot :component="root" :page="state" />
   </br-node-component>
 </template>
 
 <script lang="ts">
-import { Configuration, Page, initialize, destroy } from '@bloomreach/spa-sdk';
+import { Configuration, PageModel, Page, initialize, isPage, destroy } from '@bloomreach/spa-sdk';
 import { Component, Prop, ProvideReactive, Vue, Watch } from 'vue-property-decorator';
 import BrNodeComponent from './BrNodeComponent.vue';
 
@@ -32,10 +32,10 @@ import BrNodeComponent from './BrNodeComponent.vue';
   components: { BrNodeComponent },
   computed: {
     root(this: BrPage) {
-      return this.page?.getComponent();
+      return this.state?.getComponent();
     },
   },
-  data: () => ({ page: undefined }),
+  data: () => ({ state: undefined }),
   name: 'br-page',
 })
 export default class BrPage extends Vue {
@@ -50,29 +50,47 @@ export default class BrPage extends Vue {
    */
   @Prop() @ProvideReactive() mapping!: Record<string, Vue.Component>;
 
-  @ProvideReactive() private page?: Page;
+  /**
+   * The pre-initialized page instance or prefetched page model.
+   * Mostly this property should be used to transfer state from the server-side to the client-side.
+   */
+  @Prop() page?: Page | PageModel;
+
+  /**
+   * The current state of the page component.
+   */
+  @ProvideReactive('page') state?: Page;
 
   destroyed() {
     this.destroy();
   }
 
   mounted() {
-    this.page?.sync();
+    this.state?.sync();
   }
 
   updated() {
-    this.page?.sync();
+    this.state?.sync();
   }
 
   @Watch('configuration', { immediate: true, deep: true })
-  private async update() {
+  private async update(current: Configuration, previous: Configuration) {
     this.destroy();
-    this.page = await initialize(this.configuration);
+
+    const page = previous ? undefined : this.page;
+
+    if (isPage(page)) {
+      this.state = page;
+
+      return;
+    }
+
+    this.state = await initialize(this.configuration, page);
   }
 
   private destroy() {
-    if (this.page) {
-      destroy(this.page);
+    if (this.state) {
+      destroy(this.state);
     }
   }
 }
