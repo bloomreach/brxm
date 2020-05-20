@@ -17,6 +17,8 @@ package org.onehippo.repository.documentworkflow.integration;
 
 import java.rmi.RemoteException;
 import java.util.Calendar;
+import java.util.Set;
+import java.util.SortedMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -26,6 +28,8 @@ import javax.jcr.Value;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
+import org.assertj.core.api.Assertions;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
@@ -414,5 +418,34 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         assertThat(unpublished.hasNode("compound3")).isTrue();
     }
 
+    @Test
+    public void document_is_audit_traced() throws RepositoryException, WorkflowException, RemoteException {
+
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
+        Assertions.assertThat(documentWorkflow.listVersions())
+                .isEmpty();
+
+        documentWorkflow.obtainEditableInstance();
+        final Node draft = getVariant(DRAFT);
+        draft.addMixin(HippoStdPubWfNodeType.MIXIN_HIPPOSTDPUBWF_AUDIT_TRACE);
+        final String propertyName = "hippo:title";
+        final String propertyValue = "test";
+        draft.setProperty(propertyName, propertyValue);
+        session.save();
+        documentWorkflow.commitEditableInstance();
+
+        final Node unpublished = getVariant(UNPUBLISHED);
+
+        assertThat(unpublished.isNodeType(HippoStdPubWfNodeType.MIXIN_HIPPOSTDPUBWF_AUDIT_TRACE)).isTrue();
+
+        Assertions.assertThat(unpublished.getProperty(propertyName).getString())
+                .isEqualTo(propertyValue);
+        final SortedMap<Calendar, Set<String>> versions = documentWorkflow.listVersions();
+        Assertions.assertThat(versions.size())
+                .isEqualTo(1);
+
+        documentWorkflow.restoreVersion(versions.firstKey());
+        Assertions.assertThat(documentWorkflow.isModified()).isFalse();
+    }
 
 }
