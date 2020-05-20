@@ -45,6 +45,11 @@ export default class BrPage extends Vue {
    */
   @Prop() configuration!: Configuration;
 
+  /**
+   * The brXM and Vue.js components mapping.
+   */
+  @Prop() @ProvideReactive() mapping!: Record<string, Vue.Component>;
+
   @ProvideReactive() private page?: Page;
 
   destroyed() {
