@@ -880,7 +880,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         try {
             return (HippoBean) getObjectBeanManager().getObject("/" + base);
         } catch (ObjectBeanManagerException e) {
-            log.error("ObjectBeanManagerException. Return null : {}", e);
+            log.info("ObjectBeanManagerException. Return null", e);
             return null;
         }
     }
@@ -907,7 +907,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
                 return (HippoBean) getObjectBeanManager().getObject("/" + base + "/" + relPath);
             }
         } catch (ObjectBeanManagerException e) {
-            log.error("ObjectBeanManagerException. Return null : {}", e);
+            log.info("ObjectBeanManagerException. Return null", e);
             return null;
         }
     }

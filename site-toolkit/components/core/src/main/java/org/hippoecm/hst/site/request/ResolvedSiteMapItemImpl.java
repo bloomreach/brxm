@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -213,8 +213,13 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         try {
             Session session = RequestContextProvider.get().getSession();
             String absPath = getResolvedMount().getMount().getContentPath() + "/" + PathUtils.normalizePath(getRelativeContentPath());
-            if (!session.nodeExists(absPath)) {
-                log.debug("No node found at '{}'. No mapped configuration can be returned", absPath);
+            try {
+                if (!session.nodeExists(absPath)) {
+                    log.debug("No node found at '{}'. No mapped configuration can be returned", absPath);
+                    return null;
+                }
+            } catch (RepositoryException e) {
+                log.info("Could not get node for '{}' : {}", absPath, e.toString());
                 return null;
             }
 
