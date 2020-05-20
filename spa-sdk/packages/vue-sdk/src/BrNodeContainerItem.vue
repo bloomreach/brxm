@@ -15,22 +15,17 @@
   -->
 
 <template>
-  <component :is="componentName" :component="component" :page="page" />
+  <component :is="mapping[component.getType()]" :component="component" :page="page" />
 </template>
 
 <script lang="ts">
 import { ContainerItem, Page } from '@bloomreach/spa-sdk';
 import { Component, InjectReactive, Inject, Vue, Watch } from 'vue-property-decorator';
 
-const CAMEL_CASE = /\s+(\w)/g;
-
 @Component({
   computed: {
     component(this: BrNodeContainerItem) {
       return this.component$();
-    },
-    componentName(this: BrNodeContainerItem) {
-      return `br-${this.component.getType()!.replace(CAMEL_CASE, '-$1').toLowerCase()}`;
     },
   },
 })
@@ -38,6 +33,8 @@ export default class BrNodeContainerItem extends Vue {
   @Inject() private component$!: () => ContainerItem;
 
   private component!: ContainerItem;
+
+  @InjectReactive() private mapping!: Record<string, Vue.Component>;
 
   @InjectReactive() private page!: Page;
 

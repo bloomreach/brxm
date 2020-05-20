@@ -23,6 +23,13 @@
         <br-node-component v-for="(component, key) in component.getChildren()" :key="key" :component="component" />
       </br-node-container>
 
+      <component
+        v-else-if="component.getName() in mapping"
+        :is="mapping[component.getName()]"
+        :component="component"
+        :page="page"
+      />
+
       <br-node-component v-else v-for="(component, key) in component.getChildren()" :key="key" :component="component" />
     </slot>
   </br-meta>
@@ -48,6 +55,8 @@ import BrNodeContainer from './BrNodeContainer.vue';
 })
 export default class BrNodeComponent extends Vue {
   @Prop() component!: SpaComponent;
+
+  @InjectReactive() private mapping!: Record<string, Vue.Component>;
 
   @InjectReactive() private page!: Page;
 

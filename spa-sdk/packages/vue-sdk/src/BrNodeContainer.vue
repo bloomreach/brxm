@@ -15,7 +15,16 @@
   -->
 
 <template>
-  <br-container-inline v-if="component.getType() === TYPE_CONTAINER_INLINE" :component="component" :page="page">
+  <component
+    v-if="component.getType() in mapping"
+    :is="mapping[component.getType()]"
+    :component="component"
+    :page="page"
+  >
+    <slot />
+  </component>
+
+  <br-container-inline v-else-if="component.getType() === TYPE_CONTAINER_INLINE" :component="component" :page="page">
     <slot />
   </br-container-inline>
 
@@ -88,6 +97,8 @@ export default class BrNodeContainer extends Vue {
   @Inject() private component$!: () => Container;
 
   private component!: Container;
+
+  @InjectReactive() private mapping!: Record<string, Vue.Component>;
 
   @InjectReactive() private page!: Page;
 }
