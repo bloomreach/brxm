@@ -19,19 +19,17 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +58,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         this.resolvedMount = resolvedMount;
 
        /*
-        * We take the properties form the hstSiteMapItem getParameters and replace params (like ${1}) with the params[] array 
+        * We take the properties form the hstSiteMapItem getParameters and replace params (like ${1}) with the params[] array
         */
 
         resolvedParameters = new Properties();
@@ -206,35 +204,15 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
             return null;
         }
 
-        if (getRelativeContentPath() == null) {
-            log.debug("No relative content path for '{}' so cannot lookup mapped component configuration id", hstSiteMapItem.getId());
-            return null;
-        }
         try {
-            Session session = RequestContextProvider.get().getSession();
-            String absPath = getResolvedMount().getMount().getContentPath() + "/" + PathUtils.normalizePath(getRelativeContentPath());
-            try {
-                if (!session.nodeExists(absPath)) {
-                    log.debug("No node found at '{}'. No mapped configuration can be returned", absPath);
-                    return null;
-                }
-            } catch (RepositoryException e) {
-                log.info("Could not get node for '{}' : {}", absPath, e.toString());
+            final HippoBean contentBean = RequestContextProvider.get().getContentBean();
+            if (contentBean != null && contentBean.getNode() != null) {
+                String primaryType = contentBean.getNode().getPrimaryNodeType().getName();
+                return hstSiteMapItem.getComponentConfigurationIdMappings().get(primaryType);
+            } else {
+                log.debug("No content bean found for request, return null");
                 return null;
             }
-
-            Node node =  session.getNode(absPath);
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                // we need to fetch the document below the handle if it is present
-                if (!node.hasNode(node.getName())) {
-                    log.debug("No mapped configuration can be returned because no document below handle");
-                    return null;
-                }
-                node = node.getNode(node.getName());
-            }
-            String primaryType = node.getPrimaryNodeType().getName();
-            return hstSiteMapItem.getComponentConfigurationIdMappings().get(primaryType);
-
         } catch (RepositoryException e) {
             log.error("Repository exception while looking up component mapping", e);
             return null;
