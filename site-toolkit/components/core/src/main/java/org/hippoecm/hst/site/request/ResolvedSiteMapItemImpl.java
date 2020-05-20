@@ -249,8 +249,13 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         try {
             Session session = RequestContextProvider.get().getSession();
             String absPath = getResolvedMount().getMount().getContentPath() + "/" + PathUtils.normalizePath(getRelativeContentPath());
-            if (!session.nodeExists(absPath)) {
-                log.debug("No node found at '{}'. No mapped configuration can be returned", absPath);
+            try {
+                if (!session.nodeExists(absPath)) {
+                    log.debug("No node found at '{}'. No mapped configuration can be returned", absPath);
+                    return null;
+                }
+            } catch (RepositoryException e) {
+                log.info("Could not get node for '{}' : {}", absPath, e.toString());
                 return null;
             }
 

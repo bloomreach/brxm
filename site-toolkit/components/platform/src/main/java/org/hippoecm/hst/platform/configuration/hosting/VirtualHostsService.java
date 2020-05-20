@@ -466,16 +466,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
-    public void addVirtualHost(VirtualHost virtualHost) throws IllegalArgumentException {
-       Map<String, VirtualHost> rootVirtualHosts =  rootVirtualHostsByGroup.get(virtualHost.getHostGroupName());
-       if(rootVirtualHosts == null) {
-           rootVirtualHosts =  virtualHostHashMap();
-           rootVirtualHostsByGroup.put(virtualHost.getHostGroupName(), rootVirtualHosts);
-       }
-       rootVirtualHosts.put(virtualHost.getName(), virtualHost);
-    }
-
-    @Override
     public Map<String, Map<String, VirtualHost>> getRootVirtualHostsByGroup() {
         return rootVirtualHostsByGroup;
     }
