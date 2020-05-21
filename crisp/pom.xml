@@ -59,7 +59,6 @@
     <httpcomponents-httpcore.version>4.4.9</httpcomponents-httpcore.version>
     <httpcomponents-httpclient.version>4.5.5</httpcomponents-httpclient.version>
 
-    <spring.security.version>4.2.13.RELEASE</spring.security.version>
     <spring-security-oauth2.version>2.3.7.RELEASE</spring-security-oauth2.version>
 
     <junit.version>4.12</junit.version>
