@@ -49,6 +49,7 @@ module.exports = {
             {
               buildTarget: isServer ? 'server' : 'client',
               corejs: { version: 3 },
+              loose: true,
             },
           ],
         ];
