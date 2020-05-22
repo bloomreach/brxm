@@ -27,6 +27,15 @@ module.exports = {
         content: process.env.npm_package_description || '',
       },
     ],
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
+      {
+        rel: 'stylesheet',
+        href: 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css',
+        integrity: 'sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk',
+        crossorigin: 'anonymous',
+      },
+    ],
   },
   loading: { color: '#fff' },
   buildModules: ['@nuxt/typescript-build'],
