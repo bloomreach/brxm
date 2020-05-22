@@ -78,6 +78,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
     private JcrNodeModel nodeModel;
     private Observable observable;
+    private Observable draftObservable;
     private transient boolean loaded = false;
 
     private transient String cssClass;
@@ -87,6 +88,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
     public StateIconAttributes(final JcrNodeModel nodeModel) {
         this.nodeModel = nodeModel;
         observable = new Observable(nodeModel);
+        draftObservable = new Observable(nodeModel);
     }
 
     public String getSummary() {
@@ -158,10 +160,14 @@ public class StateIconAttributes implements IObservable, IDetachable {
                 unpublishedVariantNode = frozen;
             }
         }
-        if (( unpublishedVariantNode != null || draftVariantNode != null ) && (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
+
+        final Node unpublishedOtherwiseDraft =
+                unpublishedVariantNode != null ? unpublishedVariantNode : draftVariantNode;
+        if ( unpublishedOtherwiseDraft != null
+                && (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
                 || unpublishedVariantNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY))) {
 
-            final String state = appendDraftChangesPostfix(getState(unpublishedVariantNode), retainable);
+            final String state = appendDraftChangesPostfix(getState(unpublishedOtherwiseDraft), retainable);
             cssClass = StateIconAttributeModifier.PREFIX + (isHistoric ? "prev-" : "") + state;
 
             final JcrNodeTypeModel nodeTypeModel = new JcrNodeTypeModel(HippoStdNodeType.NT_PUBLISHABLESUMMARY);
@@ -170,7 +176,12 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
             icons = getStateIcons(state);
 
-            observable.setTarget(new JcrNodeModel(unpublishedVariantNode));
+            if (unpublishedVariantNode != null){
+                observable.setTarget(new JcrNodeModel(unpublishedVariantNode));
+            }
+            if (draftVariantNode != null){
+                draftObservable.setTarget(new JcrNodeModel(draftVariantNode));
+            }
         }
         else {
             icons = new Icon[]{Icon.EMPTY, Icon.EMPTY};
@@ -232,16 +243,19 @@ public class StateIconAttributes implements IObservable, IDetachable {
     @Override
     public void setObservationContext(IObservationContext<? extends IObservable> context) {
         observable.setObservationContext(context);
+        draftObservable.setObservationContext(context);
     }
 
     @Override
     public void startObservation() {
         observable.startObservation();
+        draftObservable.startObservation();
     }
 
     @Override
     public void stopObservation() {
         observable.stopObservation();
+        draftObservable.stopObservation();
     }
 
 
