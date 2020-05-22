@@ -40,6 +40,7 @@ module.exports = {
   loading: { color: '#fff' },
   buildModules: ['@nuxt/typescript-build'],
   modules: ['@nuxtjs/axios', '@nuxtjs/dotenv'],
+  plugins: ['~/plugins/brxm'],
   build: {
     babel: {
       presets({ isServer }) {
