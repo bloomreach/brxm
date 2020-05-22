@@ -25,6 +25,9 @@
       ],
       "env": {
         "jest": true
+      },
+      "rules": {
+        "max-classes-per-file": "off"
       }
     }
   ]
