@@ -129,6 +129,7 @@
               <includes>
                 <include>*/node_modules/**</include>
                 <include>*/dist/**</include>
+                <include>nuxt/.nuxt/**</include>
                 <include>react-csr/build/**</include>
                 <include>react-ssr/.next/**</include>
               </includes>

@@ -31,6 +31,7 @@
         <exclude>*/node_modules/**</exclude>
         <exclude>*/README.md</exclude>
         <exclude>*/dist/**</exclude>
+        <exclude>nuxt/.nuxt/**</exclude>
         <exclude>react-csr/build/**</exclude>
         <exclude>react-ssr/.next/**</exclude>
         <exclude>xm/**</exclude>
