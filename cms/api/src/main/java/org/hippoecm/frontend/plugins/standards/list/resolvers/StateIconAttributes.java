@@ -172,6 +172,9 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
             observable.setTarget(new JcrNodeModel(unpublishedVariantNode));
         }
+        else {
+            icons = new Icon[]{Icon.EMPTY, Icon.EMPTY};
+        }
     }
 
     private String appendDraftChangesPostfix(final String state, final boolean retainable) {
