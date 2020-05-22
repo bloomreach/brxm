@@ -16,7 +16,8 @@
     "@nuxtjs/dotenv": "^1.4",
     "cross-env": "^7.0",
     "express": "^4.17",
-    "nuxt": "^2.12"
+    "nuxt": "^2.12",
+    "nuxt-property-decorator": "^2.7"
   },
   "devDependencies": {
     "@babel/runtime-corejs3": "^7.9",
