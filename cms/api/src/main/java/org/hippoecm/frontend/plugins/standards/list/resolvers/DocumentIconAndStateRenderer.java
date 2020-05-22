@@ -68,10 +68,10 @@ public class DocumentIconAndStateRenderer extends AbstractNodeRenderer {
             final HippoIcon typeIcon = getTypeIcon("dummyId", node);
             icon.addCopyOf(typeIcon);
 
-            final Icon[] stateIconOrNull = stateIconAttributes.getIcons();
-            if (stateIconOrNull != null) {
-                stateIcons[0] = icon.addFromSprite(stateIconOrNull[0], IconSize.M, Position.TOP_LEFT);
-                stateIcons[1] = icon.addFromSprite(stateIconOrNull[1], IconSize.M, Position.BOTTOM_LEFT);
+            final Icon[] stateIcons = stateIconAttributes.getIcons();
+            if (stateIcons.length >= 2) {
+                this.stateIcons[0] = icon.addFromSprite(stateIcons[0], IconSize.M, Position.TOP_LEFT);
+                this.stateIcons[1] = icon.addFromSprite(stateIcons[1], IconSize.M, Position.BOTTOM_LEFT);
             }
 
             add(icon);
