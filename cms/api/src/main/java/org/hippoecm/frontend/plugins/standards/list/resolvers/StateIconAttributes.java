@@ -63,18 +63,18 @@ import org.slf4j.LoggerFactory;
  * css class.</p>
  * <p>The {@link DocumentIconAndStateRenderer} uses {@link #getIcons()} to add and update the icons.</p>
  * <p>The handle, document or document revision is observed, see {@link org.hippoecm.frontend.model.event.IObservable}
- * by the observers of {@link org.hippoecm.frontend.plugins.standards.list.ListCell}, so that at any modification
+ * by the observers of {@link org.hippoecm.frontend.plugins.standards.list.ListCell}, so that any modification
  * updates the css class, tooltip and icons.</p>
- * <p>In case of a handle, <em>only</em> the unpublished variant is observed, the case of document that document and
- * if the {@link #nodeModel}, see constructor argument {@link #StateIconAttributes(JcrNodeModel)} refers to a revision
- * , the frozen node of the revision is used.</p>
- *
+ * <p>In case of a handle, the unpublished variant <em>and</em> the draft variant are observed, the case of document
+ * that document and if the {@link #nodeModel}, see constructor argument {@link #StateIconAttributes(JcrNodeModel)}
+ * refers to a revision, the frozen node of the revision is used.</p>
  */
 public class StateIconAttributes implements IObservable, IDetachable {
 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(StateIconAttributes.class);
+    public static final String DRAFT_CHANGES = "-draft-changes";
 
     private JcrNodeModel nodeModel;
     private Observable observable;
@@ -116,11 +116,13 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
         nodeModel.detach();
         observable.detach();
+        draftObservable.detach();
     }
 
     void load() {
         if (!loaded) {
             observable.setTarget(null);
+            draftObservable.setTarget(null);
             try {
                 final Node node = nodeModel.getNode();
                 if (node != null) {
@@ -143,7 +145,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
             HandleParser handleParser = new HandleParser(node).invoke();
             unpublishedVariantNode = handleParser.getUnpublishedVariantNode();
             draftVariantNode = handleParser.getDraftVariantNode();
-            if (draftVariantNode.hasProperty(HippoStdNodeType.HIPPOSTD_RETAINABLE)){
+            if (draftVariantNode != null && draftVariantNode.hasProperty(HippoStdNodeType.HIPPOSTD_RETAINABLE)){
                 retainable = draftVariantNode.getProperty(HippoStdNodeType.HIPPOSTD_RETAINABLE).getBoolean();
             }
             primaryType = handleParser.getPrimaryType();
@@ -167,7 +169,8 @@ public class StateIconAttributes implements IObservable, IDetachable {
                 && (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
                 || unpublishedVariantNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY))) {
 
-            final String state = appendDraftChangesPostfix(getState(unpublishedOtherwiseDraft), retainable);
+            final String stateSummaryValue = getState(unpublishedOtherwiseDraft);
+            final String state = retainable? getStateSummaryForRetainableState(stateSummaryValue): stateSummaryValue;
             cssClass = StateIconAttributeModifier.PREFIX + (isHistoric ? "prev-" : "") + state;
 
             final JcrNodeTypeModel nodeTypeModel = new JcrNodeTypeModel(HippoStdNodeType.NT_PUBLISHABLESUMMARY);
@@ -176,11 +179,11 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
             icons = getStateIcons(state);
 
-            if (unpublishedVariantNode != null){
-                observable.setTarget(new JcrNodeModel(unpublishedVariantNode));
-            }
             if (draftVariantNode != null){
                 draftObservable.setTarget(new JcrNodeModel(draftVariantNode));
+            }
+            if (unpublishedVariantNode != null){
+                observable.setTarget(new JcrNodeModel(unpublishedVariantNode));
             }
         }
         else {
@@ -188,11 +191,27 @@ public class StateIconAttributes implements IObservable, IDetachable {
         }
     }
 
-    private String appendDraftChangesPostfix(final String state, final boolean retainable) {
-        if (retainable && ("live".equals(state) || "new".equals(state))) {
-            return state + "-draft-changes";
+    /**
+     * <p>Modify the state summery so that for a document that is retainable.</p>
+     * <p></p>
+     * <p>The "changed" state means "live" and "unpublished changes". In combination
+     * with a retainable document however that should be become "live" and "draft changes"
+     * according to the principle that the message should lead the user to the next action,
+     * saving the draft changes in this case.</p>
+     *
+     * @param state the value of the {@link HippoStdNodeType#HIPPOSTD_STATESUMMARY}  property.
+     * @return
+     */
+    private String getStateSummaryForRetainableState(final String state) {
+        switch (state) {
+            case "changed":
+                return "live" + DRAFT_CHANGES;
+            case "live":
+            case "new":
+                return state + DRAFT_CHANGES;
+            default:
+                return state;
         }
-        return state;
     }
 
     private String getState(Node unpublishedVariant) throws RepositoryException {
