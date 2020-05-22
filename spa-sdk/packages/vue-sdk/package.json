@@ -28,7 +28,7 @@
     "build": "vue-cli-service build --filename index --formats commonjs,umd --name BloomreachVueSdk --target lib src/main.ts",
     "lint": "vue-cli-service lint --no-fix",
     "prepare": "$npm_execpath run build",
-    "test": "vue-cli-service test:unit --coverage --passWithNoTests"
+    "test": "vue-cli-service test:unit --coverage"
   },
   "browserslist": [
     "last 1 chrome version",
