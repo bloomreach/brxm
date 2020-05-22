@@ -133,11 +133,17 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
     private void loadAttributes(final Node node) throws RepositoryException {
         Node unpublishedVariantNode = null;
+        Node draftVariantNode = null;
         NodeType primaryType = null;
         boolean isHistoric = false;
+        boolean retainable = false;
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             HandleParser handleParser = new HandleParser(node).invoke();
             unpublishedVariantNode = handleParser.getUnpublishedVariantNode();
+            draftVariantNode = handleParser.getDraftVariantNode();
+            if (draftVariantNode.hasProperty(HippoStdNodeType.HIPPOSTD_RETAINABLE)){
+                retainable = draftVariantNode.getProperty(HippoStdNodeType.HIPPOSTD_RETAINABLE).getBoolean();
+            }
             primaryType = handleParser.getPrimaryType();
         } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             unpublishedVariantNode = node;
@@ -152,10 +158,10 @@ public class StateIconAttributes implements IObservable, IDetachable {
                 unpublishedVariantNode = frozen;
             }
         }
-        if (unpublishedVariantNode != null && (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
+        if (( unpublishedVariantNode != null || draftVariantNode != null ) && (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
                 || unpublishedVariantNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY))) {
 
-            final String state = getState(unpublishedVariantNode);
+            final String state = appendDraftChangesPostfix(getState(unpublishedVariantNode), retainable);
             cssClass = StateIconAttributeModifier.PREFIX + (isHistoric ? "prev-" : "") + state;
 
             final JcrNodeTypeModel nodeTypeModel = new JcrNodeTypeModel(HippoStdNodeType.NT_PUBLISHABLESUMMARY);
@@ -166,6 +172,13 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
             observable.setTarget(new JcrNodeModel(unpublishedVariantNode));
         }
+    }
+
+    private String appendDraftChangesPostfix(final String state, final boolean retainable) {
+        if (retainable && ("live".equals(state) || "new".equals(state))) {
+            return state + "-draft-changes";
+        }
+        return state;
     }
 
     private String getState(Node unpublishedVariant) throws RepositoryException {
@@ -200,8 +213,11 @@ public class StateIconAttributes implements IObservable, IDetachable {
         switch (state) {
             case "new":
                 return new Icon[]{Icon.MINUS_CIRCLE, Icon.EMPTY};
+            case "new-draft-changes":
+                return new Icon[]{Icon.MINUS_CIRCLE, Icon.EXCLAMATION_TRIANGLE};
             case "live":
                 return new Icon[]{Icon.CHECK_CIRCLE, Icon.EMPTY};
+            case "live-draft-changes":
             case "changed":
                 return new Icon[]{Icon.CHECK_CIRCLE, Icon.EXCLAMATION_TRIANGLE};
             default:
@@ -228,7 +244,8 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
     private class HandleParser {
         private final Node node;
-        private Node unpublishedVariant;
+        private Node unpublishedVariantNode;
+        private Node draftVariantNode;
         private NodeType primaryType;
 
         HandleParser(final Node node) {
@@ -236,7 +253,11 @@ public class StateIconAttributes implements IObservable, IDetachable {
         }
 
         public Node getUnpublishedVariantNode() {
-            return unpublishedVariant;
+            return unpublishedVariantNode;
+        }
+
+        public Node getDraftVariantNode() {
+            return draftVariantNode;
         }
 
         public NodeType getPrimaryType() {
@@ -246,13 +267,19 @@ public class StateIconAttributes implements IObservable, IDetachable {
         public HandleParser invoke() throws RepositoryException {
             NodeIterator docs = node.getNodes(node.getName());
             while (docs.hasNext()) {
-                unpublishedVariant = docs.nextNode();
-                primaryType = unpublishedVariant.getPrimaryNodeType();
-                if (unpublishedVariant.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
-                    String state = unpublishedVariant.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+                Node variantNode = docs.nextNode();
+                primaryType = variantNode.getPrimaryNodeType();
+                if (variantNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
+                    String state = variantNode.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
                     if ("unpublished".equals(state)) {
-                        break;
+                        unpublishedVariantNode = variantNode;
                     }
+                    if ("draft".equals(state)){
+                        draftVariantNode = variantNode;
+                    }
+                }
+                if (draftVariantNode != null && unpublishedVariantNode != null) {
+                    break;
                 }
             }
             return this;
