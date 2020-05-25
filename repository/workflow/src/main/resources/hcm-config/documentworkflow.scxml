@@ -94,7 +94,7 @@
       holder == user
     }
 
-    // true if draft exists and not currently editor or edited by current user
+    // true if draft exists and not currently editor or edited by current user or transferable
     def boolean isEditable() {
       !holder or editor
     }
