@@ -242,35 +242,15 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
             return null;
         }
 
-        if (getRelativeContentPath() == null) {
-            log.debug("No relative content path for '{}' so cannot lookup mapped component configuration id", hstSiteMapItem.getId());
-            return null;
-        }
         try {
-            Session session = RequestContextProvider.get().getSession();
-            String absPath = getResolvedMount().getMount().getContentPath() + "/" + PathUtils.normalizePath(getRelativeContentPath());
-            try {
-                if (!session.nodeExists(absPath)) {
-                    log.debug("No node found at '{}'. No mapped configuration can be returned", absPath);
-                    return null;
-                }
-            } catch (RepositoryException e) {
-                log.info("Could not get node for '{}' : {}", absPath, e.toString());
+            final HippoBean contentBean = RequestContextProvider.get().getContentBean();
+            if (contentBean != null && contentBean.getNode() != null) {
+                String primaryType = contentBean.getNode().getPrimaryNodeType().getName();
+                return hstSiteMapItem.getComponentConfigurationIdMappings().get(primaryType);
+            } else {
+                log.debug("No content bean found for request, return null");
                 return null;
             }
-
-            Node node = session.getNode(absPath);
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                // we need to fetch the document below the handle if it is present
-                if (!node.hasNode(node.getName())) {
-                    log.debug("No mapped configuration can be returned because no document below handle");
-                    return null;
-                }
-                node = node.getNode(node.getName());
-            }
-            String primaryType = node.getPrimaryNodeType().getName();
-            return hstSiteMapItem.getComponentConfigurationIdMappings().get(primaryType);
-
         } catch (RepositoryException e) {
             log.error("Repository exception while looking up component mapping", e);
             return null;
