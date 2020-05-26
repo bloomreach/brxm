@@ -142,7 +142,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
         boolean isHistoric = false;
         boolean retainable = false;
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-            HandleParser handleParser = new HandleParser(node).invoke();
+            HandleParser handleParser = new HandleParser(node);
             unpublishedVariantNode = handleParser.getUnpublishedVariantNode();
             draftVariantNode = handleParser.getDraftVariantNode();
             if (draftVariantNode != null && draftVariantNode.hasProperty(HippoStdNodeType.HIPPOSTD_RETAINABLE)){
@@ -284,8 +284,9 @@ public class StateIconAttributes implements IObservable, IDetachable {
         private Node draftVariantNode;
         private NodeType primaryType;
 
-        HandleParser(final Node node) {
+        HandleParser(final Node node) throws RepositoryException {
             this.node = node;
+            invoke();
         }
 
         public Node getUnpublishedVariantNode() {
@@ -300,7 +301,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
             return primaryType;
         }
 
-        public HandleParser invoke() throws RepositoryException {
+        private HandleParser invoke() throws RepositoryException {
             NodeIterator docs = node.getNodes(node.getName());
             while (docs.hasNext()) {
                 Node variantNode = docs.nextNode();
