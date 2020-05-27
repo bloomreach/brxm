@@ -6,15 +6,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.onehippo</groupId>
-    <artifactId>bloomreach-xm</artifactId>
+    <groupId>com.bloomreach.xm</groupId>
+    <artifactId>bloomreach-xm-aggregator</artifactId>
     <version>14.3.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.onehippo</groupId>
   <artifactId>bloomreach-xm-community</artifactId>
-  <name>bloomreach XM</name>
-  <description>Bloomreach Experience Manager</description>
+  <name>Bloomreach XM Community</name>
+  <description>Bloomreach Experience Manager Community modules</description>
   <version>14.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
