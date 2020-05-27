@@ -122,6 +122,7 @@
     <restassured.version>4.2.0</restassured.version>
     <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
     <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
+    <javassist.version>3.24.1-GA</javassist.version>
 
     <!-- END properties versions with dependency management -->
     <maven.required.version>3.3.9</maven.required.version>
@@ -593,6 +594,12 @@
         <groupId>javax.ws.rs</groupId>
         <artifactId>javax.ws.rs-api</artifactId>
         <version>${jaxrs.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>${javassist.version}</version>
       </dependency>
 
       <!-- test dependencies -->
