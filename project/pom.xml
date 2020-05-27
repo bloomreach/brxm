@@ -788,6 +788,9 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven.plugin.surefire.version}</version>
           <inherited>true</inherited>
+          <configuration>
+            <argLine>-Xmx1024m</argLine>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
