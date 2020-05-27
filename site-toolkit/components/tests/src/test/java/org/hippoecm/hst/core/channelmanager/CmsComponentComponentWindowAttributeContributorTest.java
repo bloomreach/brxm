@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.repository.api.HippoSession;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.hst.Channel;
@@ -41,15 +47,21 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
-import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_INHERITED;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_COMPONENT_EDITABLE;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_END_MARKER;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_EXPERIENCE_PAGE_COMPONENT;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_SHARED;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_XTYPE;
-import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_END_MARKER;
 import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class CmsComponentComponentWindowAttributeContributorTest {
+
+    private interface HstComponentConfigurationLockInfo extends HstComponentConfiguration, ConfigurationLockInfo {
+
+    }
 
     private List<Object> mocks;
     private HstComponentWindow window;
@@ -57,11 +69,13 @@ public class CmsComponentComponentWindowAttributeContributorTest {
     private HstRequestContext requestContext;
     private Channel channel;
     private Mount mount;
+    private Session userSession;
+
 
     private CmsComponentComponentWindowAttributeContributor contributor;
 
     @Before
-    public void setUp() {
+    public void setUp() throws RepositoryException {
         mocks = new ArrayList<>();
         window = mock(HstComponentWindow.class);
         request = mock(HstRequest.class);
@@ -72,10 +86,20 @@ public class CmsComponentComponentWindowAttributeContributorTest {
         channel = mock(Channel.class);
         expect(mount.getChannel()).andStubReturn(channel);
         expect(channel.isConfigurationLocked()).andStubReturn(false);
-        contributor = new CmsComponentComponentWindowAttributeContributor();
+        contributor = new CmsComponentComponentWindowAttributeContributor() {
+            @Override
+            boolean isInRole(final Session cmsUser, final HstComponentConfiguration compConfig, final String requiredPrivilege) throws RepositoryException {
+                return true;
+            }
+        };
         requestContext= mock(HstRequestContext.class);
         expect(requestContext.getResolvedMount()).andStubReturn(resolvedMount);
-        final HstComponentConfiguration config = mock(HstComponentConfiguration.class);
+
+        userSession = mock(HippoSession.class);
+
+        expect(requestContext.getAttribute(eq(ContainerConstants.CMS_USER_SESSION_ATTR_NAME))).andStubReturn(userSession);
+
+        final HstComponentConfigurationLockInfo config = mock(HstComponentConfigurationLockInfo.class);
         expect(window.getComponentInfo()).andStubReturn(config);
         expect(window.getReferenceNamespace()).andStubReturn("reference-namespace");
         expect(config.getComponentType()).andStubReturn(CONTAINER_COMPONENT);
@@ -88,7 +112,7 @@ public class CmsComponentComponentWindowAttributeContributorTest {
     }
 
     @Test
-    public void testContributePreamble() {
+    public void testContributePreamble_non_shared_non_exp_page_component_userSession_in_role() throws RepositoryException {
 
         replay(mocks.toArray());
 
@@ -96,12 +120,16 @@ public class CmsComponentComponentWindowAttributeContributorTest {
         contributor.contributePreamble(window, request, map);
 
         assertThat(map.containsKey(HST_XTYPE), is(false));
-        assertThat(map.containsKey(HST_INHERITED), is(false));
+
 
         assertThat(map.containsKey("uuid"), is(true));
         assertThat(map.containsKey(HST_TYPE), is(true));
         assertThat(map.containsKey("refNS"), is(true));
         assertThat(map.containsKey("url"), is(true));
+
+        assertEquals("false", map.get(HST_SHARED));
+        assertEquals("true", map.get(HST_COMPONENT_EDITABLE));
+        assertEquals("false", map.get(HST_EXPERIENCE_PAGE_COMPONENT));
     }
 
     @Test
@@ -120,6 +148,11 @@ public class CmsComponentComponentWindowAttributeContributorTest {
     @Test
     public void testContributePreambleChannelLockedPageModelApi() {
         reset(requestContext, channel);
+
+
+        userSession = mock(HippoSession.class);
+
+        expect(requestContext.getAttribute(eq(ContainerConstants.CMS_USER_SESSION_ATTR_NAME))).andStubReturn(userSession);
 
         final ResolvedMount apiResolvedMount = mock(ResolvedMount.class);
         final Mount apiMount = mock(Mount.class);

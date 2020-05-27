@@ -137,12 +137,11 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
         if (compConfig.getXType() != null) {
             populatingAttributesMap.put(ChannelManagerConstants.HST_XTYPE, compConfig.getXType());
         }
-        if (compConfig.isInherited()) {
-            populatingAttributesMap.put(ChannelManagerConstants.HST_INHERITED, "true");
-        }
 
         final String componentType = compConfig.getComponentType().toString();
         populatingAttributesMap.put(ChannelManagerConstants.HST_TYPE, componentType);
+        populatingAttributesMap.put(ChannelManagerConstants.HST_SHARED, String.valueOf(compConfig.isShared()));
+
         populatingAttributesMap.put(ChannelManagerConstants.HST_LABEL, getLabel(compConfig));
         HstURLFactory urlFactory = requestContext.getURLFactory();
         HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE, window.getReferenceNamespace(), null, requestContext);
@@ -176,7 +175,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
         }
     }
 
-    private boolean isInRole(final Session cmsUser, final HstComponentConfiguration compConfig,
+    boolean isInRole(final Session cmsUser, final HstComponentConfiguration compConfig,
                              final String requiredPrivilege) throws RepositoryException {
 
         return Arrays.stream(cmsUser.getAccessControlManager()

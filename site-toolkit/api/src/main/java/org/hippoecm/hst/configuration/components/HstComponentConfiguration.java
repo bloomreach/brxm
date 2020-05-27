@@ -280,9 +280,17 @@ public interface HstComponentConfiguration extends HstComponentInfo {
 
     /**
      * @return <code>true</code> when the backing provider ({@link HstNode}) of this {@link HstComponentConfiguration}
-     * is inherited
+     * is inherited, aka an {@link HstNode} belonging to a different hst:configuration tree than this
+     * {@link HstComponentConfiguration}
      */
     boolean isInherited();
+
+
+    /**
+     * @return {@code true} when the backing provider ({@link HstNode}) of this {@link HstComponentConfiguration} is
+     * most likely / can be shared with other {@link HstComponentConfiguration} instances
+     */
+    boolean isShared();
 
     /**
      * @return <code>true</code> when this {@link HstComponentConfiguration} can be used as a prototype to create other

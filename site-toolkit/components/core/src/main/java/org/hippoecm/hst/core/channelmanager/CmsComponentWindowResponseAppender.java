@@ -86,6 +86,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         // provide info for CM that the page is an experience page: The top hst component for experience pages
         // always has compConfig.isExperiencePageComponent() = true
         pageMetaData.put(ChannelManagerConstants.HST_EXPERIENCE_PAGE,  String.valueOf(compConfig.isExperiencePageComponent()));
+        pageMetaData.put(ChannelManagerConstants.HST_EXPERIENCE_PAGE,  String.valueOf(compConfig.isExperiencePageComponent()));
 
         final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
         if (resolvedSiteMapItem != null) {
@@ -137,6 +138,11 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
     private void populateComponentMetaData(final HstRequest request, final HstResponse response,
                                            final HstComponentWindow window) {
         final HstComponentConfiguration config = (HstComponentConfiguration)window.getComponentInfo();
+
+        if (config.isInherited()) {
+            log.debug("Component '{}' not editable because inherited", config.toString());
+            return;
+        }
 
         if (config.getCanonicalStoredLocation().contains(WORKSPACE_PATH_ELEMENT) || config.isExperiencePageComponent()) {
             final Map<String, String> preambleAttributes = new HashMap<>();

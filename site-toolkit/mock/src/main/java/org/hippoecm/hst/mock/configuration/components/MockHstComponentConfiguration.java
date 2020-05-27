@@ -56,6 +56,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     private String label;
     private String iconPath;
     private boolean inherited;
+    private boolean shared;
     private boolean prototype;
     private boolean standalone;
     private boolean async;
@@ -247,12 +248,21 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     }
 
     @Override
+    public boolean isShared() {
+        return shared;
+    }
+
+    @Override
     public boolean isPrototype() {
         return prototype;
     }
     
     public void setInherited(boolean inherited) {
         this.inherited = inherited;
+    }
+
+    public void setShared(final boolean shared) {
+        this.shared = shared;
     }
 
     @Override

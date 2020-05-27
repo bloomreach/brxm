@@ -112,6 +112,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private boolean inherited;
 
     /**
+     * {@code true} if this {@link HstComponentConfiguration} is shared. Note that if
+     * {@link HstComponentConfiguration#isInherited()} is true, then {@code shared} will also be always true. Note that
+     * containers referenced via a 'hst:containercomponentreference' can in general be shared, but this is not the
+     * purpose of 'hst:containercomponentreference' : it it used to enable a container to 'live' below the hst:workspace
+     * and in general is never meant to support 'sharing', hence a container referenced via
+     * hst:containercomponentreference will only have 'shared = true' *IF* the 'hst:containercomponentreference' node
+     * is already shared
+     */
+    private boolean shared;
+
+    /**
      * whether this {@link HstComponentConfigurationService} can serve as prototype.
      */
     private boolean prototype;
@@ -221,6 +232,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.canonicalIdentifier = StringPool.get(node.getValueProvider().getIdentifier());
 
         inherited = !canonicalStoredLocation.startsWith(rootConfigurationPathPrefix);
+
+        if (inherited) {
+            shared = true;
+        }
+
         this.parent = parent;
         this.prototype = HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES.equals(rootNodeName);
 
@@ -644,6 +660,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     @Override
+    public boolean isShared() {
+        return shared;
+    }
+
+    @Override
     public boolean isPrototype() {
         return prototype;
     }
@@ -743,6 +764,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.canonicalIdentifier = child.canonicalIdentifier;
         copy.componentFilterTag = child.componentFilterTag;
         copy.inherited = child.inherited;
+        copy.shared = child.shared;
         copy.standalone = child.standalone;
         copy.async = child.async;
         copy.asyncMode = child.asyncMode;
@@ -1008,6 +1030,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             this.lastModified = childToMerge.lastModified;
         }
 
+        // debatable however not really relevant whether when fine grained merged the component is shared or not, since
+        // merging is not allowed for container and container items any way and for this the marker 'shared' is the most
+        // relevant
+        this.shared = childToMerge.shared;
+
         // inherited flag not needed to merge
 
         if (!childToMerge.parameters.isEmpty()) {
@@ -1053,6 +1080,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         HstComponentConfigurationService copy = deepCopy(this, newId, childToMerge,
                 rootComponentConfigurations);
+
+        // a copy is always shared
+        copy.shared = true;
+
         this.componentConfigurations.put(copy.getId(), copy);
         this.childConfByName.put(copy.getName(), copy);
         this.orderedListConfigs.add(copy);

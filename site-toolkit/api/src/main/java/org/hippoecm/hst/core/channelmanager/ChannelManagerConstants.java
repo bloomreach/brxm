@@ -42,7 +42,9 @@ public interface ChannelManagerConstants {
     String HST_LOCKED_BY_CURRENT_USER = "HST-LockedBy-Current-User";
     String HST_LOCKED_ON = "HST-LockedOn";
     String HST_LAST_MODIFIED = "HST-LastModified";
-    String HST_INHERITED = "HST-Inherited";
+
+    // use for marking hst components which are / can be shared
+    String HST_SHARED = "HST-Shared";
     String HST_TYPE_MANAGE_CONTENT_LINK = "MANAGE_CONTENT_LINK";
     String HST_TYPE_PAGE_META_DATA = "PAGE-META-DATA";
     String MANAGE_CONTENT_DEFAULT_PATH = "defaultPath";
