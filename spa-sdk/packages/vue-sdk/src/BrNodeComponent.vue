@@ -37,7 +37,7 @@
 
 <script lang="ts">
 import { Component as SpaComponent, Page, isContainerItem, isContainer } from '@bloomreach/spa-sdk';
-import { Component, InjectReactive, Prop, Provide, Vue } from 'vue-property-decorator';
+import { Component, InjectReactive, Inject, Prop, Provide, Vue } from 'vue-property-decorator';
 import BrMeta from './BrMeta.vue';
 import BrNodeContainerItem from './BrNodeContainerItem.vue';
 import BrNodeContainer from './BrNodeContainer.vue';
@@ -47,6 +47,11 @@ import BrNodeContainer from './BrNodeContainer.vue';
     BrMeta,
     BrNodeContainerItem,
     BrNodeContainer,
+  },
+  computed: {
+    page(this: BrNodeComponent) {
+      return this.page$();
+    },
   },
   methods: {
     isContainerItem,
@@ -58,7 +63,7 @@ export default class BrNodeComponent extends Vue {
 
   @InjectReactive() private mapping!: Record<string, Vue.Component>;
 
-  @InjectReactive() private page!: Page;
+  @Inject() private page$!: () => Page;
 
   @Provide() // ProvideReactive doesn't work with recursive components
   private component$() {

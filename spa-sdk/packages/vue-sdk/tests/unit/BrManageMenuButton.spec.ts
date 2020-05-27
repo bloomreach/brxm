@@ -15,14 +15,18 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
-import { Component, Prop, ProvideReactive, Vue } from 'vue-property-decorator';
+import { Component, Prop, Provide, Vue } from 'vue-property-decorator';
 import { MetaCollection, Menu, Page } from '@bloomreach/spa-sdk';
 import BrManageMenuButton from '@/BrManageMenuButton.vue';
 import BrMeta from '@/BrMeta.vue';
 
 @Component({ template: '<div />' })
 class BrPage extends Vue {
-  @ProvideReactive() @Prop() page!: Page;
+  @Prop() page!: Page;
+
+  @Provide() page$() {
+    return this.page;
+  }
 }
 
 describe('BrManageMenuButton', () => {

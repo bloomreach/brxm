@@ -85,6 +85,9 @@ import BrContainerUnorderedList from './BrContainerUnorderedList.vue';
     component(this: BrNodeContainer) {
       return this.component$();
     },
+    page(this: BrNodeContainer) {
+      return this.page$();
+    },
   },
   data: () => ({
     TYPE_CONTAINER_INLINE,
@@ -96,10 +99,8 @@ import BrContainerUnorderedList from './BrContainerUnorderedList.vue';
 export default class BrNodeContainer extends Vue {
   @Inject() private component$!: () => Container;
 
-  private component!: Container;
-
   @InjectReactive() private mapping!: Record<string, Vue.Component>;
 
-  @InjectReactive() private page!: Page;
+  @Inject() private page$!: () => Page;
 }
 </script>

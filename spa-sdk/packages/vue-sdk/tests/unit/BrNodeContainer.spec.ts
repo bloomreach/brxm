@@ -37,7 +37,11 @@ class BrPage extends Vue {
 
   @ProvideReactive() @Prop() mapping!: Record<string, Vue.Component>;
 
-  @ProvideReactive() @Prop() page!: Page;
+  @Prop() page!: Page;
+
+  @Provide() page$() {
+    return this.page;
+  }
 }
 
 @Component

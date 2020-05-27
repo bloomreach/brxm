@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { Configuration, PageModel, Page, initialize, isPage, destroy } from '@bloomreach/spa-sdk';
-import { Component, Prop, ProvideReactive, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, ProvideReactive, Provide, Vue, Watch } from 'vue-property-decorator';
 import BrNodeComponent from './BrNodeComponent.vue';
 
 /**
@@ -56,12 +56,13 @@ export default class BrPage extends Vue {
    */
   @Prop() page?: Page | PageModel;
 
-  /**
-   * The current state of the page component.
-   */
-  @ProvideReactive('page') state?: Page;
+  private state?: Page;
 
   private loading?: Promise<void>;
+
+  @Provide() private page$() {
+    return this.state;
+  }
 
   async serverPrefetch() {
     await this.loading;

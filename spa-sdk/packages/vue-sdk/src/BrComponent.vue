@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { Component as SpaComponent, Page, isComponent } from '@bloomreach/spa-sdk';
-import { Component, InjectReactive, Inject, Prop, Vue } from 'vue-property-decorator';
+import { Component, Inject, Prop, Vue } from 'vue-property-decorator';
 import { Fragment } from 'vue-fragment';
 import BrNodeComponent from './BrNodeComponent.vue';
 
@@ -25,6 +25,9 @@ import BrNodeComponent from './BrNodeComponent.vue';
  */
 @Component({
   computed: {
+    page(this: BrComponent) {
+      return this.page$?.();
+    },
     parent(this: BrComponent) {
       return this.parent$?.();
     },
@@ -40,9 +43,11 @@ export default class BrComponent extends Vue {
    */
   @Prop() component?: SpaComponent | string;
 
-  @InjectReactive() private page?: Page;
+  @Inject() private page$?: () => Page;
 
   @Inject('component$') private parent$?: () => SpaComponent;
+
+  private page?: Page;
 
   private parent?: SpaComponent;
 
