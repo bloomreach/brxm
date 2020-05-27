@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.WorkflowUtils;
@@ -37,13 +38,14 @@ import org.onehippo.repository.scxml.SCXMLWorkflowData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_LABEL_UNPUBLISHED;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 /**
@@ -286,6 +288,19 @@ public class DocumentHandle implements SCXMLWorkflowData {
             return new BranchHandleImpl(branchId, this);
         }
         throw new IllegalStateException("document handle not initialized, please initialize it before calling this method");
+    }
+
+    /**
+     * Returns {@code true} if the unpublished requires audit tracing and {@code false} otherwise. Audit tracing implies
+     * that every invocation to {@link EditableWorkflow#commitEditableInstance()} results in a new version of the
+     * unpublished variant
+     *
+     * @return if the unpublished requires audit tracing
+     * @throws RepositoryException if calling a method on the unpublished fails.
+     */
+    public boolean isAuditTrace() throws RepositoryException {
+        final DocumentVariant unpublished = documents.get(UNPUBLISHED.getState());
+        return unpublished != null && unpublished.getNode().isNodeType(HippoStdPubWfNodeType.MIXIN_HIPPOSTDPUBWF_AUDIT_TRACE);
     }
 
     private void initializeDocumentBranches() throws RepositoryException {

@@ -231,7 +231,12 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public Document commitEditableInstance() throws WorkflowException, RepositoryException {
-        return (Document) triggerAction(DocumentWorkflowAction.commitEditableInstance());
+        final Document document = (Document) triggerAction(DocumentWorkflowAction.commitEditableInstance());
+        if(workflowExecutor.getData().isAuditTrace()) {
+            // Because documentworkflow.scxml can't be modified in a minor release this action is implemented in code only
+            triggerAction(DocumentWorkflowAction.version());
+        }
+        return document;
     }
 
     @Override
@@ -523,4 +528,5 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         final HippoSession internalWorkflowSession = (HippoSession) getWorkflowContext().getInternalWorkflowSession();
         return internalWorkflowSession.pendingChanges(unpublishedVariant.getNode(), null).hasNext();
     }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 Hippo
+ * Copyright 2010-2020 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -37,3 +37,7 @@
 - hippostdpubwf:document (Reference)
 - hippostdpubwf:refId (String)
 - hippostdpubwf:creationDate (Date)
+
+// a mixin if place on a document variant indicates that when the draft gets committed to unpublished, a new version
+// (in version history) must be created
+[hippostdpubwf:auditTrace] > nt:base mixin
