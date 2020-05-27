@@ -46,9 +46,15 @@ public class UUIDUtilsTest {
                 "0000cafebabe-11111cafe-2222babe-cafe-babecafebabe",
                 "0000cafebabe-11111cafe-2222babe-33333cafe-babecafebabe",
                 "0000cafebabe-11111cafe-2222babe-33333cafe-4444babecafebabe"
-        ).map(uuid ->
-                // fromString does not throw exception but uuid is invalid
-                UUID.fromString(uuid).toString().equals(uuid) ? null : uuid
+        ).map(uuid -> {
+                    // fromString sometimes does not throw exception but uuid is invalid
+                    try {
+                        return UUID.fromString(uuid).toString().equals(uuid) ? null : uuid;
+                    } catch (IllegalArgumentException iae) {
+                        // It's normal that a exception was thrown
+                        return null;
+                    }
+                }
         ).forEach(this::validateInvalid);
 
     }
