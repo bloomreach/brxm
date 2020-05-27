@@ -15,7 +15,7 @@
  */
 
 import { Wrapper, shallowMount } from '@vue/test-utils';
-import { Component, Prop, ProvideReactive, Provide, Vue } from 'vue-property-decorator';
+import { Component, Prop, Provide, Vue } from 'vue-property-decorator';
 import { ContainerItem, Page } from '@bloomreach/spa-sdk';
 import BrNodeContainerItem from '@/BrNodeContainerItem.vue';
 
@@ -27,7 +27,11 @@ class BrPage extends Vue {
     return this.component;
   }
 
-  @ProvideReactive() @Prop() mapping!: Record<string, Vue.Component>;
+  @Prop() mapping!: Record<string, Vue.Component>;
+
+  @Provide() mapping$() {
+    return this.mapping;
+  }
 
   @Prop() page!: Page;
 
