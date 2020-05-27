@@ -38,6 +38,10 @@ interface MenuModels {
   menu?: import('@bloomreach/spa-sdk').Menu;
 }
 
+interface PageableModels {
+  pageable: Pageable;
+}
+
 interface Pageable {
   currentPage: number;
   currentRange: number[];

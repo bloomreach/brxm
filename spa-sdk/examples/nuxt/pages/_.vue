@@ -53,6 +53,7 @@ import { Component, Vue } from 'nuxt-property-decorator';
 import Banner from '~/components/BrBanner.vue';
 import Content from '~/components/BrContent.vue';
 import Menu from '~/components/BrMenu.vue';
+import NewsList from '~/components/BrNewsList.vue';
 
 @Component({
   async asyncData(context) {
@@ -74,6 +75,7 @@ import Menu from '~/components/BrMenu.vue';
       Banner,
       Content,
       menu: Menu,
+      'News List': NewsList,
     },
   }),
 })
