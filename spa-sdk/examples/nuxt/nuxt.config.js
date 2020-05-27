@@ -37,6 +37,9 @@ module.exports = {
       },
     ],
   },
+  env: {
+    VUE_APP_CMS_BASE_URL: process.env.VUE_APP_CMS_BASE_URL,
+  },
   loading: { color: '#fff' },
   buildModules: ['@nuxt/typescript-build'],
   modules: ['@nuxtjs/axios', '@nuxtjs/dotenv'],
