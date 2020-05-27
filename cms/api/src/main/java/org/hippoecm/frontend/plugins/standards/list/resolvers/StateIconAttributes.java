@@ -136,22 +136,22 @@ public class StateIconAttributes implements IObservable, IDetachable {
     }
 
     private void loadAttributes(final Node node) throws RepositoryException {
-        Node unpublishedVariantNode = null;
-        Node draftVariantNode = null;
+        Node stateSummaryNode = null;
         NodeType primaryType = null;
         boolean isHistoric = false;
         boolean retainable = false;
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             HandleParser handleParser = new HandleParser(node);
-            unpublishedVariantNode = handleParser.getUnpublishedVariantNode();
-            draftVariantNode = handleParser.getDraftVariantNode();
+            stateSummaryNode = handleParser.getStateSummaryVariant();
+            final Node draftVariantNode = handleParser.getDraftVariantNode();
             if (draftVariantNode != null && draftVariantNode.hasProperty(HippoStdNodeType.HIPPOSTD_RETAINABLE)){
                 retainable = draftVariantNode.getProperty(HippoStdNodeType.HIPPOSTD_RETAINABLE).getBoolean();
+                draftObservable.setTarget(new JcrNodeModel(draftVariantNode));
             }
             primaryType = handleParser.getPrimaryType();
         } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-            unpublishedVariantNode = node;
-            primaryType = unpublishedVariantNode.getPrimaryNodeType();
+            stateSummaryNode = node;
+            primaryType = stateSummaryNode.getPrimaryNodeType();
         } else if (node.isNodeType("nt:version")) {
             isHistoric = true;
             Node frozen = node.getNode("jcr:frozenNode");
@@ -159,17 +159,14 @@ public class StateIconAttributes implements IObservable, IDetachable {
             NodeTypeManager ntMgr = frozen.getSession().getWorkspace().getNodeTypeManager();
             primaryType = ntMgr.getNodeType(primary);
             if (primaryType.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                unpublishedVariantNode = frozen;
+                stateSummaryNode = frozen;
             }
         }
-
-        final Node unpublishedOtherwiseDraft =
-                unpublishedVariantNode != null ? unpublishedVariantNode : draftVariantNode;
-        if ( unpublishedOtherwiseDraft != null
+        if ( stateSummaryNode != null
                 && (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
-                || unpublishedVariantNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY))) {
+                || stateSummaryNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY))) {
 
-            final String stateSummaryValue = getState(unpublishedOtherwiseDraft);
+            final String stateSummaryValue = getState(stateSummaryNode);
             final String state = retainable? getStateSummaryForRetainableState(stateSummaryValue): stateSummaryValue;
             cssClass = StateIconAttributeModifier.PREFIX + (isHistoric ? "prev-" : "") + state;
 
@@ -179,12 +176,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
             icons = getStateIcons(state);
 
-            if (draftVariantNode != null){
-                draftObservable.setTarget(new JcrNodeModel(draftVariantNode));
-            }
-            if (unpublishedVariantNode != null){
-                observable.setTarget(new JcrNodeModel(unpublishedVariantNode));
-            }
+            observable.setTarget(new JcrNodeModel(stateSummaryNode));
         }
         else {
             icons = new Icon[]{Icon.EMPTY, Icon.EMPTY};
@@ -280,7 +272,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
     private class HandleParser {
         private final Node node;
-        private Node unpublishedVariantNode;
+        private Node stateSummaryVariant;
         private Node draftVariantNode;
         private NodeType primaryType;
 
@@ -289,8 +281,16 @@ public class StateIconAttributes implements IObservable, IDetachable {
             invoke();
         }
 
-        public Node getUnpublishedVariantNode() {
-            return unpublishedVariantNode;
+        /**
+         * <p>In all cases, except the following the unpublished variant is used to obtain the state summary</p>
+         * <ul>
+         *     <li>If there is no unpublished variant, but a published exists, the published variant is used</li>
+         *     <li>If there is no unpublished nor published, the draft is used</li>
+         * </ul>
+         * @return One of the variants or {@code null} if none is present
+         */
+        public Node getStateSummaryVariant() {
+            return stateSummaryVariant;
         }
 
         public Node getDraftVariantNode() {
@@ -308,14 +308,12 @@ public class StateIconAttributes implements IObservable, IDetachable {
                 primaryType = variantNode.getPrimaryNodeType();
                 if (variantNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
                     String state = variantNode.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                    if ("unpublished".equals(state)) {
-                        unpublishedVariantNode = variantNode;
-                    }
                     if ("draft".equals(state)){
                         draftVariantNode = variantNode;
                     }
+                    stateSummaryVariant = variantNode;
                 }
-                if (draftVariantNode != null && unpublishedVariantNode != null) {
+                if (draftVariantNode != null) {
                     break;
                 }
             }
