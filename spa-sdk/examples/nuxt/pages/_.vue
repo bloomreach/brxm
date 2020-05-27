@@ -55,6 +55,9 @@ import Content from '~/components/BrContent.vue';
 import Menu from '~/components/BrMenu.vue';
 import NewsList from '~/components/BrNewsList.vue';
 
+const VISITOR_COOKIE = '_v';
+const VISITOR_COOKIE_MAX_AGE_IN_SECONDS = 365 * 24 * 60 * 60;
+
 @Component({
   async asyncData(context) {
     const configuration = {
@@ -63,9 +66,23 @@ import NewsList from '~/components/BrNewsList.vue';
       request: {
         path: context.route.fullPath,
       },
+      visitor: process.server
+        ? context.app.$cookies.get(VISITOR_COOKIE, { parseJSON: true })
+        : context.nuxtState.visitor,
     };
 
     const page = await initialize({ ...configuration, httpClient: context.$axios });
+    configuration.visitor = page.getVisitor();
+
+    if (process.server && configuration.visitor) {
+      context.app.$cookies.set(VISITOR_COOKIE, configuration.visitor, {
+        httpOnly: true,
+        maxAge: VISITOR_COOKIE_MAX_AGE_IN_SECONDS,
+      });
+      context.beforeNuxtRender(({ nuxtState }) => {
+        nuxtState.visitor = configuration.visitor;
+      });
+    }
 
     return { configuration, page };
   },

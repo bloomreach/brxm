@@ -42,7 +42,7 @@ module.exports = {
   },
   loading: { color: '#fff' },
   buildModules: ['@nuxt/typescript-build'],
-  modules: ['@nuxtjs/axios', '@nuxtjs/dotenv'],
+  modules: ['@nuxtjs/axios', '@nuxtjs/dotenv', 'cookie-universal-nuxt'],
   plugins: ['~/plugins/brxm'],
   build: {
     babel: {
