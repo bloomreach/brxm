@@ -61,6 +61,12 @@ export default class BrPage extends Vue {
    */
   @ProvideReactive('page') state?: Page;
 
+  private loading?: Promise<void>;
+
+  async serverPrefetch() {
+    await this.loading;
+  }
+
   destroyed() {
     this.destroy();
   }
@@ -74,11 +80,14 @@ export default class BrPage extends Vue {
   }
 
   @Watch('configuration', { immediate: true, deep: true })
-  private async update(current: Configuration, previous: Configuration) {
+  private async update(current: Configuration, previous?: Configuration) {
     this.destroy();
+    this.loading = this.initialize(previous ? undefined : this.page);
+    await this.loading;
+    delete this.loading;
+  }
 
-    const page = previous ? undefined : this.page;
-
+  private async initialize(page?: Page | PageModel) {
     if (isPage(page)) {
       this.state = page;
 
