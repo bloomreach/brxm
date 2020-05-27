@@ -49,6 +49,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.junit.Assert.assertEquals;
@@ -155,10 +156,10 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         final Session adminSession = createSession(ADMIN_CREDENTIALS);
 
         try {
-            final String mountId = getNodeId(adminSession,"/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+            final String mountId = getNodeId(adminSession, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final String containerId = getNodeId(adminSession,unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
-            final String catalogId = getNodeId(adminSession,"/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+            final String containerId = getNodeId(adminSession, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final String catalogId = getNodeId(adminSession, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
 
             final DocumentWorkflow documentWorkflow = getDocumentWorkflow(adminSession);
             // since document got published and nothing yet changed, should not be published
@@ -245,6 +246,81 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
     }
 
+    @Test
+    public void not_allowed_to_modify_xpage_if_draft_edited_by_other_user() throws Exception {
+
+        // first make 'author' the holder of draft and then admin should not be allowed to make changes
+
+        final HippoSession author = (HippoSession) createSession(AUTHOR_CREDENTIALS);
+        final Session adminSession = createSession(ADMIN_CREDENTIALS);
+        try {
+
+            // make sure document is being edited
+            final DocumentWorkflow authorWorkflow = (DocumentWorkflow) author.getWorkspace().getWorkflowManager().getWorkflow("default", author.getNode(EXPERIENCE_PAGE_HANDLE_PATH));
+            authorWorkflow.obtainEditableInstance();
+
+            final String mountId = getNodeId(adminSession, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            final String containerId = getNodeId(adminSession, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final String catalogId = getNodeId(adminSession, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(adminSession);
+
+            final RequestResponseMock createRequestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + containerId + "./" + catalogId, null,
+                    "POST");
+
+
+            final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, ADMIN_CREDENTIALS);
+            final Map<String, String> createResponseMap = mapper.readerFor(Map.class).readValue(createResponse.getContentAsString());
+
+            assertEquals(BAD_REQUEST.getStatusCode(), createResponse.getStatus());
+
+            assertEquals("Document being edited by another user", createResponseMap.get("message"));
+
+        } finally {
+            author.logout();
+            adminSession.logout();
+        }
+    }
+
+    @Test
+    public void allowed_to_modify_xpage_if_draft_is_saved_by_other_user() throws Exception {
+        // after 'saveDraft' a document becomes transferable and as a result, someone else can obtain editable instance
+        // or continue editing, hence (s)he should also be able to modify the XPage
+
+        final HippoSession author = (HippoSession) createSession(AUTHOR_CREDENTIALS);
+        try {
+
+            // make sure document is being edited
+            final DocumentWorkflow authorWorkflow = (DocumentWorkflow) author.getWorkspace().getWorkflowManager().getWorkflow("default", author.getNode(EXPERIENCE_PAGE_HANDLE_PATH));
+            authorWorkflow.obtainEditableInstance();
+
+            // after save draft, document becomes transferrable
+            authorWorkflow.saveDraft();
+
+            final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            final String containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final String catalogId = getNodeId("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+
+            final RequestResponseMock createRequestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + containerId + "./" + catalogId, null,
+                    "POST");
+
+
+            final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, ADMIN_CREDENTIALS);
+            final Map<String, String> createResponseMap = mapper.readerFor(Map.class).readValue(createResponse.getContentAsString());
+
+            assertEquals(CREATED.getStatusCode(), createResponse.getStatus());
+
+
+        } finally {
+            author.logout();
+        }
+    }
+
+
 
     @Test
     public void create_item_before() throws Exception {
@@ -287,12 +363,13 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
     /**
      * the 'before item' is an item of another experience page
+     *
      * @throws Exception
      */
     @Test
     public void create_item_before_item_of_other_container_results_in_error() throws Exception {
 
-        final String beforeItemId = getNodeId( EXPERIENCE_PAGE_2_HANDLE_PATH + "/expPage2/hst:page/body/container/banner");
+        final String beforeItemId = getNodeId(EXPERIENCE_PAGE_2_HANDLE_PATH + "/expPage2/hst:page/body/container/banner");
         final String expectedMessage = String.format(String.format("Order before container item '%s' is of other experience page", beforeItemId));
         notAllowedcreateBeforeItem(beforeItemId, expectedMessage);
     }
@@ -324,7 +401,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), createResponse.getStatus());
         assertEquals(false, createResponseMap.get("success"));
 
-        assertEquals(expectedMessage , createResponseMap.get("message"));
+        assertEquals(expectedMessage, createResponseMap.get("message"));
     }
 
 
@@ -388,7 +465,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         final Session session = createSession(ADMIN_CREDENTIALS);
 
         try {
-             // first create a second container
+            // first create a second container
             JcrUtils.copy(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container",
                     unpublishedExpPageVariant.getPath() + "/hst:page/body/container2");
             session.save();
@@ -477,15 +554,10 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
 
     /**
-     * <p>
-     *     It is not allowed to move a container item from HST Configuration to an XPage: A document has a different life
-     *     cycle than HST configuration, thus if we would support such a move, we'd get problems if either the XPage or
-     *     HST Config gets published
-     * </p>
-     * <p>
-     *     This tests covers the move of an an HST Config container item to XPage container. The reverse test is covered in
-     *     {@link ContainerComponentResourceTest}
-     * </p>
+     * <p> It is not allowed to move a container item from HST Configuration to an XPage: A document has a different
+     * life cycle than HST configuration, thus if we would support such a move, we'd get problems if either the XPage or
+     * HST Config gets published </p> <p> This tests covers the move of an an HST Config container item to XPage
+     * container. The reverse test is covered in {@link ContainerComponentResourceTest} </p>
      */
     @Test
     public void move_container_item_from_hst_config_to_XPage_is_not_allowed() throws Exception {
@@ -499,9 +571,9 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
                     "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage", "hst:component",
                     "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main", "hst:component",
                     "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main/container", "hst:containercomponent",
-                      "hst:xtype", "hst.vbox",
+                    "hst:xtype", "hst.vbox",
                     "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main/container/banner", "hst:containeritemcomponent",
-                      "hst:componentclassname", "org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent",
+                    "hst:componentclassname", "org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent",
             };
 
             RepositoryTestCase.build(content, session);
@@ -510,9 +582,9 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
             final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final String targetContainerId = getNodeId(session,unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final String targetContainerId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
 
-            final String itemFromHstConfig = getNodeId(session,"/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main/container/banner");
+            final String itemFromHstConfig = getNodeId(session, "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main/container/banner");
 
             final RequestResponseMock updateContainerReqRes = mockGetRequestResponse(
                     "http", "localhost", "/_rp/" + targetContainerId, null, "PUT");
@@ -585,4 +657,5 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), updateResponse.getStatus());
     }
+
 }

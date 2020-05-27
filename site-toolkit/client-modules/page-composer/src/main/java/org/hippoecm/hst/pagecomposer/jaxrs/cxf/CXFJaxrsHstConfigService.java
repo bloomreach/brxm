@@ -207,7 +207,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
     /**
      * if belongs to XPage, returns the unpublished variant. If it is an XPage but there is no unpublished variant,
-     * we throw an IllegalStateException for now, see CMS-13262
+     * we throw an ClientException for now, see CMS-13262
      */
     private Node getXPageUnpublishedVariant(Node node) throws RepositoryException {
         if (node.getSession().getRootNode().isSame(node)) {

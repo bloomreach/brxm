@@ -28,6 +28,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.WorkflowUtils;
@@ -51,24 +52,28 @@ class XPageUtils {
 
     }
 
+    /**
+     * Returns the {@link DocumentWorkflow} for the current Experience Page document BUT if the current page is not
+     * editable by the {@code userSession} then a ClientException is thrown
+     * @throws ClientException in case the current user is not allowed to edit the current document, for example because
+     * someone else is already editing it
+     */
     static DocumentWorkflow getDocumentWorkflow(final HippoSession userSession,
-                                                          final PageComposerContextService contextService) throws RepositoryException, WorkflowException {
+                                                final PageComposerContextService contextService) throws RepositoryException, WorkflowException {
 
         // userSession is allowed to read the node since has XPAGE_REQUIRED_PRIVILEGE_NAME on the node
         final Node handle = userSession.getNodeByIdentifier(contextService.getExperiencePageHandleUUID());
 
-        final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, DRAFT).orElse(null);
-        if (draftNode != null) {
-            final String draftHolder = getStringProperty(draftNode, HIPPOSTD_HOLDER, null);
-            final String userId = userSession.getUserID();
-            if (!userId.equals(draftHolder)) {
-                throw new ClientException("Document being edited by another user", ClientError.ITEM_ALREADY_LOCKED);
-            }
-        }
-
-        // TODO is 'default' the right document workflow??
-        // I think it is ...
         final DocumentWorkflow documentWorkflow = (DocumentWorkflow) userSession.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
+
+        try {
+            if (Boolean.FALSE.equals(documentWorkflow.hints().get(DocumentWorkflowAction.obtainEditableInstance().getAction()))) {
+                throw new ClientException("Document not editable", ClientError.ITEM_ALREADY_LOCKED);
+            }
+        } catch (RemoteException e) {
+            log.error("Exception while checking hints", e);
+            throw new WorkflowException(e.getMessage());
+        }
 
         checkoutCorrectBranch(documentWorkflow, contextService);
         return documentWorkflow;
