@@ -16,14 +16,17 @@
 
 package org.hippoecm.hst.core.channelmanager;
 
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -32,14 +35,20 @@ import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.Boolean.TRUE;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_COMPONENT_EDITABLE;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_EXPERIENCE_PAGE_COMPONENT;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.obtainEditableInstance;
 
 public class CmsComponentComponentWindowAttributeContributor implements ComponentWindowAttributeContributor {
 
@@ -48,13 +57,16 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
     @Override
     public void contributePreamble(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap) {
 
-        HstComponentConfiguration compConfig = ((HstComponentConfiguration) window.getComponentInfo());
+        final HstComponentConfiguration compConfig = ((HstComponentConfiguration) window.getComponentInfo());
         final HstRequestContext requestContext = request.getRequestContext();
 
         populatingAttributesMap.put("uuid", compConfig.getCanonicalIdentifier());
 
         try {
-            final Session cmsUser = (Session)requestContext.getAttribute(ContainerConstants.CMS_USER_SESSION_ATTR_NAME);
+            // default editable false
+            populatingAttributesMap.put(HST_COMPONENT_EDITABLE, "false");
+
+            final HippoSession cmsUser = (HippoSession) requestContext.getAttribute(ContainerConstants.CMS_USER_SESSION_ATTR_NAME);
             if (cmsUser == null) {
                 throw new IllegalStateException("For Channel Manager preview requests there is expect to be a CMS user " +
                         "Session available");
@@ -66,26 +78,59 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
                 populatingAttributesMap.put(HST_EXPERIENCE_PAGE_COMPONENT, "true");
                 // check whether cmsUser has the right role on the xpage component
                 inRole = isInRole(cmsUser, compConfig, XPAGE_REQUIRED_PRIVILEGE_NAME);
+                if (inRole) {
+                    // user has right role, now check if no-one else is editing the draft
+                    // since user is in right role, use has for sure read-access!
+                    final Node handle = getHandle(cmsUser.getNodeByIdentifier(compConfig.getCanonicalIdentifier()));
+                    final Workflow documentWorkflow = cmsUser.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
+                    final Map<String, Serializable> hints = documentWorkflow.hints();
+                    if (TRUE.equals(hints.get(obtainEditableInstance().getAction()))) {
+                        // Xpage document is editable thus component is also editable
+                        populatingAttributesMap.put(HST_COMPONENT_EDITABLE, "true");
+                    } else {
+                        // Document most likely locked
+                        final String inUseBy = (String) hints.get("inUseBy");
+                        if (StringUtils.isNotBlank(inUseBy)) {
+                            populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, inUseBy);
+                        }
+                    }
+                }
             } else {
                 populatingAttributesMap.put(HST_EXPERIENCE_PAGE_COMPONENT, "false");
-                // check whether cmsUser has the right role on the HST config component
-                inRole = isInRole(cmsUser, compConfig, CHANNEL_WEBMASTER_PRIVILEGE_NAME);
-            }
 
-            populatingAttributesMap.put(HST_COMPONENT_EDITABLE, String.valueOf(inRole));
+                final Channel channel = requestContext.getResolvedMount().getMount().getChannel();
 
-            // TODO instead of marking the component as locked the above should be enough but for now also mark it
-            // TODO locked since the UI already 'knows' locked
-            if (!inRole) {
-                populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, "not enough karma");
+                if (channel != null && channel.isConfigurationLocked()) {
+                    populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, "system");
+                    populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
+                    populatingAttributesMap.put(HST_COMPONENT_EDITABLE, "false");
+
+                } else if (compConfig instanceof ConfigurationLockInfo) {
+                    ConfigurationLockInfo lockInfo = (ConfigurationLockInfo) compConfig;
+                    if (lockInfo.getLockedBy() == null) {
+                        // check whether cmsUser has the right role on the HST config component
+                        inRole = isInRole(cmsUser, compConfig, CHANNEL_WEBMASTER_PRIVILEGE_NAME);
+                        populatingAttributesMap.put(HST_COMPONENT_EDITABLE, String.valueOf(inRole));
+                    } else {
+                        String cmsUserId = (String) request.getAttribute(ContainerConstants.CMS_REQUEST_USER_ID_ATTR);
+                        populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, lockInfo.getLockedBy());
+                        if (lockInfo.getLockedBy().equals(cmsUserId)) {
+                            populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "true");
+                        } else {
+                            populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
+                            populatingAttributesMap.put(HST_COMPONENT_EDITABLE, "false");
+                        }
+                        if (lockInfo.getLockedOn() != null) {
+                            populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_ON, String.valueOf(lockInfo.getLockedOn().getTimeInMillis()));
+                        }
+                    }
+                }
             }
 
         } catch (PathNotFoundException e) {
             // cms user cannot read component thus certainly cannot modify it
-            populatingAttributesMap.put(HST_COMPONENT_EDITABLE, "false");
-        } catch (RepositoryException e) {
-            log.error("RepositoryException for cmsUser session :", e);
-            populatingAttributesMap.put(HST_COMPONENT_EDITABLE, "false");
+        } catch (RemoteException | WorkflowException | RepositoryException e) {
+            log.error("Exception while checking access cmsUser session :", e);
         }
 
         if (compConfig.getXType() != null) {
@@ -103,33 +148,20 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
         populatingAttributesMap.put("url", url.toString());
         populatingAttributesMap.put("refNS", window.getReferenceNamespace());
 
-        final Channel channel = requestContext.getResolvedMount().getMount().getChannel();
-
-        if (channel != null && channel.isConfigurationLocked() && !compConfig.isExperiencePageComponent()) {
-            populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, "system");
-            populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
-        } else if (compConfig.isExperiencePageComponent()) {
-            // TODO lock the component in case an other user contains a lock (aka is editing the draft)
-            // TODO see CMS-13158
-        } else if (compConfig instanceof ConfigurationLockInfo) {
-            ConfigurationLockInfo lockInfo = (ConfigurationLockInfo) compConfig;
-            if (lockInfo.getLockedBy() != null) {
-                String cmsUserId = (String) request.getAttribute(ContainerConstants.CMS_REQUEST_USER_ID_ATTR);
-                populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, lockInfo.getLockedBy());
-                if (lockInfo.getLockedBy().equals(cmsUserId)) {
-                    populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "true");
-                } else {
-                    populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
-                }
-                if (lockInfo.getLockedOn() != null) {
-                    populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_ON, String.valueOf(lockInfo.getLockedOn().getTimeInMillis()));
-                }
-            }
-        }
         if (compConfig.getLastModified() != null) {
             populatingAttributesMap.put(ChannelManagerConstants.HST_LAST_MODIFIED, String.valueOf(compConfig.getLastModified().getTimeInMillis()));
         }
 
+    }
+
+    /**
+     * @return the ancestor handle node and IllegalArgument if no handle found as ancestor
+     */
+    private Node getHandle(final Node node) throws RepositoryException {
+        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+            return node;
+        }
+        return getHandle(node.getParent());
     }
 
     private boolean isInRole(final Session cmsUser, final HstComponentConfiguration compConfig,
