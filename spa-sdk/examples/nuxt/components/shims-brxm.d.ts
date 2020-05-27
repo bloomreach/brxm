@@ -33,3 +33,7 @@ interface DocumentData {
 interface DocumentContent {
   value: string;
 }
+
+interface MenuModels {
+  menu?: import('@bloomreach/spa-sdk').Menu;
+}
