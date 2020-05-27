@@ -51,6 +51,7 @@ import { Configuration, initialize } from '@bloomreach/spa-sdk';
 import { Component, Vue } from 'nuxt-property-decorator';
 
 import Banner from '~/components/BrBanner.vue';
+import Content from '~/components/BrContent.vue';
 
 @Component({
   async asyncData(context) {
@@ -70,6 +71,7 @@ import Banner from '~/components/BrBanner.vue';
   data: () => ({
     mapping: {
       Banner,
+      Content,
     },
   }),
 })
