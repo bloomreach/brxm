@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { Menu, Page } from '@bloomreach/spa-sdk';
-import { Component, InjectReactive, Prop, Vue } from 'vue-property-decorator';
+import { Component, Inject, Prop, Vue } from 'vue-property-decorator';
 import BrMeta from './BrMeta.vue';
 
 /**
@@ -28,6 +28,11 @@ import BrMeta from './BrMeta.vue';
  */
 @Component({
   components: { BrMeta },
+  computed: {
+    page(this: BrManageMenuButton) {
+      return this.page$?.();
+    },
+  },
   name: 'br-manage-menu-button',
 })
 export default class BrManageMenuButton extends Vue {
@@ -36,6 +41,6 @@ export default class BrManageMenuButton extends Vue {
    */
   @Prop() menu!: Menu;
 
-  @InjectReactive() private page?: Page;
+  @Inject() private page$?: () => Page;
 }
 </script>

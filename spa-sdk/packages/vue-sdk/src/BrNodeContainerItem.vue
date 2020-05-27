@@ -36,6 +36,9 @@ import BrContainerItemUndefined from './BrContainerItemUndefined.vue';
     component(this: BrNodeContainerItem) {
       return this.component$();
     },
+    page(this: BrNodeContainerItem) {
+      return this.page$();
+    },
   },
 })
 export default class BrNodeContainerItem extends Vue {
@@ -45,7 +48,9 @@ export default class BrNodeContainerItem extends Vue {
 
   @InjectReactive() private mapping!: Record<string, Vue.Component>;
 
-  @InjectReactive() private page!: Page;
+  @Inject() private page$!: () => Page;
+
+  private page!: Page;
 
   private unsubscribe?: Function;
 

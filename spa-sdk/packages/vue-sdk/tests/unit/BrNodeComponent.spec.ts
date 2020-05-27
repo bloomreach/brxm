@@ -16,7 +16,7 @@
 
 import { mocked } from 'ts-jest/utils';
 import { Wrapper, shallowMount } from '@vue/test-utils';
-import { Component, Prop, ProvideReactive, Vue } from 'vue-property-decorator';
+import { Component, Prop, ProvideReactive, Provide, Vue } from 'vue-property-decorator';
 import { Component as BrComponent, MetaCollection, Page, isContainerItem, isContainer } from '@bloomreach/spa-sdk';
 import BrNodeComponent from '@/BrNodeComponent.vue';
 
@@ -26,7 +26,11 @@ jest.mock('@bloomreach/spa-sdk');
 class BrPage extends Vue {
   @ProvideReactive() @Prop() mapping!: Record<string, Vue.Component>;
 
-  @ProvideReactive() @Prop() page!: Page;
+  @Prop() page!: Page;
+
+  @Provide() page$() {
+    return this.page;
+  }
 }
 
 @Component
