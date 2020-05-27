@@ -211,16 +211,12 @@
             <!-- if current user is holder, (s)he is allowed to obtain editable instance -->
             <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
             <hippo:action action="commitEditableInstance" enabledExpr="true"/>
-            <hippo:setTransferable transferable="false"/>
             <if cond="!!draft">
               <hippo:action action="saveDraft" enabledExpr="true"/>
             </if>
           <else/>
             <!-- for a not-current editor the current editor (holder) is reported through the 'inUseBy' feedback -->
-
-           <if cond="!transferable" >
-             <hippo:feedback key="inUseBy" value="holder"/>
-           </if>
+            <hippo:feedback key="inUseBy" value="holder"/>
           </if>
           <if cond="!editor and workflowContext.isGranted(draft,'hippo:admin')">
             <!-- For an admin (granted hippo:admin) enable the unlock operation if not-current editor -->
