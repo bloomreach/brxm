@@ -37,7 +37,7 @@
 
 <script lang="ts">
 import { Component as SpaComponent, Page, isContainerItem, isContainer } from '@bloomreach/spa-sdk';
-import { Component, InjectReactive, Inject, Prop, Provide, Vue } from 'vue-property-decorator';
+import { Component, Inject, Prop, Provide, Vue } from 'vue-property-decorator';
 import BrMeta from './BrMeta.vue';
 import BrNodeContainerItem from './BrNodeContainerItem.vue';
 import BrNodeContainer from './BrNodeContainer.vue';
@@ -49,6 +49,9 @@ import BrNodeContainer from './BrNodeContainer.vue';
     BrNodeContainer,
   },
   computed: {
+    mapping(this: BrNodeComponent) {
+      return this.mapping$();
+    },
     page(this: BrNodeComponent) {
       return this.page$();
     },
@@ -61,7 +64,7 @@ import BrNodeContainer from './BrNodeContainer.vue';
 export default class BrNodeComponent extends Vue {
   @Prop() component!: SpaComponent;
 
-  @InjectReactive() private mapping!: Record<string, Vue.Component>;
+  @Inject() private mapping$!: () => Record<string, Vue.Component>;
 
   @Inject() private page$!: () => Page;
 

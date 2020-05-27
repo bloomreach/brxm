@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import { ContainerItem, Page } from '@bloomreach/spa-sdk';
-import { Component, InjectReactive, Inject, Vue, Watch } from 'vue-property-decorator';
+import { Component, Inject, Vue, Watch } from 'vue-property-decorator';
 import BrContainerItemUndefined from './BrContainerItemUndefined.vue';
 
 @Component({
@@ -35,6 +35,9 @@ import BrContainerItemUndefined from './BrContainerItemUndefined.vue';
   computed: {
     component(this: BrNodeContainerItem) {
       return this.component$();
+    },
+    mapping(this: BrNodeContainerItem) {
+      return this.mapping$();
     },
     page(this: BrNodeContainerItem) {
       return this.page$();
@@ -46,7 +49,7 @@ export default class BrNodeContainerItem extends Vue {
 
   private component!: ContainerItem;
 
-  @InjectReactive() private mapping!: Record<string, Vue.Component>;
+  @Inject() private mapping$!: () => Record<string, Vue.Component>;
 
   @Inject() private page$!: () => Page;
 

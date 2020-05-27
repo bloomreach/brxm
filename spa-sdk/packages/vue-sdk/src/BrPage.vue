@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { Configuration, PageModel, Page, initialize, isPage, destroy } from '@bloomreach/spa-sdk';
-import { Component, Prop, ProvideReactive, Provide, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, Provide, Vue, Watch } from 'vue-property-decorator';
 import BrNodeComponent from './BrNodeComponent.vue';
 
 /**
@@ -48,7 +48,7 @@ export default class BrPage extends Vue {
   /**
    * The brXM and Vue.js components mapping.
    */
-  @Prop() @ProvideReactive() mapping!: Record<string, Vue.Component>;
+  @Prop() mapping!: Record<string, Vue.Component>;
 
   /**
    * The pre-initialized page instance or prefetched page model.
@@ -59,6 +59,10 @@ export default class BrPage extends Vue {
   private state?: Page;
 
   private loading?: Promise<void>;
+
+  @Provide() private mapping$() {
+    return this.mapping;
+  }
 
   @Provide() private page$() {
     return this.state;

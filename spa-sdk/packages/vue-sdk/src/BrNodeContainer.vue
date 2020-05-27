@@ -66,7 +66,7 @@ import {
   TYPE_CONTAINER_ORDERED_LIST,
   TYPE_CONTAINER_UNORDERED_LIST,
 } from '@bloomreach/spa-sdk';
-import { Component, InjectReactive, Inject, Vue } from 'vue-property-decorator';
+import { Component, Inject, Vue } from 'vue-property-decorator';
 import BrContainerBox from './BrContainerBox.vue';
 import BrContainerInline from './BrContainerInline.vue';
 import BrContainerNoMarkup from './BrContainerNoMarkup.vue';
@@ -85,6 +85,9 @@ import BrContainerUnorderedList from './BrContainerUnorderedList.vue';
     component(this: BrNodeContainer) {
       return this.component$();
     },
+    mapping(this: BrNodeContainer) {
+      return this.mapping$();
+    },
     page(this: BrNodeContainer) {
       return this.page$();
     },
@@ -99,7 +102,7 @@ import BrContainerUnorderedList from './BrContainerUnorderedList.vue';
 export default class BrNodeContainer extends Vue {
   @Inject() private component$!: () => Container;
 
-  @InjectReactive() private mapping!: Record<string, Vue.Component>;
+  @Inject() private mapping$!: () => Record<string, Vue.Component>;
 
   @Inject() private page$!: () => Page;
 }
