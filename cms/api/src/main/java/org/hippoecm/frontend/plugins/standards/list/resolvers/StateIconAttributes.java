@@ -16,14 +16,12 @@
 
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
-import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
-import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
+
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
@@ -41,6 +39,9 @@ import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 
 /**
  * <p>Standard attributes of a hippostd:publishable document. Figures out what CSS classes, summary
@@ -65,8 +66,10 @@ import org.slf4j.LoggerFactory;
  * <p>The handle, document or document revision is observed, see {@link org.hippoecm.frontend.model.event.IObservable}
  * by the observers of {@link org.hippoecm.frontend.plugins.standards.list.ListCell}, so that any modification
  * updates the css class, tooltip and icons.</p>
- * <p>In case of a handle, the unpublished variant <em>and</em> the draft variant are observed, the case of document
- * that document and if the {@link #nodeModel}, see constructor argument {@link #StateIconAttributes(JcrNodeModel)}
+ * <p>In case of a handle, the draft variant is observed if it exists. If the stateSummary or the retainable
+ * property changes, the icon and toolip are updated. If no draft variant exists the published or unpublished
+ * variant is observed.</p>
+ * <p>If the {@link #nodeModel}, see constructor argument {@link #StateIconAttributes(JcrNodeModel)}
  * refers to a revision, the frozen node of the revision is used.</p>
  */
 public class StateIconAttributes implements IObservable, IDetachable {
@@ -78,7 +81,6 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
     private JcrNodeModel nodeModel;
     private Observable observable;
-    private Observable draftObservable;
     private transient boolean loaded = false;
 
     private transient String cssClass;
@@ -88,7 +90,6 @@ public class StateIconAttributes implements IObservable, IDetachable {
     public StateIconAttributes(final JcrNodeModel nodeModel) {
         this.nodeModel = nodeModel;
         observable = new Observable(nodeModel);
-        draftObservable = new Observable(nodeModel);
     }
 
     public String getSummary() {
@@ -116,13 +117,11 @@ public class StateIconAttributes implements IObservable, IDetachable {
 
         nodeModel.detach();
         observable.detach();
-        draftObservable.detach();
     }
 
     void load() {
         if (!loaded) {
             observable.setTarget(null);
-            draftObservable.setTarget(null);
             try {
                 final Node node = nodeModel.getNode();
                 if (node != null) {
@@ -146,7 +145,6 @@ public class StateIconAttributes implements IObservable, IDetachable {
             final Node draftVariantNode = handleParser.getDraftVariantNode();
             if (draftVariantNode != null && draftVariantNode.hasProperty(HippoStdNodeType.HIPPOSTD_RETAINABLE)){
                 retainable = draftVariantNode.getProperty(HippoStdNodeType.HIPPOSTD_RETAINABLE).getBoolean();
-                draftObservable.setTarget(new JcrNodeModel(draftVariantNode));
             }
             primaryType = handleParser.getPrimaryType();
         } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
@@ -184,7 +182,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
     }
 
     /**
-     * <p>Modify the state summery so that for a document that is retainable.</p>
+     * <p>Modify the state summery for a document that is retainable.</p>
      * <p></p>
      * <p>The "changed" state means "live" and "unpublished changes". In combination
      * with a retainable document however that should be become "live" and "draft changes"
@@ -192,7 +190,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
      * saving the draft changes in this case.</p>
      *
      * @param state the value of the {@link HippoStdNodeType#HIPPOSTD_STATESUMMARY}  property.
-     * @return
+     * @return modified state summary
      */
     private String getStateSummaryForRetainableState(final String state) {
         switch (state) {
@@ -254,19 +252,16 @@ public class StateIconAttributes implements IObservable, IDetachable {
     @Override
     public void setObservationContext(IObservationContext<? extends IObservable> context) {
         observable.setObservationContext(context);
-        draftObservable.setObservationContext(context);
     }
 
     @Override
     public void startObservation() {
         observable.startObservation();
-        draftObservable.startObservation();
     }
 
     @Override
     public void stopObservation() {
         observable.stopObservation();
-        draftObservable.stopObservation();
     }
 
 
@@ -282,11 +277,6 @@ public class StateIconAttributes implements IObservable, IDetachable {
         }
 
         /**
-         * <p>In all cases, except the following the unpublished variant is used to obtain the state summary</p>
-         * <ul>
-         *     <li>If there is no unpublished variant, but a published exists, the published variant is used</li>
-         *     <li>If there is no unpublished nor published, the draft is used</li>
-         * </ul>
          * @return One of the variants or {@code null} if none is present
          */
         public Node getStateSummaryVariant() {
@@ -301,9 +291,17 @@ public class StateIconAttributes implements IObservable, IDetachable {
             return primaryType;
         }
 
-        private HandleParser invoke() throws RepositoryException {
+        /**
+         * <p>
+         * Find the draft variant and use that as the stateSummaryVariant or
+         * set the stateSummaryVariant to the first (unpublished or published) variant
+         * that is found if there is no draft variant
+         * </p>
+         * @throws RepositoryException
+         */
+        private void invoke() throws RepositoryException {
             NodeIterator docs = node.getNodes(node.getName());
-            while (docs.hasNext()) {
+            while (docs.hasNext() && draftVariantNode == null) {
                 Node variantNode = docs.nextNode();
                 primaryType = variantNode.getPrimaryNodeType();
                 if (variantNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
@@ -313,11 +311,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
                     }
                     stateSummaryVariant = variantNode;
                 }
-                if (draftVariantNode != null) {
-                    break;
-                }
             }
-            return this;
         }
     }
 }
