@@ -19,16 +19,20 @@ import axios from 'axios';
 import { NextPageContext } from 'next';
 // tslint:disable-next-line:import-name
 import getConfig from 'next/config';
+import { parseCookies, setCookie } from 'nookies'
 import { BrComponent, BrPage, BrPageContext } from '@bloomreach/react-sdk';
 import { Configuration, Page, initialize } from '@bloomreach/spa-sdk';
 import { Banner, Content, Menu, NewsList } from '../components';
 import routes from '../routes';
 
+const VISITOR_COOKIE = '_v';
+const VISITOR_COOKIE_MAX_AGE_IN_SECONDS = 365 * 24 * 60 * 60;
+
 const { Link } = routes;
 const { publicRuntimeConfig } = getConfig();
 
 interface IndexProps {
-  config: Configuration;
+  configuration: Configuration;
   page: Page;
 }
 
@@ -36,43 +40,44 @@ export default class Index extends React.Component<IndexProps> {
   private static visitor?: Configuration['visitor'];
 
   static async getInitialProps(context: NextPageContext) {
-    const config = {
+    const cookies = parseCookies(context);
+    const configuration = {
       cmsBaseUrl: publicRuntimeConfig.cmsBaseUrl,
       spaBaseUrl: publicRuntimeConfig.spaBaseUrl,
       request: { path: context.asPath || '' },
-      visitor: Index.visitor,
+      visitor:  cookies[VISITOR_COOKIE]
+        ? JSON.parse(cookies[VISITOR_COOKIE])
+        : Index.visitor,
     };
-    const page = await initialize({
-      ...config,
-      httpClient: axios,
-      request: { ...context.req, ...config.request },
-    });
-    config.visitor = page.getVisitor();
+    const page = await initialize({ ...configuration, httpClient: axios });
+    configuration.visitor = page.getVisitor();
 
-    if (context.res && config.visitor) {
-      context.res.setHeader(
-        'Set-Cookie',
-        `${config.visitor.header}=${config.visitor.id}; Max-Age=${365 * 24 * 60 * 60}; Path=/; HttpOnly`,
+    if (context.res && configuration.visitor) {
+      setCookie(
+        context,
+        VISITOR_COOKIE,
+        JSON.stringify(configuration.visitor),
+        { httpOnly: true, maxAge: VISITOR_COOKIE_MAX_AGE_IN_SECONDS },
       );
     }
 
     // Limit the number of hosts that are allowed to embed your application.
     // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
-    context?.res?.setHeader('Content-Security-Policy', `frame-ancestors 'self' ${new URL(config.cmsBaseUrl).host}`);
+    context?.res?.setHeader('Content-Security-Policy', `frame-ancestors 'self' ${new URL(configuration.cmsBaseUrl).host}`);
 
-    return { config, page };
+    return { configuration, page };
   }
 
   componentDidMount() {
-    Index.visitor = this.props.config.visitor;
+    Index.visitor = this.props.configuration.visitor;
   }
 
   render() {
-    const config = { ...this.props.config, httpClient: axios };
+    const configuration = { ...this.props.configuration, httpClient: axios };
     const mapping = { Banner, Content, 'News List': NewsList };
 
     return (
-      <BrPage configuration={config} mapping={mapping} page={this.props.page}>
+      <BrPage configuration={configuration} mapping={mapping} page={this.props.page}>
         <header>
           <nav className="navbar navbar-expand-sm navbar-dark sticky-top bg-dark" role="navigation">
             <div className="container">
