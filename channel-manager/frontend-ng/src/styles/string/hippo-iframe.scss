@@ -409,6 +409,12 @@
 .hippo-dragging {
   cursor: grabbing;
 
+  .drop-not-allowed {
+    background-color: rgba($red-400, .3);
+    cursor: not-allowed;
+    pointer-events: all;
+  }
+
   .hippo-overlay-element-container {
     display: flex;
   }

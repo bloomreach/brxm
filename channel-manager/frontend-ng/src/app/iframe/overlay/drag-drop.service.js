@@ -72,7 +72,7 @@ export default class DragDropService {
       mirrorContainer,
       ignoreInputTextSelection: false,
       moves: (el, source) => !this.dropping && this._isContainerEnabled(source),
-      accepts: (el, target) => this._isContainerEnabled(target),
+      accepts: (el, target, source) => this._isContainerEnabled(target) && this._hasSameDropGroup(source, target),
       invalid: () => !this.draggingOrClicking,
       dragDelay: 300,
     };
@@ -124,6 +124,19 @@ export default class DragDropService {
   _isContainerEnabled(containerElement) {
     const container = this.PageStructureService.getContainerByIframeElement(containerElement);
     return container && !container.isDisabled();
+  }
+
+  _hasSameDropGroup(source, target) {
+    const sourceContainer = this.PageStructureService.getContainerByIframeElement(source);
+    const targetContainer = this.PageStructureService.getContainerByIframeElement(target);
+
+    if (!sourceContainer || !targetContainer) {
+      return false;
+    }
+
+    const sourceDropGroups = sourceContainer.getDropGroups();
+    const targetDropGroups = targetContainer.getDropGroups();
+    return sourceDropGroups.some(group => targetDropGroups.includes(group));
   }
 
   _getContainerBoxElements() {
@@ -185,6 +198,18 @@ export default class DragDropService {
   _onStartDrag(containerElement) {
     this.$document.find('html').addClass('hippo-dragging');
     this._updateDragDirection(containerElement);
+
+    const sourceContainer = this.PageStructureService.getContainerByIframeElement(containerElement);
+    const groups = sourceContainer.getDropGroups();
+    const page = this.PageStructureService.getPage();
+    page.getContainers()
+      .filter(container => container.isVisible())
+      .forEach((container) => {
+        if (!container.getDropGroups().some(group => groups.includes(group))) {
+          container.getOverlayElement().addClass('drop-not-allowed');
+        }
+      });
+
     this.CommunicationService.emit('drag:start');
   }
 
@@ -224,6 +249,7 @@ export default class DragDropService {
 
   _onStopDragOrClick(element) {
     this.$document.find('html').removeClass('hippo-dragging hippo-overlay-permeable');
+    this.$document.find('.drop-not-allowed').removeClass('drop-not-allowed');
     this.CommunicationService.emit('drag:stop');
 
     this.draggingOrClicking = false;
