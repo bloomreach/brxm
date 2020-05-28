@@ -81,7 +81,8 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
                 if (inRole) {
                     // user has right role, now check if no-one else is editing the draft
                     // since user is in right role, use has for sure read-access!
-                    final Node handle = getHandle(cmsUser.getNodeByIdentifier(compConfig.getCanonicalIdentifier()));
+                    final Node hstComponent = cmsUser.getNodeByIdentifier(compConfig.getCanonicalIdentifier());
+                    final Node handle = getHandle(hstComponent);
                     final Workflow documentWorkflow = cmsUser.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
                     final Map<String, Serializable> hints = documentWorkflow.hints();
                     if (TRUE.equals(hints.get(obtainEditableInstance().getAction()))) {
@@ -155,13 +156,24 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
     }
 
     /**
-     * @return the ancestor handle node and IllegalArgument if no handle found as ancestor
+     * @return the ancestor handle node a RepositoryException if no handle found as ancestor
      */
-    private Node getHandle(final Node node) throws RepositoryException {
-        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-            return node;
+    private Node getHandle(final Node handleOrDescendant) throws RepositoryException {
+        return getHandle(handleOrDescendant, handleOrDescendant);
+    }
+
+    /**
+     * @return the ancestor handle node a RepositoryException if no handle found as ancestor
+     */
+    private Node getHandle(final Node origin, final Node current) throws RepositoryException {
+        if (current.isNodeType(HippoNodeType.NT_HANDLE)) {
+            return current;
         }
-        return getHandle(node.getParent());
+        try {
+            return getHandle(current.getParent());
+        } catch (RepositoryException e) {
+            throw new RepositoryException(String.format("Could not find a handle node ancestor for '%s'", origin.getPath()));
+        }
     }
 
     private boolean isInRole(final Session cmsUser, final HstComponentConfiguration compConfig,
