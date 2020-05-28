@@ -79,9 +79,7 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
     public Document saveDraft(final Document document) {
         validateSaveDraft();
         updateDraft(document);
-        final Document updatedDocument = editDraft();
-        addDocumentInfo(updatedDocument);
-        return updatedDocument;
+        return document;
     }
 
     protected abstract void updateDraft(final Document document);

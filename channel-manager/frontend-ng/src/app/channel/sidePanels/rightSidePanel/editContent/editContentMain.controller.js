@@ -165,7 +165,9 @@ class EditContentMainCtrl {
   }
 
   keepDraft() {
-    this.ContentEditor.keepDraft();
+    this.ContentEditor.keepDraft().then(
+      () => this.ContentEditor.open(this.ContentEditor.getDocumentId()),
+    );
   }
 
   isKeepDraftEnabled() {
@@ -180,8 +182,8 @@ class EditContentMainCtrl {
 
   uiCanExit() {
     if (this.isRetainable()) {
-      this.ContentEditor.close();
-      return this.$q.resolve();
+      return this.ContentEditor.keepDraft()
+        .finally(() => this.ContentEditor.close());
     }
     return this._confirmExit()
       .then(() => this.ContentEditor.discardChanges()
