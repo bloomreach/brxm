@@ -30,6 +30,11 @@ public interface ChannelManagerConstants {
     String HST_EXPERIENCE_PAGE_COMPONENT = "HST-Experience-Page-Component";
     String HST_SITEMAP_ID = "HST-Sitemap-Id";
     String HST_SITEMAPITEM_ID = "HST-SitemapItem-Id";
+
+    /**
+     * @deprecated since 14.x Experience Pages, do not use any more
+     */
+    @Deprecated
     String HST_PAGE_EDITABLE = "HST-Page-Editable";
     String HST_RENDER_VARIANT = "HST-Render-Variant";
     String HST_SITE_HAS_PREVIEW_CONFIG = "HST-Site-HasPreviewConfig";

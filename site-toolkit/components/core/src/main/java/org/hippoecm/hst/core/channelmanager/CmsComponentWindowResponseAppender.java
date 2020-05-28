@@ -95,13 +95,6 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             if (siteMap instanceof CanonicalInfo) {
                 final CanonicalInfo canonicalInfo = (CanonicalInfo) siteMap;
                 pageMetaData.put(ChannelManagerConstants.HST_SITEMAP_ID, canonicalInfo.getCanonicalIdentifier());
-                if (canonicalInfo.getCanonicalPath().contains(WORKSPACE_PATH_ELEMENT) &&
-                        canonicalInfo.getCanonicalPath().startsWith(mount.getHstSite().getConfigurationPath())) {
-                    // sitemap item is part of workspace && of current site configuration (thus not inherited)
-                    pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "true");
-                } else {
-                    pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "false");
-                }
             } else {
                 log.warn("Expected sitemap of subtype {}. Cannot set sitemap id.", CanonicalInfo.class.getName());
             }
