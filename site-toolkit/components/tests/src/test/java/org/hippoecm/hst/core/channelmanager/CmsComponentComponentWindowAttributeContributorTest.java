@@ -120,8 +120,6 @@ public class CmsComponentComponentWindowAttributeContributorTest {
         contributor.contributePreamble(window, request, map);
 
         assertThat(map.containsKey(HST_XTYPE), is(false));
-
-
         assertThat(map.containsKey("uuid"), is(true));
         assertThat(map.containsKey(HST_TYPE), is(true));
         assertThat(map.containsKey("refNS"), is(true));
@@ -175,7 +173,6 @@ public class CmsComponentComponentWindowAttributeContributorTest {
 
         assertThat(requestContext.getResolvedMount(), is(apiResolvedMount));
         final Map<String, String> map = new HashMap<>();
-
 
         contributor.contributePreamble(window, request, map);
 
