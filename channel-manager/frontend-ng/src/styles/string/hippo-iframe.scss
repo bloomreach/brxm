@@ -80,6 +80,28 @@
       box-shadow: inset 0 0 1px 0 $overlay-container-inline-color, inset 0 0 8px 0 $overlay-container-glow-color;
       pointer-events: auto;
     }
+
+    &-readonly {
+      border: 1px dashed $bloomreach-gray-38;
+      pointer-events: auto;
+
+      &:hover {
+        background-color: rgba($bloomreach-white, .6);
+
+        .hippo-overlay-xpage-toggle {
+          display: flex;
+        }
+      }
+    }
+
+    .hippo-overlay-xpage-toggle {
+      align-items: center;
+      display: none;
+      height: 100%;
+      justify-content: center;
+      position: absolute;
+      width: 100%;
+    }
   }
 
   &-component {
@@ -129,7 +151,8 @@
   &.hippo-overlay-label-experiment,
   .hippo-dragging .hippo-overlay-element-container > &,
   .hippo-overlay-element-component:hover > &,
-  .hippo-overlay-element-container-empty:hover > & {
+  .hippo-overlay-element-container-empty:hover > &,
+  .hippo-overlay-element-container-readonly:hover > & {
     visibility: visible;
   }
 }
@@ -413,6 +436,10 @@
     background-color: rgba($red-400, .3);
     cursor: not-allowed;
     pointer-events: all;
+
+    .hippo-overlay-xpage-toggle {
+      display: none;
+    }
   }
 
   .hippo-overlay-element-container {
