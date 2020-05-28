@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+const ARG_PORT = '--port';
+const port = process.argv.find((arg) => arg.startsWith(`${ARG_PORT}=`));
+
 module.exports = {
   mode: 'universal',
   head: {
@@ -44,6 +47,9 @@ module.exports = {
   buildModules: ['@nuxt/typescript-build'],
   modules: ['@nuxtjs/axios', '@nuxtjs/dotenv', 'cookie-universal-nuxt'],
   plugins: ['~/plugins/brxm'],
+  server: {
+    port: port && port.substring(ARG_PORT.length + 1),
+  },
   build: {
     babel: {
       presets({ isServer }) {
