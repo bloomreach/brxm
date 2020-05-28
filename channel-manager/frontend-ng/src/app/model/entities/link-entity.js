@@ -36,4 +36,12 @@ export class LinkEntity extends Entity {
   setComponent(component) {
     this._component = component;
   }
+
+  isVisible() {
+    return true;
+  }
+
+  isShared() {
+    return false;
+  }
 }

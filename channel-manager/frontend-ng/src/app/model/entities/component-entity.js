@@ -60,12 +60,28 @@ export class ComponentEntity extends Entity {
     return this._meta[HstConstants.HAS_NO_DOM];
   }
 
+  isEditable() {
+    return this._meta[HstConstants.COMPONENT_EDITABLE] === 'true';
+  }
+
   isLocked() {
     return angular.isDefined(this.getLockedBy());
   }
 
   isLockedByCurrentUser() {
     return this._meta[HstConstants.LOCKED_BY_CURRENT_USER] === 'true';
+  }
+
+  isShared() {
+    return this._meta[HstConstants.SHARED] === 'true';
+  }
+
+  isVisible() {
+    return this.isEditable();
+  }
+
+  isXPageComponent() {
+    return this._meta[HstConstants.EXPERIENCE_PAGE_COMPONENT] === 'true';
   }
 
   addHeadContributions(contributions) {

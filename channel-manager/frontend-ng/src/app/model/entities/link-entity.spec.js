@@ -51,4 +51,20 @@ describe('LinkEntity', () => {
       expect(link.getComponent()).toBe(component);
     });
   });
+
+  describe('isShared', () => {
+    it('should return false', () => {
+      const link = new LinkEntity({});
+
+      expect(link.isShared()).toBe(false);
+    });
+  });
+
+  describe('isVisible', () => {
+    it('should return true', () => {
+      const link = new LinkEntity({});
+
+      expect(link.isVisible()).toBe(true);
+    });
+  });
 });
