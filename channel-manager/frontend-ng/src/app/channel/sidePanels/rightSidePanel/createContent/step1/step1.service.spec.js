@@ -193,6 +193,7 @@ describe('Step1Service', () => {
       Step1Service.documentType = 'test-doctype';
       Step1Service.rootPath = 'test-rootpath';
       Step1Service.defaultPath = 'test-defaultpath';
+      Step1Service.experiencePage = false;
 
       Step1Service.createDocument().then(done);
       expect(ContentService.createDocument).toHaveBeenCalledWith({
@@ -203,6 +204,7 @@ describe('Step1Service', () => {
         documentTypeId: 'test-doctype',
         rootPath: 'test-rootpath',
         defaultPath: 'test-defaultpath',
+        experiencePage: false,
       });
     });
 
