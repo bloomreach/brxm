@@ -16,9 +16,12 @@
 
 // Should match HST's org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.
 export const CHANNEL_ID = 'HST-Channel-Id';
+export const COMPONENT_EDITABLE = 'HST-Component-Editable';
 export const CONTEXT_PATH = 'HST-Context-Path';
 export const DEFAULT_RENDER_VARIANT = 'hippo-default';
 export const END_MARKER = 'HST-End';
+export const EXPERIENCE_PAGE = 'HST-Experience-Page';
+export const EXPERIENCE_PAGE_COMPONENT = 'HST-Experience-Page-Component';
 export const EXPERIMENT_ID = 'Targeting-experiment-id';
 export const EXPERIMENT_STATE = 'Targeting-experiment-state';
 export const HAS_NO_DOM = 'hasNoDom';
@@ -35,6 +38,7 @@ export const PATH_INFO = 'HST-Path-Info';
 export const REFERENCE_NAMESPACE = 'refNS';
 export const RENDER_URL = 'url';
 export const RENDER_VARIANT = 'HST-Render-Variant';
+export const SHARED = 'HST-Shared';
 export const SITEMAPITEM_ID = 'HST-SitemapItem-Id';
 export const TYPE = 'HST-Type';
 export const TYPE_COMPONENT = 'CONTAINER_ITEM_COMPONENT';
