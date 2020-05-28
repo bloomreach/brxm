@@ -99,4 +99,8 @@ export class Container extends ComponentEntity {
       children: this._items.map(item => item.getId()),
     };
   }
+
+  getDropGroups() {
+    return this.isXPageComponent() ? ['xpages'] : ['default'];
+  }
 }

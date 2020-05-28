@@ -314,4 +314,20 @@ describe('Container', () => {
       expect(container.getHstRepresentation()).toEqual(jasmine.objectContaining({ children: ['component-id'] }));
     });
   });
+
+  describe('getDropGroups', () => {
+    it('should return "xpages" if the component is an Experience Page component', () => {
+      const container = new Container({ 'HST-Experience-Page-Component': 'true' });
+
+      expect(container.getDropGroups()).toContain('xpages');
+      expect(container.getDropGroups()).not.toContain('default');
+    });
+
+    it('should return "default" if the component is not an Experience Page component', () => {
+      const container = new Container({});
+
+      expect(container.getDropGroups()).toContain('default');
+      expect(container.getDropGroups()).not.toContain('xpages');
+    });
+  });
 });
