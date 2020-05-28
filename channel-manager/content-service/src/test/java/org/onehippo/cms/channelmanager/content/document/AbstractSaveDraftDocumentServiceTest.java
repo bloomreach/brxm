@@ -198,7 +198,7 @@ public class AbstractSaveDraftDocumentServiceTest {
         input.setFields(fields);
         Document expected = new Document();
         expected.setId("id");
-        expected.getInfo().setCanKeepDraft(true);
+        expected.getInfo().setCanKeepDraft(false);
         expected.getInfo().setRetainable(true);
         expected.getInfo().setDirty(false);
         expected.setFields(fields);
