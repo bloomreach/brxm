@@ -56,6 +56,7 @@ export default class OverlayService {
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = false;
+    this._isXpageMode = false;
 
     this._onOverlayMouseDown = this._onOverlayMouseDown.bind(this);
     this._onOverlayClick = this._onOverlayClick.bind(this);
@@ -83,6 +84,10 @@ export default class OverlayService {
     }
 
     this._isEditable = await this.CommunicationService.isEditable();
+
+    const page = this.PageStructureService.getPage();
+    this._isXpageMode = page && page.getMeta().isXPage();
+
     await this._cssPromise;
 
     if (!this._overlay || !this.$document.find('body > .hippo-overlay').length) {
@@ -320,8 +325,7 @@ export default class OverlayService {
   _addMarkupAndBehavior(structureElement, overlayElement) {
     switch (structureElement.getType()) {
       case 'container':
-        this._addDropIcon(structureElement, overlayElement);
-        this._addLockIcon(structureElement, overlayElement);
+        this._addContainerMarkup(structureElement, overlayElement);
         break;
       case 'content-link':
         this._addLinkMarkup(overlayElement, contentLinkSvg, 'EDIT_CONTENT', 'qa-content-link');
@@ -340,6 +344,12 @@ export default class OverlayService {
       default:
         break;
     }
+  }
+
+  _addContainerMarkup(structureElement, overlayElement) {
+    this._addDropIcon(structureElement, overlayElement);
+    this._addLockIcon(structureElement, overlayElement);
+    this._addXPageToggle(structureElement, overlayElement);
   }
 
   _addComponentMarkup(structureElement, overlayElement) {
@@ -396,6 +406,18 @@ export default class OverlayService {
     }
 
     return this._translate('CONTAINER_LOCKED_BY', { user: container.getLockedBy() });
+  }
+
+  _addXPageToggle(container, overlayElement) {
+    const title = this._translate(container.isXPageComponent() ? 'TOGGLE_SHARED_CONTAINERS' : 'TOGGLE_PAGE_CONTAINERS');
+    const toggleButton = angular.element(`<button class="btn btn-default" title="${title}">${title}</button>`);
+    toggleButton.on('click', () => {
+      this._isXpageMode = !this._isXpageMode;
+      this.sync();
+    });
+    angular.element('<div class="hippo-overlay-xpage-toggle"></div>')
+      .append(toggleButton)
+      .appendTo(overlayElement);
   }
 
   _addLinkMarkup(overlayElement, svg, titleKey, qaClass = '') {
@@ -678,6 +700,9 @@ export default class OverlayService {
         boxElement.toggleClass('hippo-overlay-box-container-filled', !isEmptyInDom);
         overlayElement.toggleClass('hippo-overlay-element-container-empty', isEmptyInDom);
         overlayElement.toggleClass('hippo-overlay-element-container-disabled', structureElement.isDisabled());
+        overlayElement.toggleClass('hippo-overlay-element-container-readonly', structureElement.isXPageComponent()
+          ? !this._isXpageMode
+          : this._isXpageMode);
         break;
       }
       default:
@@ -690,6 +715,12 @@ export default class OverlayService {
   _isElementVisible(structureElement, boxElement) {
     switch (structureElement.getType()) {
       case 'component':
+        if (!this.isComponentsOverlayDisplayed) {
+          return false;
+        }
+        return structureElement.isXPageComponent()
+          ? this._isXpageMode
+          : !this._isXpageMode;
       case 'container':
         return this.isComponentsOverlayDisplayed;
       case 'content-link':

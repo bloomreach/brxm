@@ -336,6 +336,15 @@ describe('OverlayService', () => {
     expect(emptyContainer.find('.hippo-overlay-label-text').html()).toBe('Empty container');
   });
 
+  it('renders "shared" labels for structure elements that are marked with HST-Shared', async () => {
+    await loadIframeFixture();
+
+    const container = $document.find('.hippo-overlay > .hippo-overlay-element-container').eq(0);
+    const labelText = container.find('.hippo-overlay-label-text');
+
+    expect(labelText.html()).toBe('vBox container SHARED_SUFFIX');
+  });
+
   it('renders the name structure elements in a data-qa-name attribute', async () => {
     await loadIframeFixture();
 
