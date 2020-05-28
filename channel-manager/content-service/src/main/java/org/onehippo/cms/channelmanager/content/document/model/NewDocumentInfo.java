@@ -24,6 +24,7 @@ public class NewDocumentInfo {
     private String folderTemplateQuery;
     private String rootPath;
     private String defaultPath;
+    private boolean experiencePage;
 
     public String getName() {
         return name;
@@ -79,5 +80,13 @@ public class NewDocumentInfo {
 
     public void setDefaultPath(final String defaultPath) {
         this.defaultPath = defaultPath;
+    }
+
+    public boolean isExperiencePage() {
+        return experiencePage;
+    }
+
+    public void setExperiencePage(final boolean experiencePage) {
+        this.experiencePage = experiencePage;
     }
 }
