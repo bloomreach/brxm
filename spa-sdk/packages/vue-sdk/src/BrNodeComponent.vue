@@ -60,6 +60,7 @@ import BrNodeContainer from './BrNodeContainer.vue';
     isContainerItem,
     isContainer,
   },
+  name: 'br-node-component',
 })
 export default class BrNodeComponent extends Vue {
   @Prop() component!: SpaComponent;
