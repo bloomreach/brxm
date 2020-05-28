@@ -19,6 +19,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { Response, Request } from 'express';
+import { serialize } from 'cookie';
 import { BrPageComponent } from '@bloomreach/ng-sdk';
 import { Page } from '@bloomreach/spa-sdk';
 
@@ -32,6 +33,7 @@ export const CMS_BASE_URL = new InjectionToken<string>('brXM Base URL');
 export const SPA_BASE_URL = new InjectionToken<string>('SPA Base URL');
 
 const VISITOR_COOKIE = '_v';
+const VISITOR_COOKIE_MAX_AGE_IN_SECONDS = 365 * 24 * 60 * 60;
 
 @Component({
   selector: 'br-index',
@@ -61,7 +63,7 @@ export class IndexComponent implements OnInit {
       cmsBaseUrl,
       spaBaseUrl,
       request: { path: router.url },
-      visitor: this.getVisitor(),
+      visitor: this.request?.cookies[VISITOR_COOKIE] && JSON.parse(this.request.cookies[VISITOR_COOKIE]),
     } as BrPageComponent['configuration'];
 
     this.navigationEnd = router.events.pipe(
@@ -78,16 +80,6 @@ export class IndexComponent implements OnInit {
     });
   }
 
-  private getVisitor() {
-    const [header, id] = this.request?.cookies[VISITOR_COOKIE]?.split('|') || [];
-
-    if (!header || !id) {
-      return;
-    }
-
-    return { header, id };
-  }
-
   setVisitor(page?: Page) {
     const visitor = page?.getVisitor();
 
@@ -98,7 +90,11 @@ export class IndexComponent implements OnInit {
     this.configuration.visitor = visitor;
     this.response?.setHeader(
       'Set-Cookie',
-      `${VISITOR_COOKIE}=${visitor.header}|${visitor.id}; Max-Age=${365 * 24 * 60 * 60}; Path=/; HttpOnly`,
+      serialize(
+        VISITOR_COOKIE,
+        JSON.stringify(visitor),
+        { httpOnly: true, maxAge: VISITOR_COOKIE_MAX_AGE_IN_SECONDS },
+      ),
     );
   }
 }
