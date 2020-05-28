@@ -299,7 +299,8 @@ export default class OverlayService {
         </span>
       `);
 
-      const label = structureElement.getLabel();
+      const suffix = structureElement.isShared() ? ` ${this._translate('SHARED_SUFFIX')}` : '';
+      const label = `${structureElement.getLabel()}${suffix}`;
       const escapedLabel = this._setLabelText(labelElement, label);
       labelElement.attr('data-qa-name', escapedLabel);
 
