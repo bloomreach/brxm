@@ -48,6 +48,7 @@ import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_C
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_EXPERIENCE_PAGE_COMPONENT;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
+import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.obtainEditableInstance;
 
 public class CmsComponentComponentWindowAttributeContributor implements ComponentWindowAttributeContributor {
@@ -68,7 +69,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
 
             final HippoSession cmsUser = (HippoSession) requestContext.getAttribute(ContainerConstants.CMS_USER_SESSION_ATTR_NAME);
             if (cmsUser == null) {
-                throw new IllegalStateException("For Channel Manager preview requests there is expect to be a CMS user " +
+                throw new IllegalStateException("For Channel Manager preview requests there is expected to be a CMS user " +
                         "Session available");
             }
 
@@ -77,7 +78,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
             if (compConfig.isExperiencePageComponent()) {
                 populatingAttributesMap.put(HST_EXPERIENCE_PAGE_COMPONENT, "true");
                 // check whether cmsUser has the right role on the xpage component
-                inRole = isInRole(cmsUser, compConfig, XPAGE_REQUIRED_PRIVILEGE_NAME);
+                inRole = isInRole(cmsUser, compConfig.getCanonicalStoredLocation(), XPAGE_REQUIRED_PRIVILEGE_NAME);
                 if (inRole) {
                     // user has right role, now check if no-one else is editing the draft
                     // since user is in right role, use has for sure read-access!
@@ -110,7 +111,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
                     ConfigurationLockInfo lockInfo = (ConfigurationLockInfo) compConfig;
                     if (lockInfo.getLockedBy() == null) {
                         // check whether cmsUser has the right role on the HST config component
-                        inRole = isInRole(cmsUser, compConfig, CHANNEL_WEBMASTER_PRIVILEGE_NAME);
+                        inRole = isInRole(cmsUser, compConfig.getCanonicalStoredLocation(), CHANNEL_WEBMASTER_PRIVILEGE_NAME);
                         populatingAttributesMap.put(HST_COMPONENT_EDITABLE, String.valueOf(inRole));
                     } else {
                         String cmsUserId = (String) request.getAttribute(ContainerConstants.CMS_REQUEST_USER_ID_ATTR);
@@ -173,14 +174,6 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
         } catch (RepositoryException e) {
             throw new RepositoryException(String.format("Could not find a handle node ancestor for '%s'", origin.getPath()));
         }
-    }
-
-    boolean isInRole(final Session cmsUser, final HstComponentConfiguration compConfig,
-                             final String requiredPrivilege) throws RepositoryException {
-
-        return Arrays.stream(cmsUser.getAccessControlManager()
-                .getPrivileges(compConfig.getCanonicalStoredLocation()))
-                .anyMatch(privilege -> privilege.getName().equals(requiredPrivilege));
     }
 
     @Override

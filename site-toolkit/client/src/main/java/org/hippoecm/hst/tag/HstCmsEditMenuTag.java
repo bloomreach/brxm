@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,8 +32,10 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.sitemenu.CommonMenu;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,8 @@ import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_L
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_ON;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_USER_ID_ATTR;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
 import static org.hippoecm.hst.utils.TagUtils.encloseInHTMLComment;
 import static org.hippoecm.hst.utils.TagUtils.toJSONMap;
 
@@ -106,7 +110,7 @@ public class HstCmsEditMenuTag extends TagSupport {
                         "for matched mount '{}'.", requestContext.getResolvedMount().getMount().toString());
                 return EVAL_PAGE;
             }
-            CanonicalInfo canonicalInfo = (CanonicalInfo) siteMenuConfiguration;
+            final CanonicalInfo canonicalInfo = (CanonicalInfo) siteMenuConfiguration;
             if (!canonicalInfo.isWorkspaceConfiguration()) {
                 log.debug("Skipping cms edit menu because siteMenuConfiguration found not part of workspace " +
                         "for matched mount '{}'.", requestContext.getResolvedMount().getMount().toString());
@@ -117,6 +121,21 @@ public class HstCmsEditMenuTag extends TagSupport {
                         "for matched mount '{}'.", requestContext.getResolvedMount().getMount().toString());
                 return EVAL_PAGE;
             }
+
+            final HippoSession cmsUser = (HippoSession) requestContext.getAttribute(ContainerConstants.CMS_USER_SESSION_ATTR_NAME);
+            if (cmsUser == null) {
+                log.warn("For Channel Manager preview requests there is expected to be a CMS user Session available");
+                return EVAL_PAGE;
+            }
+
+            final boolean inRole = isInRole(cmsUser, canonicalInfo.getCanonicalPath(), CHANNEL_WEBMASTER_PRIVILEGE_NAME);
+
+            if (!inRole) {
+                log.debug("Cms User '{}' does not have required role '{}' to modify menu '{}'", cmsUser.getUserID(),
+                        CHANNEL_WEBMASTER_PRIVILEGE_NAME, canonicalInfo.getCanonicalPath());
+                return EVAL_PAGE;
+            }
+
             try {
                write(siteMenuConfiguration);
             } catch (IOException ioe) {
