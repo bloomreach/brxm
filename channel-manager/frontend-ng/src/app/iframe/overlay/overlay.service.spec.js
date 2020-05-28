@@ -309,7 +309,12 @@ describe('OverlayService', () => {
     expect(boxElement.is(markupComponentC)).toBe(true);
 
     const emptyMarkup = `
-      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component C", "uuid": "cccc" } -->
+      <!-- {
+        "HST-Type": "CONTAINER_ITEM_COMPONENT",
+        "HST-Label": "component C",
+        "HST-Component-Editable": "true",
+        "uuid": "cccc"
+      } -->
       <!-- { "HST-End": "true", "uuid": "cccc" } -->
     `;
 
@@ -423,6 +428,7 @@ describe('OverlayService', () => {
       <!-- {
         "HST-Type": "CONTAINER_ITEM_COMPONENT",
         "HST-Label": "component A",
+        "HST-Component-Editable": "true",
         "uuid": "aaaa",
         "Targeting-experiment-id": "567",
         "Targeting-experiment-state": "CREATED"
@@ -632,7 +638,12 @@ describe('OverlayService', () => {
     expect($document.find('.hippo-overlay > .hippo-overlay-element-menu-link')).toHaveLength(1);
 
     const componentMarkupWithoutMenuLink = `
-      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+      <!-- {
+        "HST-Type": "CONTAINER_ITEM_COMPONENT",
+        "HST-Label": "component A",
+        "HST-Component-Editable": "true",
+        "uuid": "aaaa"
+      } -->
         <p id="markup-in-component-a">Markup in component A without menu link</p>
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
     `;
