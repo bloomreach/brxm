@@ -223,6 +223,7 @@
   "SELECT_DOCUMENT_LOCKED": "Cannot select document (component is locked)",
   "SET_TO_NOW": "Set to now",
   "SET_TO_TODAY": "Set to today",
+  "SHARED_SUFFIX": "(shared)",
   "SHOW_COMPONENTS": "Show container and component outlines",
   "SHOW_CONTENT": "Show content buttons",
   "SUBPAGE_CHANGEMANAGEMENT_SUFFIX_YOU": " (you)",
