@@ -138,6 +138,7 @@ export default class PageStructureService {
     return this._page.getContainers()
       .map(container => container.getComponents())
       .flat()
+      .filter(component => component.hasOverlayElement())
       .find(component => component.getOverlayElement().is(overlayElement)
         || angular.element.contains(component.getOverlayElement()[0], overlayElement));
   }
@@ -150,7 +151,9 @@ export default class PageStructureService {
     const containers = this._page.getContainers();
 
     // eslint-disable-next-line consistent-return
-    return containers.find(container => container.getOverlayElement().is(overlayElement));
+    return containers
+      .filter(container => container.hasOverlayElement())
+      .find(container => container.getOverlayElement().is(overlayElement));
   }
 
   getContainerByIframeElement(containerIFrameElement) {
