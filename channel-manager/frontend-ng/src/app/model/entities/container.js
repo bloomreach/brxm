@@ -33,7 +33,7 @@ export class Container extends ComponentEntity {
   }
 
   isDisabled() {
-    return this.isInherited() || (this.isLocked() && !this.isLockedByCurrentUser());
+    return this.isInherited() || !this.isEditable() || (this.isLocked() && !this.isLockedByCurrentUser());
   }
 
   isInherited() {
