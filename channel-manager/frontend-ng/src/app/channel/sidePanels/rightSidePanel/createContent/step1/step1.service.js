@@ -40,6 +40,7 @@ class Step1Service {
     delete this.defaultPath;
     delete this.documentTemplateQuery;
     delete this.folderTemplateQuery;
+    delete this.experiencePage;
   }
 
   stop() {
@@ -53,6 +54,7 @@ class Step1Service {
     this.defaultPath = defaultPath;
     this.documentTemplateQuery = documentTemplateQuery;
     this.folderTemplateQuery = folderTemplateQuery;
+    this.experiencePage = false;
 
     return this.ContentService.getDocumentTemplateQuery(documentTemplateQuery)
       .then(documentTemplateQueryResult => this._onLoadDocumentTypes(documentTemplateQueryResult.documentTypes))
@@ -102,6 +104,7 @@ class Step1Service {
       folderTemplateQuery: this.folderTemplateQuery,
       rootPath: this.rootPath,
       defaultPath: this.defaultPath,
+      experiencePage: this.experiencePage,
     };
     return this.ContentService.createDocument(document)
       .catch(error => this._onError(error, 'Unexpected error creating a new document'));
