@@ -38,7 +38,6 @@ const VISITOR_COOKIE_MAX_AGE_IN_SECONDS = 365 * 24 * 60 * 60;
 @Component({
   selector: 'br-index',
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.css'],
 })
 export class IndexComponent implements OnInit {
   configuration: BrPageComponent['configuration'];
