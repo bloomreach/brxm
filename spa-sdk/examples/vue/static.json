@@ -1,0 +1,6 @@
+{
+  "root": "examples/vue/dist/",
+  "routes": {
+    "/**": "index.html"
+  }
+}
