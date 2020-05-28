@@ -234,12 +234,14 @@ export default class OverlayService {
 
     const overlays = new Set();
 
-    this._getAllStructureElements().forEach((element) => {
-      this._syncElement(element);
+    this._getAllStructureElements()
+      .filter(element => element.isVisible())
+      .forEach((element) => {
+        this._syncElement(element);
 
-      overlays.add(element.getOverlayElement()[0]);
-      overlays.add(element.getBoxElement()[0]);
-    });
+        overlays.add(element.getOverlayElement()[0]);
+        overlays.add(element.getBoxElement()[0]);
+      });
 
     if (this._overlays) {
       this._overlays.forEach(element => element && !overlays.has(element) && element.remove());
