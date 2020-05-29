@@ -133,20 +133,17 @@ class PageStructureService {
 
     const oldContainer = component.getContainer();
     return this.HstComponentService.deleteComponent(oldContainer.getId(), componentId)
-      .then(() => {
-        this.ChannelService.recordOwnChange();
-        return oldContainer;
-      },
-      (errorResponse) => {
-        const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED'
-          ? 'ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED'
-          : 'ERROR_DELETE_COMPONENT';
-        const params = errorResponse.parameterMap;
-        params.component = component.getLabel();
-        this.FeedbackService.showError(errorKey, params);
+      .then(() => this.ChannelService.checkChanges().then(() => oldContainer),
+        (errorResponse) => {
+          const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED'
+            ? 'ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED'
+            : 'ERROR_DELETE_COMPONENT';
+          const params = errorResponse.parameterMap;
+          params.component = component.getLabel();
+          this.FeedbackService.showError(errorKey, params);
 
-        return this.$q.reject();
-      });
+          return this.$q.reject();
+        });
   }
 
   /**
@@ -222,11 +219,8 @@ class PageStructureService {
   addComponentToContainer(catalogComponent, container, nextComponentId) {
     return this.HstService.addHstComponent(catalogComponent, container.getId(), nextComponentId)
       .then(
-        (newComponentJson) => {
-          this.ChannelService.recordOwnChange();
-          // TODO: handle error when rendering container failed
-          return newComponentJson.id;
-        },
+        // TODO: handle error when rendering container failed
+        newComponentJson => this.ChannelService.checkChanges().then(() => newComponentJson.id),
         (errorResponse) => {
           const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED'
             ? 'ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED'
@@ -257,7 +251,7 @@ class PageStructureService {
     // last, record a channel change. The caller is responsible for re-rendering the changed container(s)
     // so their meta-data is updated and we're sure they look right
     return this.$q.all(backendCallPromises)
-      .then(() => this.ChannelService.recordOwnChange())
+      .then(() => this.ChannelService.checkChanges())
       .then(() => changedContainers)
       .catch(() => this.FeedbackService.showError('ERROR_MOVE_COMPONENT_FAILED', {
         component: component.getLabel(),

@@ -180,8 +180,8 @@ class PageMenuService extends MenuService {
             this.SiteMapService.load(siteMapId); // reload sitemap (left side panel)
 
             this.SiteMapItemService.clear(); // wipe meta-data of current page
-            this.ChannelService.recordOwnChange(); // mark the channel changed
           })
+          .then(() => this.ChannelService.checkChanges())
           .catch(() => {
             this.FeedbackService.showError('ERROR_DELETE_PAGE');
           });

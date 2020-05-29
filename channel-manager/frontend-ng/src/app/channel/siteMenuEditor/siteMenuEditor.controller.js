@@ -161,11 +161,14 @@ class SiteMenuEditorCtrl {
   }
 
   onBack() {
-    if (this.isMenuModified) {
-      this.HippoIframeService.reload();
-      this.ChannelService.recordOwnChange();
+    if (!this.isMenuModified) {
+      this.onDone();
+      return;
     }
-    this.onDone();
+
+    this.HippoIframeService.reload();
+    this.ChannelService.checkChanges()
+      .then(() => this.onDone());
   }
 
   saveItem() {

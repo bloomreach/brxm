@@ -128,8 +128,8 @@ class EditComponentMainCtrl {
     return this.ComponentEditor.confirmDeleteComponent()
       .then(() => {
         this.ComponentEditor.deleteComponent()
+          .then(() => this.ChannelService.checkChanges())
           .then(() => {
-            this.ChannelService.recordOwnChange();
             this.HippoIframeService.reload();
             this.EditComponentService.killEditor();
           })
