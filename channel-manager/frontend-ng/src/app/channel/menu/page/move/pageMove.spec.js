@@ -87,7 +87,7 @@ describe('PageMoveComponent', () => {
     spyOn($translate, 'instant').and.callFake(key => key);
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
-    spyOn(ChannelService, 'recordOwnChange');
+    spyOn(ChannelService, 'checkChanges').and.returnValue($q.resolve());
     spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HippoIframeService, 'load');
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
@@ -205,7 +205,7 @@ describe('PageMoveComponent', () => {
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('/abc/123');
     expect(SiteMapService.load).toHaveBeenCalled();
-    expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });
 

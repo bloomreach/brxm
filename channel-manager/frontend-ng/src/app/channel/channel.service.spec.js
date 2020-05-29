@@ -465,6 +465,45 @@ describe('ChannelService', () => {
     });
   });
 
+  describe('checkChanges', () => {
+    beforeEach(() => {
+      loadChannel();
+    });
+
+    it('should not throw an error if the backend call fails', (done) => {
+      HstService.doGet.and.returnValue($q.reject());
+
+      ChannelService.checkChanges().then(done);
+      $rootScope.$digest();
+    });
+
+    it('should get change-set from the backend', () => {
+      ChannelService.checkChanges();
+
+      expect(HstService.doGet).toHaveBeenCalledWith('mountId', 'userswithchanges');
+    });
+
+    it('should record changes if backend return current user in change-set', () => {
+      spyOn(ChannelService, 'recordOwnChange');
+      HstService.doGet.and.returnValue($q.when({ data: [{ id: 'testUser' }] }));
+
+      ChannelService.checkChanges();
+      $rootScope.$digest();
+
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    });
+
+    it('should not record changes if backend does not return current user in change-set', () => {
+      spyOn(ChannelService, 'recordOwnChange');
+      HstService.doGet.and.returnValue($q.when({ data: [{ id: 'tobi' }] }));
+
+      ChannelService.checkChanges();
+      $rootScope.$digest();
+
+      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+    });
+  });
+
   it('records own changes', () => {
     channelMock.changedBySet = ['tobi', 'obiwan'];
     loadChannel();

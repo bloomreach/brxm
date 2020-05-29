@@ -142,7 +142,7 @@ describe('PageMenuService', () => {
         spyOn(ChannelService, 'isEditable').and.returnValue(false);
         spyOn(ChannelService, 'hasPrototypes');
         spyOn(ChannelService, 'hasWorkspace');
-        spyOn(ChannelService, 'recordOwnChange');
+        spyOn(ChannelService, 'checkChanges').and.returnValue($q.resolve());
         spyOn(ChannelService, 'loadPageModifiableChannels');
         spyOn(ChannelService, 'getPageModifiableChannels');
         spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
@@ -297,7 +297,7 @@ describe('PageMenuService', () => {
         expect(HippoIframeService.load).toHaveBeenCalledWith('');
         expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
         expect(SiteMapItemService.clear).toHaveBeenCalled();
-        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+        expect(ChannelService.checkChanges).toHaveBeenCalled();
       });
 
       it('does nothing when not confirming the deletion of a page', () => {
