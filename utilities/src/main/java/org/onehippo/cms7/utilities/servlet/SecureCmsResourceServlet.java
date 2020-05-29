@@ -26,19 +26,54 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Serves resources from either web application or classpath.
+ * <p>
+ * By default, this {@link SecureCmsResourceServlet} serves resources with whitelisted extensions from either web
+ * application or classpath, just like {@link ResourceServlet} does. Optionally, this {@link SecureCmsResourceServlet}
+ * can be configured to only serve the resources for requests which have logged in user if this is required for
+ * some reason. To configure secured access, configure in the web.xml
  *
- * Can be used in cms only and checks whether the requester is logged in before serving the resource.
+ * <pre>
+ *     &lt;servlet&gt;
+ *        &lt;servlet-name&gt;ServletName&lt;/servlet-name&gt;
+ *        &lt;servlet-class&gt;org.onehippo.cms7.utilities.servlet.SecureCmsResourceServlet&lt;/servlet-class&gt;
+ *        &lt;init-param&gt;
+ *          &lt;param-name&gt;cmsSecure&lt;/param-name&gt;
+ *          &lt;param-value&gt;true&lt;/param-value&gt;
+ *        &lt;/init-param&gt;
+ *        &lt;snip&gt;other init params&lt;/snip&gt;
+ *      &lt;/servlet&gt;
+ * </pre>
+ * You can also opt for setting CORS headers for
+ * <ol>
+ *     <li>Access-Control-Allow-Origin = ${origin}</li>
+ *     <li>Access-Control-Allow-Credentials = true</li>
+ *     <li>Vary = Origin</li>
+ * </ol>
+ * By default these headers will be set unless you add
+ * <pre>
+ *        &lt;init-param&gt;
+ *          &lt;param-name&gt;supportCors&lt;/param-name&gt;
+ *          &lt;param-value&gt;false&lt;/param-value&gt;
+ *        &lt;/init-param&gt;
+ * </pre>
+ * </p>
+ *
  */
 public class SecureCmsResourceServlet extends ResourceServlet {
 
     private static final Logger log = LoggerFactory.getLogger(SecureCmsResourceServlet.class);
 
+    /**
+     *  by default cmsSecure is false meaning you do not have to be authenticated to load whitelisted files (see
+     *  ResourceServlet). if authenticated is needed, set init-param 'cmsSecure = true' in the web.xml
+     */
+    private boolean cmsSecure;
     private boolean supportCors;
 
     @Override
     public void init() throws ServletException {
         super.init();
+        cmsSecure = Boolean.parseBoolean(getInitParameter("cmsSecure", "false"));
         supportCors = Boolean.parseBoolean(getInitParameter("supportCors", "true"));
     }
 
@@ -60,7 +95,7 @@ public class SecureCmsResourceServlet extends ResourceServlet {
     }
 
     protected boolean isAllowed(final String resourcePath, final HttpServletRequest servletRequest) {
-        if (!isUserLoggedIn(servletRequest)) {
+        if (cmsSecure && !isUserLoggedIn(servletRequest)) {
             return false;
         }
 
