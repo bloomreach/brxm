@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -198,10 +198,8 @@ function config(
   $mdIconProvider.defaultFontSet('mdi');
 
   $mdIconProvider
-    .icon('any-device', `images/any-device.svg${antiCache}`)
     .icon('back', `images/back.svg${antiCache}`)
     .icon('close', `images/close.svg${antiCache}`)
-    .icon('desktop', `images/desktop.svg${antiCache}`)
     .icon('document-status-changed', `images/document-status-changed.svg${antiCache}`)
     .icon('document-status-live', `images/document-status-live.svg${antiCache}`)
     .icon('document-status-new', `images/document-status-new.svg${antiCache}`)
@@ -211,11 +209,9 @@ function config(
     .icon('left-side-panel-arrow-left', `images/left-side-panel-arrow-left.svg${antiCache}`)
     .icon('left-side-panel-arrow-right', `images/left-side-panel-arrow-right.svg${antiCache}`)
     .icon('maximize-sidepanel', `images/maximize-sidepanel.svg${antiCache}`)
-    .icon('phone', `images/phone.svg${antiCache}`)
     .icon('publish', `images/publish.svg${antiCache}`)
     .icon('resize-handle', `images/resize-handle.svg${antiCache}`)
     .icon('switch-to-content-editor', `images/switch-to-content-editor.svg${antiCache}`)
-    .icon('tablet', `images/tablet.svg${antiCache}`)
     .icon('toggle_components_overlay', `images/toggle_components_overlay.svg${antiCache}`)
     .icon('un-maximize-sidepanel', `images/un-maximize-sidepanel.svg${antiCache}`);
 
