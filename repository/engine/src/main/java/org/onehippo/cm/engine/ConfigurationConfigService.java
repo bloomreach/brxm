@@ -872,24 +872,26 @@ public class ConfigurationConfigService {
 
         javax.jcr.Value[] newSystemValues = null;
         // in case of a system property with meta add-new-values set, determine the *new* values to be added
-        if (updateProperty.isAddNewSystemValues() && baselineProperty != null &&
-                // only needed when not changing the type/multiplicity of a property because then it will be recreated
-                baselineProperty.isMultiple() && updateProperty.getValueType() == baselineProperty.getValueType()) {
+        // only needed when not changing the type/multiplicity of a property because then it will be recreated
+        if (updateProperty.isAddNewSystemValues() && (baselineProperty == null ||
+                baselineProperty.isMultiple() && updateProperty.getValueType() == baselineProperty.getValueType())) {
 
-            final ArrayList<Value> baselineValues = new ArrayList<>(baselineProperty.getValues());
+            if (baselineProperty != null) {
+                final ArrayList<Value> baselineValues = new ArrayList<>(baselineProperty.getValues());
 
-            for (int i = verifiedUpdateValues.size() -1; i > -1; i--) {
-                for (int j = baselineValues.size()-1; j > -1; j--) {
-                    if (valueIsIdentical(verifiedUpdateValues.get(i), baselineValues.get(j))) {
-                        verifiedUpdateValues.remove(i);
-                        baselineValues.remove(j);
-                        break;
+                for (int i = verifiedUpdateValues.size() -1; i > -1; i--) {
+                    for (int j = baselineValues.size()-1; j > -1; j--) {
+                        if (valueIsIdentical(verifiedUpdateValues.get(i), baselineValues.get(j))) {
+                            verifiedUpdateValues.remove(i);
+                            baselineValues.remove(j);
+                            break;
+                        }
                     }
                 }
-            }
-            if (verifiedUpdateValues.isEmpty()) {
-                // all values equal: skip (which is unexpected: then why did we get here in the first place?)
-                return;
+                if (verifiedUpdateValues.isEmpty()) {
+                    // all values equal: skip (which is unexpected: then why did we get here in the first place?)
+                    return;
+                }
             }
 
             // in case of an existing multi-value property of the same type, determine which new values actually need to be added
