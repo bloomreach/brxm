@@ -2049,4 +2049,57 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
         testValues = JcrUtils.getMultipleStringProperty(testNode, "test", new String[0]);
         assertArrayEquals(new String[]{"c", "c", "e", "f", "f"}, testValues);
     }
+
+    @Test
+    public void test_add_new_system_values_against_existing_values() throws Exception {
+        // start with no baseline for the test property
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n";
+        ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        // add test property values 'at runtime'
+        testNode.setProperty("test", new String[]{"a", "b"});
+        session.save();
+
+        // verify adding empty (no values) add-new-system-values configuration for the already existing test property
+        // values retains those values (e.g. there is no *baseline* configuration for this property, yet
+        String updateSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: []\n";
+        applyDefinitions(updateSource, baseline);
+        String[] testValues = JcrUtils.getMultipleStringProperty(testNode, "test", new String[0]);
+        assertArrayEquals(new String[]{"a", "b"}, testValues);
+
+        // recreate the setup so we again don't have a 'baseline' for the test property
+        testNode.getProperty("test").remove();
+        session.save();
+        baseline = applyDefinitions(baselineSource);
+        // add test property values 'at runtime'
+        testNode.setProperty("test", new String[]{"a", "b"});
+        session.save();
+
+        // verify adding some add-new-system-values configuration for the already existing test property
+        // values retains those values (e.g. there is no *baseline* configuration for this property, yet
+        updateSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: [c]\n";
+        applyDefinitions(updateSource, baseline);
+        testValues = JcrUtils.getMultipleStringProperty(testNode, "test", new String[0]);
+        assertArrayEquals(new String[]{"a", "b", "c"}, testValues);
+    }
 }
