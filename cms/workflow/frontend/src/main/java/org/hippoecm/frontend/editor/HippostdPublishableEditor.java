@@ -409,9 +409,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             }
             session.getJcrSession().refresh(true);
             modified = false;
-            branchIdModel.destroy();
-
-        } catch (final RepositoryException | WorkflowException | RemoteException ex) {
+        } catch (RepositoryException | WorkflowException | RemoteException ex) {
             log.error("failure while reverting", ex);
         }
     }
