@@ -35,7 +35,7 @@
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
     <hippo.repository.version>14.3.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>14.3.0-keep-draft-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>14.3.0-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>14.3.0-SNAPSHOT</hippo.hst.version>
     <hippo.commons.version>14.3.0-SNAPSHOT</hippo.commons.version>
     <hippo.plugin.gallerypicker.version>14.3.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
