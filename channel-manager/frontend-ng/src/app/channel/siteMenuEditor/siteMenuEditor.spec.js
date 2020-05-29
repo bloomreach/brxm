@@ -80,7 +80,7 @@ describe('SiteMenuEditor', () => {
     spyOn(SiteMenuService, 'getEditableMenuItem').and.callFake(id => $q.when({ id }));
     spyOn(SiteMenuService, 'loadMenu').and.returnValue($q.when(menu));
     spyOn(SiteMenuService, 'saveMenuItem').and.returnValue($q.when());
-    spyOn(ChannelService, 'recordOwnChange');
+    spyOn(ChannelService, 'checkChanges').and.returnValue($q.resolve());
     spyOn(ChannelService, 'reload');
     spyOn(DialogService, 'confirm').and.returnValue(dialog);
     spyOn(DialogService, 'show').and.returnValue($q.when());
@@ -233,7 +233,7 @@ describe('SiteMenuEditor', () => {
 
         $ctrl.onBack();
         expect(HippoIframeService.reload).not.toHaveBeenCalled();
-        expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+        expect(ChannelService.checkChanges).not.toHaveBeenCalled();
         expect($ctrl.onDone).toHaveBeenCalled();
       });
 
@@ -245,8 +245,10 @@ describe('SiteMenuEditor', () => {
         spyOn($ctrl, 'onDone');
 
         $ctrl.onBack();
+        $rootScope.$digest();
+
         expect(HippoIframeService.reload).toHaveBeenCalled();
-        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+        expect(ChannelService.checkChanges).toHaveBeenCalled();
         expect($ctrl.onDone).toHaveBeenCalled();
       });
     });
@@ -265,7 +267,7 @@ describe('SiteMenuEditor', () => {
 
         // update channel when leaving the subpage after modification
         $ctrl.onBack();
-        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+        expect(ChannelService.checkChanges).toHaveBeenCalled();
       });
 
       it('flashes a toast if the item name already exists', () => {
@@ -320,7 +322,7 @@ describe('SiteMenuEditor', () => {
 
         // update channel when leaving the subpage after modification
         $ctrl.onBack();
-        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+        expect(ChannelService.checkChanges).toHaveBeenCalled();
       });
 
       it('doesn\'t delete the item is deletion is not confirmed', () => {

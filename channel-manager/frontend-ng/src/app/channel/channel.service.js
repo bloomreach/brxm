@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -239,9 +239,19 @@ class ChannelService {
     return this.getChannel().configurationLocked;
   }
 
+  async checkChanges() {
+    try {
+      const { data: changedSet } = await this.HstService.doGet(this.getMountId(), 'userswithchanges');
+      const user = this.ConfigService.cmsUser;
+      if (changedSet.some(({ id }) => id === user)) {
+        this.recordOwnChange();
+      }
+    // eslint-disable-next-line no-empty
+    } catch (ignore) {}
+  }
+
   recordOwnChange() {
     const user = this.ConfigService.cmsUser;
-
     if (this.channel.changedBySet.indexOf(user) === -1) {
       this.channel.changedBySet.push(user);
     }

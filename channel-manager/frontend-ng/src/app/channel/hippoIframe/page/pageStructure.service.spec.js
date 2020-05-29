@@ -61,7 +61,7 @@ describe('PageStructureService', () => {
       PageStructureService = _PageStructureService_;
     });
 
-    spyOn(ChannelService, 'recordOwnChange');
+    spyOn(ChannelService, 'checkChanges').and.returnValue($q.resolve());
     spyOn(CommunicationService, 'ready').and.returnValue($q.resolve());
   });
 
@@ -630,13 +630,13 @@ describe('PageStructureService', () => {
       done();
     });
 
-    it('records a change after adding a new component to a container successfully', (done) => {
+    it('checks changes after adding a new component to a container successfully', (done) => {
       spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({ id: 'newUuid' }));
 
       PageStructureService.addComponentToContainer(component, container)
         .then((newComponentId) => {
           expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
-          expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+          expect(ChannelService.checkChanges).toHaveBeenCalled();
           expect(newComponentId).toEqual('newUuid');
           done();
         });
@@ -663,7 +663,7 @@ describe('PageStructureService', () => {
       PageStructureService.removeComponentById('component-1').then((container) => {
         expect(container.getId()).toBe('container-1');
         expect(HstComponentService.deleteComponent).toHaveBeenCalledWith('container-1', 'component-1');
-        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+        expect(ChannelService.checkChanges).toHaveBeenCalled();
         done();
       });
 
@@ -746,7 +746,7 @@ describe('PageStructureService', () => {
 
       expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-1', container.getHstRepresentation());
       expect(componentIds(container)).toEqual(['component-2', 'component-1']);
-      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+      expect(ChannelService.checkChanges).toHaveBeenCalled();
     });
 
     it('can move the second component to the first position in the container', () => {
@@ -762,7 +762,7 @@ describe('PageStructureService', () => {
 
       expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-1', container.getHstRepresentation());
       expect(componentIds(container)).toEqual(['component-2', 'component-1']);
-      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+      expect(ChannelService.checkChanges).toHaveBeenCalled();
     });
 
     it('can move a component to another container', () => {
@@ -780,7 +780,7 @@ describe('PageStructureService', () => {
       expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-2', container2.getHstRepresentation());
       expect(componentIds(container1)).toEqual(['component-2']);
       expect(componentIds(container2)).toEqual(['component-1']);
-      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+      expect(ChannelService.checkChanges).toHaveBeenCalled();
     });
 
     it('shows an error when a component is moved within a container that just got locked by another user', () => {
@@ -798,7 +798,7 @@ describe('PageStructureService', () => {
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
         component: 'Component 1',
       });
-      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+      expect(ChannelService.checkChanges).not.toHaveBeenCalled();
     });
 
     it('shows an error when a component is moved out of a container that just got locked by another user', () => {
@@ -818,7 +818,7 @@ describe('PageStructureService', () => {
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
         component: 'Component 1',
       });
-      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+      expect(ChannelService.checkChanges).not.toHaveBeenCalled();
     });
 
     it('shows an error when a component is moved into a container that just got locked by another user', () => {
@@ -838,7 +838,7 @@ describe('PageStructureService', () => {
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
         component: 'Component 1',
       });
-      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+      expect(ChannelService.checkChanges).not.toHaveBeenCalled();
     });
   });
 
@@ -967,13 +967,13 @@ describe('PageStructureService', () => {
       done();
     });
 
-    it('records a change after adding a new component to a container successfully', (done) => {
+    it('check changes after adding a new component to a container successfully', (done) => {
       spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({ id: 'newUuid' }));
 
       PageStructureService.addComponentToContainer(component, container)
         .then((newComponentId) => {
           expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
-          expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+          expect(ChannelService.checkChanges).toHaveBeenCalled();
           expect(newComponentId).toEqual('newUuid');
           done();
         });
