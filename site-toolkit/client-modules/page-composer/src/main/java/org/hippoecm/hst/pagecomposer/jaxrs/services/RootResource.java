@@ -292,7 +292,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
             if (getPageComposerContextService().hasPreviewConfiguration()) {
 
                 isChannelAdmin = isInRole(jcrSession, liveConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME) &&
-                        isInRole(jcrSession, liveConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME);
+                        isInRole(jcrSession, getPreviewConfigurationPath(), CHANNEL_ADMIN_PRIVILEGE_NAME);
 
             } else {
                 isChannelAdmin = isInRole(jcrSession, liveConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME);
