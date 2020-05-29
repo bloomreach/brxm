@@ -34,6 +34,7 @@ import static org.junit.Assert.assertThat;
 public class TestDynamicBeanCompoundType extends AbstractDynamicBeanServiceTest {
 
     private static final String TEST_DOCUMENT_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamicdocumentcontent/dynamicdocumentcontent";
+    private static final String TEST_COMPOUND_ONLY_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamicdocumentcontent/dynamicdocumentcontent/contentbeanstest:unregisteredfield";
     private static final String TEST_EMPTY_COMPOUND_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamicdocumentcontent/dynamicdocumentcontent/contentbeanstest:emptycompoundfield";
 
     private static final String CUSTOM_COMPOUND_TYPE_METHOD_NAME = "getDynamiccompound";
@@ -44,6 +45,8 @@ public class TestDynamicBeanCompoundType extends AbstractDynamicBeanServiceTest 
 
     private static final String INNER_CUSTOM_COMPOUND_TYPE_METHOD_NAME = "getDynamicinnercompound";
     private static final String STRING_TYPE_METHOD_NAME_IN_INNER_CUSTOM_COMPOUND_CLASS = "getStringTypeField";
+    private static final String HTMLBLOCK_TYPE_GETTEXT_METHOD_NAME = "getText";
+
 
     public String getDocumentPath() {
         return TEST_DOCUMENT_TYPE_CONTENTS_PATH;
@@ -132,6 +135,18 @@ public class TestDynamicBeanCompoundType extends AbstractDynamicBeanServiceTest 
     }
 
     @Test
+    public void testGetValueOfUnregisteredCustomCompoundType() throws Exception {
+
+        Object generatedBean = objectConverter.getObject(session, TEST_COMPOUND_ONLY_TYPE_CONTENTS_PATH);
+
+        assertNotNull("The content bean is not created for " + TEST_COMPOUND_ONLY_TYPE_CONTENTS_PATH, generatedBean);
+        assertThat(generatedBean, instanceOf(HippoCompound.class));
+
+        HippoHtml htmlBlockText = (HippoHtml) generatedBean.getClass().getMethod(HTMLBLOCK_TYPE_GETTEXT_METHOD_NAME).invoke(generatedBean);
+        assertEquals("Welcome Home with lazy loaded compounds!", htmlBlockText.getContent());
+    }
+
+    @Test
     public void testEmptyCompound() throws Exception {
 
         Object generatedBean = objectConverter.getObject(session, TEST_EMPTY_COMPOUND_TYPE_CONTENTS_PATH);
@@ -139,4 +154,5 @@ public class TestDynamicBeanCompoundType extends AbstractDynamicBeanServiceTest 
         assertNotNull("The content bean is not created for " + TEST_EMPTY_COMPOUND_TYPE_CONTENTS_PATH, generatedBean);
         assertThat(generatedBean, instanceOf(HippoCompound.class));
     }
+
 }
