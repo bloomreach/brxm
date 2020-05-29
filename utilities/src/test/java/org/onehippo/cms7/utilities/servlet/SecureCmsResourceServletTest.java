@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,19 +33,40 @@ import static org.onehippo.cms7.utilities.servlet.ResourceServletTest.getMockHtt
 public class SecureCmsResourceServletTest {
 
     @Test
-    public void testUnauthorizedServlet() throws ServletException, IOException {
+    public void testUnauthorized_cmsSecure_Servlet() throws ServletException, IOException {
         final MockHttpServletRequest request = getMockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeServlet();
+        final ResourceServlet servlet = initializeServlet(true);
         servlet.service(request, response);
         assertThat("Unauthorized request should give 404.", response.getStatus(), is(404));
     }
 
     @Test
-    public void testAuthorizedServlet() throws ServletException, IOException {
+    public void testAuthorized_cmsSecure_Servlet() throws ServletException, IOException {
         final MockHttpServletRequest request = getMockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeServlet();
+        final ResourceServlet servlet = initializeServlet(true);
+        fakeLoggedinUser(request);
+        servlet.service(request, response);
+        assertThat("Authorized request should give resource.", response.getStatus(), is(200));
+        assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
+    }
+
+    @Test
+    public void testUnauthorized_cmsInSecure_Servlet() throws ServletException, IOException {
+        final MockHttpServletRequest request = getMockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final ResourceServlet servlet = initializeServlet(false);
+        servlet.service(request, response);
+        assertThat("UnAuthorized request should give resource.", response.getStatus(), is(200));
+        assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
+    }
+
+    @Test
+    public void testAuthorized_cmsInSecure_Servlet() throws ServletException, IOException {
+        final MockHttpServletRequest request = getMockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final ResourceServlet servlet = initializeServlet(false);
         fakeLoggedinUser(request);
         servlet.service(request, response);
         assertThat("Authorized request should give resource.", response.getStatus(), is(200));
@@ -53,10 +74,13 @@ public class SecureCmsResourceServletTest {
     }
 
 
-    private ResourceServlet initializeServlet() throws ServletException {
+    private ResourceServlet initializeServlet(final boolean cmsSecure) throws ServletException {
         final SecureCmsResourceServlet servlet = new SecureCmsResourceServlet();
         final MockServletConfig servletConfig = new MockServletConfig();
         servletConfig.addInitParameter("jarPathPrefix", "META-INF/test");
+
+        servletConfig.addInitParameter("cmsSecure", String.valueOf(cmsSecure));
+
 
         servlet.init(servletConfig);
         return servlet;
