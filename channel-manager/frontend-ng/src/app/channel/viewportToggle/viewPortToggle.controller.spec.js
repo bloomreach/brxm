@@ -18,10 +18,12 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ViewportToggleCtrl', () => {
-  let ngModel;
-  let viewportMap;
   let $ctrl;
   let $translate;
+  let channel;
+  let devices;
+  let ngModel;
+  let viewportMap;
   let ChannelService;
   let ViewportService;
 
@@ -34,58 +36,105 @@ describe('ViewportToggleCtrl', () => {
       ViewportService = _ViewportService_;
 
       ngModel = jasmine.createSpyObj('NgModelCtrl', ['$setViewValue']);
-      viewportMap = {
-        desktop: 1167,
-        tablet: 678,
-        phone: 256,
-      };
-      spyOn($translate, 'instant');
-      spyOn(ChannelService, 'getChannel').and.returnValue({ defaultDevice: 'default', viewportMap });
+      devices = [];
+      viewportMap = {};
+      channel = { defaultDevice: 'default', devices, viewportMap };
+      spyOn(ChannelService, 'getChannel').and.returnValue(channel);
       spyOn(ViewportService, 'setWidth');
+      spyOn($translate, 'instant').and.callFake(key => key);
 
       $ctrl = _$componentController_('viewportToggle', {}, { ngModel });
     });
   });
 
   describe('$onInit', () => {
-    it('selects the "ANY_DEVICE" viewport and uses it to set the viewport', () => {
+    it('selects the "any_device" viewport and uses it to set the viewport', () => {
       $ctrl.$onInit();
 
-      expect($ctrl.value).toBe('ANY_DEVICE');
+      expect($ctrl.value).toBe('any_device');
       expect(ViewportService.setWidth).toHaveBeenCalledWith(0);
     });
 
-    it("should select a channel's default device", () => {
-      ChannelService.getChannel.and.returnValue({ defaultDevice: 'tablet', viewportMap });
+    it("selects a channel's default device", () => {
+      channel.defaultDevice = 'tablet';
       $ctrl.$onInit();
 
-      expect($ctrl.value).toBe('TABLET');
+      expect($ctrl.value).toBe('tablet');
+    });
+
+    it('allows for a custom viewport', () => {
+      devices.push('{ "id": "Custom-id", "icon": "custom-icon", "width": 320 }');
+      $ctrl.$onInit();
+
+      expect($ctrl.values).toHaveLength(5);
+      expect($ctrl.values[4]).toEqual({
+        id: 'custom-id',
+        icon: 'custom-icon',
+        label: 'Custom-id',
+        width: 320,
+      });
+    });
+
+    it('ensures a custom viewport has a default icon and lowercase id', () => {
+      devices.push('{ "id": "CUSTOM-ID", "width": 320 }');
+      $ctrl.$onInit();
+
+      expect($ctrl.values[4].id).toEqual('custom-id');
+      expect($ctrl.values[4].icon).not.toBeEmpty();
+    });
+
+    it('allows the default viewports to be customized', () => {
+      devices.push('{ "id": "tablet", "width": 4000, "icon": "ipad" }');
+      $ctrl.$onInit();
+
+      expect($ctrl.values[2].id).toBe('tablet');
+      expect($ctrl.values[2].width).toBe(4000);
+      expect($ctrl.values[2].icon).toBe('ipad');
+    });
+
+    it('should not choke on improper configuration values for custom viewports', () => {
+      devices.push(null);
+      devices.push(undefined);
+      devices.push('');
+      devices.push(' ');
+      devices.push('tablet:786px');
+      devices.push('{ id: "id-with-missing-double-quotes" }');
+
+      $ctrl.$onInit();
+
+      expect($ctrl.values).toHaveLength(4);
     });
 
     it('should set the viewport widths from the backend', () => {
+      viewportMap.desktop = 1167;
+      viewportMap.tablet = 678;
+      viewportMap.phone = 256;
       $ctrl.$onInit();
 
-      expect($ctrl.values[0].id).toBe('ANY_DEVICE');
+      expect($ctrl.values[0].id).toBe('any_device');
       expect($ctrl.values[0].width).toBe(0);
-      expect($ctrl.values[1].id).toBe('DESKTOP');
+      expect($ctrl.values[1].id).toBe('desktop');
       expect($ctrl.values[1].width).toBe(1167);
-      expect($ctrl.values[2].id).toBe('TABLET');
+      expect($ctrl.values[2].id).toBe('tablet');
       expect($ctrl.values[2].width).toBe(678);
-      expect($ctrl.values[3].id).toBe('PHONE');
+      expect($ctrl.values[3].id).toBe('phone');
       expect($ctrl.values[3].width).toBe(256);
     });
 
     it('should use the default viewport width values when the backend does not return any', () => {
-      Object.keys(viewportMap).forEach(key => delete viewportMap[key]);
       $ctrl.$onInit();
 
-      expect($ctrl.values[0].id).toBe('ANY_DEVICE');
+      expect($ctrl.values[0].id).toBe('any_device');
+      expect($ctrl.values[0].label).toBe('any_device');
       expect($ctrl.values[0].width).toBe(0);
-      expect($ctrl.values[1].id).toBe('DESKTOP');
+      expect($ctrl.values[1].id).toBe('desktop');
+      expect($ctrl.values[1].label).toBe('desktop');
       expect($ctrl.values[1].width).toBe(1280);
-      expect($ctrl.values[2].id).toBe('TABLET');
+      expect($ctrl.values[2].id).toBe('tablet');
+      expect($ctrl.values[2].label).toBe('tablet');
       expect($ctrl.values[2].width).toBe(720);
-      expect($ctrl.values[3].id).toBe('PHONE');
+      expect($ctrl.values[3].id).toBe('phone');
+      expect($ctrl.values[3].label).toBe('phone');
       expect($ctrl.values[3].width).toBe(320);
     });
   });
@@ -93,24 +142,16 @@ describe('ViewportToggleCtrl', () => {
   describe('onChange', () => {
     beforeEach(() => {
       $ctrl.$onInit();
-      $ctrl.value = 'TABLET';
+      $ctrl.value = 'tablet';
       $ctrl.onChange();
     });
 
     it('should update the model', () => {
-      expect(ngModel.$setViewValue).toHaveBeenCalledWith('TABLET');
+      expect(ngModel.$setViewValue).toHaveBeenCalledWith('tablet');
     });
 
     it('should update the viewport width', () => {
-      expect(ViewportService.setWidth).toHaveBeenCalledWith(viewportMap.tablet);
-    });
-  });
-
-  describe('getDisplayName', () => {
-    it('should return the display name', () => {
-      $ctrl.getDisplayName({ id: 'TEST' });
-
-      expect($translate.instant).toHaveBeenCalledWith('VIEWPORT_TEST');
+      expect(ViewportService.setWidth).toHaveBeenCalledWith(720);
     });
   });
 });

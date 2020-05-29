@@ -14,50 +14,69 @@
  * limitations under the License.
  */
 
-const DEFAULT_VIEWPORT_WIDTHS = {
-  desktop: 1280,
-  tablet: 720,
-  phone: 320,
-};
+const DEFAULT_VIEWPORTS = [
+  {
+    id: 'any_device',
+    icon: 'mdi-cellphone-link',
+    width: 0,
+  },
+  {
+    id: 'desktop',
+    icon: 'mdi-monitor',
+    width: 1280,
+  },
+  {
+    id: 'tablet',
+    icon: 'mdi-tablet',
+    width: 720,
+  },
+  {
+    id: 'phone',
+    icon: 'mdi-cellphone',
+    width: 320,
+  },
+];
+
+const DEFAULT_VIEWPORT_ICON = 'mdi-devices';
 
 class ViewportToggleCtrl {
-  constructor($translate, ChannelService, ViewportService) {
+  constructor($log, $translate, ChannelService, ViewportService) {
     'ngInject';
 
+    this.$log = $log;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.ViewportService = ViewportService;
   }
 
   $onInit() {
-    const { defaultDevice, viewportMap } = this.ChannelService.getChannel();
-    const widths = Object.assign({}, DEFAULT_VIEWPORT_WIDTHS, viewportMap);
+    const { defaultDevice, devices, viewportMap } = this.ChannelService.getChannel();
 
-    this.values = [
-      {
-        id: 'ANY_DEVICE',
-        icon: 'any-device',
-        width: 0,
-      },
-      {
-        id: 'DESKTOP',
-        icon: 'desktop',
-        width: widths.desktop,
-      },
-      {
-        id: 'TABLET',
-        icon: 'tablet',
-        width: widths.tablet,
-      },
-      {
-        id: 'PHONE',
-        icon: 'phone',
-        width: widths.phone,
-      },
-    ];
+    this.values = DEFAULT_VIEWPORTS
+      .map((viewport) => {
+        const label = this._getViewportLabel(viewport.id);
+        const width = viewportMap[viewport.id] || viewport.width;
+        return { ...viewport, label, width };
+      });
 
-    const selectedDevice = this.value || defaultDevice.toUpperCase();
-    this.value = this.values.some(item => item.id === selectedDevice) ? selectedDevice : this.values[0].id;
+    this._parseJSON(devices)
+      .forEach((customViewport) => {
+        const viewport = this.values.find(vp => vp.id === customViewport.id.toLowerCase());
+        if (viewport) {
+          Object.assign(viewport, customViewport);
+          return;
+        }
+
+        customViewport.label = this._getViewportLabel(customViewport.id);
+        customViewport.id = customViewport.id.toLowerCase();
+        if (!customViewport.icon) {
+          customViewport.icon = DEFAULT_VIEWPORT_ICON;
+        }
+        this.values.push(customViewport);
+      });
+
+    const selectedViewport = this.value || defaultDevice.toLowerCase();
+    this.value = this.values.some(item => item.id === selectedViewport) ? selectedViewport : this.values[0].id;
 
     this._updateViewport();
   }
@@ -69,14 +88,42 @@ class ViewportToggleCtrl {
     }
   }
 
+  _parseJSON(values) {
+    return values
+      .map((value) => {
+        if (!value || !value.trim) {
+          return null;
+        }
+
+        value = value.trim();
+        if (!value.startsWith('{') || !value.endsWith('}')) {
+          return null;
+        }
+
+        try {
+          return JSON.parse(value);
+        } catch (e) {
+          this.$log.error('Failed to parse viewport JSON blob', value, e);
+          return null;
+        }
+      })
+      .filter(Boolean);
+  }
+
   _updateViewport() {
     const { width } = this.values.find(item => item.id === this.value);
 
     this.ViewportService.setWidth(width);
   }
 
-  getDisplayName(viewport) {
-    return this.$translate.instant(`VIEWPORT_${viewport.id}`);
+  /**
+   * If the translated value is the same as the lookup key, we assume there is no translation
+   * and use the id instead.
+   */
+  _getViewportLabel(id) {
+    const key = `VIEWPORT_${id.toUpperCase()}`;
+    const translation = this.$translate.instant(key);
+    return translation !== key ? translation : id;
   }
 }
 
