@@ -52,6 +52,9 @@ public class SecureCmsResourceServlet extends ResourceServlet {
                 resp.setHeader("Access-Control-Allow-Origin", origin);
                 resp.setHeader("Access-Control-Allow-Credentials", "true");
             }
+            // Below set 'Vary' is really important because without it, the same resource is cached in the browser
+            // regardless the Origin
+            resp.setHeader("Vary", "Origin");
         }
         super.doGet(req, resp);
     }
