@@ -78,14 +78,5 @@
         <module>archetype</module>
       </modules>
     </profile>
-    <profile>
-      <id>sdks</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>ui-extension</module>
-      </modules>
-    </profile>
   </profiles>
 </project>
