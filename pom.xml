@@ -14,7 +14,6 @@
   <artifactId>bloomreach-xm-community</artifactId>
   <name>Bloomreach XM Community</name>
   <description>Bloomreach Experience Manager community modules</description>
-  <version>14.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -78,16 +77,6 @@
       </activation>
       <modules>
         <module>archetype</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>sdks</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>spa-sdk</module>
-        <module>ui-extension</module>
       </modules>
     </profile>
   </profiles>
