@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/translation:
+      jcr:primaryType: hipposys:workflowcategory
+      /default:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.translation.impl.TranslationWorkflowImpl
+        hipposys:display: Translation workflow
+        hipposys:nodetype: hippotranslation:translated
+        hipposys:privileges: ['hippo:author']

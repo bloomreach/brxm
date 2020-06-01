@@ -1,0 +1,14 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/autoexport:
+      /hippo:moduleconfig:
+        autoexport:modules:
+          operation: override
+          type: string
+          value: ['first:/']
+    /reorder-second-mix:
+      jcr:primaryType: nt:unstructured
+      /from-first:
+        jcr:primaryType: nt:unstructured
+    /content:
+      .meta:category: content

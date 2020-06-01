@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:queries/hippo:templates/new-file-folder:
+      jcr:primaryType: hippostd:templatequery
+      hippostd:modify: [./_name, $name]
+      jcr:language: xpath
+      jcr:statement: /jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-file-folder/hippostd:templates/node()
+      /hippostd:templates:
+        jcr:primaryType: hippostd:templates
+        /asset gallery:
+          jcr:primaryType: hippogallery:stdAssetGallery
+          jcr:mixinTypes: ['mix:versionable']
+          jcr:uuid: 11f02d97-91d6-4a55-bd6a-c862f5210d8d
+          hippostd:foldertype: [new-file-folder]
+          hippostd:gallerytype: ['hippogallery:exampleAssetSet']

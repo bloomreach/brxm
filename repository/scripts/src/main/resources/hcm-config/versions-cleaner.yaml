@@ -1,0 +1,17 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:update/hippo:registry/VersionsCleaner:
+      jcr:primaryType: hipposys:updaterinfo
+      hipposys:batchsize: 10
+      hipposys:description: "VersionsCleaner is a script that visits document nodes\
+        \ and cleans up the version history.\r\nIt can retain retainCount number and\
+        \ daysToKeep days of latest versions.\r\nFor each node, it checks all its\
+        \ versions: if the age of the version is older than the daysToKeep and \n\
+        there are more versions than retainCount, then it deletes the version.\r"
+      hipposys:dryrun: false
+      hipposys:parameters: '{ "retainCount": 2, "daysToKeep": 30 }'
+      hipposys:query: //element(*, mix:versionable)
+      hipposys:script:
+        type: string
+        resource: /versions-cleaner.groovy
+      hipposys:throttle: 1000

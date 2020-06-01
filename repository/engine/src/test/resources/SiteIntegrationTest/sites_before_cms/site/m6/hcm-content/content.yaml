@@ -1,0 +1,6 @@
+/content/m2contentnode/m6node:
+  jcr:primaryType: nt:unstructured
+  property: propertyValue
+  /m6subnode:
+    jcr:primaryType: nt:unstructured
+    subnodeproperty: propertyValue
