@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:update/hippo:registry/Test Post Channel Manager Event:
+      jcr:primaryType: hipposys:updaterinfo
+      hipposys:batchsize: 10
+      hipposys:description: Test Post Channel Manager Event
+      hipposys:dryrun: false
+      hipposys:parameters: "{\r\n  \"testEventType\": \"ChannelManagerEvent\", // \"PageCopyEvent\"\
+        \ | \"BeforeChannelDeleteEvent\" | \"ChannelEvent\" | \"ChannelManagerEvent\"\r\
+        \n  \"targetContextPath\": \"/site\"\r\n}"
+      hipposys:query: /jcr:root
+      hipposys:script:
+        type: string
+        resource: test-post-channel-manager-event.groovy
+      hipposys:throttle: 1000

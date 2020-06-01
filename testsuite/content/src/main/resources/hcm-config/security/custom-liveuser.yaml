@@ -1,0 +1,12 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:users/customliveuser:
+      jcr:primaryType: hipposys:user
+      hipposys:active: true
+      hipposys:passkey: jvm://
+      hipposys:userroles:
+        .meta:category: system
+        .meta:add-new-system-values: true
+        value: [xm.live-documents.reader]
+      hipposys:securityprovider: internal
+      hipposys:system: true
