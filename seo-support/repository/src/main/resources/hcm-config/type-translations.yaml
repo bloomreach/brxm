@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/seosupport:seo:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: SEO
+        seosupport:seodescription: SEO Description
+        seosupport:seodescription#hint: Text to be used in the meta description tag
+        seosupport:seotitle: SEO Title
+        seosupport:seotitle#hint: Text to be used in the title tag
