@@ -1,0 +1,12 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-recommended-scss"
+  ],
+  "rules": {
+    "max-line-length": 120,
+    "no-descending-specificity": null,
+    "number-leading-zero": "never",
+    "selector-type-no-unknown": null
+  }
+}

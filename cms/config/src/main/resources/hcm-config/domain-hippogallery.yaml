@@ -1,0 +1,35 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/hippogallery:
+      jcr:primaryType: hipposys:domain
+      /hippogallery-exampleimageset:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippogallery-exampleimageset:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippogallery:exampleImageSet
+      /hippogallery-imageset:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippogallery-imageset:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippogallery:imageset
+      /hippogallery-exampleassetset:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippogallery-exampleassetset:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippogallery:exampleAssetSet
+      /readwrite:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [author, editor]
+        hipposys:role: readwrite

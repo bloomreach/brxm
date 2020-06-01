@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/layoutProvider:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.hippoecm.frontend.editor.layout.LayoutProviderPlugin

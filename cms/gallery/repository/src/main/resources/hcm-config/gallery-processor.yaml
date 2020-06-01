@@ -1,0 +1,16 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService:
+      jcr:primaryType: frontend:plugin
+      gallery.processor.id: service.gallery.processor
+      plugin.class: org.hippoecm.frontend.plugins.gallery.processor.ScalingGalleryProcessorPlugin
+      /hippogallery:thumbnail:
+        jcr:primaryType: frontend:pluginconfig
+        height: 60
+        upscaling: false
+        width: 60
+      /hippogallery:original:
+        jcr:primaryType: frontend:pluginconfig
+        height: 0
+        upscaling: false
+        width: 0

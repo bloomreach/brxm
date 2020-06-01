@@ -1,0 +1,8 @@
+definitions:
+  namespace:
+    test-builtin:
+      uri: http://www.onehippo.org/test-builtin-unused
+      cnd: repository-test.cnd
+    cmstest:
+      uri: http://www.hippoecm.org/cms/test/nt/1.0
+      cnd: cmstest.cnd

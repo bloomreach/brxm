@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/editing:
+      /handle:
+        jcr:primaryType:
+          operation: override
+          type: name
+          value: frontend:workflow
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          browser.id: ${browser.id}
+          editor.id: ${editor.id}
+          model.id: ${model.id}
+          plugin.class: org.hippoecm.frontend.plugins.reviewedactions.EditingWorkflowPlugin
+          validator.id: ${validator.id}

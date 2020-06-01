@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-header-bar:
+      jcr:primaryType: frontend:plugincluster

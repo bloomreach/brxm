@@ -1,0 +1,54 @@
+// Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+.hippo-ckeditor {
+
+  background: url("#{$images}/loading.gif") no-repeat center;
+
+  // hide the textarea
+  .hippo-ckeditor-textarea {
+    display: none;
+  }
+}
+
+// override default CKEditor styling
+.hippo-root {
+
+  // use same border color as other fields
+  .cke,
+  .cke_top,
+  .cke_bottom {
+    border-color: $editor-subfield-border;
+  }
+
+  // use custom background color and fonts in the toolbars
+  .cke_top,
+  .cke_bottom {
+    background: $ckeditor-toolbar-bgcolor;
+
+    * {
+      font-family: $font-family-base;
+    }
+  }
+
+  // align left side of the text in the 'Styles' dropdown with left side of the icons below it
+  .cke_combo_text {
+    padding-left: 6px;
+  }
+
+  // use same margin in the editing area as other input fields
+  .cke_wysiwyg_div.cke_editable {
+    padding: 8px;
+  }
+}
