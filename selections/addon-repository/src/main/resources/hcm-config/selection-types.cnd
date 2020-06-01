@@ -1,0 +1,11 @@
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<'selection'='http://forge.onehippo.org/selection/nt/1.0'>
+
+[selection:basedocument] > hippo:document
+
+[selection:listitem] > hippo:compound
+  - selection:key (string) 
+  - selection:label (string) 
+
+[selection:valuelist] > selection:basedocument orderable
++ selection:listitem (selection:listitem) multiple
