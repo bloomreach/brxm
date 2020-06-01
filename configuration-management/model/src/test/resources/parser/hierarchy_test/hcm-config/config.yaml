@@ -1,0 +1,60 @@
+definitions:
+  namespace:
+    myhippoproject:
+      uri: http://www.onehippo.org/myhippoproject/nt/1.0
+      cnd: example.cnd
+  config:
+    /:
+      root-level-property: root-level-property-value
+      /node-with-single-property:
+        property: node-with-single-property-value
+      /node-with-multiple-properties:
+        single: value1
+        multiple: [value2, value3]
+        empty-multiple: []
+      /node-with-sub-node:
+        /sub-node:
+          property: sub-node-value
+      /node-delete:
+        .meta:delete: true
+      /node-order-before:
+        .meta:order-before: node
+        property: value
+        /empty-node: {}
+      /node-ignore-reordered-children:
+        .meta:ignore-reordered-children: true
+    /path/to/node-delete:
+      .meta:delete: true
+    /path/to/node-order-before:
+      .meta:order-before: node
+    /path/to/node:
+      delete-property:
+        operation: delete
+      add-property:
+        operation: add
+        type: string
+        value: [addme]
+      replace-property-single-string: single
+      replace-property-map:
+        type: binary
+        resource: [folder/image.png]
+      override-property:
+        operation: override
+        type: string
+        value: single
+      /node-with-new-type:
+        jcr:primaryType:
+          operation: override
+          value: some:type
+        jcr:mixinTypes:
+          operation: override
+          value: ['some:mixin']
+      /node-with-mixin-add:
+        jcr:mixinTypes:
+          operation: add
+          value: ['some:mixin']
+    /hst:hst:
+      jcr:primaryType: hst:hst
+    /hst:hst/hst:hst:
+      jcr:primaryType: hst:configurations
+  webfilebundle: site
