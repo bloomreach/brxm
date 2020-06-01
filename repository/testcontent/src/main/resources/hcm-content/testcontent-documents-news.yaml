@@ -1,0 +1,40 @@
+/content/documents/news:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['mix:versionable']
+  jcr:uuid: e0155dd8-69d3-4c80-bc0a-2b81eeb092c4
+  hippostd:foldertype: [new-document, new-folder]
+  /mynews1:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: 5901f6af-ee8d-4fdd-88d8-0d156c8f0805
+    /mynews1:
+      jcr:primaryType: testcontent:news
+      jcr:mixinTypes: ['mix:versionable']
+      jcr:uuid: d1847bd1-78da-4491-beab-e0e6d2fee3e0
+      hippo:availability: [preview]
+      hippostd:state: unpublished
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
+      hippostdpubwf:lastModificationDate: 2010-02-04T16:32:28.068+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      testcontent:date: 2010-01-05T09:03:00+01:00
+      testcontent:introduction: <html><body>introduction</body></html>
+      testcontent:title: title
+      /testcontent:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: <html><body><a facetselect="link1">link1</a><a facetselect="link2">link2</a></body></html>
+        /link1:
+          jcr:primaryType: hippo:facetselect
+          hippo:docbase: 3732eae8-01ca-4bdd-8f2f-1f9654722ba8
+          hippo:facets: []
+          hippo:modes: []
+          hippo:values: []
+        /link2:
+          jcr:primaryType: hippo:facetselect
+          hippo:docbase: cb3bb9bd-309d-47b0-8858-d92b46edc52f
+          hippo:facets: []
+          hippo:modes: []
+          hippo:values: []
+      /testcontent:internallink:
+        jcr:primaryType: hippo:mirror
+        hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe

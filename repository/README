@@ -1,0 +1,38 @@
+========================================
+How to test and build Hippo Repository
+========================================
+
+1. Introduction
+
+  Very brief introduction to how to build and test Hippo Repository!
+
+2. Requirements --
+
+  (1) Java 1.8
+  (2) Maven 3.0.4+
+
+3. Build 
+     
+    (1) Build with short running test but no integration tests
+    
+      $ mvn clean install
+    
+    (2) Build with skipping tests
+    
+      $ mvn clean install -DskipTests
+    
+    (3) Build with integration tests
+
+      $ mvn clean install -Pintegration
+
+    (4) Build with Hippo Snapshot Repository Flag
+      - Note: Mostly you do not need this when you check out and build a released version!
+              Needed only when you build the TRUNK having snapshot dependencies!
+      - Note: Please beware that the `-Dhippo.snapshots' option is effective only when you define
+              a Maven profile with this property in your settings.xml for the Hippo snapshot repository.
+              For detail, see https://wiki.onehippo.com/display/CMS7/Build+Hippo+CMS+7.5+or+higher+from+scratch
+      - Add `-Dhippo.snapshots' for snapshot dependencies.
+        For example,
+        
+          $ mvn clean install -Dhippo.snapshots -DskipTests
+        

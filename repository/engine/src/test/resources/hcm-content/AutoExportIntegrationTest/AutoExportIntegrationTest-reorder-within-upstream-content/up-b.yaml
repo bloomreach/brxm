@@ -1,0 +1,9 @@
+/AutoExportIntegrationTest-reorder-within-upstream-content/up-b:
+  .meta:order-before: up-a
+  jcr:primaryType: nt:unstructured
+  /overlapping:
+    jcr:primaryType: nt:unstructured
+    /up-a:
+      jcr:primaryType: nt:unstructured
+    /up-b:
+      jcr:primaryType: nt:unstructured

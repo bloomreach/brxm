@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /:
+      jcr:mixinTypes:
+        operation: add
+        value: ['hippo:named']
+      hippo:name: Root Node

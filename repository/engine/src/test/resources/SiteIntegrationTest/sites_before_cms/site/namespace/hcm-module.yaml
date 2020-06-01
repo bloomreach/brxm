@@ -1,0 +1,6 @@
+group:
+  name: hippo-extension-namespace
+project:
+  name: extension-namespace
+module: 
+  name: extension-namespace
