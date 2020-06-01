@@ -1,0 +1,18 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:prototypepages/two-columns:
+      jcr:primaryType: hst:component
+      jcr:mixinTypes: ['hst:prototypemeta']
+      hst:displayname: Two columns
+      hst:referencecomponent: hst:abstractpages/base
+      /main:
+        jcr:primaryType: hst:component
+        /content:
+          jcr:primaryType: hst:component
+          hst:template: two-columns.main.content
+          /left-container:
+            jcr:primaryType: hst:containercomponent
+            hst:xtype: HST.vBox
+          /right-container:
+            jcr:primaryType: hst:containercomponent
+            hst:xtype: HST.vBox

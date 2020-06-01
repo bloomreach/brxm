@@ -1,0 +1,37 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite_nl/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /error:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/errorpage
+        hst:refId: error
+      /_any_:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/errorpage
+      /wikipedia:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/wikipedia
+        hst:refId: aboutId
+        hst:relativecontentpath: wikipedia
+        /archive:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/wikipediaarchive
+          hst:refId: homeId
+          hst:relativecontentpath: wikipedia/faceted
+          /_any_:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/wikipediaarchive
+            hst:relativecontentpath: wikipedia/archive/${1}
+          /_any_.html:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/detailwikipage
+            hst:relativecontentpath: wikipedia/archive/${1}
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/wikipediaarchive
+          hst:relativecontentpath: wikipedia/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/detailwikipage
+          hst:relativecontentpath: wikipedia/${1}
