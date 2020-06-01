@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hst:hst/hst:blueprints/intranet-subsite/hst:configuration/hst:workspace/hst:sitemap:
+      jcr:primaryType: hst:sitemap

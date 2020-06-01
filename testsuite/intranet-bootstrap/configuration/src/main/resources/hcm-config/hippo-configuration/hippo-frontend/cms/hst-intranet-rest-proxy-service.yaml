@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/hstIntranetRestProxyService:
+      jcr:primaryType: frontend:plugin
+      context.path: /intranet
+      ping.service.uri: /sites/_isAlive
+      plugin.class: org.hippoecm.frontend.service.restproxy.RestProxyServicePlugin
+      rest.uri: http://127.0.0.1:8080/intranet/_cmsrest
+      service.id: hst.rest.proxy.service

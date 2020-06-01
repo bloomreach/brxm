@@ -1,0 +1,13 @@
+definitions:
+  config:
+    /hst:hst/hst:hosts/dev-localhost/com:
+      jcr:primaryType: hst:virtualhost
+      hst:contextpath: /intranet
+      hst:homepage: root
+      /example:
+        jcr:primaryType: hst:virtualhost
+        /dev:
+          jcr:primaryType: hst:virtualhost
+          /hst:root:
+            jcr:primaryType: hst:mount
+            hst:mountpoint: /hst:hst/hst:sites/intranet
