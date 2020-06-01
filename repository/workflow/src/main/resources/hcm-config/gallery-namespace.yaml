@@ -1,0 +1,173 @@
+definitions:
+  config:
+    /hippo:namespaces/hippogallery:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      /image:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:resource']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippo/nt/2.0
+            /width:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippogallery:width
+              hipposysedit:type: Long
+            /height:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippogallery:height
+              hipposysedit:type: Long
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 94
+            hippogallery:width: 94
+            jcr:data:
+              type: binary
+              resource: /namespaces/hippogallery/image/prototypes/prototype/prototype.jpg
+            jcr:encoding: UTF-8
+            jcr:lastModified: 2008-03-26T12:03:00+01:00
+            jcr:mimeType: image/jpeg
+      /imageset:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:document']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippogallery/nt/2.0
+            /filename:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippogallery:filename
+              hipposysedit:type: String
+            /description:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippogallery:description
+              hipposysedit:type: String
+            /thumbnail:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:autocreated: true
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippogallery:thumbnail
+              hipposysedit:primary: true
+              hipposysedit:type: hippogallery:image
+            /original:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippogallery:original
+              hipposysedit:type: hippogallery:image
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippogallery:imageset
+            jcr:mixinTypes: ['mix:versionable']
+            jcr:uuid: 451ab3d0-ad1a-49de-94f0-b5216dacf384
+            /hippogallery:thumbnail:
+              jcr:primaryType: hippogallery:image
+              jcr:data:
+                type: binary
+                resource: /namespaces/hippogallery/imageset/prototypes/prototype_thumbnail.gif
+              jcr:lastModified: 1970-01-01T00:00:00Z
+              jcr:mimeType: image/gif
+            /hippogallery:original:
+              jcr:primaryType: hippogallery:image
+              jcr:data:
+                type: binary
+                resource: /namespaces/hippogallery/imageset/prototypes/prototype_original.gif
+              jcr:lastModified: 1970-01-01T00:00:00Z
+              jcr:mimeType: image/gif
+      /exampleImageSet:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:document']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippogallery/nt/2.0
+            /thumbnail:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:autocreated: true
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippogallery:thumbnail
+              hipposysedit:primary: true
+              hipposysedit:type: hippo:resource
+            /picture:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippogallery:picture
+              hipposysedit:type: hippo:resource
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippogallery:exampleImageSet
+            jcr:mixinTypes: ['mix:versionable']
+            jcr:uuid: 551ab3d0-ad1a-49de-94f0-b5216dacf389
+            /hippogallery:thumbnail:
+              jcr:primaryType: hippo:resource
+              jcr:data:
+                type: binary
+                resource: /namespaces/hippogallery/exampleimageset/prototypes/prototype/thumbnail/data.gif
+              jcr:lastModified: 2008-09-11T20:14:37.511+02:00
+              jcr:mimeType: image/gif
+            /hippogallery:picture:
+              jcr:primaryType: hippo:resource
+              jcr:data:
+                type: binary
+                resource: /namespaces/hippogallery/exampleimageset/prototypes/prototype/picture/data.gif
+              jcr:lastModified: 2008-09-11T20:15:22.026+02:00
+              jcr:mimeType: image/gif
+      /exampleAssetSet:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:document']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippogallery/nt/2.0
+            /asset:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:autocreated: true
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippogallery:asset
+              hipposysedit:primary: true
+              hipposysedit:type: hippo:resource
+      /container:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:mixin: true
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippogallery/nt/2.0
+      /relaxed:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:mixin: true
+            hipposysedit:supertype: ['hippogallery:container', 'hippostd:relaxed']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippogallery/nt/2.0

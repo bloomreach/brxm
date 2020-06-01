@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="navigation">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>nt:unstructured</sv:value>
+  </sv:property>
+  <sv:node sv:name="bySectionSource">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:facetsearch</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:docbase" sv:type="String">
+      <sv:value>/files</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:facets" sv:type="String">
+      <sv:value>section</sv:value>
+      <sv:value>source</sv:value>
+      <sv:value>year</sv:value>
+      <sv:value>month</sv:value>
+      <sv:value>author</sv:value>
+      <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>bySectionSource</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:resultset">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetresult</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="bySectionDate">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:facetsearch</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:docbase" sv:type="String">
+      <sv:value>/files</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:facets" sv:type="String">
+      <sv:value>section</sv:value>
+      <sv:value>year</sv:value>
+      <sv:value>month</sv:value>
+      <sv:value>source</sv:value>
+      <sv:value>author</sv:value>
+      <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>bySectionDate</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:resultset">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetresult</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="bySourceSection">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:facetsearch</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:docbase" sv:type="String">
+      <sv:value>/files</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:facets" sv:type="String">
+      <sv:value>source</sv:value>
+      <sv:value>section</sv:value>
+      <sv:value>year</sv:value>
+      <sv:value>month</sv:value>
+      <sv:value>author</sv:value>
+      <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>bySourceSection</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:resultset">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetresult</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="bySourceDate">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:facetsearch</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:docbase" sv:type="String">
+      <sv:value>/files</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:facets" sv:type="String">
+      <sv:value>source</sv:value>
+      <sv:value>year</sv:value>
+      <sv:value>month</sv:value>
+      <sv:value>section</sv:value>
+      <sv:value>author</sv:value>
+      <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>bySourceDate</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:resultset">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetresult</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="byAuthorDate">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:facetsearch</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:docbase" sv:type="String">
+      <sv:value>/files</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:facets" sv:type="String">
+      <sv:value>author</sv:value>
+      <sv:value>year</sv:value>
+      <sv:value>month</sv:value>
+      <sv:value>section</sv:value>
+      <sv:value>source</sv:value>
+      <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>byAuthorDate</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:resultset">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetresult</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="byAuthorSource">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:facetsearch</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:docbase" sv:type="String">
+      <sv:value>/files</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:facets" sv:type="String">
+      <sv:value>author</sv:value>
+      <sv:value>section</sv:value>
+      <sv:value>source</sv:value>
+      <sv:value>year</sv:value>
+      <sv:value>month</sv:value>
+      <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>byAuthorSource</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:resultset">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetresult</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="byDateAuthor">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:facetsearch</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:docbase" sv:type="String">
+      <sv:value>/files</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:facets" sv:type="String">
+      <sv:value>year</sv:value>
+      <sv:value>month</sv:value>
+      <sv:value>day</sv:value>
+      <sv:value>author</sv:value>
+      <sv:value>section</sv:value>
+      <sv:value>source</sv:value>
+      <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>byDateAuthor</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:resultset">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetresult</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="byDateSection">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:facetsearch</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:docbase" sv:type="String">
+      <sv:value>/files</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:facets" sv:type="String">
+      <sv:value>year</sv:value>
+      <sv:value>month</sv:value>
+      <sv:value>day</sv:value>
+      <sv:value>section</sv:value>
+      <sv:value>source</sv:value>
+      <sv:value>author</sv:value>
+      <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>byDateSection</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:resultset">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetresult</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>
+

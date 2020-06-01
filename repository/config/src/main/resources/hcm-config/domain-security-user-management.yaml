@@ -1,0 +1,48 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/security-user-management:
+      jcr:primaryType: hipposys:domain
+      /users:
+        jcr:primaryType: hipposys:domainrule
+        /users-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:users
+      /groups:
+        jcr:primaryType: hipposys:domainrule
+        /groups-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:groups
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: readonly
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.security.viewer
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+      /readwrite:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: readwrite
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.security.user-admin
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []

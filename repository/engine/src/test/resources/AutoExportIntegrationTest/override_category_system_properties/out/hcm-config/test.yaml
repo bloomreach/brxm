@@ -1,0 +1,45 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:users/test-user:
+      jcr:primaryType: hipposys:user
+      hipposys:securityprovider: internal
+      hipposys:userroles:
+        .meta:category: system
+        .meta:add-new-system-values: true
+        type: string
+        value: [a]
+      hipposys:active: true
+    /hippo:configuration/hippo:groups/test-group:
+      jcr:primaryType: hipposys:group
+      hipposys:securityprovider: internal
+      hipposys:userroles:
+        .meta:category: system
+        .meta:add-new-system-values: true
+        type: string
+        value: [b, c]
+    /hippo:configuration/hippo:domains/defaultread:
+      /test-authrole:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: readonly
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          type: string
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          type: string
+          value: [test-user]
+      /test-authrole2:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          type: string
+          value: [test-group]
+        hipposys:role: readonly
+        hipposys:userrole:
+          .meta:category: system
+          type: string
+          value: a

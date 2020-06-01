@@ -1,0 +1,17 @@
+definitions:
+  config:
+    /topmost/upstream:
+      existingPropertyUpstreamAlreadyOverridden:
+        operation: override
+        type: reference
+        path: /other/path
+      existingPropertyUpstream:
+        operation: override
+        type: string
+        value: [I'm a string!, And now I have more than one value]
+    /topmost/upstream/exportFirst:
+      jcr:primaryType: nt:unstructured
+      existingPropertyWithLocalDef: [Don't call it a comeback, '... I''ve been here
+          the whole time']
+      existingPropertyWithAddInSecond: [value1]
+      propertyWithResources: I'm just a test file

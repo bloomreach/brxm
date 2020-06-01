@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /config:
+      jcr:primaryType: nt:unstructured
+      /container:
+        jcr:primaryType: nt:unstructured

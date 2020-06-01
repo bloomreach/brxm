@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /topmost/upstream:
+      existingPropertyUpstreamAlreadyOverridden:
+        type: reference
+        path: /other/path
+      existingPropertyUpstream:
+        operation: override
+        value: ["I'm a string!", "And now I have more than one value"]
+      /exportFirst:
+        existingPropertyWithAddInSecond:
+          operation: override
+          value: value3
+        existingPropertyWithLocalDef:
+          operation: override
+          value: ["Don't call it a comeback", '... I''ve been here the whole time']
+        propertyWithResources:
+          operation: override
+          value: I'm just a test file
+    /topmost/upstream/exportSecond:
+      newPropertyToSecond:
+        operation: override
+        type: long
+        value: 1234567890
