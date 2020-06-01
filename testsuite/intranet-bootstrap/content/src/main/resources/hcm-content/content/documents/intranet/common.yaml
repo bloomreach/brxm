@@ -1,0 +1,58 @@
+/content/documents/intranet/common:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['hippotranslation:translated', 'hippo:named', 'mix:referenceable']
+  jcr:uuid: 13c6120a-13a9-4913-a781-055c4399ffa9
+  hippo:name: Common
+  hippostd:foldertype: [new-translated-folder-intranet, new-document-intranet]
+  hippotranslation:id: intranet-common-id
+  hippotranslation:locale: en
+  /homepage:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: bf717e3f-2d56-4a6e-bfe4-7c2a53e04e91
+    hippo:name: Home Page
+    /homepage:
+      jcr:primaryType: intranet:textdocument
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: d82f1dd7-514a-43d4-8024-969a25d46aa7
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+      hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2011-02-15T14:58:39.642Z
+      hippotranslation:id: intranet-common-homepage-id
+      hippotranslation:locale: en
+      intranet:summary: This is the home page of the generated HST website.
+      intranet:title: My Hippo Project Home Page
+      /intranet:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: "<p>Now go ahead and build your own website!</p> \n    \
+          \      "
+  /about-us:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: a186f2da-30e3-46f1-9120-684af52d4129
+    hippo:name: About Us
+    /about-us:
+      jcr:primaryType: intranet:textdocument
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: c153e224-5735-43a7-ade9-91f315ff79da
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+      hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2011-02-15T14:58:39.642Z
+      hippotranslation:id: intranet-common-about-us-id
+      hippotranslation:locale: en
+      intranet:summary: Who we are.
+      intranet:title: About us
+      /intranet:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: We are Hippo! Come and visit us at <a href="http://www.onehippo.com"
+          title="Hippo website">www.onehippo.com</a>!

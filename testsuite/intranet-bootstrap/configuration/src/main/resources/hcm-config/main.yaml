@@ -1,0 +1,8 @@
+definitions:
+  namespace:
+    intranet:
+      uri: http://www.onehippo.org/intranet/nt/1.0
+      cnd: namespaces/intranet.cnd
+  config:
+    /hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig:
+      watchedModules: [intranet-bootstrap/webfiles]
