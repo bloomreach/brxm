@@ -1,0 +1,30 @@
+#
+#  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+#
+#  Licensed under the Apache License, Version 2.0 (the  "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS"
+#  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
+There is no preview version '/hst:hst/hst:sites/subsub1-preview' for mount
+Error in dependency cycle
+Please correct the configuration because duplicate configuration nodes found
+Cannot add cms location
+Cannot lookup referenced component
+Cannot find hst:template
+Relative inherit path '../unittestcommon/hst:workspace/hst:containers/myReferenceableContainer'
+An event handler will be registered for a path where no node currently is available
+Failed to register event listener
+Existing lock file
+Unable to register RepositoryStat
+A service was already registered with name
+Initializing module scheduler failed
+Trying to delete node

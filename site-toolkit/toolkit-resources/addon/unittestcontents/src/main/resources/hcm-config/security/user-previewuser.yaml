@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:users/previewuser:
+      jcr:primaryType: hipposys:user
+      hipposys:active: true
+      hipposys:passkey: jvm://
+      hipposys:password: previewuserpass
+      hipposys:securityprovider: internal
+      hipposys:system: true

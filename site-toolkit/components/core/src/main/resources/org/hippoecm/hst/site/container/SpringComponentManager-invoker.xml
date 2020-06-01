@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+
+  <bean id="org.hippoecm.hst.core.container.HstComponentInvoker"
+        class="org.hippoecm.hst.core.container.HstComponentInvokerImpl">
+    <property name="exceptionThrowable" value="${development.mode}" />
+    <property name="errorRenderPath" value="${component.error.page}" />
+    <property name="dispatchUrlPrefix" value="${dispatch.url.prefix}" />
+  </bean>
+
+  <bean id="persistableSessionAroundAdvice" class="org.hippoecm.hst.core.container.PersistableSessionAroundAdvice">
+  </bean>  
+
+  <aop:config>
+    <aop:aspect ref="persistableSessionAroundAdvice">
+      <aop:pointcut id="theExecutionOfComponentInvokingMethods"
+                    expression="execution(* org.hippoecm.hst.core.container.HstComponentInvoker.*(org.hippoecm.hst.core.container.HstContainerConfig, javax.servlet.ServletRequest, javax.servlet.ServletResponse))" />
+      <aop:around pointcut-ref="theExecutionOfComponentInvokingMethods"
+                  method="invoke" />
+    </aop:aspect>
+  </aop:config>
+
+  <!-- AJAX based asynchronous component window renderer -->
+  <bean id="ajaxAsynchronousComponentWindowRenderer" class="org.hippoecm.hst.core.container.AjaxAsynchronousComponentWindowRenderer">
+    <property name="asyncLoadJavaScriptFragmentTemplate" value="${ajax.asynchronous.component.windows.load.js.fragment.template}" />
+  </bean>
+
+  <!-- ESI based asynchronous component window renderer -->
+  <bean id="esiAsynchronousComponentWindowRenderer" class="org.hippoecm.hst.core.container.ESIAsynchronousComponentWindowRenderer">
+  </bean>
+
+  <!-- SSI based asynchronous component window renderer -->
+  <bean id="ssiAsynchronousComponentWindowRenderer" class="org.hippoecm.hst.core.container.SSIAsynchronousComponentWindowRenderer">
+  </bean>
+
+  <!-- Asynchronous component window renderers map used by AggregationValve -->
+  <bean id="asynchronousComponentWindowRendererMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+    <property name="sourceMap">
+      <map>
+        <entry key="ajax" value-ref="ajaxAsynchronousComponentWindowRenderer" />
+        <entry key="esi" value-ref="esiAsynchronousComponentWindowRenderer" />
+        <entry key="ssi" value-ref="ssiAsynchronousComponentWindowRenderer" />
+      </map>
+    </property>
+  </bean>
+
+  <bean id="cmsComponentAttributeContributors" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.hippoecm.hst.core.channelmanager.CmsComponentComponentWindowAttributeContributor"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="composerComponentWindowResponseAppenders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.hippoecm.hst.core.channelmanager.CmsComponentWindowResponseAppender">
+          <property name="attributeContributors" ref="cmsComponentAttributeContributors"/>
+         </bean>
+      </list>
+    </property>
+  </bean>
+
+</beans>
+
