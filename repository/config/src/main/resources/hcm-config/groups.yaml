@@ -1,0 +1,42 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:groups:
+      /everybody:
+        jcr:primaryType: hipposys:group
+        hipposys:description: ''
+        hipposys:members: ['*']
+        hipposys:securityprovider: internal
+        hipposys:system: true
+      /author:
+        jcr:primaryType: hipposys:group
+        hipposys:members:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:userroles:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [xm.default-user.author]
+        hipposys:securityprovider: internal
+      /editor:
+        jcr:primaryType: hipposys:group
+        hipposys:members:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:userroles:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [xm.default-user.editor]
+        hipposys:securityprovider: internal
+      /admin:
+        jcr:primaryType: hipposys:group
+        hipposys:members:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:userroles:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [xm.default-user.system-admin, xm.repository-browser.user]
+        hipposys:securityprovider: internal

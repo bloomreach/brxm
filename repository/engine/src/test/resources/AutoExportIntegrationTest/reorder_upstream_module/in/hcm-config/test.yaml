@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /content:
+      .meta:category: content

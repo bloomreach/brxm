@@ -1,0 +1,5 @@
+/nodeWithProperties:
+  stringProperty: aaa
+  stringPropertyNotMultiple: bbb
+  multipleStringProperty: [ccc, ddd]
+  multipleStringPropertyWithOneValue: [eee]
