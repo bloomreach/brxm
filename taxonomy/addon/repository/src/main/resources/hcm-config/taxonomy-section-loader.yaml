@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-browser/taxonomiesTreeLoader:
+      jcr:primaryType: frontend:plugin
+      cluster.name: cms-tree-views/taxonomies
+      plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
+      /cluster.config:
+        jcr:primaryType: frontend:pluginconfig
+        browser.id: service.browse
+        editor.id: service.edit
+        wicket.id: service.browse.tree.taxonomies
