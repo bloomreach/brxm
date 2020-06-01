@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "save" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "done" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

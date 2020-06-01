@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:workflows:
+      /zh:
+        committype: 动作类型
+        admin: 管理
+        jcr:primaryType: hipposys:resourcebundle

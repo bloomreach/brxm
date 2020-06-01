@@ -1,0 +1,25 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:types.seosupport:seo/seosupport:seotitle#hint" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.seosupport:seo/seosupport:seotitle" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.seosupport:seo/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.seosupport:seo/seosupport:seodescription" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.seosupport:seo/seosupport:seodescription#hint" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
