@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration>
+
+  <Appenders>
+
+    <!-- console -->
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
+    </Console>
+
+  </Appenders>
+
+  <Loggers>
+
+    <!-- CMS logging -->
+    <Logger name="org.apache" level="error"/>
+    <Logger name="org.hippoecm" level="error"/>
+    <Logger name="com.onehippo" level="error"/>
+    <Logger name="org.onehippo" level="error"/>
+
+    <!-- audit logging -->
+    <Logger additivity="false" name="org.hippoecm.repository.api.Workflow" level="info"/>
+    <Logger additivity="false" name="org.onehippo.audit" level="info"/>
+
+    <!-- Site logging -->
+    <Logger name="org.hippoecm.hst" level="warn"/>
+
+    <!-- DiagnosticReportingValve only logs when diagnostics enabled in hst:hosts config in repo hence
+         can be here on level 'info' -->
+    <Logger name="org.hippoecm.hst.core.container.DiagnosticReportingValve" level="info"/>
+
+    <!-- crisp-profile logging -->
+    <Logger additivity="false" name="org.onehippo.cms7.crisp.core.profile.ResourceResolverProfiler" level="info"/>
+
+    <Logger name="freemarker" level="error"/>
+    <Logger name="org.apache.cxf" level="error"/>
+    <Logger name="javax.ws.rs.core" level="error"/>
+    <Logger name="org.apache.commons.pool" level="error"/>
+    <Logger name="org.apache.commons.beanutils" level="error"/>
+
+    <!-- too many caching warnings -->
+    <Logger name="org.apache.jackrabbit.core.state" level="error"/>
+    <Logger name="org.apache.jackrabbit.core.ItemManager" level="error"/>
+    <Logger name="org.apache.jackrabbit.core.persistence.bundle.util.LRUNodeIdCache" level="error"/>
+
+    <!-- ignore wicket localizer warnings -->
+    <Logger name="org.apache.wicket.Localizer" level="error"/>
+
+    <!-- more info wanted -->
+    <Logger name="org.apache.jackrabbit.core.persistence.bundle" level="info"/>
+    <Logger name="org.hippoecm.repository.updater" level="info"/>
+    <Logger name="org.apache.jackrabbit.core.query.lucene.MultiIndex" level="info"/>
+    <Logger name="org.apache.jackrabbit.core.query.lucene.SearchIndex" level="info"/>
+    <Logger name="org.apache.jackrabbit.core.query.lucene.ConsistencyCheck" level="info"/>
+
+    <!-- project logging -->
+    <Logger name="org.example" level="info"/>
+
+    <Root level="warn">
+      <AppenderRef ref="console"/>
+    </Root>
+
+  </Loggers>
+
+</Configuration>
