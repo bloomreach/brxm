@@ -1,0 +1,50 @@
+definitions:
+  config:
+    /hippo:namespaces/selection/valuelist:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          hipposysedit:node: true
+          hipposysedit:supertype: ['selection:basedocument']
+          hipposysedit:uri: http://forge.onehippo.org/selection/nt/1.0
+          /listitem:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:multiple: true
+            hipposysedit:ordered: true
+            hipposysedit:path: selection:listitem
+            hipposysedit:type: selection:listitem
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: selection:valuelist
+          jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+          hippo:availability: [live, preview]
+          hippotranslation:id: '@uuid - from query'
+          hippotranslation:locale: inherited - from query
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          frontend:properties: [mode]
+          frontend:references: [engine, wicket.model, model.compareTo]
+          frontend:services: [wicket.id]
+          mode: edit
+          /root:
+            jcr:primaryType: frontend:plugin
+            item: ${cluster.id}.field
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+            wicket.id: ${wicket.id}
+          /listitem:
+            jcr:primaryType: frontend:plugin
+            caption: Item
+            engine: ${engine}
+            field: listitem
+            mode: ${mode}
+            model.compareTo: ${model.compareTo}
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+            wicket.id: ${cluster.id}.field
+            wicket.model: ${wicket.model}

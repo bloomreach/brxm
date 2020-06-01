@@ -1,0 +1,32 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/selection:BooleanRadioGroup:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Boolean Radio Group
+    /hippo:configuration/hippo:translations/hippo:types/selection:DynamicDropdown:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Dynamic Dropdown
+    /hippo:configuration/hippo:translations/hippo:types/selection:StaticDropdown:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Static Dropdown
+    /hippo:configuration/hippo:translations/hippo:types/selection:valuelist:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Value list
+    /hippo:configuration/hippo:translations/hippo:types/selection:listitem:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Value list item
+    /hippo:configuration/hippo:translations/hippo:types/selection:RadioGroup:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Radio group
