@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-static/navigator:
+      section.tagcloud: service.browse.tree.tagcloud
+      sections:
+        operation: add
+        type: string
+        value: [section.tagcloud]
