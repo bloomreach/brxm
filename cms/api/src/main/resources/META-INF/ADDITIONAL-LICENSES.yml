@@ -1,0 +1,819 @@
+- module name: blueimp-canvas-to-blob@3.5.0
+  name: blueimp-canvas-to-blob
+  version: 3.5.0
+  description: >-
+    Canvas to Blob is a polyfill for the standard JavaScript canvas.toBlob
+    method. It can be used to create Blob objects from an HTML canvas element.
+  copyright: ''
+  licenses: MIT
+  licenseFile: >-
+    node_modules/blueimp-file-upload/node_modules/blueimp-canvas-to-blob/README.md
+  licenseModified: 'no'
+  licenseText: >-
+    # JavaScript Canvas to Blob  ## Description Canvas to Blob is a polyfill for
+    the standard JavaScript
+    [canvas.toBlob](http://www.w3.org/TR/html5/scripting-1.html#dom-canvas-toblob)
+    method.  It can be used to create
+    [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) objects from
+    an HTML [canvas](https://developer.mozilla.org/en-US/docs/HTML/Canvas)
+    element.  ## Usage Include the (minified) JavaScript Canvas to Blob script
+    in your HTML markup:  ```html <script
+    src='js/canvas-to-blob.min.js'></script> ```  Then use the *canvas.toBlob()*
+    method in the same way as the native implementation:  ```js var canvas =
+    document.createElement('canvas'); /* ... your canvas manipulations ... */ if
+    (canvas.toBlob) {     canvas.toBlob(         function (blob) {            
+    // Do something with the blob object,             // e.g. creating a
+    multipart form for file uploads:             var formData = new
+    FormData();             formData.append('file', blob, fileName);            
+    /* ... */         },         'image/jpeg'     ); } ```  ## Requirements The
+    JavaScript Canvas to Blob function has zero dependencies.  However, Canvas
+    to Blob is a very suitable complement to the [JavaScript Load
+    Image](https://github.com/blueimp/JavaScript-Load-Image) function.  ## API
+    In addition to the **canvas.toBlob** polyfill, the JavaScript Canvas to Blob
+    script provides one additional function called **dataURLtoBlob**, which is
+    added to the global window object, unless the library is loaded via a module
+    loader like RequireJS, Browserify or webpack:  ```js // 80x60px GIF image
+    (color black, base64 data): var b64Data =
+    'R0lGODdhUAA8AIABAAAAAP///ywAAAAAUAA8AAACS4SPqcvtD6' +        
+    'OctNqLs968+w+G4kiW5omm6sq27gvH8kzX9o3n+s73/g8MCofE' +        
+    'ovGITCqXzKbzCY1Kp9Sq9YrNarfcrvcLDovH5PKsAAA7',     imageUrl =
+    'data:image/gif;base64,' + b64Data,     blob = window.dataURLtoBlob &&
+    window.dataURLtoBlob(imageUrl); ```  ## Browsers The following browsers
+    support either the native or the polyfill *canvas.toBlob()* method:  ###
+    Desktop browsers  * Google Chrome (see [Chromium issue
+    #67587](https://code.google.com/p/chromium/issues/detail?id=67587)) * Apple
+    Safari 6.0+ (see [Mozilla issue
+    #648610](https://bugzilla.mozilla.org/show_bug.cgi?id=648610)) * Mozilla
+    Firefox 4.0+ * Microsoft Internet Explorer 10.0+  ### Mobile browsers  *
+    Apple Safari Mobile on iOS 6.0+ * Google Chrome on iOS 6.0+ * Google Chrome
+    on Android 4.0+  ## Test [JavaScript Canvas to Blob
+    Test](https://blueimp.github.io/JavaScript-Canvas-to-Blob/test/)  ## License
+    The JavaScript Canvas to Blob script is released under the [MIT
+    license](http://www.opensource.org/licenses/MIT).
+- module name: blueimp-canvas-to-blob@3.7.0
+  name: blueimp-canvas-to-blob
+  version: 3.7.0
+  description: >-
+    Canvas to Blob is a polyfill for the standard JavaScript canvas.toBlob
+    method. It can be used to create Blob objects from an HTML canvas element.
+  copyright: ''
+  licenses: MIT
+  licenseFile: node_modules/blueimp-canvas-to-blob/README.md
+  licenseModified: 'no'
+  licenseText: >-
+    # JavaScript Canvas to Blob  ## Description Canvas to Blob is a polyfill for
+    the standard JavaScript
+    [canvas.toBlob](http://www.w3.org/TR/html5/scripting-1.html#dom-canvas-toblob)
+    method.  It can be used to create
+    [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) objects from
+    an HTML [canvas](https://developer.mozilla.org/en-US/docs/HTML/Canvas)
+    element.  ## Usage Include the (minified) JavaScript Canvas to Blob script
+    in your HTML markup:  ```html <script
+    src='js/canvas-to-blob.min.js'></script> ```  Then use the *canvas.toBlob()*
+    method in the same way as the native implementation:  ```js var canvas =
+    document.createElement('canvas'); /* ... your canvas manipulations ... */ if
+    (canvas.toBlob) {     canvas.toBlob(         function (blob) {            
+    // Do something with the blob object,             // e.g. creating a
+    multipart form for file uploads:             var formData = new
+    FormData();             formData.append('file', blob, fileName);            
+    /* ... */         },         'image/jpeg'     ); } ```  ## Requirements The
+    JavaScript Canvas to Blob function has zero dependencies.  However, Canvas
+    to Blob is a very suitable complement to the [JavaScript Load
+    Image](https://github.com/blueimp/JavaScript-Load-Image) function.  ## API
+    In addition to the **canvas.toBlob** polyfill, the JavaScript Canvas to Blob
+    script provides one additional function called **dataURLtoBlob**, which is
+    added to the global window object, unless the library is loaded via a module
+    loader like RequireJS, Browserify or webpack:  ```js // 80x60px GIF image
+    (color black, base64 data): var b64Data =
+    'R0lGODdhUAA8AIABAAAAAP///ywAAAAAUAA8AAACS4SPqcvtD6' +        
+    'OctNqLs968+w+G4kiW5omm6sq27gvH8kzX9o3n+s73/g8MCofE' +        
+    'ovGITCqXzKbzCY1Kp9Sq9YrNarfcrvcLDovH5PKsAAA7',     imageUrl =
+    'data:image/gif;base64,' + b64Data,     blob = window.dataURLtoBlob &&
+    window.dataURLtoBlob(imageUrl); ```  ## Browsers The following browsers
+    support either the native or the polyfill *canvas.toBlob()* method:  ###
+    Desktop browsers  * Google Chrome (see [Chromium issue
+    #67587](https://code.google.com/p/chromium/issues/detail?id=67587)) * Apple
+    Safari 6.0+ (see [Mozilla issue
+    #648610](https://bugzilla.mozilla.org/show_bug.cgi?id=648610)) * Mozilla
+    Firefox 4.0+ * Microsoft Internet Explorer 10.0+  ### Mobile browsers  *
+    Apple Safari Mobile on iOS 6.0+ * Google Chrome on iOS 6.0+ * Google Chrome
+    on Android 4.0+  ## Test [JavaScript Canvas to Blob
+    Test](https://blueimp.github.io/JavaScript-Canvas-to-Blob/test/)  ## License
+    The JavaScript Canvas to Blob script is released under the [MIT
+    license](https://opensource.org/licenses/MIT).
+- module name: blueimp-file-upload@9.18.0
+  name: blueimp-file-upload
+  version: 9.18.0
+  description: >-
+    File Upload widget with multiple file selection, drag&drop support, progress
+    bar, validation and preview images, audio and video for jQuery. Supports
+    cross-domain, chunked and resumable file uploads. Works with any server-side
+    platform (Google App Engine, PHP, Python, Ruby on Rails, Java, etc.) that
+    supports standard HTML form file uploads.
+  copyright: Copyright (c) 2017 jQuery-File-Upload Authors
+  licenses: MIT
+  licenseFile: node_modules/blueimp-file-upload/LICENSE
+  licenseModified: 'no'
+  licenseText: >-
+    The MIT License (MIT)  Copyright (c) 2017 jQuery-File-Upload Authors 
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the 'Software'), to
+    deal in the Software without restriction, including without limitation the
+    rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+    sell copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:  The above
+    copyright notice and this permission notice shall be included in all copies
+    or substantial portions of the Software.  THE SOFTWARE IS PROVIDED 'AS IS',
+    WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+    TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+    LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+    CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+- module name: blueimp-load-image@2.12.2
+  name: blueimp-load-image
+  version: 2.12.2
+  description: >-
+    JavaScript Load Image is a library to load images provided as File or Blob
+    objects or via URL. It returns an optionally scaled and/or cropped HTML img
+    or canvas element. It also provides a method to parse image meta data to
+    extract Exif tags and thumbnails and to restore the complete image header
+    after resizing.
+  copyright: ''
+  licenses: MIT
+  licenseFile: node_modules/blueimp-load-image/README.md
+  licenseModified: 'no'
+  licenseText: >-
+    # JavaScript Load Image  > A JavaScript library to load and transform image
+    files.  ## Table of contents  - [Demo](#demo) - [Description](#description)
+    - [Setup](#setup) - [Usage](#usage) - [Image loading](#image-loading) -
+    [Image scaling](#image-scaling) - [Requirements](#requirements) -
+    [API](#api) - [Options](#options) - [Meta data parsing](#meta-data-parsing)
+    - [Exif parser](#exif-parser) - [License](#license) - [Credits](#credits) 
+    ## Demo [JavaScript Load Image
+    Demo](https://blueimp.github.io/JavaScript-Load-Image/)  ## Description
+    JavaScript Load Image is a library to load images provided as File or Blob
+    objects or via URL.   It returns an optionally scaled and/or cropped HTML
+    img or canvas element via an asynchronous callback.   It also provides a
+    method to parse image meta data to extract Exif tags and thumbnails and to
+    restore the complete image header after resizing.  ## Setup Include the
+    (combined and minified) JavaScript Load Image script in your HTML markup: 
+    ```html <script src='js/load-image.all.min.js'></script> ```  Or
+    alternatively, choose which components you want to include:  ```html <script
+    src='js/load-image.js'></script> <script
+    src='js/load-image-scale.js'></script> <script
+    src='js/load-image-meta.js'></script> <script
+    src='js/load-image-fetch.js'></script> <script
+    src='js/load-image-exif.js'></script> <script
+    src='js/load-image-exif-map.js'></script> <script
+    src='js/load-image-orientation.js'></script> ```  ## Usage  ### Image
+    loading In your application code, use the **loadImage()** function like
+    this:  ```js document.getElementById('file-input').onchange = function (e)
+    {     loadImage(         e.target.files[0],         function (img)
+    {             document.body.appendChild(img);         },         {maxWidth:
+    600} // Options     ); }; ```  ### Image scaling It is also possible to use
+    the image scaling functionality with an existing image:  ```js var
+    scaledImage = loadImage.scale(     img, // img or canvas element    
+    {maxWidth: 600} ); ```  ## Requirements The JavaScript Load Image library
+    has zero dependencies.  However, JavaScript Load Image is a very suitable
+    complement to the [Canvas to
+    Blob](https://github.com/blueimp/JavaScript-Canvas-to-Blob) library.  ## API
+    The **loadImage()** function accepts a
+    [File](https://developer.mozilla.org/en/DOM/File) or
+    [Blob](https://developer.mozilla.org/en/DOM/Blob) object or a simple image
+    URL (e.g. `'https://example.org/image.png'`) as first argument.  If a
+    [File](https://developer.mozilla.org/en/DOM/File) or
+    [Blob](https://developer.mozilla.org/en/DOM/Blob) is passed as parameter, it
+    returns a HTML **img** element if the browser supports the
+    [URL](https://developer.mozilla.org/en/DOM/window.URL) API or a
+    [FileReader](https://developer.mozilla.org/en/DOM/FileReader) object if
+    supported, or **false**.   It always returns a HTML
+    [img](https://developer.mozilla.org/en/docs/HTML/Element/Img) element when
+    passing an image URL:  ```js document.getElementById('file-input').onchange
+    = function (e) {     var loadingImage = loadImage(        
+    e.target.files[0],         function (img) {            
+    document.body.appendChild(img);         },         {maxWidth: 600}    
+    );     if (!loadingImage) {         // Alternative code ...     } }; ``` 
+    The **img** element or
+    [FileReader](https://developer.mozilla.org/en/DOM/FileReader) object
+    returned by the **loadImage()** function allows to abort the loading process
+    by setting the **onload** and **onerror** event handlers to null:  ```js
+    document.getElementById('file-input').onchange = function (e) {     var
+    loadingImage = loadImage(         e.target.files[0],         function (img)
+    {             document.body.appendChild(img);         },         {maxWidth:
+    600}     );     loadingImage.onload = loadingImage.onerror = null; }; ``` 
+    The second argument must be a **callback** function, which is called when
+    the image has been loaded or an error occurred while loading the image. The
+    callback function is passed one argument, which is either a HTML **img**
+    element, a [canvas](https://developer.mozilla.org/en/HTML/Canvas) element,
+    or an [Event](https://developer.mozilla.org/en/DOM/event) object of type
+    **error**:  ```js var imageUrl = 'https://example.org/image.png';
+    loadImage(     imageUrl,     function (img) {         if(img.type ===
+    'error') {             console.log('Error loading image ' +
+    imageUrl);         } else {            
+    document.body.appendChild(img);         }     },     {maxWidth: 600} ); ``` 
+    ## Options The optional third argument to **loadImage()** is a map of
+    options:  * **maxWidth**: Defines the maximum width of the img/canvas
+    element. * **maxHeight**: Defines the maximum height of the img/canvas
+    element. * **minWidth**: Defines the minimum width of the img/canvas
+    element. * **minHeight**: Defines the minimum height of the img/canvas
+    element. * **sourceWidth**: The width of the sub-rectangle of the source
+    image to draw into the destination canvas.   Defaults to the source image
+    width and requires `canvas: true`. * **sourceHeight**: The height of the
+    sub-rectangle of the source image to draw into the destination canvas.  
+    Defaults to the source image height and requires `canvas: true`. * **top**:
+    The top margin of the sub-rectangle of the source image.   Defaults to `0`
+    and requires `canvas: true`. * **right**: The right margin of the
+    sub-rectangle of the source image.   Defaults to `0` and requires `canvas:
+    true`. * **bottom**: The bottom margin of the sub-rectangle of the source
+    image.   Defaults to `0` and requires `canvas: true`. * **left**: The left
+    margin of the sub-rectangle of the source image.   Defaults to `0` and
+    requires `canvas: true`. * **contain**: Scales the image up/down to contain
+    it in the max dimensions if set to `true`.   This emulates the CSS feature
+    [background-image:
+    contain](https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Scaling_background_images#contain).
+    * **cover**: Scales the image up/down to cover the max dimensions with the
+    image dimensions if set to `true`.   This emulates the CSS feature
+    [background-image:
+    cover](https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Scaling_background_images#cover).
+    * **aspectRatio**: Crops the image to the given aspect ratio (e.g.
+    `16/9`).   Setting the `aspectRatio` also enables the `crop` option. *
+    **pixelRatio**: Defines the ratio of the canvas pixels to the physical image
+    pixels on the screen.   Should be set to `window.devicePixelRatio` unless
+    the scaled image is not rendered on screen.   Defaults to `1` and requires
+    `canvas: true`. * **downsamplingRatio**: Defines the ratio in which the
+    image is downsampled.   By default, images are downsampled in one step. With
+    a ratio of `0.5`, each step scales the image to half the size, before
+    reaching the target dimensions.   Requires `canvas: true`. * **crop**: Crops
+    the image to the maxWidth/maxHeight constraints if set to `true`.   Enabling
+    the `crop` option also enables the `canvas` option. * **orientation**:
+    Transform the canvas according to the specified Exif orientation, which can
+    be an `integer` in the range of `1` to `8` or the boolean value `true`.  
+    When set to `true`, it will set the orientation value based on the EXIF data
+    of the image, which will be parsed automatically if the exif library is
+    available.   Setting the `orientation` also enables the `canvas` option.  
+    Setting `orientation` to `true` also enables the `meta` option. * **meta**:
+    Automatically parses the image meta data if set to `true`.   The meta data
+    is passed to the callback as second argument.   If the file is given as URL
+    and the browser supports the [fetch
+    API](https://developer.mozilla.org/en/docs/Web/API/Fetch_API), fetches the
+    file as Blob to be able to parse the meta data. * **canvas**: Returns the
+    image as [canvas](https://developer.mozilla.org/en/HTML/Canvas) element if
+    set to `true`. * **crossOrigin**: Sets the crossOrigin property on the img
+    element for loading [CORS enabled
+    images](https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image). *
+    **noRevoke**: By default, the [created object
+    URL](https://developer.mozilla.org/en/DOM/window.URL.createObjectURL) is
+    revoked after the image has been loaded, except when this option is set to
+    `true`.  They can be used the following way:  ```js loadImage(    
+    fileOrBlobOrUrl,     function (img) {        
+    document.body.appendChild(img);     },     {         maxWidth: 600,        
+    maxHeight: 300,         minWidth: 100,         minHeight: 50,        
+    canvas: true     } ); ```  All settings are optional. By default, the image
+    is returned as HTML **img** element without any image size restrictions.  ##
+    Meta data parsing If the Load Image Meta extension is included, it is also
+    possible to parse image meta data.   The extension provides the method
+    **loadImage.parseMetaData**, which can be used the following way:  ```js
+    loadImage.parseMetaData(     fileOrBlob,     function (data) {         if
+    (!data.imageHead) {             return;         }         // Combine
+    data.imageHead with the image body of a resized file         // to create
+    scaled images with the original image meta data, e.g.:         var blob =
+    new Blob([             data.imageHead,             // Resized images always
+    have a head size of 20 bytes,             // including the JPEG marker and a
+    minimal JFIF header:             loadImage.blobSlice.call(resizedImage,
+    20)         ], {type: resizedImage.type});     },     {        
+    maxMetaDataSize: 262144,         disableImageHead: false     } ); ```  The
+    third argument is an options object which defines the maximum number of
+    bytes to parse for the image meta data, allows to disable the imageHead
+    creation and is also passed along to segment parsers registered via
+    loadImage extensions, e.g. the Exif parser.  **Note:**   Blob objects of
+    resized images can be created via
+    [canvas.toBlob()](https://github.com/blueimp/JavaScript-Canvas-to-Blob). 
+    ### Exif parser If you include the Load Image Exif Parser extension, the
+    argument passed to the callback for **parseMetaData** will contain the
+    additional property **exif** if Exif data could be found in the given
+    image.   The **exif** object stores the parsed Exif tags:  ```js var
+    orientation = data.exif[0x0112]; ```  It also provides an **exif.get()**
+    method to retrieve the tag value via the tag's mapped name:  ```js var
+    orientation = data.exif.get('Orientation'); ```  By default, the only
+    available mapped names are **Orientation** and **Thumbnail**.   If you also
+    include the Load Image Exif Map library, additional tag mappings become
+    available, as well as two additional methods, **exif.getText()** and
+    **exif.getAll()**:  ```js var flashText = data.exif.getText('Flash'); //
+    e.g.: 'Flash fired, auto mode',  // A map of all parsed tags with their
+    mapped names as keys and their text values: var allTags =
+    data.exif.getAll(); ```  The Exif parser also adds additional options for
+    the parseMetaData method, to disable certain aspects of the parser:  *
+    **disableExif**: Disables Exif parsing. * **disableExifThumbnail**: Disables
+    parsing of the Exif Thumbnail. * **disableExifSub**: Disables parsing of the
+    Exif Sub IFD. * **disableExifGps**: Disables parsing of the Exif GPS Info
+    IFD.  ## License The JavaScript Load Image script is released under the [MIT
+    license](https://opensource.org/licenses/MIT).  ## Credits  * Image meta
+    data handling implementation based on the help and contribution of Achim
+    Stöhr. * Exif tags mapping based on Jacob Seidelin's
+    [exif-js](https://github.com/jseidelin/exif-js).
+- module name: blueimp-tmpl@3.6.0
+  name: blueimp-tmpl
+  version: 3.6.0
+  description: >-
+    1KB lightweight, fast & powerful JavaScript templating engine with zero
+    dependencies. Compatible with server-side environments like Node.js, module
+    loaders like RequireJS, Browserify or webpack and all web browsers.
+  copyright: ''
+  licenses: MIT
+  licenseFile: node_modules/blueimp-file-upload/node_modules/blueimp-tmpl/README.md
+  licenseModified: 'no'
+  licenseText: >-
+    # JavaScript Templates  ## Demo [JavaScript Templates
+    Demo](https://blueimp.github.io/JavaScript-Templates/)  ## Description 1KB
+    lightweight, fast & powerful JavaScript templating engine with zero
+    dependencies. Compatible with server-side environments like Node.js, module
+    loaders like RequireJS, Browserify or webpack and all web browsers.  ##
+    Usage  ### Client-side Include the (minified) JavaScript Templates script in
+    your HTML markup:  ```html <script src='js/tmpl.min.js'></script> ```  Add a
+    script section with type **'text/x-tmpl'**, a unique **id** property and
+    your template definition as content:  ```html <script type='text/x-tmpl'
+    id='tmpl-demo'> <h3>{%=o.title%}</h3> <p>Released under the <a
+    href='{%=o.license.url%}'>{%=o.license.name%}</a>.</p> <h4>Features</h4>
+    <ul> {% for (var i=0; i<o.features.length; i++) { %}    
+    <li>{%=o.features[i]%}</li> {% } %} </ul> </script> ```  **'o'** (the
+    lowercase letter) is a reference to the data parameter of the template
+    function (see the API section on how to modify this identifier).  In your
+    application code, create a JavaScript object to use as data for the
+    template:  ```js var data = {     'title': 'JavaScript Templates',    
+    'license': {         'name': 'MIT license',         'url':
+    'http://www.opensource.org/licenses/MIT'     },     'features': [        
+    'lightweight & fast',         'powerful',         'zero dependencies'     ]
+    }; ```  In a real application, this data could be the result of retrieving a
+    [JSON](http://json.org/) resource.  Render the result by calling the
+    **tmpl()** method with the id of the template and the data object as
+    arguments:  ```js document.getElementById('result').innerHTML =
+    tmpl('tmpl-demo', data); ```  ### Server-side  The following is an example
+    how to use the JavaScript Templates engine on the server-side with
+    [node.js](http://nodejs.org/).  Create a new directory and add the
+    **tmpl.js** file. Or alternatively, install the **blueimp-tmpl** package
+    with [npm](https://www.npmjs.org/):  ```sh npm install blueimp-tmpl ```  Add
+    a file **template.html** with the following content:  ```html <!DOCTYPE
+    HTML> <title>{%=o.title%}</title> <h3><a
+    href='{%=o.url%}'>{%=o.title%}</a></h3> <h4>Features</h4> <ul> {% for (var
+    i=0; i<o.features.length; i++) { %}     <li>{%=o.features[i]%}</li> {% } %}
+    </ul> ```  Add a file **server.js** with the following content:  ```js
+    require('http').createServer(function (req, res) {     var fs =
+    require('fs'),         // The tmpl module exports the tmpl()
+    function:         tmpl = require('./tmpl'),         // Use the following
+    version if you installed the package with npm:         // tmpl =
+    require('blueimp-tmpl'),         // Sample data:         data =
+    {             'title': 'JavaScript Templates',             'url':
+    'https://github.com/blueimp/JavaScript-Templates',             'features':
+    [                 'lightweight & fast',                
+    'powerful',                 'zero dependencies'             ]         };    
+    // Override the template loading method:     tmpl.load = function (id)
+    {         var filename = id + '.html';         console.log('Loading ' +
+    filename);         return fs.readFileSync(filename, 'utf8');     };    
+    res.writeHead(200, {'Content-Type': 'text/x-tmpl'});     // Render the
+    content:     res.end(tmpl('template', data)); }).listen(8080, 'localhost');
+    console.log('Server running at http://localhost:8080/'); ```  Run the
+    application with the following command:  ```sh node server.js ```  ##
+    Requirements The JavaScript Templates script has zero dependencies.  ## API 
+    ### tmpl() function The **tmpl()** function is added to the global
+    **window** object and can be called as global function:  ```js var result =
+    tmpl('tmpl-demo', data); ```  The **tmpl()** function can be called with the
+    id of a template, or with a template string:  ```js var result =
+    tmpl('<h3>{%=o.title%}</h3>', data); ```  If called without second argument,
+    **tmpl()** returns a reusable template function:  ```js var func =
+    tmpl('<h3>{%=o.title%}</h3>'); document.getElementById('result').innerHTML =
+    func(data); ```  ### Templates cache Templates loaded by id are cached in
+    the map **tmpl.cache**:  ```js var func = tmpl('tmpl-demo'), // Loads and
+    parses the template     cached = typeof tmpl.cache['tmpl-demo'] ===
+    'function', // true     result = tmpl('tmpl-demo', data); // Uses cached
+    template function  tmpl.cache['tmpl-demo'] = null; result =
+    tmpl('tmpl-demo', data); // Loads and parses the template again ```  ###
+    Output encoding The method **tmpl.encode** is used to escape HTML special
+    characters in the template output:  ```js var output =
+    tmpl.encode('<>&\''\x00'); // Renders '&lt;&gt;&amp;&quot;&#39;' ``` 
+    **tmpl.encode** makes use of the regular expression **tmpl.encReg** and the
+    encoding map **tmpl.encMap** to match and replace special characters, which
+    can be modified to change the behavior of the output encoding.   Strings
+    matched by the regular expression, but not found in the encoding map are
+    removed from the output. This allows for example to automatically trim input
+    values (removing whitespace from the start and end of the string):  ```js
+    tmpl.encReg = /(^\s+)|(\s+$)|[<>&''\x00]/g; var output = tmpl.encode('   
+    Banana!    '); // Renders 'Banana' (without whitespace) ```  ### Local
+    helper variables The local variables available inside the templates are the
+    following:  * **o**: The data object given as parameter to the template
+    function (see the next section on how to modify the parameter name). *
+    **tmpl**: A reference to the **tmpl** function object. * **_s**: The string
+    for the rendered result content. * **_e**: A reference to the
+    **tmpl.encode** method. * **print**: Helper function to add content to the
+    rendered result string. * **include**: Helper function to include the return
+    value of a different template in the result.  To introduce additional local
+    helper variables, the string **tmpl.helper** can be extended. The following
+    adds a convenience function for *console.log* and a streaming function, that
+    streams the template rendering result back to the callback argument (note
+    the comma at the beginning of each variable declaration):  ```js tmpl.helper
+    += ',log=function(){console.log.apply(console, arguments)}' +    
+    ',st='',stream=function(cb){var l=st.length;st=_s;cb( _s.slice(l));}'; ``` 
+    Those new helper functions could be used to stream the template contents to
+    the console output:  ```html <script type='text/x-tmpl' id='tmpl-demo'>
+    <h3>{%=o.title%}</h3> {% stream(log); %} <p>Released under the <a
+    href='{%=o.license.url%}'>{%=o.license.name%}</a>.</p> {% stream(log); %}
+    <h4>Features</h4> <ul> {% stream(log); %} {% for (var i=0;
+    i<o.features.length; i++) { %}     <li>{%=o.features[i]%}</li>     {%
+    stream(log); %} {% } %} </ul> {% stream(log); %} </script> ```  ### Template
+    function argument The generated template functions accept one argument,
+    which is the data object given to the **tmpl(id, data)** function. This
+    argument is available inside the template definitions as parameter **o**
+    (the lowercase letter).  The argument name can be modified by overriding
+    **tmpl.arg**:  ```js tmpl.arg = 'p';  // Renders '<h3>JavaScript
+    Templates</h3>': var result = tmpl('<h3>{%=p.title%}</h3>', {title:
+    'JavaScript Templates'}); ```  ### Template parsing The template contents
+    are matched and replaced using the regular expression **tmpl.regexp** and
+    the replacement function **tmpl.func**. The replacement function operates
+    based on the [parenthesized submatch
+    strings](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter). 
+    To use different tags for the template syntax, override **tmpl.regexp** with
+    a modified regular expression, by exchanging all occurrences of '{%' and
+    '%}', e.g. with '[%' and '%]':  ```js tmpl.regexp =
+    /([\s'\\])(?!(?:[^[]|\[(?!%))*%\])|(?:\[%(=|#)([\s\S]+?)%\])|(\[%)|(%\])/g;
+    ```  By default, the plugin preserves whitespace (newlines, carriage
+    returns, tabs and spaces). To strip unnecessary whitespace, you can override
+    the **tmpl.func** function, e.g. with the following code:  ```js var
+    originalFunc = tmpl.func; tmpl.func = function (s, p1, p2, p3, p4, p5,
+    offset, str) {     if (p1 && /\s/.test(p1)) {         if (!offset ||
+    /\s/.test(str.charAt(offset - 1)) ||                
+    /^\s+$/g.test(str.slice(offset))) {             return '';         }        
+    return ' ';     }     return originalFunc.apply(tmpl, arguments); }; ```  ##
+    Templates syntax  ### Interpolation Print variable with HTML special
+    characters escaped:  ```html <h3>{%=o.title%}</h3> ```  Print variable
+    without escaping:  ```html <h3>{%#o.user_id%}</h3> ```  Print output of
+    function calls:  ```html <a href='{%=encodeURI(o.url)%}'>Website</a> ``` 
+    Use dot notation to print nested properties:  ```html
+    <strong>{%=o.author.name%}</strong> ```  ### Evaluation Use **print(str)**
+    to add escaped content to the output:  ```html <span>Year: {% var d=new
+    Date(); print(d.getFullYear()); %}</span> ```  Use **print(str, true)** to
+    add unescaped content to the output:  ```html <span>{% print('Fast &amp;
+    powerful', true); %}</span> ```  Use **include(str, obj)** to include
+    content from a different template:  ```html <div> {% include('tmpl-link',
+    {name: 'Website', url: 'https://example.org'}); %} </div> ```  **If else
+    condition**:  ```html {% if (o.author.url) { %}     <a
+    href='{%=encodeURI(o.author.url)%}'>{%=o.author.name%}</a> {% } else {
+    %}     <em>No author url.</em> {% } %} ```  **For loop**:  ```html <ul> {%
+    for (var i=0; i<o.features.length; i++) { %}     <li>{%=o.features[i]%}</li>
+    {% } %} </ul> ```  ## Compiled templates The JavaScript Templates project
+    comes with a compilation script, that allows you to compile your templates
+    into JavaScript code and combine them with a minimal Templates runtime into
+    one combined JavaScript file.  The compilation script is built for
+    [node.js](http://nodejs.org/).   To use it, first install the JavaScript
+    Templates project via [npm](https://www.npmjs.org/):  ```sh npm install
+    blueimp-tmpl ```  This will put the executable **tmpl.js** into the folder
+    **node_modules/.bin**. It will also make it available on your PATH if you
+    install the package globally (by adding the **-g** flag to the install
+    command).  The **tmpl.js** executable accepts the paths to one or multiple
+    template files as command line arguments and prints the generated JavaScript
+    code to the console output. The following command line shows you how to
+    store the generated code in a new JavaScript file that can be included in
+    your project:  ```sh tmpl.js index.html > tmpl.js ```  The files given as
+    command line arguments to **tmpl.js** can either be pure template files or
+    HTML documents with embedded template script sections. For the pure template
+    files, the file names (without extension) serve as template ids.   The
+    generated file can be included in your project as a replacement for the
+    original **tmpl.js** runtime. It provides you with the same API and provides
+    a **tmpl(id, data)** function that accepts the id of one of your templates
+    as first and a data object as optional second parameter.  ## Tests The
+    JavaScript Templates project comes with [Unit
+    Tests](https://en.wikipedia.org/wiki/Unit_testing).   There are two
+    different ways to run the tests:  * Open test/index.html in your browser or
+    * run `npm test` in the Terminal in the root path of the repository
+    package.  The first one tests the browser integration, the second one the
+    [node.js](http://nodejs.org/) integration.  ## License The JavaScript
+    Templates script is released under the [MIT
+    license](http://www.opensource.org/licenses/MIT).
+- module name: blueimp-tmpl@3.8.0
+  name: blueimp-tmpl
+  version: 3.8.0
+  description: >-
+    1KB lightweight, fast & powerful JavaScript templating engine with zero
+    dependencies. Compatible with server-side environments like Node.js, module
+    loaders like RequireJS, Browserify or webpack and all web browsers.
+  copyright: ''
+  licenses: MIT
+  licenseFile: node_modules/blueimp-tmpl/README.md
+  licenseModified: 'no'
+  licenseText: >-
+    # JavaScript Templates  ## Demo [JavaScript Templates
+    Demo](https://blueimp.github.io/JavaScript-Templates/)  ## Description 1KB
+    lightweight, fast & powerful JavaScript templating engine with zero
+    dependencies. Compatible with server-side environments like Node.js, module
+    loaders like RequireJS, Browserify or webpack and all web browsers.  ##
+    Usage  ### Client-side Include the (minified) JavaScript Templates script in
+    your HTML markup:  ```html <script src='js/tmpl.min.js'></script> ```  Add a
+    script section with type **'text/x-tmpl'**, a unique **id** property and
+    your template definition as content:  ```html <script type='text/x-tmpl'
+    id='tmpl-demo'> <h3>{%=o.title%}</h3> <p>Released under the <a
+    href='{%=o.license.url%}'>{%=o.license.name%}</a>.</p> <h4>Features</h4>
+    <ul> {% for (var i=0; i<o.features.length; i++) { %}    
+    <li>{%=o.features[i]%}</li> {% } %} </ul> </script> ```  **'o'** (the
+    lowercase letter) is a reference to the data parameter of the template
+    function (see the API section on how to modify this identifier).  In your
+    application code, create a JavaScript object to use as data for the
+    template:  ```js var data = {     'title': 'JavaScript Templates',    
+    'license': {         'name': 'MIT license',         'url':
+    'https://opensource.org/licenses/MIT'     },     'features': [        
+    'lightweight & fast',         'powerful',         'zero dependencies'     ]
+    }; ```  In a real application, this data could be the result of retrieving a
+    [JSON](http://json.org/) resource.  Render the result by calling the
+    **tmpl()** method with the id of the template and the data object as
+    arguments:  ```js document.getElementById('result').innerHTML =
+    tmpl('tmpl-demo', data); ```  ### Server-side  The following is an example
+    how to use the JavaScript Templates engine on the server-side with
+    [node.js](http://nodejs.org/).  Create a new directory and add the
+    **tmpl.js** file. Or alternatively, install the **blueimp-tmpl** package
+    with [npm](https://www.npmjs.org/):  ```sh npm install blueimp-tmpl ```  Add
+    a file **template.html** with the following content:  ```html <!DOCTYPE
+    HTML> <title>{%=o.title%}</title> <h3><a
+    href='{%=o.url%}'>{%=o.title%}</a></h3> <h4>Features</h4> <ul> {% for (var
+    i=0; i<o.features.length; i++) { %}     <li>{%=o.features[i]%}</li> {% } %}
+    </ul> ```  Add a file **server.js** with the following content:  ```js
+    require('http').createServer(function (req, res) {     var fs =
+    require('fs'),         // The tmpl module exports the tmpl()
+    function:         tmpl = require('./tmpl'),         // Use the following
+    version if you installed the package with npm:         // tmpl =
+    require('blueimp-tmpl'),         // Sample data:         data =
+    {             'title': 'JavaScript Templates',             'url':
+    'https://github.com/blueimp/JavaScript-Templates',             'features':
+    [                 'lightweight & fast',                
+    'powerful',                 'zero dependencies'             ]         };    
+    // Override the template loading method:     tmpl.load = function (id)
+    {         var filename = id + '.html';         console.log('Loading ' +
+    filename);         return fs.readFileSync(filename, 'utf8');     };    
+    res.writeHead(200, {'Content-Type': 'text/x-tmpl'});     // Render the
+    content:     res.end(tmpl('template', data)); }).listen(8080, 'localhost');
+    console.log('Server running at http://localhost:8080/'); ```  Run the
+    application with the following command:  ```sh node server.js ```  ##
+    Requirements The JavaScript Templates script has zero dependencies.  ## API 
+    ### tmpl() function The **tmpl()** function is added to the global
+    **window** object and can be called as global function:  ```js var result =
+    tmpl('tmpl-demo', data); ```  The **tmpl()** function can be called with the
+    id of a template, or with a template string:  ```js var result =
+    tmpl('<h3>{%=o.title%}</h3>', data); ```  If called without second argument,
+    **tmpl()** returns a reusable template function:  ```js var func =
+    tmpl('<h3>{%=o.title%}</h3>'); document.getElementById('result').innerHTML =
+    func(data); ```  ### Templates cache Templates loaded by id are cached in
+    the map **tmpl.cache**:  ```js var func = tmpl('tmpl-demo'), // Loads and
+    parses the template     cached = typeof tmpl.cache['tmpl-demo'] ===
+    'function', // true     result = tmpl('tmpl-demo', data); // Uses cached
+    template function  tmpl.cache['tmpl-demo'] = null; result =
+    tmpl('tmpl-demo', data); // Loads and parses the template again ```  ###
+    Output encoding The method **tmpl.encode** is used to escape HTML special
+    characters in the template output:  ```js var output =
+    tmpl.encode('<>&\''\x00'); // Renders '&lt;&gt;&amp;&quot;&#39;' ``` 
+    **tmpl.encode** makes use of the regular expression **tmpl.encReg** and the
+    encoding map **tmpl.encMap** to match and replace special characters, which
+    can be modified to change the behavior of the output encoding.   Strings
+    matched by the regular expression, but not found in the encoding map are
+    removed from the output. This allows for example to automatically trim input
+    values (removing whitespace from the start and end of the string):  ```js
+    tmpl.encReg = /(^\s+)|(\s+$)|[<>&''\x00]/g; var output = tmpl.encode('   
+    Banana!    '); // Renders 'Banana' (without whitespace) ```  ### Local
+    helper variables The local variables available inside the templates are the
+    following:  * **o**: The data object given as parameter to the template
+    function (see the next section on how to modify the parameter name). *
+    **tmpl**: A reference to the **tmpl** function object. * **_s**: The string
+    for the rendered result content. * **_e**: A reference to the
+    **tmpl.encode** method. * **print**: Helper function to add content to the
+    rendered result string. * **include**: Helper function to include the return
+    value of a different template in the result.  To introduce additional local
+    helper variables, the string **tmpl.helper** can be extended. The following
+    adds a convenience function for *console.log* and a streaming function, that
+    streams the template rendering result back to the callback argument (note
+    the comma at the beginning of each variable declaration):  ```js tmpl.helper
+    += ',log=function(){console.log.apply(console, arguments)}' +    
+    ',st='',stream=function(cb){var l=st.length;st=_s;cb( _s.slice(l));}'; ``` 
+    Those new helper functions could be used to stream the template contents to
+    the console output:  ```html <script type='text/x-tmpl' id='tmpl-demo'>
+    <h3>{%=o.title%}</h3> {% stream(log); %} <p>Released under the <a
+    href='{%=o.license.url%}'>{%=o.license.name%}</a>.</p> {% stream(log); %}
+    <h4>Features</h4> <ul> {% stream(log); %} {% for (var i=0;
+    i<o.features.length; i++) { %}     <li>{%=o.features[i]%}</li>     {%
+    stream(log); %} {% } %} </ul> {% stream(log); %} </script> ```  ### Template
+    function argument The generated template functions accept one argument,
+    which is the data object given to the **tmpl(id, data)** function. This
+    argument is available inside the template definitions as parameter **o**
+    (the lowercase letter).  The argument name can be modified by overriding
+    **tmpl.arg**:  ```js tmpl.arg = 'p';  // Renders '<h3>JavaScript
+    Templates</h3>': var result = tmpl('<h3>{%=p.title%}</h3>', {title:
+    'JavaScript Templates'}); ```  ### Template parsing The template contents
+    are matched and replaced using the regular expression **tmpl.regexp** and
+    the replacement function **tmpl.func**. The replacement function operates
+    based on the [parenthesized submatch
+    strings](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter). 
+    To use different tags for the template syntax, override **tmpl.regexp** with
+    a modified regular expression, by exchanging all occurrences of '{%' and
+    '%}', e.g. with '[%' and '%]':  ```js tmpl.regexp =
+    /([\s'\\])(?!(?:[^[]|\[(?!%))*%\])|(?:\[%(=|#)([\s\S]+?)%\])|(\[%)|(%\])/g;
+    ```  By default, the plugin preserves whitespace (newlines, carriage
+    returns, tabs and spaces). To strip unnecessary whitespace, you can override
+    the **tmpl.func** function, e.g. with the following code:  ```js var
+    originalFunc = tmpl.func; tmpl.func = function (s, p1, p2, p3, p4, p5,
+    offset, str) {     if (p1 && /\s/.test(p1)) {         if (!offset ||
+    /\s/.test(str.charAt(offset - 1)) ||                
+    /^\s+$/g.test(str.slice(offset))) {             return '';         }        
+    return ' ';     }     return originalFunc.apply(tmpl, arguments); }; ```  ##
+    Templates syntax  ### Interpolation Print variable with HTML special
+    characters escaped:  ```html <h3>{%=o.title%}</h3> ```  Print variable
+    without escaping:  ```html <h3>{%#o.user_id%}</h3> ```  Print output of
+    function calls:  ```html <a href='{%=encodeURI(o.url)%}'>Website</a> ``` 
+    Use dot notation to print nested properties:  ```html
+    <strong>{%=o.author.name%}</strong> ```  ### Evaluation Use **print(str)**
+    to add escaped content to the output:  ```html <span>Year: {% var d=new
+    Date(); print(d.getFullYear()); %}</span> ```  Use **print(str, true)** to
+    add unescaped content to the output:  ```html <span>{% print('Fast &amp;
+    powerful', true); %}</span> ```  Use **include(str, obj)** to include
+    content from a different template:  ```html <div> {% include('tmpl-link',
+    {name: 'Website', url: 'https://example.org'}); %} </div> ```  **If else
+    condition**:  ```html {% if (o.author.url) { %}     <a
+    href='{%=encodeURI(o.author.url)%}'>{%=o.author.name%}</a> {% } else {
+    %}     <em>No author url.</em> {% } %} ```  **For loop**:  ```html <ul> {%
+    for (var i=0; i<o.features.length; i++) { %}     <li>{%=o.features[i]%}</li>
+    {% } %} </ul> ```  ## Compiled templates The JavaScript Templates project
+    comes with a compilation script, that allows you to compile your templates
+    into JavaScript code and combine them with a minimal Templates runtime into
+    one combined JavaScript file.  The compilation script is built for
+    [node.js](http://nodejs.org/).   To use it, first install the JavaScript
+    Templates project via [npm](https://www.npmjs.org/):  ```sh npm install
+    blueimp-tmpl ```  This will put the executable **tmpl.js** into the folder
+    **node_modules/.bin**. It will also make it available on your PATH if you
+    install the package globally (by adding the **-g** flag to the install
+    command).  The **tmpl.js** executable accepts the paths to one or multiple
+    template files as command line arguments and prints the generated JavaScript
+    code to the console output. The following command line shows you how to
+    store the generated code in a new JavaScript file that can be included in
+    your project:  ```sh tmpl.js index.html > tmpl.js ```  The files given as
+    command line arguments to **tmpl.js** can either be pure template files or
+    HTML documents with embedded template script sections. For the pure template
+    files, the file names (without extension) serve as template ids.   The
+    generated file can be included in your project as a replacement for the
+    original **tmpl.js** runtime. It provides you with the same API and provides
+    a **tmpl(id, data)** function that accepts the id of one of your templates
+    as first and a data object as optional second parameter.  ## Tests The
+    JavaScript Templates project comes with [Unit
+    Tests](https://en.wikipedia.org/wiki/Unit_testing).   There are two
+    different ways to run the tests:  * Open test/index.html in your browser or
+    * run `npm test` in the Terminal in the root path of the repository
+    package.  The first one tests the browser integration, the second one the
+    [node.js](http://nodejs.org/) integration.  ## License The JavaScript
+    Templates script is released under the [MIT
+    license](https://opensource.org/licenses/MIT).
+- module name: bootstrap-sass@3.3.7
+  name: bootstrap-sass
+  version: 3.3.7
+  description: >-
+    bootstrap-sass is a Sass-powered version of Bootstrap 3, ready to drop right
+    into your Sass powered applications.
+  copyright: >-
+    Copyright (c) 2011-2016 Twitter, Inc. Copyright (c) 2011-2016 The Bootstrap
+    Authors
+  licenses: MIT
+  licenseFile: node_modules/bootstrap-sass/LICENSE
+  licenseModified: 'no'
+  licenseText: >-
+    The MIT License (MIT)  Copyright (c) 2011-2016 Twitter, Inc Copyright (c)
+    2011-2016 The Bootstrap Authors  Permission is hereby granted, free of
+    charge, to any person obtaining a copy of this software and associated
+    documentation files (the 'Software'), to deal in the Software without
+    restriction, including without limitation the rights to use, copy, modify,
+    merge, publish, distribute, sublicense, and/or sell copies of the Software,
+    and to permit persons to whom the Software is furnished to do so, subject to
+    the following conditions:  The above copyright notice and this permission
+    notice shall be included in all copies or substantial portions of the
+    Software.  THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
+    EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+    OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+    USE OR OTHER DEALINGS IN THE SOFTWARE.
+- module name: jquery@3.3.1
+  name: jquery
+  version: 3.3.1
+  description: JavaScript library for DOM operations
+  copyright: 'Copyright JS Foundation and other contributors, https://js.foundation/'
+  licenses: MIT
+  licenseFile: node_modules/jquery/LICENSE.txt
+  licenseModified: 'no'
+  licenseText: >-
+    Copyright JS Foundation and other contributors, https://js.foundation/  This
+    software consists of voluntary contributions made by many individuals. For
+    exact contribution history, see the revision history available at
+    https://github.com/jquery/jquery  The following license applies to all parts
+    of this software except as documented below:  ====  Permission is hereby
+    granted, free of charge, to any person obtaining a copy of this software and
+    associated documentation files (the 'Software'), to deal in the Software
+    without restriction, including without limitation the rights to use, copy,
+    modify, merge, publish, distribute, sublicense, and/or sell copies of the
+    Software, and to permit persons to whom the Software is furnished to do so,
+    subject to the following conditions:  The above copyright notice and this
+    permission notice shall be included in all copies or substantial portions of
+    the Software.  THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY
+    KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
+    EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+    OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+    USE OR OTHER DEALINGS IN THE SOFTWARE.  ====  All files located in the
+    node_modules and external directories are externally maintained libraries
+    used by this software which have their own licenses; we recommend you read
+    them, as their terms may differ from the terms above.
+- module name: normalize.css@6.0.0
+  name: normalize.css
+  version: 6.0.0
+  description: A modern alternative to CSS resets
+  copyright: Copyright © Nicolas Gallagher and Jonathan Neal
+  licenses: MIT
+  licenseFile: node_modules/normalize.css/LICENSE.md
+  licenseModified: 'no'
+  licenseText: >-
+    # The MIT License (MIT)  Copyright © Nicolas Gallagher and Jonathan Neal 
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the 'Software'), to
+    deal in the Software without restriction, including without limitation the
+    rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+    sell copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:  The above
+    copyright notice and this permission notice shall be included in all copies
+    or substantial portions of the Software.  THE SOFTWARE IS PROVIDED 'AS IS',
+    WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+    TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+    LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+    CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+- module name: open-sans-fontface@1.4.0
+  name: open-sans-fontface
+  version: 1.4.0
+  description: The Open Sans fontface
+  copyright: ''
+  licenses: Apache*
+  licenseFile: node_modules/open-sans-fontface/README.md
+  licenseModified: 'no'
+  licenseText: >-
+    # Open Sans @font-face kit  I split the SASS file, so the developer can
+    decide which fonts and styles she or he really needs.  Installable via
+    [Bower](http://twitter.github.com/bower/): ``` bower install
+    open-sans-fontface ```  ## Demo __Our repository:__
+    [http://fontfacekit.github.com/open-sans](http://fontfacekit.github.com/open-sans) 
+    __Google Web Fonts:__
+    [http://www.google.com/fonts/specimen/Open+Sans](http://www.google.com/fonts/specimen/Open+Sans)  
+    ## Maintain your own font-face in FontFaceKit Contact @gustavohenke if you
+    want to maintain your own font-face in this repository.
+- module name: retinajs@2.1.0
+  name: retinajs
+  version: 2.1.0
+  description: >-
+    > Retina.js has been updated to version 2.0! With this update, the API has
+    changed a bit. Make sure to go over this README before updating.
+  copyright: 'Copyright (c) 2013-2016 Axial, LLC, Ben Atkin, and other contributors'
+  licenses: MIT
+  licenseFile: node_modules/retinajs/LICENSE
+  licenseModified: 'no'
+  licenseText: >-
+    The MIT License (MIT)  Copyright (c) 2013-2016 Axial, LLC, Ben Atkin, and
+    other contributors  Permission is hereby granted, free of charge, to any
+    person obtaining a copy of this software and associated documentation files
+    (the 'Software'), to deal in the Software without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish,
+    distribute, sublicense, and/or sell copies of the Software, and to permit
+    persons to whom the Software is furnished to do so, subject to the following
+    conditions:  The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.  THE
+    SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+    IN THE SOFTWARE.
+- module name: selectric@1.11.1
+  name: selectric
+  version: 1.11.1
+  description: 'Fast, simple and light jQuery plugin to customize HTML selects'
+  copyright: Copyright (c) 2016 Leonardo Santos
+  licenses: MIT
+  licenseFile: node_modules/selectric/LICENSE
+  licenseModified: 'no'
+  licenseText: >-
+    The MIT License (MIT)  Copyright (c) 2016 Leonardo Santos  Permission is
+    hereby granted, free of charge, to any person obtaining a copy of this
+    software and associated documentation files (the 'Software'), to deal in the
+    Software without restriction, including without limitation the rights to
+    use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:  The above
+    copyright notice and this permission notice shall be included in all copies
+    or substantial portions of the Software.  THE SOFTWARE IS PROVIDED 'AS IS',
+    WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+    TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+    LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+    CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

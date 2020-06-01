@@ -1,0 +1,136 @@
+definitions:
+  config:
+    /hippo:namespaces/hippostd:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      /publishable:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:mixin: true
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippostd/nt/2.0
+            /PublicationStatus:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippostd:state
+              hipposysedit:type: String
+            /Editor:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippostd:holder
+              hipposysedit:type: String
+      /taggable:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:mixin: true
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippostd/nt/2.0
+            /tags:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:multiple: true
+              hipposysedit:path: hippostd:tags
+              hipposysedit:type: String
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [engine, wicket.model, model.compareTo]
+            frontend:services: [wicket.id]
+            /tags:
+              jcr:primaryType: frontend:plugin
+              caption: Tags
+              field: tags
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              type: hippostd:taggable
+      /folder:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippostd/nt/2.0
+      /directory:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippostd/nt/2.0
+      /container:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 582d9921-4bb2-4876-98f6-f658fdc67362
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 1d656e68-5429-461d-9fb3-0bbff0845f12
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:mixin: true
+            hipposysedit:supertype: ['hippo:container']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippostd/nt/2.0
+      /relaxed:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 1b3cab8c-c7d2-4f3c-960d-d4466215d755
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: a099fe9b-4eaf-4494-8d79-9b0fb0561c51
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:mixin: true
+            hipposysedit:supertype: ['hippostd:container']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippostd/nt/2.0
+      /date:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippostd:datefields', 'hippo:derived']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippostd/nt/2.0
+            /date:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippostd:date
+              hipposysedit:primary: true
+              hipposysedit:type: Date
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippostd:date
+            jcr:mixinTypes: ['mix:referenceable']
+            jcr:uuid: 503f2f56-a435-4a5c-85fb-6bb1288af8b8
+            hippostd:date: 2008-09-11T14:02:28.068+02:00
+            hippostd:dayofmonth: 11
+            hippostd:dayofweek: 5
+            hippostd:dayofyear: 255
+            hippostd:hourofday: 14
+            hippostd:minute: 2
+            hippostd:month: 8
+            hippostd:second: 28
+            hippostd:weekofyear: 37
+            hippostd:year: 2008

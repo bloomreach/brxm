@@ -1,0 +1,117 @@
+/*
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+.left-crop-area {
+  float: left;
+  width: 580px;
+  overflow: auto;
+  margin: 8px;
+}
+
+.left-crop-area .yui-skin-sam {
+  float: left;
+}
+
+.left-crop-area .yui-skin-sam .yui-crop .yui-resize {
+  border: 1px dashed #666;
+}
+
+.right-crop-area {
+  float: right;
+  max-width: 216px;
+  width: 216px;
+  padding: 5px 5px 5px 12px;
+  margin: 5px 0;
+  min-height: 200px;
+  overflow: auto;
+}
+
+.right-crop-area .preview-container {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid black;
+}
+
+.right-crop-area .preview-title {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  padding-bottom: 14px;
+}
+
+.right-crop-area .preview-description {
+  display: block;
+  padding-bottom: 12px;
+}
+
+.right-crop-area .thumbnail-size {
+  display: block;
+  padding-top: 10px;
+}
+
+.right-crop-area .fit-view {
+  display: block;
+  padding-top: 10px;
+}
+
+.right-crop-area .fit-view input {
+  margin-right: 10px;
+}
+
+/* YUI has a bug when the image is small but the cropping mask large. It repeats the image...*/
+.yui-crop-resize-mask {
+  background-repeat: no-repeat;
+}
+
+.yui-resize-status {
+  background-color: #ffee69;
+  border: 1px solid #a6982b;
+  border-top-color: #d4c237;
+  color: #000000;
+  z-index: 100000;
+}
+
+.yui-resize-status strong, .yui-resize-status em {
+  clear: both;
+  display: block;
+  float: left;
+  padding: 1px;
+  text-align: center;
+}
+
+.yui-resize-status strong, .yui-resize-status em {
+  font-style: normal;
+  font-weight: normal;
+  padding: 1px;
+}
+
+.modal_fullscreen .right-crop-area {
+  display: none;
+}
+
+.modal_fullscreen .modal_fullscreen_content {
+  background-color: #f7f7f7;
+}
+
+.modal_fullscreen .left-crop-area {
+  overflow: auto;
+  width: auto;
+  height: auto;
+}
+
+.left-crop-area .yui-crop .yui-draggable.yui-resize-knob.yui-resize {
+  background-color: #f7f7f7;
+}

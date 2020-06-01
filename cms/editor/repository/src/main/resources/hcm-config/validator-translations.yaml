@@ -1,0 +1,22 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        email: Enter a valid email address
+        escaped: 'Do not use these characters: < > & '' "'
+        required: Enter a value
+        required#Date: Enter a date
+        required#OpenUiString: Enter a value
+        required#String: Enter some text
+        required#hippo-mirror: Select a link
+        required#hippo-resource: Upload a resource
+        required#hippostd-html: Enter some text
+        non-empty: Enter a value
+        non-empty-html: Enter some text
+        path-is-used-multiple-times: Do not use the same path multiple times
+        html: Enter a value
+        resource-required: Upload a file
+        summarySingle: This document has 1 error
+        summaryMultiple: This document has ${numberOfErrors} errors
