@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    testproject:
+      uri: http://www.onehippo.org/services/search/nt/testproject/1.0
+      cnd: testproject-types.cnd
