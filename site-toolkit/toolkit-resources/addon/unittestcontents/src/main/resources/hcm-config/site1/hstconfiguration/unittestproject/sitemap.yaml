@@ -1,0 +1,206 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestproject/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /_default_:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/pagenotfound
+        hst:parameternames: [testparam]
+        hst:parametervalues: ['${1}']
+      /home:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/homepage
+        hst:refId: homeRefId
+        hst:relativecontentpath: common/homepage
+      /about-us:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/standarddetail
+        hst:relativecontentpath: common/aboutfolder/about-us
+      /aboutfolder:
+        jcr:primaryType: hst:sitemapitem
+        hst:relativecontentpath: common/aboutfolder
+        /_index_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/standarddetail
+          hst:relativecontentpath: common/aboutfolder/contact
+        /_default_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/standarddetail
+          hst:relativecontentpath: common/aboutfolder/${1}
+        /_default_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/standarddetail
+          hst:relativecontentpath: common/aboutfolder/${1}
+          /_index_:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/standarddetail
+            hst:relativecontentpath: ${parent}/address
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/standarddetail
+          hst:relativecontentpath: common/aboutfolder/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/standarddetail
+          hst:relativecontentpath: common/aboutfolder/${1}
+      /handler_nooptest:
+        jcr:primaryType: hst:sitemapitem
+        hst:parameternames: [myparam]
+        hst:parametervalues: [/home]
+        hst:sitemapitemhandlerids: [noophandler]
+        /_default_:
+          jcr:primaryType: hst:sitemapitem
+          hst:sitemapitemhandlerids: [noophandler]
+      /handler_sitemapitem_redirecttest:
+        jcr:primaryType: hst:sitemapitem
+        hst:parameternames: [redirectto]
+        hst:parametervalues: [/home]
+        hst:sitemapitemhandlerids: [sitemapitem_redirecthandler]
+      /handler_browser_redirecttest:
+        jcr:primaryType: hst:sitemapitem
+        hst:parameternames: [redirectto]
+        hst:parametervalues: [/home]
+        hst:sitemapitemhandlerids: [browser_redirecthandler]
+      /multiplehandler_example:
+        jcr:primaryType: hst:sitemapitem
+        /_default_:
+          jcr:primaryType: hst:sitemapitem
+          /_default_:
+            jcr:primaryType: hst:sitemapitem
+            hst:sitemapitemhandlerids: [examplehandler1, examplehandler2]
+      /pagenotfound:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/pagenotfound
+      /news:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/newsoverview
+        hst:refId: newsRefId
+        hst:relativecontentpath: News
+        /_default_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/standarddetail
+          hst:refId: wildcardNewsRefId
+          hst:relativecontentpath: News/${1}
+        /_default_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsoverview
+          hst:relativecontentpath: News/${1}
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsoverview
+          hst:relativecontentpath: News/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/standarddetail
+          hst:relativecontentpath: News/${1}
+      /alsonews:
+        jcr:primaryType: hst:sitemapitem
+        /news2:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsoverview
+          hst:relativecontentpath: News
+          /_default_.html:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/standarddetail
+            hst:relativecontentpath: News/${1}
+          /_default_:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/newsoverview
+            hst:relativecontentpath: News/${1}
+          /_any_:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/newsoverview
+            hst:relativecontentpath: News/${1}
+          /_any_.html:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/standarddetail
+            hst:relativecontentpath: News/${1}
+      /newswith_linkrewriting_excluded:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/newsoverview
+        hst:excludedforlinkrewriting: true
+        hst:relativecontentpath: News
+        /_default_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/standarddetail
+          hst:excludedforlinkrewriting: true
+          hst:relativecontentpath: News/${1}
+        /_default_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsoverview
+          hst:excludedforlinkrewriting: true
+          hst:relativecontentpath: News/${1}
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsoverview
+          hst:excludedforlinkrewriting: true
+          hst:relativecontentpath: News/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/standarddetail
+          hst:excludedforlinkrewriting: true
+          hst:relativecontentpath: News/${1}
+      /newsCtxOnly:
+        jcr:primaryType: hst:sitemapitem
+        /_default_:
+          jcr:primaryType: hst:sitemapitem
+          /news:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/newsoverview
+            hst:relativecontentpath: News
+            /_default_.html:
+              jcr:primaryType: hst:sitemapitem
+              hst:componentconfigurationid: hst:pages/standarddetail
+              hst:relativecontentpath: News/${2}
+            /_default_:
+              jcr:primaryType: hst:sitemapitem
+              hst:componentconfigurationid: hst:pages/newsoverview
+              hst:relativecontentpath: News/${2}
+            /_any_:
+              jcr:primaryType: hst:sitemapitem
+              hst:componentconfigurationid: hst:pages/newsoverview
+              hst:relativecontentpath: News/${2}
+            /_any_.html:
+              jcr:primaryType: hst:sitemapitem
+              hst:componentconfigurationid: hst:pages/standarddetail
+              hst:relativecontentpath: News/${2}
+      /contact:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/contactpage
+        /thankyou:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/thankyou
+      /pipelines:
+        jcr:primaryType: hst:sitemapitem
+        /custom:
+          jcr:primaryType: hst:sitemapitem
+          hst:namedpipeline: MyCustomPipeline
+        /_default_:
+          jcr:primaryType: hst:sitemapitem
+      /contact-spring:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/contactspringpage
+        /thankyou:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/thankyou
+      /contact-dispatch:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/contactdispatchpage
+        /thankyou:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/thankyou
+      /contact-springmvc:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/contactspringmvcpage
+        /thankyou:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/thankyou
+      /search:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/searchpage
+      /uniquelinks:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/uniquelinkspage
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/uniquelinkspage

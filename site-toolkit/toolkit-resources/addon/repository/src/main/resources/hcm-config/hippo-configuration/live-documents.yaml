@@ -1,0 +1,31 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/live-documents:
+      jcr:primaryType: hipposys:domain
+      /hippo-document:
+        jcr:primaryType: hipposys:domainrule
+        /nodetype-hippo-document:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippo:document
+        /hide-prototypes:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: nodename
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:prototype
+        /availability-live:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: hippo:availability
+          hipposys:filter: true
+          hipposys:type: String
+          hipposys:value: live
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: []
+        hipposys:role: readonly

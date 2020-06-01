@@ -1,0 +1,20 @@
+definitions:
+  config:
+    /hippo:namespaces/contentbeanstest:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+    /hippo:namespaces/system:
+      jcr:primaryType: hipposysedit:namespace
+      /UnknownString:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: false
+            hipposysedit:type: String
+            hipposysedit:uri: internal
+      
