@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="test">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>nt:unstructured</sv:value>
+  </sv:property>
+  <sv:property sv:name="foo" sv:type="String">
+    <sv:value>bar</sv:value>
+  </sv:property>
+  <sv:node sv:name="quz">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>nt:unstructured</sv:value>
+    </sv:property>
+    <sv:property sv:name="qux" sv:type="String">
+      <sv:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:base64Binary">Gw==</sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>

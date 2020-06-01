@@ -1,0 +1,16 @@
+definitions:
+  config:
+    /topmost/upstream:
+      jcr:primaryType: nt:unstructured
+      existingPropertyUpstream: "I'm a string!"
+      existingPropertyUpstreamAlreadyOverridden: /path/like/thing
+    /path:
+      jcr:primaryType: nt:unstructured
+      /like:
+        jcr:primaryType: nt:unstructured
+        /thing:
+          jcr:primaryType: nt:unstructured
+    /other:
+      jcr:primaryType: nt:unstructured
+      /path:
+        jcr:primaryType: nt:unstructured

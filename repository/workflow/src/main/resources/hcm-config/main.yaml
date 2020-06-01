@@ -1,0 +1,11 @@
+definitions:
+  namespace:
+    hippostdpubwf:
+      uri: http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0
+      cnd: hippostdpubwf.cnd
+    hippogallery:
+      uri: http://www.onehippo.org/jcr/hippogallery/nt/2.0
+      cnd: hippogallery.cnd
+    hipposcxml:
+      uri: http://www.onehippo.org/jcr/hipposcxml/nt/1.0
+      cnd: hipposcxml.cnd

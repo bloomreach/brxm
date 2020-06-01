@@ -1,0 +1,75 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/versioning:
+      jcr:primaryType: hipposys:domain
+      /nt-system:
+        jcr:primaryType: hipposys:domainrule
+        /type-rep-system:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: rep:system
+      /nt-versionStorage:
+        jcr:primaryType: hipposys:domainrule
+        /type-rep-versionStorage:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: rep:versionStorage
+      /nt-versionHistory:
+        jcr:primaryType: hipposys:domainrule
+        /type-nt-versionHistory:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: nt:versionHistory
+      /nt-versionlabels:
+        jcr:primaryType: hipposys:domainrule
+        /type-nt-versionlabels:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: nt:versionLabels
+      /nt-version:
+        jcr:primaryType: hipposys:domainrule
+        /type-nt-version:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: nt:version
+      /nt-frozennode:
+        jcr:primaryType: hipposys:domainrule
+        /type-nt-frozennode:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: nt:frozenNode
+      /nt-versionedchild:
+        jcr:primaryType: hipposys:domainrule
+        /type-nt-versionedchild:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: nt:versionedChild
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [everybody]
+        hipposys:role: readonly
+      /editor:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [editor]
+        hipposys:role: editor

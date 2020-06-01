@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/scheduler:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.hippoecm.repository.quartz.SchedulerModule
+      /hippo:moduleconfig:
+        jcr:primaryType: hipposched:jobregistry
+        /system:
+          jcr:primaryType: hipposched:jobgroup
