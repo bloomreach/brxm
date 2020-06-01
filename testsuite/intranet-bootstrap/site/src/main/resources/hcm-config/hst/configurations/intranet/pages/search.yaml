@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:pages/search:
+      jcr:primaryType: hst:component
+      hst:referencecomponent: hst:abstractpages/base
+      /main:
+        jcr:primaryType: hst:component
+        /content:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/search

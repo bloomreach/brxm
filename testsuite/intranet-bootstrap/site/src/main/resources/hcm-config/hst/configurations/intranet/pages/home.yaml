@@ -1,0 +1,14 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:pages/home:
+      jcr:primaryType: hst:component
+      hst:referencecomponent: hst:abstractpages/base
+      /main:
+        jcr:primaryType: hst:component
+        /content:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/content
+          hst:template: home.main.content
+          /container:
+            jcr:primaryType: hst:containercomponentreference
+            hst:referencecomponent: home/container

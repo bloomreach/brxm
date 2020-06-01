@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+  
+  <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-jackson.xml" />
+  <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-plain-pipeline.xml" />
+  <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-content-pipeline.xml" />
+
+  <!--
+    Enabling to use '_format' parameter name instead of the CXF default _type parameter name for the plain JAX-RS pipeline.
+    Also, if you set 'additionalQueryString' property, then all the JAX-RS requests will have the additional parameters forcefully.
+    For example, if you set it to '_type=json', then you can force the output format to JSON format globally
+    without considering 'Accept' HTTP request header.
+  -->
+  <bean id="jaxrsRestPlainServiceQueryStringReplacingInterceptor" class="org.hippoecm.hst.jaxrs.cxf.QueryStringReplacingInterceptor">
+    <property name="paramNameReplaces">
+      <map>
+        <!-- The following will replace '_format' parameter name with '_type' parameter name before JAX-RS processing. -->
+        <entry key="_format" value="_type" />
+      </map>
+    </property>
+    <property name="additionalQueryString">
+      <value></value>
+      <!-- The following will append additional query string before JAX-RS processing
+      <value>_type=json</value>
+      -->
+    </property>
+  </bean>
+
+  <!--
+    Enabling to use '_format' parameter name instead of the CXF default _type parameter name for the Content/Context-Aware JAX-RS pipeline.
+    Also, if you set 'additionalQueryString' property, then all the JAX-RS requests will have the additional parameters forcefully.
+    For example, if you set it to '_type=json', then you can force the output format to JSON format globally
+    without considering 'Accept' HTTP request header.
+  -->
+  <bean id="jaxrsRestContentServiceQueryStringReplacingInterceptor" class="org.hippoecm.hst.jaxrs.cxf.QueryStringReplacingInterceptor">
+    <property name="paramNameReplaces">
+      <map>
+        <!-- The following will replace '_format' parameter name with '_type' parameter name before JAX-RS processing. -->
+        <entry key="_format" value="_type" />
+      </map>
+    </property>
+    <property name="additionalQueryString">
+      <value>_type=xml</value>
+      <!-- The following will append additional query string before JAX-RS processing
+      <value>_type=json</value>
+      -->
+    </property>
+  </bean>
+  
+  <!-- Custom JAX-RS REST Plain Resource Providers to be overriden. -->
+  <bean id="customRestPlainResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.ProductPlainResource" />
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.TopProductsResource" />
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.ContentTypesResource" />
+          </constructor-arg>
+        </bean>
+      </list>
+    </property>
+  </bean>
+  
+  <!-- Custom JAX-RS REST Content Resource Providers to be overriden. -->
+  <bean id="customRestContentResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.NewsDocumentContentResource" />
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.TextDocumentContentResource" />
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.BaseDocumentContentResource" />
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.ProductContentResource" />
+          </constructor-arg>
+        </bean>
+      </list>
+    </property>
+  </bean>
+  
+</beans>
+

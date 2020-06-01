@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:catalog:
+      jcr:primaryType: hst:catalog
+      /intranet-catalog:
+        jcr:primaryType: hst:containeritempackage
+        /list:
+          jcr:primaryType: hst:containeritemcomponent
+          hst:componentclassname: org.hippoecm.hst.intranet.components.ListView
+          hst:iconpath: images/catalog-list.png
+          hst:label: List
+          hst:parameternames: [title, pageSize, sortBy]
+          hst:parametervalues: [List, '3', 'intranet:date']
+          hst:template: base.main.list
+          hst:xtype: HST.Item
