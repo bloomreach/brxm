@@ -1,0 +1,21 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-tagproviders:
+      jcr:primaryType: frontend:plugincluster
+      tags.index: tags
+      /tagsTags:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.onehippo.forge.ecmtagging.providers.CurrentTagsTagsProvider
+        score: 0.5
+        tags.index: ${tags.index}
+      /SimilaritySearchTags:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.onehippo.forge.ecmtagging.providers.SimilaritySearchTagsProvider
+        score: 1.0
+      /fileTags:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.onehippo.forge.ecmtagging.providers.FileTagsProvider
+        score: 1.0
+      /suggestor:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.onehippo.forge.ecmtagging.TagSuggestor
