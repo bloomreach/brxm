@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-validators/contentblocks-validator:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.onehippo.forge.contentblocks.validator.ContentBlocksValidator

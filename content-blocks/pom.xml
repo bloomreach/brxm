@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-project</artifactId>
+    <version>29.16-SNAPSHOT</version>
+  </parent>
+
+  <inceptionYear>2009</inceptionYear>
+
+  <name>Hippo Plugin Content Blocks</name>
+  <description>Hippo Plugin Content Blocks</description>
+  <groupId>org.onehippo.cms7</groupId>
+  <artifactId>hippo-plugin-content-blocks</artifactId>
+  <version>4.6.11-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <scm>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-plugin-content-blocks.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-plugin-content-blocks.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-plugin-content-blocks</url>
+  </scm>
+
+  <properties>
+    <hippo.repository.version>5.6.11-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.6.11-SNAPSHOT</hippo.cms.version>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-api</artifactId>
+      <version>${hippo.cms.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-engine</artifactId>
+      <version>${hippo.cms.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-frontend</artifactId>
+      <version>${hippo.cms.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.html</include>
+          <include>**/*.png</include>
+          <include>**/*.gif</include>
+          <include>**/*.js</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*.css</include>
+          <include>**/*.cnd</include>
+          <include>**/*.xml</include>
+          <include>**/*.yaml</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <!-- repository content XML -->
+                <exclude>README.md</exclude>
+                <exclude>src/main/resources/*.xml</exclude>
+                <exclude>demo/bootstrap/configuration/src/main/resources/**/*.xml</exclude>
+                <exclude>demo/bootstrap/content/src/main/resources/**/*.xml</exclude>
+                <!-- 3rd party -->
+                <exclude>demo/site/src/main/webapp/js/html5shiv.js</exclude>
+                <exclude>demo/site/src/main/webapp/css/style.css</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
