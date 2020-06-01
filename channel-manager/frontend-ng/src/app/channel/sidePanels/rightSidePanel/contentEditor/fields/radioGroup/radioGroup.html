@@ -1,0 +1,27 @@
+<!--
+  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<md-radio-group class="md-primary"
+                ng-class="{'horizontal': $ctrl.isOrientationHorizontal()}"
+                name="{{::$ctrl.name}}"
+                ng-blur="$ctrl.onFieldBlur()"
+                ng-change="$ctrl.ngModelCtrl.$setViewValue($ctrl.ngModel)"
+                ng-focus="$ctrl.onFieldFocus()"
+                ng-model="$ctrl.ngModel"
+                ng-required="$ctrl.isRequired">
+  <md-radio-button ng-repeat="buttonValue in $ctrl.buttonValues()" ng-value="buttonValue">
+    {{ ::$ctrl.buttonDisplayValues($index) }}
+  </md-radio-button>
+</md-radio-group>

@@ -1,0 +1,106 @@
+/*
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@import 'variables';
+
+document-fields {
+  display: block;
+  padding-right: $form-dense-distance;
+  padding-top: $form-dense-distance;
+
+  & & {
+    padding-right: 0;
+    padding-top: 0;
+  }
+
+  label {
+    // md-tooltip searches for the first parent with pointer-events
+    // ng-material disables pointer events on labels, they should be enabled
+    // when using md-no-float
+    pointer-events: auto !important;
+
+    &::after {
+      content: '' !important; // hide material required mark
+    }
+  }
+
+  .checkbox-hint {
+    font-size: 18px;
+    height: 18px;
+    min-height: 18px;
+    min-width: 18px;
+    vertical-align: baseline;
+    width: 18px;
+  }
+}
+
+primitive-field,
+compound-field,
+choice-field {
+  display: block;
+
+  > .field {
+    padding-left: $form-dense-distance;
+  }
+}
+
+primitive-field,
+compound-field {
+  primitive-field > .field {
+    padding-left: 0;
+  }
+}
+
+.field {
+  &--bordered {
+    border-left: 3px solid $grey-500;
+    margin-bottom: $form-dense-distance;
+
+    & & {
+      border-left: none;
+    }
+  }
+
+  &--focused {
+    border-color: $blue-500;
+  }
+
+  &--invalid {
+    border-color: $red-500;
+  }
+
+  &__title {
+    margin-bottom: $form-dense-distance;
+    margin-left: -6px;
+
+    h5 {
+      margin-bottom: 0;
+    }
+
+    &--focused,
+    &--focused &-icon {
+      color: $blue-500;
+    }
+
+    &--invalid,
+    &--invalid &-icon {
+      color: $red-500;
+    }
+  }
+
+  &__error {
+    margin-left: $icon-size + 4px;
+  }
+}
