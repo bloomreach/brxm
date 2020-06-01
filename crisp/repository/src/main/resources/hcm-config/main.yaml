@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    crisp:
+      uri: http://www.onehippo.com/jcr/hippo/crisp/nt/1.0
+      cnd: crisp-types.cnd
