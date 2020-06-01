@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/default/handle/frontend:renderer/channelactions:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.onehippo.cms7.channelmanager.plugins.channelactions.ChannelActionsPlugin
+      wicket.id: ${item}
