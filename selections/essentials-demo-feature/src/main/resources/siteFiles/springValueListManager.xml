@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+  <bean id="org.onehippo.forge.selection.hst.manager.ValueListManager" class="org.onehippo.forge.selection.hst.manager.DefaultValueListManager">
+    <constructor-arg>
+      <map>
+        <entry key="valuelist1" value="/content/documents/valuelists/valuelist1"/>
+        <entry key="valuelistMultilingual" value="/content/documents/valuelists/en/valuelist-en"/>
+        <entry key="continents" value="/content/documents/valuelists/chained/continents"/>
+        <entry key="africa" value="/content/documents/valuelists/chained/africa"/>
+        <entry key="europe" value="/content/documents/valuelists/chained/europe"/>
+      </map>
+    </constructor-arg>
+    <property name="mapOfStaticOptionsMap">
+      <map>
+        <entry key="staticOptions1">
+          <map>
+            <entry key="" value="(None)" />
+            <entry key="sv1" value="Static Value 1" />
+            <entry key="sv2" value="Static Value 2" />
+            <entry key="sv3" value="Static Value 3" />
+            <entry key="sv4" value="sv4" />
+          </map>
+        </entry>
+        <entry key="carOptions1">
+          <map>
+            <entry key="fordfiesta" value="Ford Fiesta" />
+            <entry key="fordtaurus" value="Ford Taurus" />
+            <entry key="fordfusion" value="Ford Fusion" />
+            <entry key="porschecarrera" value="Porsche Carrera" />
+            <entry key="vwgolf" value="Volkswagen Golf" />
+            <entry key="vwbeetle" value="Volkswagen Beetle" />
+            <entry key="vwtouareg" value="Volkswagen Touareg" />
+          </map>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+</beans>

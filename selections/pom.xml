@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-project</artifactId>
+    <version>30.4.4-SNAPSHOT</version>
+  </parent>
+
+  <name>Hippo Plugin Selections</name>
+  <description>Hippo Plugin Selections</description>
+  <artifactId>hippo-plugin-selections</artifactId>
+  <version>13.4.4-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <inceptionYear>2009</inceptionYear>
+
+  <scm>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-plugin-selections.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-plugin-selections.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-plugin-selections</url>
+  </scm>
+
+
+  <properties>
+    <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
+    <notice.project.name>Hippo Plugins Selection</notice.project.name>
+
+    <hippo.cms.version>13.4.4-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>13.4.4-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>13.4.4-SNAPSHOT</hippo.hst.version>
+
+    <junit.version>4.12</junit.version>
+    <easymock.version>3.4</easymock.version>
+    <!-- Make sure that powermock and easymock are compatible -->
+    <powermock.version>1.6.5</powermock.version>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+
+  <issueManagement>
+    <system>Jira Hippo Plugins</system>
+    <url>https://issues.onehippo.com/browse/HIPPLUG/component/10996</url>
+  </issueManagement>
+
+  <dependencyManagement>
+
+    <dependencies>
+
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-api</artifactId>
+        <version>${hippo.hst.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-client</artifactId>
+        <version>${hippo.hst.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-content-beans</artifactId>
+        <version>${hippo.hst.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-commons</artifactId>
+        <version>${hippo.hst.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-utilities</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-jaxrs</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-engine</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-api</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-builtin</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+     <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-editor-frontend</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-api</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-perspectives</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-translation-common</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
+  
+      <!-- test dependencies -->
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>${easymock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-testutils</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-api-easymock</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-module-junit4</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+    </dependencies>
+
+  </dependencyManagement>
+
+  <modules>
+    <module>addon-repository</module>
+    <module>addon-cms</module>
+    <module>hst</module>
+    <module>essentials-demo-feature</module>
+  </modules>
+
+  <profiles>
+
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>jrebel</name>
+        </property>
+      </activation>
+    </profile>
+
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <exclude>README.md</exclude>
+                <!-- repository content XML -->
+                <exclude>addon-repository/src/main/resources/**/*.xml</exclude>
+                <exclude>demo/content/src/main/resources/**/*.xml</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
+
+</project>
