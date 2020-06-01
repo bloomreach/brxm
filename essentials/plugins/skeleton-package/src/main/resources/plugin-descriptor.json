@@ -1,0 +1,12 @@
+{
+  "id": "skeleton",
+  "name": "Essentials Site Skeleton",
+  "icon": "/essentials/feature/images/banner-plugin-icon.png",
+  "introduction": "Provides a basic site structure for adding features, such as a basic sitemap, an empty menu and styling.",
+  "type": "feature",
+  "vendor": {
+    "name": "BloomReach",
+    "url": "https://www.bloomreach.com"
+  },
+  "packageFile" : "/META-INF/skeleton_instructions.xml"
+}

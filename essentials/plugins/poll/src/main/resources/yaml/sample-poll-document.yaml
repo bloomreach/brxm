@@ -1,0 +1,33 @@
+/content/documents/{{namespace}}/polls:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+  hippostd:foldertype: [new-poll-document, new-poll-folder]
+  hippotranslation:id: {{translationId}}
+  hippotranslation:locale: en
+  /example-poll:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: 0d478047-6978-45b1-b20c-7bb4eaf48e02
+    /example-poll:
+      jcr:primaryType: poll:polldocument
+      jcr:mixinTypes: ['mix:referenceable', 'mix:versionable']
+      hippo:availability: [live, preview]
+      hippostd:state: published
+      hippostd:stateSummary: live
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2014-06-02T17:40:59.190+02:00
+      hippostdpubwf:lastModificationDate: 2014-06-02T17:41:51.398+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      /poll:poll:
+        jcr:primaryType: poll:poll
+        poll:active: true
+        poll:introduction: This is an example
+        poll:text: Example poll
+        /poll:option:
+          jcr:primaryType: poll:option
+          poll:label: Hippo Essentials
+          poll:value: essentials
+        /poll:option[2]:
+          jcr:primaryType: poll:option
+          poll:label: Hippo CMS
+          poll:value: hippo

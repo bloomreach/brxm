@@ -1,0 +1,38 @@
+{
+  "name": "hippo-essentials",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "grunt": "grunt",
+    "build": "grunt build",
+    "start": "grunt server"
+  },
+  "engines": {
+    "node": "8",
+    "npm": "6"
+  },
+  "dependencies": {
+    "@bloomreach/hippo-theme": "5.0.0",
+    "angular": "1.7.8",
+    "angular-animate": "1.7.8",
+    "angular-aria": "1.7.8",
+    "angular-chosen-localytics": "1.9.3",
+    "angular-sanitize": "1.7.8",
+    "angular-ui-bootstrap": "2.5.6",
+    "angular-ui-router": "1.0.22",
+    "angular-ui-tree": "2.22.6",
+    "chosen-js": "1.8.7",
+    "jquery": "^3.4.1"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.7.8",
+    "grunt": "^1.0.4",
+    "grunt-contrib-clean": "2.0.0",
+    "grunt-contrib-copy": "1.0.0",
+    "grunt-contrib-jshint": "2.1.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "jasmine-jquery": "2.1.1",
+    "load-grunt-tasks": "5.1.0",
+    "time-grunt": "2.0.0"
+  }
+}

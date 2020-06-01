@@ -1,0 +1,26 @@
+{
+  "id": "templatequerygenerator",
+  "type": "tool",
+  "name": "Template Query Generator",
+  "icon": "/essentials/tool/images/template-query-generator-icon.svg",
+  "introduction": "Generate template queries for documents and document folders.",
+  "restClasses": [
+    "org.onehippo.cms7.essentials.templatequery.rest.TemplateQueryGeneratorResource"
+  ],
+  "categories": {
+    "application": [
+      "developer-tool",
+      "query generator"
+    ],
+    "type": [
+      "tool"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "vendor": {
+    "name": "BloomReach",
+    "url": "https://www.bloomreach.com"
+  }
+}

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+
+  <!--
+    DOCUMENT TYPES REGISTRATION
+  -->
+  <instructionSet>
+    <!-- cnd-->
+    <cnd documentType="bannerdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
+    <!-- templates-->
+    <xml action="copy" source="xml/namespaces/bannerdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
+    <!-- beans-->
+    <file action="copy" source="java/Banner.txt" target="{{beansFolder}}/Banner.java"/>
+    <!-- queries -->
+    <xml action="copy" source="xml/configuration/new-banner-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="xml/configuration/new-banner-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <!-- type translations -->
+    <translations source="/json/translations/bannerdocument-translations.json" />
+    <translations source="/json/translations/bannertemplates-translations.json" />
+  </instructionSet>
+
+  <!--
+    //############################################
+    // CAROUSEL COMPONENT
+    //############################################
+  -->
+  <instructionSet group="jsp">
+    <file action="copy" source="jsp/essentials-carousel.jsp" target="{{jspRoot}}/hstdefault/essentials-carousel.jsp"/>
+    <file action="copy" source="jsp/essentials-banner.jsp" target="{{jspRoot}}/hstdefault/essentials-banner.jsp"/>
+    <xml action="copy" source="hst/carousel-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="hst/banner-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+  </instructionSet>
+
+  <instructionSet group="freemarker">
+    <freemarker action="copy" source="freemarker/essentials-carousel.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-carousel.ftl"/>
+    <freemarker action="copy" source="freemarker/essentials-banner.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-banner.ftl"/>
+    <xml action="copy" source="hst/carousel-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="hst/banner-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+  </instructionSet>
+
+  <instructionSet group="extraTemplates">
+    <freemarker action="copy"
+                source="freemarker/essentials-banner-without-description.ftl"
+                target="{{freemarkerRoot}}/hstdefault/essentials-banner/without-description.ftl"/>
+    <file action="copy"
+          source="freemarker/essentials-banner.properties"
+          target="{{freemarkerRoot}}/hstdefault/essentials-banner.properties"/>
+    <file action="copy"
+          source="freemarker/essentials-banner_nl.properties"
+          target="{{freemarkerRoot}}/hstdefault/essentials-banner_nl.properties"/>
+  </instructionSet>
+
+  <instructionSet>
+    <xml action="copy" source="hst/catalog/banner-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="hst/catalog/carousel-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <file action="copy" binary="true" source="images/banner.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/banner.png"/>
+    <file action="copy" binary="true" source="images/carousel.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/carousel.png"/>
+  </instructionSet>
+
+  <!--
+    SAMPLE DATA
+  -->
+  <instructionSet group="sampleData">
+    <xml action="copy" source="xml/data/banner-folder-creator.xml" target="/content/documents/{{namespace}}"/>
+    <xml action="copy" source="xml/data/banner_entry_1.xml" target="/content/documents/{{namespace}}/banners"/>
+    <xml action="copy" source="xml/data/banner_entry_2.xml" target="/content/documents/{{namespace}}/banners"/>
+    <xml action="copy" source="xml/data/banner_images.xml" target="/content/gallery/{{namespace}}"/>
+  </instructionSet>
+
+</instructions>

@@ -1,0 +1,161 @@
+<!--
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="panel panel-default" ng-controller="contentBlocksCtrl">
+  <div class="panel-heading"><h3>Content Blocks</h3></div>
+  <div class="panel-body">
+      <essentials-draft-warning></essentials-draft-warning>
+    <p>The Content Blocks feature provides support for adding <em>content blocks fields</em> to your document types.
+      A content blocks field is a collection of different (potentially complex) compound field types from which the
+      content authors may choose.
+    </p>
+    <p>This configuration screen allows you to add new content blocks field to your document types. You can also
+      modify (or delete) existing content blocks fields. Content updaters will be run automatically to adjust your
+      existing content.
+    </p>
+    <p>When you create a new content blocks field, it will be created at the default location for new fields.
+      You can move the content blocks field to the desired position in the CMS Document Type Editor. You can
+      click on the 'Edit in CMS' link to get there. Make sure you commit all changes before coming back to
+      Essentials.
+    </p>
+    <p class="alert alert-info">Note that adding a new content blocks field to a document type will require an
+      update of the corresponding content bean. The BeanWriter tool is currently not capable of dealing with
+      content blocks fields correctly, so you'll need to do this manually, in your project sources.
+      <a target="_blank" href="https://www.onehippo.org/library/concepts/plugins/content-blocks/delivery-tier.html">This link</a>
+        explains what to do.
+    </p>
+    <p>You can find more detailed documentation for the Content Blocks plugin
+      <a target="_blank" href="https://www.onehippo.org/library/concepts/plugins/content-blocks/about.html">here</a>.
+    </p>
+
+    <div ng-show="up">
+        <h4>Edit your Content Blocks Fields</h4>
+        <div ng-hide="documentTypes.length > 0" class="alert alert-warning">
+          <p>You appear not to have any editable document types in your project yet. In order to create content blocks fields,
+            you first need to have document types. Either install features that provide a document type, or create some
+            in the CMS Document Type Editor.
+          </p>
+        </div>
+        <form ng-show="documentTypes.length > 0" class="form-horizontal" novalidate name="contentBlocksForm">
+          <div class="form-group row">
+            <label class="col-sm-4 control-label" for="contentBlocksDocumentType">Document Type:</label>
+            <div class="col-sm-4">
+              <select id="contentBlocksDocumentType" chosen
+                      class="form-control"
+                      ng-disabled="!contentBlocksForm.$valid"
+                      ng-model="selectedDocumentType"
+                      ng-selected="selectedDocumentType"
+                      ng-options="type.name for type in documentTypes"
+                      data-placeholder="Choose a document type..."
+                      width="'100%'">
+                  <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->
+              </select>
+            </div>
+            <div class="col-sm-4 form-control-static">
+              <p ng-show="selectedDocumentType">
+                <essentials-cms-document-type-deep-link
+                      name-space="{{selectedDocTypeNamespace()}}"
+                      document-name="{{selectedDocTypeName()}}"
+                      label="Edit {{selectedDocumentType.name}} in CMS">
+                </essentials-cms-document-type-deep-link>
+              </p>
+            </div>
+          </div>
+
+          <!--Document type-specific part-->
+          <div ng-show="selectedDocumentType">
+            <div ng-hide="selectedDocumentType.contentBlocksFields.length > 0" class="alert alert-warning">
+              <p>This document type does not yet have any content blocks fields. You can add some and then set them up.
+              </p>
+            </div>
+            <table ng-show="selectedDocumentType.contentBlocksFields.length > 0" class="table table-hover">
+              <tr>
+                <th>Field Name</th>
+                <th>Field Caption</th>
+                <th></th>
+                <th>Picker Type</th>
+                <th>Max Blocks</th>
+                <th>Used Compounds</th>
+              </tr>
+              <tr ng-repeat="field in selectedDocumentType.contentBlocksFields">
+                <td>
+                  <input class="form-control" required type="text" ng-model="field.name"/>
+                </td><td>
+                  <input class="form-control" required type="text" ng-model="field.caption"/>
+                </td>
+                <td>
+                  <button class="btn btn-danger" ng-click="deleteField(field)">Delete</button>
+                </td>
+                <td>
+                  <select chosen
+                          class="form-control"
+                          ng-model="field.pickerType"
+                          ng-selected="field.pickerType"
+                          ng-options="pickerType for pickerType in pickerTypes"
+                          width="'100%'"></select>
+                </td>
+                <td>
+                  <input class="form-control" type="text" ng-model="field.maxItems" ng-pattern="/^\d+$/" placeholder="No limit"/>
+                </td>
+                <td>
+                  <select chosen multiple required
+                          class="form-control"
+                          ng-model="field.compounds"
+                          ng-selected="field.compounds"
+                          ng-options="compound.name for compound in compounds"
+                          data-placeholder="Select compound types"
+                          width="'100%'"></select>
+                </td>
+              </tr>
+            </table>
+            <div class="row">
+              <div class="col-xs-12">
+                <p>
+                  <button class="btn btn-success" ng-click="addField()">Add</button> an empty content blocks field
+                  <span ng-show="copyChoices.length > 0">
+                    or <button class="btn btn-success" ng-disabled="!copyChoice" ng-click="copyField()">Copy</button> an
+                    <span title="You may need to save your changes in order to update the list of choices">existing field</span>:
+                  </span>
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4" ng-show="copyChoices.length > 0">
+                <p>
+                  <select chosen
+                          class="form-control"
+                          ng-model="copyChoice"
+                          ng-selected="copyChoice"
+                          ng-options="choice.name for choice in copyChoices"
+                          data-placeholder="Select field to copy"
+                          width="'100%'">
+                      <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->
+                  </select>
+                </p>
+              </div>
+            </div>
+            <div class="pull-right">
+              <button class="btn btn-primary" ng-click="reset()">Reset Changes</button>
+              <button class="btn btn-success" ng-disabled="!contentBlocksForm.$valid" ng-click="update()">Save Changes</button>
+            </div>
+            <p class="clearfix">&nbsp;</p>
+          </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+
