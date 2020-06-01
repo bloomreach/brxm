@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "set-to-current-date" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "set-to-current-date-tooltip" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

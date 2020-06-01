@@ -1,0 +1,25 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:templates/simple" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:templates/new-document" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:templates/new-translated-folder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:templates/new-collection" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:templates/new-folder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

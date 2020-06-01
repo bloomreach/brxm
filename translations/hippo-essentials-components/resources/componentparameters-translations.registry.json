@@ -1,0 +1,285 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsBlogAuthorPostsComponentInfo/pageSize" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsBlogAuthorPostsComponentInfo/postScope" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsBlogAuthorPostsComponentInfo/sortField" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/group.documents" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/group.settings" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/document4" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/document3" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/document6" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/document5" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/document2" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/document1" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/cycle" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/pause" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/carouselWidth" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/carouselHeight" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/carouselBackgroundColor" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/showNavigation" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/interval" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsDocumentComponentInfo/document" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsEventsComponentInfo/hidePastEvents" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsEventsComponentInfo/documentDateField" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsEventsComponentInfo/documentTypes" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsFacetsComponentInfo/facetPath" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/mapType#TERRAIN" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/mapType.help" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/address" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/apiKey" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/latitude" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/mapType" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/location.help" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/zoomFactor" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/map.options" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/mapType#SATELLITE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/width" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/mapType#ROADMAP" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/mapType#HYBRID" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/location" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/longitude" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/height" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsImageComponentInfo/document" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListComponentInfo/path" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListComponentInfo/documentTypes" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListComponentInfo/includeSubtypes" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document8" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document7" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document9" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document4" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document3" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document6" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document10" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document5" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document2" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document1" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsMenuComponentInfo/menu" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsNewsComponentInfo/hideFutureItems" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsNewsComponentInfo/documentDateField" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsNewsComponentInfo/documentTypes" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsPageable/pageSize" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsPageable/showPagination" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsRepositoryMenuComponentInfo/folderLinks" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsRepositoryMenuComponentInfo/depth" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsRepositoryMenuComponentInfo/root" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsSearchComponentInfo/documentTypes" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsSearchComponentInfo/showPagination" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsSortable/sortOrder#desc" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsSortable/sortOrder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsSortable/sortField" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsSortable/sortOrder#asc" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo/width" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo/height" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

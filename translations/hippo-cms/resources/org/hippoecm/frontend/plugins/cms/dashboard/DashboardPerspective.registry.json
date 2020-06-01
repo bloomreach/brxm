@@ -1,0 +1,19 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "todo" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "RESOLVED"
+      }
+    },
+    "perspective-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "history" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

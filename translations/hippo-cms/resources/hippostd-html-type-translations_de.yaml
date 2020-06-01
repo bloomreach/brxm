@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:html:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Erweiterter Rich Text Editor

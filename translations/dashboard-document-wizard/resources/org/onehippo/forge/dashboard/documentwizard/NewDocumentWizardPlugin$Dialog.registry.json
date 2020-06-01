@@ -1,0 +1,33 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "date-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "error-validation-names" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "list-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "invalid.name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "error-display-name-exists" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "error-sns-node-exists" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "name-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
