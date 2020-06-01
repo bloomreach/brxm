@@ -1,0 +1,15 @@
+*.iml
+*.ipr
+*.iws
+*.log
+*.tmp
+/.idea
+.project
+.settings
+.classpath
+essentials/overlays
+/nb-configuration.xml
+site/nb-configuration.xml
+site/overlays
+/storage
+target/
