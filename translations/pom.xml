@@ -21,6 +21,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
     <version>13.4.4-SNAPSHOT</version>
+    <relativePath>../release/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Community Translations</name>
@@ -43,12 +44,6 @@
     <destKey />
   </properties>
   
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms-translations.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms-translations.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-cms-translations</url>
-  </scm>
-
   <repositories>
     <repository>
       <id>hippo</id>

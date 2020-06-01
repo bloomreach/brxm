@@ -22,6 +22,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
     <version>13.4.4-SNAPSHOT</version>
+    <relativePath>../release/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Essentials</name>
@@ -56,12 +57,6 @@
     <sonar.jacoco.reportPath>${basedir}/target/target/jacoco.exec</sonar.jacoco.reportPath>
 
   </properties>
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-essentials.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-essentials.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-essentials</url>
-  </scm>
-
   <modules>
     <module>plugin-sdk</module>
     <module>plugins</module>
