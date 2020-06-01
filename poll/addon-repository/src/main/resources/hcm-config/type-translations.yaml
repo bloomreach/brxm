@@ -1,0 +1,23 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/poll:option:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Option
+        poll:label: Label
+        poll:value: Value
+    /hippo:configuration/hippo:translations/hippo:types/poll:poll:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Poll Compound
+        poll:introduction: Introduction (optional)
+        poll:options: Options
+        poll:text: Text
+    /hippo:configuration/hippo:translations/hippo:types/poll:polldocument:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Poll
+        poll:poll: Poll

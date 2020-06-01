@@ -1,0 +1,30 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/polldata:
+      jcr:primaryType: hipposys:domain
+      /readwrite:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [sitewriters]
+        hipposys:role: readwrite
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [liveusers, previewusers]
+        hipposys:role: readonly
+      /poll-polldata:
+        jcr:primaryType: hipposys:domainrule
+        /poll-polldata-node:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: poll:polldata
+      /poll-vote:
+        jcr:primaryType: hipposys:domainrule
+        /poll-vote-node:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: poll:votes
