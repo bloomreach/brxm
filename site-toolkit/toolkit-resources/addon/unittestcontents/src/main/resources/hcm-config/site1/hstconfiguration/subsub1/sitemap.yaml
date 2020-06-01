@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/subsub1/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /about-us:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/standarddetail
+        hst:relativecontentpath: about-us
