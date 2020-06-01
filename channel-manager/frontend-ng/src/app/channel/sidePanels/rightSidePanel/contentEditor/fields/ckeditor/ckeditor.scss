@@ -1,0 +1,108 @@
+// Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// sass-lint:disable class-name-format, no-qualifying-elements
+@import 'variables';
+
+.cke_screen_reader_only {
+  &.cke_copyformatting_notification {
+    height: 0 !important;
+    width: 0 !important;
+  }
+}
+
+ckeditor {
+  &.is-invalid {
+    .cke {
+      border-bottom-color: $red-a700 !important;
+    }
+  }
+
+  .cke {
+    .cke_button__source {
+      display: none;
+    }
+
+    .cke_wysiwyg_div {
+      padding: 8px !important;
+    }
+
+    .md-resize-handle {
+      display: none !important;
+    }
+
+    // CKEditor input area (:not is required to exclude toolbars)
+    &[class*='cke_editor_input_']:not(.cke_shared) {
+      margin-bottom: 1px;
+
+      &.cke_focus {
+        border-bottom-color: $blue-500 !important;
+        border-bottom-style: solid;
+        border-bottom-width: 2px;
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .md-resize-handle {
+    display: none;
+  }
+}
+
+.cke_shared {
+  border: 0 !important;
+  box-shadow: 0 !important;
+}
+
+.cke_top {
+  border-bottom: 0 !important;
+
+  // Remove codemirror buttons in CKEditor toolbar
+  .cke_button {
+    &.cke_button__searchcode,
+    &.cke_button__autoformat,
+    &.cke_button__commentselectedrange,
+    &.cke_button__uncommentselectedrange,
+    &.cke_button__autocomplete {
+      display: none;
+    }
+  }
+}
+
+.cke_bottom {
+  border: 0 !important;
+
+  &:empty {
+    padding: 0 !important;
+  }
+}
+
+.cke_resizer {
+  display: none;
+}
+
+.cke_dialog_contents {
+  .cke_dialog_ui_textarea {
+    * {
+      font-family: monospace !important;
+      font-size: 12px;
+    }
+  }
+
+  .cke_dialog_ui_button {
+    &.UncommentSelectedRange {
+      margin-top: 0 !important;
+    }
+  }
+}

@@ -1,0 +1,21 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/popupSocialMediaService:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.onehippo.cms7.channelmanager.plugins.social.PopupSocialMediaService
+      service.id: popup.social.media.service
+      /facebook:
+        jcr:primaryType: frontend:pluginconfig
+        display.name: Facebook
+        enabled: 'true'
+        share.url: http://www.facebook.com/sharer.php?u=
+      /linkedin:
+        jcr:primaryType: frontend:pluginconfig
+        display.name: LinkedIn
+        enabled: 'true'
+        share.url: http://www.linkedin.com/shareArticle?mini=true&url=
+      /twitter:
+        jcr:primaryType: frontend:pluginconfig
+        display.name: Twitter
+        enabled: 'true'
+        share.url: http://twitter.com/share?url=

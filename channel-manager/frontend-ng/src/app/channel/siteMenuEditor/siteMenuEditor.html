@@ -1,0 +1,179 @@
+<!--
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<subpage-toolbar flex="none"
+                 data-title="{{ ::'SUBPAGE_MENU_EDITOR_TITLE' | translate }}"
+                 on-back="$ctrl.onBack()">
+</subpage-toolbar>
+
+<subpage-content layout="row" class="qa-site-menu-editor" flex>
+  <div hippo-tree
+       ng-if="$ctrl.items.length > 0"
+       class="expansion-panel"
+       data-items="$ctrl.items"
+       data-options="$ctrl.treeOptions"
+       data-selected-item="$ctrl.selectedItem"
+       data-draggable="!$ctrl.isLockedByOther()"
+       ng-class="{ 'hippo-tree-is-dragging': $ctrl.isDragging }"
+       flex>
+    <form name="form"
+          flex
+          ng-submit="form.$valid && $ctrl.saveItem()"
+          novalidate>
+      <md-card scroll-to-if="$ctrl.editingItem == item">
+        <md-card-title ui-tree-handle class="no-padding" ng-class="{active: $ctrl.selectedItem.id === item.id}">
+          <md-card-title-text>
+            <div class="md-headline" layout="row" layout-align="space-between center">
+              <div layout="row" layout-align="start center">
+                <md-button type="button"
+                           class="md-icon-button"
+                           ng-click="hippoTree.toggle(this)"
+                           ng-if="!hippoTree.isEmpty(this)"
+                           aria-label="{{ (collapsed ? 'EXPAND' : 'COLLAPSE') | translate }}"
+                           data-nodrag
+                           stop-propagation>
+                  <md-icon class="mdi-18" md-font-icon="{{ collapsed ? 'mdi-plus' : 'mdi-minus' }}"></md-icon>
+                </md-button>
+                <div ng-class="{'empty-tree-item': hippoTree.isEmpty(this)}">{{ item.title }}</div>
+              </div>
+              <div>
+                <md-button type="button"
+                           class="md-icon-button"
+                           aria-label="{{ ::'EDIT' | translate }}"
+                           ng-click="$ctrl.toggleEditState(item)">
+                  <md-icon class="mdi-18"
+                           md-font-icon="{{ $ctrl.editingItem.id === item.id ? 'mdi-chevron-up' : 'mdi-chevron-down' }}">
+                  </md-icon>
+                </md-button>
+              </div>
+            </div>
+          </md-card-title-text>
+        </md-card-title>
+        <div ng-if="$ctrl.editingItem.id == item.id">
+          <md-card-content>
+            <div layout="row">
+              <md-input-container flex>
+                <label>{{ ::'TITLE' | translate }}</label>
+                <input name="title"
+                       ng-model="$ctrl.editingItem.title"
+                       ng-disabled="$ctrl.isLockedByOther()"
+                       required
+                       select-all-on-focus
+                       focus-if="$ctrl.isAdding">
+                <div ng-messages="form.title.$error">
+                  <div ng-message="required">{{ ::'TITLE_REQUIRED' | translate }}</div>
+                </div>
+              </md-input-container>
+            </div>
+            <div>
+              <md-radio-group ng-model="$ctrl.editingItem.linkType">
+                <md-radio-button ng-disabled="$ctrl.isLockedByOther()"
+                                 value="SITEMAPITEM">{{ ::'SUBPAGE_MENU_EDITOR_INTERNAL_LINK' | translate }}</md-radio-button>
+                <md-radio-button ng-disabled="$ctrl.isLockedByOther()"
+                                 value="EXTERNAL">{{ ::'SUBPAGE_MENU_EDITOR_EXTERNAL_LINK' | translate }}</md-radio-button>
+                <md-radio-button ng-disabled="$ctrl.isLockedByOther()"
+                                 value="NONE">{{ ::'SUBPAGE_MENU_EDITOR_NO_LINK' | translate }}</md-radio-button>
+              </md-radio-group>
+            </div>
+            <div ng-if="$ctrl.editingItem.linkType == 'SITEMAPITEM'"
+                 layout="row">
+              <md-input-container flex>
+                <label>{{ ::'SUBPAGE_MENU_EDITOR_INTERNAL_LINK' | translate }}</label>
+                <input name="sitemapLink"
+                       ng-model="$ctrl.editingItem.sitemapLink"
+                       required
+                       disabled>
+                <div ng-messages="form.sitemapLink.$error">
+                  <div ng-message="required">{{ ::'LINK_REQUIRED' | translate }}</div>
+                </div>
+              </md-input-container>
+              <div>
+                <md-button type="button"
+                           ng-disabled="$ctrl.isLockedByOther()"
+                           ng-click="$ctrl.showPicker($event)">
+                  {{ ::'SUBPAGE_MENU_EDITOR_SELECT_INTERNAL_LINK' | translate }}
+                </md-button>
+              </div>
+            </div>
+            <div ng-if="$ctrl.editingItem.linkType == 'EXTERNAL'"
+                 layout="row">
+              <md-input-container flex>
+                <label>{{ ::'SUBPAGE_MENU_EDITOR_EXTERNAL_LINK' | translate }}</label>
+                <input name="externalLink"
+                       ng-model="$ctrl.editingItem.externalLink"
+                       ng-disabled="$ctrl.isLockedByOther()"
+                       required>
+                <div ng-messages="form.externalLink.$error">
+                  <div ng-message="required">{{ ::'LINK_REQUIRED' | translate }}</div>
+                </div>
+              </md-input-container>
+            </div>
+            <div ng-if="$ctrl.hasLocalParameters()" class="qa-advanced-settings">
+              <md-switch ng-model="$ctrl.showLocalParameters" aria-label="{{ ::'ADVANCED_SETTINGS' | translate }}">
+                {{ ::'ADVANCED_SETTINGS' | translate }}
+              </md-switch>
+              <div ng-if="$ctrl.showLocalParameters" layout="row" data-ng-repeat="(key, value) in $ctrl.editingItem.localParameters">
+                <md-input-container flex class="qa-property">
+                  <label>{{ key }}</label>
+                  <input type="text"
+                         ng-model="$ctrl.editingItem.localParameters[key]"
+                         ng-disabled="$ctrl.isLockedByOther()">
+                </md-input-container>
+              </div>
+            </div>
+          </md-card-content>
+          <md-divider></md-divider>
+          <md-card-actions layout="row"
+                           layout-align="space-between center">
+            <md-button type="button"
+                       ng-disabled="$ctrl.isLockedByOther()"
+                       aria-label="{{ ::'DELETE' | translate }}"
+                       ng-click="$ctrl.deleteItem()">
+              {{ ::'DELETE' | translate }}
+            </md-button>
+            <div>
+              <md-button type="button"
+                         ng-disabled="$ctrl.isLockedByOther()"
+                         aria-label="{{ ::'CANCEL' | translate }}"
+                         ng-click="$ctrl.stopEditingItem()">
+                {{ ::'CANCEL' | translate }}
+              </md-button>
+              <md-button type="submit"
+                         ng-disabled="$ctrl.isLockedByOther()"
+                         aria-label="{{ ::'SAVE' | translate }}"
+                         class="md-raised md-primary">
+                {{ ::'SAVE' | translate }}
+              </md-button>
+            </div>
+          </md-card-actions>
+        </div>
+      </md-card>
+    </form>
+  </div>
+  <div class="empty-tree" ng-if="$ctrl.items.length === 0">{{ ::'SUBPAGE_MENU_EDITOR_EMPTY_MENU' | translate }}</div>
+  <div class="fab-space-holder"></div>
+  <md-button class="md-fab md-fab-bottom-right md-accent qa-menu-item-add"
+             ng-click="$ctrl.addItem()"
+             ng-disabled="$ctrl.isLockedByOther() || $ctrl.isSaving.newItem">
+    <md-icon aria-label="{{::'SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM' | translate }}"
+             class="mdi-18"
+             md-font-icon="mdi-plus">
+    </md-icon>
+    <md-tooltip md-direction="top">
+      {{::'SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM' | translate}}
+    </md-tooltip>
+  </md-button>
+</subpage-content>
