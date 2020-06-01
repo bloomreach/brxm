@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/templates/type-hippo-prototype/hide-taxonomy-prototype:
+      jcr:primaryType: hipposys:facetrule
+      hipposys:equals: false
+      hipposys:facet: jcr:primaryType
+      hipposys:filter: false
+      hipposys:type: Name
+      hipposys:value: hippotaxonomy:taxonomy
