@@ -1,0 +1,16 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-folder-views/hippofacnav:facetsubnavigation:
+      jcr:primaryType: frontend:plugincluster
+      frontend:properties: [list.page.size, list.view.size]
+      frontend:references: [model.folder, model.document]
+      frontend:services: [wicket.id]
+      list.page.size: '500'
+      list.view.size: '3'
+      /root:
+        jcr:primaryType: frontend:plugin
+        expand.collapse.supported: true
+        plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.FacetSearchListingPlugin
+        wicket.model: ${model.folder}
+        /filters:
+          jcr:primaryType: frontend:pluginconfig
