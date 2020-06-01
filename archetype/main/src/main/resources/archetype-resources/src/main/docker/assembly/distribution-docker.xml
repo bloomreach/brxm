@@ -1,0 +1,19 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+  <id>distribution-docker</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <componentDescriptors>
+    <componentDescriptor>${project.basedir}/src/main/assembly/common-lib-component.xml</componentDescriptor>
+    <componentDescriptor>${project.basedir}/src/main/assembly/shared-lib-component.xml</componentDescriptor>
+
+    <componentDescriptor>${project.basedir}/src/main/docker/assembly/conf-component-docker.xml</componentDescriptor>
+    <componentDescriptor>${project.basedir}/src/main/docker/assembly/webapps-component-docker.xml</componentDescriptor>
+    <componentDescriptor>${project.basedir}/src/main/docker/assembly/scripts-docker.xml</componentDescriptor>
+
+    <componentDescriptor>${project.basedir}/src/main/docker/assembly/docker-db-libs.xml</componentDescriptor>
+  </componentDescriptors>
+</assembly>
