@@ -1,0 +1,86 @@
+// Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Bloomreach primary colors
+$bluePrimary:                                 #147ac8;
+$blueLight:                                   rgba($bluePrimary, .1);
+$blueLightSolid:                              #e7f1f9;
+$blueMedium:                                  rgba($bluePrimary, .35);
+$blueMediumSolid:                             #acd0eb;
+$blueDark:                                    #1265b3;
+$orangePrimary:                               #ff751a;
+$orangeLight:                                 #ffdfce;
+$orangeDark:                                  #e64a19;
+
+// Bloomreach functional colors
+$pink:                                        #c2185b;
+$red:                                         #d40022;
+$orange:                                      #ffa000;
+$yellow:                                      #ffa733;
+$brown:                                       #5d4037;
+$lime:                                        #afb42b;
+$green:                                       #3dcc3d;
+$teal:                                        #00796b;
+$cyan:                                        #0097a7;
+$indigo:                                      #303f9f;
+$purple:                                      #7b1fa2;
+
+// Bloomreach grays.
+// "solid" means: same color without alpha channel as if rendered on a white background.
+$black:                                       #000;
+$gray5:                                       rgba(0, 0, 0, .05);
+$gray5Solid:                                  #f2f2f2;
+$gray12:                                      rgba(0, 0, 0, .12);
+$grayLightSolid:                              #f5f5f5;
+$gray38:                                      rgba(0, 0, 0, .38);
+$gray60:                                      rgba(0, 0, 0, .6);
+$gray60Solid:                                 #666;
+$gray87:                                      rgba(0, 0, 0, .87);
+$white:                                       #fff;
+
+// Legacy grays
+$darkest-shade:                               #22272f;
+$darker-shade:                                #39434c;
+$dark-shade:                                  #9ba0a5;
+$dark-gray:                                   #b8bcbf;
+$light-gray:                                  #d4d6d8;
+$light-shade:                                 #e8e8ea;
+$lighter-shade:                               #ebeced;
+$lightest-shade:                              #f7f7f7;
+
+// Legacy colors
+$primary:                                     $bluePrimary;
+$success:                                     $green;
+$info:                                        #40a6ff;
+$warning:                                     $yellow;
+$danger:                                      $red;
+
+$primary-light:                               #d2e6f7;
+$success-light:                               #e2fed9;
+$info-light:                                  #d9edff;
+$warning-light:                               #fffada;
+$danger-light:                                #fbe6e9;
+
+$primary-shaded:                              $blueDark;
+$success-shaded:                              #b6ccae;
+$info-shaded:                                 #aebecc;
+$warning-shaded:                              #ccc8ae;
+$danger-shaded:                               #ccaeae;
+
+$diff-added:                                  #cfc;
+$diff-added-border:                           $diff-added;
+$diff-removed:                                #fdc6c6;
+$diff-removed-border:                         $diff-removed;
+$diff-changed:                                #d9edff;
+$diff-changed-border:                         #009;

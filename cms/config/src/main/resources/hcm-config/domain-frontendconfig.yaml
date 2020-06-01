@@ -1,0 +1,50 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/frontend-config:
+      jcr:primaryType: hipposys:domain
+      /frontend-config:
+        jcr:primaryType: hipposys:domainrule
+        /frontend-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:frontend
+      /hippo-namespaces:
+        jcr:primaryType: hipposys:domainrule
+        /hippo-namespaces-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /hippo:namespaces
+      /hippo-queries:
+        jcr:primaryType: hipposys:domainrule
+        /queries-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:queries
+      /hippo-workflows:
+        jcr:primaryType: hipposys:domainrule
+        /workflow-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:workflows
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: readonly
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.frontend-config.reader
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []

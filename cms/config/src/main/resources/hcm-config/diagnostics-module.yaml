@@ -1,0 +1,13 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/diagnostics:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.hippoecm.frontend.diagnosis.DiagnosticsDaemonModule
+      hipposys:cmsonly: true
+      /hippo:moduleconfig:
+        jcr:primaryType: nt:unstructured
+        allowedAddresses: ['']
+        allowedUsers: ['']
+        depth: -1
+        enabled: false
+        thresholdMillisec: 3000

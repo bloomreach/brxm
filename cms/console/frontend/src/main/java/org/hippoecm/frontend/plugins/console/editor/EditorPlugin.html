@@ -1,0 +1,105 @@
+<!--
+    * Copyright 2007-2017 Hippo B.V. (http://www.onehippo.com)
+    *
+    * Licensed under the Apache License, Version 2.0 (the  "License");
+    * you may not use this file except in compliance with the License.
+    * You may obtain a copy of the License at
+    *
+    * http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+<wicket:panel>
+  <div wicket:id="message" class="panel-message">[message]</div>
+  <form wicket:id="editor">
+    <h3 wicket:id="toggle-header-0">[UUID]</h3>
+    <table class="editor-general-table" id="toggle-box-0" style="display:block;">
+      <tr>
+        <td rowspan="3" style="vertical-align: top;"><span class="icon" wicket:id="nodeIcon"></span></td>
+        <td class="general-name">Path: </td>
+        <td><span wicket:id="nodePath"/></td>
+      </tr>
+      <tr>
+        <td class="general-name">Name: </td>
+        <td><span wicket:id="name"/></td>
+      </tr>
+      <tr>
+        <td class="general-name">UUID: </td>
+        <td><span wicket:id="uuid"/></td>
+      </tr>
+      <tr>
+        <td><span class="icon fa fa-arrow-circle-o-up" /></td>
+        <td class="general-name">HCM Origin: </td>
+        <td><div wicket:id="origin"/></td>
+      </tr>
+    </table>
+    <h3 wicket:id="toggle-header-1">[Types]</h3>
+    <table class="editor-types-table" id="toggle-box-1" style="display:block;">
+      <tr class="type-primary">
+        <td class="type-name">Primary: </td>
+        <td>
+          <span class="icon fa fa-arrow-circle-o-up" wicket:id="primarytypeorigin"/>
+        </td>
+        <td class="type-value"><span wicket:id="primarytype"/></td>
+      </tr>
+      <tr class="type-mixin">
+        <td class="type-name">Mixin: </td>
+        <td>
+          <span class="icon fa fa-arrow-circle-o-up" wicket:id="mixintypesorigin"/>
+        </td>
+        <td class="type-value"><span wicket:id="types"/></td>
+      </tr>
+    </table>
+
+    <h3 wicket:id="toggle-header-2">[Properties]</h3>
+    <ul id="toggle-box-2" class="properties" style="display:block;">
+      <li wicket:id="namespaces">
+        <h4 wicket:id="toggle-namespace">[namespace]</h4>
+        <ul wicket:id="propertiesContainer" style="display:block;" class="properties-group">
+          <li class="property" wicket:id="properties">
+            <span class="property-namespace" wicket:id="namespace">namespace</span><span class="property-name" wicket:id="name">Property name</span>
+            &nbsp;
+            <span wicket:id="type" class="property-type">Property type</span>
+            <span class="icon fa fa-arrow-circle-o-up" wicket:id="origin"/>
+            <a wicket:id="delete">
+              <span class="remove-icon fa fa-times"/>
+            </a>
+            <table class="property-value-container" width="100%" wicket:id="values-container">
+              <tr>
+                <td width="100%">
+                  <ul style="list-style: none">
+                    <li class="property-value" wicket:id="values">
+                      <span wicket:id="value"></span>
+                      <a class="property-value-remove" wicket:id="remove">
+                        <span class="remove-icon fa fa-times"/>
+                      </a>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+            </table>
+            <a class="property-add" wicket:id="add">
+              <span class="add-icon fa fa-plus"/>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3 wicket:id="toggle-header-3">[Mixin Types]</h3>
+    <div class="mixin-types" id="toggle-box-3" style="display:block">
+      <div wicket:id="mixintypes">
+        <ul style="list-style: none;">
+          <li class="mixin-type" wicket:id="type">
+            <input type="checkbox" wicket:id="check"><label class="mixin-name" wicket:id="name">[mixin name]</label></input>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </form>
+</wicket:panel>
+</html>

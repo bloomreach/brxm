@@ -1,0 +1,12 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:publishableSummary:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        hippostd:stateSummary=changed: Live, unpublished changes
+        hippostd:stateSummary=live: Live
+        hippostd:stateSummary=new: Offline
+        hippostd:stateSummary=live-draft-changes: Live, draft changes
+        hippostd:stateSummary=new-draft-changes: Offline, draft changes
+        hippostd:stateSummary=review: Under review
