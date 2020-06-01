@@ -1,0 +1,31 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
+        autoexport:excluded:
+          operation: add
+          value: ['/hst:*/hst:configurations/*-preview', '/hst:*/hst:configurations/*-preview/**']
+        autoexport:filteruuidpaths:
+          operation: add
+          value: ['/hst:*/**']
+        autoexport:injectresidualchildnodecategory:
+          operation: add
+          value: ['/hst:platform/**: config',
+            '/hst:*/**/hst:workspace/**[hst:containercomponent]: content',
+            '/hst:*/**/hst:workspace/**[hst:sitemenu]: content',
+            '/hst:*/**/hst:workspace/hst:abstractpages: content',
+            '/hst:*/**/hst:workspace/hst:channel: content',
+            '/hst:*/**/hst:workspace/hst:components: content',
+            '/hst:*/**/hst:workspace/hst:pages: content',
+            '/hst:*/**/hst:workspace/hst:sitemap: content',
+            '/hst:*/**/hst:workspace/hst:templates: content',
+            '/hst:*/hst:hosts/**[hst:virtualhostgroup]: content',
+            '/hst:*/hst:hosts/**[hst:virtualhost]: content',
+            '/hst:*/hst:hosts/**[hst:mount]: content']
+        autoexport:overrideresidualchildnodecategory:
+          operation: add
+          value: ['/hst:*/hst:configurations: config',
+            '/hst:*/hst:hosts: config',
+            '/hst:*/hst:hosts/**: config',
+            '/hippo:configuration/hippo:update/hippo:registry: config',
+            '/hippo:configuration/hippo:update/hippo:registry/**: config',
+            '/hst:*/hst:blueprints/**: config']

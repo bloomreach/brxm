@@ -1,0 +1,142 @@
+definitions:
+  config:
+    /hippo:namespaces/testproject:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      /basedocument:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document', 'hippostd:publishableSummary']
+            hipposysedit:uri: http://www.hippoecm.org/hst/nt/testproject/1.0
+      /textpage:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['testproject:basedocument']
+            hipposysedit:uri: http://www.hippoecm.org/hst/nt/testproject/1.0
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: testproject:title
+              hipposysedit:primary: false
+              hipposysedit:type: String
+            /summary:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: testproject:summary
+              hipposysedit:primary: false
+              hipposysedit:type: String
+            /body:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: testproject:body
+              hipposysedit:primary: false
+              hipposysedit:type: hippostd:html
+            /date:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: testproject:date
+              hipposysedit:primary: false
+              hipposysedit:type: Date
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: testproject:textpage
+            jcr:mixinTypes: ['mix:referenceable']
+            hippostd:state: unpublished
+            hippostdpubwf:createdBy: admin
+            hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+            hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+            hippostdpubwf:lastModifiedBy: admin
+            testproject:date: 2009-10-23T12:44:11.055+02:00
+            testproject:summary: ''
+            testproject:title: ''
+            /testproject:body:
+              jcr:primaryType: hippostd:html
+              hippostd:content: |-
+                <html> <body>
+                                            <p>body</p> </body>
+                                            </html>
+      /newspage:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['testproject:basedocument']
+            hipposysedit:uri: http://www.hippoecm.org/hst/nt/testproject/1.0
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: testproject:title
+              hipposysedit:primary: false
+              hipposysedit:type: String
+            /summary:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: testproject:summary
+              hipposysedit:primary: false
+              hipposysedit:type: String
+            /body:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: testproject:body
+              hipposysedit:primary: false
+              hipposysedit:type: hippostd:html
+            /date:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: testproject:date
+              hipposysedit:primary: false
+              hipposysedit:type: Date
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: testproject:newspage
+            jcr:mixinTypes: ['mix:referenceable']
+            hippostd:state: unpublished
+            hippostdpubwf:createdBy: admin
+            hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+            hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+            hippostdpubwf:lastModifiedBy: admin
+            testproject:date: 2009-10-23T12:44:11.055+02:00
+            testproject:summary: ''
+            testproject:title: ''
+            /testproject:body:
+              jcr:primaryType: hippostd:html
+              hippostd:content: |-
+                <html> <body>
+                                            <p>body</p> </body>
+                                            </html>
