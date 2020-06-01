@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/validation/hippo:moduleconfig/required/hippostd:html:
+      jcr:primaryType: hipposys:moduleconfig
+      hipposys:className: org.hippoecm.frontend.plugins.richtext.validation.RequiredRichTextValidator

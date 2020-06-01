@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hippo:reports:
+      jcr:primaryType: hipporeport:folder

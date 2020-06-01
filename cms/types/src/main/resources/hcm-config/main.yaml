@@ -1,0 +1,8 @@
+definitions:
+  namespace:
+    frontend:
+      uri: http://www.onehippo.org/jcr/frontend/nt/2.0
+      cnd: frontend.cnd
+    reporting:
+      uri: http://www.onehippo.org/jcr/reporting/nt/2.0
+      cnd: reporting.cnd

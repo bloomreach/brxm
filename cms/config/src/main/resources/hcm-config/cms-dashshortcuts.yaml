@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-dashshortcuts:
+      jcr:primaryType: frontend:plugincluster
+      frontend:overrides: model.document
