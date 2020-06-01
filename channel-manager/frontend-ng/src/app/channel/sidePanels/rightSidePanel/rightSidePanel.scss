@@ -1,0 +1,91 @@
+// Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+@import 'variables';
+
+right-side-panel {
+  &.side-panel-open md-sidenav {
+    margin-left: auto;
+    padding-left: $side-panel-border-width;
+  }
+
+  .btn-full-screen,
+  .btn-normal-screen {
+    margin: 0 !important;
+  }
+
+  .right-side-panel-top-toolbar {
+    max-height: 64px;
+    z-index: 3 !important;
+
+    .md-toolbar-tools > .md-icon-button {
+      min-width: 40px;
+    }
+  }
+
+  .right-side-panel-top-toolbar-icon:not(:empty) {
+    padding-right: 10px;
+  }
+
+  .right-side-panel-top-toolbar-tools {
+    display: flex;
+  }
+
+  .right-side-panel-context {
+    color: $text-dim;
+    font-size: 12px;
+    font-weight: normal;
+  }
+}
+
+.right-side-panel {
+  mat-toolbar,
+  md-toolbar {
+    background: $grey-50;
+    box-sizing: border-box;
+    color: $text-dark;
+
+    &:first-child {
+      border-bottom: 1px solid $grey-200;
+    }
+
+    &:last-child {
+      border-top: 1px solid $grey-200;
+    }
+
+    md-icon {
+      color: $text-dim;
+    }
+
+    md-icon[md-svg-icon] {
+      color: $grey-900;
+      opacity: .87;
+    }
+
+    .md-button {
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 0;
+      padding-right: 0;
+
+      &.large-label {
+        padding-left: 6px;
+        padding-right: 6px;
+      }
+    }
+  }
+
+  .md-subheader a {
+    color: $blue-600;
+  }
+}

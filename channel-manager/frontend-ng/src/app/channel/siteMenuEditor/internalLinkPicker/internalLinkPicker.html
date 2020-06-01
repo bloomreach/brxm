@@ -1,0 +1,69 @@
+<!--
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<md-dialog aria-label="{{ 'PICKER_TITLE' | translate }}">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>{{ 'PICKER_TITLE' | translate }}</h2>
+    </div>
+  </md-toolbar>
+  <md-dialog-content layout="row" class="picker-content">
+    <md-content flex="33" flex-sm="50">
+      <section>
+        <md-subheader class="picker-type">
+          <md-select aria-label="{{ 'PICKER_SELECT' | translate }}"
+                     ng-model="picker.pickerType"
+                     ng-change="picker.changePickerType()">
+            <md-option ng-value="option" ng-repeat="option in picker.pickerTypes">{{ option.name }}</md-option>
+          </md-select>
+        </md-subheader>
+        <hippo-tree
+             ng-if="picker.items.length > 0"
+             class="hippo-tree has-styling"
+             data-items="picker.items"
+             data-selected-item="picker.selectedItem"
+             data-options="picker.treeOptions"
+             data-draggable="false">
+          <a class="hippo-tree-item-toggle"
+             data-nodrag stop-propagation
+             ng-click="toggle(); hippoTree.toggle(item)"
+             data-ng-if="item.expandable">
+            <md-icon md-font-icon="{{ item.collapsed ? 'mdi-menu-right' : 'mdi-menu-down' }}"></md-icon>
+          </a>
+          <span class="spacer" data-ng-if="!item.expandable"></span>
+          <span class="angular-ui-tree-title-wrapper">
+            <md-icon md-svg-icon="{{item.collapsed || !item.expandable ? 'folder-closed' : 'folder-open'}}"></md-icon>
+            <span class="angular-ui-tree-title">{{ item.displayName }}</span>
+          </span>
+        </hippo-tree>
+        <div class="empty-tree" ng-if="picker.items.length === 0">{{ 'PICKER_EMPTY_TREE' | translate }}</div>
+      </section>
+
+    </md-content>
+    <md-content flex="66" flex-sm="50" class="hippo-listing scroll-to-container">
+      <item-listing items="picker.selectedItem.items"
+                    selected-item="picker.selectedDocument" />
+    </md-content>
+  </md-dialog-content>
+  <md-dialog-actions layout="row">
+    <md-button ng-click="picker.cancel()">
+      {{ 'CANCEL' | translate }}
+    </md-button>
+    <md-button ng-click="picker.ok()" ng-disabled="!picker.selectedDocument">
+      {{ 'OK' | translate }}
+    </md-button>
+  </md-dialog-actions>
+</md-dialog>
