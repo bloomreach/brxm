@@ -1,0 +1,12 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:users/sitewriter:
+      jcr:primaryType: hipposys:user
+      hipposys:active: true
+      hipposys:passkey: jvm://
+      hipposys:userroles:
+        .meta:category: system
+        .meta:add-new-system-values: true
+        value: [xm.form.writer]
+      hipposys:securityprovider: internal
+      hipposys:system: true

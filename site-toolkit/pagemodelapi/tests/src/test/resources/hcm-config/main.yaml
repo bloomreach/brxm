@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    pagemodelapitest:
+      uri: http://www.onehippo.org/pagemodelapitest/nt/1.0
+      cnd: namespaces/pagemodelapitest.cnd

@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:users/author:
+      jcr:primaryType: hipposys:user
+      hipposys:active: true
+      hipposys:password: author
+      hipposys:securityprovider: internal
