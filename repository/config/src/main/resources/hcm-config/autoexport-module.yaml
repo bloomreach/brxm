@@ -1,0 +1,18 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/autoexport:
+      jcr:primaryType: hipposys:module
+      /hippo:moduleconfig:
+        jcr:primaryType: autoexport:config
+        autoexport:enabled: true
+        autoexport:modules: ['content:/']
+        autoexport:excluded: ['/**/jcr:lockOwner', '/**/jcr:lockIsDeep']
+        autoexport:injectresidualchildnodecategory: []
+        autoexport:overrideresidualchildnodecategory: ["/hippo:configuration/hippo:groups: config",
+                                                       "/hippo:configuration/hippo:roles: config",
+                                                       "/hippo:configuration/hippo:userroles: config"]
+        autoexport:filteruuidpaths: []
+        autoexport:lastrevision:
+          .meta:category: system
+        autoexport:ntrlastmodified:
+          .meta:category: system

@@ -1,0 +1,6 @@
+group:
+  name: hippo-extension-test
+project:
+  name: extension-test
+module: 
+  name: extension-test

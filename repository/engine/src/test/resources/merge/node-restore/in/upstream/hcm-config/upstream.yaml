@@ -1,0 +1,14 @@
+definitions:
+  config:
+    /topmost/upstream:
+      jcr:primaryType: nt:unstructured
+      /restore:
+        jcr:primaryType: nt:unstructured
+        /node:
+          jcr:primaryType: nt:unstructured
+          someproperty: myproperty
+          otherproperty: otherproperty
+          /subnode:
+            jcr:primaryType: nt:unstructured
+            subproperty: subvalue
+
