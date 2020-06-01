@@ -1,0 +1,96 @@
+// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+.image-gallery {
+
+  height: 100%;
+
+  // move the 'Name' header above the icon column
+  th.doclisting-name span {
+    margin-left: -43px;
+  }
+
+  &.image-gallery-list {
+    td.doclisting-icon {
+      @include fixed-width($image-gallery-list-box-size);
+
+      > span {
+        @include fixed-height($image-gallery-list-box-size);
+      }
+    }
+  }
+
+  &.image-gallery-thumbnails tbody {
+    tr {
+      display: inline-block;
+      &:first-child {
+        border-top: 1px solid transparent;
+      }
+    }
+
+    td {
+      display: flex;
+      justify-content: center;
+    }
+
+    td.doclisting-icon,
+    td.doclisting-name {
+      @include fixed-width(100%);
+    }
+
+    td.doclisting-icon {
+      padding: $image-gallery-thumbnail-padding 0 0 0;
+      > span {
+        @include fixed-width($image-gallery-thumbnail-box-size);
+        @include fixed-height($image-gallery-thumbnail-box-size);
+      }
+    }
+
+    td.doclisting-name {
+      padding: 8px 0;
+      > span {
+        text-align: center;
+        max-width: 100%;
+        > span {
+          @include truncate();
+          max-width: 100%;
+          padding: 0 $image-gallery-thumbnail-padding;
+        }
+      }
+    }
+  }
+
+  .toggle-button a {
+    outline: 0 none;
+
+    &.gallery-mode-active {
+      box-sizing: border-box;
+      border-bottom: 2px solid $primary;
+
+      .hi {
+        color: $primary;
+      }
+    }
+  }
+}
+
+.yui-layout-expanded .image-gallery-thumbnails tr,
+.hippo-picker .image-gallery-thumbnails tr {
+  border-top-color: transparent;
+  width: $image-gallery-thumbnail-item-width;
+}
+
+.yui-layout-collapsed .image-gallery-thumbnails tbody tr {
+  display: block;
+}

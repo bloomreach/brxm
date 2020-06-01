@@ -1,0 +1,75 @@
+// Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+.hippo-root .wicket-ajax-indicator {
+  background-color: $ajax-loader-bgcolor;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  width: $ajax-loader-width;
+  z-index: 2;
+  visibility: hidden;
+
+  .ajax-loader {
+    display: block;
+    width: 100%;
+    height: $ajax-loader-height;
+    animation: ajaxloader 1s infinite linear;
+    animation-play-state: paused;
+    background-size: $ajax-loader-width $ajax-loader-height;
+    @include retina("#{$images}/loader/ajax-loader.png", 2, $ajax-loader-width $ajax-loader-height);
+    background-repeat: no-repeat;
+    will-change: auto;
+  }
+}
+
+.hippo-ajax-show-load .wicket-ajax-indicator {
+  visibility: visible;
+  .ajax-loader {
+    will-change: transform;
+    animation-play-state: running;
+  }
+}
+
+.hippo-ajax-show-busy {
+  cursor: wait;
+}
+
+.hippo-dialog-picker .wicket-ajax-indicator,
+.hippo-window .hippo-root .wicket-ajax-indicator {
+  position: absolute;
+  bottom: 16px;
+  left: 12px;
+  background: transparent;
+  top: auto;
+}
+
+@keyframes ajaxloader {
+  0% {
+    transform: translate(-75%, 0) rotateY(0deg);
+  }
+
+  50% {
+    transform: translate(25%, 0) rotateY(0deg);
+  }
+
+  50.001% {
+    transform: translate(75%, 0) rotateY(180deg);
+  }
+
+  100% {
+    transform: translate(-25%, 0) rotateY(180deg);
+  }
+}

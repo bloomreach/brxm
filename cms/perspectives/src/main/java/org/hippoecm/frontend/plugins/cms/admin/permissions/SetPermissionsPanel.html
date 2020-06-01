@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+  *
+  * Licensed under the Apache License, Version 2.0 (the  "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+<wicket:extend>
+    <h2><label wicket:id="permissions-set-title">[[Set permissions for domain {domain name}]]</label></h2>
+    <h3>
+        <wicket:message key="permissions-description-domain"/>
+    </h3>
+    <wicket:message key="permissions-description"/>
+    <table class="hippo-controlpanel-table-default hippo-list-details">
+        <thead>
+        <tr>
+            <th>
+                <wicket:message key="permissions-role-header"/>
+            </th>
+            <th>
+                <wicket:message key="permissions-groups-header"/>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr wicket:id="role-row">
+            <td><label wicket:id="role"/></td>
+            <td class="no-padding">
+                <table>
+                    <tr wicket:id="groups">
+                        <td width="50%">
+                            <span wicket:id="group-label"/>
+                        </td>
+                        <td>
+                            <span wicket:id="group-remove"/>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <form wicket:id="form" class="hippo-controlpanel-options">
+        <wicket:message key="permissions-grant-group"/>
+        <select wicket:id="groups-select">
+            <option>group1</option>
+        </select>
+        <wicket:message key="permissions-the-role"/>
+        <select wicket:id="roles-select">
+            <option>role1</option>
+        </select>
+        <wicket:message key="permissions-in-domain"/>
+        <input type="button" class="btn btn-default btn-xs" wicket:message="value:permissions-assign" wicket:id="submit"/>
+    </form>
+</wicket:extend>
+</html>

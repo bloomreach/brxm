@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/assetProcessorService:
+      jcr:primaryType: frontend:plugin
+      gallery.processor.id: asset.gallery.processor
+      plugin.class: org.hippoecm.frontend.plugins.gallery.NullGalleryProcessorPlugin

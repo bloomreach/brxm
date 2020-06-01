@@ -1,0 +1,451 @@
+// Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+.hippo-panel-plugin-body h2 {
+  font-size: 20px;
+  font-weight: normal;
+  color: $darkest-shade;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.hippo-panel-plugin-body h3 {
+  font-size: 12px;
+  font-weight: bold;
+  color: $primary;
+  margin-bottom: 5px;
+}
+
+.hippo-controlpanel-form textarea {
+  width: 400px;
+  height: 200px
+}
+
+.hippo-controlpanel-form input[type="password"],
+.hippo-controlpanel-form input[type="text"] {
+  border: 1px solid $dark-shade;
+  padding: 3px;
+  line-height: 16px;
+}
+
+.hippo-controlpanel-form td {
+  padding-right: 6px;
+}
+
+.hippo-panel-plugin .icons-128 {
+  background-position: left center;
+  background-repeat: no-repeat;
+  border-bottom: 1px solid $dark-shade;
+  border-top: 1px solid $dark-shade;
+  min-height: 128px;
+  padding-bottom: 10px;
+  padding-left: 150px;
+  padding-top: 10px;
+}
+
+.user-128 {
+  background-image: url('#{$images}/admin/user-128.png')
+}
+
+.groups-128 {
+  background-image: url('#{$images}/admin/groups-128.png')
+}
+
+.hippo-controlpanel-table-default {
+  border: 1px solid $dark-shade;
+  border-collapse: collapse;
+}
+
+.hippo-controlpanel-table-default .navigator {
+  padding-top: 10px;
+}
+
+.hippo-controlpanel-table-default tr th {
+  background-color: $light-shade;
+
+  border-bottom: 1px solid $dark-shade;
+  border-left: none;
+  border-right: 1px solid $dark-shade;
+  font-size: 12px;
+  font-weight: bold;
+  color: $black;
+  padding: 4px;
+
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+.hippo-controlpanel-table-default tr td {
+  vertical-align: top;
+  padding: 4px;
+}
+
+.hippo-controlpanel-table-default tr.navigation td {
+  padding: 15px;
+}
+
+.hippo-controlpanel-table-default tr.navigation .navigatorLabel {
+  font-size: 11px;
+  font-weight: bold;
+
+}
+
+.hippo-controlpanel-table-default tr.navigation td a {
+  background: $lightest-shade;
+  color: $light-gray;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 13px;
+  padding: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-decoration: none;
+}
+
+.hippo-controlpanel-table-default tr.navigation td a[href]:hover {
+  background: $dark-shade;
+  color: $white;
+  text-decoration: underline;
+}
+
+.hippo-controlpanel-table-default tr.navigation td a[href] {
+  color: $darkest-shade;
+  text-decoration: underline;
+}
+
+.hippo-controlpanel-table-default tr td a {
+  color: $primary
+}
+
+.hippo-controlpanel-table-default tr td:hover {
+  cursor: default
+}
+
+.hippo-controlpanel-table-default tr.odd td {
+  background: $lightest-shade;
+  border-right: 1px solid $dark-shade;
+
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+.hippo-controlpanel-table-default tr.even td {
+  background: $white;
+  border-right: 1px solid $dark-shade;
+
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+.hippo-controlpanel-table-nested {
+  border-collapse: separate
+}
+
+.hippo-controlpanel-table-nested tr td {
+  background: $lightest-shade;
+  border: 1px solid $white;
+  border-bottom: none;
+  border-top: none;
+  padding: 4px;
+  line-height: 15px;
+}
+
+.hippo-controlpanel-table-nested span.icon-16 {
+  padding: 0;
+  padding-left: 17px;
+  background-position: 0 0;
+}
+
+.hippo-controlpanel-table-nested span.icon-16 a {
+  color: $danger
+}
+
+.hippo-controlpanel-table-nested span.icon-16 a:hover {
+  text-decoration: underline
+}
+
+.hippo-controlpanel-membership-item-label {
+  display: block;
+  width: 200px
+}
+
+.hippo-controlpanel-actions-top {
+  border-bottom: 1px solid $dark-shade;
+  border-top: none;
+  text-align: left;
+  padding-top: 2px;
+  margin-bottom: 5px
+}
+
+.hippo-controlpanel-actions {
+  padding: 10px;
+  border-top: 1px solid $dark-shade;
+  text-align: right;
+  padding-right: 25px;
+  margin-top: 15px;
+}
+
+.hippo-controlpanel-actions li {
+  margin-left: 10px;
+  cursor: pointer
+}
+
+.hippo-controlpanel-options {
+  margin-top: 15px;
+  padding-bottom: 15px;
+}
+
+.hippo-controlpanel-options li {
+  list-style-type: disc;
+  margin: 5px;
+  color: $dark-shade;
+  list-style-position: inside;
+  font-size: 12px;
+}
+
+.hippo-controlpanel-options .delete {
+  margin-top: 15px;
+}
+
+.hippo-controlpanel-options li a {
+  font-size: 12px;
+  color: $primary
+}
+
+.hippo-controlpanel-options li a:hover {
+  text-decoration: underline;
+  font-size: 12px;
+  color: $primary
+}
+
+.hippo-root .hippo-controlpanel-actions a {
+  padding: 6px;
+  padding-left: 22px;
+  display: block;
+  float: left;
+  border: 1px solid $dark-shade;
+  background-color: $lightest-shade;
+  font-weight: bold;
+}
+
+.hippo-root .hippo-controlpanel-actions a:hover {
+  text-decoration: underline;
+  cursor: pointer
+}
+
+.hippo-controlpanel-section-title {
+  font-size: 14px;
+}
+
+.hippo-controlpanel-table-default {
+}
+
+.groovy-basic-shell {
+  background-color: $white;
+  height: 320px;
+  width: 720px;
+  position: relative !important;
+}
+
+.hidden_field {
+  visibility: hidden;
+}
+
+.search-input {
+  width: auto !important;
+  font-size: 12px;
+  color: $dark-shade;
+}
+
+.updater-editor-plugin {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-flow: row;
+  overflow: hidden;
+
+  > * {
+    display: flex;
+    flex-flow: column;
+  }
+
+  .updater-left {
+    border-right: 1px solid $dark-gray;
+    overflow: auto;
+    resize: horizontal;
+    width: 200px;
+
+    .updater-tree {
+      border-top: 1px solid $dark-gray;
+
+      padding: 4px 0 0 0;
+      flex: 0;
+
+      > div.hippo-tree > div.wicket-tree {
+        .row {
+          padding-left: 5px;
+        }
+        .row-selected {
+          background: $primary;
+        }
+      }
+    }
+  }
+
+  .updater-left-top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 auto;
+
+    > input {
+      flex: 1 1 auto;
+      margin: 6px 8px;
+    }
+  }
+
+  .updater-right-top {
+    padding: 8px;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  > .updater-right {
+    width: 100%;
+    
+    .updater-details {
+      height: calc(100% - 32px);
+
+      display: flex;
+      overflow-y: auto;
+
+      flex: 1 0 auto;
+      padding: 0 8px 8px 8px;
+
+      form {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+
+        > * {
+          width: 100%;
+          min-width: 100%;
+          max-width: 100%;
+        }
+
+        .hippo-modal-feedback {
+          flex: 0 0 auto;
+          padding-bottom: 4px;
+        }
+
+        .toolbar {
+          flex: 0 0 auto;
+          padding-bottom: 8px;
+        }
+
+        .labelcell {
+          width: 125px;
+          overflow: hidden;
+          white-space: nowrap;
+          vertical-align: top;
+          padding-top: 5px;
+        }
+
+        .script-edit-link, .log-title {
+          flex: 0 0 auto;
+          padding: 8px 0 2px 0;
+        }
+
+        .hippo-modal-feedback {
+          margin: 0;
+          overflow: auto;
+          .feedbackPanel {
+            margin: 0;
+          }
+        }
+
+        .updater-editor-parameters {
+          flex: 0 0 auto;
+
+          input[type=text], textarea {
+            box-sizing: border-box;
+            width: 100%;
+            border: 1px solid $light-gray;
+            padding: 4px;
+            margin: 0 0 4px 0;
+          }
+
+          textarea {
+            resize: vertical;
+          }
+
+          textarea[name="radios:description:textarea"] {
+            height: 40px;
+            max-height: 200px;
+          }
+
+          textarea[name="radios:parameters:textarea"] {
+            height: 40px;
+            max-height: 200px;
+          }
+        }
+
+        .updater-editor-script {
+          flex: 1 1 auto;
+
+          max-width: 100px;
+          overflow: hidden;
+
+          border: 0;
+
+          &.updater-editor-script-visible:not(:last-child) {
+            flex-shrink: 0;
+          }
+
+          .CodeMirror .updater-editor {
+            visibility: hidden;
+
+            &.updater-editor-visible {
+              border: 1px solid $light-gray;
+              visibility: visible;
+              line-height: normal;
+            }
+          }
+        }
+
+        .updater-feedback {
+          flex: 1 1 auto;
+          box-sizing: border-box;
+
+          border: 1px solid $light-gray;
+          padding: 4px;
+
+          max-width: 100px;
+          overflow: auto;
+        }
+      }
+
+      pre {
+        overflow: hidden;
+      }
+    }
+  }
+}
