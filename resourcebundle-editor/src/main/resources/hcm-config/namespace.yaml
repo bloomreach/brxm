@@ -1,0 +1,70 @@
+definitions:
+  config:
+    /hippo:namespaces/resourcebundle:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      /resourcebundle:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:document', 'hippostd:relaxed']
+            hipposysedit:uri: http://www.hippoecm.org/hst/resourcebundle/nt/2.1
+            /id:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: resourcebundle:id
+              hipposysedit:primary: false
+              hipposysedit:type: String
+              hipposysedit:validators: [non-empty, required]
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: resourcebundle:resourcebundle
+            jcr:mixinTypes: ['mix:referenceable']
+            hippostd:holder: holder
+            hippostd:state: draft
+            hippostdpubwf:createdBy: ''
+            hippostdpubwf:creationDate: 2013-05-21T16:16:43.622+02:00
+            hippostdpubwf:lastModificationDate: 2013-05-21T16:16:43.622+02:00
+            hippostdpubwf:lastModifiedBy: ''
+            resourcebundle:id: ''
+            resourcebundle:keys: []
+            resourcebundle:messages: []
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [wicket.model, model.compareTo, engine, validator.id]
+            frontend:services: [wicket.id, validator.id]
+            type: resourcebundle:resourcebundle
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+            /id:
+              jcr:primaryType: frontend:plugin
+              caption: ID
+              field: id
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              wicket.id: ${cluster.id}.field
+              /cluster.options:
+                jcr:primaryType: frontend:pluginconfig
+            /resourcebundleplugin:
+              jcr:primaryType: frontend:plugin
+              browser.id: service.browse
+              caption: HST Resource Bundle Editor Plugin
+              engine: ${engine}
+              mode: ${mode}
+              plugin.class: org.onehippo.cms7.resourcebundle.ResourceBundlePlugin
+              template.size: ''
+              wicket.id: ${cluster.id}.field
+              wicket.model: ${wicket.model}
