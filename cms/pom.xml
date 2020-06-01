@@ -21,6 +21,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>29.16-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
@@ -132,12 +133,6 @@
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
 
   </properties>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-cms</url>
-  </scm>
 
   <build>
     <pluginManagement>
