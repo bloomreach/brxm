@@ -1,0 +1,20 @@
+{
+  "hippo:templates":   {
+    "en":     {
+      "new-banner-folder": "new banner folder",
+      "new-banner-document": "new banner document"
+    },
+    "nl":     {
+      "new-banner-folder": "nieuwe banner map",
+      "new-banner-document": "nieuwe banner"
+    },
+    "de":     {
+      "new-banner-folder": "Neuer Banner-Ordner",
+      "new-banner-document": "Neues Banner"
+    },
+    "fr":     {
+      "new-banner-folder": "nouveau dossier bannière",
+      "new-banner-document": "nouvelle bannière"
+    }
+  }
+}

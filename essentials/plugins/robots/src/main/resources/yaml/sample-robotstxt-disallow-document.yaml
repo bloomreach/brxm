@@ -1,0 +1,16 @@
+/content/documents/administration/robots-disallow:
+  jcr:primaryType: hippo:handle
+  jcr:mixinTypes: ['mix:referenceable']
+  /robots-disallow:
+    jcr:primaryType: robotstxt:robotstxt
+    jcr:mixinTypes: ['mix:referenceable', 'mix:versionable']
+    hippo:availability: [live, preview]
+    hippostd:state: published
+    hippostdpubwf:createdBy: admin
+    hippostdpubwf:creationDate: 2020-03-20T00:00:00.000+02:00
+    hippostdpubwf:lastModificationDate: 2020-03-20T00:00:00.000+02:00
+    hippostdpubwf:lastModifiedBy: admin
+    /robotstxt:section:
+      jcr:primaryType: robotstxt:section
+      robotstxt:disallow: [/]
+      robotstxt:useragent: '*'

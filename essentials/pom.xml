@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-release</artifactId>
+    <version>14.3.0-SNAPSHOT</version>
+  </parent>
+
+  <name>Hippo Essentials</name>
+  <description>Hippo Essentials</description>
+  <artifactId>hippo-essentials</artifactId>
+  <version>14.3.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <notice.project.name>Hippo Essentials</notice.project.name>
+    <essentialsBuildNumber>${project.version}</essentialsBuildNumber>
+
+    <!--***START temporary override of versions*** -->
+    <!-- ***END temporary override of versions*** -->
+
+    <jsp-api.version>2.2</jsp-api.version>
+    <commons-lang.version>2.6</commons-lang.version>
+    <commons-lang3.version>3.8.1</commons-lang3.version>
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
+    <dom4j.version>2.1.3</dom4j.version>
+    <junit.version>4.12</junit.version>
+    <filesync.override>false</filesync.override>
+    <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
+
+    <swagger.version>2.0.10</swagger.version>
+
+    <maven.plugin.jacoco.version>0.8.1</maven.plugin.jacoco.version>
+    <!-- Tells Sonar to run the unit tests -->
+    <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
+    <!-- Tells Sonar to use JaCoCo as the code coverage tool -->
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.jacoco.reportPath>${basedir}/target/target/jacoco.exec</sonar.jacoco.reportPath>
+
+  </properties>
+  <scm>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-essentials.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-essentials.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-essentials</url>
+  </scm>
+
+  <modules>
+    <module>plugin-sdk</module>
+    <module>plugins</module>
+    <module>dashboard-dependencies</module>
+    <module>dashboard</module>
+  </modules>
+
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <!-- other predefined compile scope versioned dependencies -->
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>${freemarker.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.ws.rs</groupId>
+        <artifactId>javax.ws.rs-api</artifactId>
+        <version>${jaxrs.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>${spring.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <pluginManagement>
+      <plugins>
+        <!-- redefine again default Hippo LICENSE and NOTICE file handling configuration like as defined
+             in root cms7-project pom but is 'nullified' again in parent cms7-release pom. -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>process</goal>
+              </goals>
+              <configuration>
+                <resourceBundles>
+                  <resourceBundle>org.onehippo.cms7:hippo-cms7-legal-resources:1</resourceBundle>
+                </resourceBundles>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${maven.plugin.jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>jacoco-initialize</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <excludes>
+                <exclude>org.hippoecm.*</exclude>
+              </excludes>
+              <destFile>${basedir}/target/jacoco.exec</destFile>
+            </configuration>
+          </execution>
+          <execution>
+            <id>jacoco-site</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <addDefaultLicenseMatchers>false</addDefaultLicenseMatchers>
+              <excludeSubProjects>false</excludeSubProjects>
+              <licenses>
+                <license implementation="org.apache.rat.analysis.license.AppliedApacheSoftwareLicense20">
+                  <copyrightOwner>Hippo B\.V\. \(http://www\.onehippo\.com\)</copyrightOwner>
+                </license>
+              </licenses>
+              <excludes>
+                <!-- no license headers needed for these files -->
+                <exclude>**/*.cnd</exclude>
+                <exclude>**/*.json</exclude>
+                <exclude>**/*.yaml</exclude>
+                <exclude>**/*.log</exclude>
+                <exclude>**/*.patch</exclude>
+                <exclude>**/*.properties</exclude>
+                <exclude>**/MANIFEST.MF</exclude>
+                <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
+                <!-- exclude IntelliJ module files of sub-projects -->
+                <exclude>**/*.iml</exclude>
+                <!-- exclude IntelliJ Atlassian plugin file -->
+                <exclude>**/atlassian-ide-plugin.xml</exclude>
+                <!-- essentials specific -->
+                <exclude>VERSIONS</exclude>
+                <exclude>dashboard/*.txt</exclude>
+                <exclude>dashboard/node_modules/**</exclude>
+                <exclude>dashboard/src/main/webapp/js/lib/**</exclude>
+                <!-- Swagger UI -->
+                <exclude>dashboard/src/main/webapp/docs/rest-api/**</exclude>
+                <exclude>archetype/**</exclude>
+                <exclude>**/*.md</exclude>
+                <exclude>*/.idea/**</exclude>
+                <exclude>*/.npmrc/**</exclude>
+                <exclude>**/*.svg</exclude>
+                <exclude>**/*.woff*</exclude>
+                <exclude>**/*.ttf</exclude>
+                <exclude>jar-dependencies.txt</exclude>
+                <exclude>**/src/test/resources/**</exclude>
+                <exclude>plugins/skeleton-package/src/main/resources/instructions/bootstrap/**</exclude>
+                <exclude>plugins/skeleton-package/src/main/resources/instructions/js/bootstrap*.js</exclude>
+                <exclude>plugins/skeleton-package/src/main/resources/instructions/js/jquery*.js</exclude>
+                <exclude>plugins/**/*.ftl</exclude>
+                <exclude>plugins/**/*.jsp</exclude>
+                <exclude>plugins/urlrewriter/src/main/resources/instructions/xml/webxml/**</exclude>
+                <exclude>plugins/rest-services/src/main/resources/BeanNameResource.txt</exclude>
+                <exclude>plugins/rest-services/src/main/resources/spring-plain-rest-api.xml</exclude>
+                <exclude>plugins/commerce-search-box/src/main/resources/css/jquery.typeahead.min.css</exclude>
+                <exclude>plugins/commerce-search-box/src/main/resources/js/jquery.typeahead.min.js</exclude>
+                <exclude>plugins/urlrewriter/src/main/resources/instructions/xml/content/sample-rule.xml</exclude>
+                <exclude>plugins/openstreetmap/src/main/resources/webfiles/leaflet.js</exclude>
+                <exclude>plugins/openstreetmap/src/main/resources/webfiles/leaflet.js.map</exclude>
+                <exclude>plugins/openstreetmap/src/main/resources/webfiles/leaflet.css</exclude>
+                <exclude>**/target/**</exclude>
+                <exclude>**/archetype-resources/**</exclude>
+                <exclude>**/archetype-resources/**</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
