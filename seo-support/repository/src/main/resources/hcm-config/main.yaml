@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    seosupport:
+      uri: http://forge.onehippo.org/seosupport/nt/1.0
+      cnd: seosupport.cnd
