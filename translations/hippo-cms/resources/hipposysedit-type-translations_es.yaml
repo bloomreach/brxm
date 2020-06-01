@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposysedit:templatetype:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Plantilla

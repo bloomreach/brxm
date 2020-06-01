@@ -1,0 +1,172 @@
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        sortField.hint: Den technischen Namen verwenden
+        postScope: Standort Blog-Posts
+        sortField: Sortierfeld
+        pageSize: Anzahl der anzuzeigenden Posts
+        group.blogauthorposts: Autor Blogs
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsDocumentComponentInfo
+    : /de:
+        document: Dokument
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsGoogleMapsComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        mapType#TERRAIN: Geländeinformationen
+        width.hint: In Pixeln
+        address: Standort/Adresse
+        apiKey: Google Maps API Key
+        mapType.hint: Art anzuzeigenden Karte
+        latitude: Breitengrad
+        mapType: Kartentyp
+        address.hint: Der Ort kann über eine Adresse oder mit Längen- und Breitengrad
+          angegeben werden.
+        zoomFactor: Zoom-Faktor
+        map.options: Landkartenoptionen
+        height.hint: In Pixeln
+        mapType#SATELLITE: Google-Earth-Satellit
+        mapType#ROADMAP: Straßenkarte
+        mapType#HYBRID: Kombination normal und Satellit
+        width: Breite
+        location: Standort
+        longitude: Längengrad
+        height: Höhe
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        group.documents: Karussell-Dokumente
+        interval.hint: In Millisekunden
+        group.settings: Karrussel-Einstellungen
+        document4: Karussell-Element 4
+        document3: Karussell-Element 3
+        carouselWidth.hint: In Pixeln
+        document6: Karussell-Element 6
+        document5: Karussell-Element 5
+        document2: Karussell-Element 2
+        carouselHeight.hint: In Pixeln
+        document1: Karussell-Element 1
+        cycle: Karussell ständig durchlaufen
+        pause: Karussell bei Mausaktivierung anhalten
+        carouselWidth: Karussell-Breite
+        carouselHeight: Karussell-Höhe
+        carouselBackgroundColor: Karussell-Hintergrundfarbe
+        showNavigation: Karussell-Navigation anzeigen
+        interval: Karussellintervall
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSearchComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        documentTypes: Dokumenttypen
+        showPagination: Seitennummerierung anzeigen
+        documentTypes.hint: Die technischen Namen verwenden, durch Komma getrennt
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        facetPath.hint: Wenn dieser Eintrag leer ist, wird der Inhaltspfad verwendet.
+        facetPath: Facettenpfad (optional)
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        hidePastEvents: Vergangene Events ausblenden
+        documentDateField: Feld mit Dokumentdatum (zum Ausblenden)
+        documentTypes: Ereignisdokumenttypen
+        documentDateField.hint: Den technischen Namen verwenden
+        documentTypes.hint: Die technischen Namen verwenden, durch Komma getrennt
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsMenuComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        menu: Menübezeichnung
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsRepositoryMenuComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        folderLinks: Ordner sind auch Links
+        depth: Tiefe
+        root: Stammverzeichnis
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSortable
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        sortField.hint: Den technischen Namen verwenden
+        sorting.group: Sortieren
+        sortOrder#desc: Absteigend
+        sortOrder: Sortierreihenfolge
+        sortField: Sortierfeld
+        sortOrder#asc: Aufsteigend
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsVideoComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        video.group: Video
+        width: Breite
+        height: Höhe
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsPageable
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        pagination.group: Nummerierung
+        pageSize: Seitenformat
+        showPagination: Seitennummerierung anzeigen
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListPickerComponentInfo
+    : /de:
+        document8: Dokument-Element 8
+        document7: Dokument-Element 7
+        document9: Dokument-Element 9
+        document4: Dokument-Element 4
+        document3: Dokument-Element 3
+        document6: Dokument-Element 6
+        document10: Dokument-Element 10
+        document5: Dokument-Element 5
+        jcr:primaryType: hipposys:resourcebundle
+        document2: Dokument-Element 2
+        document1: Dokument-Element 1
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        path: Dokumentpfad
+        path.hint: Der Pfad im Datenspeicher
+        documentTypes: Dokumenttypen
+        list.group: Inhaltsauswahl
+        documentTypes.hint: Die technischen Namen verwenden, durch Komma getrennt
+        includeSubtypes: Dokumentuntertypen einschließen
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsNewsComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        hideFutureItems: Zukünftige Dokumente ausblenden
+        documentDateField: Feld mit Dokumentdatum (zum Ausblenden)
+        documentTypes: Nachrichten-Dokumenttypen
+        documentDateField.hint: Den technischen Namen verwenden
+        documentTypes.hint: Die technischen Namen verwenden, durch Komma getrennt
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsImageComponentInfo
+    : /de:
+        document: Bild
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsOpenStreetMapComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        width.hint: In Pixeln
+        latitude: Breite
+        mapOverlay.hint: Dropdownwerte in Dokumenten bearbeiten > Verwaltung > Stadtplan
+          öffnen
+        address.hint: Die Adresse hat Vorrang vor Längengrad / Breitengrad.
+        zoomFactor: Vergrößerungsfaktor
+        latitude.hint: Wenn dieser Eintrag leer bleibt, wird der Standardlängengrad/-breitengrad
+          verwendet
+        height: Höhe
+        longitude: Länge
+        address: Adresse
+        mapType.hint: Dropdownwerte in Dokumenten bearbeiten > Verwaltung > Stadtplan
+          öffnen
+        map.canvas: Map Canvas
+        markerCustomText: Markierung benutzerdefinierter Text
+        mapType: Kartentyp
+        map.size: Kartengröße
+        map.options: Kartenoptionen
+        height.hint: In Pixeln. Mindestens 250 Pixel.
+        showMarker#no: Keine Markierung
+        showMarker: Markierung anzeigen
+        mapOverlay: Kartenüberlagerung
+        width: Breite
+        showMarker#withoutText: Ohne Text
+        map.focus: Kartenfokus
+        location: Standortinformationen
+        showMarker#withCustomText: Breite benutzerdefinierter Text
+        showMarker#withAddress: Breite Adresse

@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "reorder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "reorder-message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

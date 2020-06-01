@@ -1,0 +1,89 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "accept-request" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "state-request-scheduledpublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "state-request-rejected" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "accept-message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "reject-request-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rejected-request-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "reject-request" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "state-unknown" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "state-request-delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "state-scheduledpublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "cancel-request" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "state-scheduleddepublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "state-request-scheduleddepublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "state-request-publish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "state-request-depublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "drop-request" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rejected-request-question" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rejected-request-unavailable" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "reject-message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "reject-request-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rejected-request-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

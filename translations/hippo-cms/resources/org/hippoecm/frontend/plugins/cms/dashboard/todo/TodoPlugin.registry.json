@@ -1,0 +1,37 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "scheduledpublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "depublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rejected" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "publish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "scheduleddepublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "collection" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "scheduledpublishdepublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

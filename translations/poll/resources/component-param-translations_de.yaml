@@ -1,0 +1,13 @@
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/poll/component/PollDocumentComponentInfo
+    : /de:
+        poll-docsPath: Umfragedokument
+        jcr:primaryType: hipposys:resourcebundle
+    /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/poll/component/PollComponentInfo:
+      /de:
+        poll-pollCompoundName: Name des Umfrage-Kompositums
+        poll-dataPath: Pfad zum Speichern der Umfragedaten
+        poll-docsPath: Pfad zum Umfragedokument für die Inhaltswurzel
+        jcr:primaryType: hipposys:resourcebundle
+        poll-docsClass: Umfragedokumentenklasse

@@ -1,0 +1,25 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "documents_suggestions" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "suggestions" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "document_view" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "browse" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "refreshlink" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

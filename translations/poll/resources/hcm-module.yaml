@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-plugin-poll-translations
+    after: hippo-plugin-poll
+module: hippo-plugin-poll-l10n-${locale}

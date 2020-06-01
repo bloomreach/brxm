@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:workflows:
+      /es:
+        committype: Tipo de acciones
+        admin: Administración
+        jcr:primaryType: hipposys:resourcebundle

@@ -1,0 +1,25 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "invalid.taxonomy.category.key" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "invalid.taxonomy.key" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "edit" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "no-items" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "canonical" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

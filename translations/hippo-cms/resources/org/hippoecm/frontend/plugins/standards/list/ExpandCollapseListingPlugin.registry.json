@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "default-column-nodename" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

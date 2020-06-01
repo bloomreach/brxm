@@ -1,0 +1,41 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "button-add-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.frontend.plugins.gallery.model.GalleryException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "button-upload-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "file-type-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "button-close-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "no-file-uploaded-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.apache.commons.fileupload.FileUploadException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.frontend.plugins.gallery.model.SvgScriptGalleryException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

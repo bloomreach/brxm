@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "depublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

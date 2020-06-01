@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        required#hippogallerypicker-imagelink: Afbeelding selecteren
+        image-references: Selecteer een afbeelding

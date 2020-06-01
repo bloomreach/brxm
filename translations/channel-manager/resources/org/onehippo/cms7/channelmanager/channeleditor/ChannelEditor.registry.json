@@ -1,0 +1,89 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "properties-form-create-new-document-link-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-form-load-exception-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-form-button-add-variant" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-form-create-new-document-window-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-window-button-close" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-form-create-new-document-message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "component-variants-default" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-form-create-new-document-field-name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-form-create-new-document-button-create" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-form-create-new-document-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-window-button-delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-form-load-exception-response" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "component-variants-plus" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-window-button-save" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-form-create-new-document-field-location" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-window-default-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-form-load-exception-field-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-form-button-delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-form-create-new-document-button-cancel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-form-no-properties" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "properties-window-button-done" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
