@@ -1,0 +1,26 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/selection:DynamicDropdown:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Dynamische Dropdown
+    /hippo:configuration/hippo:translations/hippo:types/selection:listitem:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Waardelijst item
+    /hippo:configuration/hippo:translations/hippo:types/selection:StaticDropdown:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Statische Dropdown
+    /hippo:configuration/hippo:translations/hippo:types/selection:RadioGroup:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Keuzerondjes
+    /hippo:configuration/hippo:translations/hippo:types/selection:valuelist:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Waardelijst
+    /hippo:configuration/hippo:translations/hippo:types/selection:BooleanRadioGroup:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Keuzerondjes ja/nee

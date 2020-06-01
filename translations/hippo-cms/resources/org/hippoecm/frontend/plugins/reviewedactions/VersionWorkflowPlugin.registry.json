@@ -1,0 +1,29 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "select" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "restore" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "created" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "created-for-branch-restore-to-document" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "restore-to" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "created-for-branch" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

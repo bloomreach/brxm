@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "labels.translate" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

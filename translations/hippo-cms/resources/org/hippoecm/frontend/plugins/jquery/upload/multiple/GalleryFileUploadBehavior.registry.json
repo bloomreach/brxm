@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "max.number.of.files.exceeded.widget" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "max.filesize.message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "invalid.extension.message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

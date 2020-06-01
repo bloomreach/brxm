@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/resourcebundle:resourcebundle:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Resource Bundle

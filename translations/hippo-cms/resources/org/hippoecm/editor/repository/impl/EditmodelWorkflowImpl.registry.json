@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "edit" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "commit" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "revert" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "copy" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

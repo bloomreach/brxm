@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "success" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

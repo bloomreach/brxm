@@ -1,0 +1,49 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "url-name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "creationdate" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "document-name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "publication-header" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "lastmodifiedby" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "document-info" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "document-names" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "lastmodificationdate" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "close" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "created-by" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "publicationdate" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

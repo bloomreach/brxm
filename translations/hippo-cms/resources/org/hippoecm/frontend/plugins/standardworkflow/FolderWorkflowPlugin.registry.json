@@ -1,0 +1,57 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "delete-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rename-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "url-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete-message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "name-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete-message-error" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "document-type" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rename-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "folder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "add-category" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete-message-extended" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "reorder-folder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete-message-denied" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
