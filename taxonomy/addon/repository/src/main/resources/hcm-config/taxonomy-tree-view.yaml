@@ -1,0 +1,39 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-tree-views/taxonomies:
+      jcr:primaryType: frontend:plugincluster
+      frontend:references: [browser.id, editor.id]
+      frontend:services: [wicket.id, model.folder]
+      model.folder: ${cluster.id}.model.folder
+      /sectionPlugin:
+        jcr:primaryType: frontend:plugin
+        extension.tree: ${cluster.id}.tree
+        model.folder: ${model.folder}
+        model.folder.root: /content/taxonomies
+        plugin.class: org.hippoecm.frontend.plugins.cms.browse.section.BrowsingSectionPlugin
+        title: section-taxonomies
+        wicket.extensions: extension.tree
+        wicket.id: ${wicket.id}
+      /tree:
+        jcr:primaryType: frontend:plugin
+        bind.to.layout.unit: 'true'
+        nodename.max.length: 23
+        path: /content/taxonomies
+        plugin.class: org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin
+        register.context.menu: 'true'
+        rootless: 'false'
+        use.width.from.classname: 'false'
+        wicket.id: ${cluster.id}.tree
+        wicket.model: ${model.folder}
+        /module.workflow:
+          jcr:primaryType: frontend:plugin
+          browser.id: ${browser.id}
+          editor.id: ${editor.id}
+          plugin.class: org.hippoecm.addon.workflow.ContextWorkflowPlugin
+          workflow.categories: taxonomies
+        /filters:
+          jcr:primaryType: frontend:pluginconfig
+          /hideHandleType:
+            jcr:primaryType: frontend:pluginconfig
+            child: hippo:handle
+            display: false

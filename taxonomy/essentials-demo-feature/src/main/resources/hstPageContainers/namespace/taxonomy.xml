@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="taxonomy">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:containercomponentfolder</sv:value>
+  </sv:property>
+  <sv:node sv:name="main">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:containercomponent</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>8a10a054-24c1-4674-ad1d-8c6a8608c3ff</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:label" sv:type="String">
+      <sv:value>Taxonomy</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:lastmodified" sv:type="Date">
+      <sv:value>2018-10-25T12:36:47.233+02:00</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:xtype" sv:type="String">
+      <sv:value>hst.vbox</sv:value>
+    </sv:property>
+    <sv:node sv:name="taxonomyCategory">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:containeritemcomponent</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>a5d6ac03-c9aa-4fd4-b8ea-3f65b7843a7c</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentclassname" sv:type="String">
+        <sv:value>{{componentsPackage}}.TaxonomyCategoryResult</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:iconpath" sv:type="String">
+        <sv:value>images/essentials/catalog-component-icons/news-list.png</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:label" sv:type="String">
+        <sv:value>Taxonomy category</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+        <sv:value>path</sv:value>
+        <sv:value>root</sv:value>
+        <sv:value>locale</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+        <sv:value>our-words</sv:value>
+        <sv:value>exampletaxonomy</sv:value>
+        <sv:value>nl</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>taxonomy-category</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:xtype" sv:type="String">
+        <sv:value>hst.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="taxonomyCategory1">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:containeritemcomponent</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>98967216-c853-4430-9c30-f90d50b299a9</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentclassname" sv:type="String">
+        <sv:value>{{componentsPackage}}.TaxonomyCategoryResult</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:iconpath" sv:type="String">
+        <sv:value>images/essentials/catalog-component-icons/news-list.png</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:label" sv:type="String">
+        <sv:value>Taxonomy category</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+        <sv:value>path</sv:value>
+        <sv:value>root</sv:value>
+        <sv:value>locale</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+        <sv:value>our-words</sv:value>
+        <sv:value>exampletaxonomy</sv:value>
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>taxonomy-category</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:xtype" sv:type="String">
+        <sv:value>hst.item</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>
