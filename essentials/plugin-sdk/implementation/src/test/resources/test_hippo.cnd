@@ -1,0 +1,103 @@
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+
+[rep:jarFile] mixin
+- rep:jarExpanded (date) mandatory copy
++ rep:jarContents (nt:base) = nt:folder mandatory copy
+
+// DATA TYPES: MARKERS
+
+[hippo:derived] mixin
+- hippo:compute (Reference)
+  // Indicates the method that is used to compute the derived properties
+  // defined by any subtypes that extend this type.
+  // should point to a node of type hippo:deriveddefinition
+- hippo:related (Reference) multiple
+  // A multivalue property that links to all the nodes that where used to
+  // compute derived proper
+
+// DATA TYPES: DOCUMENTS
+
+[hippo:request] > nt:base
+
+[hippo:document] > nt:base
+- hippo:availability (string) multiple ignore
+- hippo:paths (string) multiple
+
+[hippo:handle] > nt:base
+- hippo:discriminator (string) multiple
++ * (hippo:document) = hippo:document multiple version
++ hippo:request (hippo:request) multiple ignore
+
+// DATA TYPES: VIRTUAL LAYER
+
+[hippo:facetresult] orderable
+- hippo:count (long)
++ * multiple ignore
+
+[hippo:facetbasesearch]
+- hippo:queryname (string) mandatory
+- hippo:count (long)
++ * (hippo:facetbasesearch) multiple ignore
+
+[hippo:facetsearch] > hippo:facetbasesearch
+- hippo:docbase (string) mandatory
+- hippo:facets (string) mandatory multiple
++ hippo:resultset (hippo:facetresult) = hippo:facetresult
+
+[hippo:facetselect] > nt:base
+- hippo:docbase (string) mandatory
+- hippo:facets (string) mandatory multiple
+- hippo:values (string) mandatory multiple
+- hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single', 'prefer', 'prefer-single'
++ * multiple ignore
+
+[hippo:mirror]
+- hippo:docbase (string) mandatory
++ * multiple ignore
+
+
+// DATA TYPES: RESOURCES
+
+[hippo:resource]
+- jcr:encoding (string)
+- jcr:mimeType (string) mandatory
+- jcr:data (binary) primary mandatory
+- jcr:lastModified (date) mandatory ignore
+- hippo:filename (string)
+- hippo:text (binary)
+
+[hippo:query] > nt:query
+
+[hippo:compound] abstract
+
+[hippo:container] mixin
++ * (hippo:mirror) multiple
++ * (hippo:facetselect) multiple
++ * (hippo:facetsearch) multiple
++ * (hippo:resource) multiple
++ * (hippo:query) multiple
++ * (hippo:compound) multiple
+
+
+// DATA TYPES: TRANSLATION
+
+[hippo:translation]
+- hippo:language (string) mandatory
+- hippo:message (string) mandatory
+- hippo:property (string)
+- hippo:value (string)
+- hippo:class (string)
+
+[hippo:translated] mixin
++ hippo:translation (hippo:translation) multiple
+
+[hippo:deleted] > hippo:document, mix:versionable
+- hippo:deletedDate (date)
+- hippo:deletedBy (string)
+
+// obsolete
+[hippo:skipindex] mixin

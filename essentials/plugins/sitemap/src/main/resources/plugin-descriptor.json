@@ -1,0 +1,28 @@
+{
+  "id": "sitemapPlugin",
+  "name": "Sitemap",
+  "icon": "/essentials/feature/images/sitemap-plugin-icon.svg",
+  "introduction": "With the Sitemap feature, you can generate an XML feed based on the sitemap protocol. This protocol is used by search engines for indexing your website.",
+  "description": "This feature wraps the 'Sitemap' Standard Plugin.",
+  "documentationLink": "https://documentation.bloomreach.com/library/concepts/plugins/sitemap/about.html",
+  "installWithParameters": false,
+  "packageFile": "/META-INF/sitemap_plugin_instructions.xml",
+  "type": "feature",
+  "vendor" : {
+    "name" : "Bloomreach",
+    "url" : "https://www.bloomreach.com"
+  },
+  "categories": {
+    "application": [
+      "search",
+      "meta-data",
+      "SEO"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  }
+}
