@@ -1,0 +1,86 @@
+definitions:
+  config:
+    /hippo:namespaces/hippostd/html:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['hipposysedit:remodel']
+          hipposysedit:cascadevalidation: false
+          hipposysedit:uri: http://www.onehippo.org/jcr/hippostd/nt/2.0
+          /content:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: true
+            hipposysedit:path: hippostd:content
+            hipposysedit:primary: true
+            hipposysedit:type: String
+            hipposysedit:validators: [html]
+          /links:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:path: '*'
+            hipposysedit:type: hippo:facetselect
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          ckeditor.config.appended.json: ''
+          ckeditor.config.overlayed.json: ''
+          excluded.image.variants: []
+          frontend:properties: [mode, ckeditor.config.appended.json, ckeditor.config.overlayed.json,
+            htmlprocessor.id, linkpicker.cluster.name, linkpicker.nodetypes, linkpicker.base.uuid,
+            linkpicker.language.context.aware, linkpicker.last.visited.key, linkpicker.last.visited.enabled,
+            linkpicker.last.visited.nodetypes, linkpicker.open.in.new.window.enabled,
+            imagepicker.cluster.name, imagepicker.nodetypes, imagepicker.base.uuid,
+            imagepicker.last.visited.key, imagepicker.last.visited.enabled, imagepicker.last.visited.nodetypes,
+            imagepicker.preferred.image.variant, included.image.variants, excluded.image.variants]
+          frontend:references: [wicket.model, model.compareTo, engine]
+          frontend:services: [wicket.id]
+          htmlprocessor.id: richtext
+          imagepicker.cluster.name: cms-pickers/images
+          imagepicker.last.visited.key: ckeditor-imagepicker
+          imagepicker.last.visited.nodetypes: ['hippostd:gallery']
+          imagepicker.nodetypes: []
+          imagepicker.preferred.image.variant: hippogallery:original
+          included.image.variants: []
+          linkpicker.cluster.name: cms-pickers/documents
+          linkpicker.last.visited.key: ckeditor-linkpicker
+          linkpicker.last.visited.nodetypes: ['hippostd:folder']
+          linkpicker.nodetypes: []
+          linkpicker.open.in.new.window.enabled: true
+          /root:
+            jcr:primaryType: frontend:plugin
+            browser.id: service.browse
+            ckeditor.config.appended.json: ${ckeditor.config.appended.json}
+            ckeditor.config.overlayed.json: ${ckeditor.config.overlayed.json}
+            diffservice.id: html.diffservice.id
+            htmlprocessor.id: ${htmlprocessor.id}
+            plugin.class: org.hippoecm.frontend.plugins.ckeditor.CKEditorNodePlugin
+            /imagepicker:
+              jcr:primaryType: frontend:pluginconfig
+              base.uuid: ${imagepicker.base.uuid}
+              cluster.name: ${imagepicker.cluster.name}
+              excluded.image.variants: ${excluded.image.variants}
+              included.image.variants: ${included.image.variants}
+              last.visited.enabled: ${imagepicker.last.visited.enabled}
+              last.visited.key: ${imagepicker.last.visited.key}
+              last.visited.nodetypes: ${imagepicker.last.visited.nodetypes}
+              nodetypes: ${imagepicker.nodetypes}
+              preferred.image.variant: ${imagepicker.preferred.image.variant}
+            /linkpicker:
+              jcr:primaryType: frontend:pluginconfig
+              base.uuid: ${linkpicker.base.uuid}
+              cluster.name: ${linkpicker.cluster.name}
+              language.context.aware: ${linkpicker.language.context.aware}
+              last.visited.enabled: ${linkpicker.last.visited.enabled}
+              last.visited.key: ${linkpicker.last.visited.key}
+              last.visited.nodetypes: ${linkpicker.last.visited.nodetypes}
+              nodetypes: ${linkpicker.nodetypes}
+              open.in.new.window.enabled: ${linkpicker.open.in.new.window.enabled}
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: hippostd:html
+          hippostd:content: ''

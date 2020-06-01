@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/defaultEditorFactory:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.hippoecm.frontend.editor.impl.DefaultEditorFactoryPlugin

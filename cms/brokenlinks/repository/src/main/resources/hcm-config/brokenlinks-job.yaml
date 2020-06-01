@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/scheduler/hippo:moduleconfig/system/CheckBrokenLinks:
+      jcr:primaryType: hipposched:repositoryjob
+      hipposched:attributeNames: [connectionTimeout, nrHttpThreads, socketTimeout,
+        startPath, urlExcludes]
+      hipposched:attributeValues: ['10000', '10', '10000', /content/documents, '']
+      hipposched:enabled: false
+      hipposched:repositoryJobClass: org.onehippo.cms7.brokenlinks.BrokenLinksCheckingJob
+      /hipposched:triggers:
+        jcr:primaryType: hipposched:triggers
+        /nightly:
+          jcr:primaryType: hipposched:crontrigger
+          jcr:mixinTypes: ['hippo:lockable', 'mix:lockable']
+          hipposched:cronExpression: 0 0 2 * * ?
+          hippo:lockExpirationTime:
+            .meta:category: system
+          hipposched:nextFireTime:
+            .meta:category: system
+          jcr:lockOwner:
+            .meta:category: system
+          jcr:lockIsDeep:
+            .meta:category: system
+

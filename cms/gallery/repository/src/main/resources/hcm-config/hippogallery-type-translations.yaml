@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippogallery:exampleAssetSet:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: File
+    /hippo:configuration/hippo:translations/hippo:types/hippogallery:exampleImageSet:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Image
+    /hippo:configuration/hippo:translations/hippo:types/hippogallery:imageset:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        hippogallery:original: Original
+        hippogallery:thumbnail: Thumbnail
+        jcr:name: Image
+    /hippo:configuration/hippo:translations/hippo:types/hippogallery:image:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Image

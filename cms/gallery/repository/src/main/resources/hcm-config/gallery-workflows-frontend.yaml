@@ -1,0 +1,31 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/gallery:
+      /image-gallery:
+        jcr:primaryType:
+          operation: override
+          type: name
+          value: frontend:workflow
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          fileupload.maxItems: '25'
+          gallery.processor.id: service.gallery.processor
+          gallery.thumbnail.size: 60
+          option.label: add-image
+          option.text: add-image-label
+          plugin.class: org.hippoecm.frontend.plugins.gallery.GalleryWorkflowPlugin
+          validator.id: service.gallery.image.validation
+      /asset-gallery:
+        jcr:primaryType:
+          operation: override
+          type: name
+          value: frontend:workflow
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          fileupload.maxItems: '25'
+          gallery.processor.id: asset.gallery.processor
+          gallery.thumbnail.size: 60
+          option.label: add-asset
+          option.text: add-file-label
+          plugin.class: org.hippoecm.frontend.plugins.gallery.GalleryWorkflowPlugin
+          validator.id: service.gallery.asset.validation

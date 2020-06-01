@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/hippo-reports/broken-links-plugin:
+      jcr:primaryType: frontend:plugin
+      auto.expand.column: name
+      columns: [name, brokenlinksLinks, brokenlinksBrokenSince, brokenlinksStatus]
+      height: '400'
+      page.size: 10
+      paging: true
+      plugin.class: org.onehippo.cms7.reports.plugins.brokenlinkslist.BrokenLinksListPlugin
+      query: //element(*, brokenlinks:brokenlinks) order by @jcr:score descending
+      title.color: highlighted
+      title.size: large
+      wicket.id: service.reports.brokenlinks
+      width: '1'

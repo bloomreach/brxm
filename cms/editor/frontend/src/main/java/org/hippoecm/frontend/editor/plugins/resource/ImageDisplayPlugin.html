@@ -1,0 +1,49 @@
+<!--
+  * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  *
+  * Licensed under the Apache License, Version 2.0 (the  "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+<wicket:panel>
+    <div class="resource-values resource-properties">
+        <wicket:container wicket:id="fragment"/>
+    </div>
+</wicket:panel>
+
+<wicket:fragment wicket:id="embed">
+    <ul>
+        <li>
+            <label class="simple-editor-label"><wicket:message key="mimetype.label">Mime type: </wicket:message></label><span wicket:id="mimetype" class="simple-editor-value"></span>
+        </li>
+        <li>
+            <label class="simple-editor-label"><wicket:message key="filesize.label">File size: </wicket:message></label><span wicket:id="filesize" class="simple-editor-value"></span>
+        </li>
+        <li>
+            <a wicket:id="link" class="simple-editor-value"><span wicket:id="filename"></span></a>
+        </li>
+    </ul>
+</wicket:fragment>
+
+<wicket:fragment wicket:id="compare">
+    <table class="compare">
+        <tr>
+            <td class="compare-base"><div wicket:id="base" /></td>
+            <td class="compare-current"><div wicket:id="current" /></td>
+        </tr>
+    </table>
+</wicket:fragment>
+
+<wicket:fragment wicket:id="unknown">
+</wicket:fragment>
+
+</html>
