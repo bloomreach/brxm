@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /tags:
+      jcr:primaryType: hippofacnav:facetnavigation
+      hippo:docbase: ed307dfc-5774-4ac7-9feb-79b57e058bb2
+      hippofacnav:facets: ['hippostd:tags']
+      hippofacnav:limit: 100

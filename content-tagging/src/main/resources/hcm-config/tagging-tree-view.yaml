@@ -1,0 +1,22 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-tree-views/tagcloud:
+      jcr:primaryType: frontend:plugincluster
+      frontend:services: [wicket.id, model.folder]
+      model.folder: ${cluster.id}.model.folder
+      /sectionPlugin:
+        jcr:primaryType: frontend:plugin
+        extension.tree: ${cluster.id}.cloud
+        model.folder: ${model.folder}
+        model.folder.root: /
+        plugin.class: org.hippoecm.frontend.plugins.cms.browse.section.BrowsingSectionPlugin
+        title: section-tagcloud
+        wicket.extensions: extension.tree
+        wicket.id: ${wicket.id}
+      /browseTagcloud:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.onehippo.forge.ecmtagging.tagcloud.TagCloudPlugin
+        tags.index: tags
+        tags.limit: 25
+        wicket.id: ${cluster.id}.cloud
+        wicket.model: ${model.folder}
