@@ -1,0 +1,14 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite-test-many/hst:pages:
+      jcr:primaryType: hst:pages
+      /sitesoverview:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/general_threecolumnlayout
+          /content:
+            jcr:primaryType: hst:component
+            hst:componentclassname: org.hippoecm.hst.demo.components.SitesOverview
+            hst:template: sitesoverview
