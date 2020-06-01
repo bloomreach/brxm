@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Demo Project</title>
+  </properties>
+  <body>
+
+    <section name="Demo Project">
+
+      <subsection name="Introduction">
+
+        <p>
+          You can check out the <code>master</code> branch to build and run the demo project from the <strong>CRISP</strong> project itself:
+        </p>
+
+        <div class="brush: bash">
+          <source><![CDATA[
+$ git clone -b master https://code.onehippo.org/cms-community/hippo-addon-crisp.git
+$ cd hippo-addon-crisp
+$ cd demo
+$ mvn clean verify
+$ mvn -P cargo.run
+          ]]></source>
+        </div>
+
+      </subsection>
+
+      <subsection name="Testing in Content Delivery tier Application">
+
+        <ul>
+          <li>Visit http://localhost:8080/site/news/.</li>
+          <li>Click on any news article.</li>
+          <li>You will see all the product list with custom-generated URI links at the bottom of the page.</li>
+          <li>
+            The external product data was retrieved through <code>ResourceServiceBroker</code>.
+            See <code>site/src/main/java/org/onehippo/cms7/crisp/demo/components/NewsContentComponent.java</code>
+            and <code>bootstrap/webfiles/src/main/resources/site/freemarker/hstdefault/newspage-main.ftl</code>
+            for detail.
+          </li>
+        </ul>
+
+      </subsection>
+
+      <subsection name="Testing in Content Authoring tier Application">
+
+        <ul>
+          <li>Visit http://localhost:8080/cms/.</li>
+          <li>Select and edit an news document.</li>
+          <li>
+            Select 'Related Products' field and try to add some products through the pop up dialog
+            (which is part of External Document Picker plugin).
+          </li>
+          <li>
+            The external product data was retrieved through <code>ResourceServiceBroker</code>.
+            See <code>cms/src/main/java/org/onehippo/cms7/crisp/demo/cms/plugin/CommerceProductDataServiceFacade.java</code>
+            for detail.
+          </li>
+        </ul>
+
+      </subsection>
+
+      <subsection name="Testing an Example Web-Hook Invalidating Resource Data Cache">
+
+        <p>
+          By default, the <code>ResourceResolver</code> component for demo product catalogs data in the demo project
+          caches result data based on resource space name, operation name, relative resource path, path variables, etc.
+          for 1 minutes ("time-to-live").
+          So, for the same requests, it will return the cached data without having to invoke the backend REST service
+          again as long the the cached data was not expired in 1 minutes ("time-to-live").
+        </p>
+
+        <p>
+          You can clear all the cached data by invoking a "Web-Hook" URL like the following manually.
+        </p>
+
+        <div class="brush: bash">
+          <source><![CDATA[
+$ curl http://localhost:8080/site/examples/invalidate-cache.jsp \
+    -d "resource_space=demoProductCatalogs&secret=some_secret"
+          ]]></source>
+        </div>
+
+        <p>
+          If you invoke the "Web-Hook" page manually, then the specific resource data cache will be cleared
+          right away in this example.
+        </p>
+
+      </subsection>
+
+    </section>
+
+  </body>
+</document>
