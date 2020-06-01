@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /unittestcontent/gallery/picture.jpeg:
+      jcr:primaryType: hippo:handle
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: db02dde5-0098-4488-a72c-2a4fc6d51beb
+      /picture.jpeg:
+        jcr:primaryType: hippogallery:imageset
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 669f4436-9399-491e-b443-6060f20b6e06
+        /hippogallery:thumbnail:
+          jcr:primaryType: hippogallery:image
+          jcr:data:
+            type: binary
+            resource: /unittestcontent/gallery/picture.jpeg/picture_thumbnail.jpeg
+          jcr:lastModified: 2009-03-12T19:01:57.884+01:00
+          jcr:mimeType: image/jpeg
+        /hippogallery:original:
+          jcr:primaryType: hippogallery:image
+          jcr:data:
+            type: binary
+            resource: /unittestcontent/gallery/picture.jpeg/picture_original.jpeg
+          jcr:lastModified: 2009-03-12T19:01:57.884+01:00
+          jcr:mimeType: image/jpeg

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+    
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+  
+  <bean id="org.hippoecm.hst.core.linking.HstLinkProcessor" class="org.hippoecm.hst.core.linking.HstLinkProcessorChain" />
+  
+  <bean id="org.hippoecm.hst.core.request.HstSiteMapMatcher" class="org.hippoecm.hst.site.request.BasicHstSiteMapMatcher">
+    <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
+  </bean>
+
+  <bean id="hstModelMutex" class="java.lang.Object"/>
+
+  <bean id="hstEventsCollector" class="org.hippoecm.hst.configuration.cache.HstEventsCollector">
+    <property name="rootPath" value="${hst.configuration.rootPath}"/>
+  </bean>
+
+
+  <bean id="hstEventsDispatcher" class="org.hippoecm.hst.configuration.cache.HstEventsDispatcher">
+    <property name="hstEventsCollector" ref="hstEventsCollector"/>
+    <property name="hstEventConsumers">
+      <list>
+        <ref bean="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache"/>
+        <ref bean="org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache"/>
+      </list>
+    </property>
+  </bean>
+
+
+  <bean id="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache"  class="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache">
+    <property name="repository" ref="javax.jcr.Repository.delegating" />
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
+    <property name="rootPath" value="${hst.configuration.rootPath}"/>
+  </bean>
+
+  <bean id="org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache"  class="org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache">
+    <property name="hstNodeLoadingCache" ref="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache" />
+    <property name="rootConfigurationsPrefix" value="${hst.configuration.rootPath}/hst:configurations/"/>
+  </bean>
+
+
+  <bean id="org.hippoecm.hst.configuration.model.EventPathsInvalidator" class="org.hippoecm.hst.configuration.model.EventPathsInvalidatorImpl">
+    <property name="hstModelMutex" ref="hstModelMutex"/>
+    <property name="hstEventsCollector" ref="hstEventsCollector"/>
+    <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
+  </bean>
+
+
+
+  <bean id="org.hippoecm.hst.configuration.model.HstManager" class="org.hippoecm.hst.configuration.model.HstManagerImpl">
+    <property name="hstModelMutex" ref="hstModelMutex"/>
+    <property name="hstEventsDispatcher" ref="hstEventsDispatcher"/>
+    <property name="hstNodeLoadingCache" ref="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache" />
+    <property name="cmsPreviewPrefix" value="${cms.default.cmspreviewprefix}"/>
+    <!-- Deprecated since CMS 10.0, HST 2.30.00: siteMapItemHandlerFactory property is deprecated on HstManagerImpl -->
+    <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />        
+    <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
+    <!-- Deprecated since CMS 10.0, HST 2.30.00: siteMapItemHandlerFactory property is deprecated on HstManagerImpl -->
+    <property name="siteMapItemHandlerFactory" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory" />
+    <property name="pathSuffixDelimiter" value="${container.request.path.suffix.delimiter}" />
+    <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
+    <property name="siteMapItemHandlerRegistry" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry" />
+    <property name="pageCache" ref="pageCache"/>
+    <property name="clearPageCacheAfterModelLoad" value="${pageCache.clearOnHstConfigChange}"/>
+    <property name="staleConfigurationSupported" value="${stale.configuration.supported}"/>
+    <property name="hstFilterPrefixExclusions">
+      <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+        <constructor-arg value="java.lang.Object" />
+        <property name="targetClass" value="org.apache.commons.lang.StringUtils" />
+        <property name="targetMethod" value="split" />
+        <property name="arguments">
+          <list>
+            <value>${filter.prefix.exclusions}</value>
+            <value>,</value>
+          </list>
+        </property>
+      </bean>
+    </property>
+    <property name="hstFilterSuffixExclusions">
+      <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+        <constructor-arg value="java.lang.Object" />
+        <property name="targetClass" value="org.apache.commons.lang.StringUtils" />
+        <property name="targetMethod" value="split" />
+        <property name="arguments">
+          <list>
+            <value>${filter.suffix.exclusions}</value>
+            <value>,</value>
+          </list>
+        </property>
+      </bean>
+    </property>
+  </bean>
+
+  <bean id="org.hippoecm.hst.configuration.environment.HostConfigPublisher" class="org.hippoecm.hst.configuration.environment.HostConfigPublisher">
+    <property name="repository" ref="javax.jcr.Repository.delegating" />
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
+  </bean>
+
+  <bean id="org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider" class="org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider"/>
+
+</beans>
+
