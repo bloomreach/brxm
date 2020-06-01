@@ -1,0 +1,6 @@
+group:
+  name: ${artifactId}
+  after: ${parentArtifactId}
+project: ${artifactId}
+module:
+  name: ${artifactId}-repository-data-application

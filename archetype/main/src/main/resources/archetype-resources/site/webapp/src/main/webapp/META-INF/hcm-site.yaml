@@ -1,0 +1,7 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+#set($hyphen = '-')
+#set($empty = '')
+name: ${rootArtifactId.replace($hyphen,$empty)}
+hstRoot: /hst:${rootArtifactId.replace($hyphen,$empty)}
