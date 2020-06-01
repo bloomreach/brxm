@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:templates/forge-sitemap-feed.ftl:
+      jcr:primaryType: hst:template
+      hst:script: '<#ftl attributes={"content_type": "application/xml"} />${sitemap}'
