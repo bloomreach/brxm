@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "doclisting-publication-date" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "doclisting-state" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "doclisting-lastmodified-date" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "doclisting-lastmodified-by" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

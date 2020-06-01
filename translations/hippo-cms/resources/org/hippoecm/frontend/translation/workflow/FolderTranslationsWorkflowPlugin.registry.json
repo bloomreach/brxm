@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "folder-translations-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "folder-translations" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

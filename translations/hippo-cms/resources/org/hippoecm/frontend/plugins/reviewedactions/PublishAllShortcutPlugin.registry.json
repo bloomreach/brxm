@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "dialog-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "link-depublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "link-publish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

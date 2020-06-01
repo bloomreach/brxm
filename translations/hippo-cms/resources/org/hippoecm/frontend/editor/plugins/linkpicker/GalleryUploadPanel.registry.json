@@ -1,0 +1,25 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "exception,type=org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "button-upload-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "select-file-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.frontend.plugins.gallery.model.SvgScriptGalleryException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
