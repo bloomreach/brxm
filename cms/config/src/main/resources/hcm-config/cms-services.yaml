@@ -1,0 +1,13 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services:
+      jcr:primaryType: frontend:plugincluster
+      /preferencesStoreService:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.service.preferences.PreferencesStorePlugin
+      /settingsService:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.service.settings.SettingsStorePlugin
+      /ajaxPopupService:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.service.popup.AjaxPopupService

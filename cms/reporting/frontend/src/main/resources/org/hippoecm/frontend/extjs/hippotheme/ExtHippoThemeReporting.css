@@ -1,0 +1,84 @@
+/*!
+ * Ext JS Library 3.3.1
+ * Copyright(c) 2006-2010 Sencha Inc.
+ * licensing@sencha.com
+ * http://www.sencha.com/license
+ */
+
+/*.hippo-report {*/
+/*border-color:#b3b3b3;*/
+/*background: url(images/panel/bg1.gif) top repeat-x #ededed;*/
+/*margin: 10px  *//* changed, new */
+/*}*/
+
+
+.hippo-reporting-perspective .x-toolbar {
+    border: none;
+    background-color: transparent;
+}
+
+.hippo-reporting-perspective .x-grid3 {
+    background: none;
+    border-bottom: 2px solid #ccc;
+}
+
+.hippo-reporting-perspective .x-grid3-row td, .x-grid3-summary-row td {
+    font: normal 11px/17px tahoma, arial, helvetica, sans-serif;
+    color: #333;
+}
+
+.hippo-reporting-perspective .x-grid3-hd-row td {
+    border-left: none;
+    border-right: none;
+}
+
+.hippo-reporting-perspective .x-grid3-row {
+    border: none;
+    border-bottom: 1px solid #ededed;
+}
+
+.hippo-reporting-perspective .x-grid3-row-alt {
+    background-color: transparent;
+}
+
+.hippo-reporting-perspective .x-grid3-row-over {
+    background-color: #fff6e0;
+}
+
+.hippo-reporting-perspective .x-grid3-header {
+    background-color: #e8e8ea;
+    background-image: none;
+}
+
+.hippo-reporting-perspective td.x-grid3-hd-over, td.sort-desc,
+.hippo-reporting-perspective td.sort-asc, td.x-grid3-hd-menu-open {
+    border-left: none;
+    border-right: none;
+    background-color: transparent;
+}
+
+.hippo-reporting-perspective .x-panel-header {
+    color: #0D496F;
+    font-weight: normal;
+    font-size: 14px;
+    font-family: tahoma, arial, helvetica, sans-serif;
+    border: none;
+    background: transparent;
+}
+
+.hippo-reporting-perspective .x-panel-body {
+    border: none;
+    background-color: transparent;
+}
+
+.hippo-reporting-perspective .x-panel-tbar .x-toolbar {
+    background-image: none;
+    border-bottom: 0 !important;
+    padding-bottom: 6px;
+}
+
+.hippo-reporting-perspective .x-panel-bbar .x-toolbar {
+    border: none;
+    background-image: none;
+    background-color: #e8e8ea;
+}

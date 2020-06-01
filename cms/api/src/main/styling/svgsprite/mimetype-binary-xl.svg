@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+<g>
+	<path fill="currentColor" d="M11,6c0,1,0,2,0,2c0,0.472-0.561,1-1.031,1H9C8.528,9,8,8.472,8,8V6c0-0.471,0.528-1,1-1h1C10,5,11,5,11,6z
+		 M10,6L8.969,5.941L8.967,8.049L10,8V6z"/>
+</g>
+<g>
+	<path fill="currentColor" d="M17,12c0,1,0,2,0,2c0,0.472-0.561,1-1.031,1H15c-0.472,0-1-0.528-1-1v-2c0-0.471,0.528-1,1-1h1
+		C16,11,17,11,17,12z M16,12h-1l-0.033,2.049L16,14V12z"/>
+</g>
+<polygon fill="currentColor" points="13,15 12,15 12,12 11,12 12,11 13,11 "/>
+<polygon fill="currentColor" points="10,15 9,15 9,12 8,12 9,11 10,11 "/>
+<polygon fill="currentColor" points="20,15 19,15 19,12 18,12 19,11 20,11 "/>
+<polygon fill="currentColor" points="24,9 23,9 23,6 22,6 23,5 24,5 "/>
+<polygon fill="currentColor" points="21,21 20,21 20,18 19,18 20,17 21,17 "/>
+<polygon fill="currentColor" points="20,27 19,27 19,24 18,24 19,23 20,23 "/>
+<polygon fill="currentColor" points="24,21 23,21 23,18 22,18 23,17 24,17 "/>
+<polygon fill="currentColor" points="14,9 13,9 13,6 12,6 13,5 14,5 "/>
+<polygon fill="currentColor" points="17,9 16,9 16,6 15,6 16,5 17,5 "/>
+<rect x="15" y="12" fill="#FFFFFF" width="1" height="2"/>
+<g>
+	<path fill="currentColor" d="M24,12c0,1,0,2,0,2c0,0.472-0.561,1-1.031,1H22c-0.472,0-1-0.528-1-1v-2c0-0.471,0.528-1,1-1h1
+		C23,11,24,11,24,12z M23,12h-1l-0.033,2.049L23,14V12z"/>
+</g>
+<rect x="22" y="12" fill="#FFFFFF" width="1" height="2"/>
+<g>
+	<path fill="currentColor" d="M11,18c0,1,0,2,0,2c0,0.472-0.561,1-1.031,1H9c-0.472,0-1-0.528-1-1v-2c0-0.471,0.528-1,1-1h1
+		C10,17,11,17,11,18z M10,18l-1.031-0.059l-0.002,2.107L10,20V18z"/>
+</g>
+<g>
+	<path fill="currentColor" d="M18,18c0,1,0,2,0,2c0,0.472-0.561,1-1.031,1H16c-0.472,0-1-0.528-1-1v-2c0-0.471,0.528-1,1-1h1
+		C17,17,18,17,18,18z M17,18l-1.031-0.059l-0.002,2.107L17,20V18z"/>
+</g>
+<g>
+	<path fill="currentColor" d="M21,6c0,1,0,2,0,2c0,0.472-0.561,1-1.031,1H19c-0.472,0-1-0.528-1-1V6c0-0.471,0.528-1,1-1h1
+		C20,5,21,5,21,6z M20,6l-1.031-0.059l-0.002,2.107L20,8V6z"/>
+</g>
+<g>
+	<path fill="currentColor" d="M14,24c0,1,0,2,0,2c0,0.472-0.561,1-1.031,1H12c-0.472,0-1-0.528-1-1v-2c0-0.471,0.528-1,1-1h1
+		C13,23,14,23,14,24z M13,24h-1l-0.033,2.049L13,26V24z"/>
+</g>
+<polygon fill="currentColor" points="10,27 9,27 9,24 8,24 9,23 10,23 "/>
+<polygon fill="currentColor" points="17,27 16,27 16,24 15,24 16,23 17,23 "/>
+<polygon fill="currentColor" points="14,21 13,21 13,18 12,18 13,17 14,17 "/>
+<rect x="12" y="24" fill="#FFFFFF" width="1" height="2"/>
+<g>
+	<path fill="currentColor" d="M24,24c0,1,0,2,0,2c0,0.472-0.561,1-1.031,1H22c-0.472,0-1-0.528-1-1v-2c0-0.471,0.528-1,1-1h1
+		C23,23,24,23,24,24z M23,24h-1l-0.033,2.049L23,26V24z"/>
+</g>
+<rect x="22" y="24" fill="#FFFFFF" width="1" height="2"/>
+<g>
+	<path fill="currentColor" d="M27,3c0,1,0,26,0,26c0,0.472-0.561,1-1.031,1H5.854C5.383,30,5,29.617,5,29.146V2.854
+		C5,2.383,5.383,2,5.854,2H26C26,2,27,2,27,3z M26,3L6,2.941L5.998,29.049L26,29V3z"/>
+</g>
+</svg>
