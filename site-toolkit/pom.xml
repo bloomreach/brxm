@@ -1,0 +1,761 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-project</artifactId>
+    <version>30.4.4-SNAPSHOT</version>
+  </parent>
+
+  <name>Hippo Site Toolkit</name>
+  <description>The Hippo Site Toolkit (HST) is an engine that serves content from the Hippo repository (2) on webpages, dynamically.
+    The HST produces a complete, dynamic website for an organization, or several complete, dynamic websites for several suborganizations
+    that have all their content managed in one Hippo repository.
+    The functionality, views and markup of the website(s) are to be defined by the web developers with Java classes, JSP and CSS, respectively.
+    The HST provides a framework of predefined Java classes, abstract Java classes and interfaces and JSP tags
+    for the web developers to work with and build on.
+  </description>
+  <url>http://www.onehippo.org/site-toolkit/</url>
+
+  <groupId>org.onehippo.cms7.hst</groupId>
+  <artifactId>hst</artifactId>
+  <version>13.4.4-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <inceptionYear>2008</inceptionYear>
+  <issueManagement>
+    <system>Jira</system>
+    <url>http://issues.onehippo.com/browse/HSTTWO</url>
+  </issueManagement>
+
+  <properties>
+    <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
+    <notice.project.name>Hippo Site Toolkit</notice.project.name>
+
+    <!-- Documentation properties (variables).
+         May not contain dots as they are processed by Apache velocity.
+         Can be used in xdoc files with the extension .xml.vm
+    -->
+
+    <public_project_wiki>http://www.onehippo.org/site-toolkit/support/forums.html</public_project_wiki>
+    <product_name>Hippo HST</product_name>
+    <product_abr>HST</product_abr>
+
+    <jsp-api.version>2.2</jsp-api.version>
+    <taglibs.version>1.2.5</taglibs.version>
+
+    <jooq.version>0.9.7</jooq.version>
+    <awaitility.version>3.1.6</awaitility.version>
+    <junit.version>4.12</junit.version>
+    <easymock.version>3.4</easymock.version>
+    <assertj.version>3.8.0</assertj.version>
+    <!-- Make sure that powermock and easymock are compatible -->
+    <powermock.version>1.6.5</powermock.version>
+
+    <xalan.version>2.7.2</xalan.version>
+
+    <commons-lang.version>2.6</commons-lang.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
+    <commons-pool.version>1.6</commons-pool.version>
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
+    <commons-io.version>2.6</commons-io.version>
+    <commons-jexl.version>1.1</commons-jexl.version>
+    <commons-configuration.version>1.10</commons-configuration.version>
+    <commons-proxy.version>1.0</commons-proxy.version>
+    <ehcache-core.version>2.10.6</ehcache-core.version>
+    <ehcache-web.version>2.0.4</ehcache-web.version>
+
+    <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
+
+    <javadoc.base.version>13.1</javadoc.base.version>
+
+    <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
+    <hippo.commons.version>13.4.4-SNAPSHOT</hippo.commons.version>
+    <hippo.repository.version>13.4.4-SNAPSHOT</hippo.repository.version>
+    <hippo.configuration-management.version>13.4.4-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.utilities.version>13.4.4-SNAPSHOT</hippo.utilities.version>
+    <hippo.services.version>13.4.4-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>13.4.4-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.services.search.version>13.4.0</hippo.services.search.version>
+    <hippo.services.contenttype.version>13.4.4-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.testutils.version>13.4.4-SNAPSHOT</hippo.testutils.version>
+    <hippo.plugin.gallerypicker.version>13.4.4-SNAPSHOT</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.selections.version>13.4.4-SNAPSHOT</hippo.plugin.selections.version>
+    <hippo.packages.version>13.4.4-SNAPSHOT</hippo.packages.version>
+    
+    <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
+
+    <mime4j.version>0.6</mime4j.version>
+    <dependency.solr.version>4.9.0</dependency.solr.version>
+    <h2.version>1.3.175</h2.version>
+
+    <!-- Before updating the swagger version verify swagger yaml works. See HSTTWO-4537 -->
+    <swagger-core.version>1.5.15</swagger-core.version>
+    <swagger-jaxrs.version>1.5.15</swagger-jaxrs.version>
+
+    <bytebuddy.version>1.9.10</bytebuddy.version>
+
+  </properties>
+
+  <!--
+     Software configuration management (scm): where to find and how to get acces to the source repository
+     This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
+  -->
+  <scm>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-site-toolkit.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-site-toolkit.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-site-toolkit</url>
+  </scm>
+
+  <mailingLists>
+    <mailingList>
+      <name>Hippo Site Toolkit Forums</name>
+      <subscribe>hippo-hst-dev-subscribe@lists.onehippo.org</subscribe>
+      <unsubscribe>hippo-hst-dev-unsubscribe@lists.onehippo.org</unsubscribe>
+      <archive>http://lists.onehippo.org/pipermail/hippo-hst-dev/</archive>
+    </mailingList>
+  </mailingLists>
+
+  <distributionManagement>
+    <site>
+      <id>www.onehippo.org</id>
+      <url>scp://www.onehippo.org/site-toolkit/project/</url>
+    </site>
+  </distributionManagement>
+
+  <repositories>
+   <repository>
+      <id>hippo</id>
+      <name>Hippo maven 2 repository.</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+
+  <dependencyManagement>
+
+    <dependencies>
+
+      <!-- Hippo CMS7 API dependency -->
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-api</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services</artifactId>
+        <version>${hippo.services.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms</groupId>
+        <artifactId>hippo-configuration-management-api</artifactId>
+        <version>${hippo.configuration-management.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms</groupId>
+        <artifactId>hippo-configuration-management-model</artifactId>
+        <version>${hippo.configuration-management.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms7-utilities</artifactId>
+        <version>${hippo.utilities.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-search-service-api</artifactId>
+        <version>${hippo.services.search.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-search-service-jcr</artifactId>
+        <version>${hippo.services.search.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-search-service-commons</artifactId>
+        <version>${hippo.services.search.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-contenttype</artifactId>
+        <version>${hippo.services.contenttype.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-eventbus</artifactId>
+        <version>${hippo.services.eventbus.version}</version>
+      </dependency>
+
+      <!-- JSP-related API dependencies -->
+
+      <dependency>
+        <groupId>javax.servlet.jsp</groupId>
+        <artifactId>jsp-api</artifactId>
+        <version>${jsp-api.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-spec</artifactId>
+        <version>${taglibs.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-impl</artifactId>
+        <version>${taglibs.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>xalan</groupId>
+        <artifactId>xalan</artifactId>
+        <version>${xalan.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <!-- Apache Commons -->
+
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>${commons-collections.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-pool</groupId>
+        <artifactId>commons-pool</artifactId>
+        <version>${commons-pool.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>${commons-beanutils.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-jexl</groupId>
+        <artifactId>commons-jexl</artifactId>
+        <version>${commons-jexl.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-configuration</groupId>
+        <artifactId>commons-configuration</artifactId>
+        <version>${commons-configuration.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils-core</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-proxy</artifactId>
+        <version>${commons-proxy.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache</artifactId>
+        <version>${ehcache-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache-web</artifactId>
+        <version>${ehcache-web.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-ext</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+
+      <!-- AspectJ -->
+
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>${aspectjweaver.version}</version>
+      </dependency>
+
+      <!-- Spring Framework -->
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${spring.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jcl</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context-support</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-web</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>${spring.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <!-- Freemarker -->
+      <dependency>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>${freemarker.version}</version>
+      </dependency>
+
+      <!-- Hippo CMS7 Depedencies -->
+
+
+      <!-- SSO for encryption/decryption -->
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms7-commons</artifactId>
+        <version>${hippo.commons.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-connector</artifactId>
+        <version>${hippo.repository.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl104-over-slf4j</artifactId>
+          </exclusion>
+          <exclusion>
+            <!-- poi 3.0.2 pulling this in -->
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-builtin</artifactId>
+        <version>${hippo.repository.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-jcr-commons</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+
+      <!-- Jackrabbit ocm -->
+
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-ocm</artifactId>
+        <version>${jackrabbit-ocm.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sourceforge.htmlcleaner</groupId>
+        <artifactId>htmlcleaner</artifactId>
+        <version>${sf.htmlcleaner.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-launcher</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+        <version>${cxf.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-rs-security-cors</artifactId>
+        <version>${cxf.version}</version>
+      </dependency>
+
+      <!-- Jackson JSON -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson2-databind.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.jaxrs</groupId>
+        <artifactId>jackson-jaxrs-json-provider</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.module</groupId>
+        <artifactId>jackson-module-jaxb-annotations</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.jaxrs</groupId>
+        <artifactId>jackson-jaxrs-base</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+        <artifactId>jackson-dataformat-yaml</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-core</artifactId>
+        <version>${swagger-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-jaxrs</artifactId>
+        <version>${swagger-jaxrs.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.james</groupId>
+        <artifactId>apache-mime4j</artifactId>
+        <version>${mime4j.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <!-- Test dependencies -->
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>${easymock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>${awaitility.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jooq</groupId>
+        <artifactId>joor-java-8</artifactId>
+        <version>${jooq.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <!-- byte buddy dependency -->
+      
+      <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy</artifactId>
+        <version>${bytebuddy.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-testutils</artifactId>
+        <version>${hippo.testutils.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-testutils</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-testcontent</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+    </dependencies>
+
+  </dependencyManagement>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+  </build>
+
+  <reporting>
+    <outputDirectory>${basedir}/target/site</outputDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <version>false</version>
+          <aggregate>true</aggregate>
+          <destDir>userapidocs</destDir>
+          <sourcepath>
+            ${basedir}/api/src/main/java:
+            ${basedir}/mock/src/main/java:
+            ${basedir}/commons/src/main/java:
+            ${basedir}/content-beans/src/main/java:
+            ${basedir}/client/src/main/java:
+            ${basedir}/components/jaxrs/src/main/java:
+            ${basedir}/components/resourcebundle/src/main/java:
+            ${basedir}/components/restapi/src/main/java:
+            ${basedir}/components/rewriter/src/main/java:
+            ${basedir}/components/security/src/main/java
+          </sourcepath>
+          <!-- disable JDK 8 doclint for javadoc -->
+          <additionalparam>-Xdoclint:none</additionalparam>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <id>default</id>
+            <reports>
+              <report>javadoc</report>
+              <report>test-javadoc</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>net.sourceforge.maven-taglib</groupId>
+        <artifactId>maven-taglib-plugin</artifactId>
+        <version>${maven.plugin.taglib.version}</version>
+        <configuration>
+          <taglib.src.dir>client/src/main/resources/META-INF</taglib.src.dir>
+          <title>HST ${project.version} JSP tag</title>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <configuration>
+          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <modules>
+    <module>api</module>
+    <module>platform-api</module>
+    <module>mock</module>
+    <module>commons</module>
+    <module>test</module>
+    <module>content-beans</module>
+    <module>solr-content-beans</module>
+    <module>solr-client</module>
+    <module>toolkit-resources</module>
+    <module>components</module>
+    <module>pagemodelapi</module>
+    <module>client</module>
+    <module>client-modules</module>
+    <module>dependencies</module>
+    <module>sandbox</module>
+  </modules>
+
+  <profiles>
+
+    <profile>
+      <id>website</id>
+      <!-- For building website documentation, there's no need to include modules. -->
+      <modules />
+    </profile>
+
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <!-- files in which no comments are possible -->
+                <exclude>sandbox/WARNINGS</exclude>
+                <!-- repository content XML -->
+                <exclude>content-beans/src/test/resources/**/*.xml</exclude>
+                <exclude>client-modules/page-composer/src/test/resources/**/*.xml</exclude>
+                <exclude>toolkit-resources/addon/repository/src/main/resources/**/*.xml</exclude>
+                <exclude>toolkit-resources/addon/unittestcontents/src/main/resources/**/*.xml</exclude>
+                <!-- javascript file that ends up in browser html is not allowed to show copyright -->
+                <exclude>components/core/src/main/resources/org/hippoecm/hst/core/container/simple-io-template.js</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
+
+</project>
