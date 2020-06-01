@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<svg width="6px" height="22px" viewBox="0 0 6 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="baseline-more_vert-24px" transform="translate(-13.000000, -5.000000)">
+      <polygon points="0 0 32 0 32 32 0 32"></polygon>
+      <path fill="currentColor" d="M16,10.6666667 C17.4666667,10.6666667 18.6666667,9.46666667 18.6666667,8 C18.6666667,6.53333333 17.4666667,5.33333333 16,5.33333333 C14.5333333,5.33333333 13.3333333,6.53333333 13.3333333,8 C13.3333333,9.46666667 14.5333333,10.6666667 16,10.6666667 Z M16,13.3333333 C14.5333333,13.3333333 13.3333333,14.5333333 13.3333333,16 C13.3333333,17.4666667 14.5333333,18.6666667 16,18.6666667 C17.4666667,18.6666667 18.6666667,17.4666667 18.6666667,16 C18.6666667,14.5333333 17.4666667,13.3333333 16,13.3333333 Z M16,21.3333333 C14.5333333,21.3333333 13.3333333,22.5333333 13.3333333,24 C13.3333333,25.4666667 14.5333333,26.6666667 16,26.6666667 C17.4666667,26.6666667 18.6666667,25.4666667 18.6666667,24 C18.6666667,22.5333333 17.4666667,21.3333333 16,21.3333333 Z"></path>
+    </g>
+  </g>
+</svg>

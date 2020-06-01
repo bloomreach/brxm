@@ -1,0 +1,14 @@
+definitions:
+  config:
+    # jvm user used by the frontend (cms, console) to read the configuration before a user is logged in
+    /hippo:configuration/hippo:users/frontend-system-user:
+      jcr:primaryType: hipposys:user
+      hipposys:active: true
+      hipposys:passkey: jvm://
+      hipposys:securityprovider: internal
+      hipposys:system: true
+      hipposys:userroles:
+        .meta:category: system
+        .meta:add-new-system-values: true
+        value: [xm.frontend-config.reader]
+

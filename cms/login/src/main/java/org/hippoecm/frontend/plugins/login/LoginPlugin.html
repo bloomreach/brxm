@@ -1,0 +1,50 @@
+<!--
+    * Copyright 2007-2018 Hippo B.V. (http://www.onehippo.com)
+    *
+    * Licensed under the Apache License, Version 2.0 (the  "License");
+    * you may not use this file except in compliance with the License.
+    * You may obtain a copy of the License at
+    *
+    * http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:head>
+    <title wicket:id="pageTitle">[ Login ]</title>
+    <link wicket:id="faviconLink" rel="shortcut icon" type="image/png"/>
+  </wicket:head>
+  <body>
+    <wicket:panel>
+      <div class="login-wrap">
+        <div class="login-panel">
+          <div class="login-panel-header">
+            <div class="login-panel-header-logo"></div>
+          </div>
+          <div wicket:id="login-panel"></div>
+        </div>
+        <div class="login-footer">
+          <label>
+            <wicket:message key="edition.label"/>
+          </label>
+          <wicket:enclosure>
+            <div>
+              <a wicket:id="termsAndConditions"><wicket:message key="terms-and-conditions-label"/></a>
+            </div>
+          </wicket:enclosure>
+        </div>
+      </div>
+      <div class="login-extend">
+        <div class="login-background">
+          <div></div>
+        </div>
+        <wicket:child/>
+      </div>
+      <div wicket:id="pinger" style="display: none;">[Prevents session timeouts]</div>
+    </wicket:panel>
+  </body>
+</html>

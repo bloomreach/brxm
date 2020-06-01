@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/translate:
+      jcr:primaryType: hipposys:workflowcategory

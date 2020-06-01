@@ -1,0 +1,46 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:queries/hippo:templates/new-type:
+      jcr:primaryType: hippostd:templatequery
+      hippostd:modify: [./_name, $name, './hipposysedit:nodetype/hipposysedit:nodetype/hipposysedit:supertype[0]',
+        $supertype]
+      jcr:language: xpath
+      jcr:statement: /jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-type/hippostd:templates/node()
+      /hippostd:templates:
+        jcr:primaryType: hippostd:templates
+        /document:
+          jcr:primaryType: hipposysedit:templatetype
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hippo:handle
+            jcr:mixinTypes: ['mix:referenceable']
+            /hipposysedit:nodetype:
+              jcr:primaryType: hipposysedit:nodetype
+              jcr:mixinTypes: ['mix:referenceable']
+              hipposysedit:node: true
+              hipposysedit:supertype: ['hippo:document', 'hippostd:relaxed', 'hippotranslation:translated']
+          /hipposysedit:prototypes:
+            jcr:primaryType: hipposysedit:prototypeset
+            /hipposysedit:prototype:
+              jcr:primaryType: nt:unstructured
+              hippostd:holder: holder
+              hippostd:state: draft
+              hippostdpubwf:createdBy: ''
+              hippostdpubwf:lastModifiedBy: ''
+              hippotranslation:id: document-type-locale-id
+              hippotranslation:locale: document-type-locale
+        /compound:
+          jcr:primaryType: hipposysedit:templatetype
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hippo:handle
+            jcr:mixinTypes: ['mix:referenceable']
+            /hipposysedit:nodetype:
+              jcr:primaryType: hipposysedit:nodetype
+              jcr:mixinTypes: ['mix:referenceable']
+              hipposysedit:node: true
+              hipposysedit:supertype: ['hippo:compound', 'hippostd:relaxed']
+          /hipposysedit:prototypes:
+            jcr:primaryType: hipposysedit:prototypeset
+            /hipposysedit:prototype:
+              jcr:primaryType: nt:unstructured

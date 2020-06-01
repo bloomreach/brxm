@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/logoutService:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.hippoecm.frontend.logout.CmsLogoutService
