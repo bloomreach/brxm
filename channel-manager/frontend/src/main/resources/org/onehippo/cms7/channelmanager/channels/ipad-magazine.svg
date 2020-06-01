@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g transform="translate(-1.000000, -6.000000)">
+      <polygon id="Path" points="0 0 40 0 40 40 0 40"></polygon>
+      <path d="M35,6.66666667 L5,6.66666667 C3.16666667,6.66666667 1.66666667,8.16666667 1.66666667,10 L1.66666667,30 C1.66666667,31.8333333 3.16666667,33.3333333 5,33.3333333 L35,33.3333333 C36.8333333,33.3333333 38.3166667,31.8333333 38.3166667,30 L38.3333333,10 C38.3333333,8.16666667 36.8333333,6.66666667 35,6.66666667 Z M31.6666667,30 L8.33333333,30 L8.33333333,10 L31.6666667,10 L31.6666667,30 Z" id="Shape" fill-opacity="0.6" fill="#000000" fill-rule="nonzero"></path>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,140 @@
+// Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+@import 'variables';
+
+.md-bloomreach-theme .picker-content {
+  .md-subheader {
+    background-color: $picker-subheader-bgcolor;
+  }
+
+  .picker-type {
+    .md-subheader-inner {
+      padding-bottom: 9px;
+      padding-top: 9px;
+    }
+
+    .md-subheader-content {
+      border: 1px solid #000;
+      border-radius: 4px;
+    }
+
+    md-select {
+      margin-bottom: 0;
+      margin-top: 0;
+    }
+
+    md-select:not([disabled]):focus .md-select-value {
+      border-bottom-color: transparent;
+    }
+
+    .md-select-value > span:not(.md-select-icon) {
+      line-height: 1.3em;
+
+      .md-text {
+        color: $text-dark;
+        padding-left: 8px;
+      }
+    }
+  }
+
+  hippo-tree {
+    .spacer {
+      display: inline-block;
+      width: 24px;
+    }
+
+    .angular-ui-tree-node {
+      display: block;
+      font-size: 14px;
+      min-height: 24px;
+
+      > div {
+        cursor: pointer;
+        line-height: 24px;
+        max-height: 24px;
+        outline: none !important;
+
+        &:focus,
+        &:focus-within,
+        &:hover {
+          background: $tree-hover-bg;
+        }
+      }
+
+      &.active > div:first-child {
+        background: $tree-active-bg;
+
+        .angular-ui-tree-title {
+          font-weight: 600;
+        }
+      }
+    }
+
+    .angular-ui-tree-title {
+      padding-left: 4px;
+    }
+
+    .hippo-tree-item-toggle {
+      display: inline-flex;
+    }
+
+    .angular-ui-tree-title-wrapper {
+      align-items: center;
+      display: inline-flex;
+    }
+
+    .angular-ui-tree-title-wrapper md-icon {
+      height: 16px;
+      min-height: 16px;
+      min-width: 16px;
+      width: 16px;
+    }
+  }
+
+  .hippo-listing {
+    md-list {
+      padding: 0;
+    }
+
+    .md-subheader-content {
+      color: $list-header-color;
+      font-size: $list-header-font-size;
+    }
+
+    .md-no-style.md-button {
+      &:hover,
+      &.md-focused {
+        background-color: $list-hover-bg;
+      }
+
+      button,
+      button:hover {
+        background-color: transparent;
+      }
+    }
+
+    .active {
+      background-color: $bloomreach-blue-light;
+
+      p {
+        font-weight: 600;
+      }
+
+      p,
+      md-icon {
+        color: $text-dark;
+      }
+    }
+  }
+}
