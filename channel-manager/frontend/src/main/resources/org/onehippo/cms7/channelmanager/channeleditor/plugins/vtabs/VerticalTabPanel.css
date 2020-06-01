@@ -1,0 +1,103 @@
+/* VrTabPanel CSS for Blue theme */
+
+/* Remove background sprite for tabs */
+.x-tot2ivn-vr-tab-strip-top.x-tab-strip-top {
+    background: #ffffff none;
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tab-right,
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tab-left,
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tab-strip-inner {
+    background: none;
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tot2ivn-vr-tab-strip-title {
+    border-top: 1px solid #e8e8ea;
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tot2ivn-vr-tab-strip-title:first-of-type {
+    border-top-color: transparent;
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tot2ivn-vr-tab-strip-title:last-of-type {
+    border-bottom: 1px solid #e8e8ea;
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tot2ivn-vr-tab-strip-title.x-tab-strip-active,
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tot2ivn-vr-tab-strip-title.x-tab-strip-active + .x-tot2ivn-vr-tab-strip-title {
+    border-top-color: rgba(20, 122, 200, 0.1);
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tab-right {
+    padding-left: 0;
+}
+
+.x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tab-left {
+    padding-right: 0;
+}
+
+/* Left Panel background */
+.x-tot2ivn-vr-tab-panel {
+    background: #ffffff;
+    border-color: #40a6ff !important;
+    height: 100%;
+}
+
+/* Left Panel */
+.x-tot2ivn-vr-tab-panel-header {
+    float: left;
+    height: 100%;
+    overflow-y: auto !important;
+}
+
+.x-tot2ivn-vr-tab-panel .x-tot2ivn-vr-tab-strip-spacer {
+    visibility: hidden;
+}
+
+.x-tot2ivn-vr-tab-panel ul.x-tot2ivn-vr-tab-strip-top {
+    border-bottom: 0;
+    padding-top: 0;
+}
+
+/* Right Body Panel */
+.x-tot2ivn-vr-tab-panel-bwrap {
+    background: #ffffff;
+    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Menu Items */
+.x-tot2ivn-vr-tab-panel li.x-tot2ivn-vr-tab-strip-title {
+    display: block;
+    width: 100%;
+    margin: 0;
+}
+
+.x-tot2ivn-vr-tab-strip.x-tab-strip span.x-tab-strip-text {
+    padding: 0 8px 0 16px !important;
+    height: 48px;
+    line-height: 48px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+/* Hovered menu item */
+.x-tot2ivn-vr-tab-strip :not(.x-tab-strip-active) .x-tab-right:hover span.x-tab-strip-text {
+    color: #000000;
+}
+
+/* Active menu item */
+.x-tot2ivn-vr-tab-panel .x-tab-strip-top .x-tab-strip-active .x-tab-right {
+    margin-bottom: 0;
+}
+
+.x-tot2ivn-vr-tab-panel .x-tab-strip-active span.x-tot2ivn-vr-tab-strip-text {
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.87);
+    background-color: rgba(20, 122, 200, 0.1);
+}
