@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "new-document-type" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "update-model" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "new-compound-type" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

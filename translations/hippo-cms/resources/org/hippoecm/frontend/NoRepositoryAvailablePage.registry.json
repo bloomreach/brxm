@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "repository.not.available" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

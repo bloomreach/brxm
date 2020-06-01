@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "regenerate-button-tip-inactive-error" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "regenerate-button-tip" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "regenerate-button-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "regenerate-button-tip-inactive-not-modified" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

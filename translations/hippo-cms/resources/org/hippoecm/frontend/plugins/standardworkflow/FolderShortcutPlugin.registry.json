@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "new-folder-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "new-document-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

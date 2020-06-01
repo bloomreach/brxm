@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "image.validation.metadata.error" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "image.validation.width" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "image.validation.width-height" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "image.validation.height" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

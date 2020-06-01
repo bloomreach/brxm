@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "datatable.no-records-found" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NavigatorLabel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

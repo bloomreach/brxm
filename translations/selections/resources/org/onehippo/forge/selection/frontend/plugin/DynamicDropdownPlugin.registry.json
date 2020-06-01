@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "choose.one" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

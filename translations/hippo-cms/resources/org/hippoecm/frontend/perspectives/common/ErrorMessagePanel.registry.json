@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "error.status.message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
