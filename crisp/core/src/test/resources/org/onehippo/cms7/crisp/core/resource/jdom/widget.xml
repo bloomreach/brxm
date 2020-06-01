@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<ui>
+    <widget>
+        <debug>on</debug>
+        <window title="Sample Konfabulator Widget">
+            <name>main_window</name>
+            <width>500</width>
+            <height>500</height>
+        </window>
+        <images>
+            <image src="Images/Sun.png" name="sun1">
+                <hOffset>250</hOffset>
+                <vOffset>250</vOffset>
+                <alignment>center</alignment>
+            </image>
+            <image src="Images/Moon.png" name="moon1">
+                <hOffset>100</hOffset>
+                <vOffset>100</vOffset>
+                <alignment>left</alignment>
+            </image>
+        </images>
+        <text data="Click Here" size="36" style="bold">
+            <name>text1</name>
+            <hOffset>250</hOffset>
+            <vOffset>100</vOffset>
+            <alignment>center</alignment>
+            <onMouseUp>
+                sun1.opacity = (sun1.opacity / 100) * 90;
+            </onMouseUp>
+        </text>
+    </widget>
+</ui>

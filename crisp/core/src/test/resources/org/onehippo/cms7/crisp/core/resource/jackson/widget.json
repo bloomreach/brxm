@@ -1,0 +1,37 @@
+{"widget": {
+    "debug": "on",
+    "window": {
+        "title": "Sample Konfabulator Widget",
+        "name": "main_window",
+        "width": 500,
+        "height": 500
+    },
+    "images": [{
+        "src": "Images/Sun.png",
+        "name": "sun1",
+        "hOffset": 250,
+        "vOffset": 250,
+        "alignment": "center",
+        "exifVersion": [48, 50, 50, 49],
+        "exifGeoLocation": ["N42", "W71"]
+      },{
+        "src": "Images/Moon.png",
+        "name": "moon1",
+        "hOffset": 100,
+        "vOffset": 100,
+        "alignment": "left",
+        "exifVersion": [48, 50, 50, 49],
+        "exifGeoLocation": ["N42", "W71"]
+      }
+    ],
+    "text": {
+        "data": "Click Here",
+        "size": 36,
+        "style": "bold",
+        "name": "text1",
+        "hOffset": 250,
+        "vOffset": 100,
+        "alignment": "center",
+        "onMouseUp": "sun1.opacity = (sun1.opacity / 100) * 90;"
+    }
+}}
