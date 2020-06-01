@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+
+    Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7.hst</groupId>
+    <artifactId>hst</artifactId>
+    <version>5.6.11-SNAPSHOT</version>
+  </parent>
+
+  <name>Hippo Site Toolkit Test</name>
+  <description>Hippo Site Toolkit Test</description>
+  <artifactId>hst-test</artifactId>
+  <packaging>pom</packaging>
+
+  <dependencies>
+
+    <!-- repository -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-testutils</artifactId>
+      <version>${hippo.repository.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-engine</artifactId>
+      <version>${hippo.repository.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-config</artifactId>
+      <version>${hippo.repository.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-workflow</artifactId>
+      <version>${hippo.repository.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-modules</artifactId>
+      <version>${hippo.repository.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services</artifactId>
+      <version>${hippo.services.version}</version>
+    </dependency>
+
+    <!-- hst dependencies & initial structure -->
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
+      <artifactId>hst-addon-cnd</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
+      <artifactId>hst-addon-repository</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
+      <artifactId>hst-addon-unittestcontents</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
+      <artifactId>hst-addon-unittestspringconfig</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+
+    <!-- end hst test content -->
+
+
+    <!-- spring dependencies -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+    </dependency>
+    <!-- end spring dependencies -->
+
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+</project>

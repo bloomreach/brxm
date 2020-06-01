@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd"
+  >
+
+  <!--
+   EventListenersContainer's start and stop method will be invoked by ApplicationEventMethodsInvokers defined above.
+   Because child modules can add more event listener items into 'jcrObservationEventListenerItems',
+   EventListenersContainer should start after modules add all the event listener items.
+ -->
+  <!-- Start EventListenersContainer on context started event -->
+  <bean class="org.hippoecm.hst.site.container.ApplicationEventMethodsInvoker">
+    <constructor-arg>
+      <map>
+        <entry>
+          <key>
+            <value>org.springframework.context.event.ContextStartedEvent</value>
+          </key>
+          <list>
+            <bean class="org.springframework.util.MethodInvoker">
+              <property name="targetObject" ref="org.hippoecm.hst.core.jcr.EventListenersContainer"/>
+              <property name="targetMethod" value="start"/>
+            </bean>
+          </list>
+        </entry>
+      </map>
+    </constructor-arg>
+  </bean>
+
+  <!-- Stops EventListenersContainer on context stopped event -->
+  <bean class="org.hippoecm.hst.site.container.ApplicationEventMethodsInvoker">
+    <constructor-arg>
+      <map>
+        <entry>
+          <key>
+            <value>org.springframework.context.event.ContextStoppedEvent</value>
+          </key>
+          <list>
+            <bean class="org.springframework.util.MethodInvoker">
+              <property name="targetObject" ref="org.hippoecm.hst.core.jcr.EventListenersContainer"/>
+              <property name="targetMethod" value="stop"/>
+            </bean>
+          </list>
+        </entry>
+      </map>
+    </constructor-arg>
+  </bean>
+
+  <bean id="org.hippoecm.hst.core.jcr.EventListenersContainer"
+    class="org.hippoecm.hst.core.jcr.EventListenersContainerImpl">
+    <property name="repository" ref="javax.jcr.Repository"/>
+    <property name="sessionLiveCheck" value="true"/>
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader"/>
+    <property name="sessionLiveCheckInterval" value="60000"/>
+    <property name="eventListenerItems" ref="jcrObservationEventListenerItems" />
+  </bean>
+
+  <bean id="baseEventListener" abstract="true">
+    <property name="skipPaths">
+      <list>
+        <value>/jcr:system</value>
+        <value>/hippo:log</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="jcrObservationEventListenerItems" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
+    <property name="targetClass" value="java.util.Collections" />
+    <property name="targetMethod" value="synchronizedList" />
+    <property name="arguments">
+      <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+        <constructor-arg value="java.util.List" />
+        <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
+        <property name="targetMethod" value="union" />
+        <property name="arguments">
+          <list>
+            <ref bean="defaultJcrObservationEventListenerItems" />
+            <ref bean="customJcrObservationEventListenerItems" />
+          </list>
+        </property>
+      </bean>
+    </property>
+  </bean>
+
+  <!-- Default jcr observation event listener items. -->
+  <bean id="defaultJcrObservationEventListenerItems" class="org.springframework.beans.factory.config.ListFactoryBean"> 
+    <property name="sourceList"> 
+      <list>
+
+        <!-- Changes in the hst configuration invoke an invalidation in the hstManager. -->
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <property name="absolutePath" value="${hst.configuration.rootPath}"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="nodeTypeNames">
+            <null/>
+          </property>
+          <property name="noLocal" value="false"/>
+
+          <property name="eventListener">
+            <bean id="hstConfigurationEventListener" parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstConfigurationEventListener">
+              <property name="hstModelMutex" ref="hstModelMutex"/>
+              <property name="hstEventsCollector" ref="hstEventsCollector"/>
+              <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
+            </bean>
+          </property>
+        </bean>
+
+        <!-- Changes in the content will invalidate the page cache if pageCache.clearOnContentChange is true . -->
+        <bean class="org.hippoecm.hst.core.jcr.OptionalEventListenerItemImpl">
+          <property name="enabled" value="${pageCache.clearOnContentChange}"/>
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <property name="absolutePath" value="/content"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="nodeTypeNames">
+            <null/>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.cache.PageCacheEventListener">
+              <property name="pageCache" ref="pageCache"/>
+            </bean>
+          </property>
+        </bean>
+
+        <!-- Changes in the webfiles must invalidate the page cache. -->
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <property name="absolutePath" value="/webfiles"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="nodeTypeNames">
+            <null/>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.cache.webfiles.WebFilesEventListener">
+              <property name="pageCache" ref="pageCache"/>
+              <property name="webFileValve" ref="webFileValve"/>
+              <property name="requestInfoCacheKeyFragmentCreator" ref="requestInfoCacheKeyFragmentCreator"/>
+            </bean>
+          </property>
+        </bean>
+
+
+        <!-- session pools refreshing event listener -->
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <!-- only nodes below '/content' in the repository triggers sessions to be refreshed. Sessions needed to load configuration
+          outside the /content scope must be refreshed within the java code building configuration -->
+          <property name="absolutePath" value="/content"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="nodeTypeNames">
+            <null/>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.core.jcr.pool.PoolingRepositorySessionsRefreshEventListener">
+              <property name="poolingRepositories">
+                <list>
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.default"/>
+                      </list>
+                    </property>
+                  </bean>
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.preview"/>
+                      </list>
+                    </property>
+                  </bean>
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.writable"/>
+                      </list>
+                    </property>
+                  </bean>
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.binaries"/>
+                      </list>
+                    </property>
+                  </bean>
+                </list>
+              </property>
+              <property name="refreshDisposableRepositories" value="true" />
+              <property name="multipleRepository" ref="javax.jcr.Repository" />
+            </bean>
+          </property>
+        </bean>
+
+        <!-- session pools marking security domains changed: All sessions should be logged out. -->
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <!-- only nodes below '/hippo:configuration' in the repository triggers sessions to be logged out -->
+          <property name="absolutePath" value="/hippo:configuration"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <!-- only changes to those node types should trigger session logout -->
+          <property name="nodeTypeNames">
+            <list>
+              <value>hipposys:authrole</value>
+              <value>hipposys:facetrule</value>
+              <value>hipposys:domainrule</value>
+              <value>hipposys:domain</value>
+              <value>hipposys:domainfolder</value>
+              <value>hipposys:role</value>
+              <value>hipposys:rolefolder</value>
+              <value>hipposys:group</value>
+              <value>hipposys:groupfolder</value>
+              <value>hipposys:externalgroup</value>
+              <value>hipposys:externalrole</value>
+            </list>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.core.jcr.pool.PoolingRepositorySessionMustBeLoggedOutListener">
+              <property name="poolingRepositories">
+                <list>
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.default"/>
+                      </list>
+                    </property>
+                  </bean>
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.preview"/>
+                      </list>
+                    </property>
+                  </bean>
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.writable"/>
+                      </list>
+                    </property>
+                  </bean>
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.binaries"/>
+                      </list>
+                    </property>
+                  </bean>
+                </list>
+              </property>
+              <property name="multipleRepository" ref="javax.jcr.Repository" />
+            </bean>
+          </property>
+        </bean>
+        
+        <!-- lazy delegating repository sessions refreshing event listener -->
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <!-- only nodes below '/content' in the repository triggers sessions to be refreshed. Sessions needed to load configuration
+          outside the /content scope must be refreshed within the java code building configuration -->
+          <property name="absolutePath" value="/content"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="nodeTypeNames">
+            <null/>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.core.jcr.LazySessionDelegatingRepositorySessionsRefreshEventListener">
+              <property name="lazySessionDelegatingRepositories">
+                <list>
+                  <ref bean="javax.jcr.Repository.subjectBased" />
+                </list>
+              </property>
+            </bean>
+          </property>
+        </bean>
+
+        <!-- Changes in the resource bundle documents invoke an invalidation in the resourceBundleRegistry. -->
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <property name="absolutePath" value="${resource.bundles.rootPath}"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="nodeTypeNames">
+            <list>
+              <value>resourcebundle:resourcebundle</value>
+            </list>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.resourcebundle.internal.ResourceBundleEventListener">
+              <constructor-arg ref="org.hippoecm.hst.resourcebundle.ResourceBundleRegistry" />
+            </bean>
+          </property>
+        </bean>
+
+        <!-- Listens to changes in the host configuration. -->
+        <bean class="org.hippoecm.hst.configuration.environment.OptionalEnvironmentEventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="nodeTypeNames">
+            <list>
+              <value>hst:virtualhostgroup</value>
+              <value>hst:virtualhost</value>
+            </list>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.configuration.environment.HostConfigListener">
+              <property name="hostConfigPublisher" ref="org.hippoecm.hst.configuration.environment.HostConfigPublisher"/>
+            </bean>
+          </property>
+        </bean>
+
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <property name="absolutePath" ref="jcrPathTemplateComposer"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean class="org.hippoecm.hst.channelmanager.security.SecurityModelImpl$SecurityModelEventListener">
+              <property name="securityModel" ref="org.hippoecm.hst.channelmanager.security.SecurityModel"/>
+            </bean>
+          </property>
+        </bean>
+
+      </list>
+    </property> 
+  </bean>
+
+  <!-- Default empty list of custom jcr observation event listener items to be overriden by projects. (e.g., classpath:META-INF/hst-assembly/overrides/*.xml) -->
+  <bean id="customJcrObservationEventListenerItems" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
+    <property name="targetClass" value="java.util.Collections" />
+    <property name="targetMethod" value="synchronizedList" />
+    <property name="arguments">
+      <list>
+        <bean class="org.springframework.beans.factory.config.ListFactoryBean"> 
+          <property name="sourceList"> 
+            <list></list>
+          </property> 
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+</beans>

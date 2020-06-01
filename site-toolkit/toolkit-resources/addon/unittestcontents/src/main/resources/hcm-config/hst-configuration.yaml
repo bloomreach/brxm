@@ -1,0 +1,26 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations:
+      /unittestcommon:
+        jcr:primaryType: hst:configuration
+      /unittestproject:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../unittestcommon]
+      /unittestsubproject:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../unittestcommon]
+      /intranettestproject:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../unittestproject]
+      /global:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../unittestcommon]
+      /sub1:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../unittestcommon]
+      /subsub1:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../unittestcommon]
+      /sub2:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../unittestcommon]

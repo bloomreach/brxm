@@ -1,0 +1,1332 @@
+<?xml version="1.0" ?>
+<!--
+  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.1"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
+
+  <description>HST Core Tag Library</description>
+  <tlib-version>1.0</tlib-version>
+  <short-name>hst-core-tags</short-name>
+  <uri>http://www.hippoecm.org/jsp/hst/core</uri>
+
+  <tag>
+    <description>A HstComponent can include the content of its child HstComponent with this tag. If the 'var' attribute
+      is missing, child content will be directly written to the location of this hst:include tag. If 'var' attribute is
+      defined, the output will be stored in the variable define by 'var'.
+    </description>
+    <name>include</name>
+    <tag-class>org.hippoecm.hst.tag.HstIncludeTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>The variable name containing the content of the child HstComponent</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>The name of the child HstComponent to be included.</description>
+      <name>ref</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <example><![CDATA[
+      <!-- Threecolumnlayout -->
+      <table class="main">
+        <tr>
+          <td class="leftmenu">
+            <hst:include ref="leftmenu"/>
+          </td>
+          <td class="content">
+            <hst:include ref="content"/>
+          </td>
+          <td class="rightmenu">
+            <hst:include ref="right" var="rightContent"/>
+            <c:if test="${not empty fn:trim(rightContent)}">
+              ${rightContent}
+            </c:if>
+          </td>
+        </tr>
+       </table>
+     ]]></example>
+  </tag>
+
+  <tag>
+    <description>This param tag can be nested into 'link', 'renderURL' and 'actionURL' to provide parameters.
+    </description>
+    <name>param</name>
+    <tag-class>org.hippoecm.hst.tag.ParamTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>The name of the parameter</description>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>The value of the parameter</description>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <example><![CDATA[
+      <ul id="paging-nav">
+        <c:forEach var="pageNr" items="${searchResults.pageNumbersArray}" varStatus="status">
+          <c:set var="active" value="" />
+          <c:if test="${searchResults.currentPage == pageNr}">
+            <c:set var="active" value=" class=\"active\"" />
+          </c:if>
+          <hst:renderURL var="pagelink">
+            <hst:param name="page" value="${pageNr}" />
+            <hst:param name="query" value="${query}" />
+          </hst:renderURL>
+          <li${active}><a href="${pagelink}" title="${pageNr}">${pageNr}</a></li>
+        </c:forEach>
+      </ul>
+      ]]></example>
+  </tag>
+
+  <tag>
+    <description>A HstComponent can make a render URL with this tag with adding some parameters. This renderURL will
+      invoke the current page with different parameters for the HstComponent including this tag.
+    </description>
+    <name>renderURL</name>
+    <tag-class>org.hippoecm.hst.tag.HstRenderURLTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstRenderURLTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The variable name of the renderURL</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>If value is 'true' the created link will be a fully qualified link (URLs), thus starting with
+        'http://' or 'https://' etc
+      </description>
+      <name>fullyQualified</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
+        renderURL can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeXml is set to true.
+      </description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <example><![CDATA[
+      <ul id="paging-nav">
+        <c:forEach var="pageNr" items="${searchResults.pageNumbersArray}" varStatus="status">
+          <c:set var="active" value="" />
+          <c:if test="${searchResults.currentPage == pageNr}">
+            <c:set var="active" value=" class=\"active\"" />
+          </c:if>
+          <hst:renderURL var="pagelink">
+            <hst:param name="page" value="${pageNr}" />
+            <hst:param name="query" value="${query}" />
+          </hst:renderURL>
+          <li${active}><a href="${pagelink}" title="${pageNr}">${pageNr}</a></li>
+        </c:forEach>
+      </ul>
+      ]]></example>
+  </tag>
+
+  <tag>
+    <description>A HstComponent can make a action URL with this tag. This tag is often used for building a form action
+      URL. This actionURL will invoke the current page with submitting the parameters to the HstComponent including this
+      tag.
+    </description>
+    <name>actionURL</name>
+    <tag-class>org.hippoecm.hst.tag.HstActionURLTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstActionURLTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The variable name of the actionURL</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>If value is 'true' the created link will be a fully qualified link (URLs), thus starting with
+        'http://' or 'https://' etc
+      </description>
+      <name>fullyQualified</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
+        actionURL can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeXml is set to true.
+      </description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+  </tag>
+
+  <tag>
+    <description>A HstComponent can make a resource URL with this tag with resource ID. This resourceURL will invoke the
+      current page with the resourceID for the HstComponent including this tag.
+    </description>
+    <name>resourceURL</name>
+    <tag-class>org.hippoecm.hst.tag.HstResourceURLTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstResourceURLTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The variable name of the resourceURL</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>The resourceID to be used by the HstComponent.</description>
+      <name>resourceId</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>If value is 'true' the created link will be a fully qualified link (URLs), thus starting with
+        'http://' or 'https://' etc
+      </description>
+      <name>fullyQualified</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+        Whether or not to escape &amp;,&gt;,&lt;,", and ' to be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default, this is set to true.
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
+        resourceURL can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeXml is set to true.
+      </description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+  </tag>
+
+  <tag>
+    <description>This tag creates a URL for rendering a single hst component</description>
+    <name>componentRenderingURL</name>
+    <tag-class>org.hippoecm.hst.tag.HstComponentRenderingURLTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstComponentRenderingURLTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The variable name of the component rendering URL</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>If value is 'true' the created link will be a fully qualified link (URLs), thus starting with
+        'http://' or 'https://' etc
+      </description>
+      <name>fullyQualified</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
+        componentRenderingURL can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeXml is set to true.
+      </description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <example><![CDATA[
+      <c:forEach var="pageNr" items="${searchResults.pageNumbersArray}">
+        <hst:componentRenderingURL var="ajaxURL">
+          <hst:param name="page" value="${pageNr}" />
+        </hst:renderURL>
+        <!-- some ajax javascript to load ${ajaxURL} and replace some block -->
+        </c:forEach>
+        ]]></example>
+  </tag>
+
+  <tag>
+    <description>This tag creates links. It knows whether to include or exclude the contextpath and servletpath. The
+      attributes 'link' and 'node' get the current servletpath in their result, the 'path' attribute does *not* get the
+      servletpath. The reasoning is that the 'path' attribute is used for static links, like for css and images. You
+      should use one of the three attributes (link|path|node) within one tag, and not more then one. If you do not
+      specify the 'var' attribute, the output is directly written. Otherwise, the value is stored in the var attribute.
+      If you only specify a hst:link (with or without var), you get a hst link for the current URL
+    </description>
+    <name>link</name>
+    <tag-class>org.hippoecm.hst.tag.HstLinkTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstLinkTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The variable name of the link tag</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>A HstLink object, containing a already rewritten object</description>
+      <name>link</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.core.linking.HstLink</type>
+    </attribute>
+    <attribute>
+      <description>A string path, typically a location relative to the webapp</description>
+      <name>path</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>A string subPath which gets appended to the path with a delimiter './' . This makes it useful for
+        creating REST links
+      </description>
+      <name>subPath</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>An IdentifiableContentBean object. This is typically one of your bean mapped objects</description>
+      <name>hippobean</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.content.beans.standard.IdentifiableContentBean</type>
+    </attribute>
+    <attribute>
+      <description>Identifier of an HippoBean object. This is a stringified identifier of one of your bean mapped objects</description>
+      <name>nodeId</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>A string id, which is the refId of a sitemap item you want to link to. Note that the sitemapitem
+        belonging to the refId should not be a wildcard matcher, and non of its ancestors should be a wildcard. Using
+        this to create a link to a sitemap item can be handy when you know to which sitemap item you want to link, but
+        not the path. For example, a single jsp is used for 2 languages which have their own sitemap. You want a link to
+        'contact' for English, and to 'kontakt' for Dutch. Using this attribute, you can link to a refId on the sitemap
+        item. Both 'contact' and 'kontakt' should have the same refId then
+      </description>
+      <name>siteMapItemRefId</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>If value is 'true' the created link will be a fully qualified link (URLs), thus starting with
+        'http://' or 'https://' etc
+      </description>
+      <name>fullyQualified</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>If the link that is created should be the canonical link, use this attr with value true
+      </description>
+      <name>canonical</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>If the link should be created in the context of the current URL, use this attr with value true. When
+        having canonical='true', this attribute is ignored.
+      </description>
+      <name>navigationStateful</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>Expert: Create a link for a mount with alias that has the value of this attribute. You can create
+        cross-domain links with this, even to mounts having a different host name. Or to a mount belonging to REST
+        calls.
+      </description>
+      <name>mount</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Expert: Create a link for a mount with type that has the value of this attribute. You can create
+        cross-mode links with this, even to preview mount or live mount. Also, you can combine this with 'mount'
+        attribute to create cross-domain links with specific type.
+      </description>
+      <name>mountType</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
+        link can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeXml is set to true.
+      </description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <example><![CDATA[
+    <!-- In a body component: A list of document names with summaries and links to those documents: -->
+
+     <c:forEach var="child_document" items="${document_list}">
+       <tr>
+         <hst:link var="link" hippobean="${child_document}"/>
+         <td class="title">
+           <a href="${link}">${child_document.name}</a>
+         </td>
+         <td>${child_document.summary}</td>
+       </tr>
+     </c:forEach>
+
+    <!-- In a <head>: -->
+
+    <hst:link var='screencss' path='/css/community/screen.css'></hst:link>
+    <link media='screen' href='${screencss}' type='text/css' rel='stylesheet'></link>
+
+    <!-- In a menu: -->
+
+     <ul id="nav-main">
+       <c:forEach var="item" items="${menu.menuItems}">
+         <c:choose >
+           <c:when test="${! empty item.externalLink}">
+             <li>
+              <a href="${item.externalLink}"><b>${item.name}</b></a>
+             </li>
+           </c:when>
+           <c:when test="${item.expanded}">
+             <li class="active">
+               ${item.name}
+             </li>
+           </c:when>
+           <c:otherwise>
+             <li>
+               <hst:link var="link" link="${item.hstLink}" />
+               <a href="${link}">
+                   ${item.name}
+               </a>
+            </li>
+           </c:otherwise>
+         </c:choose>
+       </c:forEach>
+     </ul>
+
+     <!-- Create a hst link for the current URL: -->
+     <hst:link />
+     OR
+     <hst:link var="current"/> to store it in the var 'current'
+
+     ]]></example>
+  </tag>
+
+  <tag>
+    <description>This tag creates links to web files. If you do not
+      specify the 'var' attribute, the output is directly written. Otherwise, the value is stored in the var attribute.
+      A webfile tag can only create links if there is a sitemap item that contains hst:refId = 'WEB-FILES-ID'
+      and hst:namedPipeline = 'WebFilePipeline', and the sitemap item is not allowed to have wildcards in its path (thus
+      in its own name or one of its ancestors)
+    </description>
+    <name>webfile</name>
+    <tag-class>org.hippoecm.hst.tag.HstWebFileTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstWebFileTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The variable name of the link tag</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>A web file path, starting with a / and relative to the web files root for the current webapp</description>
+      <name>path</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>If value is 'true' the created link will be a fully qualified link (URLs), thus starting with
+        'http://' or 'https://' etc
+      </description>
+      <name>fullyQualified</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
+        webfile can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeXml is set to true.
+      </description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <example><![CDATA[
+         <hst:webfile var="html4shiv" path="/js/html5shiv.js"/>
+     ]]></example>
+  </tag>
+
+  <tag>
+    <description>This sitemapitem tag can nested into a hst link tag to provide a preferred sitemap item to create the
+      link for. You can define the preferred sitemap item by choosing one (no more) of these attributes: preferItem,
+      preferItemId, or preferPath. Optionally add a fallback attr which is a boolean true or false. Default fallback is
+      true
+    </description>
+    <name>sitemapitem</name>
+    <tag-class>org.hippoecm.hst.tag.SiteMapItemTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>A HstSiteMapItem object. The preferred sitemap item to use for linkrewriting</description>
+      <name>preferItem</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.configuration.sitemap.HstSiteMapItem</type>
+    </attribute>
+    <attribute>
+      <description>
+        The id of the preferred sitemap item to use for linkrewriting
+      </description>
+      <name>preferItemId</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        The path of the preferred sitemap item to use for linkrewriting. If the path starts with a /, the / is removed
+        and ignored.
+      </description>
+      <name>preferPath</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        whether to fallback to normal linkrewriting when this preferred sitemap item is not suited to be used for the
+        link
+      </description>
+      <name>fallback</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>boolean</type>
+    </attribute>
+  </tag>
+
+
+  <tag>
+    <description>This tag can be used in faceted navigation as a helper. You can use the 'remove' attribute to remove a
+      chosen facet-value combination from the current link. It returns a link according the 'link' tag described above
+    </description>
+    <name>facetnavigationlink</name>
+    <tag-class>org.hippoecm.hst.tag.HstFacetNavigationLinkTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstFacetNavigationLinkTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The variable name of the facetnavigationlink tag</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>A HippoFacetSubNavigation object. This is the current state of the faceted navigation, from which you
+        for example want to remove one facet-value combi.
+      </description>
+      <name>current</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation</type>
+    </attribute>
+    <attribute>
+      <description>A HippoFacetSubNavigation object.</description>
+      <name>remove</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation</type>
+    </attribute>
+    <attribute>
+      <description>The List of HippoFacetSubNavigation's to be removed.</description>
+      <name>removeList</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.util.List</type>
+    </attribute>
+  </tag>
+
+  <tag>
+    <description>This tag can be used to create a cms edit url OR a HTML comment snippet that contains information about
+      the edit link in the cms. Only in preview mode, the tag can output something. In live, it will be ignored.
+      Furthermore, two different behaviours are distinguished depending on where a 'var' attribute is used or not: MODE
+      1: When there is an attribute 'var', then in a PREVIEW mount, the value of the cms url will be stored in this var.
+      It can be used by developers to create a cms link in a website. MODE 2: When there is *NOT* an attribute 'var'
+      used, then only when in PREVIEW and CMS SSO CONTEXT (template composer) an HTML COMMENT will be written directly
+      to the output containing information how to open the document in the cms. Also a HTML comment will be directly
+      written. This mode is useful for a surfandedit link that is to be used in the cms template composer.
+    </description>
+    <name>cmseditlink</name>
+    <tag-class>org.hippoecm.hst.tag.HstCmsEditLinkTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstCmsEditLinkTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>A HippoBean object. This is typically one of your bean mapped objects</description>
+      <name>hippobean</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.content.beans.standard.HippoBean</type>
+    </attribute>
+    <attribute>
+      <description>The variable name of the surf and edit url.</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+  </tag>
+
+  <tag>
+    <description>This tag can be used to create an HTML comment snippet that contains information about
+      the manage content link in the cms. Only in preview mode, the tag can output something. In live, it will be ignored.
+    </description>
+    <name>manageContent</name>
+    <tag-class>org.hippoecm.hst.tag.HstManageContentTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>Bean for existing document.</description>
+      <name>hippobean</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.content.beans.standard.HippoBean</type>
+    </attribute>
+    <attribute>
+      <description>Template query to use for creating new documents.</description>
+      <name>documentTemplateQuery</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Path to the root folder of selectable document locations. Can be a relative path to the channel's root folder or an absolute path in the repository.</description>
+      <name>rootPath</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Initial location of a new document, relative to the rootPath. Can still be changed by the user.</description>
+      <name>defaultPath</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Name of the component parameter to set when changing the content.</description>
+      <name>parameterName</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+  </tag>
+
+  <tag>
+    <description>This tag can be used to show in the channel manager in the CMS a menu to edit. This tag
+      won't output anything when not in cms channel manager preview. As argument, a CommonMenu instance is expected, which
+      in general can be a HstSiteMenu (plain configuration menu) or EditableMenu (a combination of configuration menu +
+      code piece and/or repository documents based). The editting of the menu in CMS channel manager will ONLY show the
+      hst configuration site menu items (thus in case of EditableMenu, the backing HstSiteMenu items)
+    </description>
+    <name>cmseditmenu</name>
+    <tag-class>org.hippoecm.hst.tag.HstCmsEditMenuTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstCmsEditMenuTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>A CommonMenu object, for example EditableMenu or HstSiteMenu.</description>
+      <name>menu</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.core.sitemenu.CommonMenu</type>
+    </attribute>
+  </tag>
+
+  <tag>
+    <description>This tag can be used to render a Rich Text, Formatted Text or Text field as html. Use the appropriate
+      attribute for each type.
+    </description>
+    <name>html</name>
+    <tag-class>org.hippoecm.hst.tag.HstHtmlTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstHtmlTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The variable name of the html tag</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>A HippoHtml object. Internal document links and images in the HippoHtml (hippostd:content) will be
+        rewritten to correct URLs. If you want to use different image variants than the ones stored in the
+        hippostd:content, you can add a 'imagevariant' child tag to this tag. See 'imagevariant' tag. This attribute
+        takes precedence over the formattedhtml and text attributes.</description>
+      <name>hippohtml</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.content.beans.standard.HippoHtml</type>
+    </attribute>
+    <attribute>
+      <description>A ContentRewriter object. Use this when you want to use your own ContentRewriter instead of the
+        default one, the org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter.
+      </description>
+      <name>contentRewriter</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.content.rewriter.ContentRewriter</type>
+    </attribute>
+    <attribute>
+      <description>A string containing html markup as generated by the Formatted Text field. This attribute takes
+        precedence over the text attribute.
+      </description>
+      <name>formattedText</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>A string as generated by the Text field. Line endings are rewritten to html. Double newlines are
+        converted to paragraphs. Single newlines are converted to breaks.</description>
+      <name>text</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Flag to define whether internal links are rewritten to fully qualified link (URLs), thus starting
+        with 'http://' or 'https://' etc
+      </description>
+      <name>fullyQualifiedLinks</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>If internal links should be rewritten to canonicalLinks links then use this attr with value true
+      </description>
+      <name>canonicalLinks</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <example><![CDATA[
+      <div>
+        <hst:html hippohtml="${document.body}" fullyQualifiedLinks="true" />
+        <hst:html formattedhtml="${document.formattedhtml}" />
+        <hst:html text="${document.intro}" />
+      </div>
+      ]]></example>
+  </tag>
+
+  <tag>
+    <description>This tag can be used only inside a 'html' tag to indicate that you do not want to use the image variant
+      stored in the HippoHtml (hippostd:content), but that you want to use a different variant. For example, suppose you have imageset variants
+      myproject:websitevariant and myproject:mobilesitevariant. In the HippoHtml, there might have been selected the 'myproject:websitevariant'
+      image variant, but in your mobile channel, you want to use the 'myproject:mobilesitevariant'. You can do this by injecting this 'imagevariant'
+      tag inside the 'html' tag. Also see the example below.
+    </description>
+    <name>imagevariant</name>
+    <tag-class>org.hippoecm.hst.tag.HstImageVariantTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The name of the variant to use, for example 'myhippoproject:thumbnail'</description>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Only replaces the variant names that equal one of the names of the value of this comma separated attribute. If this attribute is missing, then
+      *all* variants are replaced by the value from variant attr. Thus, this attribute is used to specifically specify which variants
+      should be replaced. Multiple variants can be configured comma separated</description>
+      <name>replaces</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Default value when not speficified is *false*. When this attribute is 'true', and the image variant from the 'variant' attribute
+        does not exist, the fallback will use the original variant
+      </description>
+      <name>fallback</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <example><![CDATA[
+      <hst:html hippobean="${document.intro}">
+         <hst:imagevariant name="myproject:mobileversion"  replaces="myproject:websiteversion" fallback="true"/>
+      </hst:html>
+      ]]></example>
+  </tag>
+
+  <tag>
+    <description>This tag can be used only inside a 'element' tag to set an attribute for the DOM element created by the
+      containing element tag. The attribute value can be set by the value attribute, but it can be set by the text
+      content of this tag also. If the value attribute of this tag is not set, this tag will look for the body text
+      content to set the value of this attribute. If the value attribute is not set at all, then it will remove the
+      attribute by the name.
+    </description>
+    <name>attribute</name>
+    <tag-class>org.hippoecm.hst.tag.HstAttributeTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The attribute name for the element</description>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>The attribute value for the element</description>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+  </tag>
+
+  <tag>
+    <description>This tag can be used to create DOM Element to create head contribution element. If you create a DOM
+      Element via this tag and pass the variable to a headContribution tag, then the headContribution element does not
+      need to parse the text content to create the head contribution DOM element. So, this tag provides an optimized way
+      to create a headContribution element. This tag can contain zero, one or more attribute tags to set attributes.
+      Also, this tag can contain text content to set the text content of the DOM element.
+    </description>
+    <name>element</name>
+    <tag-class>org.hippoecm.hst.tag.HstElementTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstElementTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The variable name of the created DOM element</description>
+      <name>var</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>The tag name of the created DOM element</description>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+  </tag>
+
+  <tag>
+    <description>A HstComponent can contribute HTML HEAD elements to the page aggregation. Because the output of a
+      HstComponent is usually put in the middle of BODY area, it is not recommended to include some javascripts or style
+      definitions in its view page. If the view page uses this headContribution tag including some head element, then
+      the container will include the head element at the final page aggregation phase.
+    </description>
+    <name>headContribution</name>
+    <tag-class>org.hippoecm.hst.tag.HeadContributionTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>To avoid multiple inclusion of the same HEAD element like javascript library, this keyHint attribute
+        can be provided to set the key for the HEAD element. If two HstComponents contribute HEAD elements with same
+        keyHint attribute, the container will include the HEAD element only once. If the component does not provide
+        keyHint attribute, the container will make a keyHint automatically by stringifying the included HEAD element by
+        this tag.
+      </description>
+      <name>keyHint</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>For more optimized way to create and use DOM element, this tag supports setting a DOM element by
+        element attribute. If this attribute is set, then the headContribution tag will not try to parse the body
+        content to create a DOM element. Instead, it will use the passed DOM element by this attribute.
+      </description>
+      <name>element</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.w3c.dom.Element</type>
+    </attribute>
+    <attribute>
+      <description>Category name of the contributed head element. The head elements can be filtered in or filtered out
+        by this attribute.
+      </description>
+      <name>category</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <example><![CDATA[
+      <hst:headContribution keyHint="generator">
+        <meta name="generator" content="Hippo Site Toolkit 2"/>
+      </hst:headContribution>
+      ]]></example>
+  </tag>
+
+  <tag>
+    <description>All the HEAD elements contributed by each HstComponent can be accessed only by the root HstComponent.
+      The root HstComponent will be responsible for rendering all the contributed HEAD elements. By inserting this tag,
+      the root HstComponent can render all the contributed HEAD elements.
+    </description>
+    <name>headContributions</name>
+    <tag-class>org.hippoecm.hst.tag.HeadContributionsTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>If this attribute is true, then the output will be generated as XHTML format. By default, this value
+        is false.
+      </description>
+      <name>xhtml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>boolean</type>
+    </attribute>
+    <attribute>
+      <description>Comma separated category list string for category includes. Contributed head elements can be filtered
+        in by this attribute. If a contributed head element has a category and this attribute contains the category,
+        then the head element would be written into the page.
+      </description>
+      <name>categoryIncludes</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Comma separated category list string for category excludes. Contributed head elements can be filtered
+        out by this attribute. If a contributed head element has a category and this attribute does not contain the
+        category, then the head element would be written into the page.
+      </description>
+      <name>categoryExcludes</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+  </tag>
+
+  <tag>
+    <description>Because there could be multiple HstComponents in a page, it is necessary to separate its namespace from
+      each other during writing some javascript functions or HTML elements. Using this tag, each HstComponent can write
+      unique name for its elements.
+    </description>
+    <name>namespace</name>
+    <tag-class>org.hippoecm.hst.tag.NamespaceTag</tag-class>
+    <body-content>empty</body-content>
+  </tag>
+
+  <tag>
+    <name>defineObjects</name>
+    <tag-class>org.hippoecm.hst.tag.DefineObjectsTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.DefineObjectsTag$TEI</tei-class>
+    <body-content>empty</body-content>
+  </tag>
+
+  <tag>
+    <description>A HstComponent can configure a wrapper elements to wrap the rendered content. When the rendered content
+      should be accessed via DOM, the wrapper element could be used. If the view page uses this tag to wrap the rendered
+      content, then the container will wrap the rendered content by the wrapper element.
+    </description>
+    <name>setWrapperElement</name>
+    <tag-class>org.hippoecm.hst.tag.SetWrapperElementTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>For more optimized way to create and use DOM element, this tag supports setting a DOM element by
+        element attribute. If this attribute is set, then this tag will not try to parse the body content to create a
+        DOM element. Instead, it will use the passed DOM element by this attribute.
+      </description>
+      <name>element</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.w3c.dom.Element</type>
+    </attribute>
+    <example><![CDATA[
+      <hst:setWrapperElement>
+        <span class="wrapper"></span>
+      </hst:setWrapperElement>
+      ]]></example>
+  </tag>
+
+  <tag>
+    <description>
+      Loads a resource bundle and stores it in the named scoped variable or
+      the bundle configuration variable
+    </description>
+    <name>setBundle</name>
+    <tag-class>org.hippoecm.hst.tag.SetHstBundleTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>
+        Resource bundle base name. This is the bundle's fully-qualified resource name,
+        which has the same form as a fully-qualified class name, that is, it uses "."
+        as the package component separator and does not have any file type
+        (such as ".class" or ".properties") suffix.
+      </description>
+      <name>basename</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>
+        Flag whether or not to fall back to the Java standard resource bundles
+        if no resource bundle is found from the HST ResourceBundleRegistry by the basename.
+        The default value is true.
+      </description>
+      <name>fallbackToJavaResourceBundle</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>
+        Flag whether or not to fall back to the default localization context, which might
+        have been set in the virtual hosts, vitual host, mount or sitemap item level.
+        The default value is true.
+      </description>
+      <name>fallbackToDefaultLocalizationContext</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>
+        Name of the exported scoped variable which stores the i18n localization context of
+        type javax.servlet.jsp.jstl.fmt.LocalizationContext.
+      </description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+  </tag>
+
+  <tag>
+    <description>
+      This tag replaces all the variables in the body content by the either current locale context or provided resource bundle.
+    </description>
+    <name>messagesReplace</name>
+    <tag-class>org.hippoecm.hst.tag.MessagesReplaceTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.MessagesReplaceTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The variable name of the replaced string</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        The resource bundle used when replacing messages.
+        If not specified, then the default localization context is used to find a bundle.
+      </description>
+      <name>bundle</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.util.ResourceBundle</type>
+    </attribute>
+    <attribute>
+      <description>
+        The resource bundle basename to find a resource bundle used when replacing messages.
+        If not specified, then the default localization context is used to find a bundle.
+      </description>
+      <name>basename</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        The locale string to determine the locale to choose a proper resource bundle.
+        If not specified, then the current response locale or default locale is used.
+      </description>
+      <name>localeString</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        The locale object to determine the locale to choose a proper resource bundle.
+        If not specified, then the current response locale or default locale is used.
+      </description>
+      <name>locale</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.util.Locale</type>
+    </attribute>
+    <attribute>
+      <description>
+        The variable reference prefix. The default value is "${".
+        If the body content content contains variable references surrounded by variablePrefix and variableSuffix,
+        then this tag replaces each variable reference by the value found in either the current locale context
+        or the provided resource bundle. Note that if you specify the value "${" yourself, you need to use "\${"
+      </description>
+      <name>variablePrefix</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        The variable reference suffix. The default value is "}".
+        If the body content content contains variable references surrounded by variablePrefix and variableSuffix,
+        then this tag replaces each variable reference by the value found in either the current locale context
+        or the provided resource bundle.
+      </description>
+      <name>variableSuffix</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        The variable reference escape character. The default value is '\'.
+        If this escape character is placed before a variable reference, the variable reference is ignored
+        and won't be replaced.
+      </description>
+      <name>escapeChar</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Character</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        Whether or not to escape a message value having &amp;,&gt;,&lt;,", and '. When escapeMessageXml = true, the
+        replaced message text can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeMessageXml is set to true.
+      </description>
+      <name>escapeMessageXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <example><![CDATA[
+      <%-- Replaces all the variables (e.g, ${company.name}) in the html output --%>
+      <hst:messagesReplace>
+        ${document.title}
+      </hst:messagesReplace>
+      <hst:messagesReplace escapeXml="false">
+        <hst:html hippohtml="${document.body}" />
+      </hst:messagesReplace>
+      ]]></example>
+  </tag>
+
+  <function>
+    <description>
+      Tests if the property of the bean is a readable one
+    </description>
+    <name>isReadable</name>
+    <function-class>org.hippoecm.hst.utils.PropertyUtils</function-class>
+    <function-signature>boolean isReadable(java.lang.Object, java.lang.String)</function-signature>
+    <example>
+      &lt;c:if test="${hst:isReadable(object, 'propertyName')}"&gt;
+    </example>
+  </function>
+
+  <function>
+    <description>
+      If the bean has a non null backing jcr node, this function tests if the node
+      is of the specified primary node type or mixin type, or a subtype thereof. If the bean is not backed
+      by a jcr provider (node), or the backing jcr node is null, this method returns false.
+    </description>
+    <name>isNodeType</name>
+    <function-class>org.hippoecm.hst.util.NodeUtils</function-class>
+    <function-signature>boolean isNodeType(javax.jcr.Node, java.lang.String)</function-signature>
+    <example>
+      &lt;c:if test="${hst:isNodeType(bean.node, 'demosite:news')}"&gt;
+    </example>
+  </function>
+
+  <function>
+    <description>
+      Determines if the class or interface represented by this content bean object is either the same as, or is a
+      subclass of, the class or interface represented by the specified fully qualified class name parameter.
+      It returns true if so; otherwise it returns false.
+    </description>
+    <name>isBeanType</name>
+    <function-class>org.hippoecm.hst.util.ContentBeanUtils</function-class>
+    <function-signature>boolean isBeanType(java.lang.Object, java.lang.String)</function-signature>
+    <example>
+      &lt;c:if test="${hst:isBeanType(bean, 'org.hippoecm.hst.demo.beans.NewsBean')}"&gt;
+    </example>
+  </function>
+
+  <function>
+    <description>
+      Replaces all the variables in the body content by the either current locale context or provided resource bundle basename.
+    </description>
+    <name>replaceMessages</name>
+    <function-class>org.hippoecm.hst.utils.MessageUtils</function-class>
+    <function-signature>String replaceMessages(java.lang.String,java.lang.String)</function-signature>
+    <example>
+      &lt;c:out value="${hst:replaceMessages(basename, text)}" /&gt;
+    </example>
+  </function>
+
+  <function>
+    <description>
+      Replaces all the variables in the body content by the either current locale context or provided resource bundle.
+    </description>
+    <name>replaceMessagesByBundle</name>
+    <function-class>org.hippoecm.hst.utils.MessageUtils</function-class>
+    <function-signature>String replaceMessagesByBundle(java.util.ResourceBundle,java.lang.String)</function-signature>
+    <example>
+      &lt;c:out value="${hst:replaceMessagesByBundle(bundle, text)}" /&gt;
+    </example>
+  </function>
+
+</taglib>

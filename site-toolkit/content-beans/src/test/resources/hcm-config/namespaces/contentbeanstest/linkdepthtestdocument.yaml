@@ -1,0 +1,116 @@
+definitions:
+  config:
+    /hippo:namespaces/contentbeanstest/linkdepthtestdocument:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 570982be-43b3-47e8-8e84-f53c875d7d18
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 973afc59-a944-43ce-aec1-3c0b8a8a6cb6
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          jcr:uuid: c7eb4124-abc3-4393-9eef-1ca079cdb505
+          hipposysedit:node: true
+          hipposysedit:supertype: ['contentbeanstest:contentdocument', 'hippostd:relaxed',
+            'hippotranslation:translated']
+          hipposysedit:uri: http://www.onehippo.org/contentbeanstest/nt/1.0
+          /contentbeanstest_deeplink:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:contentbeanstest_deeplink
+            hipposysedit:primary: false
+            hipposysedit:type: contentbeanstest:deeplink
+          /contentbeanstest_deeperlink:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:contentbeanstest_deeperlink
+            hipposysedit:primary: false
+            hipposysedit:type: contentbeanstest:deeperlink
+          /contentbeanstest_deepestlink:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:contentbeanstest_deepestlink
+            hipposysedit:primary: false
+            hipposysedit:type: contentbeanstest:deepestlink
+          /contentbeanstest_toodeeplink:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:contentbeanstest_toodeeplink
+            hipposysedit:primary: false
+            hipposysedit:type: contentbeanstest:toodeeplink
+          /hippo_mirror_:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:hippo_mirror_
+            hipposysedit:primary: false
+            hipposysedit:type: hippo:mirror
+          /docbase:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: hippo:docbase
+            hipposysedit:primary: false
+            hipposysedit:type: Docbase
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: contentbeanstest:linkdepthtestdocument
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 87541172-2c73-43b6-b010-f25c1e10ecea
+          hippo:docbase: ''
+          hippostd:holder: holder
+          hippostd:state: draft
+          hippostdpubwf:createdBy: ''
+          hippostdpubwf:creationDate: 2016-11-29T16:16:15.489+01:00
+          hippostdpubwf:lastModificationDate: 2016-11-29T16:16:15.489+01:00
+          hippostdpubwf:lastModifiedBy: ''
+          hippotranslation:id: document-type-locale-id
+          hippotranslation:locale: document-type-locale
+          /contentbeanstest:contentbeanstest_deeplink:
+            jcr:primaryType: contentbeanstest:deeplink
+            /contentbeanstest:hippo_mirror:
+              jcr:primaryType: hippo:mirror
+              hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+          /contentbeanstest:contentbeanstest_deeperlink:
+            jcr:primaryType: contentbeanstest:deeperlink
+            /contentbeanstest:contentbeanstest_deeplink:
+              jcr:primaryType: contentbeanstest:deeplink
+              /contentbeanstest:hippo_mirror:
+                jcr:primaryType: hippo:mirror
+                hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+          /contentbeanstest:contentbeanstest_deepestlink:
+            jcr:primaryType: contentbeanstest:deepestlink
+            /contentbeanstest:contentbeanstest_deeperlink:
+              jcr:primaryType: contentbeanstest:deeperlink
+              /contentbeanstest:contentbeanstest_deeplink:
+                jcr:primaryType: contentbeanstest:deeplink
+                /contentbeanstest:hippo_mirror:
+                  jcr:primaryType: hippo:mirror
+                  hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+          /contentbeanstest:contentbeanstest_toodeeplink:
+            jcr:primaryType: contentbeanstest:toodeeplink
+            /contentbeanstest:contentbeanstest_deepestlink:
+              jcr:primaryType: contentbeanstest:deepestlink
+              /contentbeanstest:contentbeanstest_deeperlink:
+                jcr:primaryType: contentbeanstest:deeperlink
+                /contentbeanstest:contentbeanstest_deeplink:
+                  jcr:primaryType: contentbeanstest:deeplink
+                  /contentbeanstest:hippo_mirror:
+                    jcr:primaryType: hippo:mirror
+                    hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+          /contentbeanstest:hippo_mirror_:
+            jcr:primaryType: hippo:mirror
+            hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe

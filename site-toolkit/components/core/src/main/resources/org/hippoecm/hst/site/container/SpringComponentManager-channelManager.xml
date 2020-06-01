@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+    
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+  <bean id="org.hippoecm.hst.configuration.channel.ChannelManager" class="org.hippoecm.hst.configuration.channel.ChannelManagerImpl">
+    <property name="hstModelMutex" ref="hstModelMutex"/>
+    <property name="hstNodeLoadingCache" ref="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache" />
+    <property name="contentRoot" value="${channel.manager.contentRoot}"/>
+    <property name="eventPathsInvalidator" ref="org.hippoecm.hst.configuration.model.EventPathsInvalidator"/>
+  </bean>
+
+  <bean class="org.hippoecm.hst.site.container.ApplicationEventMethodsInvoker">
+    <constructor-arg>
+      <map>
+        <entry>
+          <key><value>org.springframework.context.event.ContextStartedEvent</value></key>
+          <list>
+            <bean class="org.springframework.beans.support.ArgumentConvertingMethodInvoker">
+              <property name="targetObject" ref="org.hippoecm.hst.configuration.channel.ChannelManager" />
+              <property name="targetMethod" value="addChannelManagerEventListeners" />
+              <property name="arguments" ref="allChannelManagerEventListeners" />
+            </bean>
+          </list>
+        </entry>
+      </map>
+    </constructor-arg>
+  </bean> 
+
+  <bean id="allChannelManagerEventListeners" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
+    <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
+    <property name="targetMethod" value="union" />
+    <property name="arguments">
+      <list>
+        <ref bean="defaultChannelManagerEventListeners" />
+        <ref bean="customChannelManagerEventListeners" />
+      </list>
+    </property>
+  </bean>
+
+  <!-- Default system channel manager event listeners may be added here. -->
+  <bean id="defaultChannelManagerEventListeners" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
+
+  <!-- Custom channel manager event listeners in the following may be overriden in their project specific assembly. -->
+  <bean id="customChannelManagerEventListeners" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="org.hippoecm.hst.util.JsonSerializer" class="org.hippoecm.hst.core.util.JsonSerializerImpl"/>
+
+
+  <bean id="org.hippoecm.hst.channelmanager.security.SecurityModel" class="org.hippoecm.hst.channelmanager.security.SecurityModelImpl">
+    <!-- Use the delegating repository here, because we want a non pooled session: When loading the configuration
+        we do not need a session from the pool, but rather a fresh session that is logged out at the end -->
+    <property name="repository" ref="javax.jcr.Repository.delegating"/>
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
+    <property name="rootPath" value="${hst.configuration.rootPath}"/>
+    <property name="jcrPathTemplateComposer" ref="jcrPathTemplateComposer"/>
+  </bean>
+
+  <bean id="jcrPathTemplateComposer" class="java.lang.String">
+    <constructor-arg value="/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer"/>
+  </bean>
+
+</beans>

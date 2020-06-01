@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!--suppress SpringFacetInspection -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+  <bean id="resourceLifecycleManagementList" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+        <property name="targetBeanName" value="javax.jcr.Repository" />
+        <property name="propertyPath" value="resourceLifecycleManagements" />
+      </bean>
+    </property>
+  </bean>
+
+  <bean id="org.hippoecm.hst.core.container.PageErrorHandler" class="org.hippoecm.hst.core.container.DefaultPageErrorHandler">
+  </bean>
+
+  <!-- Valves -->
+
+  <bean id="abstractValve" abstract="true"
+        init-method="initialize" destroy-method="destroy">
+    <property name="containerConfiguration" ref="containerConfiguration" />
+    <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager" />
+    <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
+    <property name="requestContextComponent" ref="org.hippoecm.hst.core.internal.HstRequestContextComponent" />
+    <property name="componentFactory" ref="org.hippoecm.hst.core.container.HstComponentFactory" />
+    <property name="componentWindowFactory" ref="org.hippoecm.hst.core.container.HstComponentWindowFactory" />
+    <property name="componentInvoker" ref="org.hippoecm.hst.core.container.HstComponentInvoker" />
+    <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />
+    <property name="linkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator" />
+    <property name="siteMenusManager" ref="org.hippoecm.hst.core.sitemenu.HstSiteMenusManager" />
+    <property name="hstQueryManagerFactory" ref="org.hippoecm.hst.core.search.HstQueryManagerFactory" />
+    <property name="defaultPageErrorHandler" ref="org.hippoecm.hst.core.container.PageErrorHandler" />
+    <property name="resourceBundleRegistry" ref="org.hippoecm.hst.resourcebundle.ResourceBundleRegistry" />
+    <property name="defaultAsynchronousComponentWindowRenderingMode" value="${default.asynchronous.component.window.rendering.mode}" />
+    <property name="contentBeansTool" ref="org.hippoecm.hst.content.tool.ContentBeansTool" />
+    <property name="cachingObjectConverter" value="${object.converter.caching}" />
+  </bean>
+
+  <!-- Pre-processing valves -->
+
+  <bean id="initializationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.InitializationValve">
+    <property name="valveName" value="initializationValve" />
+  </bean>
+
+  <bean id="cmsSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsSecurityValve">
+    <property name="valveName" value="cmsSecurityValve" />
+    <property name="sessionSecurityDelegation" ref="org.hippoecm.hst.core.jcr.SessionSecurityDelegation"/>
+  </bean>
+
+  <bean id="cmsHostRestRequestContextValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsHostRestRequestContextValve">
+    <property name="valveName" value="cmsHostRestRequestContextValve" />
+    <property name="mountDecorator" ref="org.hippoecm.hst.core.internal.MountDecorator"/>
+  </bean>
+
+  <!-- Generic no-cache response headers setting valve -->
+  <bean id="noCacheResponseHeadersValve" parent="abstractValve" class="org.hippoecm.hst.core.container.GenericResponseHeadersValve">
+    <property name="valveName" value="noCacheResponseHeadersValve" />
+    <property name="settableHeaders">
+      <list>
+        <bean class="org.hippoecm.hst.util.DefaultKeyValue">
+          <constructor-arg value="Cache-Control" />
+          <constructor-arg value="no-cache" />
+        </bean>
+        <bean class="org.hippoecm.hst.util.DefaultKeyValue">
+          <constructor-arg value="Pragma" />
+          <constructor-arg value="no-cache" />
+        </bean>
+        <bean class="org.hippoecm.hst.util.DefaultKeyValue">
+          <constructor-arg value="Expires" />
+          <constructor-arg>
+            <bean class="java.lang.Long">
+              <constructor-arg value="0" />
+            </bean>
+          </constructor-arg>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <!-- Main invocable valves for each request -->
+
+  <bean id="contextResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ContextResolvingValve">
+    <property name="valveName" value="contextResolvingValve" />
+  </bean>
+
+  <bean id="selectiveRenderingContextResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SelectiveRenderingContextResolvingValve">
+    <property name="valveName" value="selectiveRenderingContextResolvingValve" />
+  </bean>
+
+  <bean id="localizationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.LocalizationValve">
+    <property name="valveName" value="localizationValve" />
+  </bean>
+
+  <bean id="securityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SecurityValve">
+    <property name="valveName" value="securityValve" />
+  </bean>
+
+  <bean id="subjectBasedSessionValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SubjectBasedSessionValve">
+    <property name="valveName" value="subjectBasedSessionValve" />
+    <property name="subjectBasedRepository" ref="javax.jcr.Repository.subjectBased" />
+  </bean>
+
+  <bean id="jcrSessionStatefulConcurrencyValve" parent="abstractValve" class="org.hippoecm.hst.core.container.JCRSessionStatefulConcurrencyValve">
+    <property name="valveName" value="jcrSessionStatefulConcurrencyValve" />
+    <property name="maxRefreshIntervalOnLazySession" value="${lazySession.maxRefreshIntervalOnCleanup}" />
+  </bean>
+
+  <bean id="actionValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ActionValve">
+    <property name="valveName" value="actionValve" />
+  </bean>
+
+  <bean id="pageInfoRenderingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PageInfoRenderingValve">
+    <property name="valveName" value="pageInfoRenderingValve" />
+  </bean>
+
+  <bean id="esiPageInfoScanningValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ESIPageInfoScanningValve">
+    <constructor-arg ref="esiPageScanner" />
+    <constructor-arg ref="esiPageRenderer" />
+    <property name="valveName" value="esiPageInfoScanningValve" />
+    <property name="esiFragmentsProcessing" value="${esi.default.fragments.processing}" />
+    <property name="esiFragmentsProcessingOnlyForAsyncComponents" value="${esi.processing.condition.async.components}" />
+    <property name="pageCache" ref="pageCache"/>
+  </bean>
+
+  <bean id="requestInfoCacheKeyFragmentCreator" class="org.hippoecm.hst.core.container.DefaultRequestInfoCacheKeyFragmentCreator" />
+
+  <bean id="pageCachingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PageCachingValve">
+    <constructor-arg ref="requestInfoCacheKeyFragmentCreator" />
+    <property name="valveName" value="pageCachingValve" />
+    <property name="pageCache" ref="pageCache"/>
+  </bean>
+
+  <bean id="defaultAggregationValveComposerComponentWindowResponseAppenders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <ref bean="composerComponentWindowResponseAppenders" />
+    </property>
+  </bean>
+
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.lang.Boolean"/>
+    <property name="targetObject" ref="defaultAggregationValveComposerComponentWindowResponseAppenders"/>
+    <property name="targetMethod" value="add"/>
+    <property name="arguments">
+      <bean class="org.hippoecm.hst.core.autoreload.AutoReloadResponseAppender"/>
+    </property>
+  </bean>
+
+  <bean id="aggregationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.AggregationValve">
+    <property name="valveName" value="aggregationValve" />
+    <property name="asynchronousComponentWindowRendererMap" ref="asynchronousComponentWindowRendererMap" />
+    <property name="componentWindowResponseAppenders" ref="defaultAggregationValveComposerComponentWindowResponseAppenders"/>
+  </bean>
+
+  <bean id="selectiveRenderingAggregationValve" parent="aggregationValve"
+        class="org.hippoecm.hst.core.container.SelectiveRenderingAggregationValve">
+    <property name="valveName" value="selectiveRenderingAggregationValve"/>
+    <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders" />
+  </bean>
+
+
+  <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ResourceServingValve">
+    <property name="valveName" value="resourceServingValve" />
+  </bean>
+
+  <bean id="componentRenderingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ComponentRenderingValve">
+    <property name="valveName" value="componentRenderingValve" />
+  </bean>
+
+  <bean id="filterChainInvokingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.FilterChainInvokingValve">
+    <property name="valveName" value="filterChainInvokingValve" />
+  </bean>
+
+  <bean id="containerResourceDispatchingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ContainerResourceDispatchingValve">
+    <property name="valveName" value="containerResourceDispatchingValve" />
+  </bean>
+
+
+  <!-- Post-processing valves -->
+
+  <bean id="cleanupValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CleanupValve">
+    <property name="valveName" value="cleanupValve" />
+    <property name="sessionSecurityDelegation" ref="org.hippoecm.hst.core.jcr.SessionSecurityDelegation"/>
+  </bean>
+
+  <bean id="diagnosticReportingValve" class="org.hippoecm.hst.core.container.DiagnosticReportingValve">
+    <property name="valveName" value="diagnosticReportingValve" />
+  </bean>
+
+  <bean id="notFoundValve" class="org.hippoecm.hst.core.container.NotFoundValve">
+    <property name="valveName" value="notFoundValve" />
+  </bean>
+
+
+  <bean id="webFileValve" parent="abstractValve" class="org.hippoecm.hst.core.container.WebFileValve">
+    <property name="valveName" value="webFileValve" />
+    <property name="webFileCache" ref="webFileCache"/>
+    <property name="negativeWebFileCacheBuilder">
+      <bean class="com.google.common.cache.CacheBuilder"
+            factory-method="from">
+        <constructor-arg value="${negativeWebFileCacheBuilder.from}" />
+      </bean>
+    </property>
+  </bean>
+
+  <!-- Pipelines -->
+
+  <bean id="org.hippoecm.hst.core.container.Pipelines" class="org.hippoecm.hst.core.container.HstSitePipelines">
+    <property name="defaultPipelineName" value="DefaultSitePipeline" />
+    <property name="pipelines">
+      <map>
+        <entry key="DefaultSitePipeline">
+           <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+            <property name="initializationValves">
+              <list>
+                <ref bean="initializationValve" />
+                <ref bean="cmsSecurityValve"/>
+              </list>
+            </property>
+            <property name="processingValves">
+              <list>
+                <ref bean="securityValve" />
+                <ref bean="subjectBasedSessionValve" />
+                <ref bean="jcrSessionStatefulConcurrencyValve"/>
+                <ref bean="contextResolvingValve" />
+                <ref bean="localizationValve" />
+                <ref bean="actionValve" />
+                <ref bean="resourceServingValve" />
+                <ref bean="pageInfoRenderingValve" />
+                <ref bean="esiPageInfoScanningValve" />
+                <ref bean="pageCachingValve"/>
+                <ref bean="componentRenderingValve" />
+                <ref bean="aggregationValve" />
+              </list>
+            </property>
+            <property name="cleanupValves">
+              <list>
+                <ref bean="diagnosticReportingValve" />
+                <ref bean="cleanupValve" />
+              </list>
+            </property>
+          </bean>
+        </entry>
+        <entry key="SpaSitePipeline">
+           <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+            <property name="initializationValves">
+              <list>
+                <ref bean="initializationValve" />
+                <ref bean="cmsSecurityValve"/>
+              </list>
+            </property>
+            <property name="processingValves">
+              <list>
+                <ref bean="securityValve" />
+                <ref bean="subjectBasedSessionValve" />
+                <ref bean="jcrSessionStatefulConcurrencyValve"/>
+                <ref bean="selectiveRenderingContextResolvingValve" />
+                <ref bean="localizationValve" />
+                <ref bean="pageInfoRenderingValve" />
+                <ref bean="pageCachingValve"/>
+                <ref bean="selectiveRenderingAggregationValve" />
+              </list>
+            </property>
+            <property name="cleanupValves">
+              <list>
+                <ref bean="diagnosticReportingValve" />
+                <ref bean="cleanupValve" />
+              </list>
+            </property>
+          </bean>
+        </entry>
+        <!-- External Web Application Invocation Pipeline -->
+        <entry key="WebApplicationInvokingPipeline">
+          <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+            <property name="initializationValves">
+              <list>
+                <ref bean="initializationValve" />
+                <ref bean="cmsSecurityValve"/>
+              </list>
+            </property>
+            <property name="processingValves">
+              <list>
+                <ref bean="localizationValve" />
+                <ref bean="securityValve" />
+                <ref bean="subjectBasedSessionValve" />
+                <ref bean="jcrSessionStatefulConcurrencyValve" />
+                <ref bean="filterChainInvokingValve" />
+              </list>
+            </property>
+            <property name="cleanupValves">
+              <list>
+                <ref bean="diagnosticReportingValve" />
+                <ref bean="cleanupValve" />
+              </list>
+            </property>
+          </bean>
+        </entry>
+
+        <entry key="WebFilePipeline">
+          <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+            <property name="initializationValves">
+              <list>
+                <ref bean="initializationValve" />
+              </list>
+            </property>
+            <property name="processingValves">
+              <list>
+                <ref bean="webFileValve" />
+              </list>
+            </property>
+            <property name="cleanupValves">
+              <list>
+                <ref bean="cleanupValve" />
+                <ref bean="diagnosticReportingValve" />
+              </list>
+            </property>
+          </bean>
+        </entry>
+
+        <entry key="ContainerResourcePipeline">
+          <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+            <property name="initializationValves">
+              <list>
+                <ref bean="initializationValve" />
+                <ref bean="cmsSecurityValve"/>
+              </list>
+            </property>
+            <property name="processingValves">
+              <list>
+                <ref bean="localizationValve" />
+                <ref bean="securityValve" />
+                <ref bean="subjectBasedSessionValve" />
+                <ref bean="jcrSessionStatefulConcurrencyValve" />
+                <ref bean="containerResourceDispatchingValve" />
+              </list>
+            </property>
+            <property name="cleanupValves">
+              <list>
+                <ref bean="diagnosticReportingValve" />
+                <ref bean="cleanupValve" />
+              </list>
+            </property>
+          </bean>
+        </entry>
+        <!-- PlainFilterChainInvokingPipeline Pipeline that only does
+            initializationValve and cleanup valves and does not have things like  securityValve or
+            subjectBasedSessionValve but directly delegates to the next servlet filter / servlet
+             -->
+        <entry key="PlainFilterChainInvokingPipeline">
+          <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+            <property name="initializationValves">
+              <list>
+                <ref bean="initializationValve" />
+              </list>
+            </property>
+            <property name="processingValves">
+              <list>
+                <ref bean="filterChainInvokingValve" />
+              </list>
+            </property>
+            <property name="cleanupValves">
+              <list>
+                <ref bean="diagnosticReportingValve" />
+                <ref bean="cleanupValve" />
+              </list>
+            </property>
+          </bean>
+        </entry>
+
+        <!-- ESI (component window) Include Rendering Pipeline -->
+        <entry key="ESIIncludePipeline">
+           <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+             <property name="processingValves">
+              <list>
+                <ref bean="contextResolvingValve" />
+                <ref bean="resourceServingValve" />
+                <ref bean="componentRenderingValve" />
+                <ref bean="aggregationValve" />
+              </list>
+             </property>
+           </bean>
+        </entry>
+
+        <!-- Page Model Pipeline -->
+        <entry key="PageModelPipeline">
+          <ref bean="org.hippoecm.hst.core.container.PageModelPipeline"/>
+        </entry>
+
+        <!-- A noop pipeline -->
+        <entry key="NoopPipeline">
+           <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+             <property name="initializationValves">
+              <list>
+                 <ref bean="notFoundValve" />
+              </list>
+             </property>
+           </bean>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <bean id="org.hippoecm.hst.core.container.PageModelPipeline" class="org.hippoecm.hst.core.container.PageModelPipeline">
+    <property name="defaultPageModelApiVersion" value="${default.pagemodelapi.version}"/>
+  </bean>
+</beans>
+
