@@ -21,6 +21,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>31.3.0-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
@@ -31,12 +32,6 @@
   <packaging>pom</packaging>
 
   <inceptionYear>2011</inceptionYear>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms-release.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms-release.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-cms-release</url>
-  </scm>
 
   <properties>
     <hippo.release.version>14.3.0-SNAPSHOT</hippo.release.version>
@@ -83,7 +78,7 @@
     <hippo.spa-sdk.version>14.3.0-SNAPSHOT</hippo.spa-sdk.version>
     <hippo.ui-extension.version>14.3.0-SNAPSHOT</hippo.ui-extension.version>
 
-    <hippo.maven.plugin.l10n>14.3.0-SNAPSHOT</hippo.maven.plugin.l10n>
+    <hippo.maven.plugin.l10n>14.2.1</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
     <hippo.cms.locales />
 

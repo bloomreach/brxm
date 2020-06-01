@@ -21,6 +21,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>31.3.0-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo CMS7 Commons</name>
@@ -83,12 +84,6 @@
      Software configuration management (scm): where to find and how to get acces to the source repository
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
   -->
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms-commons.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms-commons.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-cms-commons</url>
-  </scm>
-
   <repositories>
     <repository>
       <id>hippo</id>
