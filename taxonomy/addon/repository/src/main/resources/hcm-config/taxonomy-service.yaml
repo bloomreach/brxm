@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/taxonomyService:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.onehippo.taxonomy.plugin.TaxonomyPlugin
+      taxonomy.id: service.taxonomy
+      taxonomy.root: /content/taxonomies
+      taxonomy.state: published
