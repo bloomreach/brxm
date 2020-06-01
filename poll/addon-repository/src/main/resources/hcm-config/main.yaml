@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    poll:
+      uri: http://forge.onehippo.org/poll/nt/1.2
+      cnd: poll.cnd
