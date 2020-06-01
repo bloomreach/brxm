@@ -1,0 +1,5 @@
+group:
+  name: hippo-cms-test
+  after: hippo-cms
+project: hippo-essentials-components
+module: hippo-essentials-components-hst-test
