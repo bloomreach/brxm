@@ -1,0 +1,5 @@
+group:
+  name: hippo-cms-test
+  after: hippo-cms
+project: hippo-addon-search-service
+module: hippo-addon-search-service-jcr-test
