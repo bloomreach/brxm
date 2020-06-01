@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hst:hst/hst:sites/globalcontentapi:
+      jcr:primaryType: hst:site
+      hst:content: /unittestcontent/documents

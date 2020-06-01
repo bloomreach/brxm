@@ -1,0 +1,16 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/googleAnalyticsConfiguration:
+      jcr:primaryType: hipposys:module
+      /hippo:moduleconfig:
+        jcr:primaryType: hippogoogleanalytics:configuration
+        hippogoogleanalytics:accountId:
+          .meta:category: system
+        hippogoogleanalytics:password:
+          .meta:category: system
+        hippogoogleanalytics:tableId:
+          .meta:category: system
+        hippogoogleanalytics:username:
+          .meta:category: system
+        hippogoogleanalytics:privateKey:
+          .meta:category: system

@@ -1,0 +1,58 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestcommon/hst:components:
+      jcr:primaryType: hst:components
+      /header:
+        jcr:primaryType: hst:component
+        hst:template: header
+        /title:
+          jcr:primaryType: hst:component
+          hst:template: title
+      /overview:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:template: overview
+      /detail:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:template: detail
+      /leftmenu:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:template: leftmenu
+      /contactform:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:template: contact
+      /simplesearch:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:template: simplesearch
+      /contactspringform:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:parameternames: [spring-delegated-bean]
+        hst:parametervalues: [contactBean]
+        hst:template: contactspring
+      /contactdispatchform:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:parameternames: [dispatch-path]
+        hst:parametervalues: [jsp/components/contactdispatch.jsp]
+      /contactspringmvcform:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:parameternames: [action-path]
+        hst:parametervalues: [spring/contactspringmvc.do]
+        hst:template: contactspringmvc
+      /twopaneoverview:
+        jcr:primaryType: hst:component
+        hst:template: twopaneoverview
+        /top:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+          hst:template: overview
+        /bottom:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+          hst:template: overview

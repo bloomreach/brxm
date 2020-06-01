@@ -1,0 +1,340 @@
+definitions:
+  config:
+    /testcontent:
+      jcr:primaryType: hippostd:directory
+      jcr:mixinTypes: ['mix:referenceable']
+      hippostd:foldertype: [new-document, new-folder]
+      /gallery:
+        jcr:primaryType: hippogallery:stdImageGallery
+        jcr:mixinTypes: ['mix:referenceable']
+        hippostd:foldertype: [new-image-folder]
+        hippostd:gallerytype: ['hippogallery:exampleImageSet']
+      /assets:
+        jcr:primaryType: hippogallery:stdAssetGallery
+        jcr:mixinTypes: ['mix:referenceable']
+        hippostd:foldertype: [new-file-folder]
+        hippostd:gallerytype: ['hippogallery:exampleAssetSet']
+      /attic:
+        jcr:primaryType: hippostd:folder
+        jcr:mixinTypes: ['mix:referenceable']
+      /documents:
+        jcr:primaryType: hippostd:folder
+        jcr:mixinTypes: ['mix:referenceable']
+        hippostd:foldertype: [new-folder, new-document]
+        /testproject:
+          jcr:primaryType: hippostd:folder
+          jcr:mixinTypes: ['mix:referenceable']
+          hippostd:foldertype: [new-folder, new-document]
+          /Products:
+            jcr:primaryType: hippostd:folder
+            jcr:mixinTypes: ['mix:referenceable']
+            hippostd:foldertype: [new-folder, new-document]
+            /SomeProduct:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /SomeProduct:
+                jcr:primaryType: testproject:textpage
+                jcr:mixinTypes: ['mix:versionable']
+                hippostd:holder: admin
+                hippostd:state: unpublished
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                testproject:date: 2009-08-14T10:05:07.580+02:00
+                testproject:summary: ''
+                testproject:title: Products
+                /testproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: |-
+                    <div id="content_main">
+                                                        <p>Hippo products enable you to optimize
+                                                        information management in your organization. Our current
+                                                        offering exists out of three products:</p>
+                                                        <p><a
+                                                        href="http://www.onehippo.com/en/products,hippo-cms/index.html">Hippo
+                                                        CMS</a>: for publishing web and intranet content.
+                                                        This native XML content management system is suited for
+                                                        organizations that have large amounts of unstructured data.
+                                                        Hippo CMS allows you to organize and structure your content and
+                                                        makes content retrieval easier.</p>
+                                                        <p><a
+                                                        href="http://www.onehippo.com/en/products,hippo-portal/index.html">Hippo
+                                                        Portal:</a> streamlines and authorizes various
+                                                        information sources in your company. The portal technology
+                                                        (JSR-168) enables you to integrate back-office applications
+                                                        without losing control. It allows for personalisation and
+                                                        extensive rights management.</p>
+                                                        <p><a
+                                                        href="http://www.onehippo.com/en/products,documentmanagement/index.html">Hippo
+                                                        Document Management (CDM)</a>: is suited for
+                                                        maintaining technical documentation (compound documents). It can
+                                                        handle complex XML structures and still allows for lightning
+                                                        fast retrieval (a big plus against other players in this
+                                                        field).</p> </div>
+            /HippoCMS:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /HippoCMS:
+                jcr:primaryType: testproject:textpage
+                jcr:mixinTypes: ['mix:versionable']
+                hippostd:holder: admin
+                hippostd:state: unpublished
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                testproject:date: 2009-08-13T10:05:07.580+02:00
+                testproject:summary: |-
+                  Hippo CMS is a user-friendly content management system for
+                                                  maintaining all your information in a structured publication on
+                                                  Internet, intranet or extranet. The key points of Hippo CMS are
+                                                  user-friendliness, interoperability and expandability.
+                testproject:title: Hippo CMS
+                /testproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: |-
+                    <p>With Hippo CMS it is possible to merge
+                                                        various external sources seamlessly into a single whole. Hippo
+                                                        CMS itself therefore works with all the usual open standards and
+                                                        is deployed in particular in situations where links are needed
+                                                        with other data systems, tools and platforms. Standard
+                                                        connections are therefore present for many of the usual sources
+                                                        (SAP, Exact, Plannon, etc.).</p>
+                                                        <p><strong>What makes Hippo CMS
+                                                        different from other content management
+                                                        systems?</strong> <br />
+                                                        <strong> The open architecture offers a number of
+                                                        important benefits:</strong> </p>
+                                                        <ul class="content_list">
+                                                        <li><span><strong>Open
+                                                        Source:</strong> you can read about the benefits
+                                                        of Open Source <a
+                                                        href="http://www.onehippo.com/en/opensource,opensource/why.html">here</a>.
+                                                        The source code of Hippo CMS can be found on <a
+                                                        href="http://www.hippocms.org/">www.hippocms.org</a>.</span></li>
+                                                        <li><span><strong>Re-use
+                                                        of content:</strong> content can be used
+                                                        simultaneously on your website, intranet or extranet and even in
+                                                        print.</span></li>
+                                                        <li><span><strong>Separation
+                                                        of content, design and the content management
+                                                        system</strong> instead of merely separation of
+                                                        content and design. This means that a modification to the
+                                                        presentation has no consequences for the system itself. This
+                                                        makes the solution extremely
+                                                        flexible.</span></li>
+                                                        <li><span><strong>Rapid
+                                                        implementation:</strong> the implementation and
+                                                        running costs depend linearly on the size of the project (in
+                                                        script-based systems this relationship is
+                                                        exponential).</span></li>
+                                                        <li><span><strong>User-friendly
+                                                        interface:</strong> this is extremely important in
+                                                        systems that people have to use on a daily
+                                                        basis.</span></li>
+                                                        <li><span><strong>Native
+                                                        XML + 100% Java = 100%
+                                                        open.</strong></span></li>
+                                                        <li><span><strong>No
+                                                        vendor lock-in:</strong> the software can also be
+                                                        used by other web
+                                                        builders.</span></li>
+                                                        <li><span><strong>Unlike
+                                                        many open source products, Hippo CMS is not a toolkit that
+                                                        requires further
+                                                        configuration.</strong></span></li>
+                                                        </ul> <p>Hippo products are scalable
+                                                        and flexible systems that store data in the medium-independent
+                                                        XML format. Publication to HTML and PDF is a standard feature
+                                                        and the structured arrangement of templates in pipelined XSL
+                                                        transformations allows extremely rapid development. This means
+                                                        that the implementation times are also very
+                                                        short.</p> <p>The end-user
+                                                        environment is a very user-friendly Word-like environment where
+                                                        the content can be stored and managed in a structured way. This
+                                                        is so simple that content can be published straight from the
+                                                        source.<br /> <strong>For
+                                                        example:</strong> the job opportunities on your
+                                                        intranet or website can be placed by the HRM department, so that
+                                                        the information is relevant and up to
+                                                    date.</p>
+          /Solutions:
+            jcr:primaryType: hippostd:folder
+            jcr:mixinTypes: ['mix:referenceable']
+            hippostd:foldertype: [new-folder, new-document]
+            /SolutionsPage:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /SolutionsPage:
+                jcr:primaryType: testproject:textpage
+                jcr:mixinTypes: ['mix:versionable']
+                hippostd:holder: admin
+                hippostd:state: unpublished
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                testproject:date: 2009-08-11T10:05:07.580+02:00
+                testproject:summary: ''
+                testproject:title: Solutions
+                /testproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: |-
+                    <div id="content_main"> <p>We
+                                                        believe that every organization is unique, and that software has
+                                                        to fit like a glove. However, there are also certain
+                                                        similarities between organizations. It's our expertise to re-use
+                                                        knowledge and expertise and adapt when
+                                                        necessary.</p> <p>Hippo software is
+                                                        currently used in the following branches:</p>
+                                                        <ul class="content_list">
+                                                        <li><span>Publishers;</span></li>
+                                                        <li><span>Education;</span></li>
+                                                        <li><span>Government;</span></li>
+                                                        <li><span>Non-profit;</span></li>
+                                                        <li><span>Financial
+                                                        institutions;</span></li>
+                                                        <li><span>Manufacturing
+                                                        industry;</span></li>
+                                                        <li><span>Retail, Fast moving
+                                                        consumer goods.</span></li>
+                                                        </ul> <p>We can advise you in
+                                                        picking the right Hippo solution.</p>
+                                                        </div>
+          /Support:
+            jcr:primaryType: hippostd:folder
+            jcr:mixinTypes: ['mix:referenceable']
+            hippostd:foldertype: [new-folder, new-document]
+          /News:
+            jcr:primaryType: hippostd:folder
+            jcr:mixinTypes: ['mix:referenceable']
+            hippostd:foldertype: [new-folder, new-document]
+            /2009:
+              jcr:primaryType: hippostd:folder
+              jcr:mixinTypes: ['mix:referenceable']
+              hippostd:foldertype: [new-folder, new-document]
+              /April:
+                jcr:primaryType: hippostd:folder
+                jcr:mixinTypes: ['mix:referenceable']
+                hippostd:foldertype: [new-folder, new-document]
+                /Day5:
+                  jcr:primaryType: hippostd:folder
+                  jcr:mixinTypes: ['mix:referenceable']
+                  hippostd:foldertype: [new-folder, new-document]
+                  /Day5Article:
+                    jcr:primaryType: hippo:handle
+                    jcr:mixinTypes: ['mix:referenceable']
+                    /Day5Article:
+                      jcr:primaryType: testproject:newspage
+                      jcr:mixinTypes: ['mix:versionable']
+                      hippostd:holder: admin
+                      hippostd:state: unpublished
+                      hippostdpubwf:createdBy: admin
+                      hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                      hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                      hippostdpubwf:lastModifiedBy: admin
+                      testproject:date: 2009-08-10T10:05:07.580+02:00
+                      testproject:summary: Summary about Day5Article
+                      testproject:title: Day5Article
+                      /testproject:body:
+                        jcr:primaryType: hippostd:html
+                        hippostd:content: My Day5Article content
+                /AprilNewsArticle:
+                  jcr:primaryType: hippo:handle
+                  jcr:mixinTypes: ['mix:referenceable']
+                  /AprilNewsArticle:
+                    jcr:primaryType: testproject:newspage
+                    jcr:mixinTypes: ['mix:versionable']
+                    hippostd:holder: admin
+                    hippostd:state: unpublished
+                    hippostdpubwf:createdBy: admin
+                    hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                    hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                    hippostdpubwf:lastModifiedBy: admin
+                    testproject:date: 2009-08-09T10:05:07.580+02:00
+                    testproject:summary: Summary about AprilNewsArticle
+                    testproject:title: AprilNewsArticle
+                    /testproject:body:
+                      jcr:primaryType: hippostd:html
+                      hippostd:content: My AprilNewsArticle content
+                /April News Article 2:
+                  jcr:primaryType: hippo:handle
+                  jcr:mixinTypes: ['mix:referenceable']
+                  /April News Article 2:
+                    jcr:primaryType: testproject:newspage
+                    jcr:mixinTypes: ['mix:versionable']
+                    hippostd:holder: admin
+                    hippostd:state: unpublished
+                    hippostdpubwf:createdBy: admin
+                    hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                    hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                    hippostdpubwf:lastModifiedBy: admin
+                    testproject:date: 2009-08-09T10:05:07.580+02:00
+                    testproject:summary: Summary about April News Article 2
+                    testproject:title: April News Article 2
+                    /testproject:body:
+                      jcr:primaryType: hippostd:html
+                      hippostd:content: My second April News Article content
+              /May:
+                jcr:primaryType: hippostd:folder
+                jcr:mixinTypes: ['mix:referenceable']
+                hippostd:foldertype: [new-folder, new-document]
+            /2008:
+              jcr:primaryType: hippostd:folder
+              jcr:mixinTypes: ['mix:referenceable']
+              hippostd:foldertype: [new-folder, new-document]
+            /News1:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /News1:
+                jcr:primaryType: testproject:newspage
+                jcr:mixinTypes: ['mix:versionable']
+                hippostd:holder: admin
+                hippostd:state: unpublished
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                testproject:date: 2009-04-15T10:05:07.580+02:00
+                testproject:summary: Summary about news item 1
+                testproject:title: 'News Item 1 '
+                /testproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: My news item 1 content
+            /News2:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /News2:
+                jcr:primaryType: testproject:newspage
+                jcr:mixinTypes: ['mix:versionable']
+                hippostd:holder: admin
+                hippostd:state: unpublished
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                testproject:date: 2009-03-15T10:05:07.580+02:00
+                testproject:summary: Summary about news item 2
+                testproject:title: 'News Item 2 '
+                /testproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: My news item 2 content
+            /News3:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /News3:
+                jcr:primaryType: testproject:newspage
+                jcr:mixinTypes: ['mix:versionable']
+                hippostd:holder: admin
+                hippostd:state: unpublished
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                testproject:date: 2009-02-15T10:05:07.580+02:00
+                testproject:summary: Summary about news item 3
+                testproject:title: 'News Item 3 '
+                /testproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: My news item 3 content

@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:queries/hippo:templates/new-subsite:
+      jcr:primaryType: hippostd:templatequery
+      jcr:mixinTypes: ['hipposys:implementation']
+      hippostd:modify: [./_name, $name, './hippotranslation:id', $uuid]
+      hipposys:classname: org.hippoecm.repository.impl.query.DirectPath
+      jcr:language: xpath
+      jcr:statement: /jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/node()
+      /hippostd:templates:
+        jcr:primaryType: hippostd:templates
