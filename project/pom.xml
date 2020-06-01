@@ -1318,6 +1318,10 @@
                 <exclude>**/MANIFEST.MF</exclude>
                 <exclude>**/README.md</exclude>
                 <exclude>**/README.adoc</exclude>
+                <!-- Only exclude first three levels of target folders to avoid excluding packages named target -->
+                <exclude>target/**</exclude>
+                <exclude>*/target/**</exclude>
+                <exclude>*/*/target/**</exclude>
                 <!-- exclude IntelliJ module files of sub-projects -->
                 <exclude>**/*.iml</exclude>
                 <!-- exclude IntelliJ Atlassian plugin file -->
