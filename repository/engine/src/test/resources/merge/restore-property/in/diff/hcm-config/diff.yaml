@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /topmost/upstream:
+      existingPropertyNewlyAdded: Existing property new value
+    /topmost/upstream/exportFirst:
+      someproperty: newproperty
+    /topmost/upstream/exportSecond:
+      .meta:delete: true

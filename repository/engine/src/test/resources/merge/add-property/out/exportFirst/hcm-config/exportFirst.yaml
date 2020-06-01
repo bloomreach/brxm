@@ -1,0 +1,17 @@
+definitions:
+  config:
+    /otherTopmost:
+      newProperty: value
+      /otherChild:
+        property: value
+    /topmost/upstream:
+      existingPropertyAddedInExport: '... but now I have a new value'
+      existingPropertyNewlyModified: I'm still a string!
+      newPropertyForUpstream: Howdy!
+    /topmost/upstream/exportFirst:
+      jcr:primaryType: nt:unstructured
+      existingPropertyWithLocalDef: '... I''ve been here the whole time'
+      newPropertyForLocalDef: Hoi!
+      newPropertyWithResource:
+        type: binary
+        resource: testResource.bin

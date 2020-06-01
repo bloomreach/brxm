@@ -1,0 +1,14 @@
+definitions:
+  config:
+    /content:
+      .meta:category: content
+    /hippo:configuration/hippo:modules/autoexport:
+      /hippo:moduleconfig:
+        autoexport:filteruuidpaths:
+          operation: add
+          type: string
+          value: ['/content/uuids']
+        autoexport:excluded:
+          operation: add
+          type: string
+          value: ['/content/excluded','/content/excluded/**']

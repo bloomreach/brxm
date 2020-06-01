@@ -1,0 +1,4 @@
+/content/uuids:
+  jcr:primaryType: nt:unstructured
+  jcr:mixinTypes: ['mix:referenceable']
+  newProperty: value

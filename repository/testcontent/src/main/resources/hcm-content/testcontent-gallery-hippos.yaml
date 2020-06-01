@@ -1,0 +1,35 @@
+/content/gallery/hippos:
+  jcr:primaryType: hippogallery:stdImageGallery
+  jcr:mixinTypes: ['mix:versionable']
+  jcr:uuid: f770e2fa-e24a-4a1b-beb3-2f4bf2617473
+  hippo:availability: [preview, live]
+  hippostd:foldertype: [new-image-folder]
+  hippostd:gallerytype: ['hippogallery:imageset']
+  /Hippo.jpg:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: 0dbd96e9-6ecd-4a1e-be3a-815884b46826
+    /Hippo.jpg:
+      jcr:primaryType: hippogallery:imageset
+      jcr:mixinTypes: ['mix:versionable']
+      jcr:uuid: d2d1f4f1-b4ea-4cd3-8afa-24772cf3ff99
+      hippo:availability: [preview, live]
+      hippogallery:filename: Hippo.jpg
+      /hippogallery:thumbnail:
+        jcr:primaryType: hippogallery:image
+        hippogallery:height: 81
+        hippogallery:width: 100
+        jcr:data:
+          type: binary
+          resource: /content/gallery/hippos/hippo.jpg/Hippo_thumbnail.jpg
+        jcr:lastModified: 2008-09-11T14:02:28.068+02:00
+        jcr:mimeType: image/jpeg
+      /hippogallery:original:
+        jcr:primaryType: hippogallery:image
+        hippogallery:height: 142
+        hippogallery:width: 175
+        jcr:data:
+          type: binary
+          resource: /content/gallery/hippos/hippo.jpg/Hippo_original.jpg
+        jcr:lastModified: 2008-09-11T14:02:28.068+02:00
+        jcr:mimeType: image/jpeg

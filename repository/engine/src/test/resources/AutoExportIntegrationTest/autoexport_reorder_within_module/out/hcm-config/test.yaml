@@ -1,0 +1,54 @@
+definitions:
+  config:
+    /across:
+      jcr:primaryType: nt:unstructured
+    /across/a1-initial:
+      jcr:primaryType: nt:unstructured
+    /across/a2-last:
+      jcr:primaryType: nt:unstructured
+    /across/a3-first:
+      .meta:order-before: a1-initial
+      jcr:primaryType: nt:unstructured
+    /across/a4-middle:
+      .meta:order-before: a2-last
+      jcr:primaryType: nt:unstructured
+    /within:
+      jcr:primaryType: nt:unstructured
+      /sub:
+        jcr:primaryType: nt:unstructured
+        /w3-first:
+          jcr:primaryType: nt:unstructured
+        /w1-initial:
+          jcr:primaryType: nt:unstructured
+        /w4-middle:
+          jcr:primaryType: nt:unstructured
+        /w2-last:
+          jcr:primaryType: nt:unstructured
+    /mix:
+      .meta:residual-child-node-category: content
+      jcr:primaryType: nt:unstructured
+      /m1-initial:
+        jcr:primaryType: nt:unstructured
+      /m2-last:
+        jcr:primaryType: nt:unstructured
+    /reorder-on-config-delete:
+      jcr:primaryType: nt:unstructured
+      /1-first:
+        jcr:primaryType: nt:unstructured
+      /2-second:
+        jcr:primaryType: nt:unstructured
+    /reorder-on-config-delete/3-third:
+      jcr:primaryType: nt:unstructured
+    /reorder-on-content-delete:
+      .meta:residual-child-node-category: content
+      jcr:primaryType: nt:unstructured
+    /create-new-files:
+      jcr:primaryType: nt:unstructured
+      /sub:
+        jcr:primaryType: nt:unstructured
+    /existing-files:
+      jcr:primaryType: nt:unstructured
+      /sub:
+        jcr:primaryType: nt:unstructured
+    /content:
+      .meta:category: content

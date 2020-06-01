@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007-2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hippo:configuration">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:configuration</sv:value>
+  </sv:property>
+  <sv:node sv:name="hippo:derivatives">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:derivativesfolder</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:corederivatives">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:deriveddefinition</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:classname" sv:type="String">
+        <sv:value>org.hippoecm.repository.deriveddata.CoreDerivedDataFunction</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:nodetype" sv:type="String">
+        <sv:value>hippo:document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:serialver" sv:type="Long">
+        <sv:value>1</sv:value>
+      </sv:property>
+      <sv:node sv:name="hipposys:accessed">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hipposys:propertyreferences</sv:value>
+        </sv:property>
+        <sv:node sv:name="ancestors">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposys:builtinpropertyreference</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposys:method" sv:type="String">
+            <sv:value>ancestors</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="hipposys:derived">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hipposys:propertyreferences</sv:value>
+        </sv:property>
+        <sv:node sv:name="ancestors">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposys:relativepropertyreference</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposys:relPath" sv:type="String">
+            <sv:value>hippo:paths</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hippo:temporary">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:temporaryfolder</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:queries">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:queryfolder</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:workflows">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:workflowfolder</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>c89f56e5-5e9d-4967-9850-7b6254d1791c</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:domains">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:domainfolder</sv:value>
+    </sv:property>
+    <sv:node sv:name="everywhere">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:domain</sv:value>
+      </sv:property>
+      <sv:node sv:name="all-nodes">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hipposys:domainrule</sv:value>
+        </sv:property>
+        <sv:node sv:name="match-all-types">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposys:facetrule</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposys:equals" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposys:facet" sv:type="String">
+            <sv:value>jcr:primaryType</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposys:filter" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposys:type" sv:type="String">
+            <sv:value>Name</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposys:value" sv:type="String">
+            <sv:value>*</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="hippo:authrole">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hipposys:authrole</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposys:groups" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposys:role" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hippo:security">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:securityfolder</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:domainspath" sv:type="String">
+      <sv:value>hippo:configuration/hippo:domains</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:groupspath" sv:type="String">
+      <sv:value>hippo:configuration/hippo:groups</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:rolespath" sv:type="String">
+      <sv:value>hippo:configuration/hippo:roles</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:userspath" sv:type="String">
+      <sv:value>hippo:configuration/hippo:users</sv:value>
+    </sv:property>
+    <!-- internal/repository security  provider -->
+    <sv:node sv:name="internal">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:securityprovider</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:classname" sv:type="String">
+        <sv:value>org.hippoecm.repository.security.RepositorySecurityProvider</sv:value>
+      </sv:property>
+      <sv:node sv:name="hipposys:userprovider">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hipposys:userprovider</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposys:dirlevels" sv:type="Long">
+          <sv:value>0</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="hipposys:groupprovider">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hipposys:groupprovider</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposys:dirlevels" sv:type="Long">
+          <sv:value>0</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="hipposys:accessmanager">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:accessmanager</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:permissioncachesize" sv:type="Long">
+        <sv:value>20000</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hippo:users">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:userfolder</sv:value>
+    </sv:property>
+    <sv:node sv:name="admin">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:user</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:active" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:password" sv:type="String">
+        <sv:value>$SHA-256$HIlytXwnqSU=$NqCi2sJoM4qAwQ8136GYueUVA/TSyidpAI3Evn+y/hc=</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:securityprovider" sv:type="String">
+        <sv:value>internal</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="workflowuser">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:user</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:active" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:system" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:password" sv:type="String">
+        <sv:value>$SHA-256$*</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:securityprovider" sv:type="String">
+        <sv:value>internal</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hippo:groups">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:groupfolder</sv:value>
+    </sv:property>
+    <sv:node sv:name="admin">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:group</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:members" sv:type="String">
+        <sv:value>admin</sv:value>
+        <sv:value>workflowuser</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:securityprovider" sv:type="String">
+        <sv:value>internal</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hippo:roles">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:rolefolder</sv:value>
+    </sv:property>
+    <sv:node sv:name="admin">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:role</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:privileges" sv:type="String">
+        <sv:value>jcr:all</sv:value>
+        <sv:value>hippo:admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:roles" sv:type="String">
+        <sv:value>editor</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hippo:frontend">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:applicationfolder</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:initialize">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializefolder</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String" sv:multiple="true"/>
+    <sv:node sv:name="hippo:lock">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:lock</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hippo:modules">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:modulefolder</sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>
+

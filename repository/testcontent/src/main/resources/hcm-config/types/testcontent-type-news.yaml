@@ -1,0 +1,59 @@
+definitions:
+  config:
+    /hippo:namespaces/testcontent/news:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+      hippo:name: News
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          jcr:uuid: 1773c954-2938-4a5c-abf9-031419da4379
+          hipposysedit:node: true
+          hipposysedit:supertype: ['testcontent:basedocument', 'hippostd:relaxed']
+          hipposysedit:uri: http://www.hippoecm.org/testcontent/nt/1.7
+          /title:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:path: testcontent:title
+            hipposysedit:type: String
+            hipposysedit:validators: [required, non-empty]
+          /date:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:path: testcontent:date
+            hipposysedit:type: Date
+          /introduction:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:path: testcontent:introduction
+            hipposysedit:type: Html
+          /body:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:path: testcontent:body
+            hipposysedit:type: hippostd:html
+          /internallink:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:path: testcontent:internallink
+            hipposysedit:type: hippo:mirror
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: testcontent:news
+          jcr:mixinTypes: ['mix:versionable', 'hippotranslation:translated']
+          jcr:uuid: d9257233-e848-44d4-97e4-bc185ab2c3de
+          hippostd:holder: $holder
+          hippostd:state: unpublished
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
+          hippostdpubwf:lastModificationDate: 2010-02-04T16:32:28.068+02:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippotranslation:id: translation-prototype-id
+          hippotranslation:locale: document-type-locale
+          testcontent:introduction: introduction
+          testcontent:title: ''
+          /testcontent:body:
+            jcr:primaryType: hippostd:html
+            hippostd:content: body
+          /testcontent:internallink:
+            jcr:primaryType: hippo:mirror
+            hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe

@@ -1,0 +1,1045 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<scxml version="1.0"
+       xmlns="http://www.w3.org/2005/07/scxml"
+       xmlns:hippo="http://www.onehippo.org/cms7/repository/scxml"
+       xmlns:cs="http://commons.apache.org/scxml">
+
+  <script>
+    def getScxmlId() {
+      workflowContext.scxmlId
+    }
+
+    // draft variant property method
+    def getDraft() {
+      workflowData.documents['draft']
+    }
+
+    // unpublished variant property method
+    def getUnpublished() {
+      workflowData.documents['unpublished']
+    }
+
+    // published variant property method
+    def getPublished() {
+      workflowData.documents['published']
+    }
+
+    // branches property method
+    def getBranches() {
+      workflowData.branches
+    }
+
+    // only master available
+    def boolean isOnlyMaster() {
+      workflowData.onlyMaster
+    }
+
+    // current branchId for the action feedback or triggered action
+    def getBranchId() {
+      workflowData.branchId
+    }
+
+    // current user property method
+    def getUser() {
+      workflowContext.user
+    }
+
+    // current requests map property method
+    def getRequests() {
+      workflowData.requests
+    }
+
+    // returns the variant for copying and checking copy access privileges
+    def getCopySource() {
+      published ?: unpublished ?: null
+    }
+
+    // returns the variant for deleting and checking delete privileges
+    def getDeleteSource() {
+      unpublished ?: published ?: draft
+    }
+
+    // returns the current draft holder (editor) if defined (and draft exists)
+    def getHolder() {
+      draft?.holder
+    }
+
+    // true if draft exists and currently being edited
+    def boolean isEditing() {
+      !!holder
+    }
+
+    // true if draft exists and branch from DocumentHandle currently being edited
+    def boolean isEditingCurrentBranch() {
+      !!holder and draft.isBranch(branchId)
+    }
+
+    // true if draft exists and edited by current user
+    def boolean isEditor() {
+      holder == user
+    }
+
+    // true if draft exists and not currently editor or edited by current user
+    def boolean isEditable() {
+      !holder or editor
+    }
+
+    // true if published version (can be frozen node) for branchId exists
+    def boolean isLive() {
+      workflowData.isLiveAvailable()
+    }
+
+    // true if there is any branch (including 'master') live
+    def boolean isAnyBranchLive()  {
+      workflowData.isAnyBranchLiveAvailable()
+    }
+
+    // true if unpublished version (can be frozen node) for branchId exists
+    def boolean isPreview() {
+      workflowData.isPreviewAvailable()
+    }
+
+    // true if either unpublished or published variant exits with availability 'preview'
+    def boolean isPreviewAvailable() {
+      live or preview
+    }
+
+    // true if unpublished variant exists and no published variant exists or they have a different lastModified
+    // note this 'modified' is a different one than hippo:isModified since hippo:isModified compares whether the draft has changes
+    def boolean isModified() {
+      workflowData.isModified()
+    }
+
+    // true if there is an outstanding workflow request
+    def boolean isRequestPending() {
+      workflowData.requestPending
+    }
+
+    def getContainingFolder() {
+      workflowData.handle.parent
+    }
+
+    // true if the branch from  from DocumentHandle is 'master'
+    def boolean isMaster() {
+      branches.contains('master') and 'master'.equals(branchId)
+    }
+
+    // true if the branch from  from DocumentHandle is NOT 'master'
+    def boolean isNotMaster() {
+      !'master'.equals(branchId)
+    }
+
+    // true if the branch from  from DocumentHandle exists
+    def boolean isBranchExists() {
+      branches.contains(branchId)
+    }
+
+    // true if the current unpublished variant below the handle is modified wrt its version history. Note that this
+    // compares always the current unpublished variant its branch and not the branch for #getBranchId().
+    // If there is no unpublished, this returns false
+    def boolean isCurrentUnpublishedVersioned() {
+      workflowData.isCurrentUnpublishedVersioned(unpublished)
+    }
+  </script>
+
+  <!-- the initial no-document state is used to prevent entering the handle state if there is no document -->
+  <state id="no-document">
+    <!-- automatic transition to and continue in parallel handle state only when a document variant exists -->
+    <transition target="handle" cond="!workflowData.documents.isEmpty()"/>
+  </state>
+
+  <parallel id="handle">
+
+    <!-- the atomic status state is used to report several statuses and info feedback to the invoking workflow -->
+    <state id="status">
+      <onentry>
+        <hippo:feedback key="status" value="editable"/>
+        <hippo:feedback key="isLive" value="live"/>
+        <hippo:feedback key="previewAvailable" value="previewAvailable"/>
+        <!-- enable the checkModified operation if both draft and unpublished variants exists -->
+        <hippo:action action="checkModified" enabledExpr="!!draft and !!unpublished and branchExists"/>
+      </onentry>
+
+      <!-- target-less transition on event checkModified to compare the draft and unpublished variants which result is
+           reported back as Boolean value through the 'modified' feedback variable and the workflow operation result -->
+      <transition event="checkModified">
+        <hippo:isModified/>
+        <hippo:result value="workflowContext.feedback['modified']"/>
+      </transition>
+    </state>
+
+    <!-- the composite edit state is used to manage all operations for editing a draft variant -->
+    <state id="edit">
+
+      <!-- default no-edit state initially disables all editing operations -->
+      <state id="no-edit">
+        <onentry>
+          <hippo:action action="disposeEditableInstance" enabledExpr="false"/>
+          <hippo:action action="obtainEditableInstance" enabledExpr="false"/>
+          <hippo:action action="commitEditableInstance" enabledExpr="false"/>
+        </onentry>
+        <!-- event-less transition to state "editing" if there is no pending request and the draft variant is edited -->
+        <transition target="editing"  cond="editing"/>
+        <!-- (else) event-less transition to state "editable" if there is no pending request and the draft variant
+                    doesn't exist yet or isn't edited -->
+        <transition target="editable" cond="!requestPending or notMaster"/>
+      </state>
+
+      <!-- editing state becomes active when the draft variant is currently edited -->
+      <state id="editing">
+        <onentry>
+          <if cond="editor">
+            <!-- current editor is allowed all editing operations -->
+            <hippo:action action="disposeEditableInstance" enabledExpr="true"/>
+            <!-- if current user is holder, (s)he is allowed to obtain editable instance -->
+            <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
+            <hippo:action action="commitEditableInstance" enabledExpr="true"/>
+          <else/>
+            <!-- for a not-current editor the current editor (holder) is reported through the 'inUseBy' feedback -->
+            <hippo:feedback key="inUseBy" value="holder"/>
+          </if>
+          <if cond="!editor and workflowContext.isGranted(draft,'hippo:admin')">
+            <!-- For an admin (granted hippo:admin) enable the unlock operation if not-current editor -->
+            <hippo:action action="unlock" enabledExpr="true"/>
+          </if>
+        </onentry>
+      </state>
+
+      <!-- editable state becomes active if editing is possible but there is no current editor -->
+      <state id="editable">
+        <onentry>
+          <if cond="workflowContext.isGranted(draft,'hippo:admin')">
+            <!-- for an admin (granted hippo:admin) report the unlock operation as available but disabled -->
+            <hippo:action action="unlock" enabledExpr="false"/>
+          </if>
+          <!-- enable the operation to start editing -->
+          <hippo:action action="obtainEditableInstance" enabledExpr="branchExists"/>
+        </onentry>
+      </state>
+
+      <!-- target-less transition to 'dispose' an editable instance by (only) removing the current draft holder, and the
+           current unpublished document variant is returned if currently in preview state else the published variant -->
+      <transition event="disposeEditableInstance">
+        <!-- remove holder from the draft document -->
+        <hippo:setHolder holder="null"/>
+        <hippo:result value="preview ? unpublished : published"/>
+      </transition>
+
+      <!-- target-less transition to 'obtain' an editable draft document variant by creating or updating a draft variant
+           by copying (the contents of) the current unpublished variant if available or else the published variant -->
+      <transition event="obtainEditableInstance">
+        <!-- copy/update draft unless user already is holder (editing) -->
+
+        <if cond="!editor">
+          <if cond="!!unpublished">
+            <!-- unpublished document exists -->
+            <!-- make sure the unpublished is the right branch -->
+            <if cond="!unpublished.isBranch(branchId)">
+              <!-- current unpublished is not for the branch to restore to. First check in old branch if changed and
+              then checkout the request branch -->
+              <if cond="!currentUnpublishedVersioned">
+                <hippo:version variant="unpublished"/>
+              </if>
+              <hippo:checkoutBranch variant="unpublished"/>
+            </if>
+            <!-- copy it to draft first, unless we're already editor -->
+            <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
+          <elseif cond="!!published"/>
+            <!-- else if published document exists: first copy it to unpublished -->
+            <hippo:copyVariant sourceState="published" targetState="unpublished"/>
+            <if cond="live">
+              <hippo:configVariant variant="published" availabilities="live"/>
+              <else/>
+              <hippo:configVariant variant="published" availabilities=""/>
+            </if>
+            <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
+            <!-- create a JCR version of the published document via the unpublished variant -->
+            <hippo:version variant="unpublished"/>
+            <!-- now copy the unpublished variant to draft -->
+            <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
+          </if>
+          <!-- mark the draft document as modified, set the user as editor and remove possibly copied availabilities -->
+          <hippo:configVariant variant="draft" applyModified="true" setHolder="true" availabilities=""/>
+        </if>
+        <!-- store the (newly created or updated) draft document as result -->
+        <hippo:result value="draft"/>
+      </transition>
+
+      <!-- target-less transition to 'commit' an editable instance by removing the holder and, if new or modified,
+           copying its content to the unpublished variant -->
+      <transition event="commitEditableInstance">
+        <hippo:setHolder holder="null"/>
+        <if cond="!!unpublished">
+          <!-- if unpublished variant exist only 'commit' changes if there are any -->
+          <hippo:isModified/>
+        </if>
+        <if cond="!unpublished or workflowContext.feedback['modified']">
+          <!-- we either have a new draft (no unpublished) or the draft is modified compared to the unpublished -->
+          <if cond="!unpublished and !!published">
+            <!-- we have no unpublished variant yet but do have a published variant:
+                 remove possible 'preview' availability from the published variant -->
+            <if cond="live">
+              <hippo:configVariant variant="published" availabilities="live"/>
+            <else/>
+              <hippo:configVariant variant="published" availabilities=""/>
+            </if>
+          </if>
+          <!-- copy the new or modified draft variant to the unpublished variant, creating it if needed -->
+          <hippo:copyVariant sourceState="draft" targetState="unpublished"/>
+          <!-- configure the new or updated unpublished to be versionable, modified and available as 'preview' -->
+          <hippo:configVariant variant="unpublished" versionable="true" applyModified="true" availabilities="preview"/>
+        </if>
+        <!-- return the possibly updated unpublished variant -->
+        <hippo:result value="unpublished"/>
+      </transition>
+
+      <!-- target-less transition to 'unlock' the current edited draft variant by overriding its current holder
+           with that of the current invoking admin (granted hippo:admin) user. -->
+      <transition event="unlock">
+        <hippo:setHolder holder="user"/>
+      </transition>
+
+    </state>
+
+    <!-- the composite request state is used to manage all workflow operations on existing document workflow requests -->
+    <state id="request">
+
+      <!-- the initial no-request state is used and active when there are no current document workflow requests -->
+      <state id="no-request">
+        <!-- event-less transition to state "requested" when requests exists -->
+        <transition target="requested" cond="!empty(requests)"/>
+      </state>
+
+      <!-- the requested state becomes active when document workflow requests are present -->
+      <state id="requested">
+        <onentry>
+          <foreach item="request" array="requests.values()">
+            <!-- for all requests determine the available request actions and report them through the special 'requests'
+                 feedback map variable -->
+            <!-- for document workflow requests: -->
+            <if cond="request.workflowRequest">
+              <if cond="workflowContext.isGranted(request, 'hippo:editor')">
+                <!-- editor users (granted hippo:editor) may reject and accept as well as cancel requests -->
+                <if cond="request.workflowType!='rejected'">
+                  <!-- if request not rejected yet, enable reject operation -->
+                  <hippo:requestAction identifierExpr="request.identity" action="rejectRequest" enabledExpr="true"/>
+                </if>
+                <if cond="request.workflowType=='delete'">
+                  <!-- if request for delete: enable accept operation if not live and not editing -->
+                  <hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="!live and !editing"/>
+                <elseif cond="request.workflowType=='publish'">
+                  <!-- if request for publish: enable accept operation if modified and not editing -->
+                  <hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="modified and !editing"/>
+                </elseif>
+                <elseif cond="request.workflowType=='depublish'"/>
+                  <!-- if request for depublish: enable accept operation if live and not editing -->
+                  <hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="live and !editing"/>
+                </if>
+                <if cond="!request.owner or request.owner==user">
+                  <!-- if request owner or no request owner: enable cancel operation -->
+                  <hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/>
+                </if>
+              <!-- when not an editor user (not granted hippo:editor) then: -->
+              <elseif cond="request?.owner==user"/>
+                <!-- if request owner: enable cancel operation -->
+                <hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/>
+              </if>
+            <else/>
+              <!-- scheduled workflow operation -->
+              <if cond="workflowContext.isGranted(request, 'hippo:editor')">
+                <!-- if editor user (granted hippo:editor): enable cancel operation -->
+                <hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/>
+              </if>
+            </if>
+          </foreach>
+        </onentry>
+
+        <!-- target-less transition to 'accept' a specific request -->
+        <transition event="acceptRequest">
+          <!-- define temporary request variable for the event payload request parameter -->
+          <cs:var name="request" expr="_event.data?.request"/>
+          <!-- store the request workflow type as temporary variable -->
+          <cs:var name="workflowType" expr="request.workflowType"/>
+          <!-- store the request targetDate as temporary variable -->
+          <cs:var name="targetDate" expr="request.scheduledDate"/>
+
+          <!-- First delete the request itself.
+               Note: After this, the request object no longer can be accessed!
+                     Which is why we need to define the temporary variables workflowType and targetDate above.
+          -->
+
+          <hippo:deleteRequest requestExpr="request"/>
+
+          <if cond="!targetDate">
+            <!-- the request didn't have a targetDate defined, simply trigger the "workflowType" value as event -->
+
+            <send event="workflowType"/>
+            <!-- log the workflowType after it has been processed -->
+            <send event="'logEvent.'+workflowType"/>
+          <else/>
+            <!-- the request did have a targetDate: trigger a 'scheduled' workflow action event -->
+            <send event="workflowType" namelist="targetDate"/>
+          </if>
+
+        </transition>
+
+        <!-- target-less transition to 'reject' a request -->
+        <transition event="rejectRequest">
+          <!-- update the specific request to type rejected with an optional reason, using the event payload
+               'request' and optional 'reason' parameters -->
+          <hippo:rejectRequest requestExpr="_event.data?.request" reasonExpr="_event.data?.reason"/>
+        </transition>
+
+        <!-- target-less transition to 'cancel' a request -->
+        <transition event="cancelRequest">
+          <!-- delete the specific request using the event payload 'request' parameter -->
+          <hippo:deleteRequest requestExpr="_event.data?.request"/>
+        </transition>
+
+      </state>
+
+    </state>
+
+    <!-- the composite publish state is used to manage workflow operations for publishing a document -->
+    <state id="publish">
+
+      <!-- the initial no-publish state is used and active to indicate publish operations are currently not
+           allowed or possible because the document is being edited or not (yet) modified -->
+      <state id="no-publish">
+        <onentry>
+          <!-- by default report the request publication operation as available but disabled -->
+          <hippo:action action="requestPublication" enabledExpr="false"/>
+          <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
+              <!-- if editor user (granted hippo:editor) by default report the publish operation as available but disabled -->
+              <hippo:action action="publish" enabledExpr="false"/>
+          </if>
+        </onentry>
+        <!-- event-less transition to publishable state if not currently editing and the document is modified -->
+        <transition target="publishable" cond="!editing and modified and master"/>
+      </state>
+
+      <!-- state publishable is active when the  document is modified and not currently edited -->
+      <state id="publishable">
+        <onentry>
+
+          <if cond="(!requestPending or user=='workflowuser') and master and modified">
+            <!-- if unpublished is a master version and no request pending OR invoked by the 'workflowuser'
+            user (scheduled workflow jobs daemon): enable request publication operation -->
+            <hippo:action action="requestPublication" enabledExpr="true"/>
+            <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
+              <!-- if (also) editor user (granted hippo:editor): enable publish operation -->
+              <hippo:action action="publish" enabledExpr="true"/>
+            </if>
+          </if>
+        </onentry>
+
+        <!-- target-less transition to create a publish request when no event payload parameter targetDate is provided -->
+        <transition event="requestPublication" cond="!_event.data?.targetDate">
+          <hippo:workflowRequest type="publish" contextVariantExpr="unpublished"/>
+        </transition>
+
+        <!-- target-less transition to create a scheduledpublish request at the required event payload parameter targetDate -->
+        <transition event="requestPublication" cond="!!_event.data?.targetDate">
+          <hippo:workflowRequest type="scheduledpublish" contextVariantExpr="unpublished" targetDateExpr="_event.data?.targetDate"/>
+        </transition>
+
+        <!-- target-less transition to publish the document when no event payload parameter targetDate is provided -->
+        <transition event="publish" cond="!_event.data?.targetDate">
+          <!-- this will publish 'master' because no 'branchId' provided -->
+          <send event="'publishBranch'"/>
+        </transition>
+
+        <!-- target-less transition to schedule the publication of the document at the required event payload parameter targetDate -->
+        <transition event="publish" cond="!!_event.data?.targetDate">
+          <hippo:scheduleWorkflow type="publish" targetDateExpr="_event.data?.targetDate"/>
+        </transition>
+
+      </state>
+
+    </state>
+
+    <!-- the composite depublish state is used to manage workflow operations for depublishing a document -->
+    <state id="depublish">
+
+      <!-- the initial no-depublish state is used and active to indicate depublish operations are currently not
+           allowed or possible because the document is being edited or not 'live' -->
+      <state id="no-depublish">
+        <onentry>
+          <!-- by default report the request depublication operation as available but disabled -->
+          <hippo:action action="requestDepublication" enabledExpr="false"/>
+          <if cond="workflowContext.isGranted(published ?: unpublished ?: draft, 'hippo:editor')">
+            <!-- if editor user (granted hippo:editor) by default report the depublish operation as available but disabled -->
+            <hippo:action action="depublish" enabledExpr="false"/>
+          </if>
+        </onentry>
+        <!-- event-less transition to depublishable state if not currently editing and the document is 'live' -->
+        <transition target="depublishable" cond="!editing and live and master"/>
+      </state>
+
+      <!-- state depublishable is active when the  document is live and not currently edited -->
+      <state id="depublishable">
+        <onentry>
+          <if cond="(!requestPending or user=='workflowuser') and master">
+            <!-- if no request pending OR invoked by the 'workflowuser' user (scheduled workflow jobs daemon):
+                 enable request depublication operation -->
+            <hippo:action action="requestDepublication" enabledExpr="true"/>
+            <if cond="workflowContext.isGranted(published, 'hippo:editor')">
+              <!-- if (also) editor user (granted hippo:editor): enable publish operation -->
+              <hippo:action action="depublish" enabledExpr="true"/>
+            </if>
+          </if>
+        </onentry>
+
+        <!-- target-less transition to create a depublish request when no event payload parameter targetDate is provided -->
+        <transition event="requestDepublication" cond="!_event.data?.targetDate">
+          <hippo:workflowRequest type="depublish" contextVariantExpr="published"/>
+        </transition>
+
+        <!-- target-less transition to create a scheduleddepublish request at the required event payload parameter targetDate -->
+        <transition event="requestDepublication" cond="!!_event.data?.targetDate">
+          <hippo:workflowRequest type="scheduleddepublish" contextVariantExpr="published" targetDateExpr="_event.data?.targetDate"/>
+        </transition>
+
+        <!-- target-less transition to depublish the document when no event payload parameter targetDate is provided -->
+        <transition event="depublish" cond="!_event.data?.targetDate">
+          <send event="'depublishBranch'"/>
+        </transition>
+
+        <!-- target-less transition to schedule the depublication of the document at the required event payload parameter targetDate -->
+        <transition event="depublish" cond="!!_event.data?.targetDate">
+          <hippo:scheduleWorkflow type="depublish" targetDateExpr="_event.data?.targetDate"/>
+        </transition>
+
+      </state>
+
+    </state>
+
+    <!-- the composite versioning state is used to manage versioning related workflow operations of a document -->
+    <state id="versioning">
+
+      <onentry>
+        <!-- always enable the listVersions, even if no version is available (yet) -->
+        <hippo:action action="listVersions" enabledExpr="true"/>
+      </onentry>
+
+      <!-- target-less transition to report a list of available versions of the document -->
+      <transition event="listVersions">
+        <hippo:listVersions variant="unpublished" />
+      </transition>
+
+      <!-- the initial no-versioning state is used and active to indicate versioning operations are currently not
+           allowed or possible because there is no unpublished document variant yet -->
+      <state id="no-versioning">
+        <!-- event-less transition to versionable state when an unpublished document variant exists -->
+        <transition target="versionable" cond="!!unpublished"/>
+      </state>
+
+      <!-- the versionable state becomes active when an unpublished document variant exists -->
+      <state id="versionable">
+        <onentry>
+          <!-- enable the retrieveVersion operation -->
+          <hippo:action action="retrieveVersion" enabledExpr="true"/>
+          <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
+            <!-- if the user is editor (granted hippo:editor) also enable the other versioning operations -->
+            <hippo:action action="version" enabledExpr="true"/>
+            <hippo:action action="restoreVersion" enabledExpr="true"/>
+            <hippo:action action="versionRestoreTo" enabledExpr="true"/>
+            <hippo:action action="restoreVersionToBranch" enabledExpr="branchExists"/>
+          </if>
+        </onentry>
+
+        <!-- target-less transition to create a new version for the current unpublished variant -->
+        <transition event="version">
+          <hippo:version variant="unpublished"  />
+        </transition>
+
+        <!-- target-less transition to retrieve a specific version created on the event payload provided date parameter -->
+        <transition event="retrieveVersion">
+          <hippo:retrieveVersion historic="_event.data?.date" variant="unpublished" />
+        </transition>
+
+        <!-- target-less transition to restore a specific version from the event payload provided parameter date to the
+             payload provided parameter target (document).
+             Note: this uses custom/manual copying of the version contents, unlike the restoreVersion operation below -->
+        <transition event="versionRestoreTo">
+          <hippo:versionRestoreTo historic="_event.data?.date" variant="unpublished" target="_event.data?.target"/>
+          <hippo:result value="unpublished"/>
+        </transition>
+
+        <!-- target-less transition to restore a specific document version from the event payload provided parameter date.
+             Note: this uses standard JCR version restore unlike the versionRestoreTo operation above -->
+        <transition event="restoreVersion">
+          <hippo:restoreVersion historic="_event.data?.date"  variant="unpublished" />
+        </transition>
+
+        <transition event="restoreVersionToBranch">
+
+          <!-- to avoid potentially loosing unpublished changes, first version if needed-->
+          <if cond="!currentUnpublishedVersioned">
+            <hippo:version variant="unpublished"/>
+          </if>
+
+          <if cond="!unpublished.isBranch(branchId)">
+              <!-- current unpublished is not for the branch to restore to. First checkout the branch -->
+            <hippo:checkoutBranch variant="unpublished"/>
+          </if>
+          <!-- current unpublished is now for right branch, do a version restore and set the branch info again -->
+          <hippo:restoreVersionByVersion version="_event.data?.version" target="unpublished" />
+
+          <!-- after the restore, the newly restored unpublished variant for branch 'x' needs to be versioned to make
+               sure that the 'x-unpublished' label points to the right version -->
+          <hippo:version variant="unpublished"/>
+          <hippo:result value="unpublished"/>
+        </transition>
+      </state>
+
+    </state>
+
+    <state id="branching">
+
+      <onentry>
+        <hippo:action action="branch" enabledExpr="!editing and (!!unpublished or !!published) and branches.contains('master')"/>
+        <hippo:action action="listBranches" enabledExpr="true"/>
+        <hippo:action action="getBranch" enabledExpr="!onlyMaster and branchExists"/>
+      </onentry>
+
+      <!-- target-less transition to report a list of available branches of the document -->
+      <transition event="listBranches">
+        <hippo:listBranches/>
+      </transition>
+
+      <!-- target-less transition to get a branch -->
+      <transition event="getBranch">
+
+        <hippo:getBranch state="_event.data?.state" unpublished="unpublished" published="published" draft="draft"/>
+      </transition>
+
+      <!-- the initial no-branchable state is used and active to indicate branchable operations are currently not
+           allowed or possible because there is no unpublished or published document variant yet -->
+      <state id="no-branchable">
+        <!-- event-less transition to branchable state when an unpublished OR published document variant exists AND the
+             unpublished is for master OR there is no unpublished (in which case there is only one variant from which
+             you can branch -->
+        <transition target="branchable" cond="!editing and (!!unpublished or !!published) and branches.contains('master')"/>
+      </state>
+
+      <!-- the branchable state becomes active when an unpublished document variant exists -->
+      <state id="branchable">
+        <!-- target-less transition to create a new branch for the current unpublished variant -->
+        <transition event="branch">
+
+          <if cond="!unpublished and !!published">
+            <!-- if no unpublished variant exists yet, copy it from the published variant -->
+            <hippo:copyVariant sourceState="published" targetState="unpublished"/>
+            <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
+            <hippo:configVariant variant="published" availabilities="live"/>
+          </if>
+
+          <if cond="branchExists">
+            <!-- branch exists, only make sure it is the current unpublished is for the branch -->
+            <if cond="unpublished.isBranch(branchId)">
+
+              <hippo:result value="unpublished"/>
+            <else/>
+
+              <if cond="!currentUnpublishedVersioned">
+                <hippo:version variant="unpublished"/>
+              </if>
+
+              <hippo:checkoutBranch variant="unpublished"/>
+              <hippo:result value="unpublished"/>
+
+            </if>
+          <else/>
+
+            <if cond="!currentUnpublishedVersioned">
+              <hippo:version variant="unpublished"/>
+            </if>
+
+            <if cond="!unpublished.master">
+              <!-- branching is always done from 'master' -->
+              <hippo:checkoutBranch variant="unpublished" branchId="'master'"/>
+            </if>
+            <hippo:branch variant="unpublished" branchName="_event.data?.branchName"/>
+
+          </if>
+
+        </transition>
+
+      </state>
+
+    </state>
+
+    <state id="checking-out-branch">
+      <onentry>
+        <hippo:action action="checkoutBranch" enabledExpr="!editing and !!unpublished and !onlyMaster and branchExists"/>
+      </onentry>
+      <!-- the initial no-branching state is used and active to indicate checking-out operations are currently not
+           allowed or possible because there is no unpublished document variant yet -->
+      <state id="no-checkout-branch">
+        <!-- event-less transition to 'can-checkout-branch' state when an unpublished document variant exists
+             and not being edited -->
+        <transition target="can-checkout-branch" cond="!editing and !!unpublished and !onlyMaster and branchExists"/>
+      </state>
+      <!-- the checking-out state becomes active when an unpublished document variant exists -->
+      <state id="can-checkout-branch">
+        <transition event="checkoutBranch">
+
+          <if cond="unpublished.isBranch(branchId)">
+            <!-- return the same DocumentVariant object we already had -->
+            <hippo:result value="unpublished"/>
+
+          <else/>
+
+            <if cond="!currentUnpublishedVersioned">
+              <hippo:version variant="unpublished"/>
+            </if>
+            <hippo:checkoutBranch variant="unpublished"/>
+          </if>
+        </transition>
+
+      </state>
+    </state>
+    <state id="remove-branch">
+      <onentry>
+        <hippo:action action="removeBranch" enabledExpr="!live and !editingCurrentBranch and branchExists and notMaster"/>
+      </onentry>
+      <!-- the initial no-remove-branch state is used and active to indicate remove-branch operations are currently not
+           allowed or possible because there is no unpublished document variant yet -->
+      <state id="no-remove-branch">
+        <!-- event-less transition to 'can-remove-branch' state when an unpublished document variant exists -->
+        <transition target="can-remove-branch" cond="!live and !editingCurrentBranch and branchExists and notMaster"/>
+      </state>
+      <!-- the can-remove-branch state becomes active when an unpublished document variant exists -->
+      <state id="can-remove-branch">
+        <transition event="removeBranch">
+
+          <if cond="unpublished.isBranch(branchId)">
+            <!-- first checkout any other branch because the unpublished is for branch to be removed -->
+            <hippo:version variant="unpublished"/>
+            <hippo:checkoutBranch variant="unpublished" branchId="'*'" stateLabel="'unpublished'"/>
+          </if>
+
+          <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"/>
+        </transition>
+      </state>
+
+    </state>
+    <state id="reintegrate-branch">
+      <onentry>
+        <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
+          <hippo:action action="reintegrateBranch" enabledExpr="false"/>
+        </if>
+      </onentry>
+      <!-- the initial no-reintegrate-branch state is used and active to indicate reintegrate-branch operations are
+         currently not allowed or possible -->
+      <state id="no-reintegrate-branch">
+        <!-- event-less transition to 'can-reintegrate-branch' state -->
+        <transition target="can-reintegrate-branch" cond="!!unpublished and branchExists and notMaster"/>
+      </state>
+      <state id="can-reintegrate-branch">
+        <onentry>
+          <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
+            <hippo:action action="reintegrateBranch" enabledExpr="true"/>
+          </if>
+        </onentry>
+        <transition event="reintegrateBranch">
+
+          <!-- if the unpublished version is not for the branch to reintegrate, first version it to avoid any loss of
+           changes in the preview -->
+          <if cond="!unpublished.isBranch(branchId)">
+            <hippo:version variant="unpublished"/>
+          </if>
+
+          <hippo:setPreReintegrationLabels unpublished="unpublished"/>
+
+          <hippo:checkoutBranch variant="unpublished"/>
+
+          <!-- during reintegration we need to remove the branch for the variants that belong to the branch -->
+          <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"/>
+
+          <!-- for reintegrate, always publish. Checking modified we do not do -->
+          <if cond="_event.data?.publish">
+            <!-- copy the content of the unpublished variant to the published variant -->
+            <hippo:copyVariant sourceState="unpublished" targetState="published"/>
+            <!-- mark the published variant as published and set its availability to (only) 'live' -->
+            <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
+            <!-- create a JCR version of the published document via the unpublished variant -->
+            <hippo:version variant="unpublished" trigger="publication"/>
+          </if>
+
+        </transition>
+      </state>
+    </state>
+
+    <state id="publish-branch">
+      <onentry>
+        <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
+          <hippo:action action="publishBranch" enabledExpr="false"/>
+        </if>
+      </onentry>
+      <!-- the initial no-publish-branch state is used and active to indicate publish-branch operations are
+       currently not allowed or possible -->
+      <state id="no-publish-branch">
+        <!-- event-less transition to 'can-publish-branch' state -->
+        <transition target="can-publish-branch" cond="!!unpublished and branchExists and modified"/>
+      </state>
+      <state id="can-publish-branch">
+        <onentry>
+          <!-- if the workflow is for master, the publishBranch is only enabled when there is no request pending
+          or it is invoked by the workflow user -->
+          <if cond="((!requestPending or user=='workflowuser') and master) || notMaster">
+            <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
+              <hippo:action action="publishBranch" enabledExpr="true"/>
+            </if>
+          </if>
+        </onentry>
+        <transition event="publishBranch">
+
+          <if cond="anyBranchLive and notMaster">
+            <!-- there is a published variant, we only publish to version history -->
+            <if cond="unpublished.isBranch(branchId)">
+              <!-- do a version checkin if needed of the unpublished and mark with both unpublished and published for branchId -->
+              <if cond="!currentUnpublishedVersioned">
+                 <hippo:version variant="unpublished" trigger="publication"/>
+              <else/>
+                 <!-- the unpublished is the same as the unpublished in version history: only add the published label -->
+                 <hippo:label unpublished="unpublished" addLabel="branchId + '-published'" onLabel="branchId + '-unpublished'"/>
+              </if>
+            <else/>
+              <!-- current unpublished is for other branch : Only 'publish' in version history by setting ${branchId}-published label -->
+              <hippo:label unpublished="unpublished" addLabel="branchId + '-published'" onLabel="branchId + '-unpublished'"/>
+            </if>
+
+          </if>
+
+          <if cond="!anyBranchLive or master">
+
+            <!-- there is not yet a published variant or it is master: really publish the preview -->
+            <if cond="!unpublished.isBranch(branchId)">
+              <!-- the unpublished version is not for the branch to publish. First checkout the branch -->
+              <if cond="!currentUnpublishedVersioned">
+                <hippo:version variant="unpublished"/>
+              </if>
+              <hippo:checkoutBranch variant="unpublished"/>
+            </if>
+
+            <!-- copy the content of the unpublished variant to the published variant -->
+            <hippo:copyVariant sourceState="unpublished" targetState="published"/>
+            <!-- mark the published variant as published and set its availability to (only) 'live' -->
+            <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
+            <!-- create a JCR version of the published document via the unpublished variant -->
+            <hippo:version variant="unpublished" trigger="publication"/>
+          </if>
+        </transition>
+      </state>
+    </state>
+
+    <state id="depublish-branch">
+      <onentry>
+        <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
+          <hippo:action action="depublishBranch" enabledExpr="false"/>
+        </if>
+      </onentry>
+      <state id="no-depublish-branch">
+        <!-- event-less transition to 'can-depublish-branch' state -->
+        <transition target="can-depublish-branch" cond="live and branchExists"/>
+      </state>
+
+      <state id="can-depublish-branch">
+        <onentry>
+          <!-- if the workflow is for master, the depublishBranch is only enabled when there is no request pending
+          or it is invoked by the workflow user -->
+          <if cond="((!requestPending or user=='workflowuser') and master) || notMaster">
+            <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
+              <hippo:action action="depublishBranch" enabledExpr="true"/>
+            </if>
+          </if>
+        </onentry>
+        <transition event="depublishBranch">
+          <if cond="!!unpublished">
+            <!-- there is already an unpublished version -->
+
+            <!-- remove the published label from version history -->
+            <hippo:label unpublished="unpublished" removeLabel="branchId + '-published'"/>
+
+            <if cond="published.isBranch(branchId)">
+              <!-- this is a very complex state: the branch gets depublished but the published variant is for the branch : This
+              means we need to unpublish this one BUT if it turns out there is ANY other
+              branch (including Master) live in version history, we need to publish that branch!! Master has
+              precedence to become the live variant (although in general it already always is) -->
+
+              <cs:var name="originalUnpublishedBranchId" expr="unpublished.branchId" />
+
+              <!-- first version the existing unpublished since it might get replaced (and can be even another branch ) -->
+              <if cond="!currentUnpublishedVersioned">
+                <hippo:version variant="unpublished"/>
+              </if>
+
+              <!-- take the live variant offline -->
+              <hippo:configVariant variant="published" availabilities=""/>
+
+              <hippo:checkoutBranch variant="unpublished" branchId="'*'" stateLabel="'published'"/>
+
+              <if cond="!!workflowContext.result">
+                <!-- the checkout of a published branch succeeded in a result : publish the preview now -->
+                <!-- copy the content of the unpublished variant to the published variant -->
+                <hippo:copyVariant sourceState="unpublished" targetState="published"/>
+                <!-- mark the published variant as published and set its availability to (only) 'live' -->
+                <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
+                <!-- we do not need an extra version! -->
+
+                <!-- we need to restore the preview of before! -->
+                <hippo:checkoutBranch variant="unpublished" branchId="originalUnpublishedBranchId" forceReplace="true"/>
+              </if>
+
+            </if>
+          </if>
+
+          <if cond="!unpublished">
+            <!-- there is no unpublished version : Only allow the depublish IF the published variant is for the current right branch -->
+            <if cond="published.isBranch(branchId)">
+              <hippo:copyVariant sourceState="published" targetState="unpublished"/>
+              <!-- ensure the unpublished variant to be versionable set its availability to (only) 'preview' -->
+              <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
+              <!-- remove all availabilities from the published variant -->
+              <hippo:configVariant variant="published" availabilities=""/>
+              <!-- create a first version of the current unpublished variant to be able to restore to later -->
+              <hippo:version variant="unpublished"/>
+            </if>
+          </if>
+
+        </transition>
+      </state>
+
+    </state>
+
+    <!-- the composite terminate state is used to manage termination and related/similar workflow operations like
+         move and rename -->
+    <state id="terminate">
+
+      <!-- the initial no-terminate state is used and active when delete/move/rename operations are currently now
+           allowed or possible -->
+      <state id="no-terminate">
+        <onentry>
+          <!-- report request delete operation as available but default disabled -->
+          <hippo:action action="requestDelete" enabledExpr="false"/>
+          <if cond="workflowContext.isGranted(deleteSource, 'hippo:editor') and workflowContext.isGranted(containingFolder, 'jcr:write')">
+            <!-- if the user is editor (granted hippo:editor) AND allowed to modify (jcr:write) the document folder,
+                 report the delete/move/rename operations as available but default disabled -->
+            <hippo:action action="delete" enabledExpr="false"/>
+            <hippo:action action="move" enabledExpr="false"/>
+            <hippo:action action="rename" enabledExpr="false"/>
+          </if>
+        </onentry>
+        <!-- event-less transition to terminatable state if the document is not live and not being edited -->
+        <transition target="terminateable" cond="!anyBranchLive and !editing"/>
+      </state>
+
+      <!-- the terminateable state becomes active when the document is not live and not being edited -->
+      <state id="terminateable">
+        <onentry>
+          <if cond="!requestPending">
+            <!-- delete operations are only allowed when (also) no request is pending -->
+            <!-- (then) always enable the request delete operation -->
+            <hippo:action action="requestDelete" enabledExpr="true"/>
+            <if cond="workflowContext.isGranted(deleteSource, 'hippo:editor') and workflowContext.isGranted(containingFolder, 'jcr:write')">
+              <!-- if the user is editor (granted hippo:editor) AND allowed to modify (jcr:write) the document folder,
+                   enable the delete/move/rename operations -->
+              <hippo:action action="delete" enabledExpr="true"/>
+              <hippo:action action="move" enabledExpr="true"/>
+              <hippo:action action="rename" enabledExpr="true"/>
+            </if>
+          </if>
+        </onentry>
+
+        <!-- target-less transition to create a delete request -->
+        <transition event="requestDelete">
+          <hippo:workflowRequest type="delete" contextVariantExpr="deleteSource"/>
+        </transition>
+
+        <!-- transition to delete the current document and go to final state terminated -->
+        <transition event="delete" target="terminated">
+          <hippo:archiveDocument/>
+        </transition>
+
+        <!-- transition to move the current document and go to final state terminated -->
+        <transition event="move" target="terminated">
+          <hippo:moveDocument destinationExpr="_event.data?.destination" newNameExpr="_event.data?.name"/>
+        </transition>
+
+        <!-- transition to rename the current document and go to final state terminated -->
+        <transition event="rename" target="terminated">
+          <hippo:renameDocument newNameExpr="_event.data?.name"/>
+        </transition>
+
+      </state>
+
+    </state>
+
+    <!-- the composite copy state is used to manage the copy workflow operation -->
+    <state id="copy">
+
+      <!-- the initial no-copy state is used and active when the user is not an editor (granted hippo:editor) -->
+      <state id="no-copy">
+        <!-- event-less transition to copyable state when the user is an editor (granted hippo:editor) -->
+        <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:editor') and branchExists"/>
+      </state>
+
+      <!-- the state copyable is only active for users which are editor (granted hippo:editor) -->
+      <state id="copyable">
+        <onentry>
+          <!-- always enable the copy operation -->
+          <hippo:action action="copy" enabledExpr="true"/>
+        </onentry>
+
+        <!-- target-less transition to copy the document to the event payload provided parameters destination and name -->
+        <transition event="copy">
+          <if cond="!!unpublished">
+            <!-- unpublished document exists -->
+            <!-- make sure the unpublished is the right branch -->
+            <if cond="!unpublished.isBranch(branchId)">
+              <!-- current unpublished is not the one to copy. First checkin current unpublished and then checkout
+              the request copy branch -->
+              <hippo:version variant="unpublished"/>
+              <hippo:checkoutBranch variant="unpublished"/>
+            </if>
+          </if>
+          <hippo:copyDocument destinationExpr="_event.data?.destination" newNameExpr="_event.data?.name"/>
+        </transition>
+
+      </state>
+
+    </state>
+
+    <!-- the simple and non-transitional logEvent state is used to log actions:
+         such actions needs to be 'send' using an event name prefixed by 'logEvent.'
+         the remainder of the event name will be logged as event action
+    -->
+    <state id="logEvent">
+      <transition event="logEvent.*">
+        <hippo:logEvent actionexpr="_event.name.substring('logEvent.'.length())" />
+      </transition>
+    </state>
+
+  </parallel>
+
+  <!-- the final terminated state is used when the document no longer exists, is renamed or moved -->
+  <final id="terminated" />
+
+</scxml>

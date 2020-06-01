@@ -1,0 +1,26 @@
+definitions:
+  namespace:
+    hst:
+      uri: http://foo.bar
+      cnd: hst-dummy.cnd
+  config:
+    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
+      autoexport:injectresidualchildnodecategory:
+        operation: add
+        type: string
+        value: ['**/hst:workspace/**[hst:containercomponent]: content', '/base/*:
+            system']
+    /hst:hst:
+      jcr:primaryType: nt:unstructured
+      /hst:configurations:
+        jcr:primaryType: nt:unstructured
+        /hippogogreen:
+          jcr:primaryType: nt:unstructured
+          /hst:workspace:
+            jcr:primaryType: nt:unstructured
+            /hst:containers:
+              jcr:primaryType: nt:unstructured
+              /existing:
+                jcr:primaryType: hst:containercomponent
+    /base:
+      jcr:primaryType: hst:containercomponent

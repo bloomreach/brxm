@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:groups/author:
+      jcr:primaryType: hipposys:group
+      hipposys:members:
+        .meta:category: system
+        value: []
+      hipposys:securityprovider: internal

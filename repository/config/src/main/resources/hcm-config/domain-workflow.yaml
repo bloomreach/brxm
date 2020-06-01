@@ -1,0 +1,80 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/workflow:
+      jcr:primaryType: hipposys:domain
+      /hippo-type:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-type:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposys:type
+      /hippo-request:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-request:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippo:request
+      /hippo-workflow:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-workflow:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposys:workflow
+      /hippo-workflowfolder:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-workflowfolder:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposys:workflowfolder
+      /hippo-workflowcategory:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-workflowcategory:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposys:workflowcategory
+      /hipposched-trigger:
+        jcr:primaryType: hipposys:domainrule
+        /type-hipposched-trigger:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposched:trigger
+      /hipposched-triggers:
+        jcr:primaryType: hipposys:domainrule
+        /type-hipposched-triggers:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposched:triggers
+      /hippo-query:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-query:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippo:query
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [everybody]
+        hipposys:role: readonly

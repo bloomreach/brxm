@@ -1,0 +1,43 @@
+/content/documents/events:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['mix:versionable']
+  jcr:uuid: cbd837ed-2f07-492e-94dc-409f089a4fcf
+  hippo:availability: [preview, live]
+  hippostd:foldertype: [new-document, new-folder]
+  /myevent1:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: 7721bbea-d48a-441a-ab54-ef9b63fd96cb
+    /myevent1:
+      jcr:primaryType: testcontent:event
+      jcr:mixinTypes: ['mix:versionable']
+      jcr:uuid: 24c54e63-78d3-452f-a9f0-f216cc60c276
+      hippo:availability: [preview]
+      hippostd:state: unpublished
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
+      hippostdpubwf:lastModificationDate: 2010-02-04T16:32:28.068+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      testcontent:introduction: <html><body>introduction</body></html>
+      testcontent:title: title
+      /testcontent:address:
+        jcr:primaryType: testcontent:address
+        testcontent:number: 4
+        testcontent:street: Dolomieten
+      /testcontent:date:
+        jcr:primaryType: hippostd:date
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: f2d61185-5bf6-48dd-9fd8-78b5a21297aa
+        hippostd:date: 2008-03-26T12:03:00+01:00
+        hippostd:dayofmonth: 26
+        hippostd:dayofweek: 4
+        hippostd:dayofyear: 86
+        hippostd:hourofday: 12
+        hippostd:minute: 3
+        hippostd:month: 2
+        hippostd:second: 0
+        hippostd:weekofyear: 13
+        hippostd:year: 2008
+      /testcontent:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: <html><body>body</body></html>
