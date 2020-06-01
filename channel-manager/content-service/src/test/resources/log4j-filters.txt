@@ -1,0 +1,114 @@
+#
+#  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+#
+#  Licensed under the Apache License, Version 2.0 (the  "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS"
+#  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
+^Value of hint action \'.+\' is expected to be boolean but it was \'.+\'
+Cancel request received but no pending request found for 'uuid'.
+Cannot change the URL name of document
+Cannot create validation context
+Cannot determine publication state of document handle
+Cannot load ValidationService from service registry, field validation will be disabled
+Cannot read config of field
+Could not determine publication state of document
+Document workflow action 'actionNotYetImplemented' is not implemented
+Empty contextPath
+Error while validating field 'myproject:field' of type 'String', assuming it's valid
+Error while validating node '/example' with validator 'bad', assuming it's valid
+Failed reading hints from workflow
+Failed to add category 'new-folder', type 'hippostd:folder' and relPath 'test'
+Failed to add document 'breaking-news' of type 'project:newsdocument' to folder '/content/documents/channel/news' using template query 'new-news-document'
+Failed to archive document 'uuid'
+Failed to check whether a node with display name 'test' exists below 'null'
+Failed to check whether node 'test' exists below 'null'
+Failed to commit changes for user 'bla'.
+Failed to create field context
+Failed to create folder 'test'
+Failed to create user session for 'tester'
+Failed to determine editing info for node 'bla'
+Failed to determine if field is of type CHOICE
+Failed to determine layout of content type
+Failed to determine list-based choices for field
+Failed to determine locale of folder 'null', assuming no locale
+Failed to determine provider-based choices for field
+Failed to determine whether node with identifier 'request-node-id' is a cancelable publication request, assuming it's not
+Failed to dispose of editable instance
+Failed to erase document 'uuid'
+Failed to execute 'add' with category 'new-folder', type 'hippostd:folder' and relPath 'test'
+Failed to execute template query 'new-document'
+Failed to find nodeType node for content type '/bla'
+Failed to find validator 'unknown', ignoring it
+Failed to get folder '/test'
+Failed to get or create folder 'test' below 'null'
+Failed to get validator names for content type '/'
+Failed to load validator
+Failed to obtain draft for user 'bla'.
+Failed to persist changes
+Failed to read field 'test:id' from 'bla'
+Failed to read IMAGE_LINK 'my:imagelink' from node '/my:imagelink'
+Failed to read name of node 'null'
+Failed to read NODE_LINK 'my:documentlink' from node '/my:documentlink'
+Failed to read nodes for choice type 'choice'
+Failed to read nodes for COMPOUND type 'node:name'
+Failed to read nodes for IMAGE_LINK type 'my:imagelink'
+Failed to read nodes for NODE_LINK type 'my:documentlink'
+Failed to read property 'caption'
+Failed to read property 'field'
+Failed to read property 'plugin.class'
+Failed to read property 'prop' from node '/'
+Failed to read rich text field 'test:richtextfield'
+Failed to rename document
+Failed to rename draft
+Failed to retrieve child node 'fieldName' of node '/bla'.
+Failed to retrieve content type 'namespaced:type'
+Failed to retrieve content type 'type'
+Failed to retrieve draft node
+Failed to retrieve editor config node content type '/bla'
+Failed to retrieve hints for workflow
+Failed to retrieve JCR session for node '/bla'
+Failed to retrieve type of document '/bla'
+Failed to save changes to draft node of document uuid
+Failed to save changes to field 'ns:field' in draft node of document uuid
+Failed to set display name of node
+Failed to set display name of node '/test' to 'Test
+Failed to sort fields of content type
+Failed to write COMPOUND field 'node:name'
+Failed to write IMAGE_LINK field 'my:imagelink'
+Failed to write NODE_LINK field 'my:documentlink'
+Failed to write rich text field 'test:richtextfield'
+Failed to write value for choice type 'choice'
+Failed to write value of compound field 'node:name/string:field1' to node '/test'
+Failed to write value of field 'choice/child' to node '/test'
+Failed to write value of field 'node:name/string:field1' to node '/test'
+Failed to write value(s) to property test:id
+Forbidden to erase document 'document'
+Forbidden to erase document 'uuid'
+Hint 'action' not stored as Boolean
+Hint 'no-boolean' not stored as Boolean
+Ignoring invalid validator
+Multiple request nodes found for 'uuid'. This situation is not supported.
+No Server set for org.apache.cxf.transport.http_jetty.JettyHTTPServerEngine
+No values available for node of type 'choice'
+No values available for node of type 'node:name'
+Node '/hippo:configuration/hippo:queries/hippo:templates/new-document' is not of type nt:query
+Node '/hipposysedit:prototype' has primary nodetype 'hipposysedit:document' which is not a valid prototype
+Node with identifier 'unknown-uuid' does not exist
+Property 'displayName' cannot be blank or null
+Property 'documentTemplateQuery' cannot be blank or null
+Property 'documentTypeId' cannot be blank or null
+Property 'name' cannot be blank or null
+Property 'rootPath' cannot be blank or null
+Property 'slug' cannot be blank or null
+Property 'urlName' cannot be blank or null
+User 'admin' failed to re-obtain ownership of document

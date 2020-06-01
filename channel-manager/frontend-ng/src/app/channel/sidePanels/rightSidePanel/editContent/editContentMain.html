@@ -1,0 +1,69 @@
+<!--
+  ~ Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~  http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<form name="$ctrl.form"
+      class="form-dense-layout"
+      layout="column"
+      flex>
+  <md-subheader ng-if="$ctrl.notAllFieldsShown()"
+                md-colors="{background: 'hippo-grey-200'}">
+
+    <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
+    <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
+    <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.switchEditor()' translate-compile></div>
+  </md-subheader>
+
+  <md-subheader ng-if="$ctrl.getDocumentErrorMessages().length"
+                md-colors="{background: 'hippo-red-50'}"
+                class="qa-feedback">
+    <div ng-repeat="errorMessage in $ctrl.getDocumentErrorMessages()"
+         class="qa-feedback-message">
+      {{ ::errorMessage }}
+    </div>
+  </md-subheader>
+
+  <content-editor flex="grow"
+                  layout="column"
+                  on-switch-editor="$ctrl.switchEditor()"
+                  loading="$ctrl.loading">
+  </content-editor>
+</form>
+
+<md-toolbar>
+  <div class="md-toolbar-tools">
+    <span flex></span>
+
+    <md-button class="qa-discard"
+               ng-click="$ctrl.discard()"
+               ng-disabled="!$ctrl.isDocumentDirty()">
+      {{ ::'DISCARD' | translate }}
+    </md-button>
+
+    <md-button class="qa-publish animate-flash"
+               ng-if="$ctrl.isPublishAllowed()"
+               ng-click="$ctrl.publish()">
+      {{ ::'PUBLISH' | translate }}
+    </md-button>
+
+    <md-button class="qa-save"
+               md-no-ink
+               ng-if="!$ctrl.isPublishAllowed()"
+               ng-click="$ctrl.save()"
+               ng-disabled="!$ctrl.isSaveAllowed()">
+      {{ ::'SAVE' | translate }}
+    </md-button>
+
+  </div>
+</md-toolbar>

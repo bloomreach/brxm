@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g transform="translate(-1.000000, -3.000000)">
+      <polygon id="Path" points="0 0 40 0 40 40 0 40"></polygon>
+      <path d="M35,3.33333333 L5,3.33333333 C3.16666667,3.33333333 1.66666667,4.83333333 1.66666667,6.66666667 L1.66666667,26.6666667 C1.66666667,28.5 3.16666667,30 5,30 L16.6666667,30 L16.6666667,33.3333333 L13.3333333,33.3333333 L13.3333333,36.6666667 L26.6666667,36.6666667 L26.6666667,33.3333333 L23.3333333,33.3333333 L23.3333333,30 L35,30 C36.8333333,30 38.3333333,28.5 38.3333333,26.6666667 L38.3333333,6.66666667 C38.3333333,4.83333333 36.8333333,3.33333333 35,3.33333333 Z M35,26.6666667 L5,26.6666667 L5,6.66666667 L35,6.66666667 L35,26.6666667 Z" id="Shape-Copy-2" fill-opacity="0.6" fill="#000000" fill-rule="nonzero"></path>
+    </g>
+  </g>
+</svg>
