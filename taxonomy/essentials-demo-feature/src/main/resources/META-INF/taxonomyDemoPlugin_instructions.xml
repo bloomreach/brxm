@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<instructions xmlns="http://www.onehippo.org/essentials/instructions">
+    <instructionSet group="default">
+        <cnd documentType="newsdocument" superType="hippotranslation:translated,hippotaxonomy:classifiable,{{namespace}}:basedocument,hippostd:relaxed"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="documentTypes/newsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="hstMenus/namespace/main.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="hstMenuItems/namespace/home.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
+        <xml action="copy" overwrite="false" source="hstMenuItems/namespace/taxonomy.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
+        <xml action="copy" overwrite="false" source="hstMenuItems/namespace/news.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
+    </instructionSet>
+    <instructionSet group="freemarker">
+        <freemarker action="copy" binary="false" overwrite="false" source="freemarker/newslist-main-newslist.ftl" target="{{freemarkerRoot}}/hstdefault/newslist-main-newslist.ftl"/>
+        <freemarker action="copy" binary="false" overwrite="false" source="freemarker/taxonomy-category.ftl" target="{{freemarkerRoot}}/hstdefault/taxonomy-category.ftl"/>
+        <freemarker action="copy" binary="false" overwrite="false" source="freemarker/base-top-menu.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-top-menu.ftl"/>
+        <freemarker action="copy" binary="false" overwrite="false" source="freemarker/search-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/search-main.ftl"/>
+        <freemarker action="copy" binary="false" overwrite="false" source="freemarker/newspage-main.ftl" target="{{freemarkerRoot}}/hstdefault/newspage-main.ftl"/>
+        <freemarker action="copy" binary="false" overwrite="false" source="freemarker/base-layout.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-layout.ftl"/>
+        <freemarker action="copy" binary="false" overwrite="false" source="freemarker/homepage-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/homepage-main.ftl"/>
+        <freemarker action="copy" binary="false" overwrite="false" source="freemarker/search-box.ftl" target="{{freemarkerRoot}}/hstdefault/search-box.ftl"/>
+        <freemarker action="copy" binary="false" overwrite="false" source="freemarker/base-footer.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-footer.ftl"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="templates/hstdefault/taxonomy-category.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
+        <xml action="copy" overwrite="false" source="templates/namespace/newspage-main.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+        <xml action="copy" overwrite="false" source="hstPages/namespace/pagenotfound.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+        <xml action="copy" overwrite="false" source="hstSitemapItems/namespace/news.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+        <xml action="copy" overwrite="false" source="templates/namespace/base-top-menu.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+        <xml action="copy" overwrite="false" source="hstSitemapItems/namespace/search.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+        <xml action="copy" overwrite="false" source="hstCatalogComponents/hstdefault/taxonomyCategory.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+        <xml action="copy" overwrite="false" source="templates/namespace/homepage-main.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+        <xml action="copy" overwrite="false" source="templates/namespace/base-layout.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+        <xml action="copy" overwrite="false" source="hstSitemapItems/namespace/taxonomy.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+        <xml action="copy" overwrite="false" source="hstPages/namespace/base.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+        <xml action="copy" overwrite="false" source="hstPageContainers/namespace/newspage.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+        <xml action="copy" overwrite="false" source="hstSitemapItems/namespace/root.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+        <xml action="copy" overwrite="false" source="hstPages/namespace/taxonomy.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+        <xml action="copy" overwrite="false" source="templates/hstdefault/search-box.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
+        <xml action="copy" overwrite="false" source="templates/namespace/search-main.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+        <xml action="copy" overwrite="false" source="hstPageContainers/namespace/newslist.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+        <xml action="copy" overwrite="false" source="hstPageContainers/namespace/taxonomy.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+        <xml action="copy" overwrite="false" source="hstCatalogComponents/hstdefault/newslist.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+        <xml action="copy" overwrite="false" source="hstPages/namespace/search.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+        <xml action="copy" overwrite="false" source="hstPageContainers/namespace/base.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+        <xml action="copy" overwrite="false" source="hstSitemapItems/namespace/_any_.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+        <xml action="copy" overwrite="false" source="templates/namespace/base-footer.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+        <xml action="copy" overwrite="false" source="hstPages/namespace/newslist.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+        <xml action="copy" overwrite="false" source="hstPages/namespace/newspage.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+        <xml action="copy" overwrite="false" source="hstPages/namespace/homepage.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+        <xml action="copy" overwrite="false" source="templates/hstdefault/newslist-main-newslist.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
+        <xml action="copy" overwrite="false" source="hstSitemapItems/namespace/pagenotfound.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+        <xml action="copy" overwrite="false" source="hstPageContainers/namespace/pagenotfound.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+        <xml action="copy" overwrite="false" source="hstPageContainers/namespace/homepage.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <file action="copy" binary="true" overwrite="false" source="images/news-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/news-list.png"/>
+        <file action="copy" binary="true" overwrite="false" source="images/news-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/news-list.png"/>
+        <file action="copy" binary="true" overwrite="false" source="siteFiles/viognier-grapes-188185_640_thumbnail.jpg" target="{{projectRoot}}/repository-data/application/src/main/resources/hcm-content/content/gallery/{{namespace}}/samples/viognier-grapes-188185_640.jpg/viognier-grapes-188185_640_thumbnail.jpg"/>
+        <file action="copy" binary="true" overwrite="false" source="siteFiles/snail-193611_640_thumbnail.jpg" target="{{projectRoot}}/repository-data/application/src/main/resources/hcm-content/content/gallery/{{namespace}}/samples/snail-193611_640.jpg/snail-193611_640_thumbnail.jpg"/>
+        <file action="copy" binary="true" overwrite="false" source="siteFiles/animal-2883_640_original.jpg" target="{{projectRoot}}/repository-data/application/src/main/resources/hcm-content/content/gallery/{{namespace}}/samples/animal-2883_640.jpg/animal-2883_640_original.jpg"/>
+        <file action="copy" binary="true" overwrite="false" source="siteFiles/animal-2883_640_thumbnail.jpg" target="{{projectRoot}}/repository-data/application/src/main/resources/hcm-content/content/gallery/{{namespace}}/samples/animal-2883_640.jpg/animal-2883_640_thumbnail.jpg"/>
+        <file action="copy" binary="true" overwrite="false" source="siteFiles/viognier-grapes-188185_640_original.jpg" target="{{projectRoot}}/repository-data/application/src/main/resources/hcm-content/content/gallery/{{namespace}}/samples/viognier-grapes-188185_640.jpg/viognier-grapes-188185_640_original.jpg"/>
+        <file action="copy" binary="true" overwrite="false" source="siteFiles/snail-193611_640_original.jpg" target="{{projectRoot}}/repository-data/application/src/main/resources/hcm-content/content/gallery/{{namespace}}/samples/snail-193611_640.jpg/snail-193611_640_original.jpg"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/taxonomy.xml" target="{{siteOverrideFolder}}/taxonomy.xml"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/TaxonomySearchComponent.java" target="{{componentsFolder}}/TaxonomySearchComponent.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/TaxonomyTreeComponent.java" target="{{componentsFolder}}/TaxonomyTreeComponent.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/TaxonomyCategoryResult.java" target="{{componentsFolder}}/TaxonomyCategoryResult.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/TaxonomyCategoryResultInfo.java" target="{{componentsFolder}}/TaxonomyCategoryResultInfo.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/NewsDocument.java" target="{{beansFolder}}/NewsDocument.java"/>
+        <file action="copy" binary="false" overwrite="false" source="cmsFiles/HideForAuthorCategoryFilter.java" target="{{cmsRoot}}/src/main/java/org/onehippo/taxonomy/demo/HideForAuthorCategoryFilter.java"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/newspage-main_nl.properties" target="{{webfilesRoot}}/freemarker/hstdefault/newspage-main_nl.properties"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/variant.ftl" target="{{webfilesRoot}}/freemarker/hstdefault/newslist-main-newslist/variant.ftl"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/search-main.ftl" target="{{webfilesRoot}}/freemarker/{{namespace}}/search-main.ftl"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/variant.ftl" target="{{webfilesRoot}}/freemarker/hstdefault/newspage-main/variant.ftl"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/newspage-main.properties" target="{{webfilesRoot}}/freemarker/hstdefault/newspage-main.properties"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/pagenotfound-main.ftl" target="{{webfilesRoot}}/freemarker/{{namespace}}/pagenotfound-main.ftl"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/homepage-main.ftl" target="{{webfilesRoot}}/freemarker/{{namespace}}/homepage-main.ftl"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/pagination.ftl" target="{{webfilesRoot}}/freemarker/include/pagination.ftl"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/newspage-main.ftl" target="{{webfilesRoot}}/freemarker/hstdefault/newspage-main.ftl"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/newslist-main-newslist.ftl" target="{{webfilesRoot}}/freemarker/hstdefault/newslist-main-newslist.ftl"/>
+        <file action="copy" binary="false" overwrite="false" source="yamlFiles/taxonomydemo.yaml" target="{{projectRoot}}/repository-data/application/src/main/resources/hcm-content/content/gallery/{{namespace}}.yaml"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/base-layout.ftl" target="{{webfilesRoot}}/freemarker/{{namespace}}/base-layout.ftl"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/newslist-main-newslist.properties" target="{{webfilesRoot}}/freemarker/hstdefault/newslist-main-newslist.properties"/>
+        <file action="copy" binary="false" overwrite="false" source="yamlFiles/samples.yaml" target="{{projectRoot}}/repository-data/application/src/main/resources/hcm-content/content/gallery/{{namespace}}/samples.yaml"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/base-top-menu.ftl" target="{{webfilesRoot}}/freemarker/{{namespace}}/base-top-menu.ftl"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/newslist-main-newslist_nl.properties" target="{{webfilesRoot}}/freemarker/hstdefault/newslist-main-newslist_nl.properties"/>
+        <file action="copy" binary="false" overwrite="false" source="yamlFiles/taxonomies.yaml" target="{{projectRoot}}/repository-data/application/src/main/resources/hcm-content/taxonomies.yaml"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/taxonomy-category.ftl" target="{{webfilesRoot}}/freemarker/hstdefault/taxonomy-category.ftl"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/base-footer.ftl" target="{{webfilesRoot}}/freemarker/{{namespace}}/base-footer.ftl"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <mavenDependency artifactId="hippo-plugin-taxonomy-api" groupId="org.onehippo.cms7" targetPom="cms"/>
+        <mavenDependency artifactId="hippo-plugin-taxonomy-addon-repository" groupId="org.onehippo.cms7" targetPom="cms"/>
+        <mavenDependency artifactId="hippo-plugin-taxonomy-hstclient" groupId="org.onehippo.cms7" targetPom="site"/>
+        <mavenDependency artifactId="hippo-plugin-taxonomy-hst-api" groupId="org.onehippo.cms7" targetPom="site"/>
+        <mavenDependency artifactId="hippo-plugin-taxonomy-api" groupId="org.onehippo.cms7" targetPom="site"/>
+        <mavenDependency artifactId="hippo-plugin-taxonomy-addon-frontend" groupId="org.onehippo.cms7" targetPom="cms"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="contentDocuments/news.xml" target="/content/documents/{{namespace}}"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="contentDocuments/administration.xml" target="/content/documents"/>
+    </instructionSet>
+</instructions>

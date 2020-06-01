@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/classificationDaoService:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.onehippo.taxonomy.plugin.MixinClassificationDaoPlugin
+      taxonomy.classification.dao: service.taxonomy.dao
