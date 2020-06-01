@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=Cannot create new namespace" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

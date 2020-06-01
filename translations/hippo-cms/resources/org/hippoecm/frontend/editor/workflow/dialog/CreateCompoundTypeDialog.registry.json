@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "org.apache.wicket.extensions.wizard.NextButton.step.did.not.complete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:templates/new-type" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:templates/new-namespace" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

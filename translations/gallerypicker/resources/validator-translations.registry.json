@@ -1,0 +1,13 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:cms.validators/image-references" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/required#hippogallerypicker-imagelink" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
