@@ -1,0 +1,196 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/htmlprocessor:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.cms7.services.htmlprocessor.HtmlProcessorServiceModule
+      /hippo:moduleconfig:
+        jcr:primaryType: hipposys:moduleconfig
+        /richtext:
+          jcr:primaryType: hipposys:moduleconfig
+          charset: UTF-8
+          filter: true
+          omitComments: false
+          /a:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [accesskey, charset, class, dir, href, id, lang, name, rel,
+              style, tabindex, target, title, type]
+          /address:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /b:
+            jcr:primaryType: hipposys:moduleconfig
+          /blockquote:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, style]
+          /br:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /body:
+            jcr:primaryType: hipposys:moduleconfig
+          /caption:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /code:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /div:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, id, lang, style, title]
+          /em:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /embed:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [allowscriptaccess, height, src, type, width]
+          /h1:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, id, dir, style]
+          /h2:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, id, style]
+          /h3:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, id, style]
+          /h4:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, id, style]
+          /h5:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, id, style]
+          /h6:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, id, style]
+          /hr:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /html:
+            jcr:primaryType: hipposys:moduleconfig
+          /i:
+            jcr:primaryType: hipposys:moduleconfig
+          /iframe:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [align, allowfullscreen, class, frameborder, height, id, longdesc,
+              name, scrolling, src, style, title, width]
+          /img:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [align, alt, border, class, height, hspace, src, style, title,
+              vspace, width]
+          /li:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, style]
+          /object:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [align, class, data, height, id, style, title, type, width]
+          /ol:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, start, style]
+          /option:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, selected, style, value]
+          /p:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [align, class, dir, style]
+          /param:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, name, value, style]
+          /pre:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /s:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /select:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, multiple, name, size, style]
+          /span:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, lang, style]
+          /strong:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /sub:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /sup:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /table:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [align, border, cellpadding, cellspacing, class, dir, id,
+              style, summary, width]
+          /tbody:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /td:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, colspan, dir, rowspan, scope, style, valign, width]
+          /textarea:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, cols, name, rows, style]
+          /tfoot:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /th:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, colspan, rowspan, scope, style, valign, width]
+          /thead:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /tr:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /u:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /ul:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, style]
+        /formatted:
+          jcr:primaryType: hipposys:moduleconfig
+          charset: UTF-8
+          filter: true
+          omitComments: false
+          /address:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /br:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /em:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /h1:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, id, style]
+          /h2:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, id, style]
+          /h3:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, id, style]
+          /h4:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, id, style]
+          /h5:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, id, style]
+          /h6:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, dir, id, style]
+          /p:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [align, class, dir, style]
+          /pre:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /strong:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+          /u:
+            jcr:primaryType: hipposys:moduleconfig
+            attributes: [class, style]
+        /no-filter:
+          jcr:primaryType: hipposys:moduleconfig
+          charset: UTF-8
+          filter: false
+          omitComments: false
