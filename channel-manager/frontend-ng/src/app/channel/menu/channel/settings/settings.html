@@ -1,0 +1,74 @@
+<!--
+  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<md-toolbar flex="none" 
+            class="hippo-toolbar qa-toolbar md-bloomreach-theme">
+  <div class="md-toolbar-tools">
+    <h1>{{ ::$ctrl.subpageTitle }}</h1>
+
+    <span flex></span>
+
+    <md-button aria-label="{{ 'CANCEL' | translate }}"
+               class="qa-discard"
+               title="{{ 'CANCEL' | translate }}"
+               ng-click="$ctrl.onDone()">
+      {{ 'CANCEL' | translate }}
+    </md-button>
+
+    <md-button aria-label="{{ 'SAVE' | translate }}"
+               class="qa-action md-primary"
+               form="channel-settings"
+               title="{{ 'SAVE' | translate }}"
+               type="submit"
+               ng-disabled="$ctrl.isSaveDisabled()">
+      {{ ::'SAVE' | translate }}
+    </md-button>
+
+  </div>
+</md-toolbar>
+
+<subpage-content flex
+                 layout="row"
+                 class="qa-channel-settings md-bloomreach-theme">
+  <form id="channel-settings" 
+        name="$ctrl.form"
+        flex="initial"
+        class="qa-subpage"
+        ng-submit="$ctrl.saveIfValid()"
+        novalidate>
+    <div ng-repeat="fieldGroup in $ctrl.getFieldGroups() track by fieldGroup.titleKey">
+      <h3 class="md-title qa-fieldgroup">{{ ::$ctrl.getLabel(fieldGroup.titleKey) }}</h3>
+
+      <property-field ng-repeat="field in fieldGroup.value"
+                      field="::field"
+                      value="$ctrl.values[field]"
+                      read-only="::$ctrl.isReadOnly()"
+                      error="$ctrl.form[field].$error"
+                      info="::$ctrl.channelInfoDescription">
+      </property-field>
+    </div>
+
+    <property-field ng-if="!$ctrl.getFieldGroups().length"
+                    ng-repeat="field in $ctrl.getUngroupedFields()"
+                    field="::field"
+                    value="$ctrl.values[field]"
+                    read-only="::$ctrl.isReadOnly()"
+                    error="$ctrl.form[field].$error"
+                    info="::$ctrl.channelInfoDescription">
+    </property-field>
+
+  </form>
+</subpage-content>
