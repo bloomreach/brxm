@@ -1,0 +1,34 @@
+{
+  "hippo:types": {
+    "{{namespace}}:bannerdocument":   {
+      "en": {
+        "jcr:name": "Banner",
+        "{{namespace}}:image": "Image",
+        "{{namespace}}:content": "Content",
+        "{{namespace}}:title": "Title",
+        "{{namespace}}:link": "Link"
+      },
+      "nl": {
+        "jcr:name": "Banner",
+        "{{namespace}}:image": "Afbeelding",
+        "{{namespace}}:content": "Inhoud",
+        "{{namespace}}:title": "Titel",
+        "{{namespace}}:link": "Link"
+      },
+      "fr": {
+        "jcr:name": "Bannière",
+        "{{namespace}}:image": "Image",
+        "{{namespace}}:content": "Contenu",
+        "{{namespace}}:title": "Titre",
+        "{{namespace}}:link": "Lien"
+      },
+      "de": {
+        "jcr:name": "Banner",
+        "{{namespace}}:image": "Abbildung",
+        "{{namespace}}:content": "Inhalt",
+        "{{namespace}}:title": "Titel",
+        "{{namespace}}:link": "Link"
+      }
+    }
+  }
+}

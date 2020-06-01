@@ -1,0 +1,308 @@
+<!--
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="panel panel-default flex-column flex-child full-page" ng-controller="GalleryManagerMainCtrl">
+    <div class="panel-heading">
+        <h2>Gallery Manager</h2>
+    </div>
+    <div class="flex-row flex-child">
+        <!-- left side: list of all image sets -->
+        <div class="solid-child flex-column left-col">
+            <div class="flex-child">
+                <div class="left-heading">Image Set Definitions</div>
+                <div class="list-group">
+                    <a href="#" title="{{imageSet.name}}" class="list-group-item"
+                       data-ng-class="{'active': isSelected(imageSet)}"
+                       data-ng-repeat="imageSet in imageSets"
+                       data-ng-click="selectImageSet(imageSet); $event.preventDefault()"
+                       data-scroll-to-if="isSelected(imageSet)">
+                        {{imageSet.nameAfterPrefix}}
+                    </a>
+                </div>
+            </div>
+            <div class="solid-child left-footer">
+                <button class="btn btn-default btn-block" data-ng-click="addImageSet()">
+                    + Add Image Set Definition
+                </button>
+            </div>
+        </div>
+        <!-- right side: details of selected image set -->
+        <div class="flex-child right-col" ng-hide="selectedImageSet">
+            <div class="alert alert-warning">
+                <p>
+                    Bloomreach CMS stores several variants of each uploaded image.
+                    All variants of an image are together called an Image Set, and can be uploaded in the
+                    <a target='_blank' href='https://documentation.bloomreach.com/library/end-user-manual/images.html'>Images section</a> of the Content perspective in the CMS.
+                </p>
+                <p>
+                    No custom Image Set Definitions have been created yet, there is only the default Hippo Image Set. You can create
+                    custom Image Sets with this Gallery Manager tool.
+                </p>
+                <p>
+                    This tool will create all the <a target='_blank' href='https://documentation.bloomreach.com/library/concepts/images-and-assets/create-a-custom-image-set.html'>technical configuration</a>
+                    for the custom Image Sets.
+                </p>
+            </div>
+        </div>
+        <div class="flex-child right-col" ng-show="selectedImageSet">
+            <div ng-show="showFeedback" class="alert alert-warning">
+                <hippo-icon name="times" class="pull-right" ng-click="showFeedback = !showFeedback"></hippo-icon>
+                <p>{{feedback}}</p>
+            </div>
+            <h3>{{selectedImageSet.nameAfterPrefix}}</h3>
+            <p>Full Image Set name: {{selectedImageSet.name}}</p>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Variant</th>
+                        <th>Width</th>
+                        <th>Height</th>
+                        <th>Upscale</th>
+                        <th>Crop</th>
+                        <th class="table-action"></th>
+                        <th class="table-action"></th>
+                        <th class="table-action"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="variant in selectedImageSet.models" ng-class="{ 'read-only': variant.readOnly }">
+                        <td class="text">{{variant.name}}</td>
+                        <td class="text">{{dimension(variant.width)}}</td>
+                        <td class="text">{{dimension(variant.height)}}</td>
+                        <td>
+                          <hippo-icon name="check-square" ng-show="variant.upscaling"></hippo-icon>
+                        </td>
+                        <td>
+                          <hippo-icon name="check-square" ng-show="variant.cropping"></hippo-icon>
+                        </td>
+                        <td>
+                            <hippo-icon name="search" ng-click="viewVariant(variant)"></hippo-icon>
+                        </td>
+                        <td>
+                            <hippo-icon name="pencil-square" ng-click="editVariant(variant)" ng-if="!variant.readOnly"></hippo-icon>
+                        </td>
+                        <td>
+                            <hippo-icon name="trash" ng-click="deleteVariant(variant)" ng-if="!variant.readOnly"></hippo-icon>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-primary" ng-click="addVariant()">+ Add variant</button>
+        </div>
+    </div>
+
+    <!--Image Set Add Modal Window-->
+    <script type="text/ng-template" id="imageSetAddModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Create a new Image Set definition</h3>
+        </div>
+        <form name="imageSetAddForm">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="imageSetAddName">Image Set name</label>
+                    <input type="text" class="form-control" id="imageSetAddName" name="name"
+                           ng-model="name" required ng-pattern="/^[a-zA-Z]{2,}$/" autofocus
+                           uib-tooltip="Image Set names must unique and consist of two or more alphabetic characters"
+                           tooltip-placement="top" tooltip-trigger="mouseenter">
+                </div>
+                <div class="checkbox">
+                    <label uib-tooltip="{{updateHint}}"
+                           tooltip-placement="top" tooltip-trigger="mouseenter">
+                        <input type="checkbox" ng-model="updateExisting">
+                        Update existing Images to match this new Definition and regenerate HippoBeans
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+                <button class="btn btn-primary" type="submit" ng-click="create()"
+                        ng-disabled="!imageSetAddForm.$dirty || imageSetAddForm.$invalid">Create</button>
+            </div>
+        </form>
+    </script>
+
+    <!--Variant Add Modal Window-->
+    <script type="text/ng-template" id="variantAddModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Create a new image variant</h3>
+        </div>
+        <form name="variantAddForm">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="variantAddName">Variant name</label>
+                    <input type="text" class="form-control" id="variantAddName" name="name"
+                           ng-model="name" required ng-pattern="/^[a-zA-Z]{2,}$/" autofocus
+                           uib-tooltip="Variant names must be unique and consist of two or more alphabetic characters"
+                           variant-name image-set="imageSet">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+                <button class="btn btn-primary" type="submit" ng-click="create()"
+                        ng-disabled="!variantAddForm.$dirty || variantAddForm.$invalid">Create</button>
+            </div>
+        </form>
+    </script>
+
+    <!--Variant View Modal Window-->
+    <script type="text/ng-template" id="variantViewModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Details for variant '{{variant.name}}'</h3>
+        </div>
+        <div class="modal-body">
+            <dl class="dl-horizontal">
+                <dt>Width constraint</dt>
+                <dd>{{dimension(variant.width)}}</dd>
+                <dt>Height constraint</dt>
+                <dd>{{dimension(variant.height)}}</dd>
+                <dt>Upscale</dt>
+                <dd>{{upscaling()}}</dd>
+                <dt>Upscale and crop</dt>
+                <dd>{{cropping()}}</dd>
+                <dt>Speed vs. quality</dt>
+                <dd>{{optimization()}}</dd>
+                <dt>JPEG quality</dt>
+                <dd>{{compression()}}</dd>
+            </dl>
+            <h4>Translations</h4>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Language</th>
+                        <th>Translation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="translation in variant.translations">
+                        <td>{{translation.language}}</td>
+                        <td>{{translation.message}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit" ng-click="dismiss()">Close</button>
+        </div>
+    </script>
+
+    <!--Variant Edit Modal Window-->
+    <script type="text/ng-template" id="variantEditModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit variant '{{variant.name}}'</h3>
+        </div>
+        <form name="variantEditForm">
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label for="variantEditWidth" class="col-xs-3 control-label">Width constraint</label>
+                        <div class="col-xs-9">
+                            <input type="text" class="form-control" id="variantEditWidth"
+                                   ng-model="variant.width" required ng-pattern="/^\d+$/" autofocus
+                                   uib-tooltip="A width constraint is expressed in units of px. A value of 0 means no width constraint"
+                                   tooltip-placement="top" tooltip-trigger="mouseenter">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="variantEditHeight" class="col-xs-3 control-label">Height constraint</label>
+                        <div class="col-xs-9">
+                            <input type="text" class="form-control" id="variantEditHeight"
+                                   ng-model="variant.height" required ng-pattern="/^\d+$/"
+                                   uib-tooltip="A height constraint is expressed in units of px. A value of 0 means no height constraint"
+                                   tooltip-placement="top" tooltip-trigger="mouseenter">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="upscaleOption" class="col-xs-3 control-label">Filling options</label>
+                        <div class="col-xs-9">
+                            <div class="checkbox">
+                                <label uib-tooltip="Originals that are smaller than the variant dimensions are enlarged to fit. This may deteriorate image quality."
+                                tooltip-placement="right" tooltip-trigger="mouseenter" ng-class="upscalingDisabled()?'text-disabled':''">
+                                    <input type="checkbox" id="upscaleOption" ng-model="variant.upscaling" ng-disabled="upscalingDisabled()"> Upscale smaller images
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label uib-tooltip="Scales and then crops the originals to completely fill the variant dimensions. Only available when both width and height are specified."
+                                tooltip-placement="right" tooltip-trigger="mouseenter" ng-class="croppingDisabled()?'text-disabled':''">
+                                    <input type="checkbox" id="croppingOption" ng-model="variant.cropping" ng-disabled="croppingDisabled()"> Crop images to fill dimensions
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="variantEditOptimization" class="col-xs-3 control-label">Speed vs. quality</label>
+                        <div class="col-xs-9" uib-tooltip="Choose a scaling optimization strategy"
+                             tooltip-placement="top" tooltip-trigger="mouseenter">
+                            <select id="variantEditOptimization" class="chosen-select" chosen
+                                ng-model="variant.optimize"
+                                ng-options="o.value as o.description for o in optimizeValues"
+                                width="'100%'">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="variantEditCompression" class="col-xs-3 control-label">JPEG quality</label>
+                        <div class="col-xs-9" uib-tooltip="The compression factor can be applied to JPEG images only"
+                             tooltip-placement="top" tooltip-trigger="mouseenter">
+                            <select id="variantEditCompression" class="chosen-select" chosen
+                                ng-model="variant.compression"
+                                ng-options="c.value as c.description for c in compressionValues"
+                                width="'100%'">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <h4>Translations</h4>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Language</th>
+                            <th>Translation</th>
+                            <th class="table-action"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="translation in variant.translations">
+                            <td><input type="text" ng-model="translation.language"></td>
+                            <td><input type="text" ng-model="translation.message"></td>
+                            <td><hippo-icon name="trash" ng-click="deleteTranslation(translation)"></hippo-icon></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn btn-default" type="button" ng-click="addTranslation()">+ Add translation</button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+                <button class="btn btn-primary" type="submit" ng-click="save()"
+                        ng-disabled="!variantEditForm.$dirty || variantEditForm.$invalid">Save</button>
+            </div>
+        </form>
+    </script>
+
+    <!--Variant Delete Modal Window-->
+    <script type="text/ng-template" id="variantDeleteModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Delete Image Variant</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete the image variant "{{variant.name}}"?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+            <button class="btn btn-primary" type="submit" ng-click="ok()" autofocus>OK</button>
+        </div>
+    </script>
+
+</div>

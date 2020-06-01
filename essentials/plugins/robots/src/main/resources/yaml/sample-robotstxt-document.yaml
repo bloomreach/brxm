@@ -1,0 +1,16 @@
+/content/documents/administration/robots:
+  jcr:primaryType: hippo:handle
+  jcr:mixinTypes: ['mix:referenceable']
+  /robots:
+    jcr:primaryType: robotstxt:robotstxt
+    jcr:mixinTypes: ['mix:referenceable', 'mix:versionable']
+    hippo:availability: [live, preview]
+    hippostd:state: published
+    hippostdpubwf:createdBy: admin
+    hippostdpubwf:creationDate: 2014-06-02T14:04:49.737+02:00
+    hippostdpubwf:lastModificationDate: 2014-06-02T14:04:58.772+02:00
+    hippostdpubwf:lastModifiedBy: admin
+    /robotstxt:section:
+      jcr:primaryType: robotstxt:section
+      robotstxt:disallow: [/skip/this/url]
+      robotstxt:useragent: '*'
