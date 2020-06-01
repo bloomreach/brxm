@@ -1,0 +1,1181 @@
+{
+  "bundleType" : "ANGULAR",
+  "keyData" : {
+    "CONFIRM_DISCARD_CHANGES_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PAGE_LOCKED_BY" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_SWITCH_VIEWER_MODE_EDIT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PAGE_COPY_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CREATE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_MENU_EDITOR_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_OPEN_EXTERNAL_LINK" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PICKER_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_CHANGE_PUBLICATION_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DELETE_COMPONENT_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "VIEWPORT_TABLET" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CHANNEL_PROPERTIES_SAVE_SUCCESS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_MENU_EDITOR_EXTERNAL_LINK" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DISCARD" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_BUTTON_CLOSE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "LINK_REQUIRED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "EXPERIMENT_LABEL_COMPLETED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_MENU_EDITOR_INTERNAL_LINK" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "EXPAND" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PUBLISH" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "VALIDATION_ILLEGAL_CHARACTERS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PAGE_PATH_EXISTS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_CHANGEMANAGEMENT_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_CHANGEMANAGEMENT_SUFFIX_YOU" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_LABEL_URL_STEM" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONTAINER_LOCKED_BY" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_BUTTON_PAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PAGE_CREATION_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PICKER_SELECT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DELETE_MENU_ITEM_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_RELEVANCE_VARIANT_SELECTION_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_ADD_COMPONENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PAGE_SAVE_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DELETE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "COLLAPSE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "REMOVE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_PAGE_MOVE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SAVE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DISCARD_ALL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DISCARD_ALL_CHANGES_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "EXPERIMENT_LABEL_RUNNING" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_ENTER_EDIT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PAGE_PARENT_MISSING" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_UPDATE_COMPONENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_MENU_ITEM_SAVE_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PICKER_TYPE_SITEMAP_ITEMS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PUBLISH_CHANGES" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PICKER_LISTING_NAME" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "COPY" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_COPY_LABEL_CHANNEL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_BUTTON_BACK" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_COMPONENT_DELETED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_MENU_EDITOR_NO_LINK" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CANCEL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PICKER_EMPTY_TREE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PAGE_MODEL_RETRIEVAL_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PAGE_ADD_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TITLE_REQUIRED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "VIEWPORT_DESKTOP" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_CHANNEL_SWITCH_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_MENU_ITEM_DELETE_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PAGE_PATH_INVALID" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_MENU_SAME_NAME_SIBLING" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "RESOLVED"
+      }
+    },
+    "ERROR_MENU_SAVE_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_CHANNEL_SETTINGS_READONLY" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_SWITCH_VIEWER_MODE_VIEW" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "EXPERIMENT_LABEL_CREATED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_BUTTON_CHANGES" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_DELETE_PAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONTAINER_INHERITED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PAGE_COPY_TARGET_EXISTS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_PUBLISH_ALL_CHANGES_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DONE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_LABEL_LAST_PATHINFO_ELEMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ADVANCED_SETTINGS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_EDIT_ALTER_EGO" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_PAGE_DELETE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_VIEW_AS_LABEL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "VIEWPORT_PHONE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_MOVE_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_COPY_LABEL_URL_STEM" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_COPY_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_LABEL_TEMPLATE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "VALIDATION_REQUIRED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_CHANNEL_PROPERTIES_SAVE_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_CHANNEL_EDIT_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_MENU_EDITOR_EMPTY_MENU" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_CHANGE_DISCARD_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PAGE_MOVE_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_VIEW_ON_LABEL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_MENU_LOCKED_BY" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_MOVE_COMPONENT_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_MENU_LOAD_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_SITEMAP_ITEM_RETRIEVAL_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_DELETE_COMPONENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_SWITCH_VIEWER_MODE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PICKER_TYPE_DOCUMENTS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_CHANNEL_SETTINGS_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_SITEMAP_RETRIEVAL_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NEW_MENU_ITEM_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "MOVE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PUBLISH_ALL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_MENU_MOVE_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_LABEL_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_PAGE_COPY" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "OK" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_MENU_EDITOR_SELECT_INTERNAL_LINK" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DELETING_CHANNEL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_CHANNEL_DELETE_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_CHANNEL_SETTINGS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_CHANNEL_DELETE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_CHANNEL_DELETE_FAILED_DUE_TO_CHILD_MOUNTS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_BUTTON_CHANNEL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DELETE_CHANNEL_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DELETE_CHANNEL_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ADDING_COMPONENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CLOSE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_INVALID_DATA" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_CARDINALITY_CHANGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "EDIT_CONTENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_NOT_A_DOCUMENT_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_HELD_BY_OTHER_USER_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_NOT_A_DOCUMENT_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_OTHER_HOLDER" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_DEFAULT_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "LEFT_SIDE_PANEL_TAB_SITEMAP" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_NOT_FOUND_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "LEFT_SIDE_PANEL_TAB_COMPONENTS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_UNABLE_TO_SAVE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_NOT_EDITABLE_HERE_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_NOT_FOUND_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_REQUEST_PENDING_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_NOT_EDITABLE_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_NO_HOLDER" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "VIEWPORT_ANY_DEVICE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "EDIT_MENU" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_DEFAULT_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_FIELD_REQUIRED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_SWITCH_TO_CONTENT_EDITOR" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SWITCH_TO_CONTENT_EDITOR" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_CHANNEL_PUBLISH" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NOT_ALL_FIELDS_SHOWN_LINK" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "HIDE_CONTENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NOT_ALL_FIELDS_SHOWN" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_CHANNEL_CLOSE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "HIDE_COMPONENTS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SHOW_COMPONENTS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SHOW_CONTENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REMOVAL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REPOSITIONING" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "RESOLVED"
+      }
+    },
+    "SUBPAGE_PAGE_PROPERTIES_LABEL_ASSIGN_NEW_TEMPLATE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_PROPERTIES_LABEL_PRIMARY_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_PROPERTIES_PRIMARY_DOCUMENT_VALUE_NONE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_PAGE_PROPERTIES" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_PROPERTIES_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_PAGE_NEW" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_NEW_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_PROJECT_LABEL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_CHANNEL_SETTINGS_NOT_EDITABLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_BUTTON_LEFT_SIDE_PANEL_CLOSE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_BUTTON_LEFT_SIDE_PANEL_OPEN" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_FIELD_LONG_PATTERN" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_CHANNEL_SUBMIT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_FIELD_DOUBLE_PATTERN" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DISCARD_OWN_CHANGES_IN_PROJECT_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_SLUG_ALREADY_EXISTS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_REQUEST_PENDING" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CHANGE_DOCUMENT_NAME" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_TEMPLATE_QUERY_NOT_FOUND" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_ALREADY_DELETED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NEW_CONTENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONTINUE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DISCARD_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CREATE_CONTENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CREATE_NEW_DOCUMENT_TYPE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DISCARD_NEW_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CREATE_NEW_CONTENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SELECT_DOCUMENT_LOCKED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SELECT_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_NAME_ALREADY_EXISTS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_NOT_A_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_DOES_NOT_EXIST" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "INVALID_URL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_DOCUMENT_LOCATION_NOT_ALLOWED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FIELD_REQUIRED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_INVALID_TEMPLATE_QUERY" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_DOCUMENT_SELECTED_FOR_COMPONENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_NOT_A_FOLDER" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CHANGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CREATE_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_SERVER_ERROR" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CREATE_DOCUMENT_LOCKED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NOTIFICATION_DOCUMENT_SAVED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_WORKFLOW_ERROR" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NOT_ALL_MANDATORY_FIELDS_SHOWN_LINK" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NOT_ALL_MANDATORY_FIELDS_SHOWN" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_PART_OF_PROJECT_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DOCUMENT_ADDED_TO_PROJECT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_PROJECT_INVALID_STATE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_HELD_BY_CORE_PROJECT_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_PROJECT_NOT_FOUND" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DOCUMENT_NOT_PART_OF_PROJECT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ADD_TO_PROJECT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PLACEHOLDER_DOCUMENT_TYPE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PLACEHOLDER_DOCUMENT_NAME" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PLACEHOLDER_DOCUMENT_LOCATION" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PLACEHOLDER_DOCUMENT_URL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_INVALID_DATE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PLACEHOLDER_SEARCH" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "HOURS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "MINUTES" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SET_TO_NOW" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SEARCH_SITEMAP_ITEMS_NAME" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SEARCH_RESULTS_MULTIPLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SEARCH_MULTIPLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SEARCH_COMPONENT_NAME" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SEARCH_COMPONENTS_NAME" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SEARCH_SITEMAP_ITEM_NAME" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SEARCH_RESULTS_SINGLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SEARCH_SINGLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PROJECT_OUT_OF_SYNC" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DELETE_SINGLE_PAGE_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_CHANNEL_ACCEPT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "REJECT_CHANNEL_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_CHANNEL_REJECT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "REJECT_CHANNEL_PLACEHOLDER" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DELETE_MULTIPLE_PAGE_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "REJECT_CHANNEL_TEXT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NOTIFICATION_DOCUMENT_PUBLISHED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "REQUEST_PUBLICATION" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_NOT_EDITABLE_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_PUBLISH_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DOCUMENT_CHANGED_TOOLTIP" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_REQUEST_PUBLICATION_FAILED" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "RESOLVED"
+      }
+    },
+    "DOCUMENT_NEW_TOOLTIP" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_DOCUMENT_INVALID_MESSAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_PUBLISH_DIRTY_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SAVE_AND_PUBLISH" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_CANCEL_REQUEST_PUBLICATION_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DOCUMENT_LIVE_TOOLTIP" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_PUBLISH_DOCUMENT_FAILED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_DOCUMENT_INVALID_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_CANCEL_REQUEST" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SAVE_AND_REQUEST_PUBLICATION" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NOTIFICATION_PUBLICATION_REQUESTED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FULL_SIZE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NORMAL_SIZE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_NO_EDITABLE_COMPONENT_PROPERTIES" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "COMPONENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FEEDBACK_CANNOT_SAVE_COMPONENT_WITH_INVALID_FIELD_VALUES" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DELETE_COMPONENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "RIGHT_SIDE_PANEL_TAB_COMPONENT_PROPERTIES" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CONFIRM_DISCARD_CHANGES_TO_COMPONENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SAVE_CHANGES_TO_COMPONENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DEFAULT_PROPERTY_GROUP_LABEL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SAVE_DOCUMENT_CHANGES_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SAVE_CHANGES_TO_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_CHANGEMANAGEMENT_TITLE_PROJECT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SAVE_COMPONENT_CHANGES_TITLE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_TOAST_DISMISS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_PAGE_TOOLS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "PAGE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "COMPONENT_EDITOR_GO_BACK_TO_PAGE_LINK" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "RESOLVED"
+      }
+    },
+    "FEEDBACK_UNKNOWN_ERROR" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DOCUMENT_CONTAINS_ONE_ERROR" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_CREATE_WITH_UNSUPPORTED_VALIDATOR" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DOCUMENT_CONTAINS_MULTIPLE_ERRORS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ERROR_SAVE_WITH_UNSUPPORTED_VALIDATOR" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NONE_OPTION" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_BUTTON_DONE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "KEEP_DRAFT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DOCUMENT_HAS_DRAFT_CHANGES" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

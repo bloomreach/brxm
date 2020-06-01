@@ -1,0 +1,25 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "error-validation-names" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "error-localized-name-exists" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "error-sns-node-exists" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "error-same-names" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "error-sns-names-exist" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

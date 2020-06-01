@@ -1,0 +1,21 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        required#Date: 输入日期
+        required#hippo-resource: 上传资源
+        non-empty: 输入值
+        required: 输入值
+        escaped: 请勿使用以下字符：< > & ' "
+        required#String: 输入一些文本
+        resource-required: 上传文件
+        path-is-used-multiple-times: 请勿重复使用同一路径
+        summaryMultiple: 此文档包含 ${numberOfErrors} 个错误
+        non-empty-html: 输入一些文本
+        required#OpenUiString: 输入值
+        html: 输入值
+        summarySingle: 此文档包含 1 个错误
+        required#hippo-mirror: 选择链接
+        email: 输入有效的电子邮件地址
+        required#hippostd-html: 输入一些文本

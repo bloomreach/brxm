@@ -1,0 +1,33 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "select-layout-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "name-caption" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "superType-caption" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "new-document-type" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "mixin-caption" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "new-compound-type" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "type-detail-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

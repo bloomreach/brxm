@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "keyword_suggestions" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "refreshlink" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

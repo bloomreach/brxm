@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/sections:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        section-taxonomies: Taxonomies

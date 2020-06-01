@@ -1,0 +1,33 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:String:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Cadena
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Date:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Fecha
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:CalendarDate:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Long:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Número entero
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Text:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Texto
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Boolean:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Booleana
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Double:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Número decimal
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:OpenUiString:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Abrir la cadena de IU

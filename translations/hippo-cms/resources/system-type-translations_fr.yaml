@@ -1,0 +1,34 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:String:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Texte court
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Date:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Date
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:CalendarDate:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Date de calendrier
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Long:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Nombre entier
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Text:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Texte court
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Boolean:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Booléen
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Double:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Nombre décimal
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:OpenUiString:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Ouvrir UI String

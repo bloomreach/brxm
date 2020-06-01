@@ -1,0 +1,77 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "you-and-x-users-have-unpublished-changes" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "DE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "website" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "RU" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "x-users-have-unpublished-changes" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "locked-date-format" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "facebook" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "mobile" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "CN" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FR" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ES" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "one-user-has-unpublished-changes" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ipad-magazine" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "you-have-unpublished-changes" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "you-and-one-user-have-unpublished-changes" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "locked" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "US" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

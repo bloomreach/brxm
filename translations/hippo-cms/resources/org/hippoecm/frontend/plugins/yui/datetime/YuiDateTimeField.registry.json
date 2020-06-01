@@ -1,0 +1,41 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "date-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "set-to-current-date" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hours-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "set-to-current-date-tooltip" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "picker-format" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "IConverter.Date" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "minutes-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "set-to-current-date-only-tooltip": {
+      "status": "CLEAN",
+      "locales": null
+    },
+    "set-to-current-date-only": {
+      "status": "CLEAN",
+      "locales": null
+    }
+  }
+}

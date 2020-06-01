@@ -1,0 +1,29 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "button-publish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "button-depublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "title-depublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "button-execute" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "title-publish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
