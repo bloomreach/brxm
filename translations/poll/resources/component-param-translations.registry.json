@@ -1,0 +1,25 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:hst.componentparameters.org.onehippo.forge.poll.component.PollComponentInfo/poll-dataPath" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.poll.component.PollComponentInfo/poll-docsPath" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.poll.component.PollComponentInfo/poll-pollCompoundName" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.poll.component.PollComponentInfo/poll-docsClass" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.poll.component.PollDocumentComponentInfo/poll-docsPath" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

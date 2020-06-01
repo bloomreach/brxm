@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "next" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "cancel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "prev" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "finish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

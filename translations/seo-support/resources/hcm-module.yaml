@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-plugin-seo-support-translations
+    after: hippo-plugin-seo-support
+module: hippo-plugin-seo-support-l10n-${locale}

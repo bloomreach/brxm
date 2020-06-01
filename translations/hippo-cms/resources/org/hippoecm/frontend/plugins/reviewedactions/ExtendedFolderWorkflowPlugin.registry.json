@@ -1,0 +1,37 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "publish-all-subtext" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "depublish-all-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "depublish-all-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "publish-all-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "publish-all-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "depublish-all-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "publish-all-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "depublish-all-subtext" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:cms.validators/escaped" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/email" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/resource-required" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/non-empty" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/summaryMultiple" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/summarySingle" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/html" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/required#Date" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/required#hippo-resource" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/required" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/required#String" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/required#OpenUiString" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/required#hippo-mirror" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/required#hippostd-html" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/non-empty-html" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:types.hippostd:html/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

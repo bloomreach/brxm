@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:workflows:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        socialsharing: Deel

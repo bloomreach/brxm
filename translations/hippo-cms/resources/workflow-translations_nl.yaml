@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:workflows:
+      /nl:
+        request: Verzoeken
+        miscellaneous: Overige
+        document: Document
+        publication: Publicatie
+        jcr:primaryType: hipposys:resourcebundle

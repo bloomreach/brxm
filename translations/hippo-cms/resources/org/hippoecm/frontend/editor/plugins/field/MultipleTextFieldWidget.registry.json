@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "add-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

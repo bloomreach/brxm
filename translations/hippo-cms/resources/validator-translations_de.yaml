@@ -1,0 +1,20 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        required#Date: Ein Datum eingeben
+        required#hippo-resource: Eine Ressource hochladen
+        non-empty: Einen Wert eingeben
+        required: Einen Wert auswählen
+        escaped: 'Die folgenden Zeichen dürfen nicht verwendet werden: < > & '' "'
+        required#String: Text eingeben
+        resource-required: Eine Datei hochladen
+        summaryMultiple: Dieses Dokument hat ${numberOfErrors} Fehler
+        non-empty-html: Text eingeben
+        required#OpenUiString: Einen Wert eingeben
+        html: Einen Wert eingeben
+        summarySingle: Dieses Dokument hat 1 Fehler
+        required#hippo-mirror: Einen Link auswählen
+        email: Eine gültige E-Mail-Adresse eingeben
+        required#hippostd-html: Text eingeben

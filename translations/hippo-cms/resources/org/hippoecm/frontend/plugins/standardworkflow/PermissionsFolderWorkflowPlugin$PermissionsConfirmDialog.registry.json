@@ -1,0 +1,25 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "title-query-add" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "header-actions" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "action-edit-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "header-category" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

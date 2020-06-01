@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "document-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NavigatorLabel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "folder-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

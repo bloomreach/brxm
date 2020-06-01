@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "edit" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "copy" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

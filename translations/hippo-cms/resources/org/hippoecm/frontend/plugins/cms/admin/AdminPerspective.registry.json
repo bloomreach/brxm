@@ -1,0 +1,709 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "user-membership-added" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "admin-users-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "admin-permissions-title-help" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-password-check" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-cancel-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-member-remove-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-view-instructions" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-set-password" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "panel-plugin-panel-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "password" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "admin-system-info-title-help" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "admin-groups-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-groupname" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-active-true" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-group-removed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-group-add-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-add-users-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "updater-panel-title-help" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "GroupnameValidator.exists" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-delete-role-domain-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-search-help" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-description" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "table-header-actions" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-email" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-delete-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-delete-role-domain-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-create-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "groupname" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-set-memberships-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-remove-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-edit" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-back-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-membership-already-member" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-membership-removed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-removed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-grant-group" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-actions-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-active" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "admin-groups-title-help" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "updater-panel-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-create-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-remove-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-membership-remove-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-overview-list-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-click-and-edit" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-membership-groups-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-domain-header" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-domain-specifications" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-remove-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-edit-head" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "datatable.no-records-found" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-removed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-set-members" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-lastname" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-username" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-current" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-search-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-create-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-role-header" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-set-password-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-save-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-password-expired" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "admin-users-title-help" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "table-header-groups" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-local-memberships" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-properties" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-members" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-member-added" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-save-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-view-actions-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-current-permissions" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-password" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-remove-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "admin-system-properties-key" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "admin-system-info-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "admin-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-delete-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-provider" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-member-add-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-view-actions-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-view-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-member-already-member" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-create-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-delete-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-role-domain-combination-removed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-member-actions" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-the-role" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-description-domain" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-search-help" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-delete-role-domain-combination" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-active-false" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-users-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-edit-panel-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-membership-remove-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "EqualPasswordInputValidator" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-delete-member-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-group-added" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-current-users-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-member-removed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-create" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-search-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-column-header" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-membership-available-groups" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "system-info-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-membership-add-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-created" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-view-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "form.password" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-password-expired-true" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-set-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "UsernameValidator.exists" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-group" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-firstname" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-edit-password-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-password-set" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-click-and-edit" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-set-define-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-members-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-delete-role-domain-combination-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-edit" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-memberships" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-edit-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-delete-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-view-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-properties" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-group-remove-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-save-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-membership-add-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-set" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-save-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-delete-member-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-assign" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-set-password-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-search" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-overview-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-groups-header" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "admin-permissions-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-search" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-users-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NavigatorLabel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-overview-list-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-create" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-permissions" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-member-remove-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "admin-system-properties-title-help" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "admin-system-properties-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "system-info-refresh" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-cancel-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "perspective-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "table-header-roles" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-groups-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-external-memberships" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-set-memberships" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-in-domain" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "table-header-security-domain" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-member-add-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-saved" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-create-failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "admin-system-properties-value" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-membership-make-member-of" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "permissions-description" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-overview-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-remove-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-created" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-password-expired-false" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-new-panel-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group-edit-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-saved" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "username" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-type-external" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-type" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "user-type-repository" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
