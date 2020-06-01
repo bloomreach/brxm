@@ -1,0 +1,28 @@
+{
+  "id" : "taxonomyDemoPlugin",
+  "name" : "Taxonomy Demo",
+  "introduction" : "This taxonomy demo feature contains an example taxonomy tree, a taxonomy field in a news document type, a category filter in the CMS, a TaxonomyTreeComponent and a TaxonomySearchComponent in the site.",
+  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/taxonomy/about.html",
+  "type": "feature",
+  "vendor" : {
+    "name" : "BloomReach",
+    "url" : "https://www.bloomreach.com"
+  },
+  "icon" : "/essentials/feature/images/taxonomyDemoPlugin.png",
+  "hasConfiguration" : false,
+  "rebuildAfterInstallation" : true,
+  "installWithParameters" : true,
+  "packageFile" : "/META-INF/taxonomyDemoPlugin_instructions.xml",
+  "categories" : {
+    "license" : [ "community" ],
+    "application" : [ "content" ],
+    "type" : [ "feature" ]
+  },
+  "pluginDependencies" : [ {
+    "pluginId" : "taxonomyPlugin",
+    "minInstallStateForInstalling" : "installed"
+  }, {
+    "pluginId" : "simpleContent",
+    "minInstallStateForInstalling" : "installed"
+  } ]
+}

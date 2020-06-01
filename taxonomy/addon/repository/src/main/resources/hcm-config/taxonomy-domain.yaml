@@ -1,0 +1,69 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/taxonomy:
+      jcr:primaryType: hipposys:domain
+      /taxonomy-prototype:
+        jcr:primaryType: hipposys:domainrule
+        /prototype-name:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodename
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:prototype
+      /taxonomy-section:
+        jcr:primaryType: hipposys:domainrule
+        /cluster-name:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: cluster.name
+          hipposys:filter: false
+          hipposys:type: String
+          hipposys:value: cms-tree-views/taxonomies
+      /taxonomy-namespace-filter:
+        jcr:primaryType: hipposys:domainrule
+        /node-type:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: frontend:pluginconfig
+        /node-name:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodename
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: showTaxonomyNamespace
+      /readwrite:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [author, editor]
+        hipposys:role: readwrite
+      /taxonomycontainer-nodes:
+        jcr:primaryType: hipposys:domainrule
+        /hippo-taxonomycontainer:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippotaxonomy:container
+      /taxonomycategory-nodes:
+        jcr:primaryType: hipposys:domainrule
+        /hippo-taxonomycategory:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippotaxonomy:category
+      /taxonomy-nodes:
+        jcr:primaryType: hipposys:domainrule
+        /hippo-taxonomy:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippotaxonomy:taxonomy

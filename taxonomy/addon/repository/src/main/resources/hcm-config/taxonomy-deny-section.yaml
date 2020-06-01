@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/frontendconfig/frontend-plugins/hide-taxonomy-section:
+      jcr:primaryType: hipposys:facetrule
+      hipposys:equals: false
+      hipposys:facet: cluster.name
+      hipposys:filter: true
+      hipposys:type: String
+      hipposys:value: cms-tree-views/taxonomies
