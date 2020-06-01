@@ -1,0 +1,46 @@
+definitions:
+  config:
+    /hippo:namespaces/hippogallerypicker/imagelink:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['hipposysedit:remodel']
+          hipposysedit:cascadevalidation: false
+          hipposysedit:node: true
+          hipposysedit:supertype: ['hippo:facetselect']
+          hipposysedit:uri: http://www.hippoecm.org/hippogallerypicker/nt/2.0
+          /docbase:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: true
+            hipposysedit:path: hippo:docbase
+            hipposysedit:type: Docbase
+            hipposysedit:validators: [image-references]
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          base.uuid: ''
+          cluster.name: cms-pickers/images
+          enable.upload: 'true'
+          image.validator.id: service.gallery.image.validation
+          jcr:primaryType: frontend:plugincluster
+          frontend:properties: [base.uuid, cluster.name, enable.upload, image.validator.id, last.visited.enabled, last.visited.key, mode, nodetypes]
+          frontend:references: [model.compareTo, wicket.model]
+          frontend:services: [wicket.id]
+          last.visited.enabled: 'true'
+          last.visited.key: gallerypicker-imagelink
+          nodetypes: []
+          /root:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.onehippo.addon.frontend.gallerypicker.GalleryPickerPlugin
+            validator.id: ${image.validator.id}
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: hippogallerypicker:imagelink
+          hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+          hippo:facets: []
+          hippo:modes: []
+          hippo:values: []
