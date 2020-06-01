@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:components/forge-sitemap-feed:
+      jcr:primaryType: hst:component
+      hst:componentclassname: org.onehippo.forge.sitemap.components.SitemapFeed
+      hst:template: forge-sitemap-feed.ftl
