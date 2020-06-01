@@ -21,6 +21,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>31.3.0-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Plugin Content Tagging</name>
@@ -32,12 +33,6 @@
   <version>14.3.0-SNAPSHOT</version>
 
   <inceptionYear>2008</inceptionYear>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-plugin-content-tagging.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-plugin-content-tagging.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-plugin-content-tagging</url>
-  </scm>
 
   <properties>
     <hippo.repository.version>14.3.0-SNAPSHOT</hippo.repository.version>
