@@ -1,0 +1,51 @@
+<!--
+  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<sharedspace-toolbar ng-if="$ctrl.isEditing()"></sharedspace-toolbar>
+
+<md-content flex="grow"
+            layout="column">
+  <div ng-if="$ctrl.getError()"
+       class="md-padding feedback qa-feedback"
+       md-colors="{background: $ctrl.getError().color ? $ctrl.getError().color : 'hippo-red-50'}">
+    <h4 class="qa-feedback-title">{{::$ctrl.getError().titleKey | translate}}</h4>
+
+    <p class="qa-feedback-message"
+       translate="{{ $ctrl.getError().messageKey }}"
+       translate-values="{{ $ctrl.getError().messageParams }}">
+    </p>
+
+    <div layout
+         layout-align="end center">
+      <md-button ng-if="$ctrl.getError().linkToContentEditor"
+                 ng-click="$ctrl.onSwitchEditor()">
+        <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
+        {{ ::'FEEDBACK_SWITCH_TO_CONTENT_EDITOR' | translate }}
+      </md-button>
+
+      <md-button ng-if="$ctrl.getError().cancelRequest"
+                 ng-click="$ctrl.cancelRequestPublication()">
+        {{ ::'FEEDBACK_CANCEL_REQUEST' | translate }}
+      </md-button>
+    </div>
+  </div>
+
+  <document-fields ng-if="$ctrl.isEditing()"
+                   field-types="$ctrl.getFieldTypes()"
+                   field-values="$ctrl.getFieldValues()"
+                   locale="::$ctrl.getDocumentLocale()">
+  </document-fields>
+</md-content>
