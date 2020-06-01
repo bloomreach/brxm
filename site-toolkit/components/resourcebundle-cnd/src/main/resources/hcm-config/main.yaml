@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    resourcebundle:
+      uri: http://www.hippoecm.org/hst/resourcebundle/nt/2.1
+      cnd: resourcebundle.cnd

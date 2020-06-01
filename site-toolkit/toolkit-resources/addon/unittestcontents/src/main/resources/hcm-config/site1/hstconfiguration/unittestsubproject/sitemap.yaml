@@ -1,0 +1,40 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestsubproject/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /_default_:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/homepage
+        hst:parameternames: [testparam]
+        hst:parametervalues: ['${1}']
+      /home:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/homepage
+        hst:refId: homeRefId
+        hst:relativecontentpath: common/homepage
+      /about-us:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/standarddetail
+        hst:relativecontentpath: common/aboutfolder/about-us
+      /news:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/newsoverview
+        hst:refId: newsRefId
+        hst:relativecontentpath: News
+        /_default_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/standarddetail
+          hst:refId: wildcardNewsRefId
+          hst:relativecontentpath: News/${1}
+        /_default_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsoverview
+          hst:relativecontentpath: News/${1}
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsoverview
+          hst:relativecontentpath: News/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/standarddetail
+          hst:relativecontentpath: News/${1}

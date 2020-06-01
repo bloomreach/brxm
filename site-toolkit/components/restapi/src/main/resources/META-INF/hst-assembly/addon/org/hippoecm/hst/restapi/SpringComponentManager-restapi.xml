@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+  <bean id="restApiJacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+    <property name="annotationIntrospector" ref="restApiJacksonJaxbIntrospector"/>
+  </bean>
+
+  <bean id="restApiJacksonJaxbIntrospector" class="com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair" factory-method="pair">
+    <constructor-arg>
+      <bean class="com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector"/>
+    </constructor-arg>
+    <constructor-arg>
+      <bean class="com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector"/>
+    </constructor-arg>
+  </bean>
+
+  <bean id="restApiJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
+    <property name="mapper" ref="restApiJacksonObjectMapper" />
+  </bean>
+
+  <bean id="restApiCorsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter"/>
+
+  <bean id="restApiExceptionMapper" class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper">
+    <property name="printStackTrace" value="false" />
+  </bean>
+
+  <!-- Built-in Entity Providers which are annotated with javax.ws.rs.ext.Provider. -->
+  <bean id="defaultRestApiEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <ref bean="restApiJsonProvider"/>
+        <ref bean="restApiCorsFilter"/>
+        <ref bean="restApiExceptionMapper"/>
+      </list>
+    </property>
+  </bean>
+
+  <!-- Custom Entity Providers which are annotated with javax.ws.rs.ext.Provider. -->
+  <bean id="customRestApiEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="restApiAllEntityProviders" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
+    <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
+    <property name="targetMethod" value="union" />
+    <property name="arguments">
+      <list>
+        <ref bean="defaultRestApiEntityProviders" />
+        <ref bean="customRestApiEntityProviders" />
+      </list>
+    </property>
+  </bean>
+
+
+  <bean id="restApiServiceQueryStringReplacingInterceptor" class="org.hippoecm.hst.jaxrs.cxf.QueryStringReplacingInterceptor">
+    <property name="paramNameReplaces">
+      <map>
+        <!-- The following will replace '_format' parameter name with '_type' parameter name before JAX-RS processing.
+        <entry key="_format" value="_type" />
+        -->
+      </map>
+    </property>
+    <property name="additionalQueryString">
+      <value></value>
+      <!-- The following will append additional query string before JAX-RS processing
+      <value>addparam1=value1&amp;addparam2=value2</value>
+      -->
+    </property>
+  </bean>
+
+  <bean id="restApiServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve"
+        init-method="initialize" destroy-method="destroy">
+    <constructor-arg>
+      <bean class="org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService">
+        <constructor-arg value="jaxrsPlainService"/>
+        <property name="servletPath" value=""/>
+        <property name="jaxrsServerFactoryBean">
+          <bean class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
+            <property name="address" value="/" />
+            <property name="providers" ref="restApiAllEntityProviders" />
+            <property name="resourceProviders" ref="restApiResourceProviders" />
+          </bean>
+        </property>
+        <property name="inInterceptors">
+          <list>
+            <ref bean="restApiServiceQueryStringReplacingInterceptor" />
+          </list>
+        </property>
+      </bean>
+    </constructor-arg>
+    <property name="valveName" value="restApiServiceValve" />
+  </bean>
+
+  <bean id="restApiResourceProviders" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
+    <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
+    <property name="targetMethod" value="union" />
+    <property name="arguments">
+      <list>
+        <ref bean="customRestApiResourceProviders" />
+        <ref bean="defaultRestApiResourceProviders" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="fallbackNodeVisitors" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean id="hippoHandleVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoHandleVisitor"/>
+        <bean id="hippoFolderVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoFolderVisitor"/>
+        <bean id="hippoDirectoryVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoDirectoryVisitor"/>
+        <bean id="hippoPublicationWorkflowDocumentVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoPublicationWorkflowDocumentVisitor"/>
+        <bean id="hippoPublishableDocumentVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoPublishableDocumentVisitor"/>
+        <bean id="hippoDocumentVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoDocumentVisitor"/>
+        <bean id="hippoStdHtmlVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoStdHtmlVisitor">
+          <property name="restApiHtmlParser" ref="restApiHtmlParser"/>
+        </bean>
+        <bean id="hippoFacetSelectVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoFacetSelectVisitor"/>
+        <bean id="hippoMirrorVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoMirrorVisitor"/>
+        <bean id="hippoGalleryImageVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoGalleryImageVisitor"/>
+        <bean id="hippoResourceVisitor" class="org.hippoecm.hst.restapi.content.visitors.HippoResourceVisitor"/>
+        <bean id="defaultNodeVisitor" class="org.hippoecm.hst.restapi.content.visitors.DefaultNodeVisitor"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="annotationBasedNodeVisitors" class="org.hippoecm.hst.restapi.scanning.AnnotationBasedNodeVisitorsFactoryBean">
+    <property name="classpathResourceScanner" ref="org.hippoecm.hst.util.ClasspathResourceScanner" />
+  </bean>
+
+  <bean id="restApiLinkCreator" class="org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator"/>
+
+  <bean id="resourceContextFactory" class="org.hippoecm.hst.restapi.ResourceContextFactory">
+    <property name="restApiLinkCreator" ref="restApiLinkCreator"/>
+    <property name="annotationBasedNodeVisitors" ref="annotationBasedNodeVisitors"/>
+    <property name="fallbackNodeVisitors" ref="fallbackNodeVisitors"/>
+  </bean>
+
+
+  <bean id="abstractResource" class="org.hippoecm.hst.restapi.AbstractResource" abstract="true">
+    <property name="resourceContextFactory" ref="resourceContextFactory"/>
+  </bean>
+
+  <bean id="maxSearchResultItems" class="java.lang.Integer">
+    <constructor-arg value="100" />
+  </bean>
+
+  <bean id="documentsResource" class="org.hippoecm.hst.restapi.content.DocumentsResource" parent="abstractResource">
+    <property name="maxSearchResultItems" ref="maxSearchResultItems"/>
+  </bean>
+
+  <bean id="defaultRestApiResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <ref bean="documentsResource"/>
+          </constructor-arg>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <!-- Default empty list of custom plain resource providers to be overriden. -->
+  <bean id="customRestApiResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="restApiPipeline" class="org.hippoecm.hst.core.container.HstSitePipeline">
+    <property name="initializationValves">
+      <list>
+        <ref bean="initializationValve" />
+      </list>
+    </property>
+    <property name="processingValves">
+      <list>
+        <ref bean="pageInfoRenderingValve" />
+        <ref bean="pageCachingValve" />
+        <ref bean="restApiServiceValve" />
+      </list>
+    </property>
+    <property name="cleanupValves">
+      <list>
+        <ref bean="diagnosticReportingValve" />
+        <ref bean="cleanupValve" />
+      </list>
+    </property>
+  </bean>
+
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="org.hippoecm.hst.core.container.Pipeline" />
+    <property name="targetObject">
+      <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+        <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" />
+        <property name="propertyPath" value="pipelines"/>
+      </bean>
+    </property>
+    <property name="targetMethod" value="put" />
+    <property name="arguments">
+      <list>
+        <value>RestApiPipeline</value>
+        <ref bean="restApiPipeline"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="htmlCleaner" class="org.hippoecm.hst.content.rewriter.HtmlCleanerFactoryBean"/>
+
+  <bean id="restApiHtmlParser" class="org.hippoecm.hst.restapi.content.html.RestApiHtmlParser">
+    <property name="htmlCleaner" ref="htmlCleaner"/>
+  </bean>
+
+</beans>
+

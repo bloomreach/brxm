@@ -1,0 +1,22 @@
+definitions:
+  config:
+    /hst:hst/hst:hosts/dev-localhost/io:
+      jcr:primaryType: hst:virtualhost
+      /onehippo:
+        jcr:primaryType: hst:virtualhost
+        /hst:root:
+          jcr:primaryType: hst:mount
+          hst:alias: globalapi
+          hst:ismapped: false
+          hst:locale: en_EN
+          hst:mountpoint: /hst:hst/hst:sites/globalcontentapi
+          hst:namedpipeline: RestApiPipeline
+          hst:types: [rest]
+          /myhippoproject:
+            jcr:primaryType: hst:mount
+            hst:alias: myhippoprojectapi
+            hst:ismapped: false
+            hst:locale: en_EN
+            hst:mountpoint: /hst:hst/hst:sites/myhippoproject
+            hst:namedpipeline: RestApiPipeline
+            hst:types: [rest]
