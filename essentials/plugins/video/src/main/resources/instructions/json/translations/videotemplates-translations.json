@@ -1,0 +1,18 @@
+{"hippo:templates": {
+  "en":   {
+    "new-video-folder": "new video folder",
+    "new-video-document": "new video"
+  },
+  "nl":   {
+    "new-video-folder": "nieuwe videomap",
+    "new-video-document": "nieuwe video"
+  },
+  "de":   {
+    "new-video-folder": "Neuer Video-Ordner",
+    "new-video-document": "Neues Video"
+  },
+  "fr":   {
+    "new-video-folder": "nouveau dossier vidéo",
+    "new-video-document": "nouvelle vidéo"
+  }
+}}

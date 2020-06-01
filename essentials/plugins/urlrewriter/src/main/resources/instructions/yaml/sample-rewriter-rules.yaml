@@ -1,0 +1,71 @@
+/content/urlrewriter/sample-rules:
+  jcr:primaryType: urlrewriter:ruleset
+  jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+  hippo:name: Sample Rules
+  hippostd:foldertype: [new-urlrewriter-folder, new-urlrewriter-document]
+  /regular-rule:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    hippo:name: Regular Rule
+    /regular-rule:
+      jcr:primaryType: urlrewriter:rule
+      jcr:mixinTypes: ['mix:referenceable']
+      hippo:availability: [live]
+      hippo:related___pathreference: rule-documents/regular-rule
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2012-05-29T16:44:25.017+02:00
+      hippostdpubwf:lastModificationDate: 2012-05-31T17:40:10.887+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2015-05-19T23:36:50.296+02:00
+      urlrewriter:ruledescription: rewrite about
+      urlrewriter:rulefrom: /about
+      urlrewriter:ruleto: https://www.bloomreach.com
+      urlrewriter:ruletype: permanent-redirect
+  /advanced-rule:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    hippo:name: Advanced Rule
+    /advanced-rule:
+      jcr:primaryType: urlrewriter:advancedrule
+      jcr:mixinTypes: ['mix:referenceable']
+      hippo:availability: [live]
+      hippo:related___pathreference: rule-documents/advanced-rule
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2012-05-29T16:37:19.726+02:00
+      hippostdpubwf:lastModificationDate: 2012-05-31T17:25:04.454+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2015-05-19T23:36:45.858+02:00
+      urlrewriter:casesensitive: false
+      urlrewriter:isnotlast: false
+      urlrewriter:iswildcardtype: false
+      urlrewriter:ruledescription: demo rule
+      urlrewriter:rulefrom: /contact
+      urlrewriter:ruleto: https://www.onehippo.org
+      urlrewriter:ruletype: temporary-redirect
+  /xml-rule:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    hippo:name: XML Rule
+    /xml-rule:
+      jcr:primaryType: urlrewriter:xmlrule
+      jcr:mixinTypes: ['mix:referenceable']
+      hippo:availability: [live]
+      hippo:related___pathreference: rule-documents/xml-rule
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2015-05-19T16:50:53.926+02:00
+      hippostdpubwf:lastModificationDate: 2015-05-19T23:38:16.531+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2015-05-19T23:38:21.749+02:00
+      urlrewriter:rule: |-
+        <rule>
+          <note>
+            This rule means that requests to /test/status will be redirected to /rewrite-status.
+          </note>
+          <from>/test/status</from>
+          <to type="redirect">%{context-path}/rewrite-status</to>
+        </rule>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+
+  <instructionSet>
+    <cnd documentType="video" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
+    <xml action="copy" source="instructions/xml/namespace/video-namespace.xml" target="/hippo:namespaces/{{namespace}}"/>
+    <xml action="copy" source="instructions/xml/hst/video-component-catalog.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <file action="copy" binary="true" source="instructions/images/video.svg" target="{{imagesRoot}}/essentials/catalog-component-icons/video.svg"/>
+    <file action="copy" source="instructions/java/Video.txt" target="{{beansFolder}}/Video.java"/>
+    <xml action="copy" source="instructions/xml/folderoptions/new-video-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="instructions/xml/folderoptions/new-video-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <translations source="/instructions/json/translations/videotypes-translations.json" />
+    <translations source="/instructions/json/translations/videotemplates-translations.json" />
+    <freemarker action="copy" source="instructions/freemarker/video-component.ftl" target="{{freemarkerRoot}}/hstdefault/video-component.ftl"/>
+    <xml action="copy" source="instructions/xml/hst/video-component-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
+  </instructionSet>
+
+  <instructionSet group="extraTemplates">
+    <freemarker action="copy"
+                source="instructions/freemarker/video-component-bare.ftl"
+                target="{{freemarkerRoot}}/hstdefault/video-component/bare.ftl"/>
+    <freemarker action="copy"
+                source="instructions/freemarker/video-component-autoplay.ftl"
+                target="{{freemarkerRoot}}/hstdefault/video-component/autoplay.ftl"/>
+    <file action="copy"
+          source="instructions/freemarker/video-component.properties"
+          target="{{freemarkerRoot}}/hstdefault/video-component.properties"/>
+    <file action="copy"
+          source="instructions/freemarker/video-component_nl.properties"
+          target="{{freemarkerRoot}}/hstdefault/video-component_nl.properties"/>
+  </instructionSet>
+
+  <instructionSet group="sampleData">
+    <xml action="copy" source="instructions/xml/content/video.xml" target="/content/documents/{{namespace}}"/>
+  </instructionSet>
+</instructions>
+

@@ -1,0 +1,122 @@
+{
+  "hippo:types":   {
+    "{{namespace}}:blogpost":     {
+      "en":       {
+        "jcr:name": "Blog Post",
+        "{{namespace}}:categories": "Categories",
+        "{{namespace}}:authors": "Author(s)",
+        "{{namespace}}:content": "Content",
+        "{{namespace}}:publicationdate": "Publication Date",
+        "{{namespace}}:authors#hint": "Link to author document(s)",
+        "{{namespace}}:introduction": "Introduction",
+        "{{namespace}}:title": "Title"
+      },
+      "nl":       {
+        "jcr:name": "Blogpost",
+        "{{namespace}}:categories": "Categorieën",
+        "{{namespace}}:authors": "Auteur(s)",
+        "{{namespace}}:content": "Inhoud",
+        "{{namespace}}:publicationdate": "Publicatiedatum",
+        "{{namespace}}:authors#hint": "Link naar auteur document(en)",
+        "{{namespace}}:introduction": "Introductie",
+        "{{namespace}}:title": "Titel"
+      },
+      "fr":       {
+        "jcr:name": "Post blog",
+        "{{namespace}}:categories": "Catégories",
+        "{{namespace}}:authors": "Auteur(s)",
+        "{{namespace}}:content": "Contenu",
+        "{{namespace}}:publicationdate": "Date de publication",
+        "{{namespace}}:authors#hint": "Lien vers le(s) document(s) de l'auteur",
+        "{{namespace}}:introduction": "Introduction",
+        "{{namespace}}:title": "Titre"
+      },
+      "de":       {
+        "jcr:name": "Blog-Post",
+        "{{namespace}}:categories": "Kategorien",
+        "{{namespace}}:authors": "Verfasser",
+        "{{namespace}}:content": "Inhalt",
+        "{{namespace}}:publicationdate": "Publikationsdatum",
+        "{{namespace}}:authors#hint": "Link zu Verfasserdokument(en)",
+        "{{namespace}}:introduction": "Einführung",
+        "{{namespace}}:title": "Titel"
+      }
+    },
+    "{{namespace}}:author":     {
+      "en":       {
+        "{{namespace}}:fullname": "Name",
+        "{{namespace}}:accounts": "Accounts",
+        "jcr:name": "Author",
+        "{{namespace}}:photo#hint": "Photo of the author",
+        "{{namespace}}:fullname#hint": "Full name",
+        "{{namespace}}:role": "Role",
+        "{{namespace}}:content#hint": "Information about the author",
+        "{{namespace}}:content": "Description",
+        "{{namespace}}:accounts#hint": "External social media accounts",
+        "{{namespace}}:photo": "Photo"
+      },
+      "nl":       {
+        "{{namespace}}:fullname": "Naam",
+        "{{namespace}}:accounts": "Accounts",
+        "jcr:name": "Auteur",
+        "{{namespace}}:photo#hint": "Foto van de auteur",
+        "{{namespace}}:fullname#hint": "Volledige naam",
+        "{{namespace}}:role": "Rol",
+        "{{namespace}}:content#hint": "Informatie over de auteur",
+        "{{namespace}}:content": "Beschrijving",
+        "{{namespace}}:accounts#hint": "Externe social media accounts",
+        "{{namespace}}:photo": "Foto"
+      },
+      "fr":       {
+        "{{namespace}}:fullname": "Nom",
+        "{{namespace}}:accounts": "Konten",
+        "jcr:name": "Auteur",
+        "{{namespace}}:photo#hint": "Photo de l'auteur",
+        "{{namespace}}:fullname#hint": "Nom complet",
+        "{{namespace}}:role": "Rôle",
+        "{{namespace}}:content#hint": "Informations sur l'auteur",
+        "{{namespace}}:content": "Description",
+        "{{namespace}}:accounts#hint": "Comptes médias sociaux externes",
+        "{{namespace}}:photo": "Photo"
+      },
+      "de":       {
+        "{{namespace}}:fullname": "Name",
+        "{{namespace}}:accounts": "Comptes",
+        "jcr:name": "Verfasser",
+        "{{namespace}}:photo#hint": "Foto des Verfassers",
+        "{{namespace}}:fullname#hint": "Vollständiger Name",
+        "{{namespace}}:role": "Rolle",
+        "{{namespace}}:content#hint": "Informationen über den Verfasser",
+        "{{namespace}}:content": "Beschreibung",
+        "{{namespace}}:accounts#hint": "Externe Konten soziale Medien",
+        "{{namespace}}:photo": "Foto"
+      }
+    },
+    "{{namespace}}:account":     {
+      "en":       {
+        "{{namespace}}:type": "Type",
+        "jcr:name": "Account (Compound)",
+        "{{namespace}}:link": "Link",
+        "{{namespace}}:link#hint": "External link to the account"
+      },
+      "nl":       {
+        "{{namespace}}:type": "Soort",
+        "jcr:name": "Account (Compound)",
+        "{{namespace}}:link": "Link",
+        "{{namespace}}:link#hint": "Externe link naar het account"
+      },
+      "fr":       {
+        "{{namespace}}:type": "Type",
+        "jcr:name": "Compte (Compound)",
+        "{{namespace}}:link": "Lien",
+        "{{namespace}}:link#hint": "Lien externe vers le compte"
+      },
+      "de":       {
+        "{{namespace}}:type": "Art",
+        "jcr:name": "Konto (Compound)",
+        "{{namespace}}:link": "Link",
+        "{{namespace}}:link#hint": "Externer Link zum Konto"
+      }
+    }
+  }
+}
