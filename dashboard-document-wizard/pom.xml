@@ -21,6 +21,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>29.16-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <artifactId>hippo-plugin-dashboard-document-wizard</artifactId>
@@ -36,12 +37,6 @@
     where the document name can be entered. The folder where the document will be stored can be determined
     by supplying a date or a value from a list. Version ${project.version}.
   </description>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-plugin-dashboard-document-wizard.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-plugin-dashboard-document-wizard.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-plugin-dashboard-document-wizard</url>
-  </scm>
 
   <issueManagement>
     <system>Jira Hippo Plugins</system>

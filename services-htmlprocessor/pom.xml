@@ -22,6 +22,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>29.14</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo CMS7 Services - htmlprocessor</name>
@@ -44,12 +45,6 @@
     <easymock.version>3.0</easymock.version>
     <junit.version>4.12</junit.version>
   </properties>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-services-htmlprocessor.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-services-htmlprocessor.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-services-htmlprocessor</url>
-  </scm>
 
   <repositories>
     <repository>

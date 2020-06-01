@@ -22,6 +22,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>29.16-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo CMS7 Services - contenttype</name>
@@ -38,12 +39,6 @@
     <hippo.repository.version>5.6.11-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>5.6.11-SNAPSHOT</hippo.cms.version>
   </properties>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-services-contenttype.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-services-contenttype.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-services-contenttype</url>
-  </scm>
 
   <repositories>
     <repository>
