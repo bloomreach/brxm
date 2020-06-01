@@ -1,0 +1,5 @@
+group: 
+  name: ${artifactId}
+project: ${artifactId}
+module:
+  name: ${artifactId}-repository-data-webfiles

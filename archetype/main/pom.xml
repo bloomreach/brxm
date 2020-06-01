@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-project-archetype-parent</artifactId>
+    <version>14.3.0-SNAPSHOT</version>
+  </parent>
+
+  <name>Bloomreach CMS Project Archetype</name>
+  <description>This project enables you to start with a skeleton project
+    gluing together all the necessary components and compatible versions.
+  </description>
+
+  <artifactId>hippo-project-archetype</artifactId>
+  <packaging>maven-archetype</packaging>
+
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+
+  <scm>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-project-archetype.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-project-archetype.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-project-archetype</url>
+  </scm>
+
+  <properties>
+    <gettingstarted.artifactId>${main.app.artifactId}</gettingstarted.artifactId>
+    <docker.image.name>${main.app.artifactId}-1</docker.image.name>
+    <site.webapp.context.path>site</site.webapp.context.path>
+  </properties>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.archetype</groupId>
+        <artifactId>archetype-packaging</artifactId>
+        <version>${maven.archetype.plugin.version}</version>
+      </extension>
+    </extensions>
+
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make shared resources</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/resources.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Compile test resources</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Rename webfile bundle dir</id>
+            <phase>process-resources</phase>
+            <configuration>
+              <target name="moveDirs">
+                <move file="${project.build.outputDirectory}/archetype-resources/repository-data/webfiles/src/main/resources/__rootArtifactId__" tofile="${project.build.outputDirectory}/archetype-resources/repository-data/webfiles/src/main/resources/site" includeEmptyDirs="yes" verbose="true" />
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Create test resource</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <includes>**/*.class</includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-archetype-plugin</artifactId>
+        <version>${maven.archetype.plugin.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <skip>${skipITs}</skip>
+        </configuration>     
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
