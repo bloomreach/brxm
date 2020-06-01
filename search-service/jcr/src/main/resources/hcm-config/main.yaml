@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    hipposearch:
+      uri: http://www.onehippo.org/jcr/hipposearch/nt/1.0
+      cnd: hipposearch.cnd
