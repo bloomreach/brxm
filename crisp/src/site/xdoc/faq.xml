@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>FAQ</title>
+  </properties>
+  <body>
+
+    <section name="FAQ">
+
+      <subsection name="Q: How to Override Default CRISP Beans?">
+        <p>
+          All the internal <strong>CRISP</strong> beans are defined in <code>hippo-addon-crisp-core-x.x.x.jar!META-INF/spring-assembly/addon/crisp/crisp*.xml</code> resources.
+          If you want to override any bean, you can redefine a bean in <code>site/src/resources/META-INF/hst-assembly/addon/crisp/overrides/*.xml</code> file.
+          For example, you can override <code>org.springframework.http.client.ClientHttpRequestFactory</code> bean
+          for more advanced HTTP Client Connection handlings.
+        </p>
+      </subsection>
+
+      <subsection name="Q: Can I use CRISP in non-CMS delivery / authoring tier applciations?">
+        <p>
+          Yes, <code>CRISP</code> API and CORE is basically independent from CMS specific APIs.
+          However, you will need to include all the <strong>provided</strong> dependencies referred by
+          <code>CRISP</code> API and <code>CRISP</code> Core by yourself in your application.
+        </p>
+      </subsection>
+
+      <subsection name="Q: Which is more crispy, granny apples or CRISP?">
+        <p>
+          Depends. If you're more interested in baking or cooking than programming, perhaps granny apples look
+          more crispy, but if you have struggled with implementing backend integrations in content delivery or
+          authoring tier on and on, probably you will pick <strong>CRISP</strong>.
+        </p>
+      </subsection>
+
+    </section>
+
+  </body>
+</document>
