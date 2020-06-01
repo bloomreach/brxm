@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/default/handle/frontend:renderer/socialsharing:
+      jcr:primaryType: frontend:plugin
+      document.url.service.id: live.site.document.url.service
+      plugin.class: org.onehippo.cms7.channelmanager.plugins.social.SocialSharingPlugin
+      social.media.service.id: popup.social.media.service
+      wicket.id: ${item}

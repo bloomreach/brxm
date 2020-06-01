@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-static:
+      /channelManagerLoader:
+        .meta:order-before: browserPerspective
+        jcr:primaryType: frontend:plugin
+        cluster.name: hippo-channel-manager
+        plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
