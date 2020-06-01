@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/DocumentValueListProvider:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.onehippo.forge.selection.frontend.provider.DocumentValueListProvider
+      valuelist.provider: service.valuelist.default

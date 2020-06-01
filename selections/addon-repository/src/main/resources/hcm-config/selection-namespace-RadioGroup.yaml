@@ -1,0 +1,36 @@
+definitions:
+  config:
+    /hippo:namespaces/selection/RadioGroup:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['hipposysedit:remodel']
+          hipposysedit:node: false
+          hipposysedit:type: String
+          hipposysedit:uri: http://forge.onehippo.org/selection/nt/1.0
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          frontend:properties: [mode, source, valuelistProvider, orientation, sortComparator,
+            sortOrder, sortBy]
+          frontend:references: [wicket.model, engine, model.compareTo]
+          frontend:services: [wicket.id]
+          /root:
+            jcr:primaryType: frontend:plugin
+            engine: ${engine}
+            mode: ${mode}
+            model.compareTo: ${model.compareTo}
+            orientation: ${orientation}
+            plugin.class: org.onehippo.forge.selection.frontend.plugin.RadioGroupPlugin
+            sortBy: ${sortBy}
+            sortComparator: ${sortComparator}
+            sortOrder: ${sortOrder}
+            source: ${source}
+            valuelistProvider: ${valuelistProvider}
+            wicket.id: ${wicket.id}
+            wicket.model: ${wicket.model}
