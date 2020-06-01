@@ -1,0 +1,23 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite-test-many/hst:templates:
+      jcr:primaryType: hst:templates
+      /homepage.ftl:
+        jcr:primaryType: hst:template
+        hst:script: "<#assign\r\n        hst=JspTaglibs[\"http://www.hippoecm.org/jsp/hst/core\"\
+          ]>\r\n        <div class=\"yui-u\"> <h1>${document.title}</h1>\r\n     \
+          \   <p>${document.summary}</p> <@hst.html \r\n        hippohtml=document.html/>\
+          \ <p> </p>\r\n        <#if \"${document.resource!}\" != \"\">\r\n      \
+          \  <@hst.link var=\"resource\"\r\n        hippobean=document.resource />\
+          \ <#if\r\n        \"${resource!}\" != \"\"> <a\r\n        href=\"${resource}\"\
+          >${document.resource.name}</a>\r\n        </#if> </#if> <div> <@hst.include\
+          \ ref=\"todolist\"/>\r\n        </div> <div class=\"bannersHome\"> <@hst.include\r\
+          \n        ref=\"banners\"/> </div> <div class=\"bannersHome\">\r\n     \
+          \   <@hst.include ref=\"morebanners\"/> </div> \r\n        <div class=\"\
+          bannersHome\" id=\"container-1\">\r\n        <@hst.include ref=\"container-1\"\
+          />\r\n        </div>\r\n        <div class=\"bannersHome\" id=\"container-2\"\
+          >\r\n        <@hst.include ref=\"container-2\"/>\r\n        </div>\r\n \
+          \       <hr/>\r\n        <p\r\n        style=\"height: 30em;\"> </p> </div>"
+      /sitesoverview:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/sitesoverview.jsp

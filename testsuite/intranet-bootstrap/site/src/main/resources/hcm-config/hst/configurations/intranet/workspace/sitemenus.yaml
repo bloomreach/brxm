@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:workspace/hst:sitemenus:
+      jcr:primaryType: hst:sitemenus
+      /main:
+        jcr:primaryType: hst:sitemenu
+        /home:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: root
+        /about:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: about
+        /news:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: news

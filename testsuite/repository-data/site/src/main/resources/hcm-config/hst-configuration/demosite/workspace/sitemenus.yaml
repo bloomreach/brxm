@@ -1,0 +1,107 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite/hst:workspace/hst:sitemenus:
+      jcr:primaryType: hst:sitemenus
+      /main:
+        jcr:primaryType: hst:sitemenu
+        /Home:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: home
+        /French Home by path:
+          jcr:primaryType: hst:sitemenuitem
+          hst:mountalias: fr_site
+          hst:referencesitemapitem: accueil
+        /French Home by id:
+          jcr:primaryType: hst:sitemenuitem
+          hst:mountalias: fr_site
+          hst:referencesitemapitem: homeId
+        /About:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: about
+        /Mashup:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: mashup
+        /News:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: news
+          hst:repobased: true
+        /News1:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: news1
+          hst:repobased: true
+        /News2:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: news2
+          hst:repobased: true
+        /NewsCtxOnly:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: newsctxonly/foo/bar
+          hst:repobased: true
+        /NewsImageVariant:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: newsimagevariant
+          hst:repobased: true
+        /AllLinksForANewsItem:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: alllinkforanewsitem
+        /Products:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: products
+        /Search:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: search
+        /Faceted (JCR):
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: faceted
+          hst:repobased: true
+        /Solr Search:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: solrsearch
+        /Solr Faceted:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: solrfaceting
+        /Solr Indexer:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: solrindexer
+        /GoGreen Solr Indexer:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: gogreen-rest-product-indexer
+        /Wikipedia:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: wikipedia
+          /Archive:
+            jcr:primaryType: hst:sitemenuitem
+            hst:referencesitemapitem: wikipedia/archive
+          /Translations:
+            jcr:primaryType: hst:sitemenuitem
+            hst:referencesitemapitem: wikipedia/translations
+        /Form Component Example:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: form
+        /Contact-Spring:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: contact-spring
+        /Contact-Spring-Context:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: contact-spring-context
+        /Contact-Dispatch:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: contact-dispatch
+        /Contact-SpringMVC:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: contact-springmvc
+        /Algebra:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: algebra
+        /prepareBeforeRender Example:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: preparecalls
+        /Spring Web MVC Integration Example:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: springapp/news

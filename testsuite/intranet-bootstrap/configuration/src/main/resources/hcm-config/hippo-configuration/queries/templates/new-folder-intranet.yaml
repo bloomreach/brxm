@@ -1,0 +1,17 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:queries/hippo:templates/new-folder-intranet:
+      jcr:primaryType: hippostd:templatequery
+      jcr:mixinTypes: ['hipposys:implementation']
+      hippostd:icon: addfolder_ico
+      hippostd:modify: [./_name, $name]
+      hipposys:classname: org.hippoecm.repository.impl.query.DirectPath
+      jcr:language: xpath
+      jcr:statement: /jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-folder-intranet/hippostd:templates/node()
+      /hippostd:templates:
+        jcr:primaryType: hippostd:templates
+        /hippostd:folder:
+          jcr:primaryType: hippostd:folder
+          jcr:mixinTypes: ['mix:versionable']
+          jcr:uuid: f980cd45-560d-448a-a970-d0d5624b8e54
+          hippostd:foldertype: [new-document-intranet, new-folder-intranet]

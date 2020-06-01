@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-release</artifactId>
+    <version>13.4.4-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>hippo-testsuite</artifactId>
+  <name>Hippo Test Suite</name>
+  <description>Hippo Test Suite</description>
+  <version>13.4.4-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <inceptionYear>2009</inceptionYear>
+
+  <properties>
+
+    <!-- ***START temporary override of versions*** -->
+    <!-- ***END temporary override of versions*** -->
+
+    <jsp-api.version>2.2</jsp-api.version>
+    <taglibs.version>1.2.5</taglibs.version>
+    <commons-lang.version>2.6</commons-lang.version>
+    <junit.version>4.12</junit.version>
+    <easymock.version>3.4</easymock.version>
+
+    <filesync.override>false</filesync.override>
+    <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
+
+    <commons-math3.version>3.6.1</commons-math3.version>
+
+    <filesync.override>false</filesync.override>
+    <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
+
+    <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
+
+    <yui.sources.version>1.01.12</yui.sources.version>
+
+    <jmxremote.port>9875</jmxremote.port>
+
+    <dependency.solr.version>4.9.0</dependency.solr.version>
+
+    <json-lib.version>2.4</json-lib.version>
+
+    <webjars-servlet-2.x.version>1.5</webjars-servlet-2.x.version>
+    <webjars-swagger-ui.version>2.2.10-1</webjars-swagger-ui.version>
+
+    <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
+
+    <!-- properties for clustering setup support -->
+    <cluster.node>node1</cluster.node>
+    <mysql.version>8.0.17</mysql.version>
+    <!-- end clustering support properties -->
+    
+    <buildNumber>${maven.build.timestamp}</buildNumber>
+
+    <sonar.skip>true</sonar.skip>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <!-- other predefined runtime scope versioned dependencies -->
+      <dependency>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-spec</artifactId>
+        <version>${taglibs.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-impl</artifactId>
+        <version>${taglibs.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <!-- other predefined compile scope versioned dependencies -->
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-math3</artifactId>
+        <version>${commons-math3.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>${freemarker.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sf.json-lib</groupId>
+        <artifactId>json-lib</artifactId>
+        <version>${json-lib.version}</version>
+        <classifier>jdk15</classifier>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-annotation_1.1_spec</artifactId>
+        <version>${geronimo-annotation_1.1_spec.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- YUI -->
+      <dependency>
+        <groupId>org.onehippo.yui</groupId>
+        <artifactId>yui-2.xx-sources</artifactId>
+        <version>${yui.sources.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.webjars</groupId>
+        <artifactId>webjars-servlet-2.x</artifactId>
+        <version>${webjars-servlet-2.x.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.webjars</groupId>
+        <artifactId>swagger-ui</artifactId>
+        <version>${webjars-swagger-ui.version}</version>
+      </dependency>
+
+    </dependencies>
+
+  </dependencyManagement>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.googlecode.mavenfilesync</groupId>
+          <artifactId>maven-filesync-plugin</artifactId>
+          <version>${maven.plugins.filesync.version}</version>
+          <configuration>
+            <override>${filesync.override}</override>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>generate</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <modules>
+    <!-- Added api,random-numbers and linear-algebra for test case of Add-on component context from jar
+    modules, also see HSTTWO-2038 -->
+    <module>api</module>
+    <module>random-numbers</module>
+    <module>linear-algebra</module>
+    <module>linear-algebra-sub</module>
+    <!-- End Add-on component context -->
+    <module>repository-data</module>
+    <module>content</module>
+    <module>intranet-bootstrap</module>
+    <module>components</module>
+    <module>dependencies</module>
+    <module>resources</module>
+    <module>cms</module>
+    <module>site</module>
+    <module>intranet</module>
+    <module>prod-server-config</module>
+    <module>solr</module>
+    <module>api-docs</module>
+  </modules>
+
+  <profiles>
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>jrebel</name>
+        </property>
+      </activation>
+    </profile>
+    <profile>
+      <id>cargo.run</id>
+      <properties>
+        <solr.data.dir>${repo.path}/solr</solr.data.dir>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <configuration>
+              <configuration>
+                <configfiles>
+                  <configfile>
+                    <file>${project.basedir}/conf/hst.properties</file>
+                    <todir>conf/</todir>
+                    <tofile>hst.properties</tofile>
+                  </configfile>
+                  <configfile>
+                    <file>${project.basedir}/conf/hst-intranet.properties</file>
+                    <todir>conf/</todir>
+                    <tofile>hst-intranet.properties</tofile>
+                  </configfile>
+                </configfiles>
+              </configuration>
+              <container>
+                <systemProperties>
+                  <log4j.configurationFile>file://${project.basedir}/conf/log4j2.xml</log4j.configurationFile>
+                  <solr.data.dir>${solr.data.dir}</solr.data.dir>
+                  <project.basedir>${project.basedir}</project.basedir>
+                </systemProperties>
+              </container>
+              <deployables>
+                <deployable>
+                  <type>war</type>
+                  <properties>
+                    <context>/cms</context>
+                  </properties>
+                  <location>${project.basedir}/cms/target/cms.war</location>
+                </deployable>
+                <deployable>
+                  <location>${project.basedir}/site/target/site.war</location>
+                  <type>war</type>
+                  <properties>
+                    <context>/site</context>
+                  </properties>
+                </deployable>
+                <deployable>
+                  <location>${project.basedir}/intranet/target/intranet.war</location>
+                  <type>war</type>
+                  <properties>
+                    <context>/intranet</context>
+                  </properties>
+                </deployable>
+                <deployable>
+                  <location>${project.basedir}/solr/target/solr.war</location>
+                  <type>war</type>
+                  <properties>
+                    <context>/solr</context>
+                  </properties>
+                </deployable>
+                <deployable>
+                  <location>${project.basedir}/api-docs/target/api-docs.war</location>
+                  <type>war</type>
+                  <properties>
+                    <context>/api-docs</context>
+                  </properties>
+                </deployable>
+              </deployables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>mysql</id>
+      <properties>
+        <mysql.driver>com.mysql.jdbc.Driver</mysql.driver>
+        <mysql.username>root</mysql.username>
+        <mysql.password />
+        <mysql.host>localhost:3306</mysql.host>
+        <mysql.repo.db>testsuite</mysql.repo.db>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>${mysql.version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <configuration>
+              <configuration>
+                <properties combine.children="append">
+                  <mysql.driver>${mysql.driver}</mysql.driver>
+                  <mysql.username>${mysql.username}</mysql.username>
+                  <mysql.password>${mysql.password}</mysql.password>
+                  <mysql.host>${mysql.host}</mysql.host>
+                  <mysql.repo.db>${mysql.repo.db}</mysql.repo.db>
+                </properties>
+                <configfiles combine.children="append">
+                  <configfile>
+                    <file>${project.basedir}/conf/context-mysql.xml</file>
+                    <todir>conf/</todir>
+                    <tofile>context.xml</tofile>
+                  </configfile>
+                  <configfile>
+                    <!-- copy to target to have a '@mysql.repo.db@' substituted file -->
+                    <file>${project.basedir}/conf/repository-mysql.xml</file>
+                    <todir>conf/</todir>
+                    <tofile>repository-mysql.xml</tofile>
+                  </configfile>
+                </configfiles>
+              </configuration>
+              <container>
+                <systemProperties combine.children="append">
+                  <!-- we use repository-mysql.xml from 'target' because that one has '@mysql.repo.db@' substituted -->
+                  <repo.config>file:${project.basedir}/target/tomcat${cargo.tomcat.major.version}x/conf/repository-mysql.xml</repo.config>
+                  <org.apache.jackrabbit.core.cluster.node_id>${cluster.node}</org.apache.jackrabbit.core.cluster.node_id>
+                  <!-- disable auto export and web files watch: -->
+                  <project.basedir />
+                </systemProperties>
+                <dependencies>
+                  <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <classpath>extra</classpath>
+                  </dependency>
+                </dependencies>
+              </container>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>node2</id>
+      <properties>
+        <cluster.node>node2</cluster.node>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <configuration>
+              <configuration>
+                <properties combine.children="append">
+                  <catalina.servlet.uriencoding>UTF-8</catalina.servlet.uriencoding>
+                  <cargo.servlet.port>9080</cargo.servlet.port>
+                  <cargo.tomcat.ajp.port>9010</cargo.tomcat.ajp.port>
+                  <cargo.jvmargs>
+                    <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=9000,server=y,suspend=n -noverify ${javaagent}]]>
+                  </cargo.jvmargs>
+                  <cargo.rmi.port>9206</cargo.rmi.port>
+                </properties>
+              </configuration>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>dist</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-slf4j-impl</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>jcl-over-slf4j</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-core</artifactId>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <defaultGoal>validate</defaultGoal>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>distro-assembly</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>${project.basedir}/src/main/assembly/distribution.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <exclude>conf/catalina-logging.properties</exclude>
+                <exclude>solr/src/main/webapp/**</exclude>
+                <!-- covered by 3rd-party licenses in the LICENSE file -->
+                <exclude>intranet-bootstrap/webfiles/src/main/resources/intranet/css/style.css</exclude>
+                <exclude>intranet-bootstrap/webfiles/src/main/resources/intranet/hst-whitelist.txt</exclude>
+                <exclude>components/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml</exclude>
+                <exclude>resources/src/main/webapp/css/yui-2.8.1-reset-fonts-grids.css</exclude>
+                <!-- repository content XML -->
+                <exclude>content/src/main/resources/**/*.xml</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
+
+  <scm>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-testsuite.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-testsuite.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-testsuite</url>
+  </scm>
+
+</project>
+
