@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:sitemap/sitemap.xml:
+      jcr:primaryType: hst:sitemapitem
+      hst:componentconfigurationid: hst:components/forge-sitemap-feed
+      hst:hiddeninchannelmanager: true
