@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    webfiles:
+      uri: http://www.onehippo.org/webfiles/nt/1.0
+      cnd: webfiles.cnd
