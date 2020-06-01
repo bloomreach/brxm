@@ -1,0 +1,214 @@
+definitions:
+  config:
+    /hippo:namespaces/system:
+      jcr:primaryType: hipposysedit:namespace
+      /String:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: false
+            hipposysedit:uri: internal
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode, size, maxlength]
+            frontend:references: [wicket.model, engine, model.compareTo]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              plugin.class: org.hippoecm.frontend.editor.plugins.ValueTemplatePlugin
+      /Text:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: false
+            hipposysedit:type: String
+            hipposysedit:uri: internal
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode, rows]
+            frontend:references: [wicket.model, engine, model.compareTo]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              diffservice.id: html.diffservice.id
+              plugin.class: org.hippoecm.frontend.editor.plugins.TextTemplatePlugin
+      /Label:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+        jcr:uuid: eab1bc13-3085-4e5a-a5b4-a31ea74bbb70
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 9b37d0dc-d294-40e4-9850-f8c397fe404d
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: false
+            hipposysedit:type: String
+            hipposysedit:uri: internal
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode, size]
+            frontend:references: [wicket.model, engine, model.compareTo]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              plugin.class: org.hippoecm.frontend.editor.plugins.ValueTemplatePlugin
+      /Boolean:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: false
+            hipposysedit:uri: internal
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [wicket.model]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              plugin.class: org.hippoecm.frontend.editor.plugins.BooleanValueTemplatePlugin
+      /Date:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: false
+            hipposysedit:uri: internal
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [wicket.model]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              plugin.class: org.hippoecm.frontend.editor.plugins.DatePickerPlugin
+      /Long:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: false
+            hipposysedit:uri: internal
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [model.compareTo, wicket.model]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              plugin.class: org.hippoecm.frontend.editor.plugins.ValueTemplatePlugin
+      /Double:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: false
+            hipposysedit:uri: internal
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [model.compareTo, wicket.model]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              plugin.class: org.hippoecm.frontend.editor.plugins.ValueTemplatePlugin
+      /Docbase:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: false
+            hipposysedit:type: String
+            hipposysedit:uri: internal
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode, nodetypes]
+            frontend:references: [wicket.model]
+            frontend:services: [wicket.id]
+            nodetypes: []
+            /root:
+              jcr:primaryType: frontend:plugin
+              cluster.name: cms-pickers/documents
+              plugin.class: org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerPlugin
+      /Reference:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: false
+            hipposysedit:uri: internal
+      /CalendarDate:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: false
+            hipposysedit:type: Date
+            hipposysedit:uri: internal
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [wicket.model]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              plugin.class: org.hippoecm.frontend.editor.plugins.DatePickerPlugin
+              time.hide: 'true'

@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-validators:
+      jcr:primaryType: frontend:plugincluster
+      /registry:
+        jcr:primaryType: frontend:plugin
+        field.validator.service.id: field.validator.service
+        plugin.class: org.hippoecm.frontend.editor.validator.ValidatorService
+      /non-empty:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.editor.validator.plugins.NonEmptyCmsValidator
+      /html:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.editor.validator.plugins.HtmlCmsValidator
+      /escaped:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.editor.validator.plugins.EscapedCmsValidator
+      /email:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.editor.validator.plugins.RegExCmsValidator
+        regex_pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$
+      /references:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.editor.validator.plugins.NodeReferenceValidator

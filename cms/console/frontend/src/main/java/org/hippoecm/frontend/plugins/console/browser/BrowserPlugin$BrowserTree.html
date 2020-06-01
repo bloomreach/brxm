@@ -1,0 +1,82 @@
+<!--
+  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<html xmlns:wicket="http://wicket.apache.org/">
+<wicket:panel>
+  <div class="hippo-tree">
+    <div class="wicket-tree">
+      <div wicket:id="i">
+        <div class="a_">
+          <span wicket:id="indent"></span><a wicket:id="link"><span wicket:id="image"/></a>
+          <a wicket:id="nodeLink"><span class="icon" wicket:id="icon"></span><span wicket:id="label"></span></a>
+          <div wicket:id="contextMenu" class="hippo-console-tree-dropdown"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <wicket:fragment wicket:id="menu">
+    <ul class="hippo-console-contextmenu hippo-toolbar-menu-item">
+      <li>
+        <span class="icon fa fa-fw" wicket:id="icon-add-node"></span>
+        <span class="menu-item" wicket:id="add-node"></span>
+      </li>
+      <li class="separator">
+        <span class="icon fa fa-fw" wicket:id="icon-delete-node"></span>
+        <span class="menu-item" wicket:id="delete-node"></span>
+      </li>
+      <li class="separator">
+        <span class="icon fa fa-fw" wicket:id="icon-add-property"></span>
+        <span class="menu-item" wicket:id="add-property"></span>
+      </li>
+      <li>
+        <span class="icon fa fa-fw" wicket:id="icon-copy-node"></span>
+        <span class="menu-item" wicket:id="copy-node"></span>
+      </li>
+      <li>
+        <span class="icon fa fa-fw" wicket:id="icon-move-node"></span>
+        <span class="menu-item" wicket:id="move-node"></span>
+      </li>
+      <li class="separator">
+        <span class="icon fa fa-fw" wicket:id="icon-rename-node"></span>
+        <span class="menu-item" wicket:id="rename-node"></span>
+      </li>
+      <li>
+        <span class="icon fa fa-fw" wicket:id="icon-xml-export"></span>
+        <span class="menu-item" wicket:id="xml-export"></span>
+      </li>
+      <li class="separator">
+        <span class="icon fa fa-fw" wicket:id="icon-xml-import"></span>
+        <span class="menu-item" wicket:id="xml-import"></span>
+      </li>
+      <li>
+        <span class="icon fa fa-fw" wicket:id="icon-yaml-export"></span>
+        <span class="menu-item" wicket:id="yaml-export"></span>
+      </li>
+      <li class="separator">
+        <span class="icon fa fa-fw" wicket:id="icon-yaml-import"></span>
+        <span class="menu-item" wicket:id="yaml-import"></span>
+      </li>
+      <li>
+        <span class="icon fa fa-fw" wicket:id="icon-t9ids"></span>
+        <span class="menu-item" wicket:id="t9ids"></span>
+      </li>
+        <li>
+          <span class="icon fa fa-fw" wicket:id="icon-recompute"></span>
+          <span class="menu-item" wicket:id="recompute"></span>
+        </li>
+    </ul>
+  </wicket:fragment>
+</wicket:panel>
+</html>

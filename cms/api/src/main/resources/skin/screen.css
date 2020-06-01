@@ -1,0 +1,675 @@
+/*
+ * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+/* ======================================== */
+
+body.hippo-root #doc3 {
+  margin: 0;
+}
+
+#hd {
+  text-align: left;
+}
+
+#bd {
+  text-align: left;
+}
+
+.wicket-modal {
+  text-align: left
+}
+
+/* Hippo Global CSS tools */
+/* ================================================ */
+.hippo-global-fullwidth {
+  width: 100%;
+}
+
+.hippo-global-halfwidth {
+  width: 50%;
+}
+
+.hippo-global-alignright {
+  text-align: right
+}
+
+.hippo-global-alignmiddle {
+  text-align: center;
+  vertical-align: middle
+}
+
+.hippo-global-clearer {
+  clear: both;
+  height: 0;
+}
+
+.hippo-global-hideme {
+  display: none;
+}
+
+.hippo-global-floatleft {
+  float: left
+}
+
+.hippo-global-align-bottom {
+  vertical-align: bottom
+}
+
+/* Auke's hippo skin global css */
+/* ================================================ */
+
+/* remove the background in dialog windows */
+.hippo-window {
+  background: none
+}
+
+/* highlights */
+.hippo-global-highlight li,
+.hippo-global-highlight li a span,
+.hippo-global-highlight li,
+.hippo-root table tr.selected td,
+.hippo-root table tr.selected td,
+.hippo-root table tr.selected td a,
+.hippo-global-highlight a {
+  background: #fffada;
+}
+
+/* Hippo Modal feedback */
+
+.hippo-modal-feedback ul {
+  margin-top: 5px;
+  text-align: left;
+  margin-left: 20px;
+  margin-right: 20px;
+  border: 1px solid #39434c;
+  color: #39434c;
+  background-color: #fffada;
+  margin-bottom: 15px;
+  font-weight: bold;
+  padding:8px;
+  word-wrap: break-word;
+}
+
+.hippo-modal-feedback ul li {
+  list-style-type: none;
+  padding-left:40px;
+  min-height: 35px;
+  margin: 5px;
+}
+
+
+.hippo-modal-feedback ul li.feedbackPanelERROR {
+  background-image: url("images/icons/dialog-error-32.png");
+  background-repeat: no-repeat;
+  background-position: 0 center;
+
+}
+
+.hippo-modal-feedback ul li.feedbackPanelINFO {
+    background-image: url("images/icons/dialog-information-32.png");
+    background-repeat: no-repeat;
+    background-position: 0 center;
+}
+
+/* Logout */
+/* ================================================ */
+.hippo-header-items-right .hippo-logout {
+  color: #ffffff;
+  background-image: url("images/close.png");
+  background-repeat: no-repeat;
+  background-position: right 1px;
+  padding-right: 18px;
+}
+
+.hippo-header-items-right .hippo-logout:hover {
+  color: #ffffff;
+  background-position: right -15px;
+  background-repeat: no-repeat;
+  padding-right: 18px;
+  text-decoration: underline;
+}
+
+/* Shortcuts */
+/* ================================================ */
+.hippo-header-shortcuts {
+  padding: 4px;
+  position: absolute;
+  top: 0;
+  right: 300px
+}
+
+.hippo-header-shortcuts div div {
+  float: left;
+  margin-right: 8px;
+}
+
+.hippo-header-shortcuts div div a {
+  color: #ffffff
+}
+
+.hippo-header-shortcuts div div a.document-16 {
+  background: none
+}
+
+.hippo-header-shortcuts div div a.image-add {
+  background: none
+}
+
+.hippo-header-shortcuts div div a.icon-16 {
+  padding-left: 0;
+}
+
+/* Default feedback */
+/* ================================================ */
+.hippo-feedback ul {
+  text-align: left;
+  margin-left: 60px;
+  margin-right: 60px;
+  border: 1px solid #39434c;
+  color: #39434c;
+  background-color: #fffada;
+  margin-bottom: 15px;
+  font-weight: bold;
+  background-image: url("images/icons/dialog-information-32.png");
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  padding-left: 70px;
+  min-height: 35px;
+  padding-top: 8px;
+}
+
+.hippo-feedback ul li {
+  list-style-type: disc
+}
+
+/* Wizard */
+/* ================================================ */
+.hippo-wizard {
+}
+
+.hippo-wizard-buttons {
+  text-align: right;
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+}
+
+/* Tree moved to _tree.less */
+
+/* mimetypes icons */
+table tr.selected span.document-16, .document-16{background-image:url("images/icons/document-16.png")}
+table tr.selected span.alert-16, .alert-16{background-image:url("images/icons/alert-16.png")}
+table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/folder-16.png")}
+
+/* mimetypes icons for virtual trees */
+table tr.selected span.document-virtual-16, .document-virtual-16{background-image:url("images/icons/document-16.png")}
+table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:url("images/icons/folder-virtual-16.gif")}
+
+/* Editor Plugin */
+/* ================================================ */
+.default-textarea textarea {
+  width: 100%;
+  height: 150px;
+}
+
+div.wicket-modal div.wicket-tree {
+  border: 0;
+}
+
+.hippo-root .hippo-list-simple-container input[type="text"],
+.hippo-root .hippo-list-simple-container input[type="button"] {
+  padding: 3px;
+  margin: 6px;
+}
+
+.hippo-list-simple-container {
+  margin-bottom: 10px;
+}
+
+.hippo-list-simple {
+  overflow: auto;
+  height: 84px;
+  border: 2px inset #f7f7f7;
+}
+
+.hippo-list-simple ul li a {
+  display: block;
+}
+
+
+/* Global Icon Management */
+/* ================================================ */
+.icon-16 {
+  background-repeat: no-repeat;
+  background-position: center left;
+  padding-left: 22px;
+  padding-top: 2px;
+  padding-bottom: 4px;
+}
+
+.icon-24 a {
+  background-repeat: no-repeat;
+  background-position: 4px 4px;
+}
+
+.icon-24 a {
+  background-repeat: no-repeat;
+  background-position: 4px 4px;
+}
+
+.icon-48 a {
+  background-repeat: no-repeat;
+  background-position: 8px 8px;
+}
+
+.icon-128 a {
+  background-repeat: no-repeat;
+  background-position: 8px 8px;
+}
+
+.arrow-sort-down-16 {
+  background-image: url("images/icons/arrow-sort-down-16.png")
+}
+
+.arrow-sort-up-16 {
+  background-image: url("images/icons/arrow-sort-up-16.png")
+}
+
+.remove-field-16 {
+  background-image: url("images/controls/close-control.gif")
+}
+
+.arrow-paging-previous-16 {
+  background-image: url("images/icons/arrow-paging-previous-16.png")
+}
+
+.arrow-paging-next-16 {
+  background-image: url("images/icons/arrow-paging-next-16.png")
+}
+
+.image-add-48 {
+  background-image: url("images/icons/image-add-48.png")
+}
+
+.image-add {
+  background-image: url("images/icons/image-add-16.png");
+}
+
+.rename-128 {
+  background-image: url("images/icons/rename-128.png")
+}
+
+.rename-48 {
+  background-image: url("images/icons/rename-48.png")
+}
+
+.rename-24 {
+  background-image: url("images/icons/rename-24.png");
+}
+
+.rename-16 {
+  background-image: url("images/icons/rename-16.png");
+}
+
+.document-lock-16 {
+  background-image: url("images/icons/document-lock-16.png")
+}
+
+.dialog-information-48 {
+  background-image: url("images/icons/dialog-information-48.png")
+}
+
+.hippo-icon-question-48 {
+  background-image: url("images/icons/dialog-question-48.png")
+}
+
+.panel-toggle-version-16 {
+  background-image: url("images/icons/panel-toggle-version-16.png");
+}
+
+.panel-toggle-version-16 a:hover {
+  cursor: pointer
+}
+
+.edit-16 {
+  background-image: url("images/icons/edit-16.png")
+}
+
+.delete-16 {
+  background-image: url("images/icons/edit-delete-16.png")
+}
+
+.clear-16 {
+  background-image: url("images/icons/edit-clear-16.png");
+  margin-left: 10px;
+}
+.clear-16:hover {
+  text-decoration: none;
+}
+
+.add-16 {
+  background-image: url("images/icons/list-add-16.png")
+}
+
+.remove-16 {
+  background-image: url("images/icons/edit-delete-16.png")
+}
+
+.alert-16 {
+  background-image: url("images/icons/alert-16.png")
+}
+
+.delete-inline-16 {
+  background-image: url("images/icons/delete-inline-16.png")
+}
+
+.delete-inline-24 {
+  background-image: url("images/icons/delete-inline-24.png")
+}
+
+.delete-inline-48 {
+  background-image: url("images/icons/delete-inline-48.png")
+}
+
+.delete-inline-128 {
+  background-image: url("images/icons/delete-inline-128.png")
+}
+
+a.up-16 {
+  background-image: url("images/icons/go-up-16.png")
+}
+
+span.up-16 {
+  background-image: url("images/icons/go-up-disabled-16.png")
+}
+
+a.down-16 {
+  background-image: url("images/icons/go-down-16.png")
+}
+
+span.down-16 {
+  background-image: url("images/icons/go-down-disabled-16.png")
+}
+
+/* temp quick hack */
+.revert_ico {
+  background-image: url("images/icons/document-revert-16.png")
+}
+
+.save_ico {
+  background-image: url("images/icons/document-save-16.png")
+}
+
+.templateitemup_ico {
+  background-image: url("images/icons/go-up.png")
+}
+
+.templateitemdown_ico {
+  background-image: url("images/icons/go-down.png")
+}
+
+.reqdelete_ico {
+  background-image: url("images/icons/workflow-requestdelete-16.png")
+}
+
+.reqpublish_ico {
+  background-image: url("images/icons/workflow-requestpublish-16.png")
+}
+
+.reqdepublish_ico {
+  background-image: url("images/icons/workflow-requestunpublish-16.png")
+}
+
+.reqschedpublish_ico {
+  background-image: url("images/icons/workflow-requestpublish-16.png")
+}
+
+.reqscheddepublish_ico {
+  background-image: url("images/icons/workflow-requestunpublish-16.png")
+}
+
+.publish-16, .publish_ico {
+  background-image: url("images/icons/publish-16.png")
+}
+
+.depublish-16, .depublish_ico {
+  background-image: url("images/icons/unplublish-16.png")
+}
+
+.publish-schedule-16 {
+  background-image: url("images/icons/publish-schedule-16.png")
+}
+
+.copy-16 {
+  background-image: url("images/icons/copy-16.png")
+}
+
+.move-16 {
+  background-image: url("images/icons/move-16.png")
+}
+
+.depublish-schedule-16 {
+  background-image: url("images/icons/unpublish-scheduled-16.png")
+}
+
+.reqcancel_ico {
+  background-image: url("images/icons/unplublish-16.png")
+}
+
+.reqaccept_ico {
+  background-image: url("images/icons/workflow-accept-16.png")
+}
+
+.reqreject_ico {
+  background-image: url("images/icons/workflow-requestunpublish-16.png")
+}
+
+.adddocument_ico {
+  background-image: url("images/icons/document-new-16.png")
+}
+
+.addfolder_ico {
+  background-image: url("images/icons/folder-new-16.png")
+}
+
+.addextended_ico {
+  background-image: url("images/icons/folder-extended-new-16.png")
+}
+
+.copymodelrequest_ico {
+  background-image: url("images/icons/document-copy-16.png")
+}
+
+.editmodel_ico {
+  background-image: url("images/icons/edit-16.png")
+}
+
+.createnamespace_ico {
+  background-image: url("images/icons/document-new-16.png")
+}
+
+.modelreq_ico {
+  background-image: url("images/icons/refresh-16.png")
+}
+
+.createtyperequest_ico {
+  background-image: url("images/icons/document-new-16.png")
+}
+
+#global-feedback-container {
+  border: 1px solid #e8e8ea;
+  background-color: #fffada;
+  color: #39434c;
+  padding-top: 2px;
+}
+
+table.hippo-defaultcontent td {
+  vertical-align: top;
+}
+
+.smooth_load_workaround {
+  display: none;
+  left: -2000px;
+  top: -2000px;
+  position: absolute;
+}
+
+/* Reposition the YUI-logger so that it does not block the logout link */
+body.hippo-root div.yui-log-container {
+  top: 30px;
+  right: 5px;
+}
+
+/* Resource upload/properties */
+.resource-values {
+  font-size: 12px;
+  padding: 5px;
+}
+
+.resource-values label {
+  display: block;
+  float: left;
+  margin-right: 10px;
+}
+
+.resource-values .simple-editor-value {
+  float: left;
+}
+
+.resource-values a {
+  text-decoration: underline;
+}
+
+.resource-values ul {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.resource-values ul li {
+  list-style: none;
+  float: left;
+  min-width: 180px;
+}
+
+.resource-values ul li > span {
+  padding-right: 5px;
+}
+
+.resource-upload {
+  margin-top: 10px;
+  display: inline-table;
+}
+
+.resource-upload input {
+  clear: left;
+  float: left;
+}
+
+.resource-upload input[type="submit"] {
+  padding: 0;
+  margin: 0;
+}
+
+.hippo-window-form td input.grayedout {
+  background-color: #f7f7f7;
+}
+
+.hippo-window-form td input.grayedin {
+}
+
+.hippo-window-form td a.action {
+  color: #0877d1;
+  width: 38px;
+  float: right;
+  margin-right: 10px;
+  margin-top: 6px;
+}
+
+/* Tooltip styling without skin-sam*/
+.hippo-root .yui-tt .bd {
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  color: #000000;
+  border-color: #D4C237 #A6982B #A6982B #A6982B;
+  border-width: 1px;
+  border-style: solid;
+  background-color: #FFEE69;
+  font-size: 13px;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.hippo-root .yui-tt {
+  border-width: 0;
+}
+
+.hippo-root .yui-tt.show-scrollbars .bd {
+  overflow: auto;
+}
+
+.hippo-root .yui-tt-shadow-visible {
+  overflow: auto;
+}
+
+.hippo-root .yui-tt-shadow {
+  margin-top: 2px;
+  top: 2px;
+  right: -1px;
+  left: -1px;
+  bottom: -1px;
+  background-color: #000000;
+  display: block;
+  z-index: 0;
+}
+
+.hippo-root .yui-tt-shadow-visible {
+  opacity: .12;
+  filter: alpha(opacity = 12); /* For IE */
+}
+
+/* Workflow reject request dialog: textarea styling */
+.hippo-window-form textarea.text-dialog-textarea {
+  width: 420px;
+  height: 150px;
+}
+
+.password-expiration-label {
+	color: #ff4040;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+/*
+.hippo-referring-documents-list th.doclisting-name {
+    width: 100%;
+}
+
+.hippo-referring-documents-list td.doclisting-name span {
+    display: block;
+    height: 14px;
+    overflow: hidden;
+}
+
+.hippo-referring-documents-list .hippo-list-paging .paging-label {
+    margin-top: 0;
+}
+*/

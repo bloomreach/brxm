@@ -1,0 +1,72 @@
+/*
+ * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<hipposys='http://www.onehippo.org/jcr/hipposys/nt/1.0'>
+<frontend='http://www.onehippo.org/jcr/frontend/nt/2.0'>
+
+[frontend:pluginconfig] > nt:base orderable
+- * (string)
+- * (string) multiple
+- * (boolean)
+- * (long)
+- * (date)
+- * (double)
++ * (frontend:pluginconfig) multiple
+
+[frontend:plugin] > frontend:pluginconfig
+
+[frontend:plugincluster] > nt:base orderable
+- frontend:services (string) multiple
+- frontend:references (string) multiple
+- frontend:properties (string) multiple
+- * (string)
+- * (string) multiple
+- * (boolean)
+- * (long)
+- * (date)
+- * (double)
++ * (frontend:plugin) = frontend:plugin
+
+[frontend:clusterfolder] > nt:base
++ * (frontend:plugincluster) = frontend:plugincluster
+
+[frontend:clusterlist] > frontend:clusterfolder orderable
+
+[frontend:application] > nt:base
+- frontend:saveonexit (boolean)
+- frontend:privileges (string)
+- frontend:privileges.path (string)
+- frontend:defaultcluster (string)
++ * (frontend:plugincluster) multiple
++ * (frontend:clusterfolder) multiple
++ * (nt:unstructured) multiple //FIXME, needed for cms-reports.xml
+
+[frontend:workflow] > hipposys:workflow
++ frontend:renderer (nt:base)
+- frontend:renderer (string) // deprecated
+- * (string)
+
+[frontend:listener] > nt:base
+- frontend:path (string) mandatory
+- frontend:events (long) mandatory
+- frontend:deep (boolean) = false
+- frontend:uuids (string) multiple
+- frontend:nodetypes (string) multiple

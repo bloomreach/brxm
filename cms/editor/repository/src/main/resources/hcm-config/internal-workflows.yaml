@@ -1,0 +1,17 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/internal:
+      /template-editor-namespaces:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
+        hipposys:display: Folder based workflow on namespaces folder
+        hipposys:nodetype: hipposysedit:namespacefolder
+        /hipposys:types:
+          jcr:primaryType: hipposys:types
+      /template-editor-namespace:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
+        hipposys:display: Folder based workflow on namespaces folder
+        hipposys:nodetype: hipposysedit:namespace
+        /hipposys:types:
+          jcr:primaryType: hipposys:types
