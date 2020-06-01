@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-validators:
+      jcr:primaryType: frontend:plugincluster
+      /registry:
+        jcr:primaryType: frontend:plugin
+        field.validator.service.id: field.validator.service
+        plugin.class: org.hippoecm.frontend.editor.validator.ValidatorService

@@ -1,0 +1,14 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/committype:
+      jcr:primaryType: hipposys:workflowcategory
+      /commit:
+        jcr:primaryType: frontend:workflow
+        hipposys:classname: org.hippoecm.editor.repository.impl.EditmodelWorkflowImpl
+        hipposys:display: remodelling workflow
+        hipposys:nodetype: hipposysedit:templatetype
+        /hipposys:types:
+          jcr:primaryType: hipposys:types
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.editor.workflow.CommitTypeWorkflowPlugin

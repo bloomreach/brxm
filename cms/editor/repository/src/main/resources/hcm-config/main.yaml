@@ -1,0 +1,9 @@
+definitions:
+  namespace:
+    editor:
+      uri: http://www.hippoecm.org/editor/nt/1.0
+      cnd: editor.cnd
+  config:
+    /hippo:configuration/hippo:translations:
+      /hippo:types:
+        jcr:primaryType: hipposys:resourcebundles

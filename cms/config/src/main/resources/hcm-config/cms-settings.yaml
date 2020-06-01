@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/settings:
+      jcr:primaryType: frontend:pluginconfig
+      locales: [en]
+      send.usage.statistics.to.hippo: true
+      whitelisted.classes.for.package.resources: [org.hippoecm., org.apache.wicket.,
+        org.onehippo., wicket.contrib.]

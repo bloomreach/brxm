@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/htmlDiffService:
+      jcr:primaryType: frontend:plugin
+      diffservice.id: html.diffservice.id
+      max.diff.size: 100KB
+      plugin.class: org.hippoecm.frontend.plugins.standards.diff.HTMLDiffPlugin

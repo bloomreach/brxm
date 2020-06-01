@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates/en:
+      new-collection: new folder
+      new-document: new document
+      new-folder: new folder
+      new-translated-folder: new translated folder
+      simple: simple

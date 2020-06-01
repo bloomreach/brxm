@@ -1,0 +1,13 @@
+definitions:
+  config:
+    # The non-empty-html validator is kept for backwards-compatibility of "Html" fields that are not "required"
+    # but do have a "non-empty" validator which, in case of an Html field, checks if the field contains visible
+    # elements like text, <img/>, etc.
+    # The upgrade process between 13.2 and 13.3 will automatically convert the validator name from "non-empty"
+    # to "non-empty-html" for "html" fields.
+    /hippo:configuration/hippo:modules/validation/hippo:moduleconfig/non-empty-html:
+      jcr:primaryType: hipposys:moduleconfig
+      hipposys:className: org.hippoecm.frontend.plugins.richtext.validation.RequiredFormattedTextValidator
+    /hippo:configuration/hippo:modules/validation/hippo:moduleconfig/required/Html:
+      jcr:primaryType: hipposys:moduleconfig
+      hipposys:className: org.hippoecm.frontend.plugins.richtext.validation.RequiredFormattedTextValidator
