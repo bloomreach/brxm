@@ -1,0 +1,1141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.onehippo.cms7</groupId>
+  <artifactId>hippo-cms7-project</artifactId>
+  <version>29.16-SNAPSHOT</version>
+
+  <name>Hippo CMS Project POM</name>
+  <description>Hippo CMS Project POM</description>
+  <packaging>pom</packaging>
+
+  <url>https://www.onehippo.org/</url>
+
+  <organization>
+    <name>Hippo B.V. (http://www.onehippo.com)</name>
+    <url>http://www.onehippo.com/</url>
+  </organization>
+
+  <properties>
+    <!-- use UTF-8 encoding for filtered file copy and test reports -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <notice.project.name>${project.name}</notice.project.name>
+
+    <!--
+      Note on upgrading dependencies and plugins:
+      Always check the apache pom for guidance before upgrading.
+      Newer versions are not always better versions.
+      If they haven't upgraded to a certain version then probably that's
+      a good enough reason we shouldn't upgrade either.
+      You can find the latest apache pom here:
+      https://svn.apache.org/repos/asf/maven/pom/trunk/asf/pom.xml
+    -->
+    <javax.activation.version>1.1.1</javax.activation.version>
+    <servlet-api.version>3.1.0</servlet-api.version>
+    <javax.jcr.version>2.0</javax.jcr.version>
+    <xml-apis.version>1.0.b2</xml-apis.version>
+    <jta.version>1.1.1</jta.version>
+    <mail.version>1.4.7</mail.version>
+    <slf4j.version>1.7.25</slf4j.version>
+    <log4j2.version>2.8.2</log4j2.version>
+    <commons-logging.version>1.2</commons-logging.version>
+    <commons-logging-api.version>1.1</commons-logging-api.version>
+    <guava.version>24.1.1-jre</guava.version>
+
+    <!--
+        Below are only the defined versions of some dependencies that are used in multiple projects.
+        Note that there is *no* dependency management for the version properties below.
+    -->
+    <google-api-services-analytics.version>v3-rev116-1.20.0</google-api-services-analytics.version>
+    <cxf.version>3.2.13</cxf.version>
+    <jaxrs.version>2.1.1</jaxrs.version>
+    <!-- the jackson2 version must be compatible with Jackson used in cxf -->
+    <jackson2.version>2.10.1</jackson2.version>
+    <jackson2-databind.version>2.10.1</jackson2-databind.version>
+    <spring.version>4.3.27.RELEASE</spring.version>
+    <spring-security.version>4.2.16.RELEASE</spring-security.version>
+    <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
+    <groovy.version>2.4.15</groovy.version>
+    <freemarker.version>2.3.24-incubating</freemarker.version>
+    <nodejs.version>v8.13.0</nodejs.version>
+    <npm.version>6.4.1</npm.version>
+
+    <!-- END properties versions with dependency management -->
+    <maven.required.version>3.2.3</maven.required.version>
+
+    <maven.plugin.antrun.version>1.8</maven.plugin.antrun.version>
+    <!-- maven.plugin.assembly.version kept on 2.6. 3.0.0 shows snapshot download warnings, see CMS-10817 -->
+    <maven.plugin.assembly.version>2.6</maven.plugin.assembly.version>
+    <maven.plugin.buildnumber.version>1.4</maven.plugin.buildnumber.version>
+    <maven.plugin.cargo.version>1.6.10</maven.plugin.cargo.version>
+    <maven.plugin.changes.version>2.12.1</maven.plugin.changes.version>
+    <maven.plugin.changelog.version>2.3</maven.plugin.changelog.version>
+    <maven.plugin.clean.version>3.0.0</maven.plugin.clean.version>
+    <maven.plugin.compiler.version>3.6.1</maven.plugin.compiler.version>
+    <maven.plugin.dependency.version>3.0.1</maven.plugin.dependency.version>
+    <maven.plugin.deploy.version>2.8.2</maven.plugin.deploy.version>
+    <maven.plugin.eclipse.version>2.10</maven.plugin.eclipse.version>
+    <maven.plugin.exec.version>1.6.0</maven.plugin.exec.version>
+    <maven.plugin.failsafe.version>3.0.0-M1</maven.plugin.failsafe.version>
+    <maven.plugin.frontend.version>1.6</maven.plugin.frontend.version>
+    <maven.plugin.install.version>2.5.2</maven.plugin.install.version>
+    <maven.plugin.jar.version>3.0.2</maven.plugin.jar.version>
+    <maven.plugin.javadoc.version>2.10.4</maven.plugin.javadoc.version>
+    <maven.plugin.jrebel.version>1.1.7</maven.plugin.jrebel.version>
+    <maven.plugin.project-info.version>2.9</maven.plugin.project-info.version>
+    <maven.plugin.release.version>2.5.3</maven.plugin.release.version>
+    <maven.plugin.rat.version>0.12</maven.plugin.rat.version>
+    <maven.plugin.remote-resources.version>1.5</maven.plugin.remote-resources.version>
+    <maven.plugin.resources.version>3.0.2</maven.plugin.resources.version>
+    <maven.plugin.source.version>3.0.1</maven.plugin.source.version>
+    <maven.plugin.surefire.version>3.0.0-M1</maven.plugin.surefire.version>
+    <maven.plugin.surefire-report.version>3.0.0-M1</maven.plugin.surefire-report.version>
+    <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
+    <maven.plugin.war.version>3.1.0</maven.plugin.war.version>
+    <!-- don't bump enforcer to 1.4.1 (yet), see commit message -->
+    <maven.plugin.enforcer.version>1.4</maven.plugin.enforcer.version>
+    <maven.build.helper.version>3.0.0</maven.build.helper.version>
+
+    <!-- if you want a remote debugging on a different a address
+         override on command line with -Dcargo.debug.addres=xxxx -->
+    <cargo.debug.address>8000</cargo.debug.address>
+    <!-- if you want to start remote debugging session suspended
+         override on command line with -Dcargo.debug.suspend=y -->
+    <cargo.debug.suspend>n</cargo.debug.suspend>
+    <!-- Cargo Tomcat container version used for Tomcat tarball distribution url -->
+    <cargo.tomcat.major.version>8</cargo.tomcat.major.version>
+    <!-- Cargo Tomcat full version used for Tomcat tarball distribution url -->
+    <cargo.tomcat.full.version>8.5.34</cargo.tomcat.full.version>
+    <!-- Cargo Tomcat distribution prefix URL used for Tomcat tarball distribution url -->
+    <cargo.tomcat.distribution.url.prefix>http://archive.apache.org/dist/tomcat/</cargo.tomcat.distribution.url.prefix>
+    <!-- Cargo Tomcat distribution archive path used for Tomcat tarball distribution url -->
+    <cargo.tomcat.distribution.url.archive>tomcat-${cargo.tomcat.major.version}/v${cargo.tomcat.full.version}/bin/apache-tomcat-${cargo.tomcat.full.version}</cargo.tomcat.distribution.url.archive>
+    <!-- Cargo Tomcat distribution url postfix used for Tomcat tarball distribution url -->
+    <cargo.tomcat.distribution.url.postfix>.tar.gz</cargo.tomcat.distribution.url.postfix>
+    <!-- Cargo Tomcat full distribution url -->
+    <cargo.tomcat.distribution.url>${cargo.tomcat.distribution.url.prefix}${cargo.tomcat.distribution.url.archive}${cargo.tomcat.distribution.url.postfix}</cargo.tomcat.distribution.url>
+    <!-- Extra JVM arguments to pass to Cargo -->
+    <cargo.jvm.args />
+    <!-- Default message displayed in the console after the cargo container has started -->
+    <cargo.started.message>Press Ctrl-C to stop the Cargo container...</cargo.started.message>
+
+    <!-- default empty javaagent, see also "jrebel" profile below -->
+    <javaagent />
+
+  </properties>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <!--
+     Software configuration management (scm): where to find and how to get acces to the source repository
+     This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
+  -->
+  <scm>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms-project.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms-project.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-cms-project</url>
+  </scm>
+
+  <issueManagement>
+    <system>Jira</system>
+    <url>https://issues.onehippo.com/browse/CMS</url>
+  </issueManagement>
+
+  <inceptionYear>2007</inceptionYear>
+
+  <!-- Where to publish the project data -->
+  <distributionManagement>
+    <repository>
+      <name>Hippo Maven 2 Enterprise Repository</name>
+      <id>hippo-maven2-enterprise</id>
+      <url>https://maven.onehippo.com/content/repositories/enterprise-releases/</url>
+      <uniqueVersion>false</uniqueVersion>
+    </repository>
+    <snapshotRepository>
+      <name>Hippo Maven 2 Enterprise Snapshots</name>
+      <id>hippo-maven2-enterprise-snapshots</id>
+      <url>https://maven.onehippo.com/content/repositories/enterprise-snapshots/</url>
+      <uniqueVersion>false</uniqueVersion>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <ciManagement>
+    <system>Hudson</system>
+    <url>https://builds.onehippo.org/</url>
+  </ciManagement>
+
+  <prerequisites>
+    <maven>${maven.required.version}</maven>
+  </prerequisites>
+
+  <mailingLists>
+    <mailingList>
+      <name>Hippo Community </name>
+      <subscribe>hippo-community+subscribe@googlegroups.com</subscribe>
+      <unsubscribe>hippo-community+unsubscribe@googlegroups.com</unsubscribe>
+      <!--<post>hippo-community@googlegroups.com</post>-->
+      <archive>https://groups.google.com/d/forum/hippo-community</archive>
+    </mailingList>
+  </mailingLists>
+
+  <repositories>
+    <repository>
+      <id>hippo-maven2</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
+      </releases>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>hippo</id>
+      <name>Hippo maven 2 repository.</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
+      </releases>
+      <layout>default</layout>
+    </pluginRepository>
+    <!-- Enterprise repo is needed here until community disclosure, but should be removed again. -->
+    <pluginRepository>
+      <id>hippo-maven2-enterprise</id>
+      <name>Hippo Enterprise Maven 2</name>
+      <url>https://maven.onehippo.com/maven2-enterprise</url>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- provided third party libraries -->
+      <!-- CMS-11262 javax.activation is provided by the JRE but sometimes a previous version is referenced
+           from third-party libraries. This entry prevents accidental downgrades. -->
+      <dependency>
+        <groupId>javax.activation</groupId>
+        <artifactId>activation</artifactId>
+        <version>${javax.activation.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${servlet-api.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jta_1.1_spec</artifactId>
+        <version>${jta.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>xml-apis</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>${xml-apis.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.jcr</groupId>
+        <artifactId>jcr</artifactId>
+        <version>${javax.jcr.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>${mail.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <!-- exclude geronimo-javamail via scope 'test', since it clashes with javax.mail -->
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-javamail_1.4_spec</artifactId>
+        <version>1.7.1</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-core</artifactId>
+        <version>${cxf.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.module</groupId>
+        <artifactId>jackson-module-jaxb-annotations</artifactId>
+        <version>${jackson2.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>${slf4j.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j-impl</artifactId>
+        <version>${log4j2.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>${log4j2.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>${log4j2.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <!-- only (should) be needed to (test)compile log4j1.x (backward compatible) usages -->
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-1.2-api</artifactId>
+        <version>${log4j2.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>${commons-logging.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging-api</artifactId>
+        <version>${commons-logging-api.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.ws.rs</groupId>
+        <artifactId>javax.ws.rs-api</artifactId>
+        <version>${jaxrs.version}</version>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+
+  <dependencies>
+
+    <!-- all shared third party dependencies -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-javamail_1.4_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging-api</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>${maven.plugin.antrun.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>${maven.plugin.assembly.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>${maven.plugin.exec.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>${maven.plugin.install.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven.plugin.dependency.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>${maven.plugin.deploy.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>${maven.plugin.release.version}</version>
+          <inherited>true</inherited>
+          <configuration>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+            <!-- Default preparation goals are "clean verify", however for some multi-module projects
+                 this isn't always working. If some modules depend on other modules which are not in
+                 or under the same parent module, then Maven internal dependency resolution sometimes
+                 fails to find the dependent module. By doing a forced install during the release
+                 it is ensured these modules are (first) deployed to the local maven repository and
+                 thereby resolvable.
+                 To prevent unit-tests to be executed during this install additionally the environment
+                 parameter skipTests=true is set
+            -->
+            <preparationGoals>clean install</preparationGoals>
+            <!-- Default release:perform goals are "deploy site-deploy", but we don't do
+                 site deployment (anymore), which is why this is overridden to execute only "deploy"
+            -->
+            <goals>deploy</goals>
+            <arguments>-DskipTests=true</arguments>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven.plugin.jar.version}</version>
+          <inherited>true</inherited>
+          <configuration>
+            <archive>
+              <manifest>
+                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              </manifest>
+            </archive>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>${maven.plugin.war.version}</version>
+          <configuration>
+            <archive>
+              <manifest>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              </manifest>
+            </archive>
+            <!-- copy/move (possible) L&N files as added/appended by maven-remote-resources-plugin
+                 under /WEB-INF/classes/META-INF/ as for war artifacts these should
+                 be provided under /META-INF/ instead
+            -->
+            <webResources>
+              <resource>
+                <directory>${project.build.directory}/classes</directory>
+                <includes>
+                  <include>META-INF/LICENSE</include>
+                  <include>META-INF/NOTICE</include>
+                  <include>META-INF/DEPENDENCIES</include>
+                </includes>
+                <filtering>false</filtering>
+              </resource>
+            </webResources>
+            <!-- exclude (possible) L&N files added/appended by maven-remote-resources-plugin
+                 under /WEB-INF/classes/META-INF/ as for war artifacts these should (see above)
+                 be provided under /META-INF/ instead
+            -->
+            <packagingExcludes>
+              WEB-INF/classes/META-INF/LICENSE,
+              WEB-INF/classes/META-INF/NOTICE,
+              WEB-INF/classes/META-INF/DEPENDENCIES
+            </packagingExcludes>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <version>${maven.plugin.eclipse.version}</version>
+          <inherited>true</inherited>
+          <configuration>
+            <downloadSources>true</downloadSources>
+            <downloadJavadocs>true</downloadJavadocs>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven.plugin.surefire.version}</version>
+          <inherited>true</inherited>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-report-plugin</artifactId>
+          <version>${maven.plugin.surefire-report.version}</version>
+          <inherited>true</inherited>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven.plugin.failsafe.version}</version>
+          <inherited>true</inherited>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven.plugin.compiler.version}</version>
+          <inherited>true</inherited>
+          <configuration>
+            <fork>true</fork>
+            <meminitial>128m</meminitial>
+            <maxmem>256m</maxmem>
+            <target>1.8</target>
+            <source>1.8</source>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <version>${maven.plugin.remote-resources.version}</version>
+          <inherited>true</inherited>
+          <executions>
+            <execution>
+              <goals>
+                <goal>process</goal>
+              </goals>
+              <configuration>
+                <resourceBundles>
+                  <resourceBundle>org.onehippo.cms7:hippo-cms7-legal-resources:1</resourceBundle>
+                </resourceBundles>
+                <properties>
+                  <projectName>${notice.project.name}</projectName>
+                </properties>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven.plugin.source.version}</version>
+          <inherited>true</inherited>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <phase>DISABLE_FORKED_LIFECYCLE_MSOURCES-13</phase>
+            </execution>
+            <execution>
+              <id>attach-sources-no-fork</id>
+              <inherited>true</inherited>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven.plugin.javadoc.version}</version>
+          <configuration>
+            <source>1.8</source>
+            <javadocVersion>1.8</javadocVersion>
+            <links>
+              <link>http://download.oracle.com/javase/8/docs/api</link>
+            </links>
+            <!-- disable JDK 8 doclint for javadoc -->
+            <additionalparam>-Xdoclint:none</additionalparam>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>net.sourceforge.maven-taglib</groupId>
+          <artifactId>maven-taglib-plugin</artifactId>
+          <version>${maven.plugin.taglib.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${maven.plugin.resources.version}</version>
+          <configuration>
+            <encoding>${project.build.sourceEncoding}</encoding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>${maven.plugin.project-info.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-changelog-plugin</artifactId>
+          <version>${maven.plugin.changelog.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-changes-plugin</artifactId>
+          <version>${maven.plugin.changes.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>buildnumber-maven-plugin</artifactId>
+          <version>${maven.plugin.buildnumber.version}</version>
+          <executions>
+            <execution>
+              <phase>validate</phase>
+              <goals>
+                <goal>create</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <doCheck>false</doCheck>
+            <doUpdate>false</doUpdate>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.cargo</groupId>
+          <artifactId>cargo-maven2-plugin</artifactId>
+          <version>${maven.plugin.cargo.version}</version>
+          <configuration>
+            <configuration>
+              <properties>
+                <cargo.remote.username>admin</cargo.remote.username>
+                <cargo.remote.password />
+              </properties>
+            </configuration>
+            <container>
+              <containerId>tomcat${cargo.tomcat.major.version}x</containerId>
+              <systemProperties>
+                <Log4jContextSelector>org.apache.logging.log4j.core.selector.BasicContextSelector</Log4jContextSelector>
+              </systemProperties>
+            </container>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>${maven.plugin.enforcer.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.zeroturnaround</groupId>
+          <artifactId>jrebel-maven-plugin</artifactId>
+          <version>${maven.plugin.jrebel.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>${maven.plugin.frontend.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>${maven.plugin.clean.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-maven-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>${maven.required.version}</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- detect if offline and build a commandline.offline property value
+           which can be passed along to forked/executed processes,
+      -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${maven.build.helper.version}</version>
+        <executions>
+          <execution>
+            <id>property-commandline-offline</id>
+            <goals>
+              <goal>regex-property</goal>
+            </goals>
+            <configuration>
+              <name>commandline.offline</name>
+              <value>"${settings.offline}"</value>
+              <regex>"true"</regex>
+              <replacement>"-o"</replacement>
+              <failIfNoMatch>false</failIfNoMatch>
+            </configuration>
+          </execution>
+          <execution>
+            <id>property-commandline-online</id>
+            <goals>
+              <goal>regex-property</goal>
+            </goals>
+            <configuration>
+              <name>commandline.offline</name>
+              <value>${commandline.offline}</value>
+              <regex>"false"</regex>
+              <replacement />
+              <failIfNoMatch>false</failIfNoMatch>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>release-profile</id>
+      <build>
+        <plugins>
+          <plugin>
+            <inherited>true</inherited>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources-no-fork</id>
+                <inherited>true</inherited>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>clean</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <inherited>false</inherited>
+            <artifactId>maven-clean-plugin</artifactId>
+            <configuration>
+              <filesets>
+                <fileset>
+                  <directory>.</directory>
+                  <includes>
+                    <include>**/*~</include>
+                    <include>derby.log</include>
+                    <include>**/.lock</include>
+                  </includes>
+                </fileset>
+              </filesets>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>cargo.run</id>
+      <properties>
+        <repo.base.path>${project.basedir}</repo.base.path>
+        <repo.path>${project.build.directory}/storage</repo.path>
+        <repo.config />
+        <repo.bootstrap>true</repo.bootstrap>
+        <repo.autoexport.allowed>true</repo.autoexport.allowed>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-slf4j-impl</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>jcl-over-slf4j</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-core</artifactId>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <defaultGoal>initialize</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>cargo-run</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <configuration>
+                <home>${project.build.directory}/tomcat${cargo.tomcat.major.version}x</home>
+                <properties>
+                  <cargo.jvmargs>
+                    <![CDATA[-agentlib:jdwp=transport=dt_socket,address=${cargo.debug.address},server=y,suspend=${cargo.debug.suspend} -noverify ${javaagent} ${cargo.jvm.args}]]>
+                  </cargo.jvmargs>
+                  <cargo.tomcat.uriencoding>UTF-8</cargo.tomcat.uriencoding>
+                  <cargo.servlet.users>admin::manager-script,manager-gui</cargo.servlet.users>
+                </properties>
+              </configuration>
+              <container>
+                <systemProperties>
+                  <repo.base.path>${repo.base.path}</repo.base.path>
+                  <repo.path>${repo.path}</repo.path>
+                  <repo.config>${repo.config}</repo.config>
+                  <repo.bootstrap>${repo.bootstrap}</repo.bootstrap>
+                  <repo.autoexport.allowed>${repo.autoexport.allowed}</repo.autoexport.allowed>
+                </systemProperties>
+                <zipUrlInstaller>
+                  <downloadDir>${settings.localRepository}/org/codehaus/cargo/cargo-container-archives</downloadDir>
+                  <url>${cargo.tomcat.distribution.url}</url>
+                </zipUrlInstaller>
+                <timeout>600000</timeout>
+                <dependencies combine.children="append">
+                  <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jta_1.1_spec</artifactId>
+                    <classpath>extra</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.jcr</groupId>
+                    <artifactId>jcr</artifactId>
+                    <classpath>extra</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.mail</groupId>
+                    <artifactId>mail</artifactId>
+                    <classpath>extra</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                </dependencies>
+              </container>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>cargo-started</id>
+                <phase>initialize</phase>
+                <goals><goal>run</goal></goals>
+                <configuration>
+                  <target unless="cargo.run.nowait">
+                    <echo>${cargo.started.message}</echo><sleep hours="2147483647" />
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>jrebel</id>
+      <activation>
+        <property>
+          <name>jrebel</name>
+        </property>
+      </activation>
+      <properties>
+        <javaagent>-javaagent:${env.REBEL_HOME}/jrebel.jar</javaagent>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>jrebel-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>generate-rebel-xml</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>generate</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <version>${maven.plugin.rat.version}</version>
+            <dependencies><!-- see https://issues.apache.org/jira/browse/RAT-158 -->
+              <dependency>
+                <groupId>org.apache.maven.doxia</groupId>
+                <artifactId>doxia-core</artifactId>
+                <version>1.6</version>
+                <exclusions>
+                  <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                  </exclusion>
+                </exclusions>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <phase>validate</phase>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <addDefaultLicenseMatchers>false</addDefaultLicenseMatchers>
+              <excludeSubProjects>false</excludeSubProjects>
+              <consoleOutput>true</consoleOutput>
+              <licenses>
+                <license implementation="org.apache.rat.analysis.license.AppliedApacheSoftwareLicense20">
+                  <copyrightOwner>Hippo B\.V\. \(http://www\.onehippo\.com\)</copyrightOwner>
+                </license>
+              </licenses>
+              <licenseFamilies>
+                <licenseFamily implementation="org.apache.rat.license.Apache20LicenseFamily">
+                  <familyName>Apache License Version 2.0</familyName>
+                </licenseFamily>
+              </licenseFamilies>
+              <excludes>
+                <!-- no license headers needed for these files -->
+                <exclude>**/*.cnd</exclude>
+                <exclude>**/*.json</exclude>
+                <exclude>**/*.log</exclude>
+                <exclude>**/*.patch</exclude>
+                <exclude>**/*.properties</exclude>
+                <exclude>**/*.yaml</exclude>
+                <exclude>**/*.bin</exclude>
+                <exclude>**/hippoecm-extension.xml</exclude>
+                <exclude>**/MANIFEST.MF</exclude>
+                <exclude>**/README.md</exclude>
+                <!-- exclude IntelliJ module files of sub-projects -->
+                <exclude>**/*.iml</exclude>
+                <!-- exclude IntelliJ Atlassian plugin file -->
+                <exclude>**/atlassian-ide-plugin.xml</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>enforce-banned-dependencies</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>enforce-banned-dependencies</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <bannedDependencies>
+                      <excludes>
+                        <!--Provided dependencies-->
+                        <exclude>javax.activation:activation</exclude>
+                        <exclude>com.sun.activation:javax.activation</exclude>
+                        <exclude>com.sun.activation:jakarta.activation</exclude>
+                        <exclude>jakarta.activation:jakarta.activation-api</exclude>
+                        <exclude>javax.servlet:javax.servlet-api</exclude>
+                        <exclude>org.apache.geronimo.specs:geronimo-jta_1.1_spec</exclude>
+                        <exclude>javax.jcr:jcr</exclude>
+                        <exclude>javax.mail:mail</exclude>
+                        <exclude>com.sun.mail:javax.mail</exclude>
+                        <exclude>com.sun.mail:jakarta.mail</exclude>
+                        <exclude>jakarta.mail:jakarta.mail-api</exclude>
+                        <exclude>org.slf4j:slf4j-api</exclude>
+
+                        <!-- Banned dependencies -->
+                        <exclude>xml-apis:xml-apis</exclude>
+                        <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec</exclude>
+                        <exclude>org.slf4j:jcl-over-slf4j</exclude>
+                        <exclude>org.apache.logging.log4j:log4j-slf4j-impl</exclude>
+                        <exclude>org.apache.logging.log4j:log4j-api</exclude>
+                        <exclude>org.apache.logging.log4j:log4j-core</exclude>
+                        <exclude>org.apache.logging.log4j:log4j-1.2-api</exclude>
+                        <exclude>commons-logging:commons-logging</exclude>
+                        <exclude>commons-logging:commons-logging-api</exclude>
+                      </excludes>
+                      <includes>
+                        <include>javax.activation:activation:*:*:provided</include>
+                        <include>com.sun.activation:javax.activation:*:*:provided</include>
+                        <include>javax.servlet:javax.servlet-api:*:*:provided</include>
+                        <include>org.apache.geronimo.specs:geronimo-jta_1.1_spec:*:*:provided</include>
+                        <include>javax.jcr:jcr:*:*:provided</include>
+                        <include>javax.mail:mail:*:*:provided</include>
+                        <include>org.slf4j:slf4j-api:*:*:provided</include>
+
+                        <include>xml-apis:xml-apis:*:*:test</include>
+                        <include>org.apache.geronimo.specs:geronimo-javamail_1.4_spec:*:*:test</include>
+                        <include>org.slf4j:jcl-over-slf4j:*:*:test</include>
+                        <include>org.apache.logging.log4j:log4j-slf4j-impl:*:*:test</include>
+                        <include>org.apache.logging.log4j:log4j-api:*:*:test</include>
+                        <include>org.apache.logging.log4j:log4j-core:*:*:test</include>
+                        <include>org.apache.logging.log4j:log4j-1.2-api:*:*:test</include>
+                        <include>commons-logging:commons-logging:*:*:test</include>
+                        <include>commons-logging:commons-logging-api:*:*:test</include>
+                      </includes>
+                    </bannedDependencies>
+                  </rules>
+                  <fail>true</fail>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
