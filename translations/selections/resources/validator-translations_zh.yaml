@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        required#StaticDropdown: 选择值
+        required#selection-RadioGroup: 选择选项
+        required#RadioGroup: 选择选项
+        required#DynamicDropdown: 选择值

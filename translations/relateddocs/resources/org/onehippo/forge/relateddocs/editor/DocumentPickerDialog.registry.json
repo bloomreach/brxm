@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "document.picker.dialog.title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

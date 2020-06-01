@@ -1,0 +1,77 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/menu-name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/group.descriptionsettings" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/site-title-in-template" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/site-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/menu-item-allow-expanded" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/dc-schema-link" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/group.dcsettings" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/enable-dc-language" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/document-description-bean-props" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/group.titlesettings" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/dc-terms-link" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/site-dc-copyright-link" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/template-page-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/default-meta-description" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/document-title-bean-props" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/dc-language" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/group.imagesettings" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/document-image-bean-props" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

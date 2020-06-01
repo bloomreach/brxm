@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "new-widow-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "title-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "search-field-placeholder" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
