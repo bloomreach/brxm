@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/frontendconfig/frontend-pluginconfig/taxonomy-namespace-filter:
+      jcr:primaryType: hipposys:facetrule
+      hipposys:equals: false
+      hipposys:facet: nodename
+      hipposys:filter: false
+      hipposys:type: Name
+      hipposys:value: showTaxonomyNamespace
