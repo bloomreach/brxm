@@ -1,0 +1,29 @@
+definitions:
+  config:
+    /hippo:namespaces/system/DynamicDropdown:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['hipposysedit:remodel']
+          hipposysedit:node: false
+          hipposysedit:type: String
+          hipposysedit:uri: internal
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          frontend:properties: [mode, source, valuelistProvider, sortComparator, sortOrder,
+            sortBy, showDefault, observableId, observerId, nameProvider, sourceBasePath]
+          frontend:references: [wicket.model, engine, model.compareTo]
+          frontend:services: [wicket.id]
+          /root:
+            jcr:primaryType: frontend:plugin
+            engine: ${engine}
+            mode: ${mode}
+            model.compareTo: ${model.compareTo}
+            plugin.class: org.onehippo.forge.selection.frontend.plugin.DynamicDropdownPlugin
+            wicket.id: ${wicket.id}
+            wicket.model: ${wicket.model}
