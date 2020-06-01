@@ -1,0 +1,52 @@
+<!--
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<md-sidenav layout-fill
+            layout="row"
+            md-is-open="$ctrl.isOpen"
+            md-is-locked-open="$ctrl.isLockedOpen()"
+            class="md-sidenav-left left-side-panel qa-left-side-panel"
+            ng-class="{'sidepanel-lifted': $ctrl.isSidePanelLifted()}"
+            md-component-id="left-side-panel"
+            md-disable-backdrop>
+  <md-tabs flex
+           md-border-bottom
+           md-no-pagination
+           md-selected="$ctrl.selectedTab"
+           class="qa-sidenav-tabs">
+    <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_SITEMAP' | translate }}">
+      <site-map-listing items="$ctrl.getSiteMapItems()"
+                        flex
+                        layout="column">
+      </site-map-listing>
+    </md-tab>
+    <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_COMPONENTS' | translate }}" ng-if="$ctrl.isEditable()" ng-disabled="$ctrl.isConfigurationLocked">
+      <component-catalog components="$ctrl.getCatalog()"
+                         state="$ctrl.componentsVisible"
+                         flex
+                         layout="column">
+      </component-catalog>
+    </md-tab>
+  </md-tabs>
+
+  <mask state="$ctrl.componentsVisible"></mask>
+
+  <resize-handle element="$ctrl.sideNavElement"
+                 min-width="320"
+                 on-resize="$ctrl.onResize(newWidth)"
+                 handle-position="right">
+  </resize-handle>
+</md-sidenav>

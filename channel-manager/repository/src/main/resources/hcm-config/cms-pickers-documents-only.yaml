@@ -1,0 +1,41 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-pickers/documents-only:
+      jcr:primaryType: frontend:plugincluster
+      frontend:properties: [nodetypes, root.path, root.paths]
+      frontend:services: [wicket.id, wicket.model, model.folder]
+      root.path: /content/documents
+      root.paths: [/content/documents, /content/gallery, /content/assets]
+      /navigator:
+        jcr:primaryType: frontend:plugin
+        browser.id: ${cluster.id}.browser
+        browser.viewers: cms-folder-views
+        extension.list: service.dialog.list
+        model.default.path: /content
+        model.document: ${wicket.model}
+        plugin.class: org.hippoecm.frontend.plugins.cms.browse.Navigator
+        search.viewers: cms-search-views
+        section.documents: service.dialog.tree.content
+        section.files: service.dialog.tree.files
+        section.images: service.dialog.tree.images
+        sections: [section.documents, section.images, section.files]
+        wicket.variant: picker
+        /browser.options:
+          jcr:primaryType: frontend:pluginconfig
+          list.page.size: '10'
+          list.view.size: '8'
+        /yui.config.accordion:
+          jcr:primaryType: frontend:pluginconfig
+          ancestor.classname: hippo-picker
+          register.render.listener: false
+          register.resize.listener: false
+      /documentsTreeLoader:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-tree-views/documents
+        plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
+        /cluster.config:
+          jcr:primaryType: frontend:pluginconfig
+          bind.to.layout.unit: false
+          use.width.from.classname: hippo-picker-tree
+          wicket.id: service.dialog.tree.content
+          workflow.enabled: false
