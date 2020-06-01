@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/valuelist-service:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.forge.selection.repository.ValueListServiceModule
+      /hippo:moduleconfig:
+        jcr:primaryType: hipposys:moduleconfig
+        jaxrs.endpoint.address: /valuelists
