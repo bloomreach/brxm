@@ -181,6 +181,7 @@
           <plugin>
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
           </plugin>
         </plugins>
       </build>
