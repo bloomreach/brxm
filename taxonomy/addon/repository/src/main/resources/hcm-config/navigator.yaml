@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-static:
+      /navigator:
+        section.taxonomies: service.browse.tree.taxonomies
+        sections:
+          operation: add
+          type: string
+          value: [section.taxonomies]

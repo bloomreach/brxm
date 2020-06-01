@@ -1,0 +1,146 @@
+definitions:
+  config:
+    /hippo:namespaces/hippotaxonomy:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      /classifiable:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:mixin: true
+            hipposysedit:node: true
+            hipposysedit:uri: http://www.hippoecm.org/hippotaxonomy/nt/1.2
+            /keys:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:multiple: true
+              hipposysedit:path: hippotaxonomy:keys
+              hipposysedit:type: String
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode, taxonomy.name, caption, hint]
+            frontend:references: [wicket.model, model.compareTo, engine]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              caption: ${caption}
+              hint: ${hint}
+              mode: ${mode}
+              model.compareTo: ${model.compareTo}
+              plugin.class: org.onehippo.taxonomy.plugin.TaxonomyPickerPlugin
+              taxonomy.classification.dao: service.taxonomy.dao
+              taxonomy.id: service.taxonomy
+              taxonomy.name: ${taxonomy.name}
+              wicket.id: ${wicket.id}
+              wicket.model: ${wicket.model}
+      /canonised:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:mixin: true
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippotaxonomy:classifiable']
+            hipposysedit:uri: http://www.hippoecm.org/hippotaxonomy/nt/1.2
+            /keys:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:multiple: true
+              hipposysedit:path: hippotaxonomy:keys
+              hipposysedit:type: String
+            /canonkey:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:multiple: false
+              hipposysedit:path: hippotaxonomy:canonkey
+              hipposysedit:type: String
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode, taxonomy.name]
+            frontend:references: [wicket.model, model.compareTo, engine]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              mode: ${mode}
+              model.compareTo: ${model.compareTo}
+              plugin.class: org.onehippo.taxonomy.plugin.TaxonomyPickerPlugin
+              taxonomy.classification.dao: service.taxonomy.dao
+              taxonomy.id: service.taxonomy
+              taxonomy.name: ${taxonomy.name}
+              wicket.id: ${wicket.id}
+              wicket.model: ${wicket.model}
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: nt:unstructured
+            hippotaxonomy:canonkey: ''
+      /taxonomy:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippotaxonomy:taxonomy
+            jcr:mixinTypes: ['mix:referenceable', 'hippostd:publishableSummary']
+            hippostd:state: unpublished
+            hippostdpubwf:createdBy: admin
+            hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
+            hippostdpubwf:lastModificationDate: 2010-02-04T16:32:28.068+02:00
+            hippostdpubwf:lastModifiedBy: admin
+            hippotaxonomy:locales: [en, fr, nl, it, de]
+            /Root_Category:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: key_4cab8460-8f80-4067-9ea0-d5ea7cfa7ba2
+              /Child_Category:
+                jcr:primaryType: hippotaxonomy:category
+                hippotaxonomy:key: key_93195b75-af1e-4c72-8aa4-facdd90b660a
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [wicket.model, engine]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              keys.urlencode: false
+              mode: ${mode}
+              plugin.class: org.onehippo.taxonomy.plugin.TaxonomyEditorPlugin
+              wicket.id: ${wicket.id}
+              wicket.model: ${wicket.model}
+      /category:
+        jcr:primaryType: hipposysedit:templatetype
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+            hipposysedit:node: true
+            hipposysedit:uri: http://www.hippoecm.org/hippotaxonomy/nt/1.2
+            /key:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippotaxonomy:key
+              hipposysedit:type: String
+            /children:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:ordered: true
+              hipposysedit:path: '*'
+              hipposysedit:type: hippotaxonomy:category
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: nt:unstructured
+            hippotaxonomy:key: ''
