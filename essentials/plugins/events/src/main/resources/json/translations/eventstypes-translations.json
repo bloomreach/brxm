@@ -1,0 +1,46 @@
+{
+  "hippo:types": {
+    "{{namespace}}:eventsdocument":   {
+      "en":     {
+        "jcr:name": "Event",
+        "{{namespace}}:enddate": "End date",
+        "{{namespace}}:location": "Location",
+        "{{namespace}}:image": "Image",
+        "{{namespace}}:content": "Content",
+        "{{namespace}}:introduction": "Introduction",
+        "{{namespace}}:title": "Title",
+        "{{namespace}}:date": "Start date"
+      },
+      "nl":     {
+        "jcr:name": "Evenement",
+        "{{namespace}}:enddate": "Einddatum",
+        "{{namespace}}:location": "Locatie",
+        "{{namespace}}:image": "Afbeelding",
+        "{{namespace}}:content": "Inhoud",
+        "{{namespace}}:introduction": "Introductie",
+        "{{namespace}}:title": "Titel",
+        "{{namespace}}:date": "Startdatum"
+      },
+      "fr":     {
+        "jcr:name": "Événement",
+        "{{namespace}}:enddate": "Date de fin",
+        "{{namespace}}:location": "Lieu",
+        "{{namespace}}:image": "Image",
+        "{{namespace}}:content": "Contenu",
+        "{{namespace}}:introduction": "Introduction",
+        "{{namespace}}:title": "Titre",
+        "{{namespace}}:date": "Date de début"
+      },
+      "de":     {
+        "jcr:name": "Event",
+        "{{namespace}}:enddate": "Enddatum",
+        "{{namespace}}:location": "Standort",
+        "{{namespace}}:image": "Abbildung",
+        "{{namespace}}:content": "Inhalt",
+        "{{namespace}}:introduction": "Einführung",
+        "{{namespace}}:title": "Titel",
+        "{{namespace}}:date": "Startdatum"
+      }
+    }
+  }
+}

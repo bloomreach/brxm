@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<sv:node sv:name="root" h:merge="combine" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport">
+  <sv:property sv:multiple="true" sv:name="Xinha.config.toolbar" sv:type="String" h:merge="append">
+    <sv:value>subscript</sv:value>
+    <sv:value>superscript</sv:value>
+    <sv:value>insertcharacter</sv:value>
+    <sv:value>pastetext</sv:value>
+    <sv:value>htmlmode</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="Xinha.plugins" sv:type="String" h:merge="append">
+    <sv:value>CharacterMap</sv:value>
+    <sv:value>PasteText</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="Xinha.format" sv:type="String">
+    <sv:value>p</sv:value>
+    <sv:value>h2</sv:value>
+    <sv:value>h3</sv:value>
+    <sv:value>h4</sv:value>
+  </sv:property>
+</sv:node>
