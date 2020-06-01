@@ -1,0 +1,69 @@
+definitions:
+  config:
+    /unittestcontent/documents/unittestproject/dynamiccontent:
+      jcr:primaryType: hippo:handle
+      jcr:mixinTypes: ['hippo:named', 'hippo:versionInfo', 'mix:referenceable']
+      jcr:uuid: d993b0a1-5859-44fe-bf4b-017cda163364
+      hippo:name: DynamicContent
+      hippo:versionHistory: 05b06f75-7241-4005-a0a6-2e9ad49508ce
+      /dynamiccontent:
+        jcr:primaryType: pagemodelapitest:dynamiccontent
+        jcr:mixinTypes: ['mix:referenceable']
+        pagemodelapitest:booleanRadioGroupTypeField: false
+        pagemodelapitest:booleanTypeField: false
+        pagemodelapitest:multipleBooleanTypeField: [false, true]
+        pagemodelapitest:singleValueMultipleBooleanTypeField: false
+        pagemodelapitest:multipleValueSingleBooleanTypeField: [false]
+        pagemodelapitest:calendarDateTypeField: 2019-03-25T00:00:00
+        pagemodelapitest:dateTypeField: 2019-03-25T00:00:00
+        pagemodelapitest:multipleDateTypeField: [2019-03-25T00:00:00, 2019-03-26T00:00:00]
+        pagemodelapitest:singleValueMultipleDateTypeField: 2019-03-25T00:00:00
+        pagemodelapitest:multipleValueSingleDateTypeField: [2019-03-25T00:00:00]
+        pagemodelapitest:docbaseTypeField: 2dcef400-50e2-456e-9722-fd496defa56b
+        pagemodelapitest:doubleTypeField: 100.0
+        pagemodelapitest:multipleDoubleTypeField: [100.0, 120.0]
+        pagemodelapitest:singleValueMultipleDoubleTypeField: 100.0
+        pagemodelapitest:multipleValueSingleDoubleTypeField: [100.0]
+        pagemodelapitest:dynamicdropdownTypeField: 'dynamicvalue'
+        pagemodelapitest:staticdropdownTypeField: 'staticvalue'
+        pagemodelapitest:htmlTypeField: htmltypecontent
+        pagemodelapitest:longTypeField: 50
+        pagemodelapitest:multipleLongTypeField: [50, 60]
+        pagemodelapitest:singleValueMultipleLongTypeField: 50
+        pagemodelapitest:multipleValueSingleLongTypeField: [50]
+        pagemodelapitest:radioGroupTypeField: 'radiogroupvalue'
+        pagemodelapitest:stringTypeField: string Value
+        pagemodelapitest:textTypeField: textvalue
+        pagemodelapitest:longTypeField2: 100
+        hippo:availability: [live]
+        hippostd:state: published
+        hippostdpubwf:createdBy: admin
+        hippostdpubwf:creationDate: 2019-03-25T13:55:43.203+01:00
+        hippostdpubwf:lastModificationDate: 2019-03-26T19:54:24.640+01:00
+        hippostdpubwf:lastModifiedBy: admin
+        hippotranslation:id: efb230e0-e336-43ef-b7c4-8d7c217ca7b5
+        hippotranslation:locale: en
+        /pagemodelapitest:standardCompoundType:
+          jcr:primaryType: pagemodelapitest:dynamiccompound
+          pagemodelapitest:stringTypeField: alexanderkade
+          /pagemodelapitest:dynamicinnercompound:
+            jcr:primaryType: pagemodelapitest:dynamicinnercompound
+            pagemodelapitest:stringTypeField: http://test.com
+          /pagemodelapitest:richTextEditorCompoundType:
+            jcr:primaryType: hippostd:html
+            hippostd:content: contentOfHtmlFiledInCompoundTypeClass
+        /pagemodelapitest:richTextEditorCompoundType:
+          jcr:primaryType: hippostd:html
+          hippostd:content: richtexteditorcontent
+        /pagemodelapitest:mirrorCompoundType:
+          jcr:primaryType: hippo:mirror
+          hippo:docbase: 64ab4648-0c20-40d2-9f18-d7a394f0334b
+        /pagemodelapitest:resourceCompoundType:
+          jcr:primaryType: hippo:resource
+          hippo:filename: picture_thumbnail.jpeg
+          jcr:data:
+            type: binary
+            resource: /content/unittestcontent/documents/unittestproject/contentsource/gallery/picture/picture_thumbnail.jpeg
+          jcr:encoding: UTF-8
+          jcr:lastModified: 2008-03-26T12:03:00+01:00
+          jcr:mimeType: application/vnd.hippo.blank

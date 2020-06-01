@@ -1,0 +1,26 @@
+definitions:
+  config:
+    /hippo:namespaces/contentbeanstest/htmlblock2:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable']
+      /hipposysedit:nodetype:
+       jcr:primaryType: hippo:handle
+       jcr:mixinTypes: ['mix:referenceable']
+       /hipposysedit:nodetype:
+         jcr:primaryType: hipposysedit:nodetype
+         jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+         hipposysedit:node: true
+         hipposysedit:supertype: ['hippo:compound', 'hippostd:relaxed']
+         hipposysedit:uri: http://www.onehippo.org/contentbeanstest/nt/1.0
+         /text:
+           jcr:primaryType: hipposysedit:field
+           hipposysedit:path: contentbeanstest:text
+           hipposysedit:type: hippostd:html
+      /hipposysedit:prototypes:
+       jcr:primaryType: hipposysedit:prototypeset
+       /hipposysedit:prototype:
+         jcr:primaryType: contentbeanstest:htmlblock2
+         /contentbeanstest:text:
+           jcr:primaryType: hippostd:html
+           hippostd:content: <html><body></body></html>
+

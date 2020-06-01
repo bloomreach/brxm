@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates/en:
+      new-subsite: new subsite

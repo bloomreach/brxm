@@ -1,0 +1,14 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:roles:
+      /channel-admin:
+        jcr:primaryType: hipposys:role
+        hipposys:privileges: ['hippo:channel-admin']
+        hipposys:roles: [channel-webmaster]
+      /channel-webmaster:
+        jcr:primaryType: hipposys:role
+        hipposys:privileges: ['hippo:channel-webmaster']
+        hipposys:roles: [readwrite, channel-viewer]
+      /channel-viewer:
+        jcr:primaryType: hipposys:role
+        hipposys:privileges: ['hippo:channel-viewer']

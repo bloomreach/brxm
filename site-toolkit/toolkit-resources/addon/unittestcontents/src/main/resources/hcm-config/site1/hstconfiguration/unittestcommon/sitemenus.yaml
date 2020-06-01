@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestcommon/hst:sitemenus:
+      jcr:primaryType: hst:sitemenus
+      /main:
+        jcr:primaryType: hst:sitemenu
+        /News:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 3
+          hst:referencesitemapitem: news
+          hst:repobased: true

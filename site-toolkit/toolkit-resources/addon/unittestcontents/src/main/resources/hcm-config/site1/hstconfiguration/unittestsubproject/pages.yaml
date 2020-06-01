@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestsubproject/hst:pages:
+      jcr:primaryType: hst:pages
+      /homepage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:abstractpages/basepage
