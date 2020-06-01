@@ -1,0 +1,7 @@
+<rule>
+  <note>
+    This rule means that requests to /test/status will be redirected to /rewrite-status.
+  </note>
+  <from>/test/status</from>
+  <to type="redirect">/%{context-path}/rewrite-status</to>
+</rule>

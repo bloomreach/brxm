@@ -1,0 +1,78 @@
+<div ng-show="plugin.installState === 'onBoard'">
+  <!--
+    Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    -->
+  <div class="panel panel-default">
+    <div class="panel-heading">{{plugin.name}}</div>
+    <div class="panel-body">
+      <div ng-hide="hasNoTemplates && !hasSampleData">
+        <form novalidate name="templateForm">
+          <div ng-hide="hasNoTemplates">
+            <div class="form-group">
+              <label>Please select templating language</label>
+              <div class="radio">
+                <label>
+                  <input type="radio" ng-model="params.templateName" required value="jsp"/> JSP template
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" ng-model="params.templateName" required value="freemarker"/> FreeMarker template
+                </label>
+              </div>
+            </div>
+            <div class="form-group" ng-show="params.templateName === 'freemarker' && hasExtraTemplates">
+              <label class="control-label">Presentation</label>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" ng-model="params.extraTemplates"/> Install extra template variants
+                </label>
+              </div>
+            </div>
+          </div>
+          <div ng-show="hasSampleData">
+            <div class="form-group">
+              <label>Content</label>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" ng-model="params.sampleData"/> Add sample content
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <uib-accordion>
+        <div uib-accordion-group is-open="isopen">
+          <uib-accordion-heading>
+            Changes made by this plugin
+            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': isopen, 'glyphicon-chevron-right': !isopen}"></i>
+          </uib-accordion-heading>
+          <p ng-repeat="changeMessage in changeMessages">
+            <hippo-icon name="{{changeMessage.icon}}" size="m" ></hippo-icon> {{changeMessage.message}}
+          </p>
+        </div>
+      </uib-accordion>
+    </div>
+    <div class="panel-footer">
+      <div class="input-group">
+        <span class="input-group-btn">
+          <button class="btn btn-primary pull-right" type="submit" ng-click="apply()">Apply</button>
+          <a class="btn btn-info pull-right" href="#/installed-features">Cancel</a>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

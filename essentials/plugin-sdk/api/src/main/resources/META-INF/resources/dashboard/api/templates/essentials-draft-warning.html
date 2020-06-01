@@ -1,0 +1,46 @@
+<!--
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+
+<div ng-show="hasDraftDocuments">
+    <div class="alert alert-danger">
+        <h4><hippo-icon name="exclamation-triangle" size="m"></hippo-icon> Warning!</h4>
+        Your project contains document template(s) which still contain pending changes.
+        <p>Please commit those changes before proceeding.</p>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Document templates with pending changes:</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="doc in documentTypes | filter:isDraft">
+                <td>{{doc.name}}</td>
+                <td>
+                    <essentials-cms-document-type-deep-link
+                            label="Commit {{doc.name}} document changes"
+                            name-space="{{doc.prefix}}"
+                            document-name="{{doc.name}}">
+                    </essentials-cms-document-type-deep-link>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+

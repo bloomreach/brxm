@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+  <!--
+  //############################################
+  // COMMONS PACKAGE ADDS SHARED FILES/CONFIGURATION
+  //############################################
+  -->
+
+  <instructionSet>
+    <mavenDependency targetPom="site" groupId="org.onehippo.cms7" artifactId="hippo-essentials-components-hst" scope="provided"/>
+    <xml action="copy" source="instructions/xml/folderoptions/new-resource-bundle.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="instructions/xml/folderoptions/new-untranslated-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <translations source="/instructions/json/translations/skeletontemplates-translations.json"/>
+  </instructionSet>
+
+  <instructionSet>
+    <xml action="copy" source="instructions/content/untranslated-folder.xml" target="/content/documents"/>
+    <xml action="copy" source="instructions/content/global-labels.xml" target="/content/documents/administration/labels"/>
+    <xml action="copy" source="instructions/content/homepage-labels.xml" target="/content/documents/administration/labels"/>
+    <xml action="copy" source="instructions/content/pagenotfound-labels.xml" target="/content/documents/administration/labels"/>
+    <xml action="copy" source="instructions/content/pagination-labels.xml" target="/content/documents/administration/labels"/>
+  </instructionSet>
+
+  <instructionSet group="jsp">
+    <!-- include-->
+    <file action="copy" source="instructions/jsp/imports.jsp" target="{{jspRoot}}/include/imports.jsp"/>
+    <file action="copy" source="instructions/jsp/pagination.jsp" target="{{jspRoot}}/include/pagination.jsp"/>
+    <!-- skeleton-->
+    <file action="copy" source="instructions/jsp/base-layout.jsp" target="{{jspRoot}}/{{namespace}}/base-layout.jsp"/>
+    <file action="copy" source="instructions/jsp/base-top-menu.jsp" target="{{jspRoot}}/{{namespace}}/base-top-menu.jsp"/>
+    <file action="copy" source="instructions/jsp/base-footer.jsp" target="{{jspRoot}}/{{namespace}}/base-footer.jsp"/>
+    <file action="copy" source="instructions/jsp/homepage-main.jsp" target="{{jspRoot}}/{{namespace}}/homepage-main.jsp"/>
+    <file action="copy" source="instructions/jsp/pagenotfound-main.jsp" target="{{jspRoot}}/{{namespace}}/pagenotfound-main.jsp"/>
+
+    <xml action="copy" source="instructions/xml/hst/templates/base-layout-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/base-top-menu-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/base-footer-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/homepage-main-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/pagenotfound-main-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+  </instructionSet>
+
+  <instructionSet group="freemarker">
+    <!-- include -->
+    <freemarker action="copy" source="instructions/freemarker/imports.ftl" target="{{freemarkerRoot}}/include/imports.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/pagination.ftl" target="{{freemarkerRoot}}/include/pagination.ftl"/>
+     <!-- skeleton -->
+    <freemarker action="copy" source="instructions/freemarker/base-layout.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-layout.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/base-top-menu.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-top-menu.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/base-footer.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-footer.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/homepage-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/homepage-main.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/pagenotfound-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/pagenotfound-main.ftl"/>
+
+    <xml action="copy" source="instructions/xml/hst/templates/base-layout-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/base-top-menu-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/base-footer-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/homepage-main-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/pagenotfound-main-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+  </instructionSet>
+
+  <!--
+    //############################################
+    // COMMON HST
+    //############################################
+
+  -->
+  <instructionSet>
+    <!-- always overwrite 404 page-->
+    <file action="copy" overwrite="true" source="instructions/jsp/ErrorPage404.jsp" target="{{jspRoot}}/errorpages/ErrorPage404.jsp"/>
+    <xml action="copy" source="instructions/xml/hst/workspace/base.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="instructions/xml/hst/workspace/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="instructions/xml/hst/workspace/pagenotfound.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <!-- common -->
+    <xml action="copy" source="instructions/xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="instructions/xml/hst/sitemap/any.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="instructions/xml/hst/sitemap/pagenotfound.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="instructions/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus"/>
+
+    <xml action="copy" source="instructions/xml/hst/pages/base.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:abstractpages"/>
+    <xml action="copy" source="instructions/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="instructions/xml/hst/pages/pagenotfound.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <!-- default-->
+    <xml action="copy" source="instructions/xml/hst/catalog/essentials-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog"/>
+    <file action="copy" source="instructions/xml/spring/hippo-essentials-spring.xml" target="{{siteResources}}/META-INF/hst-assembly/overrides/hippo-essentials-spring.xml"/>
+  </instructionSet>
+
+  <!--
+  //############################################
+  // CSS/JS
+  //############################################
+-->
+  <instructionSet>
+    <file binary="true" action="copy" source="instructions/js/bootstrap.min.js" target="{{webfilesJsRoot}}/bootstrap.min.js"/>
+    <file binary="true" action="copy" source="instructions/js/jquery-2.1.0.min.js" target="{{webfilesJsRoot}}/jquery-2.1.0.min.js"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/css/bootstrap.css" target="{{webfilesRoot}}/css/bootstrap.css"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/css/bootstrap.min.css" target="{{webfilesRoot}}/css/bootstrap.min.css"/>
+    <file action="copy" binary="true" source="instructions/css/cms-request.css" target="{{webfilesRoot}}/css/cms-request.css"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.eot" target="{{webfilesRoot}}/fonts/glyphicons-halflings-regular.eot"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.svg" target="{{webfilesRoot}}/fonts/glyphicons-halflings-regular.svg"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.ttf" target="{{webfilesRoot}}/fonts/glyphicons-halflings-regular.ttf"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.woff" target="{{webfilesRoot}}/fonts/glyphicons-halflings-regular.woff"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.woff2" target="{{webfilesRoot}}/fonts/glyphicons-halflings-regular.woff2"/>
+  </instructionSet>
+
+</instructions>
