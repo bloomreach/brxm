@@ -1,0 +1,5 @@
+group: hippo-cms
+project: hippo-testsuite
+module:
+  name: hippo-testsuite-intranet-bootstrap-content
+  after: hippo-testsuite-intranet-bootstrap-configuration
