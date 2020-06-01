@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /polldata:
+      .meta:residual-child-node-category: system
+      jcr:primaryType: poll:polldata
+      jcr:mixinTypes: ['mix:lockable']
+      jcr:lockOwner:
+        .meta:category: system
+      jcr:lockIsDeep:
+        .meta:category: system
