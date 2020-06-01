@@ -1,0 +1,86 @@
+definitions:
+  config:
+    /hippo:namespaces/testproject:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 322e0ee1-5a5d-4d1c-a15a-397bfa9b64ee
+      /basedocument:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 3ee76e49-f3c4-47e3-971b-b7a95a8a3030
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 25b7c05b-f143-492d-9db1-d99347cfdc7a
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document', 'hippostd:publishableSummary']
+            hipposysedit:uri: http://www.onehippo.org/services/search/nt/testproject/1.0
+      /textpage:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 8341d42f-4815-483e-a1fd-08dd25abcfd0
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: d2870ca9-1240-4bf1-a564-2611baa4e13b
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+            jcr:uuid: 6ef8d567-d4ce-48b9-beea-3af71f46f9f0
+            hipposysedit:node: true
+            hipposysedit:supertype: ['testproject:basedocument']
+            hipposysedit:uri: http://www.onehippo.org/services/search/nt/testproject/1.0
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: testproject:title
+              hipposysedit:primary: false
+              hipposysedit:type: String
+            /summary:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: testproject:summary
+              hipposysedit:primary: false
+              hipposysedit:type: String
+            /body:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: testproject:body
+              hipposysedit:primary: false
+              hipposysedit:type: hippostd:html
+            /date:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: testproject:date
+              hipposysedit:primary: false
+              hipposysedit:type: Date
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: testproject:textpage
+            jcr:mixinTypes: ['mix:referenceable']
+            jcr:uuid: f99f9955-bdfa-43ac-83e9-e5b1e43be410
+            hippostd:state: draft
+            hippostdpubwf:createdBy: admin
+            hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+            hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+            hippostdpubwf:lastModifiedBy: admin
+            testproject:date: 2009-10-23T12:44:11.055+02:00
+            testproject:summary: ''
+            testproject:title: ''
+            /testproject:body:
+              jcr:primaryType: hippostd:html
+              hippostd:content: |-
+                <html> <body>
+                                            <p>body</p> </body>
+                                            </html>
