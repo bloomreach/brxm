@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/validation/hippo:moduleconfig/required/hippo:compound:
+      jcr:primaryType: hipposys:moduleconfig
+      hipposys:className: org.hippoecm.frontend.editor.validator.required.RequiredCompoundValidator

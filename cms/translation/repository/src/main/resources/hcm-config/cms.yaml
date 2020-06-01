@@ -1,0 +1,18 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-folder-views:
+      /hippostd:folder:
+        /translationColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          plugin.class: org.hippoecm.frontend.translation.list.TranslationsColumnProviderPlugin
+      /hippostd:directory:
+        /translationColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          plugin.class: org.hippoecm.frontend.translation.list.TranslationsColumnProviderPlugin
+      /hippo:facetselect:
+        /translationColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          plugin.class: org.hippoecm.frontend.translation.list.TranslationsColumnProviderPlugin

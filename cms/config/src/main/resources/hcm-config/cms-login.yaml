@@ -1,0 +1,14 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/login:
+      jcr:primaryType: frontend:application
+      frontend:defaultcluster: login
+      /login:
+        jcr:primaryType: frontend:plugincluster
+        /loginPage:
+          jcr:primaryType: frontend:plugin
+          browsers.supported: [firefox 63 >=, safari 12 >=, chrome 70 >=, edge 17 >=]
+          plugin.class: org.hippoecm.frontend.plugins.login.DefaultLoginPlugin
+          signin.form.autocomplete: true
+          wicket.behavior: service.behavior.browser.check
+          wicket.id: service.root

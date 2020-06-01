@@ -1,0 +1,13 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-folder-views:
+      /hippogallery:stdImageGallery:
+        /defaultColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          plugin.class: org.hippoecm.frontend.plugins.gallery.columns.ImageGalleryColumnProviderPlugin
+      /hippogallery:stdAssetGallery:
+        /defaultColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          plugin.class: org.hippoecm.frontend.plugins.gallery.columns.AssetGalleryColumnProviderPlugin

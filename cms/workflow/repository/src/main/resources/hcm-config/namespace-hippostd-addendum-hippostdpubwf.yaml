@@ -1,0 +1,19 @@
+definitions:
+  config:
+    /hippo:namespaces/hippostd/publishableSummary:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['hipposysedit:remodel']
+          hipposysedit:mixin: true
+          hipposysedit:supertype: ['hippo:derived']
+          hipposysedit:uri: http://www.onehippo.org/jcr/hippostd/nt/2.0
+          /PublicationStatus:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: true
+            hipposysedit:path: hippostd:stateSummary
+            hipposysedit:type: String
