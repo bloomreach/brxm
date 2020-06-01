@@ -1,0 +1,68 @@
+// Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import "../../../../../api/src/main/styling/styles/variables";
+@import "../../../../../api/src/main/styling/styles/mixins";
+
+$br-button-blue:                     #21abf4;
+$br-link-blue:                       #1b95e0;
+$br-yellow-2:                        #fce283;
+$br-field-bg:                        #f1f1f1;
+$br-page-bg:                         #f2f2f2;
+
+$link-color:                         $br-link-blue;
+
+$login-extend-bg-color:              $br-page-bg;
+
+$login-plugin-horizontal-padding:    120px;
+$login-plugin-vertical-padding:      40px;
+
+$login-panel-bg-color:               $white;
+$login-panel-border:                 $dark-shade;
+$login-panel-border-radius:          6px;
+$login-panel-shadow-color:           rgba(0, 0, 0, .2);
+$login-panel-shadow-spread:          12px;
+$login-panel-width:                  300px;
+
+$login-panel-header-bg-color:        linear-gradient(to right, $lighter-shade, $br-field-bg);
+$login-panel-header-height:          120px;
+
+$login-background-padding-left:      500px;
+$login-background-max-height:        600px;
+$login-background-min-height:        400px;
+$login-background-min-width:         700px;
+$login-background-vertical-padding:  80px;
+
+$login-feedback-bg-color:            $br-yellow-2;
+$login-feedback-border-color:        $light-shade;
+
+$login-submit-bg-color:              $br-button-blue;
+$login-submit-bg-color-focus:        $br-button-blue;
+$login-submit-disabled-color:        $br-button-blue;
+$login-submit-font-size:             15px;
+$login-submit-height:                70px;
+$login-submit-transition-duration:   .5s;
+
+$login-field-bg-color:               $br-field-bg;
+$login-field-border-color:           $light-shade;
+$login-field-border-color-focus:     $dark-gray;
+$login-field-border-radius:          3px;
+$login-field-height:                 40px;
+$login-field-margin-bottom:          10px;
+$login-field-text-color:             $darkest-shade;
+$login-field-transition-duration:    .4s;
+
+$login-footer-color:                 $dark-shade;
+$login-footer-padding-top:           10px;
+$login-footer-font-size:             11px;

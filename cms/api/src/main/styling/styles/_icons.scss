@@ -1,0 +1,252 @@
+// Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+.hi-defs {
+  display: none;
+}
+
+.hi {
+  display: inline-block;
+  height: 0;
+  vertical-align: text-bottom;
+  width: 0;
+}
+
+.hi-s {
+  height: 10px;
+  width: 10px;
+}
+.hi-m {
+  height: 16px;
+  width: 16px;
+}
+.hi-l {
+  height: 32px;
+  width: 32px;
+}
+.hi-xl {
+  height: 48px;
+  width: 48px;
+}
+
+.hi-rotate-90 {
+  transform: rotate(90deg);
+}
+
+// Stacked icons
+.hi-stack {
+  display: inline-block;
+  position: relative;
+
+  > .hi {
+    vertical-align: baseline;
+  }
+
+  > .hi:not(:first-child),
+  > img:not(:first-child) {
+    position: absolute;
+  }
+}
+
+// Stack positions
+.hi-top {
+  top: 0;
+}
+
+.hi-vcenter {
+  bottom: 0;
+  margin-bottom: auto;
+  margin-top: auto;
+  top: 0;
+}
+
+.hi-bottom {
+  bottom: 0;
+}
+
+.hi-left {
+  left: 0;
+}
+
+.hi-hcenter {
+  left: 0;
+  margin-left: auto;
+  margin-right: auto;
+  right: 0;
+}
+
+.hi-right {
+  right: 0;
+}
+
+// Shift stacked translation flags a bit
+.hi-stack {
+  > .hi-folder + img,
+  > .hi-folder-open + img {
+    bottom: -1px;
+    left: auto;
+    right: -1px;
+    top: auto;
+  }
+}
+
+// Default colors of shapes in icons
+.hi-file-text,
+.hi-folder,
+.hi-custom-node-type {
+  color: $primary;
+}
+
+@each $type in $mimetypes {
+  .hi-mimetype-#{$type} {
+    color: $primary;
+    fill: $white;
+
+    .hippo-list-selected & {
+      fill: $primary;
+    }
+  }
+}
+
+.hi-expand,
+.hi-compress {
+  color: $dark-gray;
+}
+
+.hi-move-into {
+  color: $dark-gray;
+}
+
+.hi-files {
+  color: $black;
+}
+
+.hi-minus-circle, .hi-times-circle {
+  color: $white;
+  fill: $danger;
+}
+
+.hi-check-circle {
+  color: $white;
+  fill: $success;
+}
+
+.hi-exclamation-triangle {
+  color: $white;
+  fill: $warning;
+}
+
+.hi-overlay-plus {
+  color: $white;
+}
+
+// Enabled icons
+.icon-enabled {
+  .hi {
+    color: $black;
+  }
+
+  .hi-gear {
+    color: $primary;
+  }
+
+  .hi-times {
+    color: $hippo-icon-delete-enabled;
+  }
+
+  .hi-minus-circle {
+    color: $white;
+    fill: $danger;
+  }
+
+  .hi-minus-circle-clock {
+    color: $danger;
+  }
+
+  .hi-file-unlocked {
+    color: $black;
+  }
+
+  .hi-new {
+    color: $primary;
+  }
+
+  .hi-check-circle {
+    color: $white;
+    fill: $success;
+  }
+
+  .hi-check-circle-clock {
+    color: $success;
+  }
+
+  .hi-overlay-plus {
+    color: $white;
+  }
+}
+
+// Disabled icons
+.icon-disabled {
+  .hi {
+    color: $hippo-menu-disabled-color;
+  }
+
+  .hi-add-overlay {
+    color: $dark-gray;
+  }
+
+  .hi-gear {
+    color: $hippo-menu-disabled-color;
+  }
+
+  .hi-minus-circle {
+    color: $white;
+    fill: $hippo-menu-disabled-color;
+  }
+
+  .hi-check-circle {
+    color: $white;
+    fill: $hippo-menu-disabled-color;
+  }
+
+  .hi-files {
+    color: $hippo-menu-disabled-color;
+  }
+
+  .hi-file-unlocked {
+    color: $hippo-menu-disabled-color;
+  }
+
+  .hi-new {
+    color: $hippo-menu-disabled-color;
+  }
+
+  .hi-rename {
+    color: $hippo-menu-disabled-color;
+  }
+
+  .hi-overlay-plus {
+    color: $white;
+    fill: $hippo-menu-disabled-color
+  }
+}
+
+// This was previously a IE11 fix for CMS7-8642: IE11 becomes unresponsive after opening/closing several documents
+// In Edge this should no longer be required, but it actually resolves the issue when icons are used in links
+// (like the tree context-menu button) and can only be clicked at certain points of the icon.
+// For more information see https://connect.microsoft.com/IE/feedback/details/796745/mouse-events-are-not-delivered-at-all-anymore-when-inside-an-svg-a-use-is-removed-from-the-dom
+svg use {
+  pointer-events: none;
+}
+

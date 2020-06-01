@@ -1,0 +1,315 @@
+/*
+ * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+.hippo-root .hippo-translation-language {
+  clear: both;
+  padding-top: 3px;
+  color: #666666;
+}
+
+.hippo-folder-translations,
+.hippo-folder-translations .x-grid3-hd-row td,
+.hippo-folder-translations .x-tree-node,
+.hippo-folder-translations .x-list-body dt em,
+.hippo-folder-translations .x-fieldset legend,
+.hippo-folder-translations .x-btn button {
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12px;
+}
+
+#folder-path .hippo-translation-language {
+  line-height: 16px;
+}
+
+.hippo-root .x-tree-node .x-tree-node-disabled .x-tree-node-icon {
+  opacity: 0.7;
+}
+
+.hippo-folder-translations .flag-md {
+  position: relative;
+  top: 2px;
+}
+
+.hippo-folder-translations .hippo-translated-folder-without-flag {
+  position: relative;
+  top: -1px;
+}
+
+.hippo-root .x-tree-node .x-tree-node-disabled a span {
+  color: #444444 !important;
+}
+
+.hippo-root .x-tree-node-expanded img {
+  vertical-align: -3px;
+}
+
+.hippo-root .x-fieldset {
+  border-color: #cccccc;
+}
+
+.hippo-root .x-fieldset legend {
+  color: black;
+}
+
+#translations-break-link {
+  margin-bottom: 6px;
+  margin-left: 0;
+}
+
+.x-btn-text-icon.x-btn-text-icon-not-found .x-btn-icon-small-left .x-btn-text {
+  padding-left: 0;
+}
+
+.hippo-root .x-panel-body {
+  border-color: #cccccc;
+}
+
+.translation-field-set .x-fieldset-bwrap .x-fieldset-body {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.hippo-folder-translations .hi-folder {
+  color: #9ba0a5;
+}
+
+.hippo-translated-folder-with-flag,
+.hippo-translated-folder-without-flag {
+  margin-right: 4px;
+}
+
+.hippo-translated-folder-with-flag svg + span {
+  width: 11px;
+  height: 9px;
+}
+
+.hippo-folder-translations .hippo-translated-folder-without-flag > .hi-folder {
+  top: 3px;
+}
+
+.hippo-translation-country {
+  background: no-repeat 100% 100%;
+}
+
+/**
+ * Below this line file has been generated with the generate_countries.sh script.
+ **/
+.hippo-translation-country-ae {
+  background-image: url(icons/flags/flag-11x9_ae.png);
+}
+
+.hippo-translation-country-ar {
+  background-image: url(icons/flags/flag-11x9_ar.png);
+}
+
+.hippo-translation-country-at {
+  background-image: url(icons/flags/flag-11x9_at.png);
+}
+
+.hippo-translation-country-au {
+  background-image: url(icons/flags/flag-11x9_au.png);
+}
+
+.hippo-translation-country-be {
+  background-image: url(icons/flags/flag-11x9_be.png);
+}
+
+.hippo-translation-country-bg {
+  background-image: url(icons/flags/flag-11x9_bg.png);
+}
+
+.hippo-translation-country-br {
+  background-image: url(icons/flags/flag-11x9_br.png);
+}
+
+.hippo-translation-country-ca {
+  background-image: url(icons/flags/flag-11x9_ca.png);
+}
+
+.hippo-translation-country-ch {
+  background-image: url(icons/flags/flag-11x9_ch.png);
+}
+
+.hippo-translation-country-cn {
+  background-image: url(icons/flags/flag-11x9_cn.png);
+}
+
+.hippo-translation-country-cy {
+  background-image: url(icons/flags/flag-11x9_cy.png);
+}
+
+.hippo-translation-country-cz {
+  background-image: url(icons/flags/flag-11x9_cz.png);
+}
+
+.hippo-translation-country-de {
+  background-image: url(icons/flags/flag-11x9_de.png);
+}
+
+.hippo-translation-country-dk {
+  background-image: url(icons/flags/flag-11x9_dk.png);
+}
+
+.hippo-translation-country-ee {
+  background-image: url(icons/flags/flag-11x9_ee.png);
+}
+
+.hippo-translation-country-error {
+  background-image: url(icons/flags/flag-11x9_error.png);
+}
+
+.hippo-translation-country-es {
+  background-image: url(icons/flags/flag-11x9_es.png);
+}
+
+.hippo-translation-country-fi {
+  background-image: url(icons/flags/flag-11x9_fi.png);
+}
+
+.hippo-translation-country-fr {
+  background-image: url(icons/flags/flag-11x9_fr.png);
+}
+
+.hippo-translation-country-gb {
+  background-image: url(icons/flags/flag-11x9_gb.png);
+}
+
+.hippo-translation-country-gr {
+  background-image: url(icons/flags/flag-11x9_gr.png);
+}
+
+.hippo-translation-country-hu {
+  background-image: url(icons/flags/flag-11x9_hu.png);
+}
+
+.hippo-translation-country-id {
+  background-image: url(icons/flags/flag-11x9_id.png);
+}
+
+.hippo-translation-country-ie {
+  background-image: url(icons/flags/flag-11x9_ie.png);
+}
+
+.hippo-translation-country-in {
+  background-image: url(icons/flags/flag-11x9_in.png);
+}
+
+.hippo-translation-country-ir {
+  background-image: url(icons/flags/flag-11x9_ir.png);
+}
+
+.hippo-translation-country-it {
+  background-image: url(icons/flags/flag-11x9_it.png);
+}
+
+.hippo-translation-country-jp {
+  background-image: url(icons/flags/flag-11x9_jp.png);
+}
+
+.hippo-translation-country-kr {
+  background-image: url(icons/flags/flag-11x9_kr.png);
+}
+
+.hippo-translation-country-lt {
+  background-image: url(icons/flags/flag-11x9_lt.png);
+}
+
+.hippo-translation-country-lu {
+  background-image: url(icons/flags/flag-11x9_lu.png);
+}
+
+.hippo-translation-country-lv {
+  background-image: url(icons/flags/flag-11x9_lv.png);
+}
+
+.hippo-translation-country-mt {
+  background-image: url(icons/flags/flag-11x9_mt.png);
+}
+
+.hippo-translation-country-mx {
+  background-image: url(icons/flags/flag-11x9_mx.png);
+}
+
+.hippo-translation-country-nl {
+  background-image: url(icons/flags/flag-11x9_nl.png);
+}
+
+.hippo-translation-country-no {
+  background-image: url(icons/flags/flag-11x9_no.png);
+}
+
+.hippo-translation-country-nz {
+  background-image: url(icons/flags/flag-11x9_nz.png);
+}
+
+.hippo-translation-country-pk {
+  background-image: url(icons/flags/flag-11x9_pk.png);
+}
+
+.hippo-translation-country-pl {
+  background-image: url(icons/flags/flag-11x9_pl.png);
+}
+
+.hippo-translation-country-pt {
+  background-image: url(icons/flags/flag-11x9_pt.png);
+}
+
+.hippo-translation-country-ro {
+  background-image: url(icons/flags/flag-11x9_ro.png);
+}
+
+.hippo-translation-country-ru {
+  background-image: url(icons/flags/flag-11x9_ru.png);
+}
+
+.hippo-translation-country-sa {
+  background-image: url(icons/flags/flag-11x9_sa.png);
+}
+
+.hippo-translation-country-se {
+  background-image: url(icons/flags/flag-11x9_se.png);
+}
+
+.hippo-translation-country-sg {
+  background-image: url(icons/flags/flag-11x9_sg.png);
+}
+
+.hippo-translation-country-si {
+  background-image: url(icons/flags/flag-11x9_si.png);
+}
+
+.hippo-translation-country-sk {
+  background-image: url(icons/flags/flag-11x9_sk.png);
+}
+
+.hippo-translation-country-tr {
+  background-image: url(icons/flags/flag-11x9_tr.png);
+}
+
+.hippo-translation-country-ua {
+  background-image: url(icons/flags/flag-11x9_ua.png);
+}
+
+.hippo-translation-country-uk {
+  background-image: url(icons/flags/flag-11x9_uk.png);
+}
+
+.hippo-translation-country-us {
+  background-image: url(icons/flags/flag-11x9_us.png);
+}
+
+.hippo-translation-country-za {
+  background-image: url(icons/flags/flag-11x9_za.png);
+}

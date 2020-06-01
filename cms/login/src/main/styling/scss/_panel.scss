@@ -1,0 +1,72 @@
+// Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+.login-wrap {
+  display: flex;
+  flex-direction: column;
+  width: $login-panel-width;
+  z-index: 2;
+}
+
+.login-panel {
+  background-color: $login-panel-bg-color;
+  border-radius: $login-panel-border-radius;
+  box-shadow: 0 0 $login-panel-shadow-spread $login-panel-shadow-color;
+}
+
+.login-panel-header {
+  background: $login-panel-header-bg-color;
+  border-radius: $login-panel-border-radius $login-panel-border-radius 0 0;
+  min-height: $login-panel-header-height;
+}
+
+.login-panel-header-logo {
+  background: url('#{$images}/login/logo-br-dev.svg') no-repeat scroll center center;
+  background-size: $login-panel-width - 100;
+  height: $login-panel-header-height;
+
+  &::before {
+    background: url('#{$images}/login/logo-hi.svg') no-repeat scroll top center;
+    content: '';
+    display: flex;
+    height: 0;
+    position: relative;
+    width: 0;
+    z-index: -1;
+  }
+
+  .login-hi &::before {
+    animation: hi 2s;
+    height: 120px;
+    width: 100%;
+  }
+
+  @keyframes hi {
+    0% {
+      transform: translateX(60px);
+    }
+
+    25% {
+      transform: translateX(120px);
+    }
+
+    85% {
+      transform: translateX(120px);
+    }
+
+    100% {
+      transform: translateX(60px);
+    }
+  }
+}
