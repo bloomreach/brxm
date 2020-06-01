@@ -1,0 +1,18 @@
+definitions:
+  config:
+    /hippo:namespaces/contentbeanstest/emptycompound:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable']
+      /hipposysedit:nodetype:
+       jcr:primaryType: hippo:handle
+       jcr:mixinTypes: ['mix:referenceable']
+       /hipposysedit:nodetype:
+         jcr:primaryType: hipposysedit:nodetype
+         jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+         hipposysedit:node: true
+         hipposysedit:supertype: ['hippo:compound']
+         hipposysedit:uri: http://www.onehippo.org/contentbeanstest/nt/1.0
+      /hipposysedit:prototypes:
+       jcr:primaryType: hipposysedit:prototypeset
+       /hipposysedit:prototype:
+         jcr:primaryType: contentbeanstest:emptycompound

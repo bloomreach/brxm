@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:users/sitewriter:
+      jcr:primaryType: hipposys:user
+      hipposys:active: true
+      hipposys:passkey: jvm://
+      hipposys:password: sitewriterpass
+      hipposys:securityprovider: internal
+      hipposys:system: true
