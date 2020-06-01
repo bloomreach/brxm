@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:pages/robotstxt:
+      jcr:primaryType: hst:component
+      jcr:uuid: cfb036fe-93c4-49af-93d3-c946d7b8a9a3
+      hst:componentclassname: org.onehippo.forge.robotstxt.components.RobotstxtComponent
+      hst:template: robotstxt.ftl
