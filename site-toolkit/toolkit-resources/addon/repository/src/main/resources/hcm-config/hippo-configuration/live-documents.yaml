@@ -1,0 +1,48 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/live-documents:
+      jcr:primaryType: hipposys:domain
+      /hippo-document:
+        jcr:primaryType: hipposys:domainrule
+        /availability-live:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: hippo:availability
+          hipposys:filter: true
+          hipposys:type: String
+          hipposys:value: live
+        /exclude-attic:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /content/attic
+        /content-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /content
+        # Although hippo:availability = live should suffice, this is an extra safe guard
+        /state-not-draft:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: hippostd:state
+          hipposys:filter: true
+          hipposys:type: String
+          hipposys:value: draft
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: readonly
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.live-documents.reader
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7.hst</groupId>
+    <artifactId>client-modules</artifactId>
+    <version>14.2.2-SNAPSHOT</version>
+  </parent>
+
+  <name>Hippo Site Toolkit Client Module Page Composer</name>
+  <description>Hippo Site Toolkit Client Module Page Composer</description>
+  <groupId>org.onehippo.cms7.hst.client-modules</groupId>
+  <artifactId>hst-page-composer</artifactId>
+  <packaging>jar</packaging>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-platform</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-jcr-commons</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-commons</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+   <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-jaxrs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <!-- Apache CXF Runtime for JAX-RS Services -->
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
+    <!-- Test dependencies -->
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-easymock</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-test</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-mock</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-testutils</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-client</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <profiles>
+    <profile>
+      <id>java8</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.jooq</groupId>
+          <artifactId>joor-java-8</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>java11</id>
+      <activation>
+        <jdk>11</jdk>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.jooq</groupId>
+          <artifactId>joor</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
+  <build>
+   <testResources>
+     <testResource>
+       <directory>src/test/java</directory>
+       <includes>
+         <include>**/*</include>
+       </includes>
+       <excludes>
+         <exclude>**/*.java</exclude>
+       </excludes>
+     </testResource>
+     <testResource>
+       <directory>src/test/resources</directory>
+       <includes>
+         <include>**/*</include>
+       </includes>
+     </testResource>
+   </testResources>
+   <resources>
+     <resource>
+       <directory>src/main/resources</directory>
+       <filtering>true</filtering>
+       <includes>
+         <include>org/hippoecm/hst/pagecomposer/SpringComponentManager-pagecomposer.xml</include>
+       </includes>
+     </resource>
+     <resource>
+       <directory>src/main/resources</directory>
+       <filtering>false</filtering>
+       <includes>
+         <include>**/*</include>
+       </includes>
+       <excludes>
+         <exclude>org/hippoecm/hst/pagecomposer/SpringComponentManager-pagecomposer.xml</exclude>
+       </excludes>
+     </resource>
+   </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <repo.path>${project.build.directory}</repo.path>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+</project>

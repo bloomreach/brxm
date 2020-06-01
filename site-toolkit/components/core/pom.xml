@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7.hst</groupId>
+    <artifactId>components</artifactId>
+    <version>14.2.2-SNAPSHOT</version>
+  </parent>
+
+  <name>Hippo Site Toolkit Core Component</name>
+  <description>Hippo Site Toolkit Core Component</description>
+  <groupId>org.onehippo.cms7.hst.components</groupId>
+  <artifactId>hst-core</artifactId>
+  <packaging>jar</packaging>
+  
+  <dependencies>
+
+    <dependency>
+      <groupId>javax.servlet.jsp</groupId>
+      <artifactId>jsp-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-pool</groupId>
+      <artifactId>commons-pool</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-jexl</groupId>
+      <artifactId>commons-jexl</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+    </dependency>
+        
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-proxy</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.james</groupId>
+      <artifactId>apache-mime4j</artifactId>
+    </dependency>
+
+    <!-- Exclude commons-logging explicitly by a provided dependency. -->
+    <dependency> 
+      <groupId>commons-logging</groupId> 
+      <artifactId>commons-logging</artifactId> 
+      <scope>provided</scope> 
+    </dependency>
+
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache-web</artifactId>
+      
+    </dependency>
+    
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-connector</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-content-beans</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-commons</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-session-pool</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-resourcebundle</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-rewriter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms7-utilities</artifactId>
+    </dependency>
+
+    <!-- SSO for encryption/decryption -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms7-commons</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- repository api for cms security valve -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+<!--  HSTTWO-3542: manually (re)generate hst-addon-module-x_y.xsd locally if needed by temporarily
+                   enable the following and copy/merge the result under src/main/resources/META-INF/schema/
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jaxb2-maven-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>schemagen</id>
+            <goals>
+              <goal>schemagen</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includes>
+            <include>org/hippoecm/hst/site/addon/module/model/ModuleDefinition.java</include>
+          </includes>
+          <transformSchemas>
+            <transformSchema>
+              <uri>http://www.onehippo.org/schema/hst/hst-addon-module_1_0.xsd</uri>
+              <toFile>hst-addon-module_1_0.xsd</toFile>
+            </transformSchema>
+          </transformSchemas>
+        </configuration>
+      </plugin>
+-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <workingDirectory>${project.build.directory}</workingDirectory>
+          <systemPropertyVariables>
+            <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
+            <!-- Tests fail when repo.path is set
+            <repo.path>${project.build.directory}</repo.path>
+            -->
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>verify</id>
+            <goals>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

@@ -1,0 +1,65 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:userroles:
+      /xm.form.writer:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Allows reading and writing of delivery tier form data through role readwrite
+        hipposys:userroles: []
+      /xm.live-documents.reader:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Allows reading of live (published) documents through role readonly
+        hipposys:userroles: [xm.webfiles.reader]
+      /xm.preview-documents.reader:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Allows reading of preview (unpublished) documents through role readonly
+        hipposys:userroles: [xm.webfiles.reader]
+      /xm.channel.admin:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Allows administration of channels through role channel-admin; implies xm.channel.webmaster
+        hipposys:userroles: [xm.channel.webmaster]
+      /xm.channel.webmaster:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Allows editing and publishing channels through role channel-webmaster; implies xm.channel.viewer
+        hipposys:userroles: [xm.channel.viewer]
+      /xm.channel.viewer:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Allows viewing channels through role channel-viewer; implies xm.webfiles.reader
+        hipposys:userroles: [xm.webfiles.reader]
+      /xm.default-user.system-admin:
+        hipposys:userroles:
+          operation: add
+          value: [xm.channel.admin]
+      # xm.default-user.editor is channel web author giving them access to the preview of the channel mgr
+      /xm.default-user.editor:
+        hipposys:userroles:
+          operation: add
+          value: [xm.channel.viewer]
+      # xm.default-user.author is channel web author giving them access to the preview of the channel mgr
+      /xm.default-user.author:
+        hipposys:userroles:
+          operation: add
+          value: [xm.channel.viewer]
+      # xm.default-user.webmaster is channel webmaster allowing them to modify hst configuration
+      /xm.default-user.webmaster:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Implies all standard userroles needed for a default webmaster user or group
+        hipposys:userroles: [xm.channel.webmaster]
+    /hippo:configuration/hippo:groups:
+      /webmaster:
+        jcr:primaryType: hipposys:group
+        hipposys:members:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:userroles:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [xm.default-user.webmaster]
+        hipposys:securityprovider: internal

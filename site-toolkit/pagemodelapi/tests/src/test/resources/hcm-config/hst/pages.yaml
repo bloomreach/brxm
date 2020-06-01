@@ -1,0 +1,13 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage:
+      hst:componentclassname: org.hippoecm.hst.pagemodelapi.common.components.GenericDetailComponent
+    /hst:hst/hst:configurations/unittestproject/hst:pages:
+      jcr:primaryType: hst:pages
+      /genericdetail:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:abstractpages/basepage
+      /httpsessionpage:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.pagemodelapi.common.components.HttpSessionComponent
+        hst:referencecomponent: hst:abstractpages/basepage
