@@ -1,0 +1,80 @@
+/content/gallery/images:
+  jcr:primaryType: hippogallery:stdImageGallery
+  jcr:mixinTypes: ['mix:referenceable']
+  jcr:uuid: d9d86d75-b184-472a-9eb1-bbc3f1c0ce3e
+  hippostd:foldertype: [new-image-folder]
+  hippostd:gallerytype: ['demosite:qaimageset']
+  /screenshot_cms_small.jpg:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: 2ae887e8-bbec-44da-82b4-c3b2c55a522b
+    hippo:discriminator: []
+    /screenshot_cms_small.jpg:
+      jcr:primaryType: demosite:qaimageset
+      hippo:availability: [live, preview]
+      hippogallery:filename: screenshot-cms7.jpg
+      /hippogallery:thumbnail:
+        jcr:primaryType: hippogallery:image
+        hippo:filename: screenshot-cms7.jpg
+        hippogallery:height: 48
+        hippogallery:width: 60
+        jcr:data:
+          type: binary
+          resource: /content/gallery/images/screenshot_cms_small.jpg/screenshot_cms_small.jpg/thumbnail/thumbnail.jpg
+        jcr:lastModified: 2014-12-30T11:07:02.468+01:00
+        jcr:mimeType: image/jpeg
+      /hippogallery:original:
+        jcr:primaryType: hippogallery:image
+        hippogallery:height: 244
+        hippogallery:width: 300
+        jcr:data:
+          type: binary
+          resource: /content/gallery/images/screenshot_cms_small.jpg/screenshot_cms_small.jpg/original/original.jpg
+        jcr:lastModified: 2014-12-30T11:07:02.468+01:00
+        jcr:mimeType: image/jpeg
+      /demosite:largethumbnail:
+        jcr:primaryType: hippogallery:image
+        hippogallery:height: 244
+        hippogallery:width: 300
+        jcr:data:
+          type: binary
+          resource: /content/gallery/images/screenshot_cms_small.jpg/screenshot_cms_small.jpg/largethumbnail/largethumbnail.jpg
+        jcr:lastModified: 2014-12-30T11:07:02.468+01:00
+        jcr:mimeType: image/jpeg
+  /nopic.gif:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: 07464293-3c92-4ebe-8f01-89bd3e92a0bf
+    hippo:discriminator: []
+    /nopic.gif:
+      jcr:primaryType: demosite:qaimageset
+      hippo:availability: [live, preview]
+      hippogallery:filename: nopic.gif
+      /hippogallery:thumbnail:
+        jcr:primaryType: hippogallery:image
+        hippo:filename: nopic.gif
+        hippogallery:height: 50
+        hippogallery:width: 60
+        jcr:data:
+          type: binary
+          resource: /content/gallery/images/nopic.gif/nopic.gif/thumbnail/thumbnail.gif
+        jcr:lastModified: 2014-12-30T11:07:26.170+01:00
+        jcr:mimeType: image/gif
+      /hippogallery:original:
+        jcr:primaryType: hippogallery:image
+        hippogallery:height: 100
+        hippogallery:width: 120
+        jcr:data:
+          type: binary
+          resource: /content/gallery/images/nopic.gif/nopic.gif/original/original.gif
+        jcr:lastModified: 2014-12-30T11:07:26.170+01:00
+        jcr:mimeType: image/gif
+      /demosite:largethumbnail:
+        jcr:primaryType: hippogallery:image
+        hippogallery:height: 100
+        hippogallery:width: 120
+        jcr:data:
+          type: binary
+          resource: /content/gallery/images/nopic.gif/nopic.gif/largethumbnail/largethumbnail.gif
+        jcr:lastModified: 2014-12-30T11:07:26.170+01:00
+        jcr:mimeType: image/gif

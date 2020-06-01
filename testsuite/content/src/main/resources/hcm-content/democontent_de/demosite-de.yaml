@@ -1,0 +1,7 @@
+/content/documents/demosite_de:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+  jcr:uuid: ad48b4c0-c6b9-4b2a-8cbe-5cf993482ffd
+  hippostd:foldertype: [new-translated-folder-demosite, new-document-demosite]
+  hippotranslation:id: f80dd670-f207-47b5-95e0-75f1c0123752
+  hippotranslation:locale: de

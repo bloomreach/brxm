@@ -1,0 +1,69 @@
+/content/documents/demosite_fr/general:
+  jcr:primaryType: hippostd:directory
+  jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+  jcr:uuid: 814ab0cb-1f2b-41a5-ac1e-bba20cdbeffd
+  hippostd:foldertype: [new-translated-folder-demosite, new-document-demosite]
+  hippotranslation:id: demosite-common-folder-id
+  hippotranslation:locale: fr
+  /a-propos:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: 82844a0f-b813-4d95-bb39-e89baad54f3f
+    hippo:name: À propos
+    /a-propos:
+      jcr:primaryType: demosite:textdocument
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: 145394a9-d3a6-4872-83c2-23e3be9cb7bb
+      demosite:summary: Who we are. We are part of the French site
+      demosite:title: À propos
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+      hippostdpubwf:lastModificationDate: 2010-06-25T12:58:16.638+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2010-06-25T13:03:22.225+02:00
+      hippotranslation:id: demosite-common-folder-about-us-id
+      hippotranslation:locale: fr
+      /demosite:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          Nous sommes sur un site français d'Hippone! Venez nous rendre visite au <a
+                                  href="http://www.onehippo.com" target="_blank" title="Hippo
+                                  website">www.onehippo.com</a>!
+  /accueil:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: 5fcb8231-2afb-403a-aa5c-881179fc74cb
+    hippo:name: Accueil
+    /accueil:
+      jcr:primaryType: demosite:textdocument
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: ef11cf93-6a9c-4e3f-96e3-57aa16b01c98
+      demosite:summary: Ceci est la page d'accueil du site TVH généré français.
+      demosite:title: Page d'accueil française
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+      hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2010-06-25T13:04:58.702+02:00
+      hippotranslation:id: demosite-common-folder-home-page-id
+      hippotranslation:locale: fr
+      /demosite:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: "<html>\n          <body>\n          \n          <p>Vous\
+          \ êtes à la sous-site de démonstration. Voici un <strong>lien interne entre\
+          \ domaines</strong> à l'\n          <strong><a href=\"about-us\">Qui sommes-nous\
+          \ en anglais page</a></strong>...</p>\n          <p>\n          ps ne me\
+          \ dérange pas mon français, je faisais de mon mieux\n          </p>\n  \
+          \        </body>\n          </html>"
+        /about-us:
+          jcr:primaryType: hippo:facetselect
+          hippo:docbase: c30cab27-5317-44f0-a9eb-977f87e0d904
+          hippo:facets: []
+          hippo:modes: []
+          hippo:values: []

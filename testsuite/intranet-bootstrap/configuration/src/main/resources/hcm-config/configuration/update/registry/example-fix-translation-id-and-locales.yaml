@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:update/hippo:registry/Example Fix Translation ID And Locales:
+      jcr:primaryType: hipposys:updaterinfo
+      hipposys:batchsize: 10
+      hipposys:description: Fix translation locale and translation ID based on the
+        base English content for each localized folder/document.
+      hipposys:dryrun: false
+      hipposys:parameters: "{\r\n  \"translationLocales\": [\r\n    \"de\", \"fr\"\
+        , \"it\", \"nl\"\r\n  ]\r\n}"
+      hipposys:query: /jcr:root/content/documents/demosite//element(*,hippotranslation:translated)
+      hipposys:script:
+        type: string
+        resource: example-fix-translation-id-and-locales.groovy
+      hipposys:throttle: 1000
