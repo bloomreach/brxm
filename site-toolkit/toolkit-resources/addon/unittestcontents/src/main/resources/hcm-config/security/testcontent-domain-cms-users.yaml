@@ -1,0 +1,19 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/content:
+      /unittestcontent-domain:
+        jcr:primaryType: hipposys:domainrule
+        /unittestcontent-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /unittestcontent
+      /extracontent-domain:
+        jcr:primaryType: hipposys:domainrule
+        /extracontent-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /extracontent

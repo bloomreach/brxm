@@ -1,0 +1,36 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestproject/hst:sitemapitemhandlers:
+      jcr:primaryType: hst:sitemapitemhandlers
+      /noophandler:
+        jcr:primaryType: hst:sitemapitemhandler
+        hst:sitemapitemhandlerclassname: org.hippoecm.hst.test.sitemapitemhandler.NoopHandlerItem
+        unittestproject:redirectto: ${redirectto}
+        unittestproject:someboolean: true
+        unittestproject:somebooleans: [true, false]
+        unittestproject:somedate: 2010-01-22T12:34:11.055+02:00
+        unittestproject:somedates: [!!timestamp '2010-01-22T12:34:11.055+02:00', !!timestamp '2010-02-22T12:34:11.055+02:00']
+        unittestproject:somedouble: 10.1
+        unittestproject:somedoubles: [10.1, 11.1]
+        unittestproject:somelong: 10
+        unittestproject:somelongs: [10, 11]
+        unittestproject:somestring: ${myparam}
+        unittestproject:somestrings: [val1, val2, '${1}']
+      /examplehandler1:
+        jcr:primaryType: hst:sitemapitemhandler
+        hst:sitemapitemhandlerclassname: org.hippoecm.hst.test.sitemapitemhandler.NoopExampleHandlerItem1
+        unittestproject:wildcard1: ${1}
+        unittestproject:wildcard2: ${2}
+      /examplehandler2:
+        jcr:primaryType: hst:sitemapitemhandler
+        hst:sitemapitemhandlerclassname: org.hippoecm.hst.test.sitemapitemhandler.NoopExampleHandlerItem2
+        unittestproject:wildcard1: ${1}
+        unittestproject:wildcard2: ${2}
+      /sitemapitem_redirecthandler:
+        jcr:primaryType: hst:sitemapitemhandler
+        hst:sitemapitemhandlerclassname: org.hippoecm.hst.test.sitemapitemhandler.SiteMapItemRedirectHandler
+        unittestproject:redirecttopath: ${redirectto}
+      /browser_redirecthandler:
+        jcr:primaryType: hst:sitemapitemhandler
+        hst:sitemapitemhandlerclassname: org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandlerItem
+        unittestproject:redirectto: ${redirectto}
