@@ -1,0 +1,29 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/selection:DynamicDropdown:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Dynamisches Dropdown
+    /hippo:configuration/hippo:translations/hippo:types/selection:listitem:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        selection:label: Wert
+        selection:key: Schlüssel
+        jcr:name: List Element
+    /hippo:configuration/hippo:translations/hippo:types/selection:StaticDropdown:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Statisches Dropdown
+    /hippo:configuration/hippo:translations/hippo:types/selection:RadioGroup:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Radio group
+    /hippo:configuration/hippo:translations/hippo:types/selection:valuelist:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Werte Liste
+        selection:listitem: Werte
+    /hippo:configuration/hippo:translations/hippo:types/selection:BooleanRadioGroup:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Optionsgruppe ja/nein

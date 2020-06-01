@@ -1,0 +1,20 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        required#Date: Insertar una fecha
+        required#hippo-resource: Actualizar un recurso
+        non-empty: Introducir un valor
+        required: Insertar un valor
+        escaped: 'No utilizar estos caracteres: < > & '' "'
+        required#String: Insertar texto
+        resource-required: Cargar un archivo
+        summaryMultiple: Este documento contiene ${numberOfErrors} errores
+        non-empty-html: Insertar texto
+        required#OpenUiString: Insertar un valor
+        html: Introducir un valor
+        summarySingle: Este documento contiene 1 error
+        required#hippo-mirror: Seleccionar un enlace
+        email: Introducir una dirección de email válida
+        required#hippostd-html: Insertar texto

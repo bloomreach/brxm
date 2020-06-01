@@ -1,0 +1,21 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:workflows/publication" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:workflows/request" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:workflows/document" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:workflows/miscellaneous" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

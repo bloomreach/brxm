@@ -1,0 +1,29 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "history-user" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "history-time" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "history-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "history-version" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "history-name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "history-state" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

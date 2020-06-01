@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:html:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Éditeur de texte riche

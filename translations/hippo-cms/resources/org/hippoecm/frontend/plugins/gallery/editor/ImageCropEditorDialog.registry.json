@@ -1,0 +1,29 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "edit-image-dialog-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "preview-description-disabled" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "fit-view" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "thumbnail-size" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "preview-description-enabled" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "preview-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

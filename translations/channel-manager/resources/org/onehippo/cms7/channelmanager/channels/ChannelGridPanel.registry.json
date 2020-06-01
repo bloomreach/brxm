@@ -1,0 +1,69 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "tooltip.name.prefix" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "locked-date-format" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "menu.columns" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group.channel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "action.grouping" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "group.channels" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "action.preview" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "zero.channels" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "menu.sort.descending" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "menu.sort.ascending" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "tooltip.preview" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "tooltip.live" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "action.add.channel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "menu.group.by" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "menu.show.groups" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:types.poll:option/poll:value" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.poll:option/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.poll:option/poll:label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.poll:poll/poll:introduction" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.poll:poll/poll:options" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.poll:poll/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.poll:poll/poll:text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.poll:polldocument/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.poll:polldocument/poll:poll" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

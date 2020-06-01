@@ -1,0 +1,29 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "discard-invalid" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "discard" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "save" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "invalid" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "close-document" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

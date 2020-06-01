@@ -1,0 +1,17 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:types.hippotaxonomy:taxonomy/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippotaxonomy:canonised/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippotaxonomy:classifiable/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
