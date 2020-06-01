@@ -1,0 +1,33 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-pickers/assets:
+      jcr:primaryType: frontend:plugincluster
+      frontend:properties: [root.paths]
+      frontend:services: [wicket.id, wicket.model, model.folder]
+      root.paths: [/content/assets]
+      /navigator:
+        jcr:primaryType: frontend:plugin
+        browser.id: ${cluster.id}.browser
+        browser.viewers: cms-folder-views
+        extension.list: service.dialog.list
+        model.default.path: /content/assets
+        model.document: ${wicket.model}
+        plugin.class: org.hippoecm.frontend.plugins.cms.browse.Navigator
+        search.viewers: cms-search-views
+        section.assets: service.dialog.tree.assets
+        sections: section.assets
+        wicket.variant: picker
+        /browser.options:
+          jcr:primaryType: frontend:pluginconfig
+          list.page.size: '10'
+          list.view.size: '8'
+      /assetsTreeLoader:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-tree-views/assets
+        plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
+        /cluster.config:
+          jcr:primaryType: frontend:pluginconfig
+          bind.to.layout.unit: false
+          use.width.from.classname: hippo-picker-tree
+          wicket.id: service.dialog.tree.assets
+          workflow.enabled: false
