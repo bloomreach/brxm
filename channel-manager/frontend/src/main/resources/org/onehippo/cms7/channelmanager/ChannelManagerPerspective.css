@@ -1,0 +1,765 @@
+/*
+ * Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* Channel manager specific font */
+.channel-manager .x-toolbar button,
+.channel-manager .x-toolbar input {
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 14px !important;
+}
+
+#hippo-channelmanager-breadcrumb button,
+.channel-manager .channel-name {
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 14px !important;
+}
+
+/* toolbar */
+.x-panel .x-panel-tbar .channel-manager-toolbar.x-toolbar {
+  background: #f5f5f5 none;
+  padding: 0 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, .12);
+}
+
+#hippo-channelmanager-breadcrumb.x-toolbar {
+  background: transparent;
+  border-bottom: none;
+}
+
+/* do not gray out 'disabled' breadcrumb items */
+#hippo-channelmanager-breadcrumb.x-toolbar .x-item-disabled {
+  opacity: 1;
+}
+
+#hippo-channelmanager-breadcrumb.x-toolbar .x-item-disabled * {
+  color: #333333 !important;
+}
+
+/* highlight the breadcrumb when it becomes active */
+#hippo-channelmanager-breadcrumb.x-toolbar.hippo-breadcrumb-active {
+  background: #f7f7f7;
+}
+
+.channel-manager .channel-manager-toolbar.x-toolbar {
+  height: 52px;
+  line-height: 52px;
+}
+
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {
+  height: 51px;
+  margin: 0 4px;
+}
+
+.channel-manager .x-btn:not(.btn) .x-btn-text:hover {
+  color: #147AC8;
+}
+
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text-icon .x-btn-text {
+  height: 18px;
+  margin: 0;
+  padding-left: 26px;
+}
+
+.channel-manager .channel-manager-toolbar.x-toolbar .br-toolbar-label {
+  font-size: 20px;
+  padding-left: 0;
+}
+
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tl,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tr,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tc,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-ml,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-mr,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-mc,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-bl,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-br,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-bc {
+  background-position: 500px 500px;
+}
+
+.channel-manager .channel-manager-toolbar .x-btn-mc {
+  border: none;
+  background: none;
+  text-align: left;
+}
+
+.channel-manager .channel-manager-toolbar .toolbarMenuIcon .x-btn-mc {
+  background: none;
+  border: 0;
+}
+
+/* breadcrumb */
+#hippo-channelmanager-breadcrumb {
+  -webkit-flex: 0 0 auto;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  padding: 0;
+}
+
+#hippo-channelmanager-breadcrumb .x-toolbar-left {
+  width: auto;
+}
+
+#hippo-channelmanager-breadcrumb .x-btn-text {
+  height: 40px;
+  margin: 0 5px;
+  padding-left: 25px;
+  background: url('breadcrumb-arrow.svg') no-repeat left center transparent;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12px;
+}
+
+#hippo-channelmanager-breadcrumb .x-toolbar-left {
+  padding: 0 10px;
+  width: auto;
+}
+
+#hippo-channelmanager-breadcrumb .x-toolbar-left .x-toolbar-cell:first-child .x-btn-text {
+  background: none;
+  padding-left: 0;
+  margin-left: 2px;
+}
+
+#hippo-channelmanager-breadcrumb .x-btn-over .x-btn-mc {
+  background-image: none;
+}
+
+#hippo-channelmanager-breadcrumb .x-btn-over .x-btn-text {
+  color: #147AC8;
+}
+
+.channel-manager .x-toolbar .breadcrumb-item {
+  opacity: 1;
+}
+
+.channel-manager .x-toolbar .breadcrumb-item .x-btn-text {
+  font-weight: bold;
+  padding-left: 8px;
+  color: #39434c;
+}
+
+.channel-manager .x-toolbar .breadcrumb-item.x-btn-over td {
+  background-image: none;
+}
+
+.channel-manager .x-toolbar .breadcrumb-item.x-btn-over button {
+  color: #39434c;
+  text-decoration: underline;
+}
+
+/* channel properties window */
+.channel-manager .hide-channel-properties {
+  display: none
+}
+
+.channel-manager .channel-properties {
+  position: relative;
+  padding: 8px;
+}
+
+.channel-manager .channel-properties th,
+.channel-manager .channel-properties td {
+  /* Fix text cutoff in IE10 */
+  line-height: 1.3;
+}
+
+.channel-manager .channel-properties th {
+  font-weight: bold;
+
+}
+.channel-manager .channel-properties td {
+  vertical-align: middle;
+  border: 0;
+}
+
+.channel-manager .channel-properties .help {
+  padding: 0 0 10px 11px;
+  vertical-align: middle;
+}
+
+.channel-manager .channel-properties .help-icon {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 4px;
+}
+
+.channel-manager .channel-properties .help-icon > a {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url('info-circle-s.svg') no-repeat center;
+  position: relative;
+}
+
+.channel-manager .channel-properties .help-icon > a span {
+  display: none;
+}
+
+.channel-manager .channel-properties .help-icon > a:hover span {
+  display: block;
+  position: absolute;
+  top: 2em;
+  right: 0;
+  white-space: pre;
+  border: 1px solid #b8bcbf;
+  background-color: #ffffff;
+  color: #000000;
+  padding: 4px;
+  z-index: 10000;
+}
+
+.channel-manager .channel-properties input {
+  width: 180px;
+}
+
+.channel-manager .channel-properties select {
+  width: 186px;
+  max-width: 186px;
+}
+
+.channel-properties-value {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+      flex-direction: row;
+  -webkit-flex-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+      justify-content: flex-end;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+      align-items: center;
+}
+
+.channel-manager .channel-properties .channel-preview-name {
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+      flex: 1 1 auto;
+  display: block;
+  max-width: 123px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.channel-manager .channel-properties .channel-preview-image-wrapper {
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+      flex: 1 1 auto;
+  display: block;
+  max-width: 123px;
+}
+
+.channel-manager .channel-properties img {
+  display: block;
+}
+
+.channel-manager .channel-properties .channel-remove-button {
+  display: inline-block;
+  margin: 0 4px;
+  width: 10px;
+  height: 10px;
+  background: url(icon-close-gray-small.png) no-repeat center;
+}
+
+.channel-manager .channel-properties .channel-remove-button:hover {
+  background: url(icon-close-red-small.png) no-repeat center;
+}
+
+.channel-manager .channel-properties-window .x-window-body {
+  overflow: auto;
+  background: #ffffff;
+}
+
+.channel-manager .x-window-footer {
+  padding-right: 0;
+}
+
+.channel-manager .x-window-footer .x-toolbar-cell {
+  padding-right: 0;
+}
+
+.channel-manager .x-btn-small .add-channel {
+  background-image: url("plus.svg");
+}
+
+.channel-manager .x-btn.x-item-disabled .add-channel {
+  background-image: url("plus-gray.svg");
+}
+
+.channel-manager .x-window .x-window-ml,
+.channel-manager .x-window .x-window-mr {
+  padding: 0;
+}
+
+.channel-manager .x-grid3-cell-inner a {
+  color: #147AC8;
+}
+
+.channel-manager .x-grid3-cell-inner a:hover {
+  text-decoration: underline;
+}
+
+.channel-manager .x-grid3-col-url {
+  position: relative;
+}
+
+.channel-manager .x-grid3-col-url a.show-live {
+  display: inline;
+}
+
+.channel-manager .x-grid3-col-url a.show-preview {
+  display: inline;
+  padding: 0 0 0 8px;
+  position: absolute;
+  right: 4px;
+}
+
+#componentPropertiesWindow .x-window-body {
+  background-color: #ffffff;
+}
+
+#componentPropertiesWindow .field-group-title {
+  display: block;
+  font-weight: bold;
+  margin: 20px 0 5px;
+  padding-top: 20px;
+  border-top: 1px solid #d4d6d8;
+}
+
+#componentPropertiesWindow .field-group-title:first-child {
+  margin: 0 0 5px;
+  padding-top: 0;
+  border: none;
+}
+
+#componentPropertiesWindow .x-panel-footer {
+  font-size: 13px;
+  padding: 0 12px 16px 12px;
+}
+
+#componentPropertiesWindow .x-panel-footer .x-toolbar-cell {
+  padding: 0 4px;
+}
+
+#createDocumentForm .x-panel-body {
+  padding: 16px;
+}
+
+.channel-manager .channel-group-handle {
+  cursor: pointer;
+  font-size: 12px;
+  height: 16px;
+  line-height: 17px;
+  margin: 0;
+  padding: 16px 0 16px 64px;
+}
+
+.channel-manager .channel-group-handle.expanded {
+  background: url(channels/chevron-down.svg) no-repeat 16px center;
+}
+
+.channel-manager .channel-group-handle.collapsed {
+  background: url(channels/chevron-right.svg) no-repeat 16px center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.channel-manager ul.channel-group {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  padding-left: 64px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.channel-manager ul.channel-group:last-child {
+  border-bottom-width: 0;
+}
+
+.channel-manager ul.channel-group li {
+  border-radius: 4px;
+  cursor: pointer;
+  display: block;
+  flex: 0 0 200px;
+  margin-bottom: 12px;
+  margin-right: 16px;
+  overflow: hidden;
+  padding: 8px 0 4px 0;
+  text-align: center;
+}
+
+.channel-manager ul.channel-group li:hover {
+  background-color: #f5f5f5;
+}
+
+.channel-manager ul.channel-group li.x-view-selected {
+  background-color: rgba(100, 100, 100, .15);
+  border-radius: 8px;
+  border-top: 1px solid rgba(0, 0, 0, .15);
+}
+
+.channel-manager .channel .channel-footer {
+  display: flex;
+  justify-content: center;
+  padding: 0 8px;
+}
+
+.channel-manager .channel .channel-region-name-wrapper {
+  display: flex;
+}
+
+.channel-manager .channel .channel-icon-stack {
+  position: relative;
+  display: inline-block;
+}
+
+.channel-manager .channel .channel-type-icon {
+  height: 40px;
+  max-height: 40px;
+}
+
+.channel-manager .channel .channel-modified-icon {
+  background: url(channels/channel-modified.svg) no-repeat;
+  background-size: contain;
+  height: 16px;
+  margin-right: 4px;
+  min-width: 16px;
+}
+
+.channel-manager .channel .channel-region-icon {
+  height: 16px;
+  padding-top: 1px;
+}
+
+.channel-manager .channel .channel-name {
+  line-height: 18px;
+  overflow: hidden;
+  padding-left: 4px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.channel-manager .channel .lockedBy {
+  font-size: 10px;
+  color: #9ba0a5;
+}
+
+/* channel icon panel overview switch buttons */
+.channel-manager-toolbar .x-toolbar-right .x-btn-noicon .x-btn-text {
+  padding-top: 3px;
+  line-height: 34px;
+  border-bottom: 3px solid transparent;
+}
+
+.channel-manager-toolbar .x-toolbar-right .x-btn-pressed.x-btn-noicon .x-btn-text {
+  color: #147AC8;
+  border-bottom: 3px solid #147AC8;
+}
+
+.channel-manager-toolbar .x-toolbar-right .xtb-spacer {
+  width: 16px;
+}
+
+.channel-manager .x-btn-small .icon-view {
+  padding-top: 3px;
+  background-image: url("channels/icon-view.svg");
+  border-bottom: 3px solid transparent;
+}
+
+.channel-manager .x-btn-pressed .x-btn-small .icon-view,
+.channel-manager .x-btn-small .icon-view:hover {
+  background-image: url("channels/icon-view-active.svg");
+}
+
+.channel-manager .x-btn-pressed .x-btn-small .icon-view {
+  border-bottom: 3px solid #147AC8;
+}
+
+.channel-manager .x-btn-small .list-view {
+  padding-top: 3px;
+  background-image: url("channels/list-view.svg");
+  border-bottom: 3px solid transparent;
+}
+
+.channel-manager .x-btn-pressed .x-btn-small .list-view,
+.channel-manager .x-btn-small .list-view:hover {
+  background-image: url("channels/list-view-active.svg");
+}
+
+.channel-manager .x-btn-pressed .x-btn-small .list-view {
+  border-bottom: 3px solid #147AC8;
+}
+
+.channel-manager-toolbar .x-btn-tl,
+.channel-manager-toolbar .x-btn-tc,
+.channel-manager-toolbar .x-btn-tr,
+.channel-manager-toolbar .x-btn-ml,
+.channel-manager-toolbar .x-btn-mr,
+.channel-manager-toolbar .x-btn-bl,
+.channel-manager-toolbar .x-btn-bc,
+.channel-manager-toolbar .x-btn-br,
+#hippo-channelmanager-breadcrumb .x-btn-tl,
+#hippo-channelmanager-breadcrumb .x-btn-tc,
+#hippo-channelmanager-breadcrumb .x-btn-tr,
+#hippo-channelmanager-breadcrumb .x-btn-ml,
+#hippo-channelmanager-breadcrumb .x-btn-mr,
+#hippo-channelmanager-breadcrumb .x-btn-bl,
+#hippo-channelmanager-breadcrumb .x-btn-bc,
+#hippo-channelmanager-breadcrumb .x-btn-br {
+  display: none;
+}
+
+.channel-manager-toolbar .x-btn-mc {
+  background: none;
+  border: none;
+}
+
+.channel-manager-toolbar .x-toolbar-right .x-btn-mc .icon-view {
+  width: 26px;
+}
+
+.channel-manager-toolbar .x-toolbar-right .x-btn-mc .list-view {
+  width: 24px;
+}
+
+#channelIconPanel .x-toolbar {
+  padding-left: 5px;
+}
+
+#channelOverview .x-toolbar .x-toolbar-right {
+  padding-bottom: 1px;
+}
+
+.x-combo-list-item {
+  text-align: left;
+}
+
+#channel-grid-panel {
+  overflow: auto;
+}
+
+.br-grid .x-grid3-header {
+  background-color: transparent;
+  background-image: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 0;
+}
+
+.br-grid .x-grid3-header .x-grid3-hd-btn {
+  background-color: transparent;
+  background-image: url(caret-down.svg);
+}
+
+.br-grid .x-grid3-header .x-grid3-hd-btn:hover {
+  background-position: left center;
+}
+
+.br-grid .x-grid3-header .x-grid3-hd-inner {
+  box-sizing: border-box;
+  height: 40px;
+}
+
+.br-grid .x-grid3-body .x-grid3-cell-inner {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  height: 48px;
+}
+
+.br-grid .x-grid3-cell-first {
+  padding-left: 24px;
+  padding-right: 0;
+}
+
+/* Dialogs have a padding of 16px instead of 24px */
+#blueprints-panel .x-grid3-cell-first {
+  padding-left: 16px;
+}
+
+.br-grid .x-grid3-cell-first .x-grid3-hd-inner,
+.br-grid .x-grid3-cell-first .x-grid3-cell-inner {
+  padding-left: 0;
+}
+
+.br-grid .x-grid3-header-offset {
+  padding-left: 0;
+}
+
+.br-grid .x-grid3-hd-row td,
+.br-grid .x-grid3-row td {
+  border: 0;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.br-grid .x-grid3-hd-row td {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+}
+
+.br-grid .x-grid3-hd-row td:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+.br-grid .x-grid3-hd-row td .x-grid3-hd-inner {
+  background-color: initial;
+  background-image: none;
+  display: flex;
+  align-items: center;
+}
+
+.br-grid .x-grid3-sort-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.br-grid .x-grid3-hd-row td.sort-desc,
+.br-grid .x-grid3-hd-row td.sort-asc {
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.br-grid .sort-desc .x-grid3-sort-icon {
+  background-image: url(arrow-down.svg);
+}
+
+.br-grid .sort-asc .x-grid3-sort-icon {
+  background-image: url(arrow-up.svg);
+}
+
+.br-grid .x-grid3-row:first-child {
+  border-color: transparent;
+}
+
+.br-grid .x-grid3-row {
+  height: 48px;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-top: 1px solid #e8e8ea;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.br-grid .x-grid3-row:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.br-grid .x-grid3-row,
+.br-grid .x-grid3-row-alt {
+  background-color: #fff;
+}
+
+.br-grid .x-grid3-row-selected {
+  background-color: rgba(20, 122, 200, 0.1) !important;
+}
+
+.br-grid .x-grid3-row-selected td {
+  font-weight: 600;
+}
+
+.component-properties-editor > .x-panel-bwrap > .x-panel-body,
+.component-properties-editor > .x-panel-bwrap > .x-panel-body > .x-box-inner {
+  overflow-y: auto;
+}
+
+.componentPropertiesForm form {
+  overflow-x: hidden !important;
+}
+
+.br-delete-variant-btn {
+  margin-top: 2px;
+}
+
+.componentPropertiesForm .x-item-disabled .x-form-trigger-over {
+  background-position: 50% 50% !important;
+}
+
+.ext-gecko .x-window-body .componentPropertiesForm .x-form-item {
+  overflow: hidden;
+}
+
+.ext-gecko .x-window-body .componentPropertiesForm .x-form-item .x-form-element {
+  padding-left: 0;
+}
+
+.br-window .br-form .br-combo .x-form-field-wrap {
+  width: 100% !important;
+}
+
+.br-window .br-form .br-combo input:not([type="checkbox"]):not([type="radio"]) {
+  width: calc(100% - 36px) !important;
+}
+
+#componentPropertiesWindow.br-window .field-group-title {
+  border-top: 1px solid rgba(0, 0, 0, .12);
+  font-weight: 600;
+  margin: 8px 0 4px;
+  padding-top: 8px;
+}
+
+#componentPropertiesWindow.br-window .field-group-title:first-child {
+  margin: 0 0 4px;
+}
+
+.blueprint-display-field {
+  padding-left: 0 !important;
+}
+
+.blueprint-display-field .x-form-display-field {
+  padding-top: 0;
+}
+
+/*
+ * The channel editor masks the surrounding CMS elements when the Angular app shows a modal. The added mask divs are
+ * styled and animated the same way as the mask created by Angular Material so all masks together look like a whole.
+ */
+@keyframes showMask {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.48;
+  }
+}
+
+@keyframes hideMask {
+  0% {
+    opacity: 0.48;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.channel-editor-mask {
+  background-color: #212121;
+  opacity: .48;
+  animation: showMask 450ms;
+  position: absolute;
+}
+
+.channel-editor-mask-removing {
+  animation: hideMask 400ms;
+}
