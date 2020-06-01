@@ -1,0 +1,20 @@
+FROM ${project.groupId}/${project.artifactId}:${project.version}
+
+LABEL PROJECT=${project.artifactId}:dev-${project.version}
+
+# Arguments used in setup-devuser.sh script file
+ARG devusername=${docker.brxm.container.dev.username}
+ARG devuid=${docker.brxm.container.dev.uid}
+ARG devgid=${docker.brxm.container.dev.gid}
+
+USER root
+
+RUN chmod +x /brxm/bin/common/setup-devuser.sh
+RUN /brxm/bin/common/setup-devuser.sh
+
+USER ${docker.brxm.container.dev.uid}
+
+COPY --chown=${docker.brxm.container.dev.uid}:${docker.brxm.container.dev.gid} maven/conf /usr/local/tomcat/conf/
+COPY --chown=${docker.brxm.container.dev.uid}:${docker.brxm.container.dev.gid} maven/webapps /usr/local/tomcat/webapps/
+COPY --chown=${docker.brxm.container.dev.uid}:${docker.brxm.container.dev.gid} maven/autoreload /usr/local/tomcat/shared/lib
+${docker.brxm.copy.dev.libs.cmd}COPY --chown=${docker.brxm.container.dev.uid}:${docker.brxm.container.dev.gid} maven/shared /usr/local/tomcat/shared/
