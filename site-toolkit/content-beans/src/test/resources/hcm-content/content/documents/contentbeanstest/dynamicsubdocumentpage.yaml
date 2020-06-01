@@ -1,0 +1,36 @@
+/content/documents/contentbeanstest/content/dynamicsubdocumentpage:
+  jcr:primaryType: hippo:handle
+  jcr:mixinTypes: ['hippo:named', 'hippo:versionInfo', 'mix:referenceable']
+  jcr:uuid: 49d73c0c-ffee-4f9a-9b0f-5fd0b06585d7
+  hippo:name: dynamicsubdocumentpage
+  hippo:versionHistory: 7c6a96dd-27ca-4401-971c-b8558e60a4e2
+  /dynamicsubdocumentpage:
+    jcr:primaryType: contentbeanstest:dynamicsubdocument
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: 51444819-ccca-4901-9bdf-62cbdb8eb5a6
+    hippo:availability: []
+    hippostd:state: draft
+    hippostdpubwf:createdBy: admin
+    hippostdpubwf:creationDate: 2019-04-08T10:21:47.784+02:00
+    hippostdpubwf:lastModificationDate: 2019-04-08T10:22:49.410+02:00
+    hippostdpubwf:lastModifiedBy: admin
+    hippotranslation:id: e3098d2f-a9f7-4018-bce8-f0eee9f552fd
+    hippotranslation:locale: en
+    contentbeanstest:title: ''
+    /contentbeanstest:subrichtexteditor:
+      jcr:primaryType: hippostd:html
+      hippostd:content: richTextEditorInSubdocument
+    /contentbeanstest:dynamiccompoundmultiple:
+      jcr:primaryType: contentbeanstest:dynamiccompound
+      contentbeanstest:begindate: 0001-01-01T13:00:00+01:00
+      contentbeanstest:street: ''
+      /contentbeanstest:dynamicinnercompound:
+        jcr:primaryType: contentbeanstest:dynamicinnercompound
+        contentbeanstest:link: http://twitter.com
+      /contentbeanstest:richTextEditorCompoundType:
+        jcr:primaryType: hippostd:html
+        hippostd:content: 'multipleListContent'
+    /contentbeanstest:dynamicsubcompound:
+      jcr:primaryType: contentbeanstest:dynamicsubcompound
+      contentbeanstest:stringTypeField2: 'subcompoundvalue'
+        

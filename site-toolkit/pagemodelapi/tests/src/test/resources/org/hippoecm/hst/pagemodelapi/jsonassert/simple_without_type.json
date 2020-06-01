@@ -1,0 +1,19 @@
+{
+  "brand":"ferrari",
+  "owner":{
+    "name":"john"
+  },
+  "colors":[
+    "blue",
+    "red"
+  ],
+  "previousOwners":[
+    {
+      "name":"Mark"
+    },
+    {
+      "name":"Peter"
+    }
+  ],
+  "origin":"Italy"
+}

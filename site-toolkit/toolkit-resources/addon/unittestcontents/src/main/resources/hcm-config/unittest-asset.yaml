@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /unittestcontent/assets/folder:
+      jcr:primaryType: hippogallery:stdAssetGallery
+      jcr:mixinTypes: ['mix:versionable']
+      jcr:uuid: a91da3c3-7953-4135-9517-2a886658d563
+      hippostd:foldertype: [new-file-folder]
+      hippostd:gallerytype: ['hippogallery:exampleAssetSet']
+      /testdata.pdf:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        jcr:uuid: 5e56d406-b302-445e-9f80-e624ba053bc4
+        hippo:name: Test Data PDF
+        /testdata.pdf:
+          jcr:primaryType: hippogallery:exampleAssetSet
+          hippo:availability: [live, preview]
+          /hippogallery:asset:
+            jcr:primaryType: hippo:resource
+            jcr:data:
+              type: binary
+              resource: /unittestcontent/assets/unittest.pdf/unittest.pdf
+            jcr:lastModified: 2020-02-07T09:55:46.713+01:00
+            jcr:mimeType: application/pdf
+
