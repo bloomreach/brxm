@@ -1,0 +1,233 @@
+// Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Color palettes
+// Blue palette
+$blue-50: #cfe7fc;
+$blue-100: #94c9f7;
+$blue-200: #5faff5;
+$blue-300: #3399f2;
+$blue-400: #1785e6;
+$blue-500: #0877d1;
+$blue-600: #0465ba;
+$blue-700: #0259a6;
+$blue-800: #024e96;
+$blue-900: #004280;
+$blue-a100: #99cfff;
+$blue-a200: #4da0ff;
+$blue-a400: #267dff;
+$blue-a700: #0357ff;
+
+// Orange palette
+$orange-50: #fce1cf;
+$orange-100: #f7ba94;
+$orange-200: #f59356;
+$orange-300: #f58133;
+$orange-400: #f26f18;
+$orange-500: #e35c09;
+$orange-600: #d15102;
+$orange-700: #bd4a02;
+$orange-800: #a84202;
+$orange-900: #963c00;
+$orange-a100: #ffc099;
+$orange-a200: #ff9659;
+$orange-a400: #ff751a;
+$orange-a700: #ff5203;
+
+// Red palette
+$red-50: #fccfcf;
+$red-100: #fc8c8c;
+$red-200: #fa5151;
+$red-300: #f22a2a;
+$red-400: #e61717;
+$red-500: #d40d0d;
+$red-600: #bd0606;
+$red-700: #ab0303;
+$red-800: #990202;
+$red-900: #850000;
+$red-a100: #f99;
+$red-a200: #ff596a;
+$red-a400: #ff334e;
+$red-a700: #f70029;
+
+// Grey palette
+$grey-50: #fff;
+$grey-100: #f4f4f5;
+$grey-200: #e8e8ea;
+$grey-300: #d9d9dd;
+$grey-400: #b8bcbf;
+$grey-500: #92a0a5;
+$grey-600: #697279;
+$grey-700: #39434c;
+$grey-800: #22272f;
+$grey-900: #000;
+$grey-a100: #fff;
+$grey-a200: #000;
+$grey-a400: #303030;
+$grey-a700: #39434c;
+
+// Text colors
+$text-dark: rgba(0, 0, 0, .87);
+$text-light: rgba(255, 255, 255, .87);
+$text-dim: rgba(0, 0, 0, .54);
+$text-disabled: rgba(0, 0, 0, .38);
+$icon-button-default: $text-dim;
+
+// Typography
+$font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
+
+// $font-family-material2 has to be a string for it to be passed to @include angular-material-typography()
+// without node-sass throwing warnings
+$font-family-material2: 'Open Sans, Roboto, Helvetica Neue, sans-serif';
+
+//TODO Clean these variables, replace with color palette
+$white: #fff;
+$black: #000;
+$blue-shadow: rgba(0, 94, 171, .25);
+$black-shadow: rgba(0, 0, 0, .25);
+$half-white: rgba(255, 255, 255, .5);
+$canvas-bgcolor: #c1c3c5;
+$border-color: rgba(0, 0, 0, .12);
+
+// Hippo-specific colors for publication states
+$hippo-red: #ff4040;
+$hippo-green: #3dcc3d;
+$hippo-yellow: #ffa733;
+
+// the default background color in browsers is white, so make the sheet white too
+$sheet-bgcolor: #fff;
+
+// Left side panel
+$list-item-active-bgcolor: rgba(158, 158, 158, .2);
+$catalog-item-height: 70px;
+
+// Resize handles for side-panels
+$resize-handle-width-left: 20px;
+$resize-handle-width-right: 10px;
+
+// Tabs
+$tabs-bottom-border-color: $border-color;
+$tabs-header-height: 48px;
+
+// Picker
+$picker-subheader-bgcolor: $grey-100;
+$picker-border-color: $grey-400;
+$picker-actions-color: $grey-100;
+
+// Tree
+$tree-bg: $white;
+$tree-color: $black;
+$tree-icon-color: $black;
+$tree-border-radius: 4px;
+$tree-border-color: $black;
+$tree-font-size: 13px;
+$tree-hover-bg: $half-white;
+
+// Active tree item
+$tree-active-bg: $blue-500;
+$tree-active-border-color: $blue-shadow;
+$tree-active-color: $white;
+
+// Animation
+$viewport-animation-transition: 400ms cubic-bezier(.25, .8, .25, 1);
+
+// DragDrop placeholder
+$tree-dd-bg: $black-shadow;
+
+// Do not use transparent tooltips
+$tooltip-bg: $black;
+
+// Style mdSelect
+$select-invalid-color: #f70029;
+
+// Toolbar
+$toolbar-height: 40px;
+
+// For consistency we use the same yellow color as is used in the CMS for the exclamation icon
+$toolbar-channel-changes-color: #ffa733;
+
+// Forms
+$form-dense-distance: 12px;
+
+// Embedded links
+$embedded-link-height: 40px;
+$embedded-link-width: 40px;
+
+// Overlay
+$overlay-box-minheight: 40px;
+
+$overlay-container-outline-color: $grey-600;
+$overlay-container-inline-color: $white;
+$overlay-container-glow-color: rgba(105, 114, 121, .75);
+$overlay-container-label-bgcolor: $grey-600;
+$overlay-container-label-border-color: $grey-600;
+$overlay-container-add-mode-hover-bgcolor: rgba(184, 188, 191, .9);
+
+$overlay-component-outline-color: $blue-500;
+$overlay-component-inline-color: $white;
+$overlay-component-glow-color: rgba(8, 120, 212, .75);
+$overlay-component-hover-shadow-color: rgba(8, 120, 212, .25);
+$overlay-component-label-bgcolor: $blue-500;
+$overlay-component-label-border-color: $blue-500;
+
+$overlay-label-color: $white;
+$overlay-label-font-size: 12px;
+
+$overlay-lock-bgcolor: $grey-600;
+$overlay-lock-color: $white;
+$overlay-lock-font-size: $overlay-label-font-size;
+$overlay-lock-height: 26px;
+$overlay-lock-width: 26px;
+
+$overlay-link-bgcolor: $orange-a400;
+$overlay-link-shadow-color: rgba(0, 0, 0, .26);
+$overlay-link-shadow-color-light: rgba(0, 0, 0, .1);
+$overlay-link-fill-color: $white;
+$overlay-link-transition: 300ms cubic-bezier(.55, 0, .55, .2);
+$overlay-link-hover-bgcolor: #e06717;
+$overlay-link-active-shadow-color: rgba(0, 0, 0, .4);
+$overlay-link-clicked-bgcolor: $orange-a200;
+$overlay-link-shadow-color: rgba(0, 0, 0, .3);
+
+$overlay-link-shadow-active: 1px 3px 8px 2px $overlay-link-shadow-color;
+$overlay-link-shadow-hover: 1px 3px 8px 1px $overlay-link-shadow-color;
+
+$overlay-icon-fill: $grey-600;
+$overlay-icon-size: 36px;
+
+// Layout breakpoints
+$layout-breakpoint-xs: 600px !default;
+$layout-breakpoint-sm: 960px !default;
+$layout-breakpoint-md: 1280px !default;
+$layout-breakpoint-lg: 1920px !default;
+
+// Transitions, based on angular material variables
+$swift-ease-in: .3s cubic-bezier(.55, 0, .55, .2);
+$swift-ease-out: .2s cubic-bezier(.25, .8, .25, 1);
+
+$full-screen-ease-in: .6s cubic-bezier(.55, 0, .55, .2);
+$full-screen-ease-out: .6s cubic-bezier(.25, .8, .25, 1);
+
+// Z-indexes
+$z-index-sidepanel: 60;
+$z-index-mask: $z-index-sidepanel + 1;
+$z-index-iframe-lifted: $z-index-mask + 1;
+$z-index-sidepanel-lifted: $z-index-iframe-lifted + 1;
+$z-index-tree: 999;
+
+$z-index-overlay: 10000;
+$z-index-overlay-component: $z-index-overlay + 1;
+$z-index-overlay-container: $z-index-overlay-component + 1;
+$z-index-overlay-link: $z-index-overlay-container + 1;
+$z-index-overlay-manage-content-options: $z-index-overlay-link + 1;

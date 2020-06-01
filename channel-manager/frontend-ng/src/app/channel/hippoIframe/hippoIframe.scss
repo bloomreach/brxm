@@ -1,0 +1,45 @@
+// Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import 'variables';
+
+hippo-iframe {
+  // The value of this variable is set by the HippoIframeService
+  --locked-width: 100%;
+
+  &.locked-width {
+    opacity: 0;
+  }
+
+  &.locked-width-add {
+    transition: all $full-screen-ease-in;
+  }
+
+  &.locked-width-remove {
+    transition: all $full-screen-ease-out;
+  }
+
+  // Lock the width of the iframe to make the side-panel overlap when going full-screen
+  &.locked-width-add-active .channel-iframe-canvas {
+    width: var(--locked-width);
+    min-width: var(--locked-width);
+  }
+
+  &.locked-width-remove-active .channel-iframe-canvas {
+    // When we close a full-screen panel completely (instead of transitioning to normal-screen) the canvas
+    // should be allowed to use 100% width because it can be bigger due to the closing of the side-panel
+    width: 100%;
+    min-width: var(--locked-width);
+  }
+}

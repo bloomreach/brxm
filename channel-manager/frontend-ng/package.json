@@ -1,0 +1,54 @@
+{
+  "name": "hippo-cm",
+  "private": true,
+  "author": "Hippo B.V.",
+  "license": "Apache-2.0",
+  "description": "Manage channels for Bloomreach Experience",
+  "repository": {
+    "type": "git",
+    "url": "https://code.onehippo.org/cms-community/hippo-addon-channel-manager"
+  },
+  "engines": {
+    "node": "8",
+    "npm": "6"
+  },
+  "scripts": {
+    "build": "webpack --env.prod",
+    "buildDev": "webpack --env.dev",
+    "buildProfile": "webpack --env.prod --profile --verbose",
+    "buildDevProfile": "webpack --env.dev --profile --verbose",
+    "buildDll": "webpack --env.dll",
+    "clean": "node_modules/@bloomreach/frontend-build/bin/clean.js",
+    "start": "webpack-serve --env.dev",
+    "startDist": "webpack-serve --env.prod",
+    "test": "karma start --env.test",
+    "testDebug": "karma start --env.test --debug",
+    "testOnce": "karma start --single-run --env.test"
+  },
+  "dependencies": {
+    "@bloomreach/dragula": "3.7.2-br.3",
+    "@mdi/font": "2.2.43",
+    "@uirouter/angularjs": "1.0.15",
+    "@uirouter/visualizer": "6.0.0",
+    "angular": "1.6.9",
+    "angular-animate": "1.6.9",
+    "angular-aria": "1.6.9",
+    "angular-local-storage": "0.7.1",
+    "angular-material": "1.1.8",
+    "angular-messages": "1.6.9",
+    "angular-translate": "2.17.0",
+    "angular-translate-loader-static-files": "2.17.0",
+    "angular-ui-tree": "2.22.6",
+    "es6-shim": "0.35.3",
+    "jquery": "3.3.1",
+    "moment-timezone": "0.5.14",
+    "mutation-summary": "0.1.1",
+    "ng-device-detector": "4.0.3",
+    "ng-focus-if": "1.0.7",
+    "open-sans-fontface": "github:FontFaceKit/open-sans#91b197ff77e8d6717ccf3a9872f4ebb2a547560f"
+  },
+  "devDependencies": {
+    "@bloomreach/frontend-build": "8.0.4",
+    "angular-mocks": "1.6.9"
+  }
+}
