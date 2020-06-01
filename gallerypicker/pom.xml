@@ -21,6 +21,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>30.4.4-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Plugin Gallery Picker</name>
@@ -30,12 +31,6 @@
   <version>13.4.4-SNAPSHOT</version>
 
   <inceptionYear>2008</inceptionYear>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-plugin-gallerypicker.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-plugin-gallerypicker.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-plugin-gallerypicker</url>
-  </scm>
 
   <properties>
     <hippo.repository.version>13.4.4-SNAPSHOT</hippo.repository.version>

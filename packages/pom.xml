@@ -21,6 +21,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>30.4.4-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Product Packages</name>
@@ -29,12 +30,6 @@
   <version>13.4.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-packages.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-packages.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-packages</url>
-  </scm>
 
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
