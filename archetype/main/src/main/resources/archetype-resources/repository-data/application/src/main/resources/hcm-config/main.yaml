@@ -1,0 +1,10 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+#set($hyphen = '-')
+#set($empty = '')
+definitions:
+  namespace:
+    ${rootArtifactId.replace($hyphen,$empty)}:
+      uri: http://www.${rootArtifactId.replace($hyphen,$empty)}.com/${rootArtifactId.replace($hyphen,$empty)}/nt/1.0
+      cnd: namespaces/${rootArtifactId}.cnd

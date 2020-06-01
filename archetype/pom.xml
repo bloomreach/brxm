@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-project</artifactId>
+    <version>30.4.4-SNAPSHOT</version>
+  </parent>
+
+  <name>BloomReach CMS Project Archetype Parent</name>
+  <description>BloomReach CMS Project Archetype Parent</description>
+
+  <artifactId>hippo-project-archetype-parent</artifactId>
+  <version>13.4.4-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <release.essentials.version>${project.version}</release.essentials.version>
+    <notice.project.name>BloomReach CMS Site Project Archetype</notice.project.name>
+    <main.app.groupId>org.onehippo.cms7.hst</main.app.groupId>
+    <main.app.artifactId>gettingstarted</main.app.artifactId>
+    <main.app.version>0.1.0</main.app.version>
+    <main.app.name>Getting Started Main Site</main.app.name>
+
+    <extra.app.groupId>org.onehippo.cms7.extra</extra.app.groupId>
+    <extra.app.artifactId>extra</extra.app.artifactId>
+    <extra.app.version>0.1.0</extra.app.version>
+    <extra.app.name>Getting Started Extra Site</extra.app.name>
+
+    <maven.archetype.plugin.version>2.4</maven.archetype.plugin.version>
+    <maven.antrun.plugin.version>1.8</maven.antrun.plugin.version>
+    <maven.dependency.plugin.version>3.1.1</maven.dependency.plugin.version>
+    <maven.resources.plugin.version>2.7</maven.resources.plugin.version>
+
+    <!-- ant and junit versions are aligned with the versions which maven-antrun-plugin uses -->
+    <ant.version>1.9.4</ant.version>
+    <junit.version>4.12</junit.version>
+
+    <docker.test.bootstrap.timeout>120000</docker.test.bootstrap.timeout>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven.dependency.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>${maven.antrun.plugin.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.ant</groupId>
+              <artifactId>ant</artifactId>
+              <version>${ant.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.ant</groupId>
+              <artifactId>ant-junit</artifactId>
+              <version>${ant.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.ant</groupId>
+              <artifactId>ant-junit4</artifactId>
+              <version>${ant.version}</version>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <phase>process-resources</phase>
+              <configuration>
+                <target>
+                  <replace summary="true" failOnNoReplacements="true" token= "@project.version@" value="${project.version}" dir="${project.build.outputDirectory}/archetype-resources">
+                    <include name="pom.xml"/>
+                  </replace>
+                  <replace token= "@release.essentials.version@" value="${release.essentials.version}" dir="${project.build.outputDirectory}/archetype-resources">
+                    <include name="pom.xml"/>
+                  </replace>
+                </target>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>Docker build the image</id>
+              <phase>integration-test</phase>
+              <configuration>
+                <skip>${skipITs}</skip>
+                <target name="dockerBuild">
+                  <condition property="executableType" value="cmd" else="sh">
+                    <os family="windows" />
+                  </condition>
+                  <condition property="executableCommand" value="/c" else="-c">
+                    <os family="windows" />
+                  </condition>
+                  <exec dir="${project.build.directory}/test-classes/projects/gettingstarted/project/${gettingstarted.artifactId}"
+                        executable="${executableType}">
+                    <arg value="${executableCommand}"/>
+                    <arg value="mvn -Pdocker.build"/>
+                  </exec>
+                </target>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>Docker run the image</id>
+              <phase>integration-test</phase>
+              <configuration>
+                <skip>${skipITs}</skip>
+                <target name="dockerRun">
+                  <condition property="executableType" value="cmd" else="sh">
+                    <os family="windows" />
+                  </condition>
+                  <condition property="executableCommand" value="/c" else="-c">
+                    <os family="windows" />
+                  </condition>
+                  <exec dir="${project.build.directory}/test-classes/projects/gettingstarted/project/${gettingstarted.artifactId}"
+                        executable="${executableType}"
+                        spawn="true">
+                    <arg value="${executableCommand}"/>
+                    <arg value="mvn -Pdocker.run -Ddb.profile=h2"/>
+                  </exec>
+                </target>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>Docker test the container</id>
+              <phase>integration-test</phase>
+              <configuration>
+                <skip>${skipITs}</skip>
+                <target name="dockerTest">
+                  <condition property="executableType" value="cmd" else="sh">
+                    <os family="windows" />
+                  </condition>
+                  <condition property="executableCommand" value="/c" else="-c">
+                    <os family="windows" />
+                  </condition>
+                  <junit printsummary="on"
+                         haltonfailure="no"
+                         failureProperty="test.failed"
+                         logfailedtests="true">
+                    <sysproperty key="docker.test.bootstrap.timeout" value="${docker.test.bootstrap.timeout}"/>
+                    <sysproperty key="docker.test.site.context.path" value="${site.webapp.context.path}"/>
+                    <classpath id="classpath.test">
+                      <pathelement location="${org.hamcrest:hamcrest-core:jar}" />
+                      <pathelement location="${project.build.directory}/test-classes" />
+                    </classpath>
+                    <formatter type="brief" usefile="false" />
+                    <batchtest>
+                      <fileset dir="${project.build.directory}/test-classes" excludes="projects/**" includes="**/*.class" />
+                    </batchtest>
+                  </junit>
+                  <exec executable="${executableType}">
+                    <arg value="${executableCommand}"/>
+                    <arg value="docker kill $(docker ps -q --filter 'name=${docker.image.name}')"/>
+                  </exec>
+                  <exec executable="${executableType}">
+                    <arg value="${executableCommand}"/>
+                    <arg value="docker rm $(docker ps -a -q --filter 'name=${docker.image.name}')"/>
+                  </exec>
+                  <fail message="Test failure detected, check test results." if="test.failed" />
+                </target>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${maven.resources.plugin.version}</version>
+          <executions>
+            <execution>
+              <!-- copy the Getting Started app to target/gettingstarted in the install phase -->
+              <id>copy-resources</id>
+              <phase>install</phase>
+              <goals>
+                <goal>copy-resources</goal>
+              </goals>
+              <configuration>
+                <outputDirectory>${project.build.directory}/${gettingstarted.artifactId}</outputDirectory>
+                <resources>
+                  <resource>
+                    <directory>${project.build.directory}/test-classes/projects/gettingstarted/project/${gettingstarted.artifactId}</directory>
+                  </resource>
+                </resources>
+                <includeEmptyDirs>true</includeEmptyDirs>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <modules>
+    <module>main</module>
+    <module>site</module>
+  </modules>
+
+  <profiles>
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <!-- skip archetype resources itself (but should not contain 3rd party copyrighted/licensed content) -->
+                <exclude>src/**</exclude>
+                <exclude>main/src/**</exclude>
+                <exclude>site/src/**</exclude>
+                <exclude>sync-marker.txt</exclude>
+                <exclude>**/target/**</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

@@ -1,0 +1,10 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+#set($hyphen = '-')
+#set($empty = '')
+definitions:
+  config:
+    /hippo:namespaces/${rootArtifactId.replace($hyphen,$empty)}:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
