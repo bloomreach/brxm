@@ -1,0 +1,43 @@
+definitions:
+  config:
+    /webfiles:
+      .meta:residual-child-node-category: system
+      jcr:primaryType: webfiles:webfiles
+      /webfiles:domains:
+        jcr:primaryType: hipposys:federateddomainfolder
+        /webfiles:
+          jcr:primaryType: hipposys:domain
+          /readonly:
+            jcr:primaryType: hipposys:authrole
+            hipposys:role: readonly
+            hipposys:userrole:
+              .meta:category: system
+              value: xm.webfiles.reader
+            hipposys:groups:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+            hipposys:users:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+          /webfiles:
+            jcr:primaryType: hipposys:domainrule
+            /webfiles-and-descendants:
+              jcr:primaryType: hipposys:facetrule
+              hipposys:equals: true
+              hipposys:facet: jcr:path
+              hipposys:type: Reference
+              hipposys:value: /
+            /exclude-webfiles-domains-and-descendants:
+              jcr:primaryType: hipposys:facetrule
+              hipposys:equals: false
+              hipposys:facet: jcr:path
+              hipposys:type: Reference
+              hipposys:value: /webfiles:domains
+    /hippo:configuration/hippo:userroles:
+      /xm.webfiles.reader:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Allows repository read access of webfiles through role readonly
+        hipposys:userroles: []
