@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:groups/everybody:
+      jcr:primaryType: hipposys:group
+      hipposys:description: ''
+      hipposys:members: ['*']
+      hipposys:securityprovider: internal
+      hipposys:system: true

@@ -1,0 +1,5 @@
+definitions:
+  config:
+    # this definition, and thus this file, will be cleaned up entirely
+    /reorder-on-config-delete/1-first:
+      .meta:order-before: delete

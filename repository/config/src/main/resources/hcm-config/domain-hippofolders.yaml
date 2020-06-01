@@ -1,0 +1,26 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/hippofolders:
+      jcr:primaryType: hipposys:domain
+      /hippostd-folder:
+        jcr:primaryType: hipposys:domainrule
+        /nodetype-hippostd-folder:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippostd:folder
+      /hippostd-directory:
+        jcr:primaryType: hipposys:domainrule
+        /nodetype-hippostd-directory:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippostd:directory
+      /readwrite:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [author, editor]
+        hipposys:role: readwrite

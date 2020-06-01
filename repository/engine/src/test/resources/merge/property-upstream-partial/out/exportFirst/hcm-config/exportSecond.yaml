@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /topmost/subnode:
+      dummy: value
+    /a:
+      jcr:primaryType: nt:unstructured
+      /b:
+        jcr:primaryType: nt:unstructured
+        property: value

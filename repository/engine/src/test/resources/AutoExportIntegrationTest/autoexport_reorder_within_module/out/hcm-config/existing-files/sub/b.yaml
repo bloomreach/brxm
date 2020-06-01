@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /existing-files/sub/b:
+      jcr:primaryType: nt:unstructured

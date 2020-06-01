@@ -1,0 +1,3 @@
+/AutoExportIntegrationTest-reorder-within-upstream-content/up-b/overlapping/local-a:
+  .meta:order-before: up-a
+  jcr:primaryType: nt:unstructured

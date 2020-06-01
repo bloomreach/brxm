@@ -1,0 +1,507 @@
+/*
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.repository.query.lucene;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.jcr.NamespaceException;
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
+import javax.security.auth.Subject;
+
+import org.apache.jackrabbit.core.query.lucene.FieldNames;
+import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
+import org.apache.jackrabbit.core.security.SystemPrincipal;
+import org.apache.jackrabbit.core.security.UserPrincipal;
+import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
+import org.hippoecm.repository.security.AuthorizationFilterPrincipal;
+import org.hippoecm.repository.security.FacetAuthConstants;
+import org.hippoecm.repository.security.domain.DomainRule;
+import org.hippoecm.repository.security.domain.QFacetRule;
+import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
+import org.hippoecm.repository.security.principals.GroupPrincipal;
+import org.onehippo.repository.util.JcrConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.query.lucene.QueryHelper.createNoHitsQuery;
+import static org.hippoecm.repository.query.lucene.QueryHelper.isMatchAllDocsQuery;
+import static org.hippoecm.repository.query.lucene.QueryHelper.isNoHitsQuery;
+import static org.hippoecm.repository.query.lucene.QueryHelper.negateQuery;
+import static org.onehippo.repository.util.JcrConstants.JCR_MIXIN_TYPES;
+import static org.onehippo.repository.util.JcrConstants.JCR_PRIMARY_TYPE;
+
+public class AuthorizationQuery {
+
+    /**
+     * The logger instance for this class
+     */
+    private static final Logger log = LoggerFactory.getLogger(AuthorizationQuery.class);
+
+    private static final String MESSAGE_ZEROMATCH_QUERY = "returning a match zero nodes query";
+    public static final String NODETYPE = "nodetype";
+    public static final String NODENAME = "nodename";
+
+    private static final Collection<String> UNINDEXED_TYPE_FACETS = new HashSet<>();
+
+    static {
+        UNINDEXED_TYPE_FACETS.add(JcrConstants.NT_SYSTEM);
+        UNINDEXED_TYPE_FACETS.add(JcrConstants.NT_VERSION_STORAGE);
+        UNINDEXED_TYPE_FACETS.add(JcrConstants.NT_VERSION_HISTORY);
+        UNINDEXED_TYPE_FACETS.add(JcrConstants.NT_VERSION);
+        UNINDEXED_TYPE_FACETS.add(JcrConstants.NT_FROZEN_NODE);
+        UNINDEXED_TYPE_FACETS.add(JcrConstants.NT_VERSIONED_CHILD);
+        UNINDEXED_TYPE_FACETS.add(JcrConstants.NT_VERSION_LABELS);
+    }
+
+
+    /**
+     * The lucene query
+     */
+    private final BooleanQuery query;
+
+
+    public AuthorizationQuery(final Subject subject,
+                              final NamespaceMappings nsMappings,
+                              final ServicingIndexingConfiguration indexingConfig,
+                              final NodeTypeManager ntMgr,
+                              final Session session,
+                              final String userId) throws RepositoryException {
+        // set the max clauses for booleans higher than the default 1024.
+        BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
+        if (!(session instanceof InternalHippoSession)) {
+            throw new RepositoryException("Session is not an instance of o.a.j.core.SessionImpl");
+        }
+
+        if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
+            this.query = new BooleanQuery(true);
+            this.query.add(new MatchAllDocsQuery(), Occur.MUST);
+        } else {
+            final Set<String> memberships = new HashSet<String>();
+            for (GroupPrincipal groupPrincipal : subject.getPrincipals(GroupPrincipal.class)) {
+                memberships.add(groupPrincipal.getName());
+            }
+            final Set<String> userIds = new HashSet<String>();
+            for (UserPrincipal userPrincipal : subject.getPrincipals(UserPrincipal.class)) {
+                userIds.add(userPrincipal.getName());
+            }
+            long start = System.currentTimeMillis();
+            this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class),
+                    subject.getPrincipals(AuthorizationFilterPrincipal.class),
+                    userIds,
+                    memberships,
+                    (InternalHippoSession)session,
+                    indexingConfig,
+                    nsMappings,
+                    ntMgr);
+
+            log.info("Creating authorization query for user '{}' took {} ms. Query: {}", userId, String.valueOf(System.currentTimeMillis() - start), query);
+        }
+    }
+
+    private BooleanQuery initQuery(final Set<FacetAuthPrincipal> facetAuths,
+                                   final Set<AuthorizationFilterPrincipal> authorizationFilterPrincipals,
+                                   final Set<String> userIds,
+                                   final Set<String> memberships,
+                                   final InternalHippoSession session,
+                                   final ServicingIndexingConfiguration indexingConfig,
+                                   final NamespaceMappings nsMappings,
+                                   final NodeTypeManager ntMgr) {
+
+        Map<String, Collection<QFacetRule>> extendedFacetRules = new HashMap<String, Collection<QFacetRule>>();
+        for (AuthorizationFilterPrincipal afp : authorizationFilterPrincipals) {
+            final Map<String, Collection<QFacetRule>> facetRules = afp.getExpandedFacetRules(facetAuths);
+            for (Map.Entry<String, Collection<QFacetRule>> entry : facetRules.entrySet()) {
+                final String domainPath = entry.getKey();
+                if (!extendedFacetRules.containsKey(domainPath)) {
+                    extendedFacetRules.put(domainPath, new ArrayList<QFacetRule>());
+                }
+                extendedFacetRules.get(domainPath).addAll(entry.getValue());
+            }
+        }
+
+        BooleanQuery authQuery = new BooleanQuery(true);
+        for (final FacetAuthPrincipal facetAuthPrincipal : facetAuths) {
+            if (!facetAuthPrincipal.getPrivileges().contains("jcr:read")) {
+                continue;
+            }
+            final Set<DomainRule> domainRules = facetAuthPrincipal.getRules();
+            for (final DomainRule domainRule : domainRules) {
+                BooleanQuery facetQuery = new BooleanQuery(true);
+                for (final QFacetRule facetRule : getFacetRules(domainRule, extendedFacetRules)) {
+                    Query q = getFacetRuleQuery(facetRule, userIds, memberships, facetAuthPrincipal.getRoles(), indexingConfig, nsMappings, session, ntMgr);
+                    if (isNoHitsQuery(q)) {
+                        log.debug("Found a no hits query in facetRule '{}'. Since facet rules are AND-ed with other " +
+                                "facet rules, we can short circuit the domain rule '{}' as it does not match any node.",
+                                facetRule, domainRule);
+                        facetQuery = new BooleanQuery(true);
+                        facetQuery.add(q, Occur.MUST);
+                        break;
+                    }
+                    log.debug("Adding to FacetQuery: FacetRuleQuery = {}", q);
+                    log.debug("FacetRuleQuery has {} clauses.", (q instanceof BooleanQuery) ? ((BooleanQuery)q).getClauses().length : 1);
+                    facetQuery.add(q, Occur.MUST);
+                }
+                log.debug("Adding to Authorization query: FacetQuery = {}", facetQuery);
+                log.debug("FacetQuery has {} clauses.", facetQuery.getClauses().length);
+                if (facetQuery.getClauses().length == 1 && isMatchAllDocsQuery(facetQuery.getClauses()[0].getQuery())) {
+                    log.info("found a MatchAllDocsQuery that will be OR-ed with other constraints for user '{}'. This means, the user can read " +
+                            "everywhere. Short circuit the auth query and return MatchAllDocsQuery", session.getUserID());
+                    // directly return the BooleanQuery that only contains the MatchAllDocsQuery : This is more efficient
+                    return facetQuery;
+                } else if (facetQuery.getClauses().length == 1 && isNoHitsQuery(facetQuery.getClauses()[0].getQuery())) {
+                    log.debug("No hits query does not add any new information for the authorization query '{}' so far " +
+                            "since gets OR-ed. Hence can be skipped.");
+                } else {
+                    authQuery.add(facetQuery, Occur.SHOULD);
+                }
+            }
+        }
+
+        if (authQuery.getClauses().length  == 0) {
+            // read nowhere
+            authQuery.add(new MatchAllDocsQuery(), Occur.MUST_NOT);
+        }
+
+        log.debug("Authorization query is : " + authQuery);
+        log.debug("Authorization query has {} clauses", authQuery.getClauses().length);
+
+        return authQuery;
+    }
+
+    private Set<QFacetRule> getFacetRules(final DomainRule domainRule, Map<String, Collection<QFacetRule>> extendedFacetRules) {
+        if (extendedFacetRules != null) {
+            final String domainRulePath = domainRule.getDomainName() + "/" + domainRule.getName();
+            final Collection<QFacetRule> extendedRules = extendedFacetRules.get(domainRulePath);
+            if (extendedRules != null) {
+                final Set<QFacetRule> facetRules = new HashSet<QFacetRule>(domainRule.getFacetRules());
+                facetRules.addAll(extendedRules);
+                return facetRules;
+            }
+        }
+        return domainRule.getFacetRules();
+    }
+
+    private Query getFacetRuleQuery(final QFacetRule facetRule,
+                                    final Set<String> userIds,
+                                    final Set<String> memberships,
+                                    final Set<String> roles,
+                                    final ServicingIndexingConfiguration indexingConfig,
+                                    final NamespaceMappings nsMappings,
+                                    final InternalHippoSession session,
+                                    final NodeTypeManager ntMgr) {
+        String value = facetRule.getValue();
+        switch (facetRule.getType()) {
+            case PropertyType.STRING:
+                Name facetName = facetRule.getFacetName();
+                try {
+                    if (NameConstants.JCR_UUID.equals(facetName)) {
+                        // note no check required for isFacetOptional since every node has a uuid
+                        if (facetRule.isEqual()) {
+                            // only allow one *single* node (not the descendants because those might not be readable)
+                            final Query tq = new TermQuery(new Term(FieldNames.UUID, value));
+                            return tq;
+                        } else {
+                            // disallow *all* descendant nodes below the node with UUID = value because our access mngr
+                            // is hierarchical: you cannot read nodes below a node you are not allowed to read
+                            final Query tq = new TermQuery(new Term(ServicingFieldNames.HIPPO_UUIDS, value));
+                            return negateQuery(tq);
+                        }
+                    }
+                    if (NameConstants.JCR_PATH.equals(facetName)) {
+                        final Query tq = new TermQuery(new Term(ServicingFieldNames.HIPPO_UUIDS, value));
+                        // note no check required for isFacetOptional since every node has a uuid
+                        if (facetRule.isEqual()) {
+                            return tq;
+                        } else {
+                            return negateQuery(tq);
+                        }
+                    } else if (indexingConfig.isFacet(facetName)) {
+                        String fieldName = ServicingNameFormat.getInternalFacetName(facetName, nsMappings);
+                        String internalNameTerm = nsMappings.translateName(facetName);
+                        Query tq;
+                        if (FacetAuthConstants.WILDCARD.equals(value)) {
+                            tq = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm));
+                        } else if (FacetAuthConstants.EXPANDER_USER.equals(value)) {
+                            tq = expandUser(fieldName, userIds);
+                        } else if (FacetAuthConstants.EXPANDER_ROLE.equals(value)) {
+                            tq = expandRole(fieldName, roles);
+                        } else if (FacetAuthConstants.EXPANDER_GROUP.equals(value)) {
+                            tq = expandGroup(fieldName, memberships);
+                        } else {
+                            tq = new TermQuery(new Term(fieldName, value));
+                        }
+                        if (facetRule.isFacetOptional()) {
+                            BooleanQuery bq = new BooleanQuery(true);
+                            // all the docs that do *not* have the property:
+                            Query docsThatMissPropertyQuery = negateQuery(
+                                    new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm)));
+                            bq.add(docsThatMissPropertyQuery, Occur.SHOULD);
+                            // and OR that one with the equals
+                            if (facetRule.isEqual()) {
+                                bq.add(tq, Occur.SHOULD);
+                                return bq;
+                            } else {
+                                Query not = negateQuery(tq);
+                                bq.add(not, Occur.SHOULD);
+                                return bq;
+                            }
+                        } else {
+                            // Property MUST exist and it MUST (or MUST NOT) equal the value,
+                            // depending on QFacetRule#isEqual.
+                            if (facetRule.isEqual()) {
+                                return tq;
+                            } else {
+                                return negateQuery(tq);
+                            }
+                        }
+                    } else {
+                        log.warn("Property " + facetName.getNamespaceURI() + ":" + facetName.getLocalName() + " not allowed for faceted search. " +
+                                "Add the property to the indexing configuration to be defined as FACET");
+                    }
+                } catch (IllegalNameException e) {
+                    log.error(e.toString());
+                }
+                break;
+            case PropertyType.NAME:
+                String nodeNameString = facetRule.getFacet();
+                if (UNINDEXED_TYPE_FACETS.contains(value) &&
+                                (NODETYPE.equalsIgnoreCase(nodeNameString) ||
+                                JCR_PRIMARY_TYPE.equals(nodeNameString) ||
+                                JCR_MIXIN_TYPES.equals(nodeNameString))) {
+                    if (facetRule.isEqual()) {
+                        // every document that is indexed is *not* one of the UNINDEXED_TYPE_FACETS
+                        // hence non is equal
+                        return createNoHitsQuery();
+                    } else {
+                        // every document that is indexed is *not* one of the UNINDEXED_TYPE_FACETS
+                        // hence all are unequal
+                        return new MatchAllDocsQuery();
+                    }
+                }
+                if (FacetAuthConstants.WILDCARD.equals(value)) {
+                    if (facetRule.isEqual()) {
+                        return new MatchAllDocsQuery();
+                    } else {
+                        return createNoHitsQuery();
+                    }
+                } else if (NODETYPE.equalsIgnoreCase(nodeNameString)) {
+                    return getNodeTypeDescendantQuery(facetRule, ntMgr, session, nsMappings);
+                } else if (NODENAME.equalsIgnoreCase(nodeNameString)) {
+                    return getNodeNameQuery(facetRule, userIds, roles, memberships, nsMappings);
+                } else {
+                    try {
+                        if (JCR_PRIMARY_TYPE.equals(nodeNameString)) {
+                            return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule, session, nsMappings);
+                        } else if (JCR_MIXIN_TYPES.equals(nodeNameString)) {
+                            return getNodeTypeQuery(ServicingFieldNames.HIPPO_MIXINTYPE, facetRule, session, nsMappings);
+                        } else {
+                            log.error("Ignoring facetrule with facet '" + nodeNameString + "'. hippo:facet must be either 'nodetype', 'jcr:primaryType' " +
+                                    "or 'jcr:mixinTypes' when hipposys:type = Name.");
+                        }
+                    } catch (IllegalNameException ine) {
+                        log.warn("Illegal name in facet rule", ine);
+                    } catch (NamespaceException ne) {
+                        log.warn("Namespace exception in facet rule", ne);
+                    }
+                }
+                break;
+        }
+        log.error("Incorrect FacetRule: returning a match zero nodes query");
+        return createNoHitsQuery();
+    }
+
+    private Query getNodeTypeDescendantQuery(final QFacetRule facetRule,
+                                             final NodeTypeManager ntMgr,
+                                             final InternalHippoSession session,
+                                             final NamespaceMappings nsMappings) {
+        List<Term> terms = new ArrayList<Term>();
+        try {
+
+            NodeType base = ntMgr.getNodeType(facetRule.getValue());
+            terms.add(getTerm(base, session, nsMappings));
+
+            // now search for all node types that are derived from base
+            NodeTypeIterator allTypes = ntMgr.getAllNodeTypes();
+            while (allTypes.hasNext()) {
+                NodeType nt = allTypes.nextNodeType();
+                NodeType[] superTypes = nt.getSupertypes();
+                if (Arrays.asList(superTypes).contains(base)) {
+                    terms.add(getTerm(nt, session, nsMappings));
+                }
+            }
+        } catch (NoSuchNodeTypeException e) {
+            log.error("invalid nodetype" + e.getMessage() + "\n" + MESSAGE_ZEROMATCH_QUERY);
+        } catch (RepositoryException e) {
+            log.error("invalid nodetype" + e.getMessage() + "\n" + MESSAGE_ZEROMATCH_QUERY);
+        }
+
+        if (terms.size() == 0) {
+            // exception occured
+            if (facetRule.isEqual()) {
+                return createNoHitsQuery();
+            } else {
+                return new MatchAllDocsQuery();
+            }
+        }
+
+        Query query;
+        if (terms.size() == 1) {
+            query = new TermQuery(terms.get(0));
+        } else {
+            BooleanQuery b = new BooleanQuery(true);
+            for (final Term term : terms) {
+                b.add(new TermQuery(term), Occur.SHOULD);
+            }
+            query = b;
+        }
+        if (facetRule.isEqual()) {
+            return query;
+        } else {
+            return negateQuery(query);
+        }
+    }
+
+    private Term getTerm(NodeType nt, InternalHippoSession session, NamespaceMappings nsMappings) throws IllegalNameException, NamespaceException {
+        String ntName = getNtName(nt.getName(), session, nsMappings);
+        if (nt.isMixin()) {
+            return new Term(ServicingFieldNames.HIPPO_MIXINTYPE, ntName);
+        } else {
+            return new Term(ServicingFieldNames.HIPPO_PRIMARYTYPE, ntName);
+        }
+    }
+
+    private Query getNodeTypeQuery(String luceneFieldName, QFacetRule facetRule, InternalHippoSession session, NamespaceMappings nsMappings) throws IllegalNameException, NamespaceException {
+        String termValue = facetRule.getValue();
+        String name = getNtName(termValue, session, nsMappings);
+        Query nodetypeQuery = new TermQuery(new Term(luceneFieldName, name));
+        if (facetRule.isEqual()) {
+            return nodetypeQuery;
+        } else {
+            return negateQuery(nodetypeQuery);
+        }
+    }
+
+    private String getNtName(String value, InternalHippoSession session, NamespaceMappings nsMappings) throws IllegalNameException, NamespaceException {
+        Name n = session.getQName(value);
+        return nsMappings.translateName(n);
+    }
+
+    public BooleanQuery getQuery() {
+        return query;
+    }
+
+    private Query getNodeNameQuery(QFacetRule facetRule, Set<String> userIds, Set<String> roles, Set<String> memberShips, final NamespaceMappings nsMappings) {
+        try {
+            String fieldName = ServicingNameFormat.getInternalFacetName(NameConstants.JCR_NAME, nsMappings);
+            String value = facetRule.getValue();
+            Query nodeNameQuery;
+            if (FacetAuthConstants.WILDCARD.equals(value)) {
+                if (facetRule.isEqual()) {
+                    return new MatchAllDocsQuery();
+                } else {
+                    return createNoHitsQuery();
+                }
+            } else if (FacetAuthConstants.EXPANDER_USER.equals(value)) {
+                nodeNameQuery = expandUser(fieldName, userIds);
+            } else if (FacetAuthConstants.EXPANDER_ROLE.equals(value)) {
+                nodeNameQuery = expandRole(fieldName, userIds);
+            } else if (FacetAuthConstants.EXPANDER_GROUP.equals(value)) {
+                nodeNameQuery = expandGroup(fieldName, userIds);
+            } else {
+                nodeNameQuery = new TermQuery(new Term(fieldName, value));
+            }
+            if (facetRule.isEqual()) {
+                return nodeNameQuery;
+            } else {
+                return negateQuery(nodeNameQuery);
+            }
+        } catch (IllegalNameException e) {
+            log.error("Failed to create node name query: " + e);
+            return createNoHitsQuery();
+        }
+    }
+
+    private Query expandUser(final String field, final Set<String> userIds) {
+        if (userIds.isEmpty()) {
+            return createNoHitsQuery();
+        }
+        // optimize the single-user principal case
+        if (userIds.size() == 1) {
+            String userId = userIds.iterator().next();
+            return new TermQuery(new Term(field, userId));
+        } else {
+            BooleanQuery b = new BooleanQuery(true);
+            for (String userId : userIds) {
+                Term term = new Term(field, userId);
+                b.add(new TermQuery(term), Occur.SHOULD);
+            }
+            return b;
+        }
+    }
+
+    private Query expandGroup(final String field, final Set<String> memberships) {
+        // boolean OR query of groups
+        if (memberships.isEmpty()) {
+            return createNoHitsQuery();
+        }
+        BooleanQuery b = new BooleanQuery(true);
+        for (String groupName : memberships) {
+            Term term = new Term(field, groupName);
+            b.add(new TermQuery(term), Occur.SHOULD);
+        }
+        return b;
+    }
+
+    private Query expandRole(final String field, final Set<String> roles) {
+        // boolean Or query of roles
+        if (roles.size() == 0) {
+            return createNoHitsQuery();
+        }
+        BooleanQuery b = new BooleanQuery(true);
+        for (String role : roles) {
+            Term term = new Term(field, role);
+            b.add(new TermQuery(term), Occur.SHOULD);
+        }
+        return b;
+    }
+
+    @Override
+    public String toString() {
+        return "authorisation query: " + query.toString();
+    }
+}

@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /topmost/upstream/exportFirst:
+      existingPropertyWithAddInSecond:
+        operation: override
+        type: string
+        value: value3
+    /topmost/upstream/exportSecond:
+      jcr:primaryType: nt:unstructured
+      newPropertyToSecond: 1234567890

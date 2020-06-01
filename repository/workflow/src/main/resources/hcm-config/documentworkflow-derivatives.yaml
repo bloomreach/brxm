@@ -1,0 +1,23 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:derivatives/reviewed-action:
+      jcr:primaryType: hipposys:deriveddefinition
+      hipposys:classname: org.onehippo.repository.documentworkflow.DerivedDataFunction
+      hipposys:nodetype: hippostd:publishableSummary
+      hipposys:serialver: 1
+      /hipposys:accessed:
+        jcr:primaryType: hipposys:propertyreferences
+        /publishedAvailability:
+          jcr:primaryType: hipposys:resolvepropertyreference
+          hipposys:relPath: ../{.}[@hippostd:state='published']/hippo:availability
+        /publishedLastModified:
+          jcr:primaryType: hipposys:resolvepropertyreference
+          hipposys:relPath: ../{.}[@hippostd:state='published']/hippostdpubwf:lastModificationDate
+        /unpublishedLastModified:
+          jcr:primaryType: hipposys:resolvepropertyreference
+          hipposys:relPath: ../{.}[@hippostd:state='unpublished']/hippostdpubwf:lastModificationDate
+      /hipposys:derived:
+        jcr:primaryType: hipposys:propertyreferences
+        /summary:
+          jcr:primaryType: hipposys:relativepropertyreference
+          hipposys:relPath: hippostd:stateSummary

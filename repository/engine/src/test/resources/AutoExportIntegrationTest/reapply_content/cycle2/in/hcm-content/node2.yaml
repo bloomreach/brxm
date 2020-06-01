@@ -1,0 +1,3 @@
+/content-test/node2:
+  jcr:primaryType: nt:unstructured
+  property: node2-cycle2

@@ -1,0 +1,94 @@
+/*
+ * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<test='http://www.onehippo.org/jcr/hippo/test/nt/1.0'>
+
+[hippo:ntunstructured] > nt:unstructured
+
+[hippo:ntunstructuredordered] > nt:unstructured orderable
+
+[hippo:testdocument] > hippo:document
++ * (nt:base) = hippo:ntunstructured multiple
+- *
+- * multiple
+
+[hippo:testcardocument] > hippo:document
++ * (nt:base) = hippo:ntunstructured multiple
+- hippo:product (string)
+- hippo:brand (string)
+- hippo:color (string)
+- hippo:date (date)
+- hippo:travelled (long)
+- hippo:price (double)
+
+
+[hippo:testtagdocument] > hippo:document
+- * (String) multiple
+
+[hippo:realdocument] > hippo:document
++ hippo:mirror (hippo:facetselect) version
+
+[hippo:testderived] > hippo:derived mixin
+- hippo:c (Long) mandatory
+
+[hippo:testderiveddocument] > hippo:document
+- hippo:a (Long)
+- hippo:b (Long)
+
+[hippo:testmixin] mixin
+- hippo:a (String) mandatory
+
+[hippo:baddocument] > hippo:document, mix:referenceable
+- hippo:x (String)
+
+[hippo:testmirror] > hippo:facetselect
+
+[hippo:subtypemirror] > hippo:mirror
+
+/*
+ * Node types used for nodescope free text searching and indexing
+ */
+
+[hippo:testhtml] > nt:base
+- hippo:testcontent (string) primary mandatory
++ * (hippo:facetselect)
+
+[hippo:testhtmltwo] > hippo:testhtml
+
+[hippo:testcompoundstructure] > nt:base
++ * (hippo:testhtml) = hippo:testhtml multiple
++ hippo:testresource (hippo:resource)
++ hippo:testpdfresource (hippo:resource)
+- *
+
+[hippo:testsearchdocument] > hippo:document
++ * (hippo:testcompoundstructure) = hippo:testcompoundstructure multiple
+- * (date)
+- * (string)
+
+[test:target] > hippo:document
+
+[test:referrer] > hippo:document
+- * (reference)
++ * (hippo:facetselect)
+
+[test:emptymixin] mixin
+[hippo:emptymixin] mixin
