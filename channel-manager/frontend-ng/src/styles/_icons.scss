@@ -1,0 +1,55 @@
+/*
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Default material design icon size: 24px
+[md-font-icon] {
+  font-size: $icon-size;
+  height: $icon-size;
+  line-height: $icon-size;
+  min-height: $icon-size;
+  min-width: $icon-size;
+  width: $icon-size;
+
+  // Some icons are colored to be consistent with the rest of the CMS
+
+  &.mdi-check-circle {
+    // Green indicator for "live" documents
+    color: $hippo-green;
+  }
+
+  &.mdi-minus-circle {
+    // Red indicator for "offline" documents
+    color: $hippo-red;
+  }
+
+  &.mdi-alert {
+    // Yellow indicator for "changed compared to the live version"
+    color: $hippo-yellow;
+    position: relative;
+
+    &::after {
+      // force a white exclamation mark by rendering a small white rectangle behind the icon
+      background: #fff;
+      bottom: 5px;
+      content: '';
+      left: 10px;
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      z-index: -1;
+    }
+  }
+}

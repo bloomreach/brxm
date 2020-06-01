@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<g>
+	<g>
+		<g>
+			<path fill="currentColor" d="M14,4c0.496,0,1.299,0.352,1.65,0.723l2.623,2.965C18.79,8.232,19,8.613,19,9v10
+				c0,0.316-0.478,0.938-0.678,1H6.415C6.232,20,6,19.75,6,19.469V4.453C6,4.203,6.175,4,6.391,4H14 M13.622,3H6.391
+				C5.623,3,5,3.646,5,4.453v15.016C5,20.275,5.646,21,6.415,21h11.907C19.088,21,20,19.807,20,19V9.422c0-0.809-0.466-1.436-1-2
+				l-3-3.386C15.463,3.471,14.392,3,13.622,3L13.622,3z"/>
+		</g>
+	</g>
+	<g>
+		<g>
+			<polygon fill="currentColor" points="19.091,9 14,8.991 14,4.001 15,4.001 15,8 19.093,8 			"/>
+		</g>
+	</g>
+	<g>
+		<g>
+			<rect x="8" y="14" fill="currentColor" width="9" height="1"/>
+		</g>
+	</g>
+	<g>
+		<g>
+			<rect x="8.001" y="17" fill="currentColor" width="9" height="1"/>
+		</g>
+	</g>
+	<g>
+		<g>
+			<rect x="8.001" y="11" fill="currentColor" width="9" height="1"/>
+		</g>
+	</g>
+</g>
+<g>
+	<path fill="#5BBC5B" d="M6.495,10.992C3.462,10.992,1,8.529,1,5.496C1,2.461,3.462,0,6.495,0c3.035,0,5.497,2.461,5.497,5.496
+		C11.992,8.529,9.53,10.992,6.495,10.992z"/>
+</g>
+<polygon fill="#FFFFFF" points="9.529,3.412 8.658,2.92 6.176,7.471 4.412,5.235 3.596,5.814 6.265,9.125 "/>
+</svg>
