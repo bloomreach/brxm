@@ -1,0 +1,217 @@
+<!--
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div ng-controller="selectionPluginCtrl">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3>Selections Configuration</h3></div>
+        <div class="panel-body">
+            <uib-tabset>
+                <uib-tab active>
+                    <uib-tab-heading>Document Types</uib-tab-heading>
+                    <essentials-draft-warning></essentials-draft-warning>
+                    <h4>Add selection fields to document types</h4>
+
+                    <div ng-hide="documentTypes.length && valueLists.length">
+                        <p>You have successfully installed the selections feature, which makes it possible to create selection fields
+                            in your document types, using value lists created and maintained in the CMS.</p>
+                        <p>It appears that you have not yet created a value list in the CMS, or that you have no document types
+                            to create selection fields. Make sure you have the desired document types in place (by adding the
+                            appropriate features to your project or creating them yourself in the CMS document type editor, and that
+                            you have created the desired value lists in the CMS.</p>
+                    </div>
+                    <div ng-show="initializing">
+                        <p><strong>Retrieving document types...</strong></p>
+                    </div>
+                    <div ng-show="documentTypes.length && valueLists.length">
+                        <div ng-hide="fieldAdded">
+                            <p>The form below allows you to add selection fields to existing document types. A selection field is a field
+                                that uses a CMS-based value list to provide the CMS user with the field options. You can choose whether the CMS
+                                user can select only a single or multiple options.</p>
+                        </div>
+                        <div ng-show="fieldAdded" class="alert alert-info">
+                            <p>You have changed one or more document types, and may want to update your document type beans now. You can use
+                                the <a href="/essentials/#/tools/beanwriter">BeanWriter tool</a> for this.</p>
+                            <p>Also, you may want to move the selection field to the desired position in the
+                                <essentials-cms-document-type-deep-link
+                                        name-space="{{modifiedType.prefix}}"
+                                        document-name="{{modifiedType.name}}">
+                                </essentials-cms-document-type-deep-link>
+                                . You can do that in the Document Type Editor
+                                (Content &#8594; Document Types &#8594; Document type).
+                                Make sure you commit all changes before coming back to Essentials.
+                            </p>
+                        </div>
+                        <form class="form-horizontal" novalidate name="addFieldForm">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="selectionDocumentType">Document type</label>
+                                <div class="col-sm-8" ng-class="addFieldForm.documentType.$invalid ? 'bg-danger' : ''">
+                                    <select id="selectionDocumentType" required chosen
+                                            class="form-control"
+                                            ng-model="data.selectedDocumentType"
+                                            ng-selected="data.selectedDocumentType"
+                                            ng-options="type.name for type in documentTypes | filter:showDocument"
+                                            data-placeholder="Choose a document type..."
+                                            width="'100%'">
+                                        <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="selectionFields.length > 0">
+                                <label class="col-sm-4 control-label">Existing selection fields</label>
+                                <div class="col-sm-8">
+                                    <table class="table table-hover">
+                                        <tr>
+                                            <th>Field name</th>
+                                            <th>Type</th>
+                                            <th>Value list</th>
+                                        </tr>
+                                        <tr ng-repeat="field in selectionFields">
+                                            <td>{{field.name}}</td>
+                                            <td>{{field.type}}</td>
+                                            <td>
+                                                <span title="{{field.valueList}}">{{valueListNameByPath(field.valueList)}}</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="selectionFieldName">Name of new field</label>
+                                <div class="col-sm-8" ng-class="addFieldForm.fieldName.$invalid?'bg-danger':''">
+                                    <input class="form-control" required id="selectionFieldName" type="text" ng-model="data.fieldName"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="selectionFieldType">Selection type</label>
+                                <div class="col-sm-8">
+                                    <select id="selectionFieldType" chosen
+                                            class="form-control"
+                                            ng-model="data.selectionType"
+                                            ng-selected="data.selectionType"
+                                            ng-options="type for type in selectionTypes"
+                                            width="'100%'">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="data.selectionType">
+                                <label class="col-sm-4 control-label" for="selectionFieldPresentation">Presentation</label>
+                                <div class="col-sm-8">
+                                    <select id="selectionFieldPresentation" chosen
+                                            class="form-control"
+                                            ng-model="data.presentation"
+                                            ng-options="pres.label for pres in typePresentations"
+                                            width="'100%'">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="data.presentation.id === 'radioboxes'">
+                                <label class="col-sm-4 control-label" for="selectionFieldOrientation">Orientation</label>
+                                <div class="col-sm-8">
+                                    <select id="selectionFieldOrientation" chosen
+                                            class="form-control"
+                                            ng-model="data.orientation"
+                                            ng-options="ori for ori in orientations"
+                                            width="'100%'">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="data.presentation.id === 'palette'">
+                                <div class="col-sm-offset-4 col-sm-8">
+                                    <div class="checkbox">
+                                        <label for="selectionFieldAllowOrdering">
+                                            <input type="checkbox" ng-model="data.allowOrdering"
+                                                   id="selectionFieldAllowOrdering"> Allow ordering
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="data.presentation.id === 'palette' || data.presentation.id === 'selectlist'">
+                                <label class="col-sm-4 control-label" for="selectionFieldMaximumRows">Maximum rows</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="text" ng-model="data.maxRows"
+                                           ng-pattern="/^\d+$/" placeholder="10" id="selectionFieldMaximumRows"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="selectionFieldValueList">Value list</label>
+                                <div class="col-sm-8" ng-class="addFieldForm.valueList.$invalid ? 'bg-danger' : ''">
+                                    <select id="selectionFieldValueList" chosen required
+                                            class="form-control"
+                                            ng-model="data.selectedValueList"
+                                            ng-selected="data.selectedValueList"
+                                            ng-options="valueListAsOption(list) for list in valueLists"
+                                            data-placeholder="Choose a value list..."
+                                            width="'100%'">
+                                        <option value=""></option><!-- Necessary due to ESSENTIALS-677 -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-8">
+                                    <button ng-disabled="!addFieldForm.$valid" class="btn btn-primary" ng-click="addField()">Add new selection field</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </uib-tab>
+
+
+                <uib-tab disabled="!valueLists.length">
+                    <uib-tab-heading>Site Availability</uib-tab-heading>
+                    <h4>Make value lists available to the site</h4>
+
+                    <p>In this tab, you configure which value lists should be made available to the site by the
+                        ValueListManager. Once a value list is available to the site, its labels/values can be
+                        rendered on the site.
+                    </p>
+                    <form novalidate name="provisionedForm">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Make available</th>
+                                <th>By name</th>
+                                <th>Value list</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="list in provisionedValueLists" ng-form="availabilityForm">
+                                <td>
+                                    <input type="checkbox" checked="{{list.included}}" ng-model="list.included"/>
+                                </td>
+                                <td>
+                                    <input ng-required="list.included" class="(list.included && !list.id)?'danger':''"
+                                           type="text" ng-model="list.id" placeholder="Specify name"/>
+                                </td>
+                                <td>
+                                    {{list.path}}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <button ng-disabled="!provisionedForm.$valid" class="btn btn-primary pull-right"
+                                ng-click="saveProvisioning()">Save settings</button>
+                    </form>
+                </uib-tab>
+            </uib-tabset>
+        </div>
+    </div>
+</div>
+
+
+
+
+
