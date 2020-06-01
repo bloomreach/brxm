@@ -1,0 +1,83 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:userroles:
+      /xm.frontend-config.reader:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Allows reading CMS and Console frontend configuration through role readonly
+        hipposys:userroles: []
+      /xm.cms.user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Required to login and use the CMS application
+        hipposys:userroles: [xm.frontend-config.reader]
+      /xm.console.user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Required to login and use the Console application
+        hipposys:userroles: [xm.frontend-config.reader]
+      /xm.dashboard.user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Required to view and use the Home (dashboard) menu and functionality within the CMS
+        hipposys:userroles: []
+      /xm.content.user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Required to view and use the Content menu and functionality within the CMS
+        hipposys:userroles: []
+      /xm.report.user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Required to view and use the Insights > Content Reports menu and functionality within the CMS
+        hipposys:userroles: []
+      /xm.system.user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Required to view and use the Setup > System menu and functionality within the CMS
+        hipposys:userroles: []
+      /xm.system.admin:
+        hipposys:userroles:
+          operation: add
+          value: [xm.console.user]
+      /xm.security.viewer:
+        hipposys:userroles:
+          operation: add
+          value: [xm.system.user]
+      /xm.content.viewer:
+        hipposys:userroles:
+          operation: add
+          value: [xm.content.user]
+      /xm.default-user.cms-admin:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:description: Implies all standard userroles needed for a default CMS administrator user or group
+        hipposys:userroles: [xm.repository.admin, xm.cms.user, xm.content.admin, xm.channel.admin, xm.dashboard.user, xm.security.user-admin, xm.security.application-admin]
+      /xm.default-user.system-admin:
+        hipposys:userroles:
+          operation: add
+          value: [xm.cms.user, xm.dashboard.user]
+      /xm.default-user.author:
+        hipposys:userroles:
+          operation: add
+          value: [xm.cms.user, xm.dashboard.user]
+      /xm.default-user.editor:
+        hipposys:userroles:
+          operation: add
+          value: [xm.cms.user, xm.dashboard.user]
+      /xm.default-user.webmaster:
+        hipposys:userroles:
+          operation: add
+          value: [xm.cms.user, xm.dashboard.user]
+    /hippo:configuration/hippo:groups:
+      /cms-admin:
+        jcr:primaryType: hipposys:group
+        hipposys:members:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:userroles:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [xm.default-user.cms-admin]
+        hipposys:securityprovider: internal

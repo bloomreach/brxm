@@ -1,0 +1,166 @@
+// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+.hippo-toolbar-menu {
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: 1px solid $gray12;
+  background-color: $editor-toolbar-bgcolor;
+  display: flex;
+  height: $editor-toolbar-height;
+
+  &:first-child {
+    padding-left: 24px;
+  }
+
+  .hippo-toolbar-section {
+    display: flex;
+    align-items: center;
+
+    > li {
+      align-items: center;
+      display: flex;
+
+      &:not(:last-child) {
+        padding-right: 8px;
+      }
+
+      // Dropdown buttons like 'Publication' get "btn btn-default" classes, which we tweak a little here
+      .hippo-toolbar-section-button {
+        // No borders
+        border: none;
+
+        // Compensate for missing top and bottom border by increasing the padding so the total height remains the same
+        padding-top: 9px;
+        padding-bottom: 9px;
+
+        &:active {
+          background-color: $gray5 !important;
+        }
+
+        > span {
+          display: flex;
+          align-items: center;
+
+          > .menu-action-icon {
+            display: inline-flex;
+          }
+
+          // Add space between icon and label in the dropdown button
+          img,
+          svg {
+            margin-right: 4px;
+          }
+        }
+
+        > svg {
+          float: left;
+          position: relative;
+          top: 17px;
+          left: 2px;
+        }
+      }
+
+      // Dropdown is shown
+      .menu-item-active {
+        background-color: $gray5;
+      }
+
+      // Dropdown wrapper element
+      .menu-item-active + div {
+        position: relative;
+
+        .hippo-toolbar-menu-item {
+          // Draw dropdown menu over border of info panel
+          z-index: 3;
+          position: absolute;
+
+          > li {
+            padding: 0;
+          }
+
+          .hippo-toolbar-menu-item-button-label {
+            position: relative;
+            top: -2px;
+          }
+        }
+      }
+    }
+
+    .menu-label-item {
+      margin-left: 12px;
+      color: $editor-toolbar-color;
+      white-space: nowrap;
+      font-size: $editor-toolbar-fontsize;
+      // Firefox will render the label 1px lower than Chrome/Safari if line-height is not set to (font-size - 1)
+      line-height: $editor-toolbar-fontsize - 1;
+
+      .menu-action-text {
+        position: relative;
+        top: 13px;
+      }
+    }
+  }
+}
+
+/* Split the dropdown in columns if there are many languages */
+.hippo-editor-toolbar .hippo-toolbar-section {
+  div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item,
+  div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
+    overflow: hidden;
+
+    > li {
+      float: left;
+      clear: none;
+      margin-right: 0;
+    }
+  }
+
+  div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item {
+    width: 320px;
+
+    li {
+      width: 50%;
+    }
+  }
+
+  div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
+    width: 480px;
+
+    li {
+      width: 33.333%;
+    }
+  }
+}
+
+.hippo-editor .hippo-toolbar-status {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: $warning-light;
+  float: left;
+
+  ul > li {
+    padding: 8px 8px 0 24px;
+    line-height: 14px;
+
+    &:first-child {
+      padding-top: 10px;
+    }
+
+    &:last-child {
+      padding-bottom: 10px;
+    }
+  }
+}

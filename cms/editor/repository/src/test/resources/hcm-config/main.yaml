@@ -1,0 +1,10 @@
+definitions:
+  namespace:
+    editmodel:
+      uri: http://www.hippoecm.org/test/editmodel/1.0
+      cnd: editmodel.cnd
+    test_0_0:
+      uri: http://www.hippoecm.org/editor/test/nt/0.0
+    test:
+      uri: http://www.hippoecm.org/editor/test/nt/0.1
+      cnd: test.cnd
