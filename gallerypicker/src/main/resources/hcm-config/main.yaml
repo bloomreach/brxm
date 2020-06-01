@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    hippogallerypicker:
+      uri: http://www.hippoecm.org/hippogallerypicker/nt/2.0
+      cnd: gallerypicker-types.cnd
