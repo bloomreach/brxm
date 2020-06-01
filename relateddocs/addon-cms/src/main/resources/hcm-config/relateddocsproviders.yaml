@@ -1,0 +1,17 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-relateddocsproviders:
+      jcr:primaryType: frontend:plugincluster
+      frontend.overrides: relateddocs.service
+      relateddocs.index: relateddocs
+      /SimilaritySearchRelatedDocs:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.onehippo.forge.relateddocs.providers.SimilaritySearchRelatedDocsProvider
+        score: 0.7
+      /ReferringRelatedDocs:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.onehippo.forge.relateddocs.providers.ReferringRelatedDocsProvider
+        score: 1.0
+      /suggestor:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.onehippo.forge.relateddocs.RelatedDocSuggestor
