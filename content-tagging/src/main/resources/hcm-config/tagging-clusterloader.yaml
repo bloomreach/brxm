@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/providersClusterLoader:
+      jcr:primaryType: frontend:plugin
+      cluster.name: cms-tagproviders
+      plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
