@@ -1,0 +1,106 @@
+{
+  "id": "bloomreachInstallAllPlugins",
+  "name": "All Bloomreach Experience features",
+  "icon": "/essentials/feature/bloomreachCoreFeatures/kitchensink.svg",
+  "introduction": "With this feature you set up a project with all recommended features enabled.",
+  "description": "This will install the set of features listed above. Please note that this component is a Bloomreach Experience only component. Adding this component to the community version might result in unexpected and unsupported behaviour of the project. ",
+  "documentationLink": "https://documentation.bloomreach.com/",
+  "installWithParameters": false,
+  "packageFile": "/META-INF/bloomreach_core_plugins_instructions.xml",
+  "type": "feature",
+  "vendor": {
+    "name": "Bloomreach",
+    "url": "https://www.bloomreach.com"
+  },
+  "categories": {
+    "application": [
+      "integration"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "enterprise"
+    ]
+  },
+  "pluginDependencies": [
+    {
+      "pluginId": "enterpriseProject"
+    },
+    {
+      "pluginId": "bannerPlugin"
+    },
+    {
+      "pluginId": "contentBlocks"
+    },
+    {
+      "pluginId": "crisp"
+    },
+    {
+      "pluginId": "imageComponentPlugin"
+    },
+    {
+      "pluginId": "blogPlugin"
+    },
+    {
+      "pluginId": "eventsPlugin"
+    },
+    {
+      "pluginId": "newsPlugin"
+    },
+    {
+      "pluginId": "relatedDocumentsPlugin"
+    },
+    {
+      "pluginId": "relevancePlugin"
+    },
+    {
+      "pluginId": "relevanceExperimentsTrendsPlugin"
+    },
+    {
+      "pluginId": "relevanceCollectorsBundlePlugin"
+    },
+    {
+      "pluginId": "documentWizardPlugin"
+    },
+    {
+      "pluginId": "listPlugin"
+    },
+    {
+      "pluginId": "menuPlugin"
+    },
+    {
+      "pluginId": "openStreetMapPlugin"
+    },
+    {
+      "pluginId": "projectsPlugin"
+    },
+    {
+      "pluginId": "robotsPlugin"
+    },
+    {
+      "pluginId": "searchPlugin"
+    },
+    {
+      "pluginId": "seoPlugin"
+    },
+    {
+      "pluginId": "simpleContent"
+    },
+    {
+      "pluginId": "sitemapPlugin"
+    },
+    {
+      "pluginId": "taxonomyPlugin"
+    },
+    {
+      "pluginId": "urlrewriterPlugin"
+    },
+    {
+      "pluginId": "videoComponentPlugin"
+    },
+    {
+      "pluginId": "luceneIndexExporter"
+    }
+  ]
+}

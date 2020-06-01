@@ -1,0 +1,50 @@
+<!--
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="log-top" ng-class="{'log-visible': visible}">
+    <div class="alert alert-info"  ng-class="{'alert-open': archiveOpen}" ng-click="toggleArchive($event)">
+        <button type="button" class="close" ng-click="hide()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+
+        <p ng-repeat="message in activeMessages" ng-show="message.visible" ng-switch="message.type">
+            <hippo-icon name="{{archiveOpen ? 'chevron-down' : 'chevron-right'}}" size=""></hippo-icon>
+            <span ng-show="$index != 0" style="margin-left: 13px;"></span>
+            {{message.date}} -
+            <span ng-switch="message.type">
+                <hippo-icon ng-switch-when="info" name="check-square" size="m" class="hi-fill-primary"></hippo-icon>
+                <hippo-icon ng-switch-when="warning" name="flag" size="m"></hippo-icon>
+                <hippo-icon ng-switch-when="error" name="exclamation" size="m"></hippo-icon>
+            </span>
+            <span ng-bind-html="message.message"></span>
+        </p>
+        <div class="log-messages ng-hide" ng-show="archiveOpen">
+            <p ng-repeat="message in archiveMessages">
+                {{message.date}} -
+                <span ng-switch="message.type">
+                    <hippo-icon ng-switch-when="info" name="check-square" class="hi-fill-primary"></hippo-icon>
+                    <hippo-icon ng-switch-when="warning" name="flag"></hippo-icon>
+                    <hippo-icon ng-switch-when="error" name="exclamation"></hippo-icon>
+                </span>
+                <span ng-bind-html="message.message"></span>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+

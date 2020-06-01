@@ -1,0 +1,39 @@
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'hippogallery'='http://www.onehippo.org/jcr/hippogallery/nt/2.0'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+
+[hippogallery:image] > hippo:resource
+  - hippogallery:height (long)
+  - hippogallery:width (long)
+
+[hippogallery:container]
+  mixin
+  + * (hippogallery:image)
+
+[hippogallery:exampleAssetSet] > hippo:document
+  + hippogallery:asset (hippo:resource) = hippo:resource primary mandatory autocreated
+
+[hippogallery:exampleImageSet] > hippo:document
+  + hippogallery:picture (hippo:resource) = hippo:resource
+  + hippogallery:thumbnail (hippo:resource) = hippo:resource primary mandatory autocreated
+
+[hippogallery:imageset] > hippo:document
+  orderable
+  - hippogallery:description (string)
+  - hippogallery:filename (string)
+  + hippogallery:thumbnail (hippogallery:image) = hippogallery:image primary mandatory autocreated
+  + hippogallery:original (hippogallery:image) = hippogallery:image
+
+[hippogallery:relaxed] > hippogallery:container, hippostd:relaxed
+  mixin
+
+[hippogallery:stdAssetGallery] > hippostd:gallery
+  orderable
+
+[hippogallery:stdImageGallery] > hippostd:gallery
+  orderable
+
+[hippogallery:stdgalleryset] > hippo:document
+  + hippogallery:thumbnail (hippo:resource) = hippo:resource primary mandatory autocreated
+  + hippogallery:picture (hippo:resource) = hippo:resource
+

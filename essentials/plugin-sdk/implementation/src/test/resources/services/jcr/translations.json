@@ -1,0 +1,10 @@
+{
+  "hippo:types" : {
+    "{{prefix}}:{{document}}" : {
+      "en" : {
+        "{{prefix}}:tags" : "Keywords",
+        "{{prefix}}:tagssupport" : "Keyword suggestions"
+      }
+    }
+  }
+}

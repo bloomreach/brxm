@@ -1,0 +1,8 @@
+/.idea/
+*.iml
+.DS_Store
+atlassian-ide-plugin.xml
+classes/
+target/
+/dashboard/node/
+/dashboard/node_modules/
