@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /m2-extension:
+      jcr:primaryType: nt:unstructured
+      property: value1
+    /corenode/subcorenode:
+      jcr:primaryType: nt:unstructured
+      property: value1

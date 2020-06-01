@@ -1,0 +1,16 @@
+definitions:
+  config:
+    /hippo:namespaces/testcontent/basedocument:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+      hippo:name: Base Document
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          jcr:uuid: a87d38af-21b1-4245-ac9c-e47afda6f294
+          hipposysedit:node: true
+          hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document', 'hippostd:publishableSummary']
+          hipposysedit:uri: http://www.hippoecm.org/testcontent/nt/1.7

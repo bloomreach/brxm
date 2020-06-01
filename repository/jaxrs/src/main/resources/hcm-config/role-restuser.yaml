@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:roles/restuser:
+      jcr:primaryType: hipposys:role
+      hipposys:system: true
+      hipposys:privileges: ['hippo:rest']

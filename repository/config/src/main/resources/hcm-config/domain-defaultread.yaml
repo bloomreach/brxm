@@ -1,0 +1,42 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/defaultread:
+      jcr:primaryType: hipposys:domain
+      /hippo-translations-domain:
+        jcr:primaryType: hipposys:domainrule
+        /hippo-translations-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:translations
+      /hippo-derivatives:
+        jcr:primaryType: hipposys:domainrule
+        /hippo-derivatives-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:derivatives
+      # TODO shouldn't hippolog be for cms users only?
+      /domain-hippolog:
+        jcr:primaryType: hipposys:domainrule
+        /hippolog-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /hippo:log
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: readonly
+        hipposys:userrole:
+          .meta:category: system
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [everybody]
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []

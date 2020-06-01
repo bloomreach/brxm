@@ -1,0 +1,3 @@
+/content/c2:
+  .meta:order-before: c1
+  jcr:primaryType: nt:unstructured

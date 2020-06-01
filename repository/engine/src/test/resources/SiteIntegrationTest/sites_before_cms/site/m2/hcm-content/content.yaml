@@ -1,0 +1,3 @@
+/content/m2contentnode:
+  jcr:primaryType: nt:unstructured
+  property: propertyValue

@@ -1,0 +1,40 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:users:
+      /admin:
+        jcr:primaryType: hipposys:user
+        hipposys:active: true
+        hipposys:password:
+          .meta:category: system
+          value: $SHA-256$HIlytXwnqSU=$NqCi2sJoM4qAwQ8136GYueUVA/TSyidpAI3Evn+y/hc=
+        hipposys:securityprovider: internal
+        hipposys:passwordlastmodified:
+          .meta:category: system
+        hipposys:previouspasswords:
+          .meta:category: system
+        hipposys:userroles:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [xm.default-user.system-admin, xm.repository-browser.user]
+      /workflowuser:
+        jcr:primaryType: hipposys:user
+        hipposys:active: true
+        hipposys:system: true
+        hipposys:password:
+          .meta:category: system
+          value: $SHA-256$*
+        hipposys:securityprovider: internal
+        hipposys:passwordlastmodified:
+          .meta:category: system
+        hipposys:previouspasswords:
+          .meta:category: system
+        hipposys:userroles:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [xm.repository.admin]
+      /ping-user:
+        jcr:primaryType: hipposys:user
+        hipposys:active: true
+        hipposys:passkey: jvm://
+        hipposys:securityprovider: internal
+        hipposys:system: true

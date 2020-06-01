@@ -1,0 +1,68 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/content:
+      jcr:primaryType: hipposys:domain
+      /content-domain:
+        jcr:primaryType: hipposys:domainrule
+        /content-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /content
+      /author:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: author
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.content.author
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+      /editor:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: editor
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.content.editor
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+      /admin:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: admin
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.content.admin
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: readonly
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.content.viewer
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
