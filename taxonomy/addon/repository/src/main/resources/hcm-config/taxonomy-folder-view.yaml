@@ -1,0 +1,27 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-folder-views/hippotaxonomy:container:
+      jcr:primaryType: frontend:plugincluster
+      frontend:properties: [list.page.size, list.view.size]
+      frontend:references: [model.folder, model.document]
+      frontend:services: [wicket.id]
+      list.page.size: '500'
+      list.view.size: '3'
+      /root:
+        jcr:primaryType: frontend:plugin
+        list.page.size: ${list.page.size}
+        list.view.size: ${list.view.size}
+        model.document: ${model.document}
+        plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.DocumentListingPlugin
+        wicket.id: ${wicket.id}
+        wicket.model: ${model.folder}
+        /filters:
+          jcr:primaryType: frontend:pluginconfig
+          /showFolderType:
+            jcr:primaryType: frontend:pluginconfig
+            child: hippotaxonomy:container
+            display: true
+          /showHandleType:
+            jcr:primaryType: frontend:pluginconfig
+            child: hippo:handle
+            display: true
