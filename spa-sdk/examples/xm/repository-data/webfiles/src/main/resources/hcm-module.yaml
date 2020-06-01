@@ -1,0 +1,5 @@
+group: 
+  name: xm-spa-example
+project: xm-spa-example
+module:
+  name: xm-spa-example-repository-data-webfiles

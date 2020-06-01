@@ -1,0 +1,39 @@
+{
+  "name": "@bloomreach/example-nuxt",
+  "version": "14.3.0",
+  "description": "Example Nuxt.js SPA for Bloomreach Experience",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue .",
+    "start": "cross-env NODE_ENV=production node server/index.js",
+    "test": "echo no tests"
+  },
+  "dependencies": {
+    "@bloomreach/spa-sdk": "^14.3",
+    "@bloomreach/vue-sdk": "^14.3",
+    "@nuxtjs/axios": "^5.10",
+    "@nuxtjs/dotenv": "^1.4",
+    "cookie-universal-nuxt": "^2.1",
+    "cross-env": "^7.0",
+    "express": "^4.17",
+    "nuxt": "^2.12",
+    "nuxt-property-decorator": "^2.7"
+  },
+  "devDependencies": {
+    "@babel/runtime-corejs3": "^7.9",
+    "@nuxt/typescript-build": "^1.0",
+    "@nuxtjs/eslint-config-typescript": "^2.0",
+    "@nuxtjs/eslint-module": "^2.0",
+    "babel-eslint": "^10.1",
+    "core-js": "^3.6",
+    "eslint": "^6.8",
+    "eslint-config-prettier": "^6.11",
+    "eslint-plugin-nuxt": "^1.0",
+    "eslint-plugin-prettier": "^3.1",
+    "nodemon": "^2.0",
+    "prettier": "^2.0"
+  }
+}
