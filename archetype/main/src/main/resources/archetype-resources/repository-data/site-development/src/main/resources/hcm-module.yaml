@@ -1,0 +1,6 @@
+site: ${artifactId}
+group: ${artifactId}
+project: ${artifactId}
+module:
+  name: ${artifactId}-repository-data-site-development
+  after: ${artifactId}-repository-data-site
