@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /a/b:
+      property: anothervalue
+    /topmost:
+      /subnode:
+        topmostvalue: customvalue

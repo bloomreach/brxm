@@ -1,0 +1,8 @@
+definitions:
+  namespace:
+    testEdit:
+      uri: http://www.onehippo.org/jcr/testEdit/1.0
+      cnd: testEdit.cnd
+  config:
+    /topmost/upstream/exportFirst:
+      jcr:primaryType: nt:unstructured

@@ -1,0 +1,6 @@
+group:
+  name: hippo-cms-test
+  after: [hippo-cms, test-group]
+project:
+  name: site-with-content-project
+module: site-with-content

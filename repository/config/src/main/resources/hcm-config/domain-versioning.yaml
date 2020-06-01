@@ -1,0 +1,39 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/versioning:
+      jcr:primaryType: hipposys:domain
+      /nt-system:
+        jcr:primaryType: hipposys:domainrule
+        /type-rep-system:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /jcr:system
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: readonly
+        hipposys:userrole:
+          .meta:category: system
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [everybody]
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+      /editor:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: editor
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.content.editor
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []

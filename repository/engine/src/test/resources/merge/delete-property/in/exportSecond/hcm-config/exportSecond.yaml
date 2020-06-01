@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /topmost/upstream/exportFirst:
+      existingPropertyWithAddInSecond:
+        operation: add
+        value: [value2]
+    /topmost/upstream/exportSecond:
+      jcr:primaryType: nt:unstructured
+      newPropertyToSecond: ['Hello,']

@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-project</artifactId>
+    <version>31.2.2-SNAPSHOT</version>
+  </parent>
+
+  <name>Repository</name>
+  <description>Hippo Repository</description>
+  <artifactId>hippo-repository</artifactId>
+  <version>14.2.2-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <inceptionYear>2007</inceptionYear>
+
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+
+  <modules>
+    <module>api</module>
+    <module>tika</module>
+    <module>connector</module>
+    <module>provider</module>
+    <module>engine</module>
+    <module>modules</module>
+    <module>deprecated</module>
+    <module>upgrade</module>
+    <module>utilities</module>
+    <module>test</module>
+    <module>testutils</module>
+    <module>testcontent</module>
+    <module>builtin</module>
+    <module>config</module>
+    <module>resources</module>
+    <module>dependencies</module>
+    <module>servlets</module>
+    <module>scripts</module>
+    <module>workflow</module>
+    <module>jaxrs</module>
+    <module>mockutils</module>
+  </modules>
+
+  <properties>
+    <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
+    <notice.project.name>Hippo Repository</notice.project.name>
+    <javadoc.base.version>13.1</javadoc.base.version>
+
+    <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
+    <hippo.configuration-management.version>14.2.2-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.commons.version>14.2.2-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>14.2.2-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>14.2.2-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.utilities.version>14.2.2-SNAPSHOT</hippo.utilities.version>
+    <hippo.testutils.version>14.2.2-SNAPSHOT</hippo.testutils.version>
+
+    <!-- Test dependencies  -->
+    <junit.version>4.12</junit.version>
+    <hamcrest-core.version>1.3</hamcrest-core.version>
+
+    <!-- Project Dependencies -->
+    <commons-io.version>2.6</commons-io.version>
+    <commons-text.version>1.6</commons-text.version>
+    <commons-lang3.version>3.9</commons-lang3.version>
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
+    <commons-collections4.version>4.4</commons-collections4.version>
+    <tika.version>1.24.1</tika.version>
+    <!-- keep pdfbox version aligned with the version tika-parsers depends on -->
+    <pdfbox.version>2.0.19</pdfbox.version>
+    <quartz.version>2.3.2</quartz.version>
+    <json-lib.version>2.4</json-lib.version>
+    <easymock.version>4.0.2</easymock.version>
+    <powermock.version>2.0.2</powermock.version>
+    <restassured.version>4.1.2</restassured.version>
+    <decentxml.version>1.4</decentxml.version>
+    <commons-scxml2.version>2.0-M1</commons-scxml2.version>
+    <mysql.version>8.0.17</mysql.version>
+    <mssql.version>6.2.2.jre8</mssql.version>
+    <postgresql.version>42.1.4</postgresql.version>
+    <oracle.version>12.2.0.1</oracle.version>
+    <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
+    <assertj.version>3.8.0</assertj.version>
+  </properties>
+
+  <scm>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-repository.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-repository.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-repository</url>
+  </scm>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <aggregate>true</aggregate>
+          <author>false</author>
+          <show>protected</show>
+          <docfilessubdirs>true</docfilessubdirs>
+          <links>
+            <link>http://www.day.com/maven/jsr170/javadocs/jcr-2.0/</link>
+          </links>
+        </configuration>
+      </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <workingDirectory>${project.build.directory}</workingDirectory>
+          <systemPropertyVariables>
+            <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+
+  </build>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.onehippo.cms</groupId>
+        <artifactId>hippo-configuration-management-api</artifactId>
+        <version>${hippo.configuration-management.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms</groupId>
+        <artifactId>hippo-configuration-management-model</artifactId>
+        <version>${hippo.configuration-management.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms7-commons</artifactId>
+        <version>${hippo.commons.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services</artifactId>
+        <version>${hippo.services.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-eventbus</artifactId>
+        <version>${hippo.services.eventbus.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms7-utilities</artifactId>
+        <version>${hippo.utilities.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.jcr</groupId>
+        <artifactId>jcr</artifactId>
+        <classifier>sources</classifier>
+        <version>${javax.jcr.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-core</artifactId>
+        <version>${tika.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-parsers</artifactId>
+        <version>${tika.version}</version>
+        <exclusions>
+          <!-- Exclusions of tika-parsers 1.24.1 compile scope dependencies, ordered by definition in tika-parser/pom.xml.
+               Each exclusion has a comment indicating the type or kind of parser(s) they are used for, just not by us.
+
+               Note: two exclusions (pdfbox, pdfbox-tools) *are* used, but instead included via tika/pom.xml
+          -->
+
+          <!-- javax.activation packages are provided by the JRE 8, so we don't want them again under any sneaky artifact renames -->
+          <exclusion> <!-- TIKA-2778: for usage > Java 8 -->
+            <groupId>com.sun.activation</groupId>
+            <artifactId>jakarta.activation</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-2802: OutlookPSTParser -->
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-747: Vorbis and FLAC parsers -->
+            <groupId>org.gagravarr</groupId>
+            <artifactId>vorbis-java-tika</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1327: Matlab .mat parser -->
+            <groupId>org.tallison</groupId>
+            <artifactId>jmatio</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-716: email parser -->
+            <groupId>org.apache.james</groupId>
+            <artifactId>apache-mime4j-dom</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-2462: SAS7BDAT (SAS) parser -->
+            <groupId>com.epam</groupId>
+            <artifactId>parso</artifactId>
+          </exclusion>
+          <exclusion> <!-- pdfbox dependencies are managed through tika/pom.xml -->
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+          </exclusion>
+          <exclusion> <!-- pdfbox dependencies are managed through tika/pom.xml -->
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox-tools</artifactId>
+          </exclusion>
+          <exclusion> <!--  TIKA-3055: PDF Preflight parser -->
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>preflight</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1601: MSAccess JackcessParser -->
+            <groupId>com.healthmarketscience.jackcess</groupId>
+            <artifactId>jackcess</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1601: MSAccess JackcessParser -->
+            <groupId>com.healthmarketscience.jackcess</groupId>
+            <artifactId>jackcess-encrypt</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-155: Java class file parser (requires asm >= 7) -->
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-852: MP4 Parser -->
+            <groupId>org.tallison</groupId>
+            <artifactId>isoparser</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-482: extraction of EXIF and IPTC metadata from JPEG and TIFF Images -->
+            <groupId>org.tallison</groupId>
+            <artifactId>metadata-extractor</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-420: Fulltext extraction from HTML pages -->
+            <groupId>de.l3s.boilerpipe</groupId>
+            <artifactId>boilerpipe</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-466: Feed Parser -->
+            <groupId>com.rometools</groupId>
+            <artifactId>rome</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-747: Vorbis and FLAC parsers -->
+            <groupId>org.gagravarr</groupId>
+            <artifactId>vorbis-java-core</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1224: source code parser -->
+            <groupId>org.codelibs</groupId>
+            <artifactId>jhighlight</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-623: PST Parser -->
+            <groupId>com.pff</groupId>
+            <artifactId>java-libpst</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-241: Unrar parser -->
+            <groupId>com.github.junrar</groupId>
+            <artifactId>junrar</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1699: refactored GROBID parser to use GROBID rest API -->
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-client</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-2021: Tesseract OCR Parser -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-exec</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1614: Geo Topic Parser -->
+            <groupId>org.apache.opennlp</groupId>
+            <artifactId>opennlp-tools</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1614: Geo Topic Parser -->
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1699: refactored GROBID parser to use GROBID rest API -->
+            <groupId>com.github.openjson</groupId>
+            <artifactId>openjson</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1803: GeoTopicParser -->
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+          </exclusion>
+          <exclusion> <!-- not needed logging dependency -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1423: GRIB formats parser -->
+            <groupId>edu.ucar</groupId>
+            <artifactId>netcdf4</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-2756: MSAccess JackcessParser -->
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom2</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1803: GeoTopicParser -->
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1423: GRIB formats parser -->
+            <groupId>edu.ucar</groupId>
+            <artifactId>grib</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1423: GRIB formats parser -->
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA 2672: Object recognition parser, tensorflow based -->
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1423: GRIB formats parser -->
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1803: GeoTopicParser -->
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1423: GRIB formats parser -->
+            <groupId>edu.ucar</groupId>
+            <artifactId>cdm</artifactId>
+          </exclusion>
+          <exclusion>  <!-- TIKA-1423: GRIB formats parser -->
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1423: GRIB formats parser -->
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1423: GRIB formats parser -->
+            <groupId>edu.ucar</groupId>
+            <artifactId>httpservices</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1423: GRIB formats parser -->
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1423: GRIB formats parser -->
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1580: ISA-Tab parsers -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-443: Geographic Information Parser -->
+            <groupId>org.apache.sis.core</groupId>
+            <artifactId>sis-utility</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-443: Geographic Information Parser -->
+            <groupId>org.apache.sis.storage</groupId>
+            <artifactId>sis-netcdf</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-443: Geographic Information Parser -->
+            <groupId>org.apache.sis.core</groupId>
+            <artifactId>sis-metadata</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-443: Geographic Information Parser -->
+            <groupId>org.opengis</groupId>
+            <artifactId>geoapi</artifactId>
+          </exclusion>
+          <exclusion> <!-- SentimentParser -->
+            <groupId>edu.usc.ir</groupId>
+            <artifactId>sentiment-analysis-parser</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1645 / TIKA-1642: CTAKESParser -->
+            <groupId>org.apache.uima</groupId>
+            <artifactId>uimafit-core</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1645 / TIKA-1642: CTAKESParser -->
+            <groupId>org.apache.uima</groupId>
+            <artifactId>uimaj-core</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1787: Stanford Name Entity Recognition -->
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1787: Stanford Name Entity Recognition -->
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+          </exclusion>
+          <exclusion> <!-- TIKA-1787: Stanford Name Entity Recognition -->
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-api</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-jcr-rmi</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-core</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-data</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-spi-commons</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-jcr-commons</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-collections4</artifactId>
+        <version>${commons-collections4.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.pdfbox</groupId>
+        <artifactId>pdfbox</artifactId>
+        <version>${pdfbox.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.pdfbox</groupId>
+        <artifactId>pdfbox-tools</artifactId>
+        <version>${pdfbox.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox-debugger</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>${commons-beanutils.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.quartz-scheduler</groupId>
+        <artifactId>quartz</artifactId>
+        <version>${quartz.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-testutils</artifactId>
+        <version>${hippo.testutils.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-core</artifactId>
+        <version>${hamcrest-core.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>${easymock.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-core</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-api-easymock</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-module-junit4</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy</artifactId>
+        <version>${groovy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>${freemarker.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.pdark</groupId>
+        <artifactId>decentxml</artifactId>
+        <version>${decentxml.version}</version>
+      </dependency>
+      <!-- SCXML -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-scxml2</artifactId>
+        <version>${commons-scxml2.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-text</artifactId>
+        <version>${commons-text.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <profiles>
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <!-- forked from Jackrabbit sources -->
+                <exclude>connector/src/main/java/org/apache/jackrabbit/jcr2spi/state/HippoSessionItemStateManager.java</exclude>
+                <exclude>engine/src/main/java/org/apache/jackrabbit/core/observation/RevisionEventJournalImpl.java</exclude>
+                <!-- copied from Maven sources -->
+                <exclude>utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java</exclude>
+                <!-- based upon and adapted from Solr sources -->
+                <exclude>utilities/src/main/java/org/onehippo/repository/util/DateMathParser.java</exclude>
+                <!-- repository content XML -->
+                <exclude>*/src/test/resources/**/*.xml</exclude>
+                <exclude>*/src/test/resources/**/*.txt</exclude>
+                <exclude>test/checker-repository.xml</exclude>
+                <exclude>test/checker-storage/**</exclude>
+                <!-- cxf slf4j logger configuration -->
+                <exclude>jaxrs/src/main/resources/META-INF/cxf/org.apache.cxf.Logger</exclude>
+                <exclude>testutils/src/main/resources/META-INF/cxf/org.apache.cxf.Logger</exclude>
+                <exclude>*.puml</exclude>
+                <exclude>**/*/*.puml</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
+

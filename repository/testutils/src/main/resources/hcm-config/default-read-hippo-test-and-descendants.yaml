@@ -1,0 +1,13 @@
+# add read access to nodes of type 'hippo:ntunstructured' for 'testUser' : Since 14.0, nt:unstructured node type
+# does not have default read access any more
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/defaultread/test-domain:
+      jcr:primaryType: hipposys:domainrule
+      /test-and-descendants:
+        jcr:primaryType: hipposys:facetrule
+        hipposys:equals: true
+        hipposys:facet: jcr:path
+        hipposys:type: Reference
+        hipposys:value: /test
+

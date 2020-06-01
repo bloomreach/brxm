@@ -1,0 +1,31 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/draft-document-holder-readwrite:
+      jcr:primaryType: hipposys:domain
+      /holder-domain:
+        jcr:primaryType: hipposys:domainrule
+        /if-holder:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: hippostd:holder
+          hipposys:type: String
+          hipposys:value: __user__
+        /draft-only:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: hippostd:state
+          hipposys:type: String
+          hipposys:value: draft
+      /readwrite:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: readwrite
+        hipposys:userrole:
+          .meta:category: system
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [everybody]
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []

@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    hippobroadcast:
+      uri: http://www.onehippo.org/hippobroadcast/nt/1.0
+      cnd: hippobroadcast.cnd
