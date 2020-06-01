@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project name="Hippo Addon CRISP">
+
+  <skin>
+    <groupId>org.onehippo.forge.mavenskin</groupId>
+    <artifactId>forge-maven-skin</artifactId>
+    <version>1.04.00</version>
+  </skin>
+
+  <body>
+
+    <menu name="Home">
+      <item name="Introduction" href="index.html" />
+      <item name="Installation" href="install.html" />
+      <item name="Getting Started" href="getstarted.html" />
+      <item name="Demo Project" href="demoproject.html" />
+      <item name="Configuration" href="config.html">
+        <item name="Example with Simple JSON REST API" href="example-simple-json-rest-api-config.html" />
+        <item name="Example with SalesForce REST API" href="example-salesforce-rest-api-config.html" />
+        <item name="Example with Marketo REST API" href="example-marketo-rest-api-config.html" />
+      </item>
+      <item name="Examples" href="examples.html">
+        <item name="Using Generic (JSON) Resource Objects" href="example-using-generic-json-resources.html" />
+        <item name="Using Generic (XML) Resource Objects" href="example-using-generic-xml-resources.html" />
+        <item name="Web-hook Example to Invalidate Cache" href="example-webhook-invalidate-cache.html" />
+      </item>
+      <item name="FAQ" href="faq.html" />
+      <item name="JavaDocs" href="apidocs/index.html" />
+      <item name="TaglibDocs" href="tlddoc/index.html" />
+      <item name="Release Notes" href="release-notes.html" />
+    </menu>
+
+    <menu ref="reports" />
+
+  </body>
+
+</project>
+

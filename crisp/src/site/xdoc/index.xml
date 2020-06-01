@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Introduction</title>
+  </properties>
+  <body>
+
+    <section name="Introduction">
+
+      <subsection name="What is CRISP?">
+        <p>
+          <strong>CRISP</strong> is <strong><u>C</u></strong>ommon <strong><u>R</u></strong>esource model
+          <strong><u>I</u></strong>nterface and <strong><u>S</u></strong>ervice <strong><u>P</u></strong>rovider
+          module for External APIs (e.g, API Gateway), which enables simple, seamless, enterprise-ready and performant
+          external services integration.
+        </p>
+        <p>
+          Also, <i>Content aggregation and personalization</i> become easier, more transparent and reliable in
+          application development if you adopt <strong>CRISP</strong> module as an integration backbone.
+        </p>
+      </subsection>
+
+      <subsection name="Why CRISP?">
+
+        <p>
+          Let's think about a typical integration scenario with an external (REST, Web Services, API, etc) service
+          in an application:
+        </p>
+
+        <img src="images/integ_backends.png" alt="Typical Integartion with Backends" />
+
+        <p>
+          You could think of having a common invoker service to retrieve data from the external backend services, so that each component
+          in pages makes a call on the common invoker service. Just a typical scenario, right?
+        </p>
+
+        <p>
+          Now, the <strong>architectural questions</strong> like the following arise right away from our experiences
+          <i>again and again</i> whenever we implement content delivery or content authoring tier applications:
+        </p>
+
+        <ul>
+          <li>
+            <strong>Performance / Efficiency</strong>:
+            How can we guarantee an enterprise-level performance and efficiency when invoking the external
+            backend services?
+            How can we avoid duplicate requests from different components in single page rendering?
+            How can we cache data for performance in delivery tier for instance?
+          </li>
+          <li>
+            <strong>Security</strong>:
+            The backend services could require secured access and/or authentication such as OAuth2,
+            especially in enterprise environments. How can we easily provide secured acccess and authentication if required?
+          </li>
+          <li>
+            <strong>Availability</strong>:
+            The backend service invocation must not affect the mission-critical system's availability due to any
+            system failure (e.g, OutOfMemory, too much processor cycle overhead, etc.).
+            How can we easily ensure that?
+          </li>
+          <li>
+            <strong>Configurability / Manageability</strong>:
+            Suppose you want to integrate with SalesForce backend REST services as an example. You want to be able
+            to change the connection configuration sometimes at runtime without having to redeploy or restart the server.
+            How can we achieve that kind of runtime configurabililty without compromising any other quality attributes?
+            How can we maximize manageability to avoid unnecessary redeployments or restarts?
+          </li>
+          <li>
+            <strong>Modifiability</strong>:
+            Sometimes you want to fix or improve the underlying integration service components.
+            How can we develop the code or configuration faster and easier to meet the challenges?
+          </li>
+          <li>
+            <strong>Cost-effectiveness</strong>:
+            It looked simple at first.
+            But now if you think of the quality attributes mentioned above (performance, efficiency, security, availability,
+            configurability, manageability and modifiability), then you will realize that it's not that simple.
+            Especially if you're concerned about cost vs. benefit, the problem becomes more complex.
+            The question is, how can we achieve all those qualities in a very cost-effective manner?
+          </li>
+        </ul>
+
+        <p>
+          To address all the <strong>architectural questions</strong> above, <strong>CRISP</strong> module was introduced.
+          <strong>CRISP</strong> can be characterized this way:
+        </p>
+        <ul>
+          <li>
+            <strong>CRISP</strong> is a core software asset which is designed as highly reusable and performant
+            in higher quality expectations.
+          </li>
+          <li>
+            <strong>CRISP</strong> enables faster and more cost-effective product and project delivery process.
+          </li>
+          <li>
+            <strong>CRISP</strong> gives developers abilities to integrate and aggregate a wide range of data sources,
+            content and services via various mechanisms, such as API Gateway, ESB, REST, RSS, etc., without much
+            effort.
+          </li>
+          <li>
+            <strong>CRISP</strong> allows to integrate and aggregate external data and content without having to
+            migrate data or content into single repository.
+          </li>
+          <li>
+            <strong>CRISP</strong> provides a cost-effective, performant and reliable toolkit to integrate with
+            any different backends such as BloomReach CrossLink, Commerce APIs, SalesForce, Eloqua, Marketo, etc.
+            for personalization and content aggregation, with increasing digital experiences.
+          </li>
+        </ul>
+      </subsection>
+
+      <subsection name="CRISP's Vision">
+        <ul>
+          <li>Lightweight Common Resource API and Service Provider for various enterprise data, content aggregation and personalization.</li>
+          <li>Easy to use, highly performant and reliable message exchange backbone. E.g, built-in caching control under the hood.</li>
+          <li>Highly customizable and configurable message routing for variants of use cases.</li>
+          <li>Core software asset for products/projects.</li>
+        </ul>
+      </subsection>
+
+      <subsection name="CRISP's Features">
+        <ul>
+          <li>
+            Generic External (REST) API service invoking broker service, <code>ResourceServiceBroker</code>.
+          </li>
+          <li>
+            Generic resource object model, <code>Resource</code>, that enables easy access to resources and properties.
+          </li>
+          <li>
+            Resource space routing configuration through Spring Framework bean configuration in repository.
+          </li>
+          <li>
+            Caching service in <code>ResourceServiceBroker</code> level as well as <code>ResourceResolver</code> level,
+            and it is easily configurable and customizable.
+          </li>
+          <li>
+            <code>ResourceServiceBroker</code> can be used in both Content Delivery and Content Authoring applications.
+          </li>
+          <li>
+            HTTP invocations through Spring Framework <code>RestTemplate</code> (including OAuth2-based <code>RestTemplate</code>
+            configuration example) for more configurability and maintainability.
+          </li>
+          <li>
+            Dynamic configuration management at runtime through repository configuration.
+          </li>
+          <li>
+            <code>Resource</code> level pagination.
+          </li>
+          <li>
+            API support to allow to implement a web-hook (in order to invalidate cache for instance) easily.
+          </li>
+        </ul>
+
+        <p>
+          The following features are considered to be shipped in the <strong>future</strong>, too.
+        </p>
+
+        <ul>
+          <li>
+            Default implementation support for XML based <code>Resource</code> representations such as RSS Feeds.
+          </li>
+          <li>
+            Example <code>ResourceResolver</code> and <code>Resource</code> implementations for custom Java API
+            calls on the backends instead of JSON/XML in the demo project. For example, if a backend media server
+            supports a full Java API encapsulating REST API payloads for developers, then the example can show
+            how to implement a custom <code>ResourceResolver</code> and <code>Resource</code> for the backend.
+          </li>
+          <li>
+            More <code>ResourceResolver</code> Spring bean configuration examples for different backends to be copied
+            and pasted right away. Please let us know if you want to contribute some from your experiences! :-)
+          </li>
+        </ul>
+
+      </subsection>
+
+      <subsection name="Architectural Views">
+
+        <h4>Components and Connectors View</h4>
+        <br/>
+
+        <p>
+          The following diagram depicts a higher level <i>Components and Connectors View</i> to show how <strong>CRISP</strong>
+          module helps easier and more seamless integration for applications.
+          Please note that this higher level diagram does not necessarily describes all the details as exactly as
+          it is designed or implemented in the detail level though.
+        </p>
+
+        <div>
+          <img src="images/CRISP_CNC.png" />
+        </div>
+
+        <p>
+          <strong>CRISP</strong> Broker component provides the following:
+        </p>
+
+        <ul>
+          <li>
+            Single broker to retrieve content and data from the backend APIs.
+          </li>
+          <li>
+            Configurability with proper routings and executions at runtime.
+          </li>
+          <li>
+            Automatic caching and invalidation capabilities of external data and content for better performance.
+          </li>
+          <li>
+            Resource link resolution capabilities of external data and content.
+          </li>
+        </ul>
+
+        <p>
+          How does <strong>CRISP</strong> address the <strong>architectural questions</strong>?
+        </p>
+
+        <ul>
+          <li>
+            <strong>Performance / Efficiency</strong>:
+            <strong>CRISP</strong> provides resource object model caching by default in a generic way.
+            For example, it creates a cache key based on <i>resource space</i> name, <i>operation</i> name,
+            <i>relative resource path</i>, <i>path variables</i>, etc. and it may keep the cached data for a specified
+            time interval (N minute for instance) for best performance under the hood.
+            Application code may simply invoke <code>ResourceServiceBroker</code> API operations transparently
+            without having to consider the details such as caching and invalidation by itself. <strong>CRISP</strong>
+            will take care of the details for best performance for application developers.
+            Also, applications can implement a "Web-Hook" very easily through transparent API to invalidate caches.
+            In addition, <strong>CRISP</strong> provides clear API interfaces to serve backend services, generate
+            links for the external resources, cache or invalidate cache the resources, and so on.
+          </li>
+          <li>
+            <strong>Security</strong>:
+            <strong>CRISP</strong> adopts Spring Framework's <code>RestTemplate</code>, <code>OAuth2RestTemplate</code>, etc.
+            for enterprise-ready secured REST service invocations with examples by default.
+          </li>
+          <li>
+            <strong>Availability</strong>:
+            <strong>CRISP</strong> implements all the service components very carefully to meet enterprise quality attributes
+            to guarantee availability quality requirements.
+          </li>
+          <li>
+            <strong>Configurability / Manageability</strong>:
+            <strong>CRISP</strong> provides all the configuration in the repository. So, administrator may update
+            the configuration stored in the repository and all the changes will be reflected at runtime on the fly
+            without having to worry about redeployments or restarts at all.
+          </li>
+          <li>
+            <strong>Modifiability</strong>:
+            <strong>CRISP</strong> is designed with very clean APIs and taking advantage of Spring Framework,
+            Spring Security Framework, Spring Security OAuth Framework, etc. to maximize productivity and modifiability.
+            Also, <strong>CRISP</strong> provides a generic model API for any different backend data through
+            <code>Resource</code> interface which can be used in the templates without any more code implementation for the models,
+            which increases development productivity a lot.
+          </li>
+          <li>
+            <strong>Cost-effectiveness</strong>:
+            <strong>CRISP</strong> already solves all the backend integration requirements in a generic way.
+            So, enterprise-ready, high-quality integration module can be simply done through simple configurations
+            and minimal code / template implementations in most use cases.
+          </li>
+        </ul>
+
+        <br/>
+
+        <h4>Module View</h4>
+        <br/>
+
+        <p>
+          The following diagram depicts a higher level <i>Module View</i> to show how <strong>CRISP</strong>
+          module is composed of multiple submodules with dependencies.
+          Please note that this higher level diagram does not necessarily describes all the details as exactly as
+          it is designed or implemented in the detail level though.
+        </p>
+
+        <div>
+          <img src="images/CRISP_Module.png" />
+        </div>
+
+        <ul>
+          <li>
+            <strong>CRISP API</strong> submodule contains all the public APIs (interfaces and abstract base classes)
+            that applications can depend on.
+          </li>
+          <li>
+            <strong>CRISP CORE</strong> submodule contains core components and services that either implement
+            public APIs or internal services.
+          </li>
+          <li>
+            <strong>CRISP Repository</strong> submodule contains repository boostrap configurations, repository
+            addon module to register/unregister configuration change event listener, etc.
+          </li>
+          <li>
+            <strong>CRISP HST</strong> submodule contains utilities and tag libraries that can be used in Hippo
+            Delivery tier applications.
+          </li>
+        </ul>
+
+      </subsection>
+
+    </section>
+
+  </body>
+</document>
