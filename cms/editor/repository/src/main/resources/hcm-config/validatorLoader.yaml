@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-static/validatorLoader:
+      jcr:primaryType: frontend:plugin
+      cluster.name: cms-validators
+      plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader

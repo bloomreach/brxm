@@ -1,0 +1,50 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-search-views:
+      jcr:primaryType: frontend:clusterfolder
+      /text:
+        jcr:primaryType: frontend:plugincluster
+        frontend:properties: [list.page.size, list.view.size]
+        frontend:references: [model.document, model.search]
+        frontend:services: [wicket.id]
+        list.page.size: '500'
+        list.view.size: '3'
+        /root:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          expand.collapse.supported: true
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.SearchViewPlugin
+          wicket.model: ${model.search}
+        /defaultColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          documentTypeIconRenderer: resourceIconRenderer
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.DefaultListColumnProviderPlugin
+        /searchColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.SearchListColumnProviderPlugin
+      /image:
+        jcr:primaryType: frontend:plugincluster
+        frontend:properties: [list.page.size, list.view.size, gallery.thumbnail.size,
+          gallery.thumbnail.box.size]
+        frontend:references: [model.document, model.search]
+        frontend:services: [wicket.id]
+        gallery.thumbnail.box.size: '32'
+        gallery.thumbnail.size: '60'
+        list.page.size: '500'
+        list.view.size: '3'
+        /root:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          expand.collapse.supported: true
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.ImageSearchViewPlugin
+          wicket.model: ${model.search}
+        /defaultColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          plugin.class: org.hippoecm.frontend.plugins.gallery.columns.ImageGalleryColumnProviderPlugin
+        /searchColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.SearchListColumnProviderPlugin

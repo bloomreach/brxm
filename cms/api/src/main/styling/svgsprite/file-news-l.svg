@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+	<rect x="3" y="6" opacity="0.7" fill="currentColor" width="17" height="3"/>
+	<rect x="3" y="14" opacity="0.7" fill="currentColor" width="12" height="6"/>
+	<rect x="3" y="22" fill="currentColor" width="12" height="1"/>
+	<rect x="3" y="25" fill="currentColor" width="12" height="1"/>
+	<rect x="17" y="14" fill="currentColor" width="11" height="1"/>
+	<rect x="17" y="25" fill="currentColor" width="11" height="1"/>
+	<rect x="17" y="17" opacity="0.7" fill="currentColor" width="11" height="6"/>
+	<g>
+		<g>
+			<g>
+				<path fill="currentColor" d="M23,3c0.496,0,1.299,0.352,1.65,0.723l5.623,5.965C30.79,10.232,31,10.613,31,11v17 c0,0.316-0.478,0.938-0.678,1H1.415C1.232,29,1,28.75,1,28.469V3.453C1,3.203,1.175,3,1.391,3H23 M22.622,2H1.391 C0.623,2,0,2.646,0,3.453v25.016C0,29.275,0.646,30,1.415,30h28.907C31.088,30,32,28.807,32,28V11.422c0-0.809-0.466-1.436-1-2 l-6-6.386C24.463,2.471,23.392,2,22.622,2L22.622,2z"/>
+			</g>
+		</g>
+		<g>
+			<g>
+				<polygon fill="currentColor" points="31.091,11 23,10.991 23,3.001 24,3.001 24,10 31.093,10 			"/>
+			</g>
+		</g>
+	</g>
+</svg>

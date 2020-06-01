@@ -1,0 +1,74 @@
+/*
+ * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+.gallery-wrapper {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+ul.gallery-list li a {
+    display: block;
+    height: 100px;
+    text-decoration: none;
+    color: #333333;
+    position: relative;
+}
+
+ul.gallery-list {
+    display: block;
+    overflow: auto;
+}
+
+.hippo-picker-list-details ul.gallery-list {
+    overflow: visible;
+}
+
+ul.gallery-list li {
+    list-style: none outside;
+    float: left;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+}
+
+ul.gallery-list li.selected {
+    background-color: #FFE29A;
+}
+
+ul.gallery-list li div img {
+    vertical-align: middle;
+    padding: 5px;
+    border: 1px solid #eee;
+}
+
+.title {
+    position: absolute;
+    bottom: 0px;
+    width: 100px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    -moz-binding: url('ellipsis.xml#ellipsis');
+}
+
+.img-wrapper {
+    overflow: hidden;
+}

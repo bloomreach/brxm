@@ -1,0 +1,40 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/default:
+      /handle:
+        jcr:primaryType:
+          operation: override
+          type: name
+          value: frontend:workflow
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugincluster
+          frontend:references: [browser.id, editor.id, wicket.model]
+          frontend:services: [wicket.id]
+          item: ${cluster.id}.item
+          /root:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+          /admin:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.reviewedactions.AdminWorkflowPlugin
+            wicket.id: ${item}
+          /publication:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.reviewedactions.PublicationWorkflowPlugin
+            wicket.id: ${item}
+          /document:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.reviewedactions.DocumentWorkflowPlugin
+            wicket.id: ${item}
+          /top:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.reviewedactions.PreviewWorkflowPlugin
+            wicket.id: ${item}
+          /requests:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.reviewedactions.RequestsWorkflowPlugin
+            wicket.id: ${item}
+          /metadata:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.reviewedactions.DocMetaDataPlugin
+            wicket.id: ${item}

@@ -1,0 +1,91 @@
+/*
+ * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<test='http://www.hippoecm.org/editor/test/nt/0.1'>
+<test_0_0='http://www.hippoecm.org/editor/test/nt/0.0'>
+
+[test_0_0:test] > nt:base
+- test_0_0:title (string)
+
+[test_0_0:inheriting] > test_0_0:test
+- test_0_0:extra (string)
+
+[test:test] > nt:base
+- test:title (string)
++ test:child (nt:unstructured)
+
+[test:test2] > nt:base
+- test:title (string)
++ test:child (nt:unstructured)
+
+[test:inheriting] > test:test
+- test:extra (string)
+
+[test:mixin] mixin
+
+[test:mixinTest]
+
+[test:superMixinTest] > test:mixinTest, test:mixin
+
+[test:extramixin] mixin
+
+[test:legacy]
+- test:a (string)
+- test:b (string)
+
+[test:uncascaded]
+- test:property (string)
+
+[test:validator]
+- test:optional (string)
+- test:nonempty (string)
+- test:mandatory (string)
+- test:escaped (string)
+- test:email (string)
+- test:multiple (string) multiple
+- test:autocreated (string) = 'auto' autocreated 
+- test:protected (string) protected
+
+[test:container]
++ test:base (test:validator)
++ test:single (test:validator) 
++ test:multiple (test:validator) multiple
++ test:uncascaded (test:uncascaded)
++ * (test:validator)
+
+[test:edited]
+- test:title (string)
+
+[test:document] > hippo:document, hippostd:relaxed
+- test:title (string)
+
+[test:inheritingfromedited] > test:edited
+- test:extra (string)
+
+[test:mandatorybase]
+- test:base (string) mandatory
+
+[test:mandatory] > test:mandatorybase
+- test:mandatory (string) mandatory
+- test:withdefaults (string) mandatory < 'aap', 'noot'
+- test:autocreated (string) = 'mies' mandatory autocreated
+

@@ -1,0 +1,67 @@
+/*
+ *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+.crop-button {
+  display: block;
+  width: 124px;
+  height: 26px;
+  padding: 6px 0 0 30px;
+}
+
+.crop-button.active {
+  background: url("res/button_crop.png") no-repeat scroll 0 0 transparent;
+  cursor: pointer;
+  color: #333333;
+}
+
+.crop-button.active:hover {
+  background: url("res/button_crop_hover.png") no-repeat scroll 0 0 transparent;
+}
+
+.crop-button.inactive {
+  background: url("res/button_crop_inactive.png") no-repeat scroll 0 0 transparent;
+  color: #999999;
+}
+
+/*.imageset-override-styles .resource-values, .imageset-override-styles .dataTableContainer {
+    margin-top: 4px;
+} */
+
+.imageset-override-styles .imageset-extension-upload, .imageset-override-styles .imageset-extension-crop {
+  float:left;
+}
+
+.imageset-override-styles .imageset-extension-crop {
+  padding-top: 10px;
+}
+
+
+.imageset-override-styles .imageset-extension-upload .selectFilesLink {
+    width:124px;
+    background: url("res/button_upload.png") no-repeat scroll 0 0 transparent;
+}
+
+.imageset-override-styles .imageset-extension-upload .selectFilesLink.rollover,
+.imageset-override-styles .imageset-extension-upload .selectFilesLink:hover {
+    background: url("res/button_upload_hover.png") no-repeat scroll 0 0 transparent;
+    cursor: pointer;
+}
+
+.fullscreen-crop-action {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #999;
+}

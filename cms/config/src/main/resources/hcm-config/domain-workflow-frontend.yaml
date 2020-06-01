@@ -1,0 +1,21 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/workflow:
+      /hippostdpubwf-request:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippostdpubwf-request:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippostdpubwf:request
+      /frontend-workflow:
+        jcr:primaryType: hipposys:domainrule
+        /type-frontend-workflow:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: frontend:workflow
