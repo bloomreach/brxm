@@ -1,0 +1,25 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "restoreTo" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "retrieve" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "version" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=No such historic version" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=version never existed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

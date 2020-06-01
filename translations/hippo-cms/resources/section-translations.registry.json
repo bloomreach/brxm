@@ -1,0 +1,21 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:cms.sections/section-files" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.sections/section-documents" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.sections/section-configuration" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.sections/section-images" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

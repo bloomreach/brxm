@@ -1,0 +1,17 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:channelmanager.switch-template/choose.template" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:channelmanager.switch-template/switch.template" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:channelmanager.switch-template/missing.template" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

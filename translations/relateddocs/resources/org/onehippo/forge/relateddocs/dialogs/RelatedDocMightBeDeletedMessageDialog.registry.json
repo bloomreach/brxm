@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "relateddoc-might-be-deleted-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "relateddoc-might-be-deleted-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

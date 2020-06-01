@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /en:
+        new-namespace: New namespace
+        jcr:primaryType: hipposys:resourcebundle
+        new-type: New Type

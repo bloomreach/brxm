@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/sections:
+      /nl:
+        section-documents: Documenten
+        section-images: Afbeeldingen
+        jcr:primaryType: hipposys:resourcebundle
+        section-files: Bestanden
+        section-configuration: Documenttypes

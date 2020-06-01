@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "schedule-publish-text" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "schedule-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
