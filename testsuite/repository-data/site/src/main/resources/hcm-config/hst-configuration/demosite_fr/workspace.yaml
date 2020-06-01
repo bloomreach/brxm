@@ -1,0 +1,25 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite_fr/hst:workspace:
+      jcr:primaryType: hst:workspace
+      /hst:containers:
+        jcr:primaryType: hst:containercomponentfolder
+        /bodyhome:
+          jcr:primaryType: hst:containercomponentfolder
+          /container-1:
+            jcr:primaryType: hst:containercomponent
+            hst:xtype: HST.vBox
+          /container-2:
+            jcr:primaryType: hst:containercomponent
+            hst:xtype: HST.vBox
+      /hst:channel:
+        jcr:primaryType: hst:channel
+        hst:channelinfoclass: org.hippoecm.hst.demo.channel.DemoChannelInfo
+        hst:name: French Demo Site
+        /hst:channelinfo:
+          jcr:primaryType: hst:channelinfo
+          test: Some prop
+      /hst:pages:
+        jcr:primaryType: hst:pages
+      /hst:sitemap:
+        jcr:primaryType: hst:sitemap
