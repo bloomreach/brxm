@@ -35,7 +35,7 @@
 
   <groupId>org.onehippo.cms7.hst</groupId>
   <artifactId>hst</artifactId>
-  <version>14.3.0-SNAPSHOT</version>
+  <version>14.3.0-Experience-Pages-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
   <issueManagement>
@@ -87,7 +87,7 @@
 
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
     <hippo.commons.version>14.3.0-SNAPSHOT</hippo.commons.version>
-    <hippo.repository.version>14.3.0-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>14.3.0-Experience-Pages-SNAPSHOT</hippo.repository.version>
     <hippo.configuration-management.version>14.3.0-SNAPSHOT</hippo.configuration-management.version>
     <hippo.utilities.version>14.3.0-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>14.3.0-SNAPSHOT</hippo.services.version>

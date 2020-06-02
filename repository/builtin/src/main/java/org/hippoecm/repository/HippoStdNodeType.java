@@ -135,6 +135,9 @@ public interface HippoStdNodeType {
      */
     String NT_DATE_FIELDS = "hippostd:datefields";
 
+
+    String MIXIN_SKIPDRAFT = "hippostd:skipdraft";
+
     /**
      * The property in a hippostd:html node instance that hold the HTML fragment.
      */

@@ -16,18 +16,13 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 
 public interface ContainerComponentService {
-    interface ContainerItem {
-        Node getContainerItem();
-
-        long getTimeStamp();
-    }
 
     /**
      * Creates a container item by using the node with id itemUUID as a template and adds it as

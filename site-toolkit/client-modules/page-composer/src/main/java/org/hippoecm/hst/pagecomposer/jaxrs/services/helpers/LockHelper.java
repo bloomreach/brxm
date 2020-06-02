@@ -134,7 +134,7 @@ public class LockHelper {
         }
 
         if (versionStamp != 0 && node.hasProperty(GENERAL_PROPERTY_LAST_MODIFIED)) {
-            long existingStamp = node.getProperty(GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
+            long existingStamp = node.getProperty(GENERAL_PROPERTY_LAST_MODIFIED).getLong();
             if (existingStamp != versionStamp) {
                 Calendar existing = Calendar.getInstance();
                 existing.setTimeInMillis(existingStamp);

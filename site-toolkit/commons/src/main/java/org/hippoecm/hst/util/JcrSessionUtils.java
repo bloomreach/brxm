@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.hst.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -23,6 +24,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +74,27 @@ public class JcrSessionUtils {
             return (HippoSession) nonProxiedSession;
         } else {
             return (HippoSession) session;
+        }
+    }
+
+    /**
+     *
+     * @param session the Session to check the privilege for
+     * @param absPath the absolute jcr path to test the privilege against
+     * @param requiredPrivilege
+     * @return {@code true} in case the {@code session} has privilege {@code requiredPrivilege} and false otherwise (also
+     * in case some exception happens)
+     */
+    public static boolean isInRole(final Session session, final String absPath,
+                     final String requiredPrivilege) {
+
+        try {
+            return Arrays.stream(session.getAccessControlManager()
+                    .getPrivileges(absPath))
+                    .anyMatch(privilege -> privilege.getName().equals(requiredPrivilege));
+        } catch (RepositoryException e) {
+            log.warn("Exception while checking privilege", e);
+            return false;
         }
     }
 }

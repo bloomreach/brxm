@@ -17,6 +17,9 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
+import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_EXPERIENCE_PAGE_HANDLE_UUID_ATRRIBUTE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -48,6 +51,35 @@ public class PageComposerContextService {
 
     public HstRequestContext getRequestContext() {
         return RequestContextProvider.get();
+    }
+
+
+    /**
+     * @return {@code true} in case this request is an Experience Page request
+     */
+    public boolean isExperiencePageRequest() {
+       return Boolean.TRUE == getRequestContext().getAttribute(REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE);
+    }
+
+    /**
+     * @return the  UUID of the handle for this experience page and {@code null} if this is not an Experience Page request
+     */
+    public String getExperiencePageHandleUUID() {
+        if (!isExperiencePageRequest()) {
+            return null;
+        }
+        return (String) getRequestContext().getAttribute(REQUEST_EXPERIENCE_PAGE_HANDLE_UUID_ATRRIBUTE);
+    }
+
+    /**
+     * @return the UUID of the unpublished variant for this experience page and {@code null} if this is not an
+     * Experience Page request or the unpublished variant is missing (only published, not yet supported, see CMS-13262
+     */
+    public String getExperiencePageUnpublishedVariantUUID() {
+        if (!isExperiencePageRequest()) {
+            return null;
+        }
+        return (String) getRequestContext().getAttribute(REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE);
     }
 
     public String getRequestConfigIdentifier() {

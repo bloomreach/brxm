@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hst='http://www.hippoecm.org/hst/nt/2.1'>
@@ -58,7 +58,7 @@
 // Metadata values
 - hst:metavalues (string) multiple
 
-[hst:abstractcomponent] > nt:base, mix:referenceable, hst:descriptive orderable 
+[hst:abstractcomponent] > nt:base, mix:referenceable, hst:descriptive orderable
 - hst:template (string)
 - hst:resourcetemplate (string)
 - hst:componentclassname (string)
@@ -139,15 +139,15 @@
 
 [hst:sitemapitemhandler] > nt:base, mix:referenceable
 - hst:sitemapitemhandlerclassname (string) mandatory
-- * (string) 
+- * (string)
 - * (string) multiple
-- * (boolean) 
+- * (boolean)
 - * (boolean) multiple
-- * (long) 
+- * (long)
 - * (long) multiple
-- * (double) 
+- * (double)
 - * (double) multiple
-- * (date) 
+- * (date)
 - * (date) multiple
 
 [hst:sitemapitemhandlers] >  nt:base, mix:referenceable orderable
@@ -295,7 +295,7 @@
 
 [hst:primarydomain] mixin
 
-[hst:redirectdomain] mixin 
+[hst:redirectdomain] mixin
 - hst:redirect (string)
 
 
@@ -434,7 +434,7 @@
 - hst:name (string)
 - hst:description (string)
 // the absolute location where, if this blueprint contains content, the content is created. If missing
-// the default contentRoot is used. It must start with a / 
+// the default contentRoot is used. It must start with a /
 - hst:contentRoot (string)
 // prototype for the channel properties.
 // Used for default values
@@ -472,10 +472,13 @@
 - hst:formid (string)
 + hst:formfieldvalue (hst:formfieldvalue) multiple
 
-[hst:formdatacontainer] 
+[hst:formdatacontainer]
 + * (hst:formdatacontainer)
 + * (hst:formdata)
 + hst:domains (hipposys:federateddomainfolder) = hipposys:federateddomainfolder
 
 [hst:formdatapayload] mixin
 - hst:payload (string)
+
+[hst:page] > hippostdpubwf:auditTrace, hippostd:skipdraft mixin
++ hst:page (hst:component) = hst:component
