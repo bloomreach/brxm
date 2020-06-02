@@ -259,7 +259,7 @@
     <profile>
       <id>docker.postgres</id>
       <properties>
-        <docker.db.bind.1>${docker.postgres.bind.1}</docker.db.bind.1>
+        <docker.db.bind.1>${dollar}{docker.postgres.bind.1}</docker.db.bind.1>
         <docker.db.bind.2>${project.basedir}/db-bootstrap:/docker-entrypoint-initdb.d</docker.db.bind.2>
 
         <docker.brxm.envRun.POSTGRES_DB_HOST>${dollar}{docker.container.db.net.${artifactId}-network.ip}</docker.brxm.envRun.POSTGRES_DB_HOST>
