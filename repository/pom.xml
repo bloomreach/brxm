@@ -21,6 +21,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>31.2.2-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Repository</name>
@@ -109,12 +110,6 @@
     <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
     <assertj.version>3.8.0</assertj.version>
   </properties>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-repository.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-repository.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-repository</url>
-  </scm>
 
   <build>
     <plugins>
