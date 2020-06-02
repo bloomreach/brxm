@@ -95,3 +95,11 @@
 [hippo:coredocument] > hippo:document
 + * = nt:unstructured multiple
 - *
+
+[hippo:testcompound] > hippo:compound
+- hippo:testprop (string)
++ * (hippo:compound)
+
+[hippo:testcompoundskipdraft] > hippo:compound, hippostd:skipdraft
+- hippo:testprop (string)
++ * (hippo:compound)

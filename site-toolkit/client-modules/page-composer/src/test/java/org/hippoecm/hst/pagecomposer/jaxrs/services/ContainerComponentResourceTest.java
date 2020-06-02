@@ -27,6 +27,7 @@ import javax.ws.rs.Path;
 import javax.xml.bind.JAXBException;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -78,7 +79,7 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
 
     @Test
     public void can_create_a_new_container_item() throws RepositoryException, IOException, JAXBException {
-        final ContainerComponentService.ContainerItem mockContainerItem = createNiceMock(ContainerComponentService.ContainerItem.class);
+        final ContainerItem mockContainerItem = createNiceMock(ContainerItem.class);
         final Node node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerComponentResourceTest-test-containeritem.xml");
         final Node containerItemNode = node.getNode("foo-component");
 

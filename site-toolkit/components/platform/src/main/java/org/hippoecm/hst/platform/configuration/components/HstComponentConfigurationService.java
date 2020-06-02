@@ -112,6 +112,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private boolean inherited;
 
     /**
+     * {@code true} if this {@link HstComponentConfiguration} is shared. Note that if
+     * {@link HstComponentConfiguration#isInherited()} is true, then {@code shared} will also be always true. Note that
+     * containers referenced via a 'hst:containercomponentreference' can in general be shared, but this is not the
+     * purpose of 'hst:containercomponentreference' : it it used to enable a container to 'live' below the hst:workspace
+     * and in general is never meant to support 'sharing', hence a container referenced via
+     * hst:containercomponentreference will only have 'shared = true' *IF* the 'hst:containercomponentreference' node
+     * is already shared
+     */
+    private boolean shared;
+
+    /**
      * whether this {@link HstComponentConfigurationService} can serve as prototype.
      */
     private boolean prototype;
@@ -183,6 +194,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private Calendar lockedOn;
     private Calendar lastModified;
     private Boolean markedDeleted;
+    private boolean experiencePageComponent;
 
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
@@ -220,6 +232,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.canonicalIdentifier = StringPool.get(node.getValueProvider().getIdentifier());
 
         inherited = !canonicalStoredLocation.startsWith(rootConfigurationPathPrefix);
+
+        if (inherited) {
+            shared = true;
+        }
+
         this.parent = parent;
         this.prototype = HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES.equals(rootNodeName);
 
@@ -643,6 +660,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     @Override
+    public boolean isShared() {
+        return shared;
+    }
+
+    @Override
     public boolean isPrototype() {
         return prototype;
     }
@@ -704,12 +726,21 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return markedDeleted == null ? false : markedDeleted;
     }
 
+    @Override
+    public boolean isExperiencePageComponent() {
+        return experiencePageComponent;
+    }
+
+    public void setExperiencePageComponent(final boolean experiencePageComponent) {
+        this.experiencePageComponent = experiencePageComponent;
+    }
+
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
-                                                      HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
+                                                      HstComponentConfigurationService child,
                                                       Map<String, HstComponentConfiguration> rootComponentConfigurations) {
         if (child.getReferenceComponent() != null) {
             // populate child component if not yet happened
-            child.populateComponentReferences(rootComponentConfigurations, populated);
+            child.populateComponentReferences(rootComponentConfigurations);
         }
         HstComponentConfigurationService copy = new HstComponentConfigurationService(newId);
         copy.parent = parent;
@@ -733,6 +764,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.canonicalIdentifier = child.canonicalIdentifier;
         copy.componentFilterTag = child.componentFilterTag;
         copy.inherited = child.inherited;
+        copy.shared = child.shared;
         copy.standalone = child.standalone;
         copy.async = child.async;
         copy.asyncMode = child.asyncMode;
@@ -749,25 +781,30 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.markedDeleted = child.markedDeleted;
         for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
             String descId = StringPool.get(copy.id + descendant.id);
-            HstComponentConfigurationService copyDescendant = deepCopy(copy, descId, descendant, populated,
+            HstComponentConfigurationService copyDescendant = deepCopy(copy, descId, descendant,
                     rootComponentConfigurations);
             copy.componentConfigurations.put(copyDescendant.id, copyDescendant);
             copy.orderedListConfigs.add(copyDescendant);
             copy.childConfByName.put(StringPool.get(copyDescendant.getName()), copyDescendant);
             // do not need them by name for copies
         }
+
+
         // the copy is populated
-        populated.add(copy);
+        //populated.add(copy);
+        copy.referencesPopulated = true;
         return copy;
     }
 
-    protected void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations,
-                                               List<HstComponentConfiguration> populated) {
-        if (populated.contains(this)) {
+    // marker if this instance already has been populated
+    private boolean referencesPopulated = false;
+
+    protected void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations) {
+
+        if (referencesPopulated) {
             return;
         }
-
-        populated.add(this);
+        referencesPopulated = true;
 
         if (this.getReferenceComponent() != null) {
             HstComponentConfigurationService referencedComp = (HstComponentConfigurationService) rootComponentConfigurations
@@ -778,7 +815,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 if (referencedComp.getReferenceComponent() != null) {
                     // populate referenced comp first:
-                    referencedComp.populateComponentReferences(rootComponentConfigurations, populated);
+                    referencedComp.populateComponentReferences(rootComponentConfigurations);
                 }
                 // get all properties that are null from the referenced component:
                 if (this.componentClassName == null) {
@@ -886,20 +923,20 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
                     if (childToMerge.getReferenceComponent() != null) {
                         // populate child component if not yet happened
-                        childToMerge.populateComponentReferences(rootComponentConfigurations, populated);
+                        childToMerge.populateComponentReferences(rootComponentConfigurations);
                     }
 
                     if (this.childConfByName.get(childToMerge.name) != null) {
                         // we have an overlay again because we have a component with the same name
                         // first populate it
                         HstComponentConfigurationService existingChild = this.childConfByName.get(childToMerge.name);
-                        existingChild.populateComponentReferences(rootComponentConfigurations, populated);
-                        childToMerge.populateComponentReferences(rootComponentConfigurations, populated);
+                        existingChild.populateComponentReferences(rootComponentConfigurations);
+                        childToMerge.populateComponentReferences(rootComponentConfigurations);
                         // merge the childToMerge with existingChild
-                        existingChild.combine(childToMerge, rootComponentConfigurations, populated);
+                        existingChild.combine(childToMerge, rootComponentConfigurations);
                     } else {
                         // make a copy of the child
-                        addDeepCopy(childToMerge, populated, rootComponentConfigurations);
+                        addDeepCopy(childToMerge, rootComponentConfigurations);
                     }
                 }
 
@@ -911,8 +948,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     private void combine(HstComponentConfigurationService childToMerge,
-                         Map<String, HstComponentConfiguration> rootComponentConfigurations,
-                         List<HstComponentConfiguration> populated) {
+                         Map<String, HstComponentConfiguration> rootComponentConfigurations) {
 
         if (this.type == Type.CONTAINER_COMPONENT || childToMerge.type == Type.CONTAINER_COMPONENT) {
             log.warn("Incorrect component configuration: *Container* Components are not allowed to be merged with other " +
@@ -994,6 +1030,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             this.lastModified = childToMerge.lastModified;
         }
 
+        // debatable however not really relevant whether when fine grained merged the component is shared or not, since
+        // merging is not allowed for container and container items any way and for this the marker 'shared' is the most
+        // relevant
+        this.shared = childToMerge.shared;
+
         // inherited flag not needed to merge
 
         if (!childToMerge.parameters.isEmpty()) {
@@ -1019,26 +1060,30 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             if (existingChild != null) {
                 // check whether the child of its own has a referencecomponent: This referencecomponent then needs
                 // to be first populated before merging
-                existingChild.populateComponentReferences(rootComponentConfigurations, populated);
-                toMerge.populateComponentReferences(rootComponentConfigurations, populated);
-                this.childConfByName.get(toMerge.name).combine(toMerge, rootComponentConfigurations, populated);
+                existingChild.populateComponentReferences(rootComponentConfigurations);
+                toMerge.populateComponentReferences(rootComponentConfigurations);
+                this.childConfByName.get(toMerge.name).combine(toMerge, rootComponentConfigurations);
             } else {
                 //  String newId = this.id + "-" + toMerge.id;
                 //  this.deepCopy(this, newId, toMerge, populated, rootComponentConfigurations);
                 // deepCopy also does the populateComponentReferences for child 'toMerge'
-                this.addDeepCopy(toMerge, populated, rootComponentConfigurations);
+                this.addDeepCopy(toMerge, rootComponentConfigurations);
             }
         }
 
     }
 
-    private void addDeepCopy(HstComponentConfigurationService childToMerge, List<HstComponentConfiguration> populated,
+    private void addDeepCopy(HstComponentConfigurationService childToMerge,
                              Map<String, HstComponentConfiguration> rootComponentConfigurations) {
 
         String newId = StringPool.get(this.id + "-" + childToMerge.id);
 
-        HstComponentConfigurationService copy = deepCopy(this, newId, childToMerge, populated,
+        HstComponentConfigurationService copy = deepCopy(this, newId, childToMerge,
                 rootComponentConfigurations);
+
+        // a copy is always shared
+        copy.shared = true;
+
         this.componentConfigurations.put(copy.getId(), copy);
         this.childConfByName.put(copy.getName(), copy);
         this.orderedListConfigs.add(copy);
@@ -1220,11 +1265,21 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
     }
 
-    protected void autocreateReferenceNames() {
+    /**
+     * <p>
+     *     In case of Experience Pages, the experience page can have inherited CLONED components
+     *     from the HST in memory model. These cloned components already have a reference name, but that reference
+     *     name might be incorrect since for example due to inheritance, the experience page might have inherited below
+     *     one component two children both with reference name 'r1'. To avoid this problem, the flag 'recreate = true'
+     *     triggers the recreation of the reference names
+     * </p>
+     * @param recreate if true, then regardless of whether the reference name is present or not, it gets recreated
+     */
+    void autocreateReferenceNames(final boolean recreate) {
 
         for (HstComponentConfigurationService child : orderedListConfigs) {
-            child.autocreateReferenceNames();
-            if (child.getReferenceName() == null || "".equals(child.getReferenceName())) {
+            child.autocreateReferenceNames(recreate);
+            if (recreate || child.getReferenceName() == null || "".equals(child.getReferenceName())) {
                 String autoRefName = "r" + (++autocreatedCounter);
                 while (usedChildReferenceNames.contains(autoRefName)) {
                     autoRefName = "r" + (++autocreatedCounter);
@@ -1243,4 +1298,5 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 .append(", template=").append(this.hstTemplate).append("]");
         return builder.toString();
     }
+
 }

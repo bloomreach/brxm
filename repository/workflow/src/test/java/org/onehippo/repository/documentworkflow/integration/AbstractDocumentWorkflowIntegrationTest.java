@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class AbstractDocumentWorkflowIntegrationTest extends RepositoryTestCase {
 
+    static final String TESTUSER = "testuser";
     protected Node handle;
     protected Node document;
 
@@ -67,9 +68,9 @@ public class AbstractDocumentWorkflowIntegrationTest extends RepositoryTestCase 
         document.addMixin(MIX_VERSIONABLE);
         document.addMixin(NT_RELAXED);
         document.setProperty(HIPPOSTDPUBWF_CREATION_DATE, Calendar.getInstance());
-        document.setProperty(HIPPOSTDPUBWF_CREATED_BY, "testuser");
+        document.setProperty(HIPPOSTDPUBWF_CREATED_BY, TESTUSER);
         document.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, Calendar.getInstance());
-        document.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY, "testuser");
+        document.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY, TESTUSER);
         document.setProperty(HIPPOSTD_STATE, UNPUBLISHED);
         document.setProperty(HIPPO_AVAILABILITY, new String[]{"preview"});
     }

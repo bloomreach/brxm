@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.security.Privilege;
@@ -87,6 +88,20 @@ public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProc
 
             if (StringUtils.isNotEmpty(absPath)) {
                 final Privilege[] privileges = session.getAccessControlManager().getPrivileges(absPath);
+                final Set<String> intersection = getIntersection(privilegesAllowedSet, privileges);
+                if (intersection.isEmpty()) {
+                    return Optional.of(String.format("Method '%s' is not allowed to be invoked since current user does not have " +
+                            "the right privileges on path '%s'", method.getName(), absPath));
+                }
+                return Optional.empty();
+            } else if (getPageComposerContextService().isExperiencePageRequest()) {
+                // for experience page, nodetype can only be hst:abstractcomponent (or subtype), otherwise IllegalStateException
+                // is thrown
+                // we know for sure that the user is allowed to read the node, otherwise it would not have passed the
+                // CXFJaxrsHstConfigService
+                final Node requestConfigNode = getPageComposerContextService().getRequestConfigNode("hst:abstractcomponent");
+
+                final Privilege[] privileges = session.getAccessControlManager().getPrivileges(requestConfigNode.getPath());
                 final Set<String> intersection = getIntersection(privilegesAllowedSet, privileges);
                 if (intersection.isEmpty()) {
                     return Optional.of(String.format("Method '%s' is not allowed to be invoked since current user does not have " +

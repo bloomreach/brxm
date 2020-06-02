@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DELETE;
@@ -30,7 +31,9 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.transport.servlet.ServletController;
 import org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.ChannelAgnostic;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
 /**
  * The hst:exception is a 'fake' resource which gets invoked by the {@link CXFJaxrsHstConfigService} in case an exception happens
@@ -39,42 +42,82 @@ import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
  */
 
 @Path("/hst:exception/")
+@Produces(MediaType.APPLICATION_JSON)
 public class ExceptionResource extends AbstractConfigResource {
 
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
+    @PermitAll @ChannelAgnostic
     public Response exceptionGet(@Context HttpServletRequest servletRequest) {
         return error(servletRequest.getAttribute(CXFJaxrsHstConfigService.REQUEST_ERROR_MESSAGE_ATTRIBUTE).toString());
     }
 
     @HEAD
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
+    @PermitAll @ChannelAgnostic
     public Response exceptionHead(@Context HttpServletRequest servletRequest) {
         return error(servletRequest.getAttribute(CXFJaxrsHstConfigService.REQUEST_ERROR_MESSAGE_ATTRIBUTE).toString());
     }
 
     @POST
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
+    @PermitAll @ChannelAgnostic
     public Response exceptionPost(@Context HttpServletRequest servletRequest) {
         return error(servletRequest.getAttribute(CXFJaxrsHstConfigService.REQUEST_ERROR_MESSAGE_ATTRIBUTE).toString());
     }
 
     @PUT
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
+    @PermitAll @ChannelAgnostic
     public Response exceptionPut(@Context HttpServletRequest servletRequest) {
         return error(servletRequest.getAttribute(CXFJaxrsHstConfigService.REQUEST_ERROR_MESSAGE_ATTRIBUTE).toString());
     }
 
     @DELETE
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
+    @PermitAll @ChannelAgnostic
     public Response exceptionDelete(@Context HttpServletRequest servletRequest) {
         return error(servletRequest.getAttribute(CXFJaxrsHstConfigService.REQUEST_ERROR_MESSAGE_ATTRIBUTE).toString());
     }
 
-    
+    @GET
+    @Path("/clientexception")
+    @PermitAll @ChannelAgnostic
+    public Response clientExceptionGet(@Context HttpServletRequest servletRequest) {
+        return getClientErrorResponse(servletRequest);
+    }
+
+    @Path("/clientexception")
+    @HEAD
+    @PermitAll @ChannelAgnostic
+    public Response clientExceptionHead(@Context HttpServletRequest servletRequest) {
+        return getClientErrorResponse(servletRequest);
+    }
+
+    @POST
+    @Path("/clientexception")
+    @PermitAll @ChannelAgnostic
+    public Response clientExceptionPost(@Context HttpServletRequest servletRequest) {
+        return getClientErrorResponse(servletRequest);
+    }
+
+    @PUT
+    @Path("/clientexception")
+    @PermitAll @ChannelAgnostic
+    public Response clientExceptionPut(@Context HttpServletRequest servletRequest) {
+        return getClientErrorResponse(servletRequest);
+    }
+
+    @DELETE
+    @Path("/clientexception")
+    @PermitAll @ChannelAgnostic
+    public Response clientExceptionDelete(@Context HttpServletRequest servletRequest) {
+        return getClientErrorResponse(servletRequest);
+    }
+
+    private Response getClientErrorResponse(final @Context HttpServletRequest servletRequest) {
+        ClientException e = (ClientException) servletRequest.getAttribute(CXFJaxrsHstConfigService.REQUEST_CLIENT_EXCEPTION_ATTRIBUTE);
+        return clientError(e.getMessage(), e.getErrorStatus());
+    }
+
 }

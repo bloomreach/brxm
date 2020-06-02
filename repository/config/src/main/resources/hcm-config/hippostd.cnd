@@ -33,6 +33,10 @@
 - hippostd:transferable (boolean)
 - hippostd:retainable (boolean)
 
+// marker mixin that if present on a *direct* child of a document variant, results in the child not being copied to
+// the draft and not from draft to the unpublished variant (though from unpublished to published)
+[hippostd:skipdraft] mixin
+
 [hippostd:document] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
 - hippostd:content (string) primary mandatory
 
