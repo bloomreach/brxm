@@ -21,6 +21,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>31.2.2-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Plugin SEO Support</name>
@@ -30,12 +31,6 @@
   <packaging>pom</packaging>
 
   <inceptionYear>2011</inceptionYear>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-plugin-seo-support.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-plugin-seo-support.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-plugin-seo-support</url>
-  </scm>
 
   <properties>
     <hippo.hst.version>14.2.2-SNAPSHOT</hippo.hst.version>
