@@ -49,12 +49,13 @@ public class AbstractConfigResource {
     public void setPageComposerContextService(PageComposerContextService pageComposerContextService) {
         this.pageComposerContextService = pageComposerContextService;
     }
-    public PlatformServices getPlatformServices() {
-        return HippoServiceRegistry.getService(PlatformServices.class);
-    }
 
     public PageComposerContextService getPageComposerContextService() {
         return pageComposerContextService;
+    }
+
+    public PlatformServices getPlatformServices() {
+        return HippoServiceRegistry.getService(PlatformServices.class);
     }
 
     protected Response ok(String msg) {

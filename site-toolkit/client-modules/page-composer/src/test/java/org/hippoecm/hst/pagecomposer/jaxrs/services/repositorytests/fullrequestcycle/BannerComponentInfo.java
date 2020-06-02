@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,14 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.platform.services.channel;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
 
-public class ChannelManagerPrivileges {
+import org.hippoecm.hst.core.parameters.JcrPath;
+import org.hippoecm.hst.core.parameters.Parameter;
 
-    public final static String CHANNEL_ADMIN_PRIVILEGE_NAME = "hippo:channel-admin";
+public interface BannerComponentInfo {
 
-    public final static String CHANNEL_WEBMASTER_PRIVILEGE_NAME = "hippo:channel-webmaster";
-
-    public final static String CHANNEL_VIEWER_PRIVILEGE_NAME = "hippo:channel-viewer";
+    @Parameter(name = "path", defaultValue = "/some/default")
+    @JcrPath(isRelative = true)
+    String getPath();
 
 }

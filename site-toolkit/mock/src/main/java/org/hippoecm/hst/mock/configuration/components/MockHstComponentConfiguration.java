@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     private String label;
     private String iconPath;
     private boolean inherited;
+    private boolean shared;
     private boolean prototype;
     private boolean standalone;
     private boolean async;
@@ -247,12 +248,21 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     }
 
     @Override
+    public boolean isShared() {
+        return shared;
+    }
+
+    @Override
     public boolean isPrototype() {
         return prototype;
     }
     
     public void setInherited(boolean inherited) {
         this.inherited = inherited;
+    }
+
+    public void setShared(final boolean shared) {
+        this.shared = shared;
     }
 
     @Override
@@ -365,4 +375,8 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
         this.markedDeleted = markedDeleted;
     }
 
+    @Override
+    public boolean isExperiencePageComponent() {
+        return false;
+    }
 }

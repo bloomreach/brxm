@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,14 +86,15 @@ public class RootContentHippoDocumentResourceTest extends AbstractTestTreePicker
             AbstractTreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());
 
             assertEquals("common", representation.getItems().get(0).getDisplayName());
-            assertEquals("News", representation.getItems().get(1).getDisplayName());
-            assertEquals("bbb", representation.getItems().get(2).getDisplayName());
-            assertEquals("Home Page", representation.getItems().get(3).getDisplayName());
-            assertEquals("doc1", representation.getItems().get(3).getNodeName());
-            assertEquals("About Us", representation.getItems().get(4).getDisplayName());
-            assertEquals("doc2", representation.getItems().get(4).getNodeName());
-            assertEquals("aaa", representation.getItems().get(5).getDisplayName());
-            assertEquals("ccc", representation.getItems().get(6).getDisplayName());
+            assertEquals("experiences", representation.getItems().get(1).getDisplayName());
+            assertEquals("News", representation.getItems().get(2).getDisplayName());
+            assertEquals("bbb", representation.getItems().get(3).getDisplayName());
+            assertEquals("Home Page", representation.getItems().get(4).getDisplayName());
+            assertEquals("doc1", representation.getItems().get(4).getNodeName());
+            assertEquals("About Us", representation.getItems().get(5).getDisplayName());
+            assertEquals("doc2", representation.getItems().get(5).getNodeName());
+            assertEquals("aaa", representation.getItems().get(6).getDisplayName());
+            assertEquals("ccc", representation.getItems().get(7).getDisplayName());
         } finally {
             cleanupContent(absRootContentPath, originalPrimaryType);
             session.save();
@@ -125,11 +126,12 @@ public class RootContentHippoDocumentResourceTest extends AbstractTestTreePicker
             assertEquals("bbb", representation.getItems().get(1).getDisplayName());
             assertEquals("ccc", representation.getItems().get(2).getDisplayName());
             assertEquals("common", representation.getItems().get(3).getDisplayName());
-            assertEquals("News", representation.getItems().get(4).getDisplayName());
-            assertEquals("About Us", representation.getItems().get(5).getDisplayName());
-            assertEquals("doc2", representation.getItems().get(5).getNodeName());
-            assertEquals("Home Page", representation.getItems().get(6).getDisplayName());
-            assertEquals("doc1", representation.getItems().get(6).getNodeName());
+            assertEquals("experiences", representation.getItems().get(4).getDisplayName());
+            assertEquals("News", representation.getItems().get(5).getDisplayName());
+            assertEquals("About Us", representation.getItems().get(6).getDisplayName());
+            assertEquals("doc2", representation.getItems().get(6).getNodeName());
+            assertEquals("Home Page", representation.getItems().get(7).getDisplayName());
+            assertEquals("doc1", representation.getItems().get(7).getNodeName());
         } finally {
             cleanupContent(absRootContentPath, originalPrimaryType);
             session.save();

@@ -1,12 +1,12 @@
 /**
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *         http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,11 +23,15 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.util.JcrConstants;
+
+import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 
 /**
  * Custom workflow task for copying (creating if necessary) from one variant node to another variant node
@@ -60,6 +64,9 @@ public class CopyVariantTask extends AbstractDocumentTask {
 
         DocumentHandle dm = getDocumentHandle();
 
+        // a copy *to* or from draft should ignore direct children below the variant of nodetype hippo:skipdraft
+        final boolean srcOrDestIsDraft = DRAFT.equals(getSourceState()) || DRAFT.equals(getTargetState());
+
         DocumentVariant sourceDoc = dm.getDocuments().get(getSourceState());
         DocumentVariant targetDoc = dm.getDocuments().get(getTargetState());
 
@@ -71,23 +78,33 @@ public class CopyVariantTask extends AbstractDocumentTask {
         final Node sourceNode = sourceDoc.getNode(workflowSession);
         Node targetNode;
 
-        boolean saveNeeded = false;
-
         if (targetDoc == null) {
-            saveNeeded = true;
-            targetNode = cloneDocumentNode(sourceNode);
 
-            if (HippoStdNodeType.DRAFT.equals(getTargetState())) {
-                if (targetNode.isNodeType(HippoNodeType.NT_HARDDOCUMENT)) {
-                    targetNode.removeMixin(HippoNodeType.NT_HARDDOCUMENT);
-                }
+            final Node parent = sourceNode.getParent();
+            JcrUtils.ensureIsCheckedOut(parent);
+
+            targetNode = parent.addNode(sourceNode.getName(), sourceNode.getPrimaryNodeType().getName());
+
+            targetNode.addMixin(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
+
+            if (sourceNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
+                targetNode.addMixin(HippoStdNodeType.NT_PUBLISHABLESUMMARY);
             }
-            if (!targetNode.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
-                targetNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
+
+            if (DRAFT.equals(getTargetState()) && targetNode.isNodeType(HippoNodeType.NT_HARDDOCUMENT)) {
+                targetNode.removeMixin(HippoNodeType.NT_HARDDOCUMENT);
             }
+            targetNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
+
+            copyTo(sourceNode, targetNode, srcOrDestIsDraft);
 
             targetDoc = new DocumentVariant(targetNode);
             targetDoc.setState(getTargetState());
+
+            workflowSession.save();
+            if (dm.hasMultipleDocumentVariants(getTargetState())) {
+                deleteDuplicateVariant(workflowSession, dm, targetDoc, getTargetState());
+            }
         }
         else {
             targetNode = targetDoc.getNode(workflowSession);
@@ -96,14 +113,7 @@ public class CopyVariantTask extends AbstractDocumentTask {
                 throw new WorkflowException(
                         "The target document variant (node) is the same as the source document variant (node).");
             }
-            copyTo(sourceNode, targetNode);
-        }
-
-        if (saveNeeded) {
-            workflowSession.save();
-            if (dm.hasMultipleDocumentVariants(getTargetState())) {
-                deleteDuplicateVariant(workflowSession, dm, targetDoc, getTargetState());
-            }
+            copyTo(sourceNode, targetNode, srcOrDestIsDraft);
         }
 
         dm.getDocuments().put(targetDoc.getState(), targetDoc);

@@ -65,10 +65,13 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
     @After
     public void tearDown() throws Exception {
-        final Session session = createSession("admin", "admin");
-        AbstractPageComposerTest.restoreHstConfigBackup(session);
-        session.logout();
-        super.tearDown();
+        try {
+            final Session session = createSession("admin", "admin");
+            AbstractPageComposerTest.restoreHstConfigBackup(session);
+            session.logout();
+        } finally {
+            super.tearDown();
+        }
     }
 
     @Test

@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
@@ -89,15 +90,26 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
     }
 
     protected Session createSession(final String userName, final String password) throws RepositoryException {
+        return createSession(new SimpleCredentials(userName, password.toCharArray()));
+    }
+    protected Session createSession(final Credentials creds) throws RepositoryException {
         Repository repository = platformComponentManager.getComponent(Repository.class.getName() + ".delegating");
-        return repository.login(new SimpleCredentials(userName, password.toCharArray()));
+        return repository.login(creds);
     }
 
+    /**
+     * the identifier of the node at jcrPath. If possible use {@link #getNodeId(Session, String)} since this one first
+     * needs to login a session
+     */
     public String getNodeId(final String jcrPath) throws RepositoryException {
         final Session admin = createSession("admin", "admin");
-        final String mountId = admin.getNode(jcrPath).getIdentifier();
+        final String identifier = admin.getNode(jcrPath).getIdentifier();
         admin.logout();
-        return mountId;
+        return identifier;
+    }
+
+    public String getNodeId(final Session session, final String jcrPath) throws RepositoryException {
+        return session.getNode(jcrPath).getIdentifier();
     }
 
     public MockHttpServletResponse render(final String mountId, final RequestResponseMock requestResponse, final Credentials authenticatedCmsUser) throws IOException, ServletException {
@@ -240,6 +252,36 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
             privilegesAllowedInvokerPreprocessor.setEnabled(true);
         }
     }
+
+    // returns the jcr session containing the changes, do more changes and save this session when needed (and logout)
+    protected Session backupHstAndCreateWorkspace() throws RepositoryException {
+        final Session session = createSession("admin", "admin");
+        AbstractPageComposerTest.createHstConfigBackup(session);
+        // move the hst:sitemap and hst:pages below the 'workspace' because since HSTTWO-3959 only the workspace
+        // gets copied to preview configuration
+        if (!session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace")) {
+            session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace", "hst:workspace");
+        }
+        if (!session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap")) {
+            session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace").addNode("hst:sitemap", "hst:sitemap");
+        }
+        if (!session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages")) {
+            session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace").addNode("hst:pages", "hst:pages");
+        }
+        return session;
+    }
+
+    protected Map<String, Object> startEdit(final Credentials creds) throws RepositoryException, IOException, ServletException {
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + mountId + "./edit", null, "POST");
+
+        final MockHttpServletResponse response = render(mountId, requestResponse, creds);
+        final String restResponse = response.getContentAsString();
+        return mapper.readerFor(Map.class).readValue(restResponse);
+    }
+
+
 }
 
 

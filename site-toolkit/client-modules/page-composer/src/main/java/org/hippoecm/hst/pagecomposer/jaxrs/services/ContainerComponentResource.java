@@ -30,10 +30,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 @Path("/hst:containercomponent/")
-public class ContainerComponentResource extends AbstractConfigResource {
+public class ContainerComponentResource extends AbstractConfigResource implements ContainerComponentResourceInterface {
     private static Logger log = LoggerFactory.getLogger(ContainerComponentResource.class);
 
     private ContainerComponentService containerComponentService;
@@ -61,6 +61,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @Override
     public Response createContainerItem(final @PathParam("itemUUID") String itemUUID,
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         if (!isValidUUID(itemUUID)) {
@@ -80,6 +81,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @Override
     public Response createContainerItemAndAddBefore(final @PathParam("itemUUID") String itemUUID,
                                                     final @PathParam("siblingItemUUID") String siblingItemUUID,
                                                     final @QueryParam("lastModifiedTimestamp") long versionStamp) {
@@ -105,6 +107,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @Override
     public Response updateContainer(final ContainerRepresentation container) {
         final ContainerAction<Response> updateContainer = () -> {
             containerComponentService.updateContainer(getSession(), container);
@@ -141,7 +144,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
         } catch (ClientException e) {
             errorStatus = e.getErrorStatus();
             httpStatusCode = Response.Status.BAD_REQUEST;
-        } catch (RepositoryException | IllegalArgumentException e) {
+        } catch (Exception e) {
             errorStatus = ErrorStatus.unknown(e.getMessage());
             httpStatusCode = Response.Status.INTERNAL_SERVER_ERROR;
         }

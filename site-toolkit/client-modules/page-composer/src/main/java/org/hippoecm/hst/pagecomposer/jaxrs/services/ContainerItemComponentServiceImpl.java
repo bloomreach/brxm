@@ -38,7 +38,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyR
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ItemNotFoundException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.UnknownClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
@@ -125,7 +124,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
         try {
             final HstComponentParameters componentParameters = getCurrentHstComponentParameters();
             if (!componentParameters.hasPrefix(variantId)) {
-                throw new ItemNotFoundException("Cannot delete variantId with id='" + variantId + "'");
+                throw new ClientException(String.format("Cannot delete variantId with id='%s'", variantId) , ClientError.ITEM_NOT_FOUND);
             }
             deleteVariant(componentParameters, variantId);
 

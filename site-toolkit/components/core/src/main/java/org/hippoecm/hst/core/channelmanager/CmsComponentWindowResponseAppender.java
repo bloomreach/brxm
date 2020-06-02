@@ -38,6 +38,7 @@ import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_EXPERIENCE_PAGE_COMPONENT;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
 
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
@@ -82,6 +83,9 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         pageMetaData.put(ChannelManagerConstants.HST_MOUNT_ID, mount.getIdentifier());
         pageMetaData.put(ChannelManagerConstants.HST_SITE_ID, mount.getHstSite().getCanonicalIdentifier());
         pageMetaData.put(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
+        // provide info for CM that the page is an experience page: The top hst component for experience pages
+        // always has compConfig.isExperiencePageComponent() = true
+        pageMetaData.put(ChannelManagerConstants.HST_EXPERIENCE_PAGE,  String.valueOf(compConfig.isExperiencePageComponent()));
 
         final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
         if (resolvedSiteMapItem != null) {
@@ -91,13 +95,6 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             if (siteMap instanceof CanonicalInfo) {
                 final CanonicalInfo canonicalInfo = (CanonicalInfo) siteMap;
                 pageMetaData.put(ChannelManagerConstants.HST_SITEMAP_ID, canonicalInfo.getCanonicalIdentifier());
-                if (canonicalInfo.getCanonicalPath().contains(WORKSPACE_PATH_ELEMENT) &&
-                        canonicalInfo.getCanonicalPath().startsWith(mount.getHstSite().getConfigurationPath())) {
-                    // sitemap item is part of workspace && of current site configuration (thus not inherited)
-                    pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "true");
-                } else {
-                    pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "false");
-                }
             } else {
                 log.warn("Expected sitemap of subtype {}. Cannot set sitemap id.", CanonicalInfo.class.getName());
             }
@@ -134,17 +131,23 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
                                            final HstComponentWindow window) {
         final HstComponentConfiguration config = (HstComponentConfiguration)window.getComponentInfo();
 
-        if (!config.getCanonicalStoredLocation().contains(WORKSPACE_PATH_ELEMENT)) {
-            log.debug("Component '{}' not editable as not part of hst:workspace configuration", config.toString());
+        if (config.isInherited()) {
+            log.debug("Component '{}' not editable because inherited", config.toString());
             return;
         }
 
-        final Map<String, String> preambleAttributes = new HashMap<>();
-        final Map<String, String> epilogueAttributes = new HashMap<>();
-        populateAttributes(window, request, preambleAttributes, epilogueAttributes);
-        response.addPreamble(createCommentWithAttr(preambleAttributes, response));
-        response.addEpilogue(createCommentWithAttr(epilogueAttributes, response));
+        if (config.getCanonicalStoredLocation().contains(WORKSPACE_PATH_ELEMENT) || config.isExperiencePageComponent()) {
+            final Map<String, String> preambleAttributes = new HashMap<>();
+            final Map<String, String> epilogueAttributes = new HashMap<>();
+            populateAttributes(window, request, preambleAttributes, epilogueAttributes);
+            response.addPreamble(createCommentWithAttr(preambleAttributes, response));
+            response.addEpilogue(createCommentWithAttr(epilogueAttributes, response));
+        } else {
+            log.debug("Component '{}' not editable as not part of hst:workspace configuration and not part of " +
+                    "an experience page", config.toString());
+        }
     }
+
 
     final void populateAttributes(HstComponentWindow window, HstRequest request,
                                   Map<String, String> preambleAttributes, Map<String, String> epilogueAttributes) {
