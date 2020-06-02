@@ -91,7 +91,7 @@
     <hippo.utilities.version>13.4.4-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>13.4.4-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>13.4.4-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.services.search.version>13.4.0</hippo.services.search.version>
+    <hippo.addon-search-service.version>13.4.4-SNAPSHOT</hippo.addon-search-service.version>
     <hippo.services.contenttype.version>13.4.4-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.testutils.version>13.4.4-SNAPSHOT</hippo.testutils.version>
     <hippo.plugin.gallerypicker.version>13.4.4-SNAPSHOT</hippo.plugin.gallerypicker.version>
@@ -189,17 +189,17 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-search-service-api</artifactId>
-        <version>${hippo.services.search.version}</version>
+        <version>${hippo.addon-search-service.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-search-service-jcr</artifactId>
-        <version>${hippo.services.search.version}</version>
+        <version>${hippo.addon-search-service.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-search-service-commons</artifactId>
-        <version>${hippo.services.search.version}</version>
+        <version>${hippo.addon-search-service.version}</version>
       </dependency>
 
       <dependency>
