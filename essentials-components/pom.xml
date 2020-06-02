@@ -22,6 +22,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>31.2.2-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Essentials Components</name>
@@ -47,12 +48,6 @@
     <junit.version>4.12</junit.version>
     <mockito.version>1.10.19</mockito.version>
   </properties>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-essentials-components.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-essentials-components.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-essentials-components</url>
-  </scm>
 
   <modules>
     <module>cms</module>

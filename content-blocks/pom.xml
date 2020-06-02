@@ -21,6 +21,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>31.2.2-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <inceptionYear>2009</inceptionYear>
@@ -30,12 +31,6 @@
   <artifactId>hippo-plugin-content-blocks-root</artifactId>
   <version>14.2.2-SNAPSHOT</version>
   <packaging>pom</packaging>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-plugin-content-blocks.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-plugin-content-blocks.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-plugin-content-blocks</url>
-  </scm>
 
   <properties>
     <hippo.repository.version>14.2.2-SNAPSHOT</hippo.repository.version>

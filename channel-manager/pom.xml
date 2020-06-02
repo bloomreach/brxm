@@ -21,6 +21,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>31.2.2-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <artifactId>hippo-addon-channel-manager</artifactId>
@@ -247,12 +248,6 @@
     <module>frontend-ng</module>
     <module>repository</module>
   </modules>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-addon-channel-manager.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-addon-channel-manager.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-addon-channel-manager</url>
-  </scm>
 
   <build>
     <pluginManagement>

@@ -21,6 +21,7 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>31.2.2-SNAPSHOT</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo CMS l10n Tooling Project</name>
@@ -38,12 +39,6 @@
     <hippo.configuration-management.version>14.2.2-SNAPSHOT</hippo.configuration-management.version>
     <junit.version>4.12</junit.version>
   </properties>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms-l10n-tooling.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms-l10n-tooling.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-cms-l10n-tooling</url>
-  </scm>
 
   <repositories>
     <repository>
