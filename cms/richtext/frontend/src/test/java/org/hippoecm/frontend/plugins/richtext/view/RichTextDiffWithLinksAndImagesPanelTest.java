@@ -100,7 +100,7 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
         Node current = addHtmlNode(root, "current", "noot");
         String diff = createDiff(base, current);
         assertEquals(htmlEncode("<html>\n"
-                + "<span class=\"diff-html-removed\" id=\"removed-null-0\" previous=\"first-null\" changeId=\"removed-null-0\" next=\"added-null-0\">aap</span>"
+                + "    <span class=\"diff-html-removed\" id=\"removed-null-0\" previous=\"first-null\" changeId=\"removed-null-0\" next=\"added-null-0\">aap</span>"
                 + "<span class=\"diff-html-added\" id=\"added-null-0\" previous=\"removed-null-0\" changeId=\"added-null-0\" next=\"last-null\">noot</span>\n"
                 + "</html>\n"), diff);
     }
@@ -115,8 +115,8 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
         addFacet(current, imageHandle);
 
         String diff = createDiff(base, current);
-        assertEquals(htmlEncode("<html>text "
-                + "<span class=\"diff-html-added\" id=\"added-null-0\" previous=\"first-null\" changeId=\"added-null-0\" next=\"last-null\">"
+        assertEquals(htmlEncode("<html>\n"
+                + "    text <span class=\"diff-html-added\" id=\"added-null-0\" previous=\"first-null\" changeId=\"added-null-0\" next=\"last-null\">"
                 + "<img src=\"binaries/image.jpg/image.jpg/hippogallery:thumbnail\" data-uuid=\""+ imageHandle.getIdentifier() +"\" data-type=\"hippogallery:thumbnail\" changeType=\"diff-added-image\">"
                 + "</span>\n"
                 + "</html>\n"), diff);
@@ -133,8 +133,8 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
 
         String diff = createDiff(base, current);
 
-        assertEquals(htmlEncode("<html>text"
-                + "<span class=\"diff-html-removed\" previous=\"first-null\" changeId=\"removed-null-0\" next=\"last-null\"> </span>"
+        assertEquals(htmlEncode("<html>\n"
+                + "    text<span class=\"diff-html-removed\" previous=\"first-null\" changeId=\"removed-null-0\" next=\"last-null\"> </span>"
                 + "<span class=\"diff-html-removed\" id=\"removed-null-0\" previous=\"first-null\" changeId=\"removed-null-0\" next=\"last-null\">"
                 + "<img src=\"binaries/image.jpg/image.jpg/hippogallery:thumbnail\" data-uuid=\""+ imageHandle.getIdentifier() +"\" data-type=\"hippogallery:thumbnail\" changeType=\"diff-removed-image\">"
                 + "</span>\n"
