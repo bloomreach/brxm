@@ -93,7 +93,7 @@
     <docker.postgres.image>postgres:10.6-alpine</docker.postgres.image>
 
     <!-- Default base image for brXM Dockerfile -->
-    <docker.brxm.base.image>tomcat:9-jdk8-openjdk-slim</docker.brxm.base.image>
+    <docker.brxm.base.image>tomcat:9-jdk11-openjdk-slim</docker.brxm.base.image>
 
     <!-- if you want a remote debugging on a different port override on command line with -Ddocker.debug.port=xxxx -->
     <docker.brxm.debug.port>8000</docker.brxm.debug.port>
