@@ -37,10 +37,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -51,6 +53,7 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.CREATED;
+import org.assertj.core.api.Assertions;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -658,4 +661,37 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), updateResponse.getStatus());
     }
 
+    @Test
+    public void creating_container_item_not_allowed_if_request_for_publication_present() throws RepositoryException, IOException, WorkflowException, ServletException {
+
+        final Session authorSession = createSession(AUTHOR_CREDENTIALS);
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(authorSession);
+        final Document document = documentWorkflow.obtainEditableInstance();
+        final Node handleNode = document.getNode(authorSession).getParent();
+        final Node draftNode = getVariant(handleNode, HippoStdNodeType.DRAFT);
+        draftNode.setProperty(HippoNodeType.HIPPO_NAME, "TEST");
+        documentWorkflow.commitEditableInstance();
+
+        documentWorkflow.requestPublication();
+
+        final Session adminSession = createSession(ADMIN_CREDENTIALS);
+        final String mountId = getNodeId(adminSession, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final String containerId = getNodeId(adminSession, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final String catalogId = getNodeId(adminSession, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+
+        final RequestResponseMock createRequestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + containerId + "./" + catalogId, null,
+                "POST");
+
+        final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, ADMIN_CREDENTIALS);
+        Assertions.assertThat(createResponse.getStatus())
+                .isEqualTo(BAD_REQUEST.getStatusCode());
+
+        final Map<String, ?> createResponseMap = mapper.readerFor(Map.class).readValue(createResponse.getContentAsString());
+        Assertions.assertThat(createResponseMap.get("success"))
+                .isEqualTo(FALSE);
+        Assertions.assertThat(createResponseMap.get("message"))
+                .isEqualTo("Document not editable");
+
+    }
 }
