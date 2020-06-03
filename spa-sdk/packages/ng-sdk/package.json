@@ -21,7 +21,7 @@
     "build": "ng build",
     "lint": "ng lint",
     "ng": "ng",
-    "prepare": "$npm_execpath run build",
+    "prepare": "$npm_execpath run build && rm dist/package.json dist/README.md",
     "test": "ng test --passWithNoTests"
   },
   "main": "dist/bundles/bloomreach-ng-sdk.umd.js",
