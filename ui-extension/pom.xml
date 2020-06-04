@@ -28,7 +28,7 @@
   <groupId>org.onehippo</groupId>
   <artifactId>ui-extension</artifactId>
   <name>Bloomreach Open UI SDK</name>
-  <version>14.2.2-SNAPSHOT</version>
+  <version>14.2.2-contentfeed-SNAPSHOT</version>
 
   <inceptionYear>2018</inceptionYear>
 

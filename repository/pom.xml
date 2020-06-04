@@ -27,7 +27,7 @@
   <name>Repository</name>
   <description>Hippo Repository</description>
   <artifactId>hippo-repository</artifactId>
-  <version>14.2.2-SNAPSHOT</version>
+  <version>14.2.2-contentfeed-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2007</inceptionYear>
