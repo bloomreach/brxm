@@ -33,9 +33,9 @@
   <inceptionYear>2011</inceptionYear>
 
   <properties>
-    <hippo.hst.version>14.3.0-SNAPSHOT</hippo.hst.version>
-    <hippo.commons.version>14.3.0-SNAPSHOT</hippo.commons.version>
-    <hippo.repository.version>14.3.0-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>${project.version}</hippo.hst.version>
+    <hippo.commons.version>${project.version}</hippo.commons.version>
+    <hippo.repository.version>${project.version}</hippo.repository.version>
     <junit.version>4.12</junit.version>
     <easymock.version>3.4</easymock.version>
   </properties>
