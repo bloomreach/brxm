@@ -103,6 +103,16 @@
               <arguments>run test:single-run</arguments>
             </configuration>
           </execution>
+          <execution>
+            <id>npm generate license files</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run license</arguments>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>

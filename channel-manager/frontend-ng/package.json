@@ -32,6 +32,7 @@
     "clean:lint:css": "febuild clean:lint:css",
     "clean:lint:js": "febuild clean:lint:js",
     "dev:all": "febuild dev:all",
+    "license": "blc . ./target/classes/META-INF",
     "lint": "febuild lint",
     "lint:css": "febuild lint:css",
     "lint:css:watch": "febuild lint:css:watch",
@@ -78,6 +79,7 @@
     "throttle-debounce": "2.1.0"
   },
   "devDependencies": {
+    "@abogaart/blc": "0.1.2",
     "@bloomreach/frontend-build": "11.1.0",
     "angular-mocks": "1.7.9",
     "babel-plugin-transform-async-to-promises": "0.8.15",
