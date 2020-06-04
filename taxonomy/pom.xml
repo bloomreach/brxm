@@ -37,17 +37,17 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Taxonomy</notice.project.name>
 
-    <hippo.services.version>14.2.2-SNAPSHOT</hippo.services.version>
-    <hippo.cms.version>14.2.2-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>14.2.2-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>14.2.2-SNAPSHOT</hippo.hst.version>
+    <hippo.services.version>${project.version}</hippo.services.version>
+    <hippo.cms.version>${project.version}</hippo.cms.version>
+    <hippo.repository.version>${project.version}</hippo.repository.version>
+    <hippo.hst.version>${project.version}</hippo.hst.version>
 
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-lang.version>2.6</commons-lang.version>
 
     <jsp-api.version>2.2</jsp-api.version>
 
-    <hippo.testutils.version>14.2.2-SNAPSHOT</hippo.testutils.version>
+    <hippo.testutils.version>${project.version}</hippo.testutils.version>
     <junit.version>4.12</junit.version>
     <easymock.version>3.0</easymock.version>
   </properties>
