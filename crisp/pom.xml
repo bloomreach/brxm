@@ -44,11 +44,11 @@
     <jdom2.version>2.0.6</jdom2.version>
     <jaxen.version>1.1.6</jaxen.version>
 
-    <hippo.commons.version>14.2.2-SNAPSHOT</hippo.commons.version>
-    <hippo.services.version>14.2.2-SNAPSHOT</hippo.services.version>
+    <hippo.commons.version>${project.version}</hippo.commons.version>
+    <hippo.services.version>${project.version}</hippo.services.version>
 
-    <hippo.repository.version>14.2.2-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>14.2.2-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>${project.version}</hippo.repository.version>
+    <hippo.hst.version>${project.version}</hippo.hst.version>
 
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
