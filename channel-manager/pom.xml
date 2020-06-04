@@ -35,15 +35,15 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
-    <hippo.repository.version>13.4.4-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>13.4.4-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>13.4.4-SNAPSHOT</hippo.hst.version>
-    <hippo.commons.version>13.4.4-SNAPSHOT</hippo.commons.version>
-    <hippo.plugin.gallerypicker.version>13.4.4-SNAPSHOT</hippo.plugin.gallerypicker.version>
-    <hippo.plugin.selections.version>13.4.4-SNAPSHOT</hippo.plugin.selections.version>
-    <hippo.services.version>13.4.4-SNAPSHOT</hippo.services.version>
-    <hippo.services.htmlprocessor.version>13.4.4-SNAPSHOT</hippo.services.htmlprocessor.version>
-    <hippo.services.validation.version>13.4.4-SNAPSHOT</hippo.services.validation.version>
+    <hippo.repository.version>${project.version}</hippo.repository.version>
+    <hippo.cms.version>${project.version}</hippo.cms.version>
+    <hippo.hst.version>${project.version}</hippo.hst.version>
+    <hippo.commons.version>${project.version}</hippo.commons.version>
+    <hippo.plugin.gallerypicker.version>${project.version}</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.selections.version>${project.version}</hippo.plugin.selections.version>
+    <hippo.services.version>${project.version}</hippo.services.version>
+    <hippo.services.htmlprocessor.version>${project.version}</hippo.services.htmlprocessor.version>
+    <hippo.services.validation.version>${project.version}</hippo.services.validation.version>
 
     <commons-lang.version>2.6</commons-lang.version>
     <lib.json.version>20090211</lib.json.version>
@@ -56,7 +56,7 @@
     <easymock.version>3.4</easymock.version>
     <!-- Make sure that powermock and easymock are compatible -->
     <powermock.version>1.6.5</powermock.version>
-    <hippo.testutils.version>13.4.4-SNAPSHOT</hippo.testutils.version>
+    <hippo.testutils.version>${project.version}</hippo.testutils.version>
   </properties>
 
   <repositories>

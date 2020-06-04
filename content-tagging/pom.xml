@@ -35,9 +35,9 @@
   <inceptionYear>2008</inceptionYear>
 
   <properties>
-    <hippo.repository.version>13.4.4-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>13.4.4-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>13.4.4-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>${project.version}</hippo.repository.version>
+    <hippo.cms.version>${project.version}</hippo.cms.version>
+    <hippo.hst.version>${project.version}</hippo.hst.version>
 
     <json-lib.version>2.4</json-lib.version>
     <junit.version>4.12</junit.version>
