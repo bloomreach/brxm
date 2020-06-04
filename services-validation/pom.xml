@@ -29,7 +29,7 @@
 
   <name>Hippo CMS7 Services - validation</name>
   <artifactId>hippo-services-validation</artifactId>
-  <version>14.2.2-SNAPSHOT</version>
+  <version>14.2.2-contentfeed-SNAPSHOT</version>
 
   <inceptionYear>2019</inceptionYear>
 

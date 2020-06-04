@@ -27,7 +27,7 @@
 
   <name>Hippo CMS7 Services - contenttype</name>
   <artifactId>hippo-services-contenttype</artifactId>
-  <version>14.2.2-SNAPSHOT</version>
+  <version>14.2.2-contentfeed-SNAPSHOT</version>
 
   <inceptionYear>2013</inceptionYear>
 
