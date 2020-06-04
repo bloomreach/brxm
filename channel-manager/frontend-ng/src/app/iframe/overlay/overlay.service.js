@@ -304,10 +304,11 @@ export default class OverlayService {
         </span>
       `);
 
-      const suffix = structureElement.isShared() ? ` ${this._translate('SHARED_SUFFIX')}` : '';
-      const label = `${structureElement.getLabel()}${suffix}`;
-      const escapedLabel = this._setLabelText(labelElement, label);
-      labelElement.attr('data-qa-name', escapedLabel);
+      const label = structureElement.getLabel();
+      this._setLabelText(labelElement, structureElement.isShared()
+        ? `${label} ${this._translate('SHARED_SUFFIX')}`
+        : label);
+      labelElement.attr('data-qa-name', structureElement.isShared() ? `${label}-shared` : label);
 
       overlayElement.append(labelElement);
     }
@@ -318,8 +319,6 @@ export default class OverlayService {
     if (textElement.text() !== text) {
       textElement.text(text);
     }
-
-    return text;
   }
 
   _addMarkupAndBehavior(structureElement, overlayElement) {
