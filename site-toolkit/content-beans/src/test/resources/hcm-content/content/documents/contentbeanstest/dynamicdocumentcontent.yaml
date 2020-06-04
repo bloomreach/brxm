@@ -36,6 +36,11 @@
       /contentbeanstest:richTextEditorCompoundType:
         jcr:primaryType: hippostd:html
         hippostd:content: 'multipleListContent'
+    /contentbeanstest:unregisteredfield:
+      jcr:primaryType: contentbeanstest:htmlblock2
+      /contentbeanstest:text:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          Welcome Home with lazy loaded compounds!
     /contentbeanstest:emptycompoundfield:
       jcr:primaryType: contentbeanstest:emptycompound
-        
