@@ -50,7 +50,7 @@ public class HippoContentChildNode {
         return name;
     }
 
-    public boolean hasContentBlocks() {
+    public boolean isContentBlocks() {
         return contentBlocks;
     }
 
