@@ -72,7 +72,15 @@ export default class DragDropService {
       mirrorContainer,
       ignoreInputTextSelection: false,
       moves: (el, source) => !this.dropping && this._isContainerEnabled(source),
-      accepts: (el, target, source) => this._isContainerEnabled(target) && this._hasSameDropGroup(source, target),
+      accepts: (el, target, source) => {
+        if (!this._isContainerEnabled(target)) {
+          return false;
+        }
+
+        const sourceContainer = this.PageStructureService.getContainerByIframeElement(source);
+        const targetContainer = this.PageStructureService.getContainerByIframeElement(target);
+        return this._hasSameDropGroup(sourceContainer, targetContainer);
+      },
       invalid: () => !this.draggingOrClicking,
       dragDelay: 300,
     };
@@ -126,10 +134,7 @@ export default class DragDropService {
     return container && !container.isDisabled();
   }
 
-  _hasSameDropGroup(source, target) {
-    const sourceContainer = this.PageStructureService.getContainerByIframeElement(source);
-    const targetContainer = this.PageStructureService.getContainerByIframeElement(target);
-
+  _hasSameDropGroup(sourceContainer, targetContainer) {
     if (!sourceContainer || !targetContainer) {
       return false;
     }
@@ -200,15 +205,10 @@ export default class DragDropService {
     this._updateDragDirection(containerElement);
 
     const sourceContainer = this.PageStructureService.getContainerByIframeElement(containerElement);
-    const groups = sourceContainer.getDropGroups();
     const page = this.PageStructureService.getPage();
     page.getContainers()
-      .filter(container => container.isVisible())
-      .forEach((container) => {
-        if (!container.getDropGroups().some(group => groups.includes(group))) {
-          container.getOverlayElement().addClass('drop-not-allowed');
-        }
-      });
+      .filter(container => container.isVisible() && !this._hasSameDropGroup(sourceContainer, container))
+      .forEach(container => container.getOverlayElement().addClass('drop-not-allowed'));
 
     this.CommunicationService.emit('drag:start');
   }
