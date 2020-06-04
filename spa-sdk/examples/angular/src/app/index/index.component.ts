@@ -16,6 +16,7 @@
 
 import { Component, InjectionToken, Inject, OnInit, Optional } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { RESPONSE, REQUEST } from '@nguniversal/express-engine/tokens';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { Response, Request } from 'express';
@@ -23,7 +24,6 @@ import { serialize } from 'cookie';
 import { BrPageComponent } from '@bloomreach/ng-sdk';
 import { Page } from '@bloomreach/spa-sdk';
 
-import { RESPONSE, REQUEST } from '../app.server.module';
 import { BannerComponent } from '../banner/banner.component';
 import { ContentComponent } from '../content/content.component';
 import { MenuComponent } from '../menu/menu.component';
