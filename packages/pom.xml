@@ -35,15 +35,15 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Product Packages</notice.project.name>
 
-    <hippo.utilities.version>14.3.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.repository.version>14.3.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>14.3.0-SNAPSHOT</hippo.cms.version>
-    <hippo.addon-channel-manager.version>14.3.0-SNAPSHOT</hippo.addon-channel-manager.version>
-    <hippo.hst.version>14.3.0-SNAPSHOT</hippo.hst.version>
-    <hippo.services.webfiles.version>14.3.0-SNAPSHOT</hippo.services.webfiles.version>
-    <hippo.services.contenttype.version>14.3.0-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.services.htmlprocessor.version>14.3.0-SNAPSHOT</hippo.services.htmlprocessor.version>
-    <hippo.essentials-components.version>14.3.0-SNAPSHOT</hippo.essentials-components.version>
+    <hippo.utilities.version>${project.version}</hippo.utilities.version>
+    <hippo.repository.version>${project.version}</hippo.repository.version>
+    <hippo.cms.version>${project.version}</hippo.cms.version>
+    <hippo.addon-channel-manager.version>${project.version}</hippo.addon-channel-manager.version>
+    <hippo.hst.version>${project.version}</hippo.hst.version>
+    <hippo.services.webfiles.version>${project.version}</hippo.services.webfiles.version>
+    <hippo.services.contenttype.version>${project.version}</hippo.services.contenttype.version>
+    <hippo.services.htmlprocessor.version>${project.version}</hippo.services.htmlprocessor.version>
+    <hippo.essentials-components.version>${project.version}</hippo.essentials-components.version>
 
   </properties>
 
