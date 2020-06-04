@@ -34,49 +34,49 @@
   <inceptionYear>2011</inceptionYear>
 
   <properties>
-    <hippo.release.version>14.2.2-SNAPSHOT</hippo.release.version>
+    <hippo.release.version>${project.version}</hippo.release.version>
 
     <!-- The jackrabbit and cargo-extensions projects are not on the release train, so these versions
          should NOT be updated with product releases. -->
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
     <hippo.cargo-extensions.version>13.0.0</hippo.cargo-extensions.version>
 
-    <hippo.configuration-management.version>14.2.2-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.addon-channel-manager.version>14.2.2-SNAPSHOT</hippo.addon-channel-manager.version>
-    <hippo.addon-search-service.version>14.2.2-SNAPSHOT</hippo.addon-search-service.version>
-    <hippo.commons.version>14.2.2-SNAPSHOT</hippo.commons.version>
-    <hippo.cms.version>14.2.2-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>14.2.2-SNAPSHOT</hippo.hst.version>
-    <hippo.packages.version>14.2.2-SNAPSHOT</hippo.packages.version>
-    <hippo.repository.version>14.2.2-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>14.2.2-SNAPSHOT</hippo.services.version>
-    <hippo.services.autoreload.version>14.2.2-SNAPSHOT</hippo.services.autoreload.version>
-    <hippo.services.contenttype.version>14.2.2-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.services.eventbus.version>14.2.2-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.services.validation.version>14.2.2-SNAPSHOT</hippo.services.validation.version>
-    <hippo.services.webfiles.version>14.2.2-SNAPSHOT</hippo.services.webfiles.version>
-    <hippo.services.htmlprocessor.version>14.2.2-SNAPSHOT</hippo.services.htmlprocessor.version>
-    <hippo.utilities.version>14.2.2-SNAPSHOT</hippo.utilities.version>
-    <hippo.testutils.version>14.2.2-SNAPSHOT</hippo.testutils.version>
-    <hippo.l10n-tooling.version>14.2.2-SNAPSHOT</hippo.l10n-tooling.version>
+    <hippo.configuration-management.version>${project.version}</hippo.configuration-management.version>
+    <hippo.addon-channel-manager.version>${project.version}</hippo.addon-channel-manager.version>
+    <hippo.addon-search-service.version>${project.version}</hippo.addon-search-service.version>
+    <hippo.commons.version>${project.version}</hippo.commons.version>
+    <hippo.cms.version>${project.version}</hippo.cms.version>
+    <hippo.hst.version>${project.version}</hippo.hst.version>
+    <hippo.packages.version>${project.version}</hippo.packages.version>
+    <hippo.repository.version>${project.version}</hippo.repository.version>
+    <hippo.services.version>${project.version}</hippo.services.version>
+    <hippo.services.autoreload.version>${project.version}</hippo.services.autoreload.version>
+    <hippo.services.contenttype.version>${project.version}</hippo.services.contenttype.version>
+    <hippo.services.eventbus.version>${project.version}</hippo.services.eventbus.version>
+    <hippo.services.validation.version>${project.version}</hippo.services.validation.version>
+    <hippo.services.webfiles.version>${project.version}</hippo.services.webfiles.version>
+    <hippo.services.htmlprocessor.version>${project.version}</hippo.services.htmlprocessor.version>
+    <hippo.utilities.version>${project.version}</hippo.utilities.version>
+    <hippo.testutils.version>${project.version}</hippo.testutils.version>
+    <hippo.l10n-tooling.version>${project.version}</hippo.l10n-tooling.version>
 
     <!-- Hippo standard plugin versions -->
-    <hippo.essentials-components.version>14.2.2-SNAPSHOT</hippo.essentials-components.version>
-    <hippo.plugin.content-blocks.version>14.2.2-SNAPSHOT</hippo.plugin.content-blocks.version>
-    <hippo.plugin.content-tagging.version>14.2.2-SNAPSHOT</hippo.plugin.content-tagging.version>
-    <hippo.plugin.dashboard-document-wizard.version>14.2.2-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
-    <hippo.plugin.gallerypicker.version>14.2.2-SNAPSHOT</hippo.plugin.gallerypicker.version>
-    <hippo.plugin.poll.version>14.2.2-SNAPSHOT</hippo.plugin.poll.version>
-    <hippo.plugin.relateddocs.version>14.2.2-SNAPSHOT</hippo.plugin.relateddocs.version>
-    <hippo.plugin.resourcebundle-editor.version>14.2.2-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
-    <hippo.plugin.robotstxt.version>14.2.2-SNAPSHOT</hippo.plugin.robotstxt.version>
-    <hippo.plugin.selections.version>14.2.2-SNAPSHOT</hippo.plugin.selections.version>
-    <hippo.plugin.seo-support.version>14.2.2-SNAPSHOT</hippo.plugin.seo-support.version>
-    <hippo.plugin.sitemap.version>14.2.2-SNAPSHOT</hippo.plugin.sitemap.version>
-    <hippo.plugin.taxonomy.version>14.2.2-SNAPSHOT</hippo.plugin.taxonomy.version>
-    <hippo.addon-crisp.version>14.2.2-SNAPSHOT</hippo.addon-crisp.version>
-    <hippo.spa-sdk.version>14.2.2-SNAPSHOT</hippo.spa-sdk.version>
-    <hippo.ui-extension.version>14.2.2-SNAPSHOT</hippo.ui-extension.version>
+    <hippo.essentials-components.version>${project.version}</hippo.essentials-components.version>
+    <hippo.plugin.content-blocks.version>${project.version}</hippo.plugin.content-blocks.version>
+    <hippo.plugin.content-tagging.version>${project.version}</hippo.plugin.content-tagging.version>
+    <hippo.plugin.dashboard-document-wizard.version>${project.version}</hippo.plugin.dashboard-document-wizard.version>
+    <hippo.plugin.gallerypicker.version>${project.version}</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.poll.version>${project.version}</hippo.plugin.poll.version>
+    <hippo.plugin.relateddocs.version>${project.version}</hippo.plugin.relateddocs.version>
+    <hippo.plugin.resourcebundle-editor.version>${project.version}</hippo.plugin.resourcebundle-editor.version>
+    <hippo.plugin.robotstxt.version>${project.version}</hippo.plugin.robotstxt.version>
+    <hippo.plugin.selections.version>${project.version}</hippo.plugin.selections.version>
+    <hippo.plugin.seo-support.version>${project.version}</hippo.plugin.seo-support.version>
+    <hippo.plugin.sitemap.version>${project.version}</hippo.plugin.sitemap.version>
+    <hippo.plugin.taxonomy.version>${project.version}</hippo.plugin.taxonomy.version>
+    <hippo.addon-crisp.version>${project.version}</hippo.addon-crisp.version>
+    <hippo.spa-sdk.version>${project.version}</hippo.spa-sdk.version>
+    <hippo.ui-extension.version>${project.version}</hippo.ui-extension.version>
 
     <hippo.maven.plugin.l10n>14.2.1</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
