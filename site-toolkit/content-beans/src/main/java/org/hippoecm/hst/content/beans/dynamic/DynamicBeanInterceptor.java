@@ -99,6 +99,6 @@ public abstract class DynamicBeanInterceptor {
      * 
      * @return cmsType class definition
      */
-    public abstract Class<?> getCmsType();
+    public abstract Class<? extends InterceptorEntity> getCmsType();
 
 }
