@@ -49,7 +49,17 @@ export default class Index extends React.Component<IndexProps> {
         ? JSON.parse(cookies[VISITOR_COOKIE])
         : Index.visitor,
     };
-    const page = await initialize({ ...configuration, httpClient: axios });
+    const page = await initialize({
+      ...configuration,
+      httpClient: axios,
+      request: {
+        ...configuration.request,
+        connection: context.req?.connection,
+        headers: context.req?.headers['x-forwarded-for']
+          ? { 'x-forwarded-for': context.req?.headers['x-forwarded-for'] }
+          : undefined,
+      },
+    });
     configuration.visitor = page.getVisitor();
 
     if (context.res && configuration.visitor) {
