@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-import { NgModule, InjectionToken } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { ServerModule, ServerTransferStateModule } from '@angular/platform-server';
-import { Response, Request } from 'express';
 
 import { AppModule } from './app.module';
 import { AppComponent } from './app.component';
-
-export const RESPONSE = new InjectionToken<Response>('Response');
-export const REQUEST = new InjectionToken<Request>('Request');
 
 @NgModule({
   imports: [
