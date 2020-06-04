@@ -19,15 +19,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoCompound;
@@ -44,7 +41,6 @@ import org.slf4j.LoggerFactory;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.NamingStrategy;
-import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.TargetType;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
@@ -393,29 +389,8 @@ public class DynamicBeanBuilder {
                                     .with(propertyName, superMethodReturnType)
                                     .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
 
-            if (Collection.class.isAssignableFrom(returnType)) {
-
-                // TODO WE cannot YET serialize List of beans or compounds hence now really ugly add json ignore...
-                // TODO once compound structures are allowed in the json output, this can be removed. SINCE we
-                // TODO should only do the JsonIgnore for PLATFORM webapp and NOT for normal websites which would
-                // TODO otherwise can a wrong SPA page model api, we have extra check to only add the JsonIgnore for the
-                // TODO cms/platform webapp
-
-                // TODO we can also opt for injecting our OWN annotations, similar to the annotations we already have,
-                // TODO for example org.hippoecm.hst.content.beans.index.Indexable : After that, we can use custom
-                // TODO Jackson serialization to skip getters that have for example @Indexable(false) (OR some other
-                // TODO annotation
-
-                if (webappType == HippoWebappContext.Type.CMS || webappType == HippoWebappContext.Type.PLATFORM) {
-                    builder = intercept.annotateMethod(AnnotationDescription.Builder.ofType(JsonIgnore.class).build());
-                } else {
-                    builder = intercept;
-                }
-
-            } else {
-                builder = intercept;
-            }
-            methodAdded = true;
+			builder = intercept;
+			methodAdded = true;
         } catch (NoSuchMethodException | IllegalArgumentException e) {
             log.error("Can't define method {} with delegate method {} with return type {} : {}", methodName, superMethodName, superMethodReturnType, e);
         }
