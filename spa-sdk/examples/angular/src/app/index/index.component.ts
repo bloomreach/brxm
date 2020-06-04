@@ -61,7 +61,13 @@ export class IndexComponent implements OnInit {
     this.configuration = {
       cmsBaseUrl,
       spaBaseUrl,
-      request: { path: router.url },
+      request: {
+        connection: request?.connection,
+        headers: request?.headers['x-forwarded-for']
+          ? { 'x-forwarded-for': request?.headers['x-forwarded-for'] }
+          : undefined,
+        path: router.url,
+      },
       visitor: this.request?.cookies[VISITOR_COOKIE] && JSON.parse(this.request.cookies[VISITOR_COOKIE]),
     } as BrPageComponent['configuration'];
 
