@@ -33,8 +33,8 @@
   <packaging>pom</packaging>
 
   <properties>
-    <hippo.repository.version>14.2.2-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>14.2.2-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>${project.version}</hippo.repository.version>
+    <hippo.cms.version>${project.version}</hippo.cms.version>
   </properties>
 
   <repositories>

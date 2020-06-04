@@ -86,17 +86,17 @@
     <javadoc.base.version>13.1</javadoc.base.version>
 
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
-    <hippo.commons.version>14.2.2-SNAPSHOT</hippo.commons.version>
-    <hippo.repository.version>14.2.2-SNAPSHOT</hippo.repository.version>
-    <hippo.configuration-management.version>14.2.2-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.utilities.version>14.2.2-SNAPSHOT</hippo.utilities.version>
-    <hippo.services.version>14.2.2-SNAPSHOT</hippo.services.version>
-    <hippo.services.eventbus.version>14.2.2-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.addon-search-service.version>14.2.2-SNAPSHOT</hippo.addon-search-service.version>
-    <hippo.services.contenttype.version>14.2.2-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.services.webfiles.version>14.2.2-SNAPSHOT</hippo.services.webfiles.version>
-    <hippo.testutils.version>14.2.2-SNAPSHOT</hippo.testutils.version>
-    <hippo.packages.version>14.2.2-SNAPSHOT</hippo.packages.version>
+    <hippo.commons.version>${project.version}</hippo.commons.version>
+    <hippo.repository.version>${project.version}</hippo.repository.version>
+    <hippo.configuration-management.version>${project.version}</hippo.configuration-management.version>
+    <hippo.utilities.version>${project.version}</hippo.utilities.version>
+    <hippo.services.version>${project.version}</hippo.services.version>
+    <hippo.services.eventbus.version>${project.version}</hippo.services.eventbus.version>
+    <hippo.addon-search-service.version>${project.version}</hippo.addon-search-service.version>
+    <hippo.services.contenttype.version>${project.version}</hippo.services.contenttype.version>
+    <hippo.services.webfiles.version>${project.version}</hippo.services.webfiles.version>
+    <hippo.testutils.version>${project.version}</hippo.testutils.version>
+    <hippo.packages.version>${project.version}</hippo.packages.version>
     
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
