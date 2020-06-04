@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.util;
 
-import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.hippoecm.hst.content.beans.Interceptor;
 import org.hippoecm.hst.content.beans.Node;
@@ -53,7 +50,6 @@ import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavi
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetsAvailableNavigation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 /**
  * ObjectConverterUtils
@@ -213,13 +209,10 @@ public class ObjectConverterUtils {
      * @param resourceScanner
      * @param locationPatterns
      * @return
-     * @throws IOException
-     * @throws SAXException
-     * @throws ParserConfigurationException
      * @see {@link ClasspathResourceScanner}
      */
     @SuppressWarnings("unchecked")
-    public static List<Class<? extends HippoBean>> getNodeAnnotatedClasses(final ClasspathResourceScanner resourceScanner, String ... locationPatterns) throws IOException, SAXException, ParserConfigurationException {
+    public static List<Class<? extends HippoBean>> getNodeAnnotatedClasses(final ClasspathResourceScanner resourceScanner, String ... locationPatterns) {
         final List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
         final Set<String> annotatedClassNames = resourceScanner.scanClassNamesAnnotatedBy(Node.class, false, locationPatterns);
         
@@ -260,13 +253,10 @@ public class ObjectConverterUtils {
      * @param resourceScanner
      * @param locationPatterns
      * @return
-     * @throws IOException
-     * @throws SAXException
-     * @throws ParserConfigurationException
      * @see {@link ClasspathResourceScanner}
      */
     @SuppressWarnings("unchecked")
-    public static List<Class<? extends DynamicBeanInterceptor>> getInterceptorAnnotatedClasses(final ClasspathResourceScanner resourceScanner, String ... locationPatterns) throws IOException, SAXException, ParserConfigurationException {
+    public static List<Class<? extends DynamicBeanInterceptor>> getInterceptorAnnotatedClasses(final ClasspathResourceScanner resourceScanner, String ... locationPatterns) {
         final List<Class<? extends DynamicBeanInterceptor>> annotatedClasses = new ArrayList<Class<? extends DynamicBeanInterceptor>>();
         final Set<String> annotatedClassNames = resourceScanner.scanClassNamesAnnotatedBy(Interceptor.class, false, locationPatterns);
         
@@ -314,10 +304,10 @@ public class ObjectConverterUtils {
         if (jcrPrimaryNodeTypeClassPairs.containsKey(jcrPrimaryNodeType)) {
             if (builtinType) {
                 log.debug("Builtin annotated class '{}' for primary type '{}' is overridden with already registered class '{}'. Builtin version is ignored.", 
-                		new Object[]{clazz.getName(), jcrPrimaryNodeType, jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType).getName()});
+                		clazz.getName(), jcrPrimaryNodeType, jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType).getName());
             } else if (ignoreDuplicates) {
                 log.debug("Duplicate annotated class '{}' found for primary type '{}'. The already registered class '{}' is preserved.", 
-                		new Object[]{clazz.getName(), jcrPrimaryNodeType, jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType).getName()});
+                		clazz.getName(), jcrPrimaryNodeType, jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType).getName());
             } else {
                 throw new IllegalArgumentException("Annotated class '" + clazz.getName() + "' for primarytype '" + jcrPrimaryNodeType +
                 		"' is a duplicate of already registered class '" + jcrPrimaryNodeTypeClassPairs.get(jcrPrimaryNodeType).getName() + "'. " +
@@ -333,32 +323,35 @@ public class ObjectConverterUtils {
     
     private static void addDynamicBeanInterceptorClassPair(Map<String, Class<? extends DynamicBeanInterceptor>> dynamicBeanPairs,
             Class<? extends DynamicBeanInterceptor> clazz, boolean ignoreDuplicates) throws IllegalArgumentException {
-        String cmsType = null;
+        String[] cmsTypes = null;
 
         if (clazz.isAnnotationPresent(Interceptor.class)) {
             Interceptor anno = clazz.getAnnotation(Interceptor.class);
-            cmsType = anno.cmsType();
+            cmsTypes = anno.cmsTypes();
         }
 
-        if (cmsType == null) {
+        if (cmsTypes == null || cmsTypes.length == 0) {
             throw new IllegalArgumentException("There's no annotation for cmsType in the class: " + clazz);
         }
 
-        if (dynamicBeanPairs.containsKey(cmsType)) {
-            if (ignoreDuplicates) {
-                log.debug(
-                        "Duplicate annotated class '{}' found for primary type '{}'. The already registered class '{}' is preserved.",
-                        new Object[] { clazz.getName(), cmsType, dynamicBeanPairs.get(cmsType).getName() });
-            } else {
-                throw new IllegalArgumentException("Annotated class '" + clazz.getName() + "' for primarytype '" + cmsType
-                        + "' is a duplicate of already registered class '" + dynamicBeanPairs.get(cmsType).getName() + "'. "
-                        + "You might have configured a bean that does not have a annotation for the cmsType and "
-                        + "inherits the cmsType from the bean it extends, resulting in 2 beans with the same cmsType. Correct your beans.");
+        for (String cmsType : cmsTypes) {
+            if (dynamicBeanPairs.containsKey(cmsType)) {
+                if (ignoreDuplicates) {
+                    log.debug(
+                            "Duplicate annotated class '{}' found for primary type '{}'. The already registered class '{}' is preserved.",
+                            clazz.getName(), cmsType, dynamicBeanPairs.get(cmsType).getName() );
+                } else {
+                    throw new IllegalArgumentException("Annotated class '" + clazz.getName() + "' for primarytype '"
+                            + cmsType + "' is a duplicate of already registered class '"
+                            + dynamicBeanPairs.get(cmsType).getName() + "'. "
+                            + "You might have configured a bean that does not have a annotation for the cmsType and "
+                            + "inherits the cmsType from the bean it extends, resulting in 2 beans with the same cmsType. Correct your beans.");
+                }
+
+                return;
             }
 
-            return;
+            dynamicBeanPairs.put(cmsType, clazz);
         }
-
-        dynamicBeanPairs.put(cmsType, clazz);
     }
 }

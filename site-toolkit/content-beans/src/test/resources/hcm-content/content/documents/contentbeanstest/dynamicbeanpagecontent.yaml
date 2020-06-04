@@ -71,3 +71,21 @@
         jcr:primaryType: hippostd:html
         hippostd:content: |-
           Welcome Home!
+    /contentbeanstest:contentblocksWithValidator:
+      jcr:primaryType: contentbeanstest:htmlblock
+      /contentbeanstest:text:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          Welcome Home with validator!
+    /contentbeanstest:essentialsGeneratedContentblocks:
+      jcr:primaryType: contentbeanstest:htmlblock
+      /contentbeanstest:text:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          Welcome Home with Essentials!
+    /contentbeanstest:essentialsGeneratedContentblocks[2]:
+      jcr:primaryType: contentbeanstest:htmlblock2
+      /contentbeanstest:text:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          Welcome Home with Essentials and lazy loaded types!
