@@ -85,14 +85,14 @@
     <javadoc.base.version>13.1</javadoc.base.version>
 
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
-    <hippo.commons.version>14.3.0-SNAPSHOT</hippo.commons.version>
-    <hippo.utilities.version>14.3.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.hst.version>14.3.0-SNAPSHOT</hippo.hst.version>
-    <hippo.services.version>14.3.0-SNAPSHOT</hippo.services.version>
-    <hippo.services.htmlprocessor.version>14.3.0-SNAPSHOT</hippo.services.htmlprocessor.version>
-    <hippo.services.validation.version>14.3.0-SNAPSHOT</hippo.services.validation.version>
-    <hippo.repository.version>14.3.0-SNAPSHOT</hippo.repository.version>
-    <hippo.configuration-management.version>14.3.0-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.commons.version>${project.version}</hippo.commons.version>
+    <hippo.utilities.version>${project.version}</hippo.utilities.version>
+    <hippo.hst.version>${project.version}</hippo.hst.version>
+    <hippo.services.version>${project.version}</hippo.services.version>
+    <hippo.services.htmlprocessor.version>${project.version}</hippo.services.htmlprocessor.version>
+    <hippo.services.validation.version>${project.version}</hippo.services.validation.version>
+    <hippo.repository.version>${project.version}</hippo.repository.version>
+    <hippo.configuration-management.version>${project.version}</hippo.configuration-management.version>
 
     <!-- Test dependencies  -->
     <easymock.version>4.2</easymock.version>
@@ -102,7 +102,7 @@
     <assertj.version>3.8.0</assertj.version>
     <!-- Make sure that powermock and easymock are compatible -->
     <powermock.version>2.0.5</powermock.version>
-    <hippo.testutils.version>14.3.0-SNAPSHOT</hippo.testutils.version>
+    <hippo.testutils.version>${project.version}</hippo.testutils.version>
 
     <!-- Project Dependencies -->
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
