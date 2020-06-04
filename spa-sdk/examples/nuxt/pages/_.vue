@@ -71,7 +71,17 @@ const VISITOR_COOKIE_MAX_AGE_IN_SECONDS = 365 * 24 * 60 * 60;
         : context.nuxtState.visitor,
     };
 
-    const page = await initialize({ ...configuration, httpClient: context.$axios });
+    const page = await initialize({
+      ...configuration,
+      httpClient: context.$axios,
+      request: {
+        ...configuration.request,
+        connection: context.req?.connection,
+        headers: context.req?.headers['x-forwarded-for']
+          ? { 'x-forwarded-for': context.req?.headers['x-forwarded-for'] }
+          : undefined,
+      },
+    });
     configuration.visitor = page.getVisitor();
 
     if (process.server && configuration.visitor) {
