@@ -276,7 +276,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
             assertEquals(BAD_REQUEST.getStatusCode(), createResponse.getStatus());
 
-            assertEquals("Document being edited by another user", createResponseMap.get("message"));
+            assertEquals("Document not editable", createResponseMap.get("message"));
 
         } finally {
             author.logout();
