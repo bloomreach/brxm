@@ -30,13 +30,13 @@
   </description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-content-tagging</artifactId>
-  <version>7.6.11-SNAPSHOT</version>
+  <version>12.6.11-SNAPSHOT</version>
 
   <inceptionYear>2008</inceptionYear>
 
   <properties>
-    <hippo.repository.version>5.6.11-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>5.6.11-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>12.6.11-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>12.6.11-SNAPSHOT</hippo.cms.version>
 
     <json-lib.version>2.4</json-lib.version>
     <junit.version>4.12</junit.version>
