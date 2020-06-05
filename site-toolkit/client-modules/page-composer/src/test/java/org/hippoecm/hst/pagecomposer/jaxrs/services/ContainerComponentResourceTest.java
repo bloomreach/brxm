@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,9 +98,9 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
             .post(MOCK_REST_PATH + "cafebabe-cafe-babe-cafe-babecafebabe?lastModifiedTimestamp=1234")
         .then()
             .statusCode(201)
-            .body("id", equalTo(containerItemNode.getIdentifier()),
-                    "name", equalTo(containerItemNode.getName()),
-                    "lastModifiedTimestamp", equalTo(3456));
+            .body("data.id", equalTo(containerItemNode.getIdentifier()),
+                    "data.name", equalTo(containerItemNode.getName()),
+                    "data.lastModifiedTimestamp", equalTo(3456));
 
         verify(containerComponentService);
     }
@@ -132,7 +132,7 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
             .post(MOCK_REST_PATH + "cafebabe-cafe-babe-cafe-babecafebabe?lastModifiedTimestamp=1234")
         .then()
             .statusCode(400)
-            .body("error", equalTo("UNKNOWN"));
+            .body("data.error", equalTo("UNKNOWN"));
 
         verify(containerComponentService);
     }
@@ -155,9 +155,9 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
             .post(MOCK_REST_PATH + "cafebabe-cafe-babe-cafe-babecafebabe?lastModifiedTimestamp=1234")
         .then()
             .statusCode(400)
-            .body("error", equalTo("ITEM_ALREADY_LOCKED"),
-                    "parameterMap.lockedBy", equalTo("admin"),
-                    "parameterMap.lockedOn", equalTo(lockedOnTime));
+            .body("data.error", equalTo("ITEM_ALREADY_LOCKED"),
+                    "data.parameterMap.lockedBy", equalTo("admin"),
+                    "data.parameterMap.lockedOn", equalTo(lockedOnTime));
 
         verify(containerComponentService);
     }
@@ -175,8 +175,8 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
             .post(MOCK_REST_PATH + "cafebabe-cafe-babe-cafe-babecafebabe?lastModifiedTimestamp=1234")
         .then()
             .statusCode(500)
-            .body("error", equalTo("UNKNOWN"),
-                    "parameterMap.errorReason", equalTo("unknown error"));
+            .body("data.error", equalTo("UNKNOWN"),
+                    "data.parameterMap.errorReason", equalTo("unknown error"));
 
         verify(containerComponentService);
     }
@@ -214,9 +214,9 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
             .delete(MOCK_REST_PATH + "cafebabe-cafe-babe-cafe-babecafebabe?lastModifiedTimestamp=1234")
         .then()
             .statusCode(400)
-            .body("error", equalTo("ITEM_ALREADY_LOCKED"),
-                    "parameterMap.lockedBy", equalTo("admin"),
-                    "parameterMap.lockedOn", equalTo(lockedOnTime));
+            .body("data.error", equalTo("ITEM_ALREADY_LOCKED"),
+                    "data.parameterMap.lockedBy", equalTo("admin"),
+                    "data.parameterMap.lockedOn", equalTo(lockedOnTime));
 
         verify(containerComponentService);
     }
@@ -234,7 +234,7 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
             .delete(MOCK_REST_PATH + "cafebabe-cafe-babe-cafe-babecafebabe?lastModifiedTimestamp=1234")
         .then()
             .statusCode(400)
-            .body("error", equalTo("UNKNOWN"));
+            .body("data.error", equalTo("UNKNOWN"));
 
         verify(containerComponentService);
     }
@@ -252,8 +252,8 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
             .delete(MOCK_REST_PATH + "cafebabe-cafe-babe-cafe-babecafebabe?lastModifiedTimestamp=1234")
         .then()
             .statusCode(500)
-            .body("error", equalTo("UNKNOWN"),
-                    "parameterMap.errorReason", equalTo("unknown error"));
+            .body("data.error", equalTo("UNKNOWN"),
+                    "data.parameterMap.errorReason", equalTo("unknown error"));
 
         verify(containerComponentService);
     }
@@ -272,9 +272,10 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
             .put(MOCK_REST_PATH)
         .then()
             .statusCode(200)
-            .body("id", equalTo("cafebabe"),
-                    "name", equalTo("foo-item"),
-                    "lastModifiedTimestamp", equalTo(1234));
+            .body("data.id", equalTo("cafebabe"),
+                    "data.name", equalTo("foo-item"),
+                    "data.lastModifiedTimestamp", equalTo(1234),
+                    "reloadRequired", equalTo(false));
 
         verify(containerComponentService);
     }
@@ -298,9 +299,9 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
             .put(MOCK_REST_PATH)
         .then()
             .statusCode(400)
-            .body("error", equalTo("ITEM_ALREADY_LOCKED"),
-                    "parameterMap.lockedBy", equalTo("admin"),
-                    "parameterMap.lockedOn", equalTo(lockedOnTime));
+            .body("data.error", equalTo("ITEM_ALREADY_LOCKED"),
+                    "data.parameterMap.lockedBy", equalTo("admin"),
+                    "data.parameterMap.lockedOn", equalTo(lockedOnTime));
 
         verify(containerComponentService);
     }
@@ -320,7 +321,7 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
             .put(MOCK_REST_PATH)
         .then()
             .statusCode(400)
-            .body("error", equalTo("UNKNOWN"));
+            .body("data.error", equalTo("UNKNOWN"));
 
         verify(containerComponentService);
     }
@@ -340,8 +341,8 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
             .put(MOCK_REST_PATH)
         .then()
             .statusCode(500)
-            .body("error", equalTo("UNKNOWN"),
-                    "parameterMap.errorReason", equalTo("unknown error"));
+            .body("data.error", equalTo("UNKNOWN"),
+                    "data.parameterMap.errorReason", equalTo("unknown error"));
 
         verify(containerComponentService);
     }
