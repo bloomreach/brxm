@@ -5,14 +5,14 @@
   <parent>
     <groupId>com.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-enterprise-release</artifactId>
-    <version>14.2.3-SNAPSHOT</version>
+    <version>14.2.3-contentfeed-SNAPSHOT</version>
   </parent>
 
   <name>XM SPA Example</name>
   <description>XM SPA Example</description>
   <groupId>com.bloomreach</groupId>
   <artifactId>xm-spa-example</artifactId>
-  <version>14.2.3-SNAPSHOT</version>
+  <version>14.2.3-contentfeed-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <!--

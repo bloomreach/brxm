@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.bloomreach.xm</groupId>
     <artifactId>bloomreach-xm-aggregator</artifactId>
-    <version>14.2.3-SNAPSHOT</version>
+    <version>14.2.3-contentfeed-SNAPSHOT</version>
   </parent>
 
   <artifactId>bloomreach-xm-community</artifactId>
