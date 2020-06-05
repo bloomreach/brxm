@@ -12,7 +12,7 @@
   <description>XM SPA Example</description>
   <groupId>com.bloomreach</groupId>
   <artifactId>xm-spa-example</artifactId>
-  <version>14.2.0</version>
+  <version>14.2.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <!--
