@@ -21,13 +21,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.2.2-SNAPSHOT</version>
+    <version>31.2.2</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo CMS7 Services - autoreload</name>
   <artifactId>hippo-services-autoreload</artifactId>
-  <version>14.2.2-SNAPSHOT</version>
+  <version>14.2.2</version>
 
   <inceptionYear>2014</inceptionYear>
 
@@ -36,8 +36,8 @@
     <notice.project.name>Hippo CMS7 Services - autoreload</notice.project.name>
 
     <!-- runtime dependencies -->
-    <hippo.repository.version>${project.version}</hippo.repository.version>
-    <hippo.services.version>${project.version}</hippo.services.version>
+    <hippo.repository.version>14.2.2</hippo.repository.version>
+    <hippo.services.version>14.2.2</hippo.services.version>
     <javax.websocket-api.version>1.1</javax.websocket-api.version>
 
     <!-- test dependencies -->

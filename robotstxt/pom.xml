@@ -20,14 +20,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.2.2-SNAPSHOT</version>
+    <version>31.2.2</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Plugin Robots.txt Generator</name>
   <description>Hippo Plugin Robots.txt Generator</description>
   <artifactId>hippo-plugin-robotstxt</artifactId>
-  <version>14.2.2-SNAPSHOT</version>
+  <version>14.2.2</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -36,8 +36,8 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Robots.txt Generator</notice.project.name>
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
-    <hippo.hst.version>${project.version}</hippo.hst.version>
-    <hippo.repository.version>${project.version}</hippo.repository.version>
+    <hippo.hst.version>14.2.2</hippo.hst.version>
+    <hippo.repository.version>14.2.2</hippo.repository.version>
 
   </properties>
 

@@ -20,14 +20,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.2.2-SNAPSHOT</version>
+    <version>31.2.2</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Plugin Selections</name>
   <description>Hippo Plugin Selections</description>
   <artifactId>hippo-plugin-selections</artifactId>
-  <version>14.2.2-SNAPSHOT</version>
+  <version>14.2.2</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -37,9 +37,9 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugins Selection</notice.project.name>
 
-    <hippo.cms.version>${project.version}</hippo.cms.version>
-    <hippo.repository.version>${project.version}</hippo.repository.version>
-    <hippo.hst.version>${project.version}</hippo.hst.version>
+    <hippo.cms.version>14.2.2</hippo.cms.version>
+    <hippo.repository.version>14.2.2</hippo.repository.version>
+    <hippo.hst.version>14.2.2</hippo.hst.version>
 
     <junit.version>4.12</junit.version>
     <easymock.version>4.0.2</easymock.version>

@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.2.2-SNAPSHOT</version>
+    <version>31.2.2</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -29,7 +29,7 @@
   <url>http://www.onehippo.com/</url>
 
   <artifactId>hippo-search-service</artifactId>
-  <version>14.2.2-SNAPSHOT</version>
+  <version>14.2.2</version>
   <packaging>pom</packaging>
   <inceptionYear>2012</inceptionYear>
 
@@ -54,9 +54,9 @@
 
     <aspectj.version>1.8.10</aspectj.version>
 
-    <hippo.repository.version>${project.version}</hippo.repository.version>
-    <hippo.services.version>${project.version}</hippo.services.version>
-    <hippo.utilities.version>${project.version}</hippo.utilities.version>
+    <hippo.repository.version>14.2.2</hippo.repository.version>
+    <hippo.services.version>14.2.2</hippo.services.version>
+    <hippo.utilities.version>14.2.2</hippo.utilities.version>
 
     <maven.plugin.site.version>3.6</maven.plugin.site.version>
     <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>

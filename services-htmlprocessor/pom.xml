@@ -21,13 +21,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.2.2-SNAPSHOT</version>
+    <version>31.2.2</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo CMS7 Services - htmlprocessor</name>
   <artifactId>hippo-services-htmlprocessor</artifactId>
-  <version>14.2.2-SNAPSHOT</version>
+  <version>14.2.2</version>
 
   <inceptionYear>2017</inceptionYear>
 
@@ -36,8 +36,8 @@
     <notice.project.name>Hippo CMS7 Services - htmlprocessor</notice.project.name>
 
     <!-- runtime dependencies -->
-    <hippo.repository.version>${project.version}</hippo.repository.version>
-    <hippo.services.version>${project.version}</hippo.services.version>
+    <hippo.repository.version>14.2.2</hippo.repository.version>
+    <hippo.services.version>14.2.2</hippo.services.version>
     <commons-lang.version>2.6</commons-lang.version>
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 

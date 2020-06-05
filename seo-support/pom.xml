@@ -20,22 +20,22 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.2.2-SNAPSHOT</version>
+    <version>31.2.2</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Plugin SEO Support</name>
   <description>Hippo Plugin SEO Support</description>
   <artifactId>hippo-plugin-seo-support-root</artifactId>
-  <version>14.2.2-SNAPSHOT</version>
+  <version>14.2.2</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2011</inceptionYear>
 
   <properties>
-    <hippo.hst.version>${project.version}</hippo.hst.version>
-    <hippo.commons.version>${project.version}</hippo.commons.version>
-    <hippo.repository.version>${project.version}</hippo.repository.version>
+    <hippo.hst.version>14.2.2</hippo.hst.version>
+    <hippo.commons.version>14.2.2</hippo.commons.version>
+    <hippo.repository.version>14.2.2</hippo.repository.version>
     <junit.version>4.12</junit.version>
     <easymock.version>3.4</easymock.version>
   </properties>

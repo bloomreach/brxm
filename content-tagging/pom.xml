@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.2.2-SNAPSHOT</version>
+    <version>31.2.2</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -30,14 +30,14 @@
   </description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-content-tagging</artifactId>
-  <version>14.2.2-SNAPSHOT</version>
+  <version>14.2.2</version>
 
   <inceptionYear>2008</inceptionYear>
 
   <properties>
-    <hippo.repository.version>${project.version}</hippo.repository.version>
-    <hippo.cms.version>${project.version}</hippo.cms.version>
-    <hippo.hst.version>${project.version}</hippo.hst.version>
+    <hippo.repository.version>14.2.2</hippo.repository.version>
+    <hippo.cms.version>14.2.2</hippo.cms.version>
+    <hippo.hst.version>14.2.2</hippo.hst.version>
 
     <json-lib.version>2.4</json-lib.version>
     <junit.version>4.12</junit.version>

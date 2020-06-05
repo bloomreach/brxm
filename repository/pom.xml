@@ -20,14 +20,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.2.2-SNAPSHOT</version>
+    <version>31.2.2</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Repository</name>
   <description>Hippo Repository</description>
   <artifactId>hippo-repository</artifactId>
-  <version>14.2.2-SNAPSHOT</version>
+  <version>14.2.2</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2007</inceptionYear>
@@ -76,12 +76,12 @@
     <javadoc.base.version>13.1</javadoc.base.version>
 
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
-    <hippo.configuration-management.version>${project.version}</hippo.configuration-management.version>
-    <hippo.commons.version>${project.version}</hippo.commons.version>
-    <hippo.services.version>${project.version}</hippo.services.version>
-    <hippo.services.eventbus.version>${project.version}</hippo.services.eventbus.version>
-    <hippo.utilities.version>${project.version}</hippo.utilities.version>
-    <hippo.testutils.version>${project.version}</hippo.testutils.version>
+    <hippo.configuration-management.version>14.2.2</hippo.configuration-management.version>
+    <hippo.commons.version>14.2.2</hippo.commons.version>
+    <hippo.services.version>14.2.2</hippo.services.version>
+    <hippo.services.eventbus.version>14.2.2</hippo.services.eventbus.version>
+    <hippo.utilities.version>14.2.2</hippo.utilities.version>
+    <hippo.testutils.version>14.2.2</hippo.testutils.version>
 
     <!-- Test dependencies  -->
     <junit.version>4.12</junit.version>

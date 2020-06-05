@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.2.2-SNAPSHOT</version>
+    <version>31.2.2</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -28,14 +28,14 @@
   <description>Hippo Plugin Gallery Picker</description>
   <artifactId>hippo-plugin-gallerypicker</artifactId>
   <packaging>jar</packaging>
-  <version>14.2.2-SNAPSHOT</version>
+  <version>14.2.2</version>
 
   <inceptionYear>2008</inceptionYear>
 
   <properties>
-    <hippo.repository.version>${project.version}</hippo.repository.version>
-    <hippo.cms.version>${project.version}</hippo.cms.version>
-    <hippo.services.validation.version>${project.version}</hippo.services.validation.version>
+    <hippo.repository.version>14.2.2</hippo.repository.version>
+    <hippo.cms.version>14.2.2</hippo.cms.version>
+    <hippo.services.validation.version>14.2.2</hippo.services.validation.version>
 
     <junit.version>4.12</junit.version>
 
