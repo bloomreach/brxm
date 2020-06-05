@@ -33,8 +33,8 @@
   <packaging>pom</packaging>
 
   <properties>
-    <hippo.repository.version>${project.version}</hippo.repository.version>
-    <hippo.cms.version>${project.version}</hippo.cms.version>
+    <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
+    <hippo.cms.version>${hippo.release.version}</hippo.cms.version>
   </properties>
 
   <repositories>
