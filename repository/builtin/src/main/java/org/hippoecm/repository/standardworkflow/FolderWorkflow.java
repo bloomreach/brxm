@@ -97,7 +97,22 @@ public interface FolderWorkflow extends Workflow {
      *
      * @param category  the category of document type to create
      * @param type      the actual document type within the category
-     * @param arguments the rewrite rule to be applied
+     * @param arguments the key-value pairs which can be used for rewrite rules or a special key-value pair in case a
+     *                  new document is created:
+     *                  <ul>
+     *                      <li>
+     *                          key 'extraMixins' with as value comma separated mixin names to be added to the created
+     *                          document variant
+     *                      </li>
+     *                      <li>
+     *                          key 'subPrototypeUUIDs' with as value comma separated UUIDs of the node that will be
+     *                          copied as-is below the created document variant
+     *                      </li>
+     *                  </ul>
+     *                  Note that the supplied extra mixins must be allowed, and if they involve mandatory constraints
+     *                  like a mandatory child node, then these need to be provided by sub prototypes. Of course a sub
+     *                  prototype should not be some folder or another very large structure and can never be the parent
+     *                  of the current folder : in such cases, a RepositoryException will be thrown
      * @return the absolute JCR path to the created document
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws MappingException    indicates that the work-flow call failed because of configuration problems
