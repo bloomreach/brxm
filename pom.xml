@@ -49,7 +49,6 @@
     <module>services-webfiles</module>
     <module>site-toolkit</module>
     <module>sitemap</module>
-    <module>spa-sdk</module>
     <module>taxonomy</module>
     <module>testsuite</module>
     <module>testutils</module>
@@ -77,6 +76,17 @@
       </activation>
       <modules>
         <module>archetype</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>spa.sdk</id>
+      <activation>
+        <property>
+          <name>!no-spa-sdk</name>
+        </property>
+      </activation>
+      <modules>
+        <module>spa-sdk</module>
       </modules>
     </profile>
   </profiles>
