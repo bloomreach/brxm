@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2007-2020 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -103,3 +103,11 @@
 [hippo:testcompoundskipdraft] > hippo:compound, hippostd:skipdraft
 - hippo:testprop (string)
 + * (hippo:compound)
+
+/*
+ * Node types used for document creation with sub prototypes below the variants
+ */
+[hippo:testhtmlmixin] mixin
++ * (hippo:testhtml) = hippo:testhtml multiple
+
+[hippo:testhtmlmixin2] mixin

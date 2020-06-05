@@ -49,6 +49,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionManager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Folder;
 import org.hippoecm.repository.api.HierarchyResolver;
@@ -418,7 +419,26 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             if (result != null) {
                 if (handleNode != null && result.isNodeType(HippoNodeType.NT_DOCUMENT)
                         && !result.hasProperty(HippoNodeType.HIPPO_AVAILABILITY)) {
+
                     result.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
+                    final String extraMixins = arguments.get("extraMixins");
+                    if (StringUtils.isNotBlank(extraMixins)) {
+                        final String[] mixins = StringUtils.split(extraMixins, ",");
+                        for (String mixin : mixins) {
+                            // in case the mixin is invalid, just throw repository exception
+                            result.addMixin(StringUtils.trim(mixin));
+                        }
+                    }
+                    final String subPrototypeUUIDs = arguments.get("subPrototypeUUIDs");
+                    if (StringUtils.isNotBlank(subPrototypeUUIDs)) {
+                        final String[] prototypeUUIDs = StringUtils.split(subPrototypeUUIDs,",");
+                        for (String prototypeUUID : prototypeUUIDs) {
+                            // in case prototypeUUID not found, just throw repository exception
+                            final Node prototypeNode = rootSession.getNodeByIdentifier(prototypeUUID);
+                            JcrUtils.copy(rootSession, prototypeNode.getPath(),
+                                    result.getPath() + "/" + prototypeNode.getName());
+                        }
+                    }
                 }
                 rootSession.save();
                 return result.getPath();
@@ -436,7 +456,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     private void doArchive(final Node handle, final String atticPath) throws RepositoryException {
         rootSession.move(handle.getPath(), atticPath + "/" + atticName(atticPath, handle));
-        rootSession.save();
         try {
             if (handle.isNodeType(NT_HANDLE)) {
                 for (final Node child : new NodeIterable(handle.getNodes(handle.getName()))) {
@@ -456,7 +475,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         } catch (RepositoryException ex) {
             log.error("error while deleting document variants from attic", ex);
         }
-
+        rootSession.save();
     }
 
     private void clear(final Node node) throws RepositoryException {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -579,6 +580,153 @@ public class FolderWorkflowTest extends RepositoryTestCase {
                 createDirectories(session, manager, node, new Random(seed), niters);
             } catch(RepositoryException | WorkflowException | RemoteException ex) {
                 concurrentError = ex;
+            }
+        }
+    }
+
+    @Test
+    public void test_new_document_with_mixins_and_subprototypes() throws RepositoryException, WorkflowException, RemoteException {
+        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
+
+        final HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("name", "myDoc");
+
+        {
+            String path = workflow.add("simple", "new-document", parameters);
+            Node myDoc = session.getRootNode().getNode(path.substring(1));
+            assertTrue(myDoc.isNodeType("hippostd:document"));
+            assertTrue(myDoc.isNodeType("mix:versionable"));
+            myDoc.remove();
+            session.save();
+        }
+
+        // single mixin addition
+        parameters.put("extraMixins", "hippo:testhtmlmixin");
+
+        {
+            String path = workflow.add("simple", "new-document", parameters);
+            Node myDoc = session.getRootNode().getNode(path.substring(1));
+            assertTrue(myDoc.isNodeType("hippo:testhtmlmixin"));
+            myDoc.remove();
+            session.save();
+        }
+
+        // double comma separated mixin addition
+        parameters.put("extraMixins", "hippo:testhtmlmixin, hippo:testhtmlmixin2");
+
+        {
+            String path = workflow.add("simple", "new-document", parameters);
+            Node myDoc = session.getRootNode().getNode(path.substring(1));
+            assertTrue(myDoc.isNodeType("hippo:testhtmlmixin"));
+            assertTrue(myDoc.isNodeType("hippo:testhtmlmixin2"));
+            myDoc.remove();
+            session.save();
+        }
+
+        // invalid mixin addition
+        parameters.remove("extraMixins");
+        parameters.put("extraMixins", "hippo:unknown");
+
+        {
+            try {
+                workflow.add("simple", "new-document", parameters);
+                fail("Expected exception for invalid mixin");
+            } catch (Exception e) {
+                // expected
+            }
+
+        }
+
+        // already present mixin addition are ignored
+        parameters.remove("extraMixins");
+        parameters.put("extraMixins", "mix:versionable");
+        {
+            String path = workflow.add("simple", "new-document", parameters);
+            Node myDoc = session.getRootNode().getNode(path.substring(1));
+            assertTrue(myDoc.isNodeType("hippostd:document"));
+            assertTrue(myDoc.isNodeType("mix:versionable"));
+            myDoc.remove();
+            session.save();
+        }
+
+        String[] subPrototype = {
+                "/test/subproto", "hippo:testhtml",
+                   "hippo:testcontent", "Test Content"
+        };
+        build(subPrototype, session);
+        session.save();
+
+        final String subPrototypeUUID = session.getNode("/test/subproto").getIdentifier();
+
+        // include sub prototype copy
+        parameters.remove("extraMixins");
+        parameters.put("extraMixins", "hippo:testhtmlmixin");
+        parameters.put("subPrototypeUUIDs", subPrototypeUUID);
+
+        {
+            String path = workflow.add("simple", "new-document", parameters);
+            Node myDoc = session.getRootNode().getNode(path.substring(1));
+            assertTrue(myDoc.isNodeType("hippostd:document"));
+            assertTrue(myDoc.isNodeType("hippo:testhtmlmixin"));
+            assertTrue(myDoc.hasNode("subproto"));
+            assertEquals("Test Content", myDoc.getNode("subproto").getProperty("hippo:testcontent").getString());
+            myDoc.remove();
+            session.save();
+        }
+
+        parameters.remove("extraMixins");
+        // without the required mixin the subprototype copy fails
+        {
+            try {
+                workflow.add("simple", "new-document", parameters);
+                fail("Expected exception for subprototype copy since the mixin to allow the child is not added");
+            } catch (Exception e) {
+                // expected
+            }
+        }
+
+        parameters.remove("extraMixins");
+        parameters.put("extraMixins", "hippo:testhtmlmixin");
+        // two sub prototypes
+        parameters.put("subPrototypeUUIDs", subPrototypeUUID + "," + subPrototypeUUID);
+
+        {
+            String path = workflow.add("simple", "new-document", parameters);
+            Node myDoc = session.getRootNode().getNode(path.substring(1));
+            assertTrue(myDoc.isNodeType("hippostd:document"));
+            assertTrue(myDoc.isNodeType("hippo:testhtmlmixin"));
+
+            // expected two added nodes
+            assertEquals(2, myDoc.getNodes("subproto").getSize());
+
+            myDoc.remove();
+            session.save();
+        }
+
+        // test an invalid prototype such as a parent or a folder (parent never allowed, some folder not allowed by
+        // nodetype constraints
+
+        parameters.remove("subPrototypeUUIDs");
+        parameters.put("subPrototypeUUIDs", node.getParent().getIdentifier());
+
+        {
+            try {
+                workflow.add("simple", "new-document", parameters);
+                fail("Expected exception for invalid subprototype since ancestor not allowed as prototype");
+            } catch (Exception e) {
+                // expected
+            }
+        }
+
+        parameters.remove("subPrototypeUUIDs");
+        parameters.put("subPrototypeUUIDs", session.getNode("/test/aap").getIdentifier());
+
+        {
+            try {
+                workflow.add("simple", "new-document", parameters);
+                fail("Expected exception for invalid subprototype since a folder not allowed as prototype");
+            } catch (Exception e) {
+                // expected
             }
         }
     }
