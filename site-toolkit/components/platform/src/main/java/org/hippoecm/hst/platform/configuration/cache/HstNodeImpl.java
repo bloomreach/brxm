@@ -76,16 +76,21 @@ public class HstNodeImpl implements HstNode {
     private boolean staleChildren = false;
 
     public HstNodeImpl(Node jcrNode, HstNode parent) throws RepositoryException {
+        this(jcrNode, parent, false);
+    }
+
+    public HstNodeImpl(final Node jcrNode, final HstNode parent, final boolean includeProtectedProperties) throws RepositoryException {
         this.parent = parent;
-        provider = new JCRValueProviderImpl(jcrNode, false, true, false);
+        provider = new JCRValueProviderImpl(jcrNode, false, true, includeProtectedProperties);
         nodeTypeName = StringPool.get(jcrNode.getPrimaryNodeType().getName());
-        loadChildren(jcrNode);
-        // detach the backing jcr node now we are done.       
+        loadChildren(jcrNode, includeProtectedProperties);
+        // detach the backing jcr node now we are done.
         stale = false;
         provider.detach();
     }
 
-    protected void loadChildren(Node jcrNode) throws RepositoryException {
+
+    protected void loadChildren(Node jcrNode, final boolean includeProtectedProperties) throws RepositoryException {
         NodeIterator nodes = jcrNode.getNodes();
         long iteratorSizeBeforeLoop = nodes.getSize();
         while (nodes.hasNext()) {
@@ -93,7 +98,7 @@ public class HstNodeImpl implements HstNode {
             if (skipNode(child)) {
                 continue;
             }
-            HstNode childRepositoryNode = new HstNodeImpl(child, this);
+            HstNode childRepositoryNode = new HstNodeImpl(child, this, includeProtectedProperties);
             if(children == null) {
                 children = new LinkedHashMap<>((int)iteratorSizeBeforeLoop * 4 / 3);
             }

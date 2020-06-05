@@ -16,10 +16,7 @@
 package org.hippoecm.hst.platform.services.experiencepage;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -28,11 +25,11 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.experiencepage.ExperiencePageLoadingException;
+import org.hippoecm.hst.experiencepage.ExperiencePageService;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeImpl;
 import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.platform.configuration.components.HstComponentsConfigurationService;
-import org.hippoecm.hst.experiencepage.ExperiencePageService;
-import org.hippoecm.hst.experiencepage.ExperiencePageLoadingException;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 
 public class ExperiencePageServiceImpl implements ExperiencePageService {
@@ -55,7 +52,9 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
         try {
             // set the classloader of the platform webapp to load the model
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-            HstNodeImpl hstNode = getHstNode(hstPage);
+
+            // Note that the 'hstPage' node can be a frozen node from version history for Experience Pages!!
+            final HstNodeImpl hstNode = getHstNode(hstPage);
 
             // the root configuration prefix is *JUST* the path to the hstPage itself (hstPage is typically a
             // node of type hst:component below a document variant
@@ -89,7 +88,12 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
 
     private HstNodeImpl getHstNode(final Node hstPage) {
         try {
-            return new HstNodeImpl(hstPage, null);
+
+            // The hstPage can be a frozen node and then every property is protected, hence we need to include
+            // protected properties (which we don't want for in memory model since takes pointless memory but does not
+            // matter for Experience Pages since used only once
+            return new HstNodeImpl(hstPage, null, true);
+
         } catch (RepositoryException e) {
             throw new ExperiencePageLoadingException("Failed to load HstPage" , e);
         }
