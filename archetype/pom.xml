@@ -32,7 +32,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <release.essentials.version>${project.version}</release.essentials.version>
+    <release.essentials.version>${hippo.release.version}</release.essentials.version>
     <notice.project.name>Bloomreach CMS Site Project Archetype</notice.project.name>
     <main.app.groupId>org.onehippo.cms7.hst</main.app.groupId>
     <main.app.artifactId>gettingstarted-${maven.build.timestamp}</main.app.artifactId>
