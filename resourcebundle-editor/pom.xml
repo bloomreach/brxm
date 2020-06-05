@@ -31,7 +31,7 @@
   <version>13.4.4-SNAPSHOT</version>
 
   <properties>
-    <hippo.cms.version>${project.version}</hippo.cms.version>
+    <hippo.cms.version>${hippo.release.version}</hippo.cms.version>
   </properties>
 
   <repositories>
