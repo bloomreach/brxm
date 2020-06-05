@@ -1,0 +1,21 @@
+definitions:
+  config:
+    /hippo:namespaces/extranamespace:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      /extraType:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:mixin: true
+            hipposysedit:node: true
+            hipposysedit:uri: http://www.hippoecm.org/extranamespace/nt/1.2
+            /extraTypeText:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: extranamespace:extraTypeText
+              hipposysedit:type: String
