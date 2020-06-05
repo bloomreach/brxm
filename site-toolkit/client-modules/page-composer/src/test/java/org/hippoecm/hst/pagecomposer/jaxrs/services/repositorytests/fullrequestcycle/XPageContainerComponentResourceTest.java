@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
@@ -167,10 +168,10 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
 
             final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, creds);
-            final Map<String, String> createResponseMap = mapper.readerFor(Map.class).readValue(createResponse.getContentAsString());
+            final ExtResponseRepresentation extResponseRepresentation = mapper.readerFor(ExtResponseRepresentation.class).readValue(createResponse.getContentAsString());
 
             if (!allowed) {
-                assertEquals("FORBIDDEN", createResponseMap.get("errorCode"));
+                assertEquals("FORBIDDEN", extResponseRepresentation.getErrorCode());
                 return;
             }
 
@@ -180,7 +181,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             // assert modifying the preview did not create a draft variant!!! changes are directly on unpublished
             assertNull(getVariant(handle, "draft"));
 
-            final String createdUUID = createResponseMap.get("id");
+            Map<String,?> map = (Map)extResponseRepresentation.getData();
+            final String createdUUID = map.get("id").toString();
 
             // assertion on newly created item
             assertTrue(adminSession.nodeExists(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
