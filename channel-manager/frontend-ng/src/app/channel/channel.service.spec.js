@@ -480,10 +480,10 @@ describe('ChannelService', () => {
     it('should get change-set from the backend', () => {
       ChannelService.checkChanges();
 
-      expect(HstService.doGet).toHaveBeenCalledWith('mountId', 'userswithchanges');
+      expect(HstService.doGet).toHaveBeenCalledWith('mountId', 'mychanges');
     });
 
-    it('should record changes if backend return current user in change-set', () => {
+    it('should record changes if backend returns changes', () => {
       spyOn(ChannelService, 'recordOwnChange');
       HstService.doGet.and.returnValue($q.when({ data: [{ id: 'testUser' }] }));
 
@@ -493,9 +493,9 @@ describe('ChannelService', () => {
       expect(ChannelService.recordOwnChange).toHaveBeenCalled();
     });
 
-    it('should not record changes if backend does not return current user in change-set', () => {
+    it('should not record changes if backend does not return changes', () => {
       spyOn(ChannelService, 'recordOwnChange');
-      HstService.doGet.and.returnValue($q.when({ data: [{ id: 'tobi' }] }));
+      HstService.doGet.and.returnValue($q.when({ data: [] }));
 
       ChannelService.checkChanges();
       $rootScope.$digest();
