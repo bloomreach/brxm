@@ -124,20 +124,6 @@ definitions:
           jcr:primaryType: hst:sitemapitem
           hst:componentconfigurationid: hst:pages/faceted_detailpage
           hst:relativecontentpath: faceted/${1}
-      /solrindexer:
-        jcr:primaryType: hst:sitemapitem
-        hst:componentconfigurationid: hst:pages/solrindexer
-      /solrsearch:
-        jcr:primaryType: hst:sitemapitem
-        hst:componentconfigurationid: hst:pages/solrsearchpage
-      /solrfaceting:
-        jcr:primaryType: hst:sitemapitem
-        hst:componentconfigurationid: hst:pages/solrfacetingpage
-        /_any_:
-          jcr:primaryType: hst:sitemapitem
-          hst:componentconfigurationid: hst:pages/solrfacetingpage
-          hst:parameternames: [facetpath]
-          hst:parametervalues: ['${1}']
       /error:
         jcr:primaryType: hst:sitemapitem
         hst:componentconfigurationid: hst:pages/errorpage
