@@ -241,9 +241,8 @@ class ChannelService {
 
   async checkChanges() {
     try {
-      const { data: changedSet } = await this.HstService.doGet(this.getMountId(), 'userswithchanges');
-      const user = this.ConfigService.cmsUser;
-      if (changedSet.some(({ id }) => id === user)) {
+      const { data: changedSet } = await this.HstService.doGet(this.getMountId(), 'mychanges');
+      if (changedSet.length > 0) {
         this.recordOwnChange();
       }
     // eslint-disable-next-line no-empty
