@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.3.0-SNAPSHOT</version>
+    <version>14.3.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -35,8 +35,8 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Services - eventbus</notice.project.name>
     
-    <hippo.services.version>14.3.0-SNAPSHOT</hippo.services.version>
-    <hippo.commons.version>14.3.0-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>${hippo.release.version}</hippo.services.version>
+    <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
 
     <asm.version>5.0.3</asm.version>
     <junit.version>4.12</junit.version>

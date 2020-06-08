@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.3.0-SNAPSHOT</version>
+    <version>14.3.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -37,10 +37,10 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Configuration Management</notice.project.name>
 
-    <hippo.testutils.version>14.3.0-SNAPSHOT</hippo.testutils.version>
-    <hippo.services.version>14.3.0-SNAPSHOT</hippo.services.version>
+    <hippo.testutils.version>${hippo.release.version}</hippo.testutils.version>
+    <hippo.services.version>${hippo.release.version}</hippo.services.version>
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
-    <hippo.utilities.version>14.3.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.utilities.version>${hippo.release.version}</hippo.utilities.version>
     <snakeyaml.version>1.23</snakeyaml.version>
     <commons-lang3.version>3.8.1</commons-lang3.version>
     <commons-io.version>2.6</commons-io.version>

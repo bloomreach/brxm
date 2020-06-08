@@ -21,7 +21,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import { join } from 'path';
 
-import { AppServerModule, RESPONSE, REQUEST } from './src/main.server';
+import { AppServerModule } from './src/main.server';
 import { APP_BASE_HREF } from '@angular/common';
 import { existsSync } from 'fs';
 
@@ -52,11 +52,7 @@ export function app() {
 
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
-    res.render(indexHtml, { req, providers: [
-      { provide: APP_BASE_HREF, useValue: req.baseUrl },
-      { provide: RESPONSE, useValue: res },
-      { provide: REQUEST, useValue: req },
-    ] });
+    res.render(indexHtml, { req, res, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }] });
   });
 
   return server;

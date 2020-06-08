@@ -53,3 +53,6 @@
   orderable
 
 [contentbeanstest:emptycompound] > hippo:compound
+
+[contentbeanstest:aggregateddocument] > hippostd:relaxed, hippo:document
+  orderable
