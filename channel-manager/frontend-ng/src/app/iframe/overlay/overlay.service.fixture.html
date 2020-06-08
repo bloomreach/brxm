@@ -61,7 +61,6 @@
         "HST-Label": "vBox container",
         "HST-XType": "HST.vBox",
         "HST-Component-Editable": "true",
-        "HST-Shared": "true",
         "uuid": "container-vbox"
       } -->
       <div id="container-vbox" class="hst-container">
@@ -362,6 +361,35 @@
           } -->
         </p>
       </div>
+
+      <!-- {
+        "HST-Type": "CONTAINER_COMPONENT",
+        "HST-Label": "vBox shared container",
+        "HST-XType": "HST.vBox",
+        "HST-Component-Editable": "true",
+        "HST-Shared": "true",
+        "uuid": "container-shared"
+      } -->
+      <div id="container-shared" class="hst-container">
+        <div id="component-in-shared-container" class="hst-container-item">
+        <!-- {
+          "HST-Type": "CONTAINER_ITEM_COMPONENT",
+          "HST-Label": "component A",
+          "HST-Component-Editable": "true",
+          "uuid": "component-in-shared-container"
+        } -->
+        <p>Shared text</p>
+        <!-- {
+          "HST-End": "true",
+          "uuid": "component-in-shared-container"
+        } -->
+      </div>
+    </div>
+    <!-- {
+      "HST-End": "true",
+      "uuid": "container-shared"
+    } -->
+
     </main>
   </body>
 </html>
