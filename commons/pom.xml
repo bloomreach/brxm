@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.3.0-SNAPSHOT</version>
+    <version>14.3.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -72,8 +72,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>always</forkMode>
+        <configuration>          
+          <forkCount>1</forkCount>
+          <reuseForks>false</reuseForks>
           <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
       </plugin>

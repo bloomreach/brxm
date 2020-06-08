@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.3.0-SNAPSHOT</version>
+    <version>14.3.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -32,7 +32,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <release.essentials.version>${project.version}</release.essentials.version>
+    <release.essentials.version>${hippo.release.version}</release.essentials.version>
     <notice.project.name>Bloomreach CMS Site Project Archetype</notice.project.name>
     <main.app.groupId>org.onehippo.cms7.hst</main.app.groupId>
     <main.app.artifactId>gettingstarted-${maven.build.timestamp}</main.app.artifactId>
