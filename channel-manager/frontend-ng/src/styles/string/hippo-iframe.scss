@@ -88,13 +88,13 @@
       &:hover {
         background-color: rgba($bloomreach-white, .7);
 
-        .hippo-overlay-xpage-toggle {
+        .hippo-overlay-edit-shared-toggle {
           display: flex;
         }
       }
     }
 
-    .hippo-overlay-xpage-toggle {
+    .hippo-overlay-edit-shared-toggle {
       align-items: center;
       display: none;
       height: 100%;
@@ -437,7 +437,7 @@
     cursor: not-allowed;
     pointer-events: all;
 
-    .hippo-overlay-xpage-toggle {
+    .hippo-overlay-edit-shared-toggle {
       display: none;
     }
   }
