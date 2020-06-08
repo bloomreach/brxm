@@ -60,18 +60,6 @@ definitions:
           hst:depth: 1
           hst:referencesitemapitem: faceted
           hst:repobased: true
-        /Solr Search:
-          jcr:primaryType: hst:sitemenuitem
-          hst:referencesitemapitem: solrsearch
-        /Solr Faceted:
-          jcr:primaryType: hst:sitemenuitem
-          hst:referencesitemapitem: solrfaceting
-        /Solr Indexer:
-          jcr:primaryType: hst:sitemenuitem
-          hst:referencesitemapitem: solrindexer
-        /GoGreen Solr Indexer:
-          jcr:primaryType: hst:sitemenuitem
-          hst:referencesitemapitem: gogreen-rest-product-indexer
         /Wikipedia:
           jcr:primaryType: hst:sitemenuitem
           hst:referencesitemapitem: wikipedia
