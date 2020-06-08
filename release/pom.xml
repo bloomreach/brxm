@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.3.0-SNAPSHOT</version>
+    <version>14.3.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -34,49 +34,47 @@
   <inceptionYear>2011</inceptionYear>
 
   <properties>
-    <hippo.release.version>14.3.0-SNAPSHOT</hippo.release.version>
-
     <!-- The jackrabbit and cargo-extensions projects are not on the release train, so these versions
          should NOT be updated with product releases. -->
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
     <hippo.cargo-extensions.version>13.0.0</hippo.cargo-extensions.version>
 
-    <hippo.configuration-management.version>14.3.0-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.addon-channel-manager.version>14.3.0-SNAPSHOT</hippo.addon-channel-manager.version>
-    <hippo.addon-search-service.version>14.3.0-SNAPSHOT</hippo.addon-search-service.version>
-    <hippo.commons.version>14.3.0-SNAPSHOT</hippo.commons.version>
-    <hippo.cms.version>14.3.0-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>14.3.0-SNAPSHOT</hippo.hst.version>
-    <hippo.packages.version>14.3.0-SNAPSHOT</hippo.packages.version>
-    <hippo.repository.version>14.3.0-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>14.3.0-SNAPSHOT</hippo.services.version>
-    <hippo.services.autoreload.version>14.3.0-SNAPSHOT</hippo.services.autoreload.version>
-    <hippo.services.contenttype.version>14.3.0-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.services.eventbus.version>14.3.0-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.services.validation.version>14.3.0-SNAPSHOT</hippo.services.validation.version>
-    <hippo.services.webfiles.version>14.3.0-SNAPSHOT</hippo.services.webfiles.version>
-    <hippo.services.htmlprocessor.version>14.3.0-SNAPSHOT</hippo.services.htmlprocessor.version>
-    <hippo.utilities.version>14.3.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.testutils.version>14.3.0-SNAPSHOT</hippo.testutils.version>
-    <hippo.l10n-tooling.version>14.3.0-SNAPSHOT</hippo.l10n-tooling.version>
+    <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
+    <hippo.addon-channel-manager.version>${hippo.release.version}</hippo.addon-channel-manager.version>
+    <hippo.addon-search-service.version>${hippo.release.version}</hippo.addon-search-service.version>
+    <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
+    <hippo.cms.version>${hippo.release.version}</hippo.cms.version>
+    <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
+    <hippo.packages.version>${hippo.release.version}</hippo.packages.version>
+    <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
+    <hippo.services.version>${hippo.release.version}</hippo.services.version>
+    <hippo.services.autoreload.version>${hippo.release.version}</hippo.services.autoreload.version>
+    <hippo.services.contenttype.version>${hippo.release.version}</hippo.services.contenttype.version>
+    <hippo.services.eventbus.version>${hippo.release.version}</hippo.services.eventbus.version>
+    <hippo.services.validation.version>${hippo.release.version}</hippo.services.validation.version>
+    <hippo.services.webfiles.version>${hippo.release.version}</hippo.services.webfiles.version>
+    <hippo.services.htmlprocessor.version>${hippo.release.version}</hippo.services.htmlprocessor.version>
+    <hippo.utilities.version>${hippo.release.version}</hippo.utilities.version>
+    <hippo.testutils.version>${hippo.release.version}</hippo.testutils.version>
+    <hippo.l10n-tooling.version>${hippo.release.version}</hippo.l10n-tooling.version>
 
     <!-- Hippo standard plugin versions -->
-    <hippo.essentials-components.version>14.3.0-SNAPSHOT</hippo.essentials-components.version>
-    <hippo.plugin.content-blocks.version>14.3.0-SNAPSHOT</hippo.plugin.content-blocks.version>
-    <hippo.plugin.content-tagging.version>14.3.0-SNAPSHOT</hippo.plugin.content-tagging.version>
-    <hippo.plugin.dashboard-document-wizard.version>14.3.0-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
-    <hippo.plugin.gallerypicker.version>14.3.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
-    <hippo.plugin.poll.version>14.3.0-SNAPSHOT</hippo.plugin.poll.version>
-    <hippo.plugin.relateddocs.version>14.3.0-SNAPSHOT</hippo.plugin.relateddocs.version>
-    <hippo.plugin.resourcebundle-editor.version>14.3.0-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
-    <hippo.plugin.robotstxt.version>14.3.0-SNAPSHOT</hippo.plugin.robotstxt.version>
-    <hippo.plugin.selections.version>14.3.0-SNAPSHOT</hippo.plugin.selections.version>
-    <hippo.plugin.seo-support.version>14.3.0-SNAPSHOT</hippo.plugin.seo-support.version>
-    <hippo.plugin.sitemap.version>14.3.0-SNAPSHOT</hippo.plugin.sitemap.version>
-    <hippo.plugin.taxonomy.version>14.3.0-SNAPSHOT</hippo.plugin.taxonomy.version>
-    <hippo.addon-crisp.version>14.3.0-SNAPSHOT</hippo.addon-crisp.version>
-    <hippo.spa-sdk.version>14.3.0-SNAPSHOT</hippo.spa-sdk.version>
-    <hippo.ui-extension.version>14.3.0-SNAPSHOT</hippo.ui-extension.version>
+    <hippo.essentials-components.version>${hippo.release.version}</hippo.essentials-components.version>
+    <hippo.plugin.content-blocks.version>${hippo.release.version}</hippo.plugin.content-blocks.version>
+    <hippo.plugin.content-tagging.version>${hippo.release.version}</hippo.plugin.content-tagging.version>
+    <hippo.plugin.dashboard-document-wizard.version>${hippo.release.version}</hippo.plugin.dashboard-document-wizard.version>
+    <hippo.plugin.gallerypicker.version>${hippo.release.version}</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.poll.version>${hippo.release.version}</hippo.plugin.poll.version>
+    <hippo.plugin.relateddocs.version>${hippo.release.version}</hippo.plugin.relateddocs.version>
+    <hippo.plugin.resourcebundle-editor.version>${hippo.release.version}</hippo.plugin.resourcebundle-editor.version>
+    <hippo.plugin.robotstxt.version>${hippo.release.version}</hippo.plugin.robotstxt.version>
+    <hippo.plugin.selections.version>${hippo.release.version}</hippo.plugin.selections.version>
+    <hippo.plugin.seo-support.version>${hippo.release.version}</hippo.plugin.seo-support.version>
+    <hippo.plugin.sitemap.version>${hippo.release.version}</hippo.plugin.sitemap.version>
+    <hippo.plugin.taxonomy.version>${hippo.release.version}</hippo.plugin.taxonomy.version>
+    <hippo.addon-crisp.version>${hippo.release.version}</hippo.addon-crisp.version>
+    <hippo.spa-sdk.version>${hippo.release.version}</hippo.spa-sdk.version>
+    <hippo.ui-extension.version>${hippo.release.version}</hippo.ui-extension.version>
 
     <hippo.maven.plugin.l10n>14.2.1</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
@@ -148,6 +146,8 @@
 
     <!-- This property is empty by default, can be used to set the tcp docker daemon -->
     <docker.daemon.host></docker.daemon.host>
+
+    <docker.image.pull.policy>Always</docker.image.pull.policy>
   </properties>
 
   <repositories>
@@ -1103,6 +1103,9 @@
           <groupId>io.fabric8</groupId>
           <artifactId>docker-maven-plugin</artifactId>
           <version>${docker.maven.plugin.version}</version>
+          <configuration>
+            <imagePullPolicy>${docker.image.pull.policy}</imagePullPolicy>
+          </configuration>
         </plugin>
 
       </plugins>
@@ -1383,6 +1386,7 @@
                       <name>maven/</name>
                       <descriptor>${docker.dev.assembly.descriptor}</descriptor>
                     </assembly>
+                    <imagePullPolicy>IfNotPresent</imagePullPolicy>
                   </build>
                   <run>
                     <ports>
@@ -1401,6 +1405,7 @@
                     <log>
                       <enabled>true</enabled>
                     </log>
+                    <imagePullPolicy>IfNotPresent</imagePullPolicy>
                   </run>
                 </image>
                 <image>

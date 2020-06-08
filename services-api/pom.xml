@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.3.0-SNAPSHOT</version>
+    <version>14.3.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -36,7 +36,7 @@
     <notice.project.name>Hippo CMS7 Services</notice.project.name>
     <javadoc.base.version>13.1</javadoc.base.version>
 
-    <hippo.commons.version>14.3.0-SNAPSHOT</hippo.commons.version>
+    <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <junit.version>4.12</junit.version>
     <easymock.version>3.0</easymock.version>
   </properties>

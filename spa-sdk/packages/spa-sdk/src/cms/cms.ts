@@ -115,7 +115,6 @@ export class CmsImpl implements Cms {
 
       script.type = 'text/javascript';
       script.src = resource;
-      script.crossOrigin = 'use-credentials';
       script.addEventListener('load', () => resolve());
       script.addEventListener('error', () => reject(new Error(`Failed to load resource '${resource}'.`)));
       this.window!.document.body.appendChild(script);

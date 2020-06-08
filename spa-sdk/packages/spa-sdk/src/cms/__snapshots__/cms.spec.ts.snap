@@ -2,7 +2,6 @@
 
 exports[`CmsImpl inject should put a script element 1`] = `
 <script
-  crossorigin="use-credentials"
   src="url1"
   type="text/javascript"
 />

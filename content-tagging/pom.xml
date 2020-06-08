@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.3.0-SNAPSHOT</version>
+    <version>14.3.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -35,9 +35,9 @@
   <inceptionYear>2008</inceptionYear>
 
   <properties>
-    <hippo.repository.version>14.3.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>14.3.0-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>14.3.0-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
+    <hippo.cms.version>${hippo.release.version}</hippo.cms.version>
+    <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
 
     <json-lib.version>2.4</json-lib.version>
     <junit.version>4.12</junit.version>

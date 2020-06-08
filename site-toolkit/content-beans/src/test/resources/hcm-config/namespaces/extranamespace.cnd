@@ -1,0 +1,4 @@
+<'extranamespace'='http://www.onehippo.org/extranamespace/nt/1.0'>
+
+[extranamespace:extraType] mixin
+- extranamespace:extraTypeText (string)

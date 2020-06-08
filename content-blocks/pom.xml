@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>31.3.0-SNAPSHOT</version>
+    <version>14.3.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -33,8 +33,8 @@
   <packaging>pom</packaging>
 
   <properties>
-    <hippo.repository.version>14.3.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>14.3.0-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
+    <hippo.cms.version>${hippo.release.version}</hippo.cms.version>
   </properties>
 
   <repositories>
