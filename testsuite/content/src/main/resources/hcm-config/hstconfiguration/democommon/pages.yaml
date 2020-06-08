@@ -70,18 +70,6 @@ definitions:
         /body:
           jcr:primaryType: hst:component
           hst:referencecomponent: hst:components/bodysearch
-      /solrsearchpage:
-        jcr:primaryType: hst:component
-        hst:referencecomponent: hst:pages/standard
-        /body:
-          jcr:primaryType: hst:component
-          hst:referencecomponent: hst:components/bodysolrsearch
-      /solrfacetingpage:
-        jcr:primaryType: hst:component
-        hst:referencecomponent: hst:pages/standard
-        /body:
-          jcr:primaryType: hst:component
-          hst:referencecomponent: hst:components/bodysolrfaceting
       /faceted:
         jcr:primaryType: hst:component
         hst:referencecomponent: hst:pages/standard
@@ -100,12 +88,6 @@ definitions:
         /body:
           jcr:primaryType: hst:component
           hst:referencecomponent: hst:components/bodywikipedia
-      /solrindexer:
-        jcr:primaryType: hst:component
-        hst:referencecomponent: hst:pages/standard
-        /body:
-          jcr:primaryType: hst:component
-          hst:referencecomponent: hst:components/bodysolrindexer
       /gogreenindexer:
         jcr:primaryType: hst:component
         hst:referencecomponent: hst:pages/standard

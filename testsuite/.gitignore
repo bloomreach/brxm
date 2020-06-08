@@ -78,10 +78,6 @@ site/.settings
 site/bin
 site/build.properties
 site/target
-solr/.classpath
-solr/.project
-solr/.settings
-solr/target
 /storage
 /target
 /velocity.log
