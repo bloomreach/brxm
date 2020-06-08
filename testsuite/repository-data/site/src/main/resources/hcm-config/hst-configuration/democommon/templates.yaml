@@ -53,18 +53,6 @@ definitions:
       /searchresults:
         jcr:primaryType: hst:template
         hst:renderpath: jsp/components/main/search.jsp
-      /solrsearchresults:
-        jcr:primaryType: hst:template
-        hst:renderpath: jsp/components/main/solrsearch.jsp
-      /solrright:
-        jcr:primaryType: hst:template
-        hst:renderpath: jsp/components/main/solrright.jsp
-      /solrsuggest-ajax:
-        jcr:primaryType: hst:template
-        hst:renderpath: jsp/components/main/solrsuggest-ajaxresult.jsp
-      /solrfaceting:
-        jcr:primaryType: hst:template
-        hst:renderpath: jsp/components/main/solrfaceting.jsp
       /todolist:
         jcr:primaryType: hst:template
         hst:renderpath: jsp/components/main/todolist.jsp
@@ -74,9 +62,6 @@ definitions:
       /wikipedia:
         jcr:primaryType: hst:template
         hst:renderpath: jsp/components/main/wikipedia.jsp
-      /solrindexer:
-        jcr:primaryType: hst:template
-        hst:renderpath: jsp/components/main/solrindexer.jsp
       /gogreenindexer:
         jcr:primaryType: hst:template
         hst:renderpath: jsp/components/main/gogreenindexer.jsp
