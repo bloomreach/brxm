@@ -56,7 +56,7 @@ export default class OverlayService {
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = false;
-    this._isXpageMode = false;
+    this._isEditSharedContainers = false;
 
     this._onOverlayMouseDown = this._onOverlayMouseDown.bind(this);
     this._onOverlayClick = this._onOverlayClick.bind(this);
@@ -84,9 +84,7 @@ export default class OverlayService {
     }
 
     this._isEditable = await this.CommunicationService.isEditable();
-
-    const page = this.PageStructureService.getPage();
-    this._isXpageMode = page && page.getMeta().isXPage();
+    this._isEditSharedContainers = false;
 
     await this._cssPromise;
 
@@ -348,7 +346,7 @@ export default class OverlayService {
   _addContainerMarkup(structureElement, overlayElement) {
     this._addDropIcon(structureElement, overlayElement);
     this._addLockIcon(structureElement, overlayElement);
-    this._addXPageToggle(structureElement, overlayElement);
+    this._addEditSharedContainersButtons(structureElement, overlayElement);
   }
 
   _addComponentMarkup(structureElement, overlayElement) {
@@ -407,14 +405,14 @@ export default class OverlayService {
     return this._translate('CONTAINER_LOCKED_BY', { user: container.getLockedBy() });
   }
 
-  _addXPageToggle(container, overlayElement) {
-    const title = this._translate(container.isXPageComponent() ? 'TOGGLE_SHARED_CONTAINERS' : 'TOGGLE_PAGE_CONTAINERS');
+  _addEditSharedContainersButtons(container, overlayElement) {
+    const title = this._translate(container.isShared() ? 'TOGGLE_SHARED_CONTAINERS' : 'TOGGLE_PAGE_CONTAINERS');
     const toggleButton = angular.element(`<button class="btn btn-default" title="${title}">${title}</button>`);
     toggleButton.on('click', () => {
-      this._isXpageMode = !this._isXpageMode;
+      this._isEditSharedContainers = !this._isEditSharedContainers;
       this.sync();
     });
-    angular.element('<div class="hippo-overlay-xpage-toggle"></div>')
+    angular.element('<div class="hippo-overlay-edit-shared-toggle"></div>')
       .append(toggleButton)
       .appendTo(overlayElement);
   }
@@ -699,9 +697,9 @@ export default class OverlayService {
         boxElement.toggleClass('hippo-overlay-box-container-filled', !isEmptyInDom);
         overlayElement.toggleClass('hippo-overlay-element-container-empty', isEmptyInDom);
         overlayElement.toggleClass('hippo-overlay-element-container-disabled', structureElement.isDisabled());
-        overlayElement.toggleClass('hippo-overlay-element-container-readonly', structureElement.isXPageComponent()
-          ? !this._isXpageMode
-          : this._isXpageMode);
+        overlayElement.toggleClass('hippo-overlay-element-container-readonly', structureElement.isShared()
+          ? !this._isEditSharedContainers
+          : this._isEditSharedContainers);
         break;
       }
       default:
@@ -717,9 +715,9 @@ export default class OverlayService {
         if (!this.isComponentsOverlayDisplayed) {
           return false;
         }
-        return structureElement.isXPageComponent()
-          ? this._isXpageMode
-          : !this._isXpageMode;
+        return structureElement.isShared()
+          ? this._isEditSharedContainers
+          : !this._isEditSharedContainers;
       case 'container':
         return this.isComponentsOverlayDisplayed;
       case 'content-link':
