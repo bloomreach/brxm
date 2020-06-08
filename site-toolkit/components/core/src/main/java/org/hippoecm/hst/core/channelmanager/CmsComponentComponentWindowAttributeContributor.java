@@ -118,9 +118,9 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
                         populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, lockInfo.getLockedBy());
                         if (lockInfo.getLockedBy().equals(cmsUserId)) {
                             populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "true");
+                            populatingAttributesMap.put(HST_COMPONENT_EDITABLE, "true");
                         } else {
                             populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
-                            populatingAttributesMap.put(HST_COMPONENT_EDITABLE, "false");
                         }
                         if (lockInfo.getLockedOn() != null) {
                             populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_ON, String.valueOf(lockInfo.getLockedOn().getTimeInMillis()));
