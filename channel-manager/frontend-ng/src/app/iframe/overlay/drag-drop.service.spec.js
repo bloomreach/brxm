@@ -71,7 +71,6 @@ describe('DragDropService', () => {
       {
         uuid: `container${number}`,
         'HST-Type': 'CONTAINER_COMPONENT',
-        'HST-Component-Editable': 'true',
         'HST-XType': xtype,
       },
       mockCommentData[`container${number}`],
@@ -98,7 +97,6 @@ describe('DragDropService', () => {
       {
         uuid: `component${number}`,
         'HST-Type': 'CONTAINER_ITEM_COMPONENT',
-        'HST-Component-Editable': 'true',
         'HST-Label': `Component ${number}`,
       },
       mockCommentData[`component${number}`],
@@ -271,7 +269,7 @@ describe('DragDropService', () => {
       'HST-LockedBy': 'anotherUser',
     };
     mockCommentData.container2 = {
-      'HST-Component-Editable': 'false',
+      'HST-Inherited': 'true',
     };
     enableDragDrop(() => {
       expect(angular.element(DragDropService.drake.containers)).toHaveLength(0);

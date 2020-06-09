@@ -207,7 +207,7 @@ export default class DragDropService {
     const sourceContainer = this.PageStructureService.getContainerByIframeElement(containerElement);
     const page = this.PageStructureService.getPage();
     page.getContainers()
-      .filter(container => container.isVisible() && !this._hasSameDropGroup(sourceContainer, container))
+      .filter(container => !this._hasSameDropGroup(sourceContainer, container))
       .forEach(container => container.getOverlayElement().addClass('drop-not-allowed'));
 
     this.CommunicationService.emit('drag:start');
