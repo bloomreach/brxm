@@ -44,8 +44,10 @@ import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +68,10 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 
@@ -130,6 +135,43 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
 
         final String pathToExperiencePage = "/unittestcontent/documents/unittestproject/News/2009/May/articleAsExpPage";
         assertionsForExperiencePage(pathToExperiencePage, null, null);
+    }
+
+    @Test
+    public void experience_page_document_variants_skips_hst_page_child_to_and_from_draft() throws Exception {
+        final String pathToExperiencePage = "/unittestcontent/documents/unittestproject/News/2009/May/articleAsExpPage";
+        final Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
+        final HippoSession session = (HippoSession)repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+        try {
+
+            // backup expPage1 before changing it with workflow
+            JcrUtils.copy(session, pathToExperiencePage, "/backupExpPage1");
+            session.save();
+
+            final Node handle = session.getNode(pathToExperiencePage);
+            final DocumentWorkflow workflow = (DocumentWorkflow)session.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
+
+            final Document draft = workflow.obtainEditableInstance();
+
+            assertTrue(getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get().hasNode("hst:page"));
+
+            assertFalse("Draft variant should not get the 'hst:page' child",
+                    draft.getNode(session).hasNode("hst:page"));
+
+            workflow.commitEditableInstance();
+
+            assertTrue(getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get().hasNode("hst:page"));
+
+            assertFalse(draft.getNode(session).hasNode("hst:page"));
+
+
+        } finally {
+            session.getNode(pathToExperiencePage).remove();
+            JcrUtils.copy(session, "/backupExpPage1", pathToExperiencePage);
+
+            session.logout();
+        }
+
     }
 
     @Test
