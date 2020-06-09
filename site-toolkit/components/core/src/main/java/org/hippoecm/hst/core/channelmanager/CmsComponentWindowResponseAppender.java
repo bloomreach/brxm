@@ -34,12 +34,15 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_EXPERIENCE_PAGE_COMPONENT;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
+import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
 
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
 
@@ -59,6 +62,34 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             return;
         }
 
+        final HstComponentConfiguration compConfig = (HstComponentConfiguration)window.getComponentInfo();
+
+        if (compConfig.isInherited()) {
+            // for inherited components we do not add any html comments since component is never editable for user any way
+            log.debug("Component '{}' not editable because inherited", compConfig.toString());
+            return;
+        }
+
+        final HippoSession cmsUser = (HippoSession) request.getRequestContext().getAttribute(ContainerConstants.CMS_USER_SESSION_ATTR_NAME);
+        if (cmsUser == null) {
+            throw new IllegalStateException("For Channel Manager preview requests there is expected to be a CMS user " +
+                    "Session available");
+        }
+
+        final boolean inRole;
+
+        if (compConfig.isExperiencePageComponent()) {
+            // check whether cmsUser has the right role on the xpage component
+            inRole = isInRole(cmsUser, compConfig.getCanonicalStoredLocation(), XPAGE_REQUIRED_PRIVILEGE_NAME);
+        } else {
+            inRole = isInRole(cmsUser, compConfig.getCanonicalStoredLocation(), CHANNEL_WEBMASTER_PRIVILEGE_NAME);
+        }
+
+        if (!inRole) {
+            log.debug("Component '{}' not editable because user is not in right role", compConfig.toString());
+            return;
+        }
+
         final CmsSessionContext cmsSessionContext = HstRequestUtils.getCmsSessionContext(request);
 
         if (cmsSessionContext == null) {
@@ -66,8 +97,6 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         }
 
         // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
-        HstComponentConfiguration compConfig = ((HstComponentConfiguration) window.getComponentInfo());
-
         if (isContainerOrContainerItem(compConfig)) {
             populateComponentMetaData(request, response, window);
         } else if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
@@ -129,12 +158,8 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
     private void populateComponentMetaData(final HstRequest request, final HstResponse response,
                                            final HstComponentWindow window) {
-        final HstComponentConfiguration config = (HstComponentConfiguration)window.getComponentInfo();
 
-        if (config.isInherited()) {
-            log.debug("Component '{}' not editable because inherited", config.toString());
-            return;
-        }
+        final HstComponentConfiguration config = (HstComponentConfiguration)window.getComponentInfo();
 
         if (config.getCanonicalStoredLocation().contains(WORKSPACE_PATH_ELEMENT) || config.isExperiencePageComponent()) {
             final Map<String, String> preambleAttributes = new HashMap<>();
