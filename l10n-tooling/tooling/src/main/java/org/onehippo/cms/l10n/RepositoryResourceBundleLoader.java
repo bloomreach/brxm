@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
         }
     }
 
-    private static FileSystem createZipFileSystem(final String zipFilename) throws IOException {
+    private FileSystem createZipFileSystem(final String zipFilename) throws IOException {
         final java.nio.file.Path path = Paths.get(zipFilename);
         final URI uri = URI.create("jar:file:" + path.toUri().getPath());
         final Map<String, String> env = new HashMap<>();
