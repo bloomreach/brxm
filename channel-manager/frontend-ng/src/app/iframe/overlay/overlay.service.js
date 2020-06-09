@@ -407,14 +407,34 @@ export default class OverlayService {
 
   _addEditSharedContainersButtons(container, overlayElement) {
     const title = this._translate(container.isShared() ? 'TOGGLE_SHARED_CONTAINERS' : 'TOGGLE_PAGE_CONTAINERS');
-    const toggleButton = angular.element(`<button class="btn btn-default" title="${title}">${title}</button>`);
-    toggleButton.on('click', () => {
-      this._isEditSharedContainers = !this._isEditSharedContainers;
-      this.sync();
-    });
-    angular.element('<div class="hippo-overlay-edit-shared-toggle"></div>')
-      .append(toggleButton)
+
+    const editSharedContainer = angular.element('<div>')
+      .addClass('hippo-overlay-shared')
       .appendTo(overlayElement);
+
+    if (container.isEmpty()) {
+      editSharedContainer.append(this._createEditSharedContainersButton(title));
+    } else {
+      const top = angular.element('<div>')
+        .addClass('hippo-overlay-shared-top')
+        .append(this._createEditSharedContainersButton(title));
+
+      const bottom = angular.element('<div>')
+        .addClass('hippo-overlay-shared-bottom')
+        .append(this._createEditSharedContainersButton(title));
+
+      editSharedContainer
+        .append(top)
+        .append(bottom);
+    }
+  }
+
+  _createEditSharedContainersButton(title) {
+    return angular.element(`<button class="hippo-overlay-shared-button" title="${title}">${title}</button>`)
+      .on('click', () => {
+        this._isEditSharedContainers = !this._isEditSharedContainers;
+        this.sync();
+      });
   }
 
   _addLinkMarkup(overlayElement, svg, titleKey, qaClass = '') {

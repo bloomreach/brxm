@@ -1133,19 +1133,32 @@ describe('OverlayService', () => {
   });
 
   describe('shared containers', () => {
+    function expectSingleButton(el, txt) {
+      const buttons = el.find('button');
+      expect(buttons).toHaveLength(1);
+      expect(buttons.eq(0).text()).toBe(txt);
+    }
+
+    function expectDoubleButton(el, txt) {
+      const buttons = el.find('button');
+      expect(buttons).toHaveLength(2);
+      expect(buttons.eq(0).text()).toBe(txt);
+      expect(buttons.eq(1).text()).toBe(txt);
+    }
+
     beforeEach(() => loadIframeFixture());
 
     it('should render buttons to toggle between editing shared and local containers', () => {
-      const buttons = $document.find('.hippo-overlay-edit-shared-toggle button');
+      const shared = $document.find('.hippo-overlay-shared');
 
-      expect(buttons).toHaveLength(7);
-      expect(buttons.eq(0).text()).toBe('TOGGLE_PAGE_CONTAINERS');
-      expect(buttons.eq(1).text()).toBe('TOGGLE_PAGE_CONTAINERS');
-      expect(buttons.eq(2).text()).toBe('TOGGLE_PAGE_CONTAINERS');
-      expect(buttons.eq(3).text()).toBe('TOGGLE_PAGE_CONTAINERS');
-      expect(buttons.eq(4).text()).toBe('TOGGLE_PAGE_CONTAINERS');
-      expect(buttons.eq(5).text()).toBe('TOGGLE_PAGE_CONTAINERS');
-      expect(buttons.eq(6).text()).toBe('TOGGLE_SHARED_CONTAINERS');
+      expect(shared).toHaveLength(7);
+      expectDoubleButton(shared.eq(0), 'TOGGLE_PAGE_CONTAINERS');
+      expectDoubleButton(shared.eq(1), 'TOGGLE_PAGE_CONTAINERS');
+      expectSingleButton(shared.eq(2), 'TOGGLE_PAGE_CONTAINERS');
+      expectDoubleButton(shared.eq(3), 'TOGGLE_PAGE_CONTAINERS');
+      expectSingleButton(shared.eq(4), 'TOGGLE_PAGE_CONTAINERS');
+      expectSingleButton(shared.eq(5), 'TOGGLE_PAGE_CONTAINERS');
+      expectDoubleButton(shared.eq(6), 'TOGGLE_SHARED_CONTAINERS');
     });
 
     it('should toggle "readonly" state between shared and local containers when clicking the toggle button', () => {
@@ -1156,12 +1169,12 @@ describe('OverlayService', () => {
       expect(localContainerOverlay).not.toHaveClass('hippo-overlay-element-container-readonly');
       expect(sharedContainerOverlay).toHaveClass('hippo-overlay-element-container-readonly');
 
-      sharedContainerOverlay.find('.hippo-overlay-edit-shared-toggle button')[0].click();
+      sharedContainerOverlay.find('.hippo-overlay-shared button')[0].click();
 
       expect(sharedContainerOverlay).not.toHaveClass('hippo-overlay-element-container-readonly');
       expect(localContainerOverlay).toHaveClass('hippo-overlay-element-container-readonly');
 
-      localContainerOverlay.find('.hippo-overlay-edit-shared-toggle button')[0].click();
+      localContainerOverlay.find('.hippo-overlay-shared button')[0].click();
 
       expect(localContainerOverlay).not.toHaveClass('hippo-overlay-element-container-readonly');
       expect(sharedContainerOverlay).toHaveClass('hippo-overlay-element-container-readonly');
