@@ -29,7 +29,7 @@ public interface HippoStdPubWfNodeType {
     String HIPPOSTDPUBWF_USERNAME = "hippostdpubwf:username";
     String HIPPOSTDPUBWF_REQDATE = "hippostdpubwf:reqdate";
     String HIPPOSTDPUBWF_REASON = "hippostdpubwf:reason";
-    String MIXIN_HIPPOSTDPUBWF_AUDIT_TRACE = "hippostdpubwf:auditTrace";
+    String MIXIN_HIPPOSTDPUBWF_AUDIT_TRACE = "hippostdpubwf:audittrace";
 
     String REJECTED = "rejected";
     String PUBLISH = "publish";
