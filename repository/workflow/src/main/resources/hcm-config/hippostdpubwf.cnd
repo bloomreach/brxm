@@ -40,4 +40,4 @@
 
 // a mixin if place on a document variant indicates that when the draft gets committed to unpublished, a new version
 // (in version history) must be created
-[hippostdpubwf:auditTrace] > nt:base mixin
+[hippostdpubwf:audittrace] > nt:base mixin
