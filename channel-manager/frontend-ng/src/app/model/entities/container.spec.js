@@ -62,7 +62,6 @@ describe('Container', () => {
     beforeEach(() => {
       container = new Container();
       spyOn(container, 'isInherited');
-      spyOn(container, 'isEditable');
       spyOn(container, 'isLocked');
       spyOn(container, 'isLockedByCurrentUser');
     });
@@ -73,16 +72,8 @@ describe('Container', () => {
       expect(container.isDisabled()).toBe(true);
     });
 
-    it('should return true when the container is not editable', () => {
-      container.isInherited.and.returnValue(false);
-      container.isEditable.and.returnValue(false);
-
-      expect(container.isDisabled()).toBe(true);
-    });
-
     it('should return true when the container is locked', () => {
       container.isInherited.and.returnValue(false);
-      container.isEditable.and.returnValue(true);
       container.isLocked.and.returnValue(true);
       container.isLockedByCurrentUser.and.returnValue(false);
 
@@ -91,7 +82,6 @@ describe('Container', () => {
 
     it('should return false when the container is not locked', () => {
       container.isInherited.and.returnValue(false);
-      container.isEditable.and.returnValue(true);
       container.isLocked.and.returnValue(false);
 
       expect(container.isDisabled()).toBe(false);
@@ -99,7 +89,6 @@ describe('Container', () => {
 
     it('should return false when the container is locked by the current user', () => {
       container.isInherited.and.returnValue(false);
-      container.isEditable.and.returnValue(true);
       container.isLocked.and.returnValue(true);
       container.isLockedByCurrentUser.and.returnValue(true);
 

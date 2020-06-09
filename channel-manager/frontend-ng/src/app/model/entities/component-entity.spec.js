@@ -94,20 +94,6 @@ describe('ComponentEntity', () => {
     });
   });
 
-  describe('isEditable', () => {
-    it('should return true', () => {
-      const component = new ComponentEntity({ 'HST-Component-Editable': 'true' });
-
-      expect(component.isEditable()).toBe(true);
-    });
-
-    it('should return false', () => {
-      const component = new ComponentEntity({});
-
-      expect(component.isEditable()).toBe(false);
-    });
-  });
-
   describe('isLocked', () => {
     it('should return true', () => {
       const component = new ComponentEntity({ 'HST-LockedBy': 'admin' });
@@ -147,20 +133,6 @@ describe('ComponentEntity', () => {
       const component = new ComponentEntity({});
 
       expect(component.isShared()).toBe(false);
-    });
-  });
-
-  describe('isVisible', () => {
-    it('should return true', () => {
-      const component = new ComponentEntity({ 'HST-Component-Editable': 'true' });
-
-      expect(component.isVisible()).toBe(true);
-    });
-
-    it('should return false', () => {
-      const component = new ComponentEntity({});
-
-      expect(component.isVisible()).toBe(false);
     });
   });
 

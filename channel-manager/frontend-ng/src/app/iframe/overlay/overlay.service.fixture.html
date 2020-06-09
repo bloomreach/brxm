@@ -60,7 +60,6 @@
         "HST-Type": "CONTAINER_COMPONENT",
         "HST-Label": "vBox container",
         "HST-XType": "HST.vBox",
-        "HST-Component-Editable": "true",
         "uuid": "container-vbox"
       } -->
       <div id="container-vbox" class="hst-container">
@@ -68,7 +67,6 @@
         <!-- {
           "HST-Type": "CONTAINER_ITEM_COMPONENT",
           "HST-Label": "component A",
-          "HST-Component-Editable": "true",
           "uuid": "aaaa"
         } -->
           <p id="markup-in-component-a">Some markup in component A</p>
@@ -88,7 +86,6 @@
         <!-- {
           "HST-Type": "CONTAINER_ITEM_COMPONENT",
           "HST-Label": "component B",
-          "HST-Component-Editable": "true",
           "uuid": "bbbb"
         } -->
           <p>Some markup in component B</p>
@@ -160,13 +157,11 @@
         "HST-Type": "CONTAINER_COMPONENT",
         "HST-Label": "NoMarkup container",
         "HST-XType": "HST.NoMarkup",
-        "HST-Component-Editable": "true",
         "uuid": "container-nomarkup"
       } -->
         <!-- {
           "HST-Type": "CONTAINER_ITEM_COMPONENT",
           "HST-Label": "component C",
-          "HST-Component-Editable": "true",
           "uuid": "cccc"
         } -->
         <div id="componentC">
@@ -185,7 +180,6 @@
         "HST-Type": "CONTAINER_COMPONENT",
         "HST-Label": "Empty container",
         "HST-XType": "HST.vBox",
-        "HST-Component-Editable": "true",
         "uuid": "container-empty"
       } -->
       <div id="container-empty" class="hst-container">
@@ -199,7 +193,6 @@
         "HST-Type": "CONTAINER_COMPONENT",
         "HST-Label": "Inherited container",
         "HST-XType": "HST.vBox",
-        "HST-Component-Editable": "true",
         "uuid": "container-inherited",
         "HST-Inherited": "true"
       } -->
@@ -208,7 +201,6 @@
           "HST-Type": "CONTAINER_ITEM_COMPONENT",
           "HST-Label": "Component with experiment",
           "HST-Render-Variant": "@1517391925$[\"and\",{\"country\":\"thenetherlands-1440145311193\"}]",
-          "HST-Component-Editable": "true",
           "uuid": "component-with-experiment",
           "Targeting-experiment-id": "1234",
           "Targeting-experiment-state": "RUNNING"
@@ -231,37 +223,11 @@
         "uuid": "container-inherited"
       } -->
 
-      <!-- {
-        "HST-Type": "CONTAINER_COMPONENT",
-        "HST-Label": "Un-editable container",
-        "HST-XType": "HST.vBox",
-        "HST-Component-Editable": "false",
-        "uuid": "container-invisible"
-      } -->
-      <div id="container-invisible" class="hst-container">
-        <!-- {
-          "HST-Type": "CONTAINER_ITEM_COMPONENT",
-          "HST-Label": "Un-editable Component",
-          "HST-Component-Editable": "false",
-          "uuid": "component-invisible",
-        } -->
-        <p>Not editable</p>
-        <!-- {
-          "HST-End": "true",
-          "uuid": "component-invisible"
-        } -->
-      </div>
-      <!-- {
-        "HST-End": "true",
-        "uuid": "container-invisible"
-      } -->
-
       <!-- Locked container (by other user) -->
       <!-- {
         "HST-Type": "CONTAINER_COMPONENT",
         "HST-Label": "vBox locked container",
         "HST-XType": "HST.vBox",
-        "HST-Component-Editable": "true",
         "uuid": "container-vbox-locked",
         "HST-LockedBy": "other user"
       } -->
@@ -334,7 +300,6 @@
         "uuid": "container-vbox-locked-self",
         "HST-LockedBy": "user",
         "HST-LockedBy-Current-User": "true",
-        "HST-Component-Editable": "true"
       } -->
       <div id="container-vbox-locked-self" class="hst-container">
         <p id="manage-content-scenario-14">
@@ -366,7 +331,6 @@
         "HST-Type": "CONTAINER_COMPONENT",
         "HST-Label": "vBox shared container",
         "HST-XType": "HST.vBox",
-        "HST-Component-Editable": "true",
         "HST-Shared": "true",
         "uuid": "container-shared"
       } -->
@@ -375,7 +339,6 @@
         <!-- {
           "HST-Type": "CONTAINER_ITEM_COMPONENT",
           "HST-Label": "component A",
-          "HST-Component-Editable": "true",
           "uuid": "component-in-shared-container"
         } -->
         <p>Shared text</p>
