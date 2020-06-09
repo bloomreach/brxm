@@ -59,12 +59,4 @@ describe('LinkEntity', () => {
       expect(link.isShared()).toBe(false);
     });
   });
-
-  describe('isVisible', () => {
-    it('should return true', () => {
-      const link = new LinkEntity({});
-
-      expect(link.isVisible()).toBe(true);
-    });
-  });
 });

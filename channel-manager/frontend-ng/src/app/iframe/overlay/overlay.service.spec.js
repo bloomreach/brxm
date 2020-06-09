@@ -227,10 +227,9 @@ describe('OverlayService', () => {
     await loadIframeFixture();
 
     // Total overlay elements
-    expect($document.find('.hippo-overlay > .hippo-overlay-element')).toHaveLength(28);
-
+    expect($document.find('.hippo-overlay > .hippo-overlay-element')).toHaveLength(27);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-container')).toHaveLength(6);
     expect($document.find('.hippo-overlay > .hippo-overlay-element-component')).toHaveLength(5);
-    expect($document.find('.hippo-overlay > .hippo-overlay-element-container')).toHaveLength(7);
     expect($document.find('.hippo-overlay > .hippo-overlay-element-menu-link')).toHaveLength(1);
     expect($document.find('.hippo-overlay > .hippo-overlay-element-manage-content-link')).toHaveLength(15);
     expect($document.find('.hst-fab')).toHaveLength(16);
@@ -280,25 +279,26 @@ describe('OverlayService', () => {
     const vboxContainerBox = $document.find('#container-vbox');
     expect(vboxContainerBox).toHaveClass('hippo-overlay-box-container-filled');
 
-    const vboxContainerOverlay = $document.find('.hippo-overlay-element-container').eq(0);
+    const containers = $document.find('.hippo-overlay-element-container');
+    const vboxContainerOverlay = containers.eq(0);
     expect(vboxContainerOverlay).not.toHaveClass('hippo-overlay-element-container-empty');
 
     const nomarkupContainerBox = $document.find('#container-nomarkup');
     expect(nomarkupContainerBox).toHaveClass('hippo-overlay-box-container-filled');
 
-    const nomarkupContainerOverlay = $document.find('.hippo-overlay-element-container').eq(1);
+    const nomarkupContainerOverlay = containers.eq(1);
     expect(nomarkupContainerOverlay).not.toHaveClass('hippo-overlay-element-container-empty');
 
     const emptyContainerBox = $document.find('#container-empty');
     expect(emptyContainerBox).not.toHaveClass('hippo-overlay-box-container-filled');
 
-    const emptyContainerOverlay = $document.find('.hippo-overlay-element-container').eq(2);
+    const emptyContainerOverlay = containers.eq(2);
     expect(emptyContainerOverlay).toHaveClass('hippo-overlay-element-container-empty');
 
-    const inheritedContainerOverlay = $document.find('.hippo-overlay-element-container').eq(3);
+    const inheritedContainerOverlay = containers.eq(3);
     expect(inheritedContainerOverlay).toHaveClass('hippo-overlay-element-container-disabled');
 
-    const sharedContainerOverlay = $document.find('.hippo-overlay-element-container').eq(6);
+    const sharedContainerOverlay = containers.eq(5);
     expect(sharedContainerOverlay).toHaveClass('hippo-overlay-element-container-readonly');
   });
 
@@ -315,7 +315,6 @@ describe('OverlayService', () => {
       <!-- {
         "HST-Type": "CONTAINER_ITEM_COMPONENT",
         "HST-Label": "component C",
-        "HST-Component-Editable": "true",
         "uuid": "cccc"
       } -->
       <!-- { "HST-End": "true", "uuid": "cccc" } -->
@@ -332,7 +331,7 @@ describe('OverlayService', () => {
     await loadIframeFixture();
 
     expect($document.find('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label')).toHaveLength(5);
-    expect($document.find('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label')).toHaveLength(7);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label')).toHaveLength(6);
     expect($document.find('.hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label')).toHaveLength(0);
 
     const emptyContainer = $document.find('.hippo-overlay-element-container').eq(2);
@@ -342,7 +341,7 @@ describe('OverlayService', () => {
   it('renders "shared" labels for structure elements that are marked with HST-Shared', async () => {
     await loadIframeFixture();
 
-    const container = $document.find('.hippo-overlay > .hippo-overlay-element-container').eq(6);
+    const container = $document.find('.hippo-overlay > .hippo-overlay-element-container').eq(5);
     const labelText = container.find('.hippo-overlay-label-text');
 
     expect(labelText.html()).toBe('vBox shared container SHARED_SUFFIX');
@@ -355,7 +354,7 @@ describe('OverlayService', () => {
     expect($document.find('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]'))
       .toHaveLength(5);
     expect($document.find('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]'))
-      .toHaveLength(7);
+      .toHaveLength(6);
     expect($document.find('.hippo-overlay-element-container:eq(2) .hippo-overlay-label').attr('data-qa-name'))
       .toBe('Empty container');
   });
@@ -441,7 +440,6 @@ describe('OverlayService', () => {
       <!-- {
         "HST-Type": "CONTAINER_ITEM_COMPONENT",
         "HST-Label": "component A",
-        "HST-Component-Editable": "true",
         "uuid": "aaaa",
         "Targeting-experiment-id": "567",
         "Targeting-experiment-state": "CREATED"
@@ -647,14 +645,13 @@ describe('OverlayService', () => {
 
     await loadIframeFixture();
 
-    expect($document.find('.hippo-overlay > .hippo-overlay-element')).toHaveLength(28);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element')).toHaveLength(27);
     expect($document.find('.hippo-overlay > .hippo-overlay-element-menu-link')).toHaveLength(1);
 
     const componentMarkupWithoutMenuLink = `
       <!-- {
         "HST-Type": "CONTAINER_ITEM_COMPONENT",
         "HST-Label": "component A",
-        "HST-Component-Editable": "true",
         "uuid": "aaaa"
       } -->
         <p id="markup-in-component-a">Markup in component A without menu link</p>
@@ -664,7 +661,7 @@ describe('OverlayService', () => {
     const componentA = PageStructureService.getPage().getComponentById('aaaa');
     await PageStructureService.updateComponent(componentA.getId(), componentMarkupWithoutMenuLink);
 
-    expect($document.find('.hippo-overlay > .hippo-overlay-element')).toHaveLength(27);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element')).toHaveLength(26);
     expect($document.find('.hippo-overlay > .hippo-overlay-element-menu-link')).toHaveLength(0);
   });
 
@@ -1151,20 +1148,19 @@ describe('OverlayService', () => {
     it('should render buttons to toggle between editing shared and local containers', () => {
       const shared = $document.find('.hippo-overlay-shared');
 
-      expect(shared).toHaveLength(7);
+      expect(shared).toHaveLength(6);
       expectDoubleButton(shared.eq(0), 'TOGGLE_PAGE_CONTAINERS');
       expectDoubleButton(shared.eq(1), 'TOGGLE_PAGE_CONTAINERS');
       expectSingleButton(shared.eq(2), 'TOGGLE_PAGE_CONTAINERS');
       expectDoubleButton(shared.eq(3), 'TOGGLE_PAGE_CONTAINERS');
       expectSingleButton(shared.eq(4), 'TOGGLE_PAGE_CONTAINERS');
-      expectSingleButton(shared.eq(5), 'TOGGLE_PAGE_CONTAINERS');
-      expectDoubleButton(shared.eq(6), 'TOGGLE_SHARED_CONTAINERS');
+      expectDoubleButton(shared.eq(5), 'TOGGLE_SHARED_CONTAINERS');
     });
 
     it('should toggle "readonly" state between shared and local containers when clicking the toggle button', () => {
       const containers = $document.find('.hippo-overlay-element-container');
       const localContainerOverlay = containers.eq(0);
-      const sharedContainerOverlay = containers.eq(6);
+      const sharedContainerOverlay = containers.eq(5);
 
       expect(localContainerOverlay).not.toHaveClass('hippo-overlay-element-container-readonly');
       expect(sharedContainerOverlay).toHaveClass('hippo-overlay-element-container-readonly');

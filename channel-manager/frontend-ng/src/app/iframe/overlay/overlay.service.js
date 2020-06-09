@@ -238,7 +238,6 @@ export default class OverlayService {
     const overlays = new Set();
 
     this._getAllStructureElements()
-      .filter(element => element.isVisible())
       .forEach((element) => {
         this._syncElement(element);
 

@@ -16,7 +16,6 @@
 
 // Should match HST's org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.
 export const CHANNEL_ID = 'HST-Channel-Id';
-export const COMPONENT_EDITABLE = 'HST-Component-Editable';
 export const CONTEXT_PATH = 'HST-Context-Path';
 export const DEFAULT_RENDER_VARIANT = 'hippo-default';
 export const END_MARKER = 'HST-End';
