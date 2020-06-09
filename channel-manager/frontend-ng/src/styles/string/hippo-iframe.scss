@@ -82,8 +82,20 @@
     }
 
     &-readonly {
-      border: 1px dashed $bloomreach-gray-38;
+      border: 1px solid $bloomreach-gray-darker;
       pointer-events: auto;
+
+      &::before {
+        background: transparent;
+        border: 1px dashed $bloomreach-white;
+        content: '';
+        display: block;
+        height: calc(100% + 2px);
+        left: -1px;
+        position: absolute;
+        top: -1px;
+        width: calc(100% + 2px);
+      }
 
       &:hover {
         background-color: rgba($bloomreach-white, .7);
@@ -492,7 +504,7 @@
 
   &:hover,
   &:focus:hover {
-    background-color: #737373;
+    background-color: $bloomreach-gray-dark;
     border-color: $bloomreach-gray-38;
     color: $bloomreach-white;
   }
