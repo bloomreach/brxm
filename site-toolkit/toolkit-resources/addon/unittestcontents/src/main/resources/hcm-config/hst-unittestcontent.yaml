@@ -214,7 +214,7 @@ definitions:
               jcr:mixinTypes: ['mix:referenceable']
               /expPage1:
                 jcr:primaryType: unittestproject:newspage
-                jcr:mixinTypes: ['mix:versionable', 'hst:page']
+                jcr:mixinTypes: ['mix:versionable', 'hst:xpage']
                 hippo:availability: [live, preview]
                 hippostd:holder: admin
                 hippostd:state: published
@@ -229,7 +229,7 @@ definitions:
                   jcr:primaryType: hippostd:html
                   hippostd:content: My Experience Page 1
                 /hst:page:
-                  jcr:primaryType: hst:component
+                  jcr:primaryType: hst:page
                   hst:referencecomponent: hst:abstractpages/basepage
                   /body:
                     jcr:primaryType: hst:component
@@ -249,7 +249,7 @@ definitions:
               jcr:mixinTypes: ['mix:referenceable']
               /expPage2:
                 jcr:primaryType: unittestproject:newspage
-                jcr:mixinTypes: ['mix:versionable', 'hst:page']
+                jcr:mixinTypes: ['mix:versionable', 'hst:xpage']
                 hippo:availability: [preview]
                 hippostd:holder: admin
                 hippostd:state: unpublished
@@ -264,7 +264,7 @@ definitions:
                   jcr:primaryType: hippostd:html
                   hippostd:content: My Experience Page 2
                 /hst:page:
-                  jcr:primaryType: hst:component
+                  jcr:primaryType: hst:page
                   hst:referencecomponent: hst:abstractpages/basepage
                   /body:
                     jcr:primaryType: hst:component
@@ -361,7 +361,7 @@ definitions:
                   jcr:mixinTypes: ['mix:referenceable']
                   /articleAsExpPage:
                     jcr:primaryType: unittestproject:newspage
-                    jcr:mixinTypes: ['mix:versionable', 'hst:page']
+                    jcr:mixinTypes: ['mix:versionable', 'hst:xpage']
                     hippo:availability: [live, preview]
                     hippostd:holder: admin
                     hippostd:state: published
@@ -376,7 +376,7 @@ definitions:
                       jcr:primaryType: hippostd:html
                       hippostd:content: My articleAsExpPage Page 1
                     /hst:page:
-                      jcr:primaryType: hst:component
+                      jcr:primaryType: hst:page
                       hst:referencecomponent: hst:abstractpages/basepage
                       /body:
                         jcr:primaryType: hst:component

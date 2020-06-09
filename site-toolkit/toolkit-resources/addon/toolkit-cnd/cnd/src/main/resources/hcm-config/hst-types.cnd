@@ -480,5 +480,9 @@
 [hst:formdatapayload] mixin
 - hst:payload (string)
 
-[hst:page] > hippostdpubwf:auditTrace, hippostd:skipdraft mixin
-+ hst:page (hst:component) = hst:component
+
+[hst:page] > hst:component, hippostd:skipdraft
+
+[hst:xpage] > hippostdpubwf:audittrace mixin
++ hst:page (hst:page) = hst:page
+
