@@ -764,7 +764,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.canonicalIdentifier = child.canonicalIdentifier;
         copy.componentFilterTag = child.componentFilterTag;
         copy.inherited = child.inherited;
-        copy.shared = child.shared;
+        // a copy is always shared
+        copy.shared = true;
         copy.standalone = child.standalone;
         copy.async = child.async;
         copy.asyncMode = child.asyncMode;
