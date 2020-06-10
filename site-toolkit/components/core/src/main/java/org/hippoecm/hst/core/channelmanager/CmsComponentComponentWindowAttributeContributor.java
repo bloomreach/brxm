@@ -66,10 +66,16 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
             if (compConfig.isExperiencePageComponent()) {
 
                 populatingAttributesMap.put(HST_EXPERIENCE_PAGE_COMPONENT, "true");
-                // user has right role, now check if no-one else is editing the draft
-                // since user is in right role, use has for sure read-access!
-                final Node hstComponent = cmsUser.getNodeByIdentifier(compConfig.getCanonicalIdentifier());
-                final Node handle = getHandle(hstComponent);
+                // Check if no-one else is editing the draft
+                final String handlePath = requestContext.getContentBean().getNode().getParent().getPath();
+                // make sure to get the handle node VIA the correct cms user : the one via the requestContext is from a
+                // jcr session combination of preview user + cms user session
+                final Node handle = cmsUser.getNode(handlePath);
+                if (!handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    log.warn("Expected a handle node but found '{}' of type '{}'", handle.getPath(),
+                            handle.getPrimaryNodeType().getName());
+                    return;
+                }
                 final Workflow documentWorkflow = cmsUser.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
                 final Map<String, Serializable> hints = documentWorkflow.hints();
                 if (FALSE.equals(hints.get(obtainEditableInstance().getAction()))) {
@@ -133,27 +139,6 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
             populatingAttributesMap.put(ChannelManagerConstants.HST_LAST_MODIFIED, String.valueOf(compConfig.getLastModified().getTimeInMillis()));
         }
 
-    }
-
-    /**
-     * @return the ancestor handle node a RepositoryException if no handle found as ancestor
-     */
-    private Node getHandle(final Node handleOrDescendant) throws RepositoryException {
-        return getHandle(handleOrDescendant, handleOrDescendant);
-    }
-
-    /**
-     * @return the ancestor handle node a RepositoryException if no handle found as ancestor
-     */
-    private Node getHandle(final Node origin, final Node current) throws RepositoryException {
-        if (current.isNodeType(HippoNodeType.NT_HANDLE)) {
-            return current;
-        }
-        try {
-            return getHandle(current.getParent());
-        } catch (RepositoryException e) {
-            throw new RepositoryException(String.format("Could not find a handle node ancestor for '%s'", origin.getPath()));
-        }
     }
 
     @Override
