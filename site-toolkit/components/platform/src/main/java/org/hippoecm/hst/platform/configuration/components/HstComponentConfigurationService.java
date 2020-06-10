@@ -40,6 +40,9 @@ import org.hippoecm.hst.core.internal.StringPool;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_PAGE;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
 
@@ -256,33 +259,34 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         this.componentClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
 
-        if (HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())) {
+        final String nodeTypeName = node.getNodeTypeName();
+        if (HstNodeTypes.NODETYPE_HST_COMPONENT.equals(nodeTypeName) || NODETYPE_HST_PAGE.equals(nodeTypeName)) {
             type = Type.COMPONENT;
-        } else if (HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())) {
+        } else if (NODETYPE_HST_CONTAINERCOMPONENT.equals(nodeTypeName)) {
             type = Type.CONTAINER_COMPONENT;
             if (componentClassName == null) {
                 log.debug("Setting componentClassName to '{}' for a component of type '{}' because there is no explicit componentClassName configured on component '{}'",
-                        new String[]{StandardContainerComponent.class.getName(), HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, id});
+                        new String[]{StandardContainerComponent.class.getName(), NODETYPE_HST_CONTAINERCOMPONENT, id});
                 componentClassName = StandardContainerComponent.class.getName();
             } else if (OLD_MOVED_BUILT_IN_STANDARD_CONTAINER_COMPONENT_CLASS.equals(componentClassName)) {
                 log.warn("For Component '{}' the configured property '{}' points to old location '{}'. Remove the " +
                         "property completely because it is the default container component class anyway. Moved class '{}' " +
-                                "will be used instead", id, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,
+                                "will be used instead", id, NODETYPE_HST_CONTAINERCOMPONENT,
                         "org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent", StandardContainerComponent.class.getName());
                 componentClassName = StandardContainerComponent.class.getName();
             }
-        } else if (HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
+        } else if (NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(nodeTypeName)) {
             type = Type.CONTAINER_ITEM_COMPONENT;
             componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
             if (!isCatalogItem && (parent == null || !(Type.CONTAINER_COMPONENT.equals(parent.getComponentType())))) {
                 log.warn("Component of type '{}' at '{}' is not configured below a '{}' node. This is not allowed. " +
                                 "Either change the primary nodetype to '{}' or '{}' or move the node below a node of type '{}'.",
-                        new String[]{HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT, canonicalStoredLocation,
-                                HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,
-                                HstNodeTypes.NODETYPE_HST_COMPONENT, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT});
+                        new String[]{NODETYPE_HST_CONTAINERITEMCOMPONENT, canonicalStoredLocation,
+                                NODETYPE_HST_CONTAINERCOMPONENT, NODETYPE_HST_CONTAINERCOMPONENT,
+                                HstNodeTypes.NODETYPE_HST_COMPONENT, NODETYPE_HST_CONTAINERCOMPONENT});
             }
         } else {
-            throw new ModelLoadingException("Unknown componentType '" + node.getNodeTypeName() + "' for '" + canonicalStoredLocation + "'. Cannot build configuration.");
+            throw new ModelLoadingException("Unknown componentType '" + nodeTypeName + "' for '" + canonicalStoredLocation + "'. Cannot build configuration.");
         }
 
         this.parametersInfoClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME));
@@ -298,7 +302,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             } else if (type == Type.CONTAINER_ITEM_COMPONENT) {
                 log.warn("Component '{}' is not allowed to have a '{}' property as this is not supported for " +
                         "components of type '{}'. Setting reference to null.", new String[]{canonicalStoredLocation, HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT,
-                        HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT});
+                        NODETYPE_HST_CONTAINERITEMCOMPONENT});
                 this.referenceComponent = null;
             }
         }
@@ -451,10 +455,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     private boolean isHstComponentOrReferenceType(final HstNode node) {
-        return HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
-                || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
-                || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())
-                || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(node.getNodeTypeName());
+        final String nodeTypeName = node.getNodeTypeName();
+        return HstNodeTypes.NODETYPE_HST_COMPONENT.equals(nodeTypeName)
+                || NODETYPE_HST_CONTAINERCOMPONENT.equals(nodeTypeName)
+                || NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(nodeTypeName)
+                || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(nodeTypeName);
     }
 
     private boolean isNotAllowedInPrototype(final HstNode node) {
@@ -496,7 +501,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                                 HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS, child.getValueProvider().getPath()});
                 return null;
             }
-            if (!HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(refNode.getNodeTypeName())) {
+            if (!NODETYPE_HST_CONTAINERCOMPONENT.equals(refNode.getNodeTypeName())) {
                 log.warn("Component '{}' contains an reference '{}' that does not point to a node of type '{}'. That is not allowed. " +
                                 "Component '{}' will be ignored.",
                         new String[]{child.getValueProvider().getPath(), reference,
