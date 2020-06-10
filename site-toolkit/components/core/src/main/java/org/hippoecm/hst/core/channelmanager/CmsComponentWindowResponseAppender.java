@@ -78,6 +78,9 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
         final boolean inRole;
 
+        // note that EVEN if the backing JCR node for compConfig is from version history, because we decorate
+        // the JCR Node to HippoBeanFrozenNode in ObjectConverterImpl.getActualNode(), the #getPath is decorated
+        // to always return a workspace path! Hence #getCanonicalStoredLocation gives right location
         if (compConfig.isExperiencePageComponent()) {
             // check whether cmsUser has the right role on the xpage component
             inRole = isInRole(cmsUser, compConfig.getCanonicalStoredLocation(), XPAGE_REQUIRED_PRIVILEGE_NAME);
