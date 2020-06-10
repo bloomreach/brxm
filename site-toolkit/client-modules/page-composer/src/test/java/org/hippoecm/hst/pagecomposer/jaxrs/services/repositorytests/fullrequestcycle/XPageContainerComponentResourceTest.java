@@ -75,15 +75,6 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         failCreateAssertions(mountId, catalogId, containerId);
 
-        final Session admin = createSession(ADMIN_CREDENTIALS);
-        DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
-        documentWorkflow.obtainEditableInstance();
-
-        final Node draft = getVariant(handle, "draft");
-
-        final String containerIdDraft = getNodeId(draft.getPath() + "/hst:page/body/container");
-
-        failCreateAssertions(mountId, containerIdDraft, containerId);
     }
 
     private void failCreateAssertions(final String mountId, final String catalogId, final String containerId) throws IOException, ServletException {
