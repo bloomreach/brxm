@@ -52,7 +52,6 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getDocumentWorkflow;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getInternalWorkflowSession;
@@ -265,8 +264,8 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
      * argument is 0, then the versionStamp check is omitted
      */
     private Node getContainerItem(final long versionStamp, final Session session) throws RepositoryException {
-        final Node containerItem = pageComposerContextService.getRequestConfigNodeById(pageComposerContextService.getRequestConfigIdentifier(),
-                NODETYPE_HST_CONTAINERITEMCOMPONENT, session);
+        // note this can be a frozen node
+        final Node containerItem = session.getNodeByIdentifier(pageComposerContextService.getRequestConfigIdentifier());
 
         final Node container = containerItem.getParent();
         validateTimestamp(versionStamp, container);
