@@ -100,7 +100,6 @@
     <json-lib.version>2.4</json-lib.version>
     <easymock.version>4.0.2</easymock.version>
     <powermock.version>2.0.2</powermock.version>
-    <restassured.version>4.1.2</restassured.version>
     <decentxml.version>1.4</decentxml.version>
     <commons-scxml2.version>2.0-M1</commons-scxml2.version>
     <mysql.version>8.0.17</mysql.version>
