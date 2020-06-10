@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -95,19 +96,26 @@ public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProc
                 }
                 return Optional.empty();
             } else if (getPageComposerContextService().isExperiencePageRequest()) {
-                // for experience page, nodetype can only be hst:abstractcomponent (or subtype), otherwise IllegalStateException
-                // is thrown
-                // we know for sure that the user is allowed to read the node, otherwise it would not have passed the
-                // CXFJaxrsHstConfigService
-                final Node requestConfigNode = getPageComposerContextService().getRequestConfigNode("hst:abstractcomponent");
+                // check the privileges on the handle node for the experience page to check whether the user has the
+                // right privilege
 
-                final Privilege[] privileges = session.getAccessControlManager().getPrivileges(requestConfigNode.getPath());
-                final Set<String> intersection = getIntersection(privilegesAllowedSet, privileges);
-                if (intersection.isEmpty()) {
-                    return Optional.of(String.format("Method '%s' is not allowed to be invoked since current user does not have " +
-                            "the right privileges on path '%s'", method.getName(), absPath));
+                final Session cmsUser = getPageComposerContextService().getRequestContext().getSession();
+                final String uuid = getPageComposerContextService().getExperiencePageHandleUUID();
+                try {
+                    final Node handle = cmsUser.getNodeByIdentifier(uuid);
+
+                    final Privilege[] privileges = session.getAccessControlManager().getPrivileges(handle.getPath());
+                    final Set<String> intersection = getIntersection(privilegesAllowedSet, privileges);
+                    if (intersection.isEmpty()) {
+                        return Optional.of(String.format("Method '%s' is not allowed to be invoked since current user does not have " +
+                                "the right privileges on path '%s'", method.getName(), absPath));
+                    }
+                    return Optional.empty();
+                } catch (ItemNotFoundException e) {
+                    return Optional.of(String.format("Method '%s' is not allowed to be invoked since current user does " +
+                                    "not have read access on the document",
+                            method.getName(), privilegesAllowed));
                 }
-                return Optional.empty();
             } else {
                 return isForbiddenOperationContext(exchange, method, privilegesAllowedSet);
             }

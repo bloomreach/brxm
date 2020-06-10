@@ -17,7 +17,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequest
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,6 @@ import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
@@ -51,8 +49,10 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static org.apache.jackrabbit.JcrConstants.NT_FROZENNODE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES;
-import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -75,6 +75,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         getComponentItemAs(AUTHOR_CREDENTIALS, mountId, componentItemId);
     }
 
+
     private void getComponentItemAs(final SimpleCredentials creds, final String mountId, final String componentItemId) throws IOException, ServletException {
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + componentItemId + "./hippo-default/en", null, "GET");
@@ -96,6 +97,36 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         assertEquals("/content/document", propertyRepresentation.get("value"));
 
     }
+
+    @Test
+    public void get_container_item_of_branched_xpage_from_version_history() throws Exception {
+
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+        final DocumentWorkflow workflow = (DocumentWorkflow) admin.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
+
+        // now the master branch is in version history!
+        workflow.branch("foo", "Foo");
+
+        assertThat(unpublishedExpPageVariant.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString())
+                .isEqualTo("foo");
+
+        // get the master frozen container item for banner
+        final Node masterVersion = admin.getWorkspace().getVersionManager().getBaseVersion(unpublishedExpPageVariant.getPath()).getFrozenNode();
+
+        assertThat(masterVersion.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
+
+        final Node frozenBannerComponent = masterVersion.getNode("hst:page/body/container/banner");
+
+        assertTrue(frozenBannerComponent.isNodeType(NT_FROZENNODE));
+
+        getComponentItemAs(ADMIN_CREDENTIALS, mountId, frozenBannerComponent.getIdentifier());
+        getComponentItemAs(EDITOR_CREDENTIALS, mountId, frozenBannerComponent.getIdentifier());
+        // author is also allowed to do a GET on XPageContainerItemComponentResource.getVariant()
+        getComponentItemAs(AUTHOR_CREDENTIALS, mountId, frozenBannerComponent.getIdentifier());
+    }
+
+
 
     @Test
     public void get_container_item_published_variant_not_allowed() throws Exception {
@@ -153,7 +184,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
             final String[] variants = JcrUtils.getMultipleStringProperty(session.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner"),
                     COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES, null);
 
-            Assertions.assertThat(variants)
+            assertThat(variants)
                     .as("Expected the default (empty) variant and 'variant1' to be present")
                     .containsExactly("", "variant1");
 
