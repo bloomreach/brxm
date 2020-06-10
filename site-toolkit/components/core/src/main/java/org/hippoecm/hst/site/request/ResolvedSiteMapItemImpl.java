@@ -22,7 +22,6 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -35,12 +34,11 @@ import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.experiencepage.ExperiencePageService;
 import org.hippoecm.hst.experiencepage.ExperiencePageLoadingException;
 import org.hippoecm.hst.util.PathUtils;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_PAGE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_XPAGE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGE;
 
 /**
@@ -190,7 +188,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
 
                 final Node node = contentBean.getNode();
                 try {
-                    if (node.isNodeType(MIXINTYPE_HST_PAGE) && node.hasNode(NODENAME_HST_PAGE)) {
+                    if (node.isNodeType(MIXINTYPE_HST_XPAGE) && node.hasNode(NODENAME_HST_PAGE)) {
                         // experience page!
                         final Node page = node.getNode(NODENAME_HST_PAGE);
                         // this is a node of type hst:component, fetch the hst component configuration for it
