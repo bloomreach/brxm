@@ -53,6 +53,7 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_FROZENUUID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_MOUNT;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.EDITING_HST_MODEL_LINK_CREATOR_ATTR;
@@ -60,6 +61,8 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextSe
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
+import static org.onehippo.repository.util.JcrConstants.JCR_FROZEN_PRIMARY_TYPE;
+import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 
 public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
@@ -195,7 +198,12 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             builder.append(HippoNodeType.NT_DOCUMENT);
         } else {
-            builder.append(node.getPrimaryNodeType().getName());
+            if (node.isNodeType(NT_FROZEN_NODE)) {
+                // map to the nodetype of the 'non-frozen' version
+                builder.append(node.getProperty(JCR_FROZEN_PRIMARY_TYPE).getString());
+            } else {
+                builder.append(node.getPrimaryNodeType().getName());
+            }
         }
         builder.append("/");
         final String optionalPathSuffix = requestContext.getPathSuffix();
@@ -207,17 +215,43 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
     /**
      * if belongs to XPage, returns the unpublished variant. If it is an XPage but there is no unpublished variant,
-     * we throw an ClientException for now, see CMS-13262
+     * we throw an ClientException for now, see CMS-13262.
+     * Note that the {@code node} can also be a frozen XPage node: In that case we try to get hold of the
+     * unpubished variant from the frozen node.
      */
     private Node getXPageUnpublishedVariant(Node node) throws RepositoryException {
         if (node.getSession().getRootNode().isSame(node)) {
             return null;
         }
 
+        if (node.isNodeType(NT_FROZEN_NODE)) {
+            Node current = node;
+            while (current.getParent().isNodeType(NT_FROZEN_NODE)) {
+                current = current.getParent();
+            }
+            // expected that current is now the frozen node of the unpublished variant
+            final String workspaceUUID = current.getProperty(JCR_FROZENUUID).getString();
+            try {
+                final Node unpublished = node.getSession().getNodeByIdentifier(workspaceUUID);
+                if (unpublished.getParent().isNodeType(HippoNodeType.NT_HANDLE) &&
+                        UNPUBLISHED.equals(JcrUtils.getStringProperty(unpublished, HIPPOSTD_STATE, null))) {
+                    return unpublished;
+                } else {
+                    throw new ClientException(String.format("Could not find unpublished variant of Experience Page for '%s'.",
+                            node.getPath()), ClientError.INVALID_UUID);
+                }
+            } catch (ItemNotFoundException e) {
+                throw new ClientException(String.format("Could not find unpublished variant workspace node for versioned node '%s'",
+                        node.getPath()), ClientError.INVALID_UUID);
+            }
+
+        }
+
         if (node.getName().equals(HstNodeTypes.NODENAME_HST_PAGE) && node.getParent().isNodeType(HstNodeTypes.MIXINTYPE_HST_XPAGE)) {
             // found hst:page, parent must be hippo:document and must be unpublished variant
             Node unpublished = node.getParent();
-            if (UNPUBLISHED.equals(JcrUtils.getStringProperty(unpublished, HIPPOSTD_STATE, null))) {
+            if (unpublished.getParent().isNodeType(HippoNodeType.NT_HANDLE) &&
+                    UNPUBLISHED.equals(JcrUtils.getStringProperty(unpublished, HIPPOSTD_STATE, null))) {
                 return unpublished;
             } else {
                 throw new ClientException(String.format("'%s' Does not belong to unpublished variant of Experience Page.",

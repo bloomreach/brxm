@@ -45,6 +45,7 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
     protected final static String EXPERIENCE_PAGE_2_HANDLE_PATH = "/unittestcontent/documents/unittestproject/experiences/expPage2";
 
     protected Node handle;
+    protected HippoSession admin;
     protected Node publishedExpPageVariant;
     protected Node unpublishedExpPageVariant;
 
@@ -52,14 +53,14 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
     public void setUp() throws Exception {
         super.setUp();
 
-        Session session = createSession(ADMIN_CREDENTIALS);
+        admin = (HippoSession)createSession(ADMIN_CREDENTIALS);
         // backup experience Page
-        JcrUtils.copy(session, EXPERIENCE_PAGE_HANDLE_PATH, "/expPage1");
+        JcrUtils.copy(admin, EXPERIENCE_PAGE_HANDLE_PATH, "/expPage1");
 
         // make sure the unpublished variant exists (just by depublishing for now....)
-        final WorkflowManager workflowManager = ((HippoSession) session).getWorkspace().getWorkflowManager();
+        final WorkflowManager workflowManager = ((HippoSession) admin).getWorkspace().getWorkflowManager();
 
-        handle = session.getNode(EXPERIENCE_PAGE_HANDLE_PATH);
+        handle = admin.getNode(EXPERIENCE_PAGE_HANDLE_PATH);
         final DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
         documentWorkflow.depublish();
         // and publish again such that there is a live variant
@@ -75,9 +76,9 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
                    "hst:componentclassname", "org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent",
         };
 
-        RepositoryTestCase.build(content, session);
+        RepositoryTestCase.build(content, admin);
 
-        session.save();
+        admin.save();
 
     }
 
@@ -93,25 +94,24 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
     @After
     public void tearDown() throws Exception {
         try {
-            final Session session = createSession("admin", "admin");
 
-            if (session.nodeExists("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage")) {
-                session.getNode("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage").remove();
+            if (admin.nodeExists("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage")) {
+                admin.getNode("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage").remove();
             } else {
                 // hst config backup has already been restored potentially, see for example
                 // XPageContainerComponentResourceTest#move_container_item_from_hst_config_to_XPage_is_not_allowed()
             }
             // restore experience page
-            if (session.nodeExists(EXPERIENCE_PAGE_HANDLE_PATH)) {
-                session.getNode(EXPERIENCE_PAGE_HANDLE_PATH).remove();
+            if (admin.nodeExists(EXPERIENCE_PAGE_HANDLE_PATH)) {
+                admin.getNode(EXPERIENCE_PAGE_HANDLE_PATH).remove();
             }
-            if (session.nodeExists("/expPage1")) {
-                session.move("/expPage1", EXPERIENCE_PAGE_HANDLE_PATH);
+            if (admin.nodeExists("/expPage1")) {
+                admin.move("/expPage1", EXPERIENCE_PAGE_HANDLE_PATH);
             }
 
-            session.save();
-            session.logout();
+            admin.save();
         } finally {
+            admin.logout();
             super.tearDown();
         }
     }
