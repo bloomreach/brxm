@@ -70,6 +70,16 @@
             <link>https://javadoc.onehippo.org/${javadoc.base.version}/hippo-cms-commons/</link>
             <link>https://javadoc.onehippo.org/${javadoc.base.version}/hippo-services-api/</link>
           </links>
+          <offlineLinks>
+            <offlineLink>
+              <url>http://javadoc.onehippo.org/${javadoc.base.version}/hippo-cms-commons/</url>
+              <location>${project.basedir}/../../commons/target/site/apidocs</location>
+            </offlineLink>
+            <offlineLink>
+              <url>http://javadoc.onehippo.org/${javadoc.base.version}/hippo-services-api/</url>
+              <location>${project.basedir}/../../services-api/target/site/apidocs</location>
+            </offlineLink>
+          </offlineLinks>
         </configuration>
       </plugin>
     </plugins>
