@@ -219,17 +219,22 @@ class PageStructureService {
   addComponentToContainer(catalogComponent, container, nextComponentId) {
     return this.HstService.addHstComponent(catalogComponent, container.getId(), nextComponentId)
       .then(
-        // TODO: handle error when rendering container failed
-        newComponentJson => this.ChannelService.checkChanges().then(() => newComponentJson.id),
+        (response) => {
+          this.ChannelService.checkChanges();
+          return {
+            reloadRequired: response.reloadRequired,
+            newComponentId: response.data.id,
+          };
+        },
         (errorResponse) => {
-          const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED'
+          const errorKey = errorResponse.data.error === 'ITEM_ALREADY_LOCKED'
             ? 'ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED'
             : 'ERROR_ADD_COMPONENT';
-          const params = errorResponse.parameterMap;
+          const params = errorResponse.data.parameterMap;
           params.component = catalogComponent.name;
           this.FeedbackService.showError(errorKey, params);
 
-          return this.$q.reject();
+          return this.$q.reject(errorResponse.message);
         },
       );
   }
