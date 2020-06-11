@@ -573,13 +573,35 @@ describe('PageStructureService', () => {
     });
 
     it('uses the HstService to add a new catalog component to the backend', (done) => {
-      spyOn(HstService, 'addHstComponent').and.returnValue(
-        $q.resolve({ id: 'new-component' }),
-      );
+      spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({
+        reloadRequired: false,
+        data: {
+          id: 'new-component',
+        },
+      }));
+
+      PageStructureService.addComponentToContainer(component, container)
+        .then(({ reloadRequired, newComponentId }) => {
+          expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
+          expect(reloadRequired).toBe(false);
+          expect(newComponentId).toBe('new-component');
+          done();
+        });
+
+      $rootScope.$digest();
+    });
+
+    it('checks changes after adding a new component to a container successfully', (done) => {
+      spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({
+        reloadRequired: false,
+        data: {
+          id: 'new-component',
+        },
+      }));
 
       PageStructureService.addComponentToContainer(component, container)
         .then(() => {
-          expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
+          expect(ChannelService.checkChanges).toHaveBeenCalled();
           done();
         });
 
@@ -590,16 +612,20 @@ describe('PageStructureService', () => {
       spyOn(FeedbackService, 'showError');
       spyOn(HstService, 'addHstComponent').and.returnValue(
         $q.reject({
-          error: 'cafebabe-error-key',
-          parameterMap: {},
+          message: 'error-message',
+          data: {
+            error: 'cafebabe-error-key',
+            parameterMap: {},
+          },
         }),
       );
 
       PageStructureService.addComponentToContainer(component, container)
-        .catch(() => {
+        .catch((errorMessage) => {
           expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', {
             component: 'Mock Component',
           });
+          expect(errorMessage).toBe('error-message');
           done();
         });
 
@@ -610,36 +636,29 @@ describe('PageStructureService', () => {
       spyOn(FeedbackService, 'showError');
       spyOn(HstService, 'addHstComponent').and.returnValue(
         $q.reject({
-          error: 'ITEM_ALREADY_LOCKED',
-          parameterMap: {
-            lockedBy: 'another-user',
-            lockedOn: 1234,
+          message: 'error-message',
+          data: {
+            error: 'ITEM_ALREADY_LOCKED',
+            parameterMap: {
+              lockedBy: 'another-user',
+              lockedOn: 1234,
+            },
           },
         }),
       );
 
-      PageStructureService.addComponentToContainer(component, container);
-      $rootScope.$digest();
-
-      expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED', {
-        lockedBy: 'another-user',
-        lockedOn: 1234,
-        component: 'Mock Component',
-      });
-      done();
-    });
-
-    it('checks changes after adding a new component to a container successfully', (done) => {
-      spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({ id: 'newUuid' }));
-
       PageStructureService.addComponentToContainer(component, container)
-        .then((newComponentId) => {
+        .catch((errorMessage) => {
           expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
-          expect(ChannelService.checkChanges).toHaveBeenCalled();
-          expect(newComponentId).toEqual('newUuid');
+          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED', {
+            lockedBy: 'another-user',
+            lockedOn: 1234,
+            component: 'Mock Component',
+          });
+          expect(errorMessage).toBe('error-message');
           done();
         });
+
       $rootScope.$digest();
     });
   });
