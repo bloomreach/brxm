@@ -256,8 +256,13 @@ class PageStructureService {
     // last, record a channel change. The caller is responsible for re-rendering the changed container(s)
     // so their meta-data is updated and we're sure they look right
     return this.$q.all(backendCallPromises)
-      .then(() => this.ChannelService.checkChanges())
-      .then(() => changedContainers)
+      .then((responses) => {
+        this.ChannelService.checkChanges();
+        return {
+          reloadRequired: responses.some(response => response.reloadRequired),
+          changedContainers,
+        };
+      })
       .catch(() => this.FeedbackService.showError('ERROR_MOVE_COMPONENT_FAILED', {
         component: component.getLabel(),
       }));
