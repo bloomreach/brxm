@@ -36,6 +36,7 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerItemComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.hippoecm.hst.site.HstServices;
@@ -43,6 +44,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -352,7 +354,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
     }
 
     @Test
-    public void delete_non_existing_variant_is_a_bas_request() throws Exception {
+    public void delete_non_existing_variant_is_a_bad_request() throws Exception {
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
@@ -362,9 +364,11 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
                 "http", "localhost", "/_rp/" + componentItemId + "./non-existing", null, "DELETE");
 
         // Do it as author which : author should be allowed
-        final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+        try (Log4jInterceptor ignore = Log4jInterceptor.onWarn().deny(XPageContainerItemComponentResource.class).build()) {
+            final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        }
 
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
 
     }
 
