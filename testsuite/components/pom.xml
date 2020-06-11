@@ -75,12 +75,6 @@
       <artifactId>commons-lang</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-extensions</artifactId>
-      <version>1.4.16</version>
-    </dependency>
-
     <!-- testsuite dependencies -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
