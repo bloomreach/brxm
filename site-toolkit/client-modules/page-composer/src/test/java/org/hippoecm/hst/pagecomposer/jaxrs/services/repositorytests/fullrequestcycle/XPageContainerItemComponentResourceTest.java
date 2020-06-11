@@ -65,9 +65,9 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
     @Test
     public void get_container_item() throws Exception {
 
-        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String componentItemId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
 
         getComponentItemAs(ADMIN_CREDENTIALS, mountId, componentItemId);
         getComponentItemAs(EDITOR_CREDENTIALS, mountId, componentItemId);
@@ -101,7 +101,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
     @Test
     public void get_container_item_of_branched_xpage_from_version_history() throws Exception {
 
-        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
         final DocumentWorkflow workflow = (DocumentWorkflow) admin.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
 
@@ -127,13 +127,12 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
     }
 
 
-
     @Test
     public void get_container_item_published_variant_not_allowed() throws Exception {
 
-        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String componentItemId = getNodeId(publishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, publishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + componentItemId + "./hippo-default/en", null, "GET");
@@ -156,96 +155,87 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
     }
 
     private void expectationsRetainingVariant(final String[] retainVariants) throws RepositoryException, IOException, ServletException, WorkflowException {
-        final Session session = createSession(ADMIN_CREDENTIALS);
 
-        try {
-            final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final String componentItemId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
 
-            final RequestResponseMock requestResponse = mockGetRequestResponse(
-                    "http", "localhost", "/_rp/" + componentItemId, null, "POST");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + componentItemId, null, "POST");
 
 
-            requestResponse.getRequest().setContent(objectMapper.writeValueAsBytes(retainVariants));
-            requestResponse.getRequest().setContentType("application/json;charset=UTF-8");
+        requestResponse.getRequest().setContent(objectMapper.writeValueAsBytes(retainVariants));
+        requestResponse.getRequest().setContentType("application/json;charset=UTF-8");
 
-            // Do it as author which : author should be allowed
-            final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+        // Do it as author which : author should be allowed
+        final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
 
-            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-            // assert container never locked for XPage, and not publishable since it did NOT change
-            assertFalse("XPage container should never get locked!!",
-                    session.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container").hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        // assert container never locked for XPage, and not publishable since it did NOT change
+        assertFalse("XPage container should never get locked!!",
+                admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container").hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
 
-            session.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner").getProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES);
+        admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner").getProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES);
 
-            final String[] variants = JcrUtils.getMultipleStringProperty(session.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner"),
-                    COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES, null);
+        final String[] variants = JcrUtils.getMultipleStringProperty(admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner"),
+                COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES, null);
 
-            assertThat(variants)
-                    .as("Expected the default (empty) variant and 'variant1' to be present")
-                    .containsExactly("", "variant1");
+        assertThat(variants)
+                .as("Expected the default (empty) variant and 'variant1' to be present")
+                .containsExactly("", "variant1");
 
 
-            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(session);
-            assertEquals("Expected no changes because retained all the variants",
-                    FALSE, documentWorkflow.hints().get("publish"));
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
+        assertEquals("Expected no changes because retained all the variants",
+                FALSE, documentWorkflow.hints().get("publish"));
 
-        } finally {
-            session.logout();
-        }
+
     }
 
     @Test
     public void retain_empty_variant_removes_all_except_default() throws Exception {
 
-        final Session session = createSession(ADMIN_CREDENTIALS);
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        assertTrue("Container has some variants bootstrapped",
+                container.getNode("banner").hasProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES));
 
-        try {
-            final Node container = session.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
-            assertTrue("Container has some variants bootstrapped",
-                    container.getNode("banner").hasProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES));
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
 
-            final String componentItemId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
-
-            final RequestResponseMock requestResponse = mockGetRequestResponse(
-                    "http", "localhost", "/_rp/" + componentItemId, null, "POST");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + componentItemId, null, "POST");
 
 
-            final MockHttpServletRequest request = requestResponse.getRequest();
-            request.setContent(objectMapper.writeValueAsBytes(new String[]{}));
-            request.setContentType("application/json;charset=UTF-8");
+        final MockHttpServletRequest request = requestResponse.getRequest();
+        request.setContent(objectMapper.writeValueAsBytes(new String[]{}));
+        request.setContentType("application/json;charset=UTF-8");
 
 
-            // Do it as author which : author should be allowed
-            final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+        // Do it as author which : author should be allowed
+        final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
 
-            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-
-            session.refresh(false);
-
-            // assert container never locked for XPAGE
-            assertFalse("XPage container should never get locked!!",
-                    container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
-
-            // container should have timestamp updated
-            assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
 
-            assertFalse("No variants left so prefixes expected to be removed",
-                    container.getNode("banner").hasProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES));
+        admin.refresh(false);
 
-            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(session);
-            assertEquals("Expected changes hence publishable", TRUE, documentWorkflow.hints().get("publish"));
+        // assert container never locked for XPAGE
+        assertFalse("XPage container should never get locked!!",
+                container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
 
-        } finally {
-            session.logout();
-        }
+        // container should have timestamp updated
+        assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
+
+
+        assertFalse("No variants left so prefixes expected to be removed",
+                container.getNode("banner").hasProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES));
+
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
+        assertEquals("Expected changes hence publishable", TRUE, documentWorkflow.hints().get("publish"));
+
+
     }
 
     @Test
@@ -255,41 +245,35 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
     }
 
     private void createVariantExpectations(final String newVariant, final Set<String> variantsExpected) throws RepositoryException, IOException, ServletException {
-        final Session session = createSession(ADMIN_CREDENTIALS);
 
-        try {
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
 
-            final String componentItemId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + componentItemId + "./" + newVariant, null, "POST");
 
-            final RequestResponseMock requestResponse = mockGetRequestResponse(
-                    "http", "localhost", "/_rp/" + componentItemId + "./" + newVariant, null, "POST");
+        // Do it as author which : author should be allowed
+        final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
 
-            // Do it as author which : author should be allowed
-            final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
-
-            assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 
 
-            session.refresh(false);
-            final Node container = session.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        admin.refresh(false);
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
 
-            // assert container never locked for XPAGE
-            assertFalse("XPage container should never get locked!!",
-                    container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        // assert container never locked for XPAGE
+        assertFalse("XPage container should never get locked!!",
+                container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
 
-            // container should have timestamp updated
-            assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
+        // container should have timestamp updated
+        assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
 
 
-            final List<String> prefixes = JcrUtils.getStringListProperty(container.getNode("banner"), COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES, Collections.emptyList());
+        final List<String> prefixes = JcrUtils.getStringListProperty(container.getNode("banner"), COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES, Collections.emptyList());
 
-            assertEquals(variantsExpected, new HashSet(prefixes));
+        assertEquals(variantsExpected, new HashSet(prefixes));
 
-        } finally {
-            session.logout();
-        }
     }
 
     @Test
@@ -302,40 +286,34 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
     }
 
     @Test
-    public void delete_last_variant_removes_prefixes()  throws Exception{
+    public void delete_last_variant_removes_prefixes() throws Exception {
 
-        final Session session = createSession(ADMIN_CREDENTIALS);
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        try {
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
 
-            final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + componentItemId + "./variant1", null, "DELETE");
 
-            final String componentItemId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        // Do it as author which : author should be allowed
+        final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
 
-            final RequestResponseMock requestResponse = mockGetRequestResponse(
-                    "http", "localhost", "/_rp/" + componentItemId + "./variant1", null, "DELETE");
-
-            // Do it as author which : author should be allowed
-            final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
-
-            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
 
-            session.refresh(false);
-            final Node container = session.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        admin.refresh(false);
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
 
-            // assert container never locked for XPAGE
-            assertFalse("XPage container should never get locked!!",
-                    container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        // assert container never locked for XPAGE
+        assertFalse("XPage container should never get locked!!",
+                container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
 
-            // container should have timestamp updated
-            assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
+        // container should have timestamp updated
+        assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
 
-            assertFalse(container.getNode("banner").hasProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES));
+        assertFalse(container.getNode("banner").hasProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES));
 
-        } finally {
-            session.logout();
-        }
+
     }
 
     @Test
@@ -343,48 +321,42 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // first create new variant
         final Set<String> set = Stream.of(new String[]{"", "variant1", "newvariant"}).collect(Collectors.toSet());
         createVariantExpectations("newvariant", set);
-        final Session session = createSession(ADMIN_CREDENTIALS);
 
-        try {
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
 
-            final String componentItemId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + componentItemId + "./variant1", null, "DELETE");
 
-            final RequestResponseMock requestResponse = mockGetRequestResponse(
-                    "http", "localhost", "/_rp/" + componentItemId + "./variant1", null, "DELETE");
+        // Do it as author which : author should be allowed
+        final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
 
-            // Do it as author which : author should be allowed
-            final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        admin.refresh(false);
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
 
-            session.refresh(false);
-            final Node container = session.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        // assert container never locked for XPAGE
+        assertFalse("XPage container should never get locked!!",
+                container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
 
-            // assert container never locked for XPAGE
-            assertFalse("XPage container should never get locked!!",
-                    container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        // container should have timestamp updated
+        assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
 
-            // container should have timestamp updated
-            assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
+        final List<String> prefixes = JcrUtils.getStringListProperty(container.getNode("banner"), COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES, Collections.emptyList());
 
-            final List<String> prefixes = JcrUtils.getStringListProperty(container.getNode("banner"), COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES, Collections.emptyList());
+        assertEquals(Stream.of(new String[]{"", "newvariant"}).collect(Collectors.toSet()), new HashSet(prefixes));
 
-            assertEquals(Stream.of(new String[]{"", "newvariant"}).collect(Collectors.toSet()), new HashSet(prefixes));
-
-        } finally {
-            session.logout();
-        }
 
     }
 
     @Test
     public void delete_non_existing_variant_is_a_bas_request() throws Exception {
 
-        final String mountId = getNodeId( "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String componentItemId = getNodeId( unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + componentItemId + "./non-existing", null, "DELETE");
@@ -398,105 +370,94 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
     @Test
     public void update_params_for_variant() throws Exception {
-        final Session session = createSession(ADMIN_CREDENTIALS);
 
-        try {
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
 
-            final String componentItemId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
-
-            final RequestResponseMock requestResponse = mockGetRequestResponse(
-                    "http", "localhost", "/_rp/" + componentItemId + "./variant1",
-                    "path=/my/new/value&newparam=newvalue", "PUT");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + componentItemId + "./variant1",
+                "path=/my/new/value&newparam=newvalue", "PUT");
 
 
-            final MultivaluedMap<String, String> updatedParams = new MultivaluedHashMap<>();
-            updatedParams.putSingle("path", "/my/new/value");
-            updatedParams.putSingle("newparam", "newvalue");
+        final MultivaluedMap<String, String> updatedParams = new MultivaluedHashMap<>();
+        updatedParams.putSingle("path", "/my/new/value");
+        updatedParams.putSingle("newparam", "newvalue");
 
-            final MockHttpServletRequest request = requestResponse.getRequest();
-            request.setContent(objectMapper.writeValueAsBytes(updatedParams));
-            request.setContentType("application/json;charset=UTF-8");
+        final MockHttpServletRequest request = requestResponse.getRequest();
+        request.setContent(objectMapper.writeValueAsBytes(updatedParams));
+        request.setContentType("application/json;charset=UTF-8");
 
-            // Do it as author which : author should be allowed
-            final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+        // Do it as author which : author should be allowed
+        final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
 
-            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-            session.refresh(false);
-            final Node container = session.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        admin.refresh(false);
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
 
-            // assert container never locked for XPAGE
-            assertFalse("XPage container should never get locked!!",
-                    container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        // assert container never locked for XPAGE
+        assertFalse("XPage container should never get locked!!",
+                container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
 
-            // container should have timestamp updated
-            assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
+        // container should have timestamp updated
+        assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
 
-            ContainerItemHelper cih = HstServices.getComponentManager().getComponent("containerItemHelper", "org.hippoecm.hst.pagecomposer");
+        ContainerItemHelper cih = HstServices.getComponentManager().getComponent("containerItemHelper", "org.hippoecm.hst.pagecomposer");
 
-            final HstComponentParameters parameters = new HstComponentParameters(container.getNode("banner"), cih);
-            // assert parameters updated
-            assertEquals("/my/new/value", parameters.getValue("variant1", "path"));
-            assertEquals("newvalue", parameters.getValue("variant1", "newparam"));
+        final HstComponentParameters parameters = new HstComponentParameters(container.getNode("banner"), cih);
+        // assert parameters updated
+        assertEquals("/my/new/value", parameters.getValue("variant1", "path"));
+        assertEquals("newvalue", parameters.getValue("variant1", "newparam"));
 
-        } finally {
-            session.logout();
-        }
     }
 
     @Test
     public void update_params_and_rename_variant() throws Exception {
 
-        final Session session = createSession(ADMIN_CREDENTIALS);
 
-        try {
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
 
-            final String componentItemId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
-
-            final RequestResponseMock requestResponse = mockGetRequestResponse(
-                    "http", "localhost", "/_rp/" + componentItemId + "./variant1",
-                    "path=/my/new/value&newparam=newvalue", "PUT");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + componentItemId + "./variant1",
+                "path=/my/new/value&newparam=newvalue", "PUT");
 
 
-            final MultivaluedMap<String, String> updatedParams = new MultivaluedHashMap<>();
-            updatedParams.putSingle("path", "/my/new/value");
-            updatedParams.putSingle("newparam", "newvalue");
+        final MultivaluedMap<String, String> updatedParams = new MultivaluedHashMap<>();
+        updatedParams.putSingle("path", "/my/new/value");
+        updatedParams.putSingle("newparam", "newvalue");
 
-            final MockHttpServletRequest request = requestResponse.getRequest();
-            request.setContent(objectMapper.writeValueAsBytes(updatedParams));
-            request.setContentType("application/json;charset=UTF-8");
+        final MockHttpServletRequest request = requestResponse.getRequest();
+        request.setContent(objectMapper.writeValueAsBytes(updatedParams));
+        request.setContentType("application/json;charset=UTF-8");
 
-            request.addHeader("Move-To", "moveToName");
+        request.addHeader("Move-To", "moveToName");
 
-            // Do it as author which : author should be allowed
-            final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+        // Do it as author which : author should be allowed
+        final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
 
-            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-            session.refresh(false);
-            final Node container = session.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        admin.refresh(false);
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
 
-            // assert container never locked for XPAGE
-            assertFalse("XPage container should never get locked!!",
-                    container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        // assert container never locked for XPAGE
+        assertFalse("XPage container should never get locked!!",
+                container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
 
-            // container should have timestamp updated
-            assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
+        // container should have timestamp updated
+        assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
 
-            ContainerItemHelper cih = HstServices.getComponentManager().getComponent("containerItemHelper", "org.hippoecm.hst.pagecomposer");
+        ContainerItemHelper cih = HstServices.getComponentManager().getComponent("containerItemHelper", "org.hippoecm.hst.pagecomposer");
 
-            final HstComponentParameters parameters = new HstComponentParameters(container.getNode("banner"), cih);
-            // assert parameters updated and new variant name 'moveToName'
-            assertEquals("/my/new/value", parameters.getValue("moveToName", "path"));
-            assertEquals("newvalue", parameters.getValue("moveToName", "newparam"));
-            assertNull(parameters.getValue("variant1", "newparam"));
+        final HstComponentParameters parameters = new HstComponentParameters(container.getNode("banner"), cih);
+        // assert parameters updated and new variant name 'moveToName'
+        assertEquals("/my/new/value", parameters.getValue("moveToName", "path"));
+        assertEquals("newvalue", parameters.getValue("moveToName", "newparam"));
+        assertNull(parameters.getValue("variant1", "newparam"));
 
-        } finally {
-            session.logout();
-        }
+
     }
 }
