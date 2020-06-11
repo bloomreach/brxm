@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Folder;
 import org.hippoecm.repository.api.MappingException;
@@ -106,7 +107,8 @@ public interface FolderWorkflow extends Workflow {
      *                      </li>
      *                      <li>
      *                          key 'subPrototypeUUIDs' with as value comma separated UUIDs of the node that will be
-     *                          copied as-is below the created document variant
+     *                          copied as-is below the created document variant. The JCR Node beloning to the UUID must
+     *                          be of type {@link HippoStdNodeType#MIXIN_SUB_PROTOTYPE}
      *                      </li>
      *                  </ul>
      *                  Note that the supplied extra mixins must be allowed, and if they involve mandatory constraints
