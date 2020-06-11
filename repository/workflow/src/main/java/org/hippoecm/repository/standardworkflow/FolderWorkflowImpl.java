@@ -50,6 +50,7 @@ import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionManager;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Folder;
 import org.hippoecm.repository.api.HierarchyResolver;
@@ -70,6 +71,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_EXCLUDE_PRIMARY_TYPES;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_MODIFY;
+import static org.hippoecm.repository.HippoStdNodeType.MIXIN_SUB_PROTOTYPE;
 import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
 import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROTOTYPE;
@@ -435,6 +437,10 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         for (String prototypeUUID : prototypeUUIDs) {
                             // in case prototypeUUID not found, just throw repository exception
                             final Node prototypeNode = rootSession.getNodeByIdentifier(prototypeUUID);
+                            if (!prototypeNode.isNodeType(MIXIN_SUB_PROTOTYPE)) {
+                                throw new WorkflowException(String.format("Node '%s' is not allowed as subprototype " +
+                                        "since is not of type '%s'", prototypeNode.getPath(), MIXIN_SUB_PROTOTYPE));
+                            }
                             JcrUtils.copy(rootSession, prototypeNode.getPath(),
                                     result.getPath() + "/" + prototypeNode.getName());
                         }
