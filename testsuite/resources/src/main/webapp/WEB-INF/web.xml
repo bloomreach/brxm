@@ -120,10 +120,6 @@
       <param-value>deployment</param-value>
     </init-param>
     <init-param>
-      <param-name>applicationClassName</param-name>
-      <param-value>org.hippoecm.hst.demo.wicketexamples.WicketContentBrowserApplication</param-value>
-    </init-param>
-    <init-param>
       <param-name>binary-download-servlet-path</param-name>
       <param-value>/site/binaries</param-value>
     </init-param>
