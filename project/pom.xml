@@ -134,7 +134,7 @@
     <maven.plugin.install.version>2.5.2</maven.plugin.install.version>
     <maven.plugin.jar.version>3.2.0</maven.plugin.jar.version>
     <maven.plugin.jacoco.version>0.8.5</maven.plugin.jacoco.version>
-    <maven.plugin.javadoc.version>3.0.1</maven.plugin.javadoc.version>
+    <maven.plugin.javadoc.version>3.2.0</maven.plugin.javadoc.version>
     <maven.plugin.jrebel.version>1.1.10</maven.plugin.jrebel.version>
     <maven.plugin.project-info.version>3.0.0</maven.plugin.project-info.version>
     <maven.plugin.release.version>2.5.3</maven.plugin.release.version>
@@ -178,6 +178,8 @@
     <javaagent />
     <!-- the h2 driver version to use for development environments. The h2 driver is bundled with the repository and added to the Tomcat classpath-->
     <h2.database.version>1.4.199</h2.database.version>
+
+    <javadoc.base.version>14.3</javadoc.base.version>
   </properties>
 
   <licenses>

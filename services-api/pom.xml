@@ -34,7 +34,6 @@
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Services</notice.project.name>
-    <javadoc.base.version>13.1</javadoc.base.version>
 
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <junit.version>4.12</junit.version>
@@ -109,6 +108,12 @@
           <links>
             <link>https://javadoc.onehippo.org/${javadoc.base.version}/hippo-cms-commons/</link>
           </links>
+          <offlineLinks>
+            <offlineLink>
+              <url>http://javadoc.onehippo.org/${javadoc.base.version}/hippo-cms-commons/</url>
+              <location>${project.basedir}/../commons/target/site/apidocs</location>
+            </offlineLink>
+          </offlineLinks>
         </configuration>
       </plugin>
     </plugins>
