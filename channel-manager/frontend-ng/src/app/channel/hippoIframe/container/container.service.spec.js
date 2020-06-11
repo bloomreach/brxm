@@ -21,7 +21,6 @@ describe('ContainerService', () => {
   let CmsService;
   let ContainerService;
   let DialogService;
-  let FeedbackService;
   let HippoIframeService;
   let PageStructureService;
   let SpaService;
@@ -58,7 +57,6 @@ describe('ContainerService', () => {
       CmsService = _CmsService_;
       ContainerService = _ContainerService_;
       DialogService = _DialogService_;
-      FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       PageStructureService = _PageStructureService_;
       SpaService = _SpaService_;
@@ -101,16 +99,12 @@ describe('ContainerService', () => {
       expect(PageStructureService.renderContainer).not.toHaveBeenCalled();
     });
 
-    it('handles errors and reloads the iframe, upon adding a component to container', () => {
+    it('reloads the iframe in case of an error', () => {
       PageStructureService.addComponentToContainer.and.returnValue($q.reject());
-      spyOn(FeedbackService, 'showError');
 
       ContainerService.addComponent({ label: 'Banner' });
       $rootScope.$digest();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', {
-        component: 'Banner',
-      });
       expect(HippoIframeService.reload).toHaveBeenCalled();
     });
   });
