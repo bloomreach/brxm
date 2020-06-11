@@ -123,7 +123,10 @@ describe('ContainerService', () => {
     const rerenderedTargetContainer = {};
 
     beforeEach(() => {
-      spyOn(PageStructureService, 'moveComponent').and.returnValue($q.resolve([sourceContainer, targetContainer]));
+      spyOn(PageStructureService, 'moveComponent').and.returnValue($q.resolve({
+        changedContainers: [sourceContainer, targetContainer],
+        reloadRequired: false,
+      }));
       spyOn(PageStructureService, 'renderContainer')
         .and.returnValues($q.resolve(rerenderedSourceContainer), $q.resolve(rerenderedTargetContainer));
     });
@@ -137,6 +140,19 @@ describe('ContainerService', () => {
       );
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(sourceContainer);
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(targetContainer);
+    });
+
+    it('reloads the iframe if the server requires it', () => {
+      spyOn(HippoIframeService, 'reload');
+      PageStructureService.moveComponent.and.returnValue($q.resolve({
+        changedContainers: [],
+        reloadRequired: true,
+      }));
+
+      ContainerService.moveComponent();
+      $rootScope.$digest();
+
+      expect(HippoIframeService.reload).toHaveBeenCalled();
     });
 
     it('should emit component:moved event in the end', () => {
