@@ -436,7 +436,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         final String[] prototypeUUIDs = StringUtils.split(subPrototypeUUIDs,",");
                         for (String prototypeUUID : prototypeUUIDs) {
                             // in case prototypeUUID not found, just throw repository exception
-                            final Node prototypeNode = rootSession.getNodeByIdentifier(prototypeUUID);
+                            final Node prototypeNode = rootSession.getNodeByIdentifier(StringUtils.trim(prototypeUUID));
                             if (!prototypeNode.isNodeType(MIXIN_SUB_PROTOTYPE)) {
                                 throw new WorkflowException(String.format("Node '%s' is not allowed as subprototype " +
                                         "since is not of type '%s'", prototypeNode.getPath(), MIXIN_SUB_PROTOTYPE));
