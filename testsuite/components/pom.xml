@@ -53,19 +53,6 @@
       <artifactId>commons-lang</artifactId>
     </dependency>
 
-    <!-- For wicket demo -->
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket</artifactId>
-      <version>1.4.16</version>
-    </dependency>
-      
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-extensions</artifactId>
-      <version>7.14.0</version>
-    </dependency>
-
     <!-- testsuite dependencies -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>

@@ -56,7 +56,7 @@
     <xml-apis.version>1.0.b2</xml-apis.version>
     <jta.version>1.1.1</jta.version>
     <mail.version>1.4.7</mail.version>
-    <slf4j.version>1.7.25</slf4j.version>
+    <slf4j.version>1.7.30</slf4j.version>
     <log4j2.version>2.11.1</log4j2.version>
     <guava.version>27.0-jre</guava.version>
 
@@ -107,6 +107,11 @@
     <freemarker.version>2.3.28</freemarker.version>
     <nodejs.version>v12.16.1</nodejs.version>
     <npm.version>6.13.4</npm.version>
+
+    <!-- test dependencies -->
+    <restassured.version>4.1.2</restassured.version>
+    <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
+    <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
 
     <!-- END properties versions with dependency management -->
     <maven.required.version>3.3.9</maven.required.version>
@@ -579,6 +584,20 @@
         <version>${jaxrs.version}</version>
       </dependency>
 
+      <!-- test dependencies -->
+      <dependency>
+        <groupId>io.rest-assured</groupId>
+        <artifactId>rest-assured</artifactId>
+        <version>${restassured.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <!-- org.apache.sling.javax.activation is used by rest-assured -->
+      <dependency>
+        <groupId>org.apache.sling</groupId>
+        <artifactId>org.apache.sling.javax.activation</artifactId>
+        <version>${sling-javax-activation.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
