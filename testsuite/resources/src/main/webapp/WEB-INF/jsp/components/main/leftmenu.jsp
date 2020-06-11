@@ -100,11 +100,6 @@
   </li>
 </c:forEach>
   <li>
-    <hst:link var="wicketExampleLink" path="/examples/contentbrowser/" />
-    <a href="${wicketExampleLink}" 
-       target="_blank">Wicket JCR Browser Example</a>
-  </li>
-  <li>
     <hst:link var="restlink" path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" mount="restapi"/>
     <a href="${restlink}"
        target="_blank">RESTful Representation</a>
