@@ -733,8 +733,9 @@ describe('PageStructureService', () => {
     });
   });
 
-  describe('move component', () => {
+  describe('moveComponent', () => {
     beforeEach(() => {
+      spyOn(HstService, 'updateHstContainer').and.returnValue($q.resolve({}));
       spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.resolve('new-markup'));
       mockParseElements(
         mockPage('page-1',
@@ -757,7 +758,6 @@ describe('PageStructureService', () => {
       const container = PageStructureService.getPage().getContainerById('container-1');
       const componentA = container.getComponent('component-1');
 
-      spyOn(HstService, 'updateHstContainer');
       expect(componentIds(container)).toEqual(['component-1', 'component-2']);
 
       PageStructureService.moveComponent(componentA, container, undefined);
@@ -773,7 +773,6 @@ describe('PageStructureService', () => {
       const component1 = container.getComponent('component-1');
       const component2 = container.getComponent('component-2');
 
-      spyOn(HstService, 'updateHstContainer');
       expect(componentIds(container)).toEqual(['component-1', 'component-2']);
 
       PageStructureService.moveComponent(component2, container, component1);
@@ -790,8 +789,6 @@ describe('PageStructureService', () => {
       const component1 = container1.getComponent('component-1');
       const container2 = page.getContainerById('container-2');
 
-      spyOn(HstService, 'updateHstContainer');
-
       PageStructureService.moveComponent(component1, container2, undefined);
       $rootScope.$digest();
 
@@ -802,12 +799,49 @@ describe('PageStructureService', () => {
       expect(ChannelService.checkChanges).toHaveBeenCalled();
     });
 
+    it('returns the affected containers', (done) => {
+      const page = PageStructureService.getPage();
+      const container1 = page.getContainerById('container-1');
+      const component1 = container1.getComponent('component-1');
+      const container2 = page.getContainerById('container-2');
+
+      PageStructureService.moveComponent(component1, container2, undefined)
+        .then(({ changedContainers }) => {
+          const [changedContainer1, changedContainer2] = changedContainers;
+          expect(container1).toEqual(changedContainer1);
+          expect(container2).toEqual(changedContainer2);
+          done();
+        });
+
+      $rootScope.$digest();
+    });
+
+    it('returns "reloadRequired" if one of the backend calls requires it', (done) => {
+      const page = PageStructureService.getPage();
+      const container1 = page.getContainerById('container-1');
+      const component1 = container1.getComponent('component-1');
+      const container2 = page.getContainerById('container-2');
+
+      HstService.updateHstContainer.and.returnValues(
+        $q.resolve({ reloadRequired: false }),
+        $q.resolve({ reloadRequired: true }),
+      );
+
+      PageStructureService.moveComponent(component1, container2, undefined)
+        .then(({ reloadRequired }) => {
+          expect(reloadRequired).toBe(true);
+          done();
+        });
+
+      $rootScope.$digest();
+    });
+
     it('shows an error when a component is moved within a container that just got locked by another user', () => {
       const page = PageStructureService.getPage();
       const container1 = page.getContainerById('container-1');
       const component1 = container1.getComponent('component-1');
 
-      spyOn(HstService, 'updateHstContainer').and.returnValue($q.reject());
+      HstService.updateHstContainer.and.returnValue($q.reject());
       spyOn(FeedbackService, 'showError');
 
       PageStructureService.moveComponent(component1, container1, undefined);
@@ -826,7 +860,7 @@ describe('PageStructureService', () => {
       const component1 = container1.getComponent('component-1');
       const container2 = page.getContainerById('container-2');
 
-      spyOn(HstService, 'updateHstContainer').and.returnValues($q.reject(), $q.resolve());
+      HstService.updateHstContainer.and.returnValues($q.reject(), $q.resolve());
       spyOn(FeedbackService, 'showError');
 
       PageStructureService.moveComponent(component1, container2, undefined);
@@ -846,7 +880,7 @@ describe('PageStructureService', () => {
       const component1 = container1.getComponent('component-1');
       const container2 = page.getContainerById('container-2');
 
-      spyOn(HstService, 'updateHstContainer').and.returnValues($q.resolve(), $q.reject());
+      HstService.updateHstContainer.and.returnValues($q.resolve(), $q.reject());
       spyOn(FeedbackService, 'showError');
 
       PageStructureService.moveComponent(component1, container2, undefined);

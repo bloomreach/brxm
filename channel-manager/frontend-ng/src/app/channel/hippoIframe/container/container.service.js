@@ -72,14 +72,22 @@ class ContainerService {
   }
 
   async moveComponent(component, container, nextComponent) {
-    const changedContainers = await this.PageStructureService.moveComponent(component, container, nextComponent);
+    const {
+      reloadRequired,
+      changedContainers,
+    } = await this.PageStructureService.moveComponent(component, container, nextComponent);
+
     if (this._reloadSpa()) {
       return;
     }
 
-    await this.$q.all(changedContainers.map(
-      changedContainer => this.PageStructureService.renderContainer(changedContainer),
-    ));
+    if (reloadRequired) {
+      await this.HippoIframeService.reload();
+    } else {
+      await this.$q.all(changedContainers.map(
+        changedContainer => this.PageStructureService.renderContainer(changedContainer),
+      ));
+    }
 
     this.$rootScope.$emit('component:moved');
   }
