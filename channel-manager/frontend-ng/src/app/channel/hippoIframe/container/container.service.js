@@ -41,10 +41,15 @@ class ContainerService {
 
   async addComponent(catalogComponent, container, nextComponentId) {
     try {
-      const newComponentId = await this.PageStructureService
+      const { reloadRequired, newComponentId } = await this.PageStructureService
         .addComponentToContainer(catalogComponent, container, nextComponentId);
+
       if (!this._reloadSpa()) {
-        await this.PageStructureService.renderContainer(container);
+        if (reloadRequired) {
+          await this.HippoIframeService.reload();
+        } else {
+          await this.PageStructureService.renderContainer(container);
+        }
       }
 
       return newComponentId;

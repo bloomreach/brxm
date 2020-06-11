@@ -67,17 +67,12 @@ describe('ContainerService', () => {
     beforeEach(() => {
       spyOn($log, 'info');
       spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
-      spyOn(PageStructureService, 'addComponentToContainer').and.returnValue($q.resolve({
-        getContainer() {},
-        getLabel() {},
-      }));
+      spyOn(PageStructureService, 'addComponentToContainer').and.returnValue($q.resolve({}));
       spyOn(PageStructureService, 'renderContainer');
-      spyOn(SpaService, 'isSpa');
+      spyOn(SpaService, 'isSpa').and.returnValue(false);
     });
 
     it('adds a component to a container in the page structure', () => {
-      SpaService.isSpa.and.returnValue(false);
-
       const component = {};
       const container = {};
       ContainerService.addComponent(component, container);
@@ -86,6 +81,16 @@ describe('ContainerService', () => {
       expect(PageStructureService.addComponentToContainer).toHaveBeenCalledWith(component, container, undefined);
       expect(HippoIframeService.reload).not.toHaveBeenCalled();
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(container);
+    });
+
+    it('reloads the iframe if the server returns "reloadRequired=true"', () => {
+      PageStructureService.addComponentToContainer.and.returnValue($q.resolve({ reloadRequired: true }));
+
+      ContainerService.addComponent();
+      $rootScope.$digest();
+
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+      expect(PageStructureService.renderContainer).not.toHaveBeenCalled();
     });
 
     it('reloads the iframe if there is an SPA', () => {
