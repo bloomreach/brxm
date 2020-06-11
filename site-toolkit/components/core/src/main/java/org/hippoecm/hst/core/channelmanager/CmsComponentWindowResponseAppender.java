@@ -64,45 +64,27 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
         final HstComponentConfiguration compConfig = (HstComponentConfiguration)window.getComponentInfo();
 
-        if (compConfig.isInherited()) {
-            // for inherited components we do not add any html comments since component is never editable for user any way
-            log.debug("Component '{}' not editable because inherited", compConfig.toString());
-            return;
-        }
-
-        final HippoSession cmsUser = (HippoSession) request.getRequestContext().getAttribute(ContainerConstants.CMS_USER_SESSION_ATTR_NAME);
-        if (cmsUser == null) {
-            throw new IllegalStateException("For Channel Manager preview requests there is expected to be a CMS user " +
-                    "Session available");
-        }
-
-        final boolean inRole;
-
-        // note that EVEN if the backing JCR node for compConfig is from version history, because we decorate
-        // the JCR Node to HippoBeanFrozenNode in ObjectConverterImpl.getActualNode(), the #getPath is decorated
-        // to always return a workspace path! Hence #getCanonicalStoredLocation gives right location
-        if (compConfig.isExperiencePageComponent()) {
-            // check whether cmsUser has the right role on the xpage component
-            inRole = isInRole(cmsUser, compConfig.getCanonicalStoredLocation(), XPAGE_REQUIRED_PRIVILEGE_NAME);
-        } else {
-            inRole = isInRole(cmsUser, compConfig.getCanonicalStoredLocation(), CHANNEL_WEBMASTER_PRIVILEGE_NAME);
-        }
-
-        if (!inRole) {
-            log.debug("Component '{}' not editable because user is not in right role", compConfig.toString());
-            return;
-        }
-
-        final CmsSessionContext cmsSessionContext = HstRequestUtils.getCmsSessionContext(request);
-
-        if (cmsSessionContext == null) {
-            throw new IllegalStateException("cmsSessionContext should never be null here.");
-        }
 
         // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
         if (isContainerOrContainerItem(compConfig)) {
-            populateComponentMetaData(request, response, window);
+            if (compConfig.isInherited()) {
+                // for inherited components we do not add any html comments since component is never editable for user any way
+                log.debug("Component '{}' not editable because inherited", compConfig.toString());
+                return;
+            }
+            if (userInRole(request, compConfig)) {
+                populateComponentMetaData(request, response, window);
+            } else {
+                log.debug("Component '{}' not editable because user is not in right role", compConfig.toString());
+            }
         } else if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
+
+            final CmsSessionContext cmsSessionContext = HstRequestUtils.getCmsSessionContext(request);
+
+            if (cmsSessionContext == null) {
+                throw new IllegalStateException("cmsSessionContext should never be null here.");
+            }
+
             populatePageMetaData(request, response, cmsSessionContext, compConfig);
         }
     }
@@ -183,5 +165,25 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             attributeContributor.contributePreamble(window, request, preambleAttributes);
             attributeContributor.contributeEpilogue(window, request, epilogueAttributes);
         }
+    }
+
+    private boolean userInRole(final HstRequest request, final HstComponentConfiguration compConfig) {
+
+        final HippoSession cmsUser = (HippoSession) request.getRequestContext().getAttribute(ContainerConstants.CMS_USER_SESSION_ATTR_NAME);
+        if (cmsUser == null) {
+            throw new IllegalStateException("For Channel Manager preview requests there is expected to be a CMS user " +
+                    "Session available");
+        }
+
+        // note that EVEN if the backing JCR node for compConfig is from version history, because we decorate
+        // the JCR Node to HippoBeanFrozenNode in ObjectConverterImpl.getActualNode(), the #getPath is decorated
+        // to always return a workspace path! Hence #getCanonicalStoredLocation gives right location
+        if (compConfig.isExperiencePageComponent()) {
+            // check whether cmsUser has the right role on the xpage component
+            return isInRole(cmsUser, compConfig.getCanonicalStoredLocation(), XPAGE_REQUIRED_PRIVILEGE_NAME);
+        } else {
+            return isInRole(cmsUser, compConfig.getCanonicalStoredLocation(), CHANNEL_WEBMASTER_PRIVILEGE_NAME);
+        }
+
     }
 }
