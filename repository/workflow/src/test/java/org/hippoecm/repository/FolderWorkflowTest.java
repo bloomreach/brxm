@@ -651,6 +651,9 @@ public class FolderWorkflowTest extends RepositoryTestCase {
 
         String[] subPrototype = {
                 "/test/subproto", "hippo:testhtml",
+                   "jcr:mixinTypes", "hippostd:subprototype",
+                   "hippo:testcontent", "Test Content",
+                "/test/invalid_subproto", "hippo:testhtml",
                    "hippo:testcontent", "Test Content"
         };
         build(subPrototype, session);
@@ -673,6 +676,19 @@ public class FolderWorkflowTest extends RepositoryTestCase {
             myDoc.remove();
             session.save();
         }
+
+        // invalid_subproto does not have the mixin 'hippostd:subprototype' hence invalid as sub prototype
+        final String invalidSubPrototypeUUID = session.getNode("/test/invalid_subproto").getIdentifier();
+        parameters.put("subPrototypeUUIDs", invalidSubPrototypeUUID);
+        {
+            try {
+                workflow.add("simple", "new-document", parameters);
+                fail("Sup prototype misses mandatory mixin 'hippostd:subprototype' hence should fail");
+            } catch (Exception e) {
+                // expected
+            }
+        }
+
 
         parameters.remove("extraMixins");
         // without the required mixin the subprototype copy fails
