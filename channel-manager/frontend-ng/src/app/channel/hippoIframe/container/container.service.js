@@ -22,7 +22,6 @@ class ContainerService {
     $translate,
     CmsService,
     DialogService,
-    FeedbackService,
     HippoIframeService,
     PageStructureService,
     SpaService,
@@ -35,7 +34,6 @@ class ContainerService {
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DialogService = DialogService;
-    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageStructureService = PageStructureService;
     this.SpaService = SpaService;
@@ -52,9 +50,6 @@ class ContainerService {
       return newComponentId;
     } catch (error) {
       this.HippoIframeService.reload();
-      this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
-        component: catalogComponent.label,
-      });
 
       throw error;
     }
