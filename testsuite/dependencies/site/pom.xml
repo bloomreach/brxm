@@ -99,19 +99,6 @@
       <scope>compile</scope>
     </dependency>
 
-    <!-- For wicket demo -->
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket</artifactId>
-      <version>1.4.16</version>
-    </dependency>
-      
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-extensions</artifactId>
-      <version>1.4.16</version>
-    </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-testsuite-api</artifactId>
