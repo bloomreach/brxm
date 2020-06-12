@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/navapp:
+      jcr:primaryType: frontend:application
+      frontend:defaultcluster: navapp-static
