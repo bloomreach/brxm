@@ -109,7 +109,7 @@ definitions:
           /hipposysedit:prototype[2]:
             jcr:primaryType: nt:unstructured
             jcr:mixinTypes: ['hippostdpubwf:document', 'hippostd:relaxed', 'mix:referenceable',
-              'hippotranslation:translated', 'hippostd:publishableSummary']
+                             'hippotranslation:translated', 'hippostd:publishableSummary']
             jcr:uuid: 1f1da5a8-2ddf-4cd8-85c2-4d3004a6d181
             demosite:summary: ''
             demosite:title: ''
@@ -310,7 +310,7 @@ definitions:
           /hipposysedit:prototype[2]:
             jcr:primaryType: nt:unstructured
             jcr:mixinTypes: ['hippostdpubwf:document', 'hippostd:relaxed', 'mix:referenceable',
-              'hippotranslation:translated', 'hippostd:publishableSummary']
+                             'hippotranslation:translated', 'hippostd:publishableSummary']
             jcr:uuid: 1557a0b0-27a6-4486-b928-cdc83ae844c3
             demosite:date: 2010-06-18T15:46:03.643+02:00
             demosite:summary: ''
@@ -717,7 +717,7 @@ definitions:
           /hipposysedit:prototype[2]:
             jcr:primaryType: nt:unstructured
             jcr:mixinTypes: ['hippostdpubwf:document', 'hippostd:relaxed', 'mix:referenceable',
-              'hippotranslation:translated', 'hippostd:publishableSummary']
+                             'hippotranslation:translated', 'hippostd:publishableSummary']
             jcr:uuid: a8e72f9d-6ccf-41c9-b0cd-3c17b2f13765
             demosite:brand: ''
             demosite:color: ''
@@ -1139,6 +1139,77 @@ definitions:
               wicket.id: ${cluster.id}.field
               /cluster.options:
                 jcr:primaryType: frontend:pluginconfig
+      /validationdocument:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        jcr:uuid: f9e9ed4b-8a45-452e-a48e-cdb8352bb74b
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 00addcb4-3c91-4085-9184-0dcfc61a4081
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+            jcr:uuid: 5f352e0a-b302-4010-b85c-32ef4e01ba24
+            hipposysedit:node: true
+            hipposysedit:supertype: ['demosite:basedocument', 'hippostd:relaxed', 'hippotranslation:translated']
+            hipposysedit:uri: http://www.hippoecm.org/hst/nt/demosite/1.0
+            /string:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: demosite:string
+              hipposysedit:primary: false
+              hipposysedit:type: String
+              hipposysedit:validators: [required]
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: demosite:validationdocument
+            jcr:mixinTypes: ['mix:referenceable']
+            jcr:uuid: 1401db59-97b4-4ad0-9f26-93b3d159ae60
+            demosite:string: ''
+            hippostd:holder: holder
+            hippostd:state: draft
+            hippostdpubwf:createdBy: ''
+            hippostdpubwf:creationDate: 2020-03-12T13:56:24.615+01:00
+            hippostdpubwf:lastModificationDate: 2020-03-12T13:56:24.615+01:00
+            hippostdpubwf:lastModifiedBy: ''
+            hippotranslation:id: document-type-locale-id
+            hippotranslation:locale: document-type-locale
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [wicket.model, model.compareTo, engine, validator.id]
+            frontend:services: [wicket.id, validator.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              extension.left: ${cluster.id}.left
+              extension.right: ${cluster.id}.right
+              plugin.class: org.hippoecm.frontend.editor.layout.TwoColumn
+              wicket.extensions: [extension.left, extension.right]
+            /left:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.left.item
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+              wicket.id: ${cluster.id}.left
+            /right:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.right.item
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+              wicket.id: ${cluster.id}.right
+            /string:
+              jcr:primaryType: frontend:plugin
+              caption: Title
+              field: string
+              hint: ''
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              wicket.id: ${cluster.id}.left.item
+              /cluster.options:
+                jcr:primaryType: frontend:pluginconfig
       /wikidocument:
         jcr:primaryType: hipposysedit:templatetype
         jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
@@ -1153,7 +1224,7 @@ definitions:
             jcr:uuid: ab687ec2-8a0a-4da8-93c1-783a2730e63d
             hipposysedit:node: true
             hipposysedit:supertype: ['demosite:basedocument', 'hippostd:relaxed',
-              'hippotranslation:translated', 'relateddocs:relatabledocs']
+                                     'hippotranslation:translated', 'relateddocs:relatabledocs']
             hipposysedit:uri: http://www.hippoecm.org/hst/nt/demosite/1.0
             /title:
               jcr:primaryType: hipposysedit:field
