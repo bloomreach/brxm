@@ -41,6 +41,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResourceInterface;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -91,16 +92,13 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
                                                     final @PathParam("siblingItemUUID") String siblingItemUUID,
                                                     final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         if (!isValidUUID(itemUUID)) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(String.format("Value of path parameter itemUUID: '%s' is not a valid UUID", itemUUID))
-                    .build();
+            final String message = String.format("Value of path parameter itemUUID: '%s' is not a valid UUID", itemUUID);
+            return clientError(message, new ErrorStatus(ClientError.INVALID_UUID));
         }
         if (siblingItemUUID != null && !isValidUUID(siblingItemUUID)) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(String.format("Value of path parameter siblingItemUUID: '%s' is not a valid UUID", siblingItemUUID))
-                    .build();
+            final String message = String.format("Value of path parameter siblingItemUUID: '%s' is not a valid UUID", siblingItemUUID);
+            return clientError(message, new ErrorStatus(ClientError.INVALID_UUID));
         }
-
         final ContainerAction<Response> createContainerItem = () -> {
 
             final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession(), getPageComposerContextService());
@@ -171,7 +169,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             documentWorkflow.saveUnpublished();
 
-            return Response.status(Response.Status.OK).entity(container).build();
+            return ok(container.getId() + " updated", container);
         };
 
         return handleAction(updateContainer);
@@ -219,7 +217,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
                 internalWorkflowSession.getNodeByIdentifier(itemUUID).remove();
                 documentWorkflow.saveUnpublished();
 
-                return Response.status(Response.Status.OK).build();
+                return ok(itemUUID + " deleted");
             } catch (ItemNotFoundException e) {
                 throw new ClientException("Item to delete not found", ClientError.INVALID_UUID);
             }
@@ -232,7 +230,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
         return (HippoSession) RequestContextProvider.get().getSession();
     }
 
-    private Response handleAction(final ContainerAction<Response> action) {
+    private Response handleAction(ContainerAction<Response> action) {
         try {
             return action.apply();
         } catch (ClientException e) {
@@ -248,7 +246,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
         log.info("Successfully created containerItemRepresentation '{}' with path '{}'", newNode.getName(), newNode.getPath());
         return Response.status(Response.Status.CREATED)
-                .entity(containerItemRepresentation)
+                .entity(new ExtResponseRepresentation(containerItemRepresentation))
                 .build();
     }
 
