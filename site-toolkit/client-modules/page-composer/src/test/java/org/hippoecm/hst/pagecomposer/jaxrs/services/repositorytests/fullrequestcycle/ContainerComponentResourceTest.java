@@ -30,12 +30,13 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.junit.Assert.assertEquals;
@@ -61,6 +62,7 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
         startEdit(ADMIN_CREDENTIALS);
         createAndDeleteAs(EDITOR_CREDENTIALS, true);
     }
+
     @Test
     public void try_create_container_item_as_author() throws Exception {
 
@@ -85,20 +87,20 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
 
 
         final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, creds);
-        final Map<String, String> createResponseMap = mapper.readerFor(Map.class).readValue(createResponse.getContentAsString());
-
+        final ExtResponseRepresentation extResponse = mapper.readerFor(ExtResponseRepresentation.class).readValue(createResponse.getContentAsString());
         if (allowed) {
+            final Map<String, ?> map = (Map) extResponse.getData();
 
             final Session session = createSession(ADMIN_CREDENTIALS);
 
             assertEquals(Response.Status.CREATED.getStatusCode(), createResponse.getStatus());
-            final String createdUUID = createResponseMap.get("id");
+            final String createdUUID = map.get("id").toString();
 
             // newly created item
             assertTrue(session.nodeExists(PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/testitem"));
             assertTrue(session.getNodeByIdentifier(createdUUID) != null);
 
-            final RequestResponseMock  deleteRequestResponse = mockGetRequestResponse(
+            final RequestResponseMock deleteRequestResponse = mockGetRequestResponse(
                     "http", "localhost", "/_rp/" + containerId + "./" + createdUUID, null,
                     "DELETE");
             final MockHttpServletResponse deleteResponse = render(mountId, deleteRequestResponse, creds);
@@ -114,7 +116,7 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
             session.logout();
 
         } else {
-            assertEquals("FORBIDDEN", createResponseMap.get("errorCode"));
+            assertEquals("FORBIDDEN", extResponse.getErrorCode());
         }
     }
 
@@ -140,7 +142,7 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
             final String itemId2 = getNodeId(session, PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/banner2");
 
             final RequestResponseMock updateContainerReqRes = mockGetRequestResponse(
-                    "http", "localhost", "/_rp/" + containerId, null,"PUT");
+                    "http", "localhost", "/_rp/" + containerId, null, "PUT");
 
             final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
 
@@ -185,7 +187,7 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
             final String itemId1 = getNodeId(session, PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/banner");
 
             final RequestResponseMock updateContainerReqRes = mockGetRequestResponse(
-                    "http", "localhost", "/_rp/" + targetContainerId, null,"PUT");
+                    "http", "localhost", "/_rp/" + targetContainerId, null, "PUT");
 
             final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
 
@@ -207,10 +209,10 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
             final Node targetContainer = session.getNodeByIdentifier(targetContainerId);
 
             final NodeIterator sourceChildren = sourceContainer.getNodes();
-            assertEquals(0 , sourceChildren.getSize());
+            assertEquals(0, sourceChildren.getSize());
 
             final NodeIterator targetChildren = targetContainer.getNodes();
-            assertEquals(1 , targetChildren.getSize());
+            assertEquals(1, targetChildren.getSize());
             assertEquals("banner", targetChildren.nextNode().getName());
 
             assertEquals("Container expected locked by",
@@ -226,13 +228,13 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
 
     /**
      * <p>
-     *     It is not allowed to move a container item from an XPage to HST Configuration: A document has a different life
-     *     cycle than HST configuration, thus if we would support such a move, we'd get problems if either the XPage or
-     *     HST Config gets published
+     * It is not allowed to move a container item from an XPage to HST Configuration: A document has a different life
+     * cycle than HST configuration, thus if we would support such a move, we'd get problems if either the XPage or
+     * HST Config gets published
      * </p>
      * <p>
-     *     This tests covers the move of an XPage container item to HST Config container. The reverse test is covered in
-     *     {@link XPageContainerComponentResourceTest}
+     * This tests covers the move of an XPage container item to HST Config container. The reverse test is covered in
+     * {@link XPageContainerComponentResourceTest}
      * </p>
      */
     @Test
@@ -247,7 +249,7 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
         final String itemFromXPage = getNodeId("/unittestcontent/documents/unittestproject/experiences/expPage1/expPage1/hst:page/body/container/banner");
 
         final RequestResponseMock updateContainerReqRes = mockGetRequestResponse(
-                "http", "localhost", "/_rp/" + targetContainerId, null,"PUT");
+                "http", "localhost", "/_rp/" + targetContainerId, null, "PUT");
 
         final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
 
@@ -274,7 +276,7 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
         final String targetContainerId = getNodeId(PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container");
 
         final RequestResponseMock updateContainerReqRes = mockGetRequestResponse(
-                "http", "localhost", "/_rp/" + targetContainerId, null,"PUT");
+                "http", "localhost", "/_rp/" + targetContainerId, null, "PUT");
 
         final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
 
@@ -300,7 +302,7 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
         final String targetContainerId = getNodeId(PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container");
 
         final RequestResponseMock updateContainerReqRes = mockGetRequestResponse(
-                "http", "localhost", "/_rp/" + targetContainerId, null,"PUT");
+                "http", "localhost", "/_rp/" + targetContainerId, null, "PUT");
 
         final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
 

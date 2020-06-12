@@ -573,13 +573,35 @@ describe('PageStructureService', () => {
     });
 
     it('uses the HstService to add a new catalog component to the backend', (done) => {
-      spyOn(HstService, 'addHstComponent').and.returnValue(
-        $q.resolve({ id: 'new-component' }),
-      );
+      spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({
+        reloadRequired: false,
+        data: {
+          id: 'new-component',
+        },
+      }));
+
+      PageStructureService.addComponentToContainer(component, container)
+        .then(({ reloadRequired, newComponentId }) => {
+          expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
+          expect(reloadRequired).toBe(false);
+          expect(newComponentId).toBe('new-component');
+          done();
+        });
+
+      $rootScope.$digest();
+    });
+
+    it('checks changes after adding a new component to a container successfully', (done) => {
+      spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({
+        reloadRequired: false,
+        data: {
+          id: 'new-component',
+        },
+      }));
 
       PageStructureService.addComponentToContainer(component, container)
         .then(() => {
-          expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
+          expect(ChannelService.checkChanges).toHaveBeenCalled();
           done();
         });
 
@@ -590,16 +612,20 @@ describe('PageStructureService', () => {
       spyOn(FeedbackService, 'showError');
       spyOn(HstService, 'addHstComponent').and.returnValue(
         $q.reject({
-          error: 'cafebabe-error-key',
-          parameterMap: {},
+          message: 'error-message',
+          data: {
+            error: 'cafebabe-error-key',
+            parameterMap: {},
+          },
         }),
       );
 
       PageStructureService.addComponentToContainer(component, container)
-        .catch(() => {
+        .catch((errorMessage) => {
           expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', {
             component: 'Mock Component',
           });
+          expect(errorMessage).toBe('error-message');
           done();
         });
 
@@ -610,36 +636,29 @@ describe('PageStructureService', () => {
       spyOn(FeedbackService, 'showError');
       spyOn(HstService, 'addHstComponent').and.returnValue(
         $q.reject({
-          error: 'ITEM_ALREADY_LOCKED',
-          parameterMap: {
-            lockedBy: 'another-user',
-            lockedOn: 1234,
+          message: 'error-message',
+          data: {
+            error: 'ITEM_ALREADY_LOCKED',
+            parameterMap: {
+              lockedBy: 'another-user',
+              lockedOn: 1234,
+            },
           },
         }),
       );
 
-      PageStructureService.addComponentToContainer(component, container);
-      $rootScope.$digest();
-
-      expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED', {
-        lockedBy: 'another-user',
-        lockedOn: 1234,
-        component: 'Mock Component',
-      });
-      done();
-    });
-
-    it('checks changes after adding a new component to a container successfully', (done) => {
-      spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({ id: 'newUuid' }));
-
       PageStructureService.addComponentToContainer(component, container)
-        .then((newComponentId) => {
+        .catch((errorMessage) => {
           expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
-          expect(ChannelService.checkChanges).toHaveBeenCalled();
-          expect(newComponentId).toEqual('newUuid');
+          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED', {
+            lockedBy: 'another-user',
+            lockedOn: 1234,
+            component: 'Mock Component',
+          });
+          expect(errorMessage).toBe('error-message');
           done();
         });
+
       $rootScope.$digest();
     });
   });
@@ -714,8 +733,9 @@ describe('PageStructureService', () => {
     });
   });
 
-  describe('move component', () => {
+  describe('moveComponent', () => {
     beforeEach(() => {
+      spyOn(HstService, 'updateHstContainer').and.returnValue($q.resolve({}));
       spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.resolve('new-markup'));
       mockParseElements(
         mockPage('page-1',
@@ -738,7 +758,6 @@ describe('PageStructureService', () => {
       const container = PageStructureService.getPage().getContainerById('container-1');
       const componentA = container.getComponent('component-1');
 
-      spyOn(HstService, 'updateHstContainer');
       expect(componentIds(container)).toEqual(['component-1', 'component-2']);
 
       PageStructureService.moveComponent(componentA, container, undefined);
@@ -754,7 +773,6 @@ describe('PageStructureService', () => {
       const component1 = container.getComponent('component-1');
       const component2 = container.getComponent('component-2');
 
-      spyOn(HstService, 'updateHstContainer');
       expect(componentIds(container)).toEqual(['component-1', 'component-2']);
 
       PageStructureService.moveComponent(component2, container, component1);
@@ -771,8 +789,6 @@ describe('PageStructureService', () => {
       const component1 = container1.getComponent('component-1');
       const container2 = page.getContainerById('container-2');
 
-      spyOn(HstService, 'updateHstContainer');
-
       PageStructureService.moveComponent(component1, container2, undefined);
       $rootScope.$digest();
 
@@ -783,12 +799,49 @@ describe('PageStructureService', () => {
       expect(ChannelService.checkChanges).toHaveBeenCalled();
     });
 
+    it('returns the affected containers', (done) => {
+      const page = PageStructureService.getPage();
+      const container1 = page.getContainerById('container-1');
+      const component1 = container1.getComponent('component-1');
+      const container2 = page.getContainerById('container-2');
+
+      PageStructureService.moveComponent(component1, container2, undefined)
+        .then(({ changedContainers }) => {
+          const [changedContainer1, changedContainer2] = changedContainers;
+          expect(container1).toEqual(changedContainer1);
+          expect(container2).toEqual(changedContainer2);
+          done();
+        });
+
+      $rootScope.$digest();
+    });
+
+    it('returns "reloadRequired" if one of the backend calls requires it', (done) => {
+      const page = PageStructureService.getPage();
+      const container1 = page.getContainerById('container-1');
+      const component1 = container1.getComponent('component-1');
+      const container2 = page.getContainerById('container-2');
+
+      HstService.updateHstContainer.and.returnValues(
+        $q.resolve({ reloadRequired: false }),
+        $q.resolve({ reloadRequired: true }),
+      );
+
+      PageStructureService.moveComponent(component1, container2, undefined)
+        .then(({ reloadRequired }) => {
+          expect(reloadRequired).toBe(true);
+          done();
+        });
+
+      $rootScope.$digest();
+    });
+
     it('shows an error when a component is moved within a container that just got locked by another user', () => {
       const page = PageStructureService.getPage();
       const container1 = page.getContainerById('container-1');
       const component1 = container1.getComponent('component-1');
 
-      spyOn(HstService, 'updateHstContainer').and.returnValue($q.reject());
+      HstService.updateHstContainer.and.returnValue($q.reject());
       spyOn(FeedbackService, 'showError');
 
       PageStructureService.moveComponent(component1, container1, undefined);
@@ -807,7 +860,7 @@ describe('PageStructureService', () => {
       const component1 = container1.getComponent('component-1');
       const container2 = page.getContainerById('container-2');
 
-      spyOn(HstService, 'updateHstContainer').and.returnValues($q.reject(), $q.resolve());
+      HstService.updateHstContainer.and.returnValues($q.reject(), $q.resolve());
       spyOn(FeedbackService, 'showError');
 
       PageStructureService.moveComponent(component1, container2, undefined);
@@ -827,7 +880,7 @@ describe('PageStructureService', () => {
       const component1 = container1.getComponent('component-1');
       const container2 = page.getContainerById('container-2');
 
-      spyOn(HstService, 'updateHstContainer').and.returnValues($q.resolve(), $q.reject());
+      HstService.updateHstContainer.and.returnValues($q.resolve(), $q.reject());
       spyOn(FeedbackService, 'showError');
 
       PageStructureService.moveComponent(component1, container2, undefined);
@@ -892,91 +945,6 @@ describe('PageStructureService', () => {
         done();
       });
 
-      $rootScope.$digest();
-    });
-  });
-
-  describe('addComponentToContainer', () => {
-    let component;
-    let container;
-
-    beforeEach(() => {
-      component = {
-        id: 'mock-component',
-        name: 'Mock Component',
-      };
-      container = jasmine.createSpyObj(['getId']);
-      container.getId.and.returnValue('mock-container');
-    });
-
-    it('uses the HstService to add a new catalog component to the backend', (done) => {
-      spyOn(HstService, 'addHstComponent').and.returnValue(
-        $q.resolve({ id: 'new-component' }),
-      );
-
-      PageStructureService.addComponentToContainer(component, container)
-        .then(() => {
-          expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
-          done();
-        });
-
-      $rootScope.$digest();
-    });
-
-    it('shows the default error message when failed to add a new component from catalog', (done) => {
-      spyOn(FeedbackService, 'showError');
-      spyOn(HstService, 'addHstComponent').and.returnValue(
-        $q.reject({
-          error: 'cafebabe-error-key',
-          parameterMap: {},
-        }),
-      );
-
-      PageStructureService.addComponentToContainer(component, container)
-        .catch(() => {
-          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', {
-            component: 'Mock Component',
-          });
-          done();
-        });
-
-      $rootScope.$digest();
-    });
-
-    it('shows the locked error message when adding a new component on a container locked by another user', (done) => {
-      spyOn(FeedbackService, 'showError');
-      spyOn(HstService, 'addHstComponent').and.returnValue(
-        $q.reject({
-          error: 'ITEM_ALREADY_LOCKED',
-          parameterMap: {
-            lockedBy: 'another-user',
-            lockedOn: 1234,
-          },
-        }),
-      );
-
-      PageStructureService.addComponentToContainer(component, container);
-      $rootScope.$digest();
-
-      expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED', {
-        lockedBy: 'another-user',
-        lockedOn: 1234,
-        component: 'Mock Component',
-      });
-      done();
-    });
-
-    it('check changes after adding a new component to a container successfully', (done) => {
-      spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({ id: 'newUuid' }));
-
-      PageStructureService.addComponentToContainer(component, container)
-        .then((newComponentId) => {
-          expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
-          expect(ChannelService.checkChanges).toHaveBeenCalled();
-          expect(newComponentId).toEqual('newUuid');
-          done();
-        });
       $rootScope.$digest();
     });
   });
