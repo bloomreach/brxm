@@ -105,7 +105,6 @@ export default class OverlayService {
     }
 
     const component = this.PageStructureService.getComponentByOverlayElement(event.target);
-
     if (component) {
       // eslint-disable-next-line consistent-return
       return this._onComponentClick(event, component);
@@ -144,6 +143,10 @@ export default class OverlayService {
 
   _onContainerClick(event, container) {
     if (container.isDisabled()) {
+      return;
+    }
+
+    if (container.isShared() !== this._isEditSharedContainers) {
       return;
     }
 

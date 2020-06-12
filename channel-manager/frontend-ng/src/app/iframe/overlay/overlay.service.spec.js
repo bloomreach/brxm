@@ -1093,6 +1093,28 @@ describe('OverlayService', () => {
       expect(OverlayService.isInAddMode).toBe(true);
     });
 
+    it('should stay in add mode when clicking on a shared container while not editing shared containers', () => {
+      OverlayService.toggleAddMode(true);
+
+      const containerOverlay = $document.find('.hippo-overlay > .hippo-overlay-element-container').eq(5);
+      containerOverlay.click();
+
+      expect(OverlayService.isInAddMode).toBe(true);
+    });
+
+    it('should stay in add mode when clicking on a local container while editing shared containers', () => {
+      const containers = $document.find('.hippo-overlay > .hippo-overlay-element-container');
+      const sharedContainerOverlay = containers.eq(5);
+      sharedContainerOverlay.find('.hippo-overlay-shared button')[0].click();
+
+      OverlayService.toggleAddMode(true);
+
+      const localContainerOverlay = containers.eq(0);
+      localContainerOverlay.click();
+
+      expect(OverlayService.isInAddMode).toBe(true);
+    });
+
     it('should add a component before the clicked one', (done) => {
       const promise = OverlayService.toggleAddMode(true);
       const componentBeforeArea = $document.find(`.hippo-overlay
