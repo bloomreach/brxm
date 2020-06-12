@@ -78,12 +78,14 @@ class ComponentCatalogService {
       await this.RightSidePanelService.close();
     }
 
-    const page = this.PageStructureService.getPage();
+    let page = this.PageStructureService.getPage();
     const container = page && page.getContainerById(containerId);
     const componentId = await this.ContainerService.addComponent(this.selectedComponent, container, nextComponentId);
     delete this.selectedComponent;
 
     if (!this.ConfigService.relevancePresent) {
+      // page may have been reloaded by the ContainerService
+      page = this.PageStructureService.getPage();
       const component = page && page.getComponentById(componentId);
       this.EditComponentService.startEditing(component);
     }
