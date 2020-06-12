@@ -458,6 +458,15 @@
   .hippo-overlay-element-component-drop-area {
     display: flex;
   }
+
+  .hippo-overlay-element-container-readonly,
+  .hippo-overlay-element-container-readonly:hover {
+    @extend %overlay-interaction-blocked;
+
+    .hippo-overlay-icon {
+      display: none;
+    }
+  }
 }
 
 .hippo-overlay-permeable {
@@ -473,13 +482,7 @@
   cursor: grabbing;
 
   .drop-not-allowed {
-    background-color: rgba($red-400, .3);
-    cursor: not-allowed;
-    pointer-events: all;
-
-    .hippo-overlay-shared {
-      display: none;
-    }
+    @extend %overlay-interaction-blocked;
   }
 
   .hippo-overlay-element-container {
@@ -637,5 +640,15 @@
 
   to {
     transform: scale(1);
+  }
+}
+
+%overlay-interaction-blocked {
+  background-color: rgba($red-400, .3);
+  cursor: not-allowed;
+  pointer-events: all;
+
+  .hippo-overlay-shared {
+    display: none;
   }
 }
