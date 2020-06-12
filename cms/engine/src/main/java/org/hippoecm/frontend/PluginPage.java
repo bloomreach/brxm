@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -96,7 +96,11 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
             context.registerTracker(this, "service.root");
 
-            pluginConfigService = new PluginConfigFactory(UserSession.get(), appFactory);
+            if (Main.isCmsApplication() && Main.hasNoIFrameParameter()) {
+                pluginConfigService = new PluginConfigFactory(PluginApplication.PLUGIN_APPLICATION_VALUE_NAVAPP, appFactory);
+            } else {
+                pluginConfigService = new PluginConfigFactory(UserSession.get(), appFactory);
+            }
             context.registerService(pluginConfigService, IPluginConfigService.class.getName());
 
             final String configurationParameter = PluginApplication.get()
