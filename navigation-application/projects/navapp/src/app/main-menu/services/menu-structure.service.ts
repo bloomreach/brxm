@@ -164,6 +164,8 @@ export class MenuStructureService {
             this.translate('MENU_ITEM_INSIGHTS_SITE_SEARCH_ANALYTICS_TOP_KEYWORDS')),
           new MenuItemLink('insights/site-search-analytics/no-revenue-keywords',
             this.translate('MENU_ITEM_INSIGHTS_SITE_SEARCH_ANALYTICS_NO_REVENUE_KEYWORDS')),
+          new MenuItemLink('insights/site-search-analytics/no-search-keywords',
+            this.translate('MENU_ITEM_INSIGHTS_SITE_SEARCH_ANALYTICS_NO_SEARCH_KEYWORDS')),
         ]),
         new MenuItemContainer(this.translate('MENU_CONTAINER_SEO_ANALYTICS'), [
           new MenuItemLink('insights/seo-analytics/overall-performance',
