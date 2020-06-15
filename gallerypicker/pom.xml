@@ -33,8 +33,8 @@
   <inceptionYear>2008</inceptionYear>
 
   <properties>
-    <hippo.repository.version>12.6.11-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>12.6.11-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
+    <hippo.cms.version>${hippo.release.version}</hippo.cms.version>
 
     <junit.version>4.12</junit.version>
 

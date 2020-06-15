@@ -37,10 +37,10 @@
   <inceptionYear>2009</inceptionYear>
 
   <properties>
-    <hippo.services.version>12.6.11-SNAPSHOT</hippo.services.version>
-    <hippo.cms.version>12.6.11-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>12.6.11-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>12.6.11-SNAPSHOT</hippo.hst.version>
+    <hippo.services.version>${hippo.release.version}</hippo.services.version>
+    <hippo.cms.version>${hippo.release.version}</hippo.cms.version>
+    <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
+    <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
   </properties>
 
   <repositories>

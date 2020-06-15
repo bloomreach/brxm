@@ -33,6 +33,8 @@
   </organization>
 
   <properties>
+    <hippo.release.version>12.6.11-SNAPSHOT</hippo.release.version>
+
     <!-- use UTF-8 encoding for filtered file copy and test reports -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
