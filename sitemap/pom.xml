@@ -37,9 +37,9 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Sitemap</notice.project.name>
 
-    <hippo.hst.version>12.6.11-SNAPSHOT</hippo.hst.version>
-    <hippo.repository.version>12.6.11-SNAPSHOT</hippo.repository.version>
-    <hippo.commons.version>12.6.11-SNAPSHOT</hippo.commons.version>
+    <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
+    <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
+    <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
   </properties>
 
   <repositories>

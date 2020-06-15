@@ -75,12 +75,12 @@
     <notice.project.name>Hippo Repository</notice.project.name>
 
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
-    <hippo.configuration-management.version>12.6.11-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.commons.version>12.6.11-SNAPSHOT</hippo.commons.version>
-    <hippo.services.version>12.6.11-SNAPSHOT</hippo.services.version>
-    <hippo.services.eventbus.version>12.6.11-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.utilities.version>12.6.11-SNAPSHOT</hippo.utilities.version>
-    <hippo.testutils.version>12.6.11-SNAPSHOT</hippo.testutils.version>
+    <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
+    <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
+    <hippo.services.version>${hippo.release.version}</hippo.services.version>
+    <hippo.services.eventbus.version>${hippo.release.version}</hippo.services.eventbus.version>
+    <hippo.utilities.version>${hippo.release.version}</hippo.utilities.version>
+    <hippo.testutils.version>${hippo.release.version}</hippo.testutils.version>
 
     <!-- Test dependencies  -->
     <junit.version>4.12</junit.version>
