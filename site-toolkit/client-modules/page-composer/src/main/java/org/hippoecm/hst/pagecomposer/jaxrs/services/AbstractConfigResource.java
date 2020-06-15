@@ -59,13 +59,22 @@ public class AbstractConfigResource {
     }
 
     protected Response ok(String msg) {
-        return ok(msg, ArrayUtils.EMPTY_STRING_ARRAY);
+        return ok(msg, ArrayUtils.EMPTY_STRING_ARRAY, false);
+    }
+
+    protected Response ok(String msg, boolean reloadRequired) {
+        return ok(msg, ArrayUtils.EMPTY_STRING_ARRAY, reloadRequired);
     }
 
     protected Response ok(String msg, Object data) {
+        return ok(msg, data, false);
+    }
+
+    protected Response ok(String msg, Object data, boolean reloadRequired) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation(data);
         entity.setMessage(msg);
         entity.setSuccess(true);
+        entity.setReloadRequired(reloadRequired);
         return Response.ok().entity(entity).build();
     }
 
@@ -73,31 +82,56 @@ public class AbstractConfigResource {
         return error(msg, ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
+    protected Response error(String msg, boolean reloadRequired) {
+        return error(msg, ArrayUtils.EMPTY_STRING_ARRAY, reloadRequired);
+    }
+
     protected Response error(String msg, Object data) {
+        return error(msg, data, false);
+    }
+
+    protected Response error(String msg, Object data, boolean reloadRequired) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation(data);
         entity.setMessage(msg);
         entity.setSuccess(false);
+        entity.setReloadRequired(reloadRequired);
         return Response.serverError().entity(entity).build();
     }
 
     protected Response clientError(String msg, Object data) {
+        return clientError(msg, data, false);
+    }
+
+
+    protected Response clientError(String msg, Object data, boolean reloadRequired) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation(data);
         entity.setMessage(msg);
         entity.setSuccess(false);
+        entity.setReloadRequired(reloadRequired);
         return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
     }
 
     protected Response created(String msg) {
+        return created(msg, false);
+    }
+
+    protected Response created(String msg, boolean reloadRequired) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation();
         entity.setMessage(msg);
         entity.setSuccess(true);
+        entity.setReloadRequired(reloadRequired);
         return Response.status(Response.Status.CREATED).entity(entity).build();
     }
 
     protected Response conflict(String msg) {
+        return conflict(msg, false);
+    }
+
+    protected Response conflict(String msg, boolean reloadRequired) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation();
         entity.setMessage(msg);
         entity.setSuccess(false);
+        entity.setReloadRequired(reloadRequired);
         return Response.status(Response.Status.CONFLICT).entity(entity).build();
     }
 
