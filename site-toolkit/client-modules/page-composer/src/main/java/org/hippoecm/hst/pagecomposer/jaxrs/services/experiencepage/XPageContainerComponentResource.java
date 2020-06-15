@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -33,6 +34,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
@@ -44,6 +46,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResourceInterface;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils;
@@ -54,10 +57,13 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.String.format;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getContainer;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.checkoutCorrectBranch;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getDocumentWorkflow;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getInternalWorkflowSession;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getWorkspaceNode;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
 
@@ -92,16 +98,20 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
                                                     final @PathParam("siblingItemUUID") String siblingItemUUID,
                                                     final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         if (!isValidUUID(itemUUID)) {
-            final String message = String.format("Value of path parameter itemUUID: '%s' is not a valid UUID", itemUUID);
+            final String message = format("Value of path parameter itemUUID: '%s' is not a valid UUID", itemUUID);
             return clientError(message, new ErrorStatus(ClientError.INVALID_UUID));
         }
         if (siblingItemUUID != null && !isValidUUID(siblingItemUUID)) {
-            final String message = String.format("Value of path parameter siblingItemUUID: '%s' is not a valid UUID", siblingItemUUID);
+            final String message = format("Value of path parameter siblingItemUUID: '%s' is not a valid UUID", siblingItemUUID);
             return clientError(message, new ErrorStatus(ClientError.INVALID_UUID));
         }
         final ContainerAction<Response> createContainerItem = () -> {
 
-            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession(), getPageComposerContextService());
+            final PageComposerContextService pageComposerContextService = getPageComposerContextService();
+
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession(), pageComposerContextService);
+
+            final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
             final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
 
@@ -109,7 +119,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
             // is of the 'preview' variant (mind you, this can be the preview of a branch loaded from version history!)
             final Node catalogItem = ContainerUtils.getContainerItem(workflowSession, itemUUID);
 
-            final Node containerNode = getContainer(versionStamp, workflowSession, getPageComposerContextService());
+            final Node containerNode = getWorkspaceNode(workflowSession, getPageComposerContextService().getRequestConfigIdentifier());
 
             // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
             // containerNode. Find a correct newName and create a new node.
@@ -117,18 +127,29 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
             final Node newItem = JcrUtils.copy(workflowSession, catalogItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
 
             if (siblingItemUUID != null) {
-                final Node siblingItem = ContainerUtils.getContainerItem(workflowSession, siblingItemUUID);
-                if (!siblingItem.getPath().startsWith(containerNode.getPath() + "/")) {
-                    throw new ClientException(String.format("Order before container item '%s' is of other experience page",
+                try {
+                    final Node siblingItem = getWorkspaceNode(workflowSession, siblingItemUUID);
+                    if (!siblingItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                        throw new ClientException(format("The container item '%s' does not have the correct type",
+                                siblingItemUUID), ClientError.INVALID_NODE_TYPE);
+                    }
+                    if (!siblingItem.getPath().startsWith(containerNode.getPath() + "/")) {
+                        throw new ClientException(format("Order before container item '%s' is of other experience page",
+                                siblingItemUUID), ClientError.INVALID_UUID);
+                    }
+                    containerNode.orderBefore(newItem.getName(), siblingItem.getName());
+                } catch (ItemNotFoundException e) {
+                    log.info("Cannot find container item '{}'.", itemUUID);
+                    throw new ClientException(format("Cannot find container item '%s'",
                             siblingItemUUID), ClientError.INVALID_UUID);
                 }
-                containerNode.orderBefore(newItem.getName(), siblingItem.getName());
+
             }
             final Calendar updatedTimestamp = updateTimestamp(containerNode);
 
             documentWorkflow.saveUnpublished();
 
-            return respondNewContainerItemCreated(new ContainerItemImpl(newItem, updatedTimestamp.getTimeInMillis()));
+            return respondNewContainerItemCreated(new ContainerItemImpl(newItem, updatedTimestamp.getTimeInMillis()), isCheckedOut);
 
         };
 
@@ -152,14 +173,21 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
     public Response updateContainer(final ContainerRepresentation container) {
         final ContainerAction<Response> updateContainer = () -> {
 
-            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession(), getPageComposerContextService());
+            final PageComposerContextService pageComposerContextService = getPageComposerContextService();
+
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession(), pageComposerContextService);
+
+            final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
             final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
-            final Node containerNode = getContainer(container.getLastModifiedTimestamp(), workflowSession, getPageComposerContextService());
 
-            validateContainerItems(workflowSession, container.getChildren());
+            final Node containerNode = getWorkspaceNode(workflowSession, getPageComposerContextService().getRequestConfigIdentifier());
 
-            ContainerUtils.updateContainerOrder(workflowSession, container.getChildren(), containerNode, node -> {
+            final List<String> children = getWorkspaceChildren(workflowSession, container.getChildren());
+
+            validateContainerItems(workflowSession, children);
+
+            ContainerUtils.updateContainerOrder(workflowSession, children, containerNode, node -> {
                 // no locking needed for XPages;
             });
 
@@ -169,10 +197,26 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             documentWorkflow.saveUnpublished();
 
-            return ok(container.getId() + " updated", container);
+            return ok(container.getId() + " updated", container, isCheckedOut);
         };
 
         return handleAction(updateContainer);
+    }
+
+    // returns the UUIDs of the workspace version for children in case children belong to versioned nodes
+    private List<String> getWorkspaceChildren(final Session session, final List<String> childIds) throws RepositoryException {
+        final List<String> workspaceChildren = new ArrayList<>(childIds.size());
+        for (String childId : childIds) {
+            if (!isValidUUID(childId)) {
+                throw new ClientException(format("Invalid child id '%s'", childId), ClientError.INVALID_UUID);
+            }
+            try {
+                workspaceChildren.add(getWorkspaceNode(session, childId).getIdentifier());
+            } catch (ItemNotFoundException e) {
+                throw new ClientException(format("Could not find workspace node for child id '%s'", childId), ClientError.INVALID_UUID);
+            }
+        }
+        return workspaceChildren;
     }
 
     /**
@@ -203,21 +247,38 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             HippoSession session = getSession();
             try {
-                final Node containerItem = session.getNodeByIdentifier(itemUUID);
 
-                final Node container = getPageComposerContextService().getRequestConfigNode("hst:abstractcomponent");
+                final PageComposerContextService pageComposerContextService = getPageComposerContextService();
 
-                if (!containerItem.getPath().startsWith(container.getPath() + "/")) {
+                final DocumentWorkflow documentWorkflow = getDocumentWorkflow(session, pageComposerContextService);
+
+                final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
+
+                final Node container = getWorkspaceNode(session, getPageComposerContextService().getRequestConfigIdentifier());
+
+                final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
+
+                // itemUUID can belong to versioned component item, in that case, find the checked out workspace equivalent
+                final Node item = internalWorkflowSession.getNodeByIdentifier(itemUUID);
+                final Node workspaceContainerItem;
+                if (item.isNodeType(JcrConstants.NT_FROZENNODE)) {
+                    // get hold of the workspace container item! Since 'checkoutCorrectBranch' did already do the checkout,
+                    // and a restore from version history restores the frozen uuid, we can safely get hold of that one
+                    final String workspaceUUID = item.getProperty(JcrConstants.JCR_FROZENUUID).getString();
+                    workspaceContainerItem = session.getNodeByIdentifier(workspaceUUID);
+                } else {
+                    workspaceContainerItem = item;
+                }
+
+                if (!workspaceContainerItem.getPath().startsWith(container.getPath() + "/")) {
                     throw new ClientException("Cannot delete container item of other document", ClientError.INVALID_UUID);
                 }
 
-                DocumentWorkflow documentWorkflow = getDocumentWorkflow(session, getPageComposerContextService());
+                workspaceContainerItem.remove();
 
-                final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
-                internalWorkflowSession.getNodeByIdentifier(itemUUID).remove();
                 documentWorkflow.saveUnpublished();
 
-                return ok(itemUUID + " deleted");
+                return ok(itemUUID + " deleted", isCheckedOut);
             } catch (ItemNotFoundException e) {
                 throw new ClientException("Item to delete not found", ClientError.INVALID_UUID);
             }
@@ -240,15 +301,17 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
         }
     }
 
-    private Response respondNewContainerItemCreated(ContainerItem newContainerItem) throws RepositoryException {
+    private Response respondNewContainerItemCreated(ContainerItem newContainerItem,
+                                                    final boolean requiresReload) throws RepositoryException {
         final Node newNode = newContainerItem.getContainerItem();
         final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation().represent(newNode, newContainerItem.getTimeStamp());
 
         log.info("Successfully created containerItemRepresentation '{}' with path '{}'", newNode.getName(), newNode.getPath());
+        final ExtResponseRepresentation entity = new ExtResponseRepresentation(containerItemRepresentation);
+        entity.setReloadRequired(requiresReload);
         return Response.status(Response.Status.CREATED)
-                .entity(new ExtResponseRepresentation(containerItemRepresentation))
+                .entity(entity)
                 .build();
     }
-
 
 }

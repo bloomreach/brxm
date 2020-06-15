@@ -24,24 +24,27 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpSession;
 
-import org.hippoecm.hst.core.container.ContainerConstants;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.jackrabbit.JcrConstants.NT_FROZENNODE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED;
-import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_HOLDER;
+import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
-import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.DRAFT;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 class XPageUtils {
@@ -53,10 +56,13 @@ class XPageUtils {
     }
 
     /**
-     * Returns the {@link DocumentWorkflow} for the current Experience Page document BUT if the current page is not
-     * editable by the {@code userSession} then a ClientException is thrown
+     * <p>
+     *     Returns the {@link DocumentWorkflow} for the current Experience Page document BUT if the current page is not
+     *     editable by the {@code userSession} then a ClientException is thrown
+     * </p>
      * @throws ClientException in case the current user is not allowed to edit the current document, for example because
      * someone else is already editing it
+     *
      */
     static DocumentWorkflow getDocumentWorkflow(final HippoSession userSession,
                                                 final PageComposerContextService contextService) throws RepositoryException, WorkflowException {
@@ -75,7 +81,6 @@ class XPageUtils {
             throw new WorkflowException(e.getMessage());
         }
 
-        checkoutCorrectBranch(documentWorkflow, contextService);
         return documentWorkflow;
     }
 
@@ -89,15 +94,18 @@ class XPageUtils {
         return documentWorkflow.getWorkflowContext().getInternalWorkflowSession();
     }
 
-    static void checkoutCorrectBranch(final DocumentWorkflow documentWorkflow,
-                                                final PageComposerContextService contextService) throws WorkflowException {
-        // TODO checkout the right branch which currently being edited in CM, this might be another one than currently
-        // TODO the unpublished is......find current branch via CmsSessionContext
+    /**
+     * optionally checks out the right branch if the branch to be changed is in version history and not the unpublished
+     * variant
+     * Returns TRUE if a branch was checked out, FALSE if it wasn't needed
+     */
+    static boolean checkoutCorrectBranch(final DocumentWorkflow documentWorkflow,
+                                         final PageComposerContextService contextService) throws WorkflowException, RepositoryException {
 
         try {
             if (!Boolean.TRUE.equals(documentWorkflow.hints().get("checkoutBranch"))) {
                 // there is only master branch, so no need to check out a branch
-                return;
+                return false;
             }
         } catch (RemoteException | RepositoryException e) {
             throw new WorkflowException(e.getMessage());
@@ -106,26 +114,63 @@ class XPageUtils {
         final HttpSession httpSession = contextService.getRequestContext().getServletRequest().getSession();
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
 
-        // TODO the CM should have been rendered with UUIDs from version history which should stay the same after
-        // TODO restoring a version from history
-        documentWorkflow.checkoutBranch(getBranchId(cmsSessionContext));
+        final String targetBranchId = getBranchId(cmsSessionContext);
+
+        // validate that the targetBranchId is the SAME as the branch ID belonging to the request identifier node (this
+        // can be a workspace container item or a container item in version history! This check is to avoid that for
+        // some reason, there is a mismatch between the container item branch and the CMS session context branch
+
+        final Optional<Node> unpublished = WorkflowUtils.getDocumentVariantNode(documentWorkflow.getNode(), UNPUBLISHED);
+
+        if (!unpublished.isPresent()) {
+            throw new WorkflowException("Expected unpublished variant to be present");
+        }
+
+        final String currentBranchId = JcrUtils.getStringProperty(unpublished.get(), HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+
+        final Node xpageComponent = getInternalWorkflowSession(documentWorkflow).getNodeByIdentifier(contextService.getRequestConfigIdentifier());
+
+        if (xpageComponent.isNodeType(NT_FROZENNODE)) {
+            Node documentVariant = xpageComponent;
+            while (documentVariant.getParent().isNodeType(NT_FROZENNODE)) {
+                documentVariant = documentVariant.getParent();
+            }
+            final String xPageComponentBranchId = JcrUtils.getStringProperty(documentVariant, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+            if (!targetBranchId.equals(xPageComponentBranchId)) {
+                throw new WorkflowException(String.format("Expected target branch id '%s' to be the same as the branch " +
+                        "id '%s' to which the XPage component '%s' belongs", targetBranchId, xPageComponentBranchId,
+                        contextService.getRequestConfigIdentifier()));
+            }
+        } else {
+            if (!targetBranchId.equals(currentBranchId)) {
+                throw new WorkflowException(String.format("Expected target branch id '%s' to be the same as the branch " +
+                                "id '%s' to which the XPage component '%s' belongs", targetBranchId, currentBranchId,
+                        contextService.getRequestConfigIdentifier()));
+            }
+        }
+
+        if (currentBranchId.equals(targetBranchId)) {
+            log.debug(String.format("target branch '%s' is current unpublished, no need to invoke checkoutBranch workflow",
+                    targetBranchId ));
+            return false;
+        }
+
+        documentWorkflow.checkoutBranch(targetBranchId);
+        return true;
     }
 
+    /**
+     *
+     * @return
+     */
     static String getBranchId(CmsSessionContext cmsSessionContext) {
-        return Optional.ofNullable(cmsSessionContext.getContextPayload())
-                .map(contextPayload -> contextPayload.get(ContainerConstants.RENDER_BRANCH_ID).toString())
-                .orElse(MASTER_BRANCH_ID);
+        final String branchId = (String) cmsSessionContext.getContextPayload().get(RENDER_BRANCH_ID);
+        if (StringUtils.isEmpty(branchId)) {
+            return MASTER_BRANCH_ID;
+        }
+        return branchId;
     }
 
-    static Node getContainer(final long versionStamp, final Session session,
-                                       final PageComposerContextService contextService) throws RepositoryException {
-
-        final Node container = contextService.getRequestConfigNodeById(contextService.getRequestConfigIdentifier(),
-                "hst:abstractcomponent", session);
-
-        validateTimestamp(versionStamp, container);
-        return container;
-    }
 
     static void validateTimestamp(final long versionStamp, final Node container) throws RepositoryException {
         if (versionStamp != 0 && container.hasProperty(GENERAL_PROPERTY_LAST_MODIFIED)) {
@@ -141,4 +186,25 @@ class XPageUtils {
     }
 
 
+    /**
+     * Returns the WORKSPACE container item for {@code identifier}
+     *
+     * Note that 'pageComposerContextService.getRequestConfigIdentifier()' can return a frozen node : this method returns
+     * the 'workspace' version of that node, and if not found, a ItemNotFoundException will be thrown
+     */
+    static Node getWorkspaceNode(final Session session, final String identifier) throws RepositoryException {
+        // note this can be a frozen node
+        final Node containerItem = session.getNodeByIdentifier(identifier);
+
+        final Node workspaceNode;
+        if (containerItem.isNodeType(JcrConstants.NT_FROZENNODE)) {
+            // get hold of the workspace container item! Since 'checkoutCorrectBranch' did already do the checkout,
+            // and a restore from version history restores the frozen uuid, we can safely get hold of that one
+            final String workspaceUUID = containerItem.getProperty(JcrConstants.JCR_FROZENUUID).getString();
+            return session.getNodeByIdentifier(workspaceUUID);
+        } else {
+            return containerItem;
+        }
+
+    }
 }

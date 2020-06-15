@@ -35,8 +35,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
@@ -48,6 +47,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorExcept
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.String.format;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
 
 /**
@@ -97,9 +97,9 @@ public class XPageContainerItemComponentResource extends AbstractConfigResource 
         try {
 
             final HashSet<String> retainedVariants = new HashSet<>(Arrays.asList(variants));
-            final Set<String> removedVariants = this.xPageContainerItemComponentService.retainVariants(retainedVariants, versionStamp);
+            final Pair<Set<String>, Boolean> result = this.xPageContainerItemComponentService.retainVariants(retainedVariants, versionStamp);
 
-            return ok("Removed variants:", removedVariants);
+            return ok("Removed variants:", result.getLeft(), result.getRight());
         } catch (ClientException e) {
             log.error("Unable to cleanup the variants of the component", e);
             return clientError(e.getMessage(), e.getErrorStatus());
@@ -138,11 +138,11 @@ public class XPageContainerItemComponentResource extends AbstractConfigResource 
                                          final MultivaluedHashMap<String, String> params) {
         try {
             if (StringUtils.isEmpty(newVariantId)) {
-                this.xPageContainerItemComponentService.updateVariant(variantId, versionStamp, params);
-                return ok("Parameters for '" + variantId + "' saved successfully.");
+                final boolean reloadRequired = this.xPageContainerItemComponentService.updateVariant(variantId, versionStamp, params);
+                return ok(format("Parameters for '%s' saved successfully.",  variantId) , reloadRequired);
             } else {
-                this.xPageContainerItemComponentService.moveAndUpdateVariant(variantId, newVariantId, versionStamp, params);
-                return ok("Parameters renamed from '" + variantId + "' to '" + newVariantId + "' and saved successfully.");
+                final boolean reloadRequired = this.xPageContainerItemComponentService.moveAndUpdateVariant(variantId, newVariantId, versionStamp, params);
+                return ok(format("Parameters renamed from '%s' to '%s' and saved successfully.", variantId, newVariantId), reloadRequired);
             }
         } catch (ClientException e) {
             return clientError("Unable to set the parameters of component", e.getErrorStatus());
@@ -161,8 +161,8 @@ public class XPageContainerItemComponentResource extends AbstractConfigResource 
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
 
         try {
-            this.xPageContainerItemComponentService.createVariant(variantId, versionStamp);
-            return created("Variant '" + variantId + "' created successfully");
+            final boolean reloadRequired = this.xPageContainerItemComponentService.createVariant(variantId, versionStamp);
+            return created(format("Variant '%s' created successfully", variantId ), reloadRequired);
         } catch (ClientException e) {
             return clientError("Could not create variant '" + variantId + "'", e.getErrorStatus());
         } catch (RepositoryException | ServerErrorException e) {
@@ -179,13 +179,13 @@ public class XPageContainerItemComponentResource extends AbstractConfigResource 
     public Response deleteVariant(final @PathParam("variantId") String variantId,
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
         try {
-            this.xPageContainerItemComponentService.deleteVariant(variantId, versionStamp);
-            return ok("Variant '" + variantId + "' deleted successfully");
+            final boolean reloadRequired = this.xPageContainerItemComponentService.deleteVariant(variantId, versionStamp);
+            return ok(format("Variant '%s' deleted successfully", variantId), reloadRequired);
         } catch (ClientException e) {
-            log.warn("Could not delete variant '{}'", variantId, e);
+            log.warn("Could not delete variant '{}' : {}", variantId, e.getMessage());
             return clientError("Could not delete variant '" + variantId + "'", e.getErrorStatus());
         } catch (RepositoryException e) {
-            log.error("Could not delete variant '{}'", variantId, e);
+            log.error("Could not delete variant '{}': {}", variantId, e.getMessage());
             final ErrorStatus errorStatus = ErrorStatus.unknown(e.getMessage());
             return error("Could not delete variant '" + variantId + "'", errorStatus);
         }
