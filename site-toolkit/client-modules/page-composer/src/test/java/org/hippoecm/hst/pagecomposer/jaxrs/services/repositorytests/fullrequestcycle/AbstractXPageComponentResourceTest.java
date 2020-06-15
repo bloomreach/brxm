@@ -15,25 +15,32 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
 
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
-import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.Utilities;
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.springframework.mock.web.MockHttpServletResponse;
 
+import static org.apache.jackrabbit.JcrConstants.NT_FROZENNODE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
-import static org.junit.Assert.assertNotNull;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.junit.Assert.assertTrue;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
 public abstract class AbstractXPageComponentResourceTest extends AbstractFullRequestCycleTest {
 
@@ -121,4 +128,54 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
         return (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
     }
 
+
+    @NotNull
+    protected Node getFrozenBannerComponent() throws Exception {
+        final Node masterVersion = versionMasterByBranching();
+
+        final Node frozenBannerComponent = masterVersion.getNode("hst:page/body/container/banner");
+
+        assertTrue(frozenBannerComponent.isNodeType(NT_FROZENNODE));
+        return frozenBannerComponent;
+    }
+
+    @NotNull
+    protected Node getFrozenContainer() throws Exception {
+        final Node masterVersion = versionMasterByBranching();
+
+        final Node frozenContainer = masterVersion.getNode("hst:page/body/container");
+
+        assertTrue(frozenContainer.isNodeType(NT_FROZENNODE));
+        return frozenContainer;
+    }
+
+    /**
+     * Branch unpublished to 'foo' and return the versioned master unpublished
+     */
+    @NotNull
+    private Node versionMasterByBranching() throws Exception {
+        final DocumentWorkflow workflow = (DocumentWorkflow) admin.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
+
+        // now the master branch is in version history!
+        workflow.branch("foo", "Foo");
+
+        assertThat(unpublishedExpPageVariant.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString())
+                .isEqualTo("foo");
+
+        // get the master frozen container item for banner
+        final Node masterVersion = admin.getWorkspace().getVersionManager().getVersionHistory(unpublishedExpPageVariant.getPath())
+                .getVersionByLabel(MASTER_BRANCH_LABEL_UNPUBLISHED).getFrozenNode();
+
+        assertThat(masterVersion.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
+        return masterVersion;
+    }
+
+
+    protected void assertRequiresReload(final MockHttpServletResponse response, final boolean expected) throws Exception {
+        final String restResponse = response.getContentAsString();
+
+        final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+
+        Assertions.assertThat(responseMap.get("reloadRequired")).isEqualTo(expected);
+    }
 }

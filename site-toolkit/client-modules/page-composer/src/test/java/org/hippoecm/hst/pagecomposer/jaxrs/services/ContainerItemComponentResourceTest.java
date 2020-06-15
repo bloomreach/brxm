@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
@@ -37,6 +38,7 @@ import org.junit.Test;
 import org.onehippo.jaxrs.cxf.CXFTest;
 
 import static io.restassured.http.ContentType.JSON;
+import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -71,7 +73,7 @@ public class ContainerItemComponentResourceTest extends CXFTest {
 
     @Test
     public void can_get_all_variants() throws RepositoryException {
-        EasyMock.expect(containerItemComponentService.getVariants())
+        expect(containerItemComponentService.getVariants())
                 .andReturn(new HashSet<>(Arrays.asList("foo-variant", "bah-variant")));
 
         EasyMock.replay(containerItemComponentService);
@@ -85,7 +87,7 @@ public class ContainerItemComponentResourceTest extends CXFTest {
 
     @Test
     public void gets_all_variants_with_a_client_side_error() throws RepositoryException {
-        EasyMock.expect(containerItemComponentService.getVariants())
+        expect(containerItemComponentService.getVariants())
                 .andThrow(new UnknownClientException("bad request"));
 
         EasyMock.replay(containerItemComponentService);
@@ -100,7 +102,7 @@ public class ContainerItemComponentResourceTest extends CXFTest {
 
     @Test
     public void gets_all_variants_with_a_server_side_error() throws RepositoryException {
-        EasyMock.expect(containerItemComponentService.getVariants())
+        expect(containerItemComponentService.getVariants())
                 .andThrow(new RepositoryException("foo error"));
 
         EasyMock.replay(containerItemComponentService);
@@ -115,8 +117,8 @@ public class ContainerItemComponentResourceTest extends CXFTest {
 
     @Test
     public void can_retain_variants() throws RepositoryException {
-        EasyMock.expect(containerItemComponentService.retainVariants(new HashSet<>(Arrays.asList("foo", "bah")), 1234))
-                .andReturn(new HashSet<>(Arrays.asList("deleted-1", "deleted-2")));
+        expect(containerItemComponentService.retainVariants(new HashSet<>(Arrays.asList("foo", "bah")), 1234))
+                .andReturn(new ImmutablePair<>(new HashSet<>(Arrays.asList("deleted-1", "deleted-2")), false));
         EasyMock.replay(containerItemComponentService);
 
         given()
@@ -140,7 +142,7 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         final ContainerItemComponentPropertyRepresentation cicpp = new ContainerItemComponentPropertyRepresentation();
         cicpp.setName("Foo Variant");
         mockVariant.setProperties(Arrays.asList(cicpp));
-        EasyMock.expect(containerItemComponentService.getVariant("foo-variant", "en"))
+        expect(containerItemComponentService.getVariant("foo-variant", "en"))
                 .andReturn(mockVariant);
 
         EasyMock.replay(containerItemComponentService);
@@ -154,7 +156,7 @@ public class ContainerItemComponentResourceTest extends CXFTest {
 
     @Test
     public void get_a_variant_with_server_side_error() throws RepositoryException, ServerErrorException {
-        EasyMock.expect(containerItemComponentService.getVariant("foo-variant", "en"))
+        expect(containerItemComponentService.getVariant("foo-variant", "en"))
                 .andThrow(new RepositoryException("foo error"));
 
         EasyMock.replay(containerItemComponentService);
@@ -172,7 +174,7 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         params.put("key1", Arrays.asList("value1"));
         params.put("key2", Arrays.asList("value2"));
 
-        containerItemComponentService.updateVariant("foo-variant", 1234, params);
+        expect(containerItemComponentService.updateVariant("foo-variant", 1234, params)).andReturn(false);
         EasyMock.replay(containerItemComponentService);
 
         given()
@@ -194,7 +196,7 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         params.put("key1", Arrays.asList("value1"));
         params.put("key2", Arrays.asList("value2"));
 
-        containerItemComponentService.moveAndUpdateVariant("foo-variant", "bah-variant", 1234, params);
+        expect(containerItemComponentService.moveAndUpdateVariant("foo-variant", "bah-variant", 1234, params)).andReturn(false);
         EasyMock.replay(containerItemComponentService);
 
         given()
@@ -264,7 +266,7 @@ public class ContainerItemComponentResourceTest extends CXFTest {
 
     @Test
     public void can_create_a_new_variant() throws RepositoryException, ServerErrorException {
-        containerItemComponentService.createVariant("foo-variant", 1234);
+        expect(containerItemComponentService.createVariant("foo-variant", 1234)).andReturn(false);
         EasyMock.replay(containerItemComponentService);
 
         given()
@@ -335,7 +337,7 @@ public class ContainerItemComponentResourceTest extends CXFTest {
 
     @Test
     public void can_delete_a_variant() throws RepositoryException, ServerErrorException {
-        containerItemComponentService.deleteVariant("foo-variant", 1234);
+        expect(containerItemComponentService.deleteVariant("foo-variant", 1234)).andReturn(true);
         EasyMock.replay(containerItemComponentService);
 
         given()

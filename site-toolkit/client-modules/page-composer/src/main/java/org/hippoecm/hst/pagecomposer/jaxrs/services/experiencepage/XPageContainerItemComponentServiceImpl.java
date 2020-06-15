@@ -30,6 +30,8 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -53,8 +55,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.checkoutCorrectBranch;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getDocumentWorkflow;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getInternalWorkflowSession;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getWorkspaceNode;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.validateTimestamp;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.MissingParametersInfo.defaultMissingParametersInfo;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.PageComposerUtil.executeWithWebsiteClassLoader;
@@ -76,7 +80,8 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
 
     @Override
     public Set<String> getVariants() throws RepositoryException {
-        final Node currentContainerItem = getContainerItem(0L, pageComposerContextService.getRequestContext().getSession());
+        final Node currentContainerItem = pageComposerContextService.getRequestContext().getSession()
+                .getNodeByIdentifier(pageComposerContextService.getRequestConfigIdentifier());
         final XPageComponentParameters componentParameters = getCurrentHstComponentParameters(currentContainerItem);
         return componentParameters.getPrefixes();
     }
@@ -85,21 +90,26 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
     public ContainerItemComponentRepresentation getVariant(final String variantId, final String localeString) throws ClientException, RepositoryException, ServerErrorException {
         try {
             // just use user session
-            return represent(getContainerItem(0L, pageComposerContextService.getRequestContext().getSession()), getLocale(localeString), variantId);
+            final Node currentContainerItem = pageComposerContextService.getRequestContext().getSession()
+                    .getNodeByIdentifier(pageComposerContextService.getRequestConfigIdentifier());
+            return represent(currentContainerItem, getLocale(localeString), variantId);
         } catch (ClassNotFoundException e) {
             throw new ServerErrorException(e);
         }
     }
 
     @Override
-    public Set<String> retainVariants(final Set<String> variants, final long versionStamp) throws RepositoryException {
+    public Pair<Set<String>, Boolean> retainVariants(final Set<String> variants, final long versionStamp) throws RepositoryException {
         try {
             // use workflow session to write to preview
-            DocumentWorkflow documentWorkflow = getDocumentWorkflow((HippoSession) pageComposerContextService.getRequestContext().getSession(),
-                    pageComposerContextService);
+            final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
+            DocumentWorkflow documentWorkflow = getDocumentWorkflow(userSession, pageComposerContextService);
+
+            final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
             final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
-            final Node containerItem = getContainerItem(versionStamp, internalWorkflowSession);
+
+            Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession);
 
             Set<String> removedVariants = doRetainVariants(containerItem, variants);
 
@@ -109,7 +119,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
                 documentWorkflow.saveUnpublished();
             }
             log.info("Removed variants: {}", removedVariants);
-            return removedVariants;
+            return new ImmutablePair<>(removedVariants, isCheckedOut);
         } catch (WorkflowException e) {
             throw new UnknownClientException(e.getMessage());
         }
@@ -117,14 +127,17 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
 
 
     @Override
-    public void createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException {
+    public boolean createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException {
         try {
             // use workflow session to write to preview
-            DocumentWorkflow documentWorkflow = getDocumentWorkflow((HippoSession) pageComposerContextService.getRequestContext().getSession(),
-                    pageComposerContextService);
+            final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
+            DocumentWorkflow documentWorkflow = getDocumentWorkflow(userSession, pageComposerContextService);
+
+            final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
             final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
-            final Node containerItem = getContainerItem(versionStamp, internalWorkflowSession);
+
+            Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession);
 
             final XPageComponentParameters componentParameters = new XPageComponentParameters(containerItem, containerItemHelper);
             if (componentParameters.hasPrefix(variantId)) {
@@ -139,6 +152,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             documentWorkflow.saveUnpublished();
 
             log.info("Variant '{}' created successfully", variantId);
+            return isCheckedOut;
         } catch (IllegalStateException | IllegalArgumentException | WorkflowException e) {
             log.warn("Could not create variant '{}'", variantId, e);
             throw new UnknownClientException("Could not create variant '" + variantId + "'");
@@ -158,14 +172,17 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
     }
 
     @Override
-    public void deleteVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException {
+    public boolean deleteVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException {
         try {
             // use workflow session to write to preview
-            DocumentWorkflow documentWorkflow = getDocumentWorkflow((HippoSession) pageComposerContextService.getRequestContext().getSession(),
-                    pageComposerContextService);
+            final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
+            DocumentWorkflow documentWorkflow = getDocumentWorkflow(userSession, pageComposerContextService);
+
+            final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
             final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
-            Node containerItem = getContainerItem(versionStamp, internalWorkflowSession);
+
+            Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession);
 
             final XPageComponentParameters componentParameters = getCurrentHstComponentParameters(containerItem);
             if (!componentParameters.hasPrefix(variantId)) {
@@ -181,6 +198,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             documentWorkflow.saveUnpublished();
 
             log.info("Variant '{}' deleted successfully", variantId);
+            return isCheckedOut;
         } catch (IllegalStateException | IllegalArgumentException | WorkflowException e) {
             log.warn("Could not delete variantId '{}'", variantId, e);
             throw new UnknownClientException("Could not delete the variantId");
@@ -191,14 +209,16 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
     }
 
     @Override
-    public void updateVariant(final String variantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
+    public boolean updateVariant(final String variantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
         try {
             // use workflow session to write to preview
-            DocumentWorkflow documentWorkflow = getDocumentWorkflow((HippoSession) pageComposerContextService.getRequestContext().getSession(),
-                    pageComposerContextService);
+            final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(userSession, pageComposerContextService);
+
+            final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
             final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
-            Node containerItem = getContainerItem(versionStamp, internalWorkflowSession);
+            final Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession);
 
             final XPageComponentParameters componentParameters = getCurrentHstComponentParameters(containerItem);
             setParameters(componentParameters, variantId, params);
@@ -210,6 +230,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             documentWorkflow.saveUnpublished();
 
             log.info("Parameters for '{}' saved successfully.", variantId);
+            return isCheckedOut;
         } catch (IllegalStateException | IllegalArgumentException | WorkflowException e) {
             log.warn("Could not save parameters for variant '{}'", variantId, e);
             throw new UnknownClientException(e.getMessage());
@@ -220,15 +241,17 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
     }
 
     @Override
-    public void moveAndUpdateVariant(final String oldVariantId, final String newVariantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
+    public boolean moveAndUpdateVariant(final String oldVariantId, final String newVariantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
         try {
             // use workflow session to write to preview
-            DocumentWorkflow documentWorkflow = getDocumentWorkflow((HippoSession) pageComposerContextService.getRequestContext().getSession(),
-                    pageComposerContextService);
+            final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
+
+            DocumentWorkflow documentWorkflow = getDocumentWorkflow(userSession, pageComposerContextService);
+
+            final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
             final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
-
-            Node containerItem = getContainerItem(versionStamp, internalWorkflowSession);
+            Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession);
 
             final XPageComponentParameters componentParameters = new XPageComponentParameters(containerItem, containerItemHelper);
             componentParameters.removePrefix(oldVariantId);
@@ -242,6 +265,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             documentWorkflow.saveUnpublished();
 
             log.info("Parameters renamed from '{}' to '{}' and saved successfully.", oldVariantId, newVariantId);
+            return isCheckedOut;
         } catch (IllegalStateException | IllegalArgumentException | WorkflowException e) {
             logParameterSettingFailed(e);
             throw new UnknownClientException(e.getMessage());
@@ -257,16 +281,17 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
         return new XPageComponentParameters(containerItem, containerItemHelper);
     }
 
-
     /**
-     * Returns the container item validated against the versionStamp of the parent container: if the parent container has
+     * Returns the WORKSPACE container item validated against the versionStamp of the parent container: if the parent container has
      * a different versionStamp than {@code versionStamp} a {@link ClientException} will be thrown. If the {@code versionStamp}
-     * argument is 0, then the versionStamp check is omitted
+     * argument is 0, then the versionStamp check is omitted.
+     *
+     * Note that 'pageComposerContextService.getRequestConfigIdentifier()' can return a frozen node : this method returns
+     * the 'workspace' version of that node, and if not found, a ItemNotFoundException will be thrown
      */
-    private Node getContainerItem(final long versionStamp, final Session session) throws RepositoryException {
-        // note this can be a frozen node
-        final Node containerItem = session.getNodeByIdentifier(pageComposerContextService.getRequestConfigIdentifier());
+    private Node getWorkspaceContainerItem(final long versionStamp, final Session session) throws RepositoryException {
 
+        final Node containerItem = getWorkspaceNode(session, pageComposerContextService.getRequestConfigIdentifier());
         final Node container = containerItem.getParent();
         validateTimestamp(versionStamp, container);
         return containerItem;
