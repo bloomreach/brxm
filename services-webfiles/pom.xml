@@ -37,8 +37,8 @@
 
     <commons-io.version>2.6</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
-    <hippo.repository.version>12.6.11-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>12.6.11-SNAPSHOT</hippo.services.version>
+    <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
+    <hippo.services.version>${hippo.release.version}</hippo.services.version>
 
     <jackrabbit.vault.version>3.1.6</jackrabbit.vault.version>
     <junit.version>4.11</junit.version>

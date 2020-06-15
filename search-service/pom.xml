@@ -54,9 +54,9 @@
 
     <aspectj.version>1.8.10</aspectj.version>
 
-    <hippo.repository.version>12.6.11-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>12.6.11-SNAPSHOT</hippo.services.version>
-    <hippo.utilities.version>12.6.11-SNAPSHOT</hippo.utilities.version>
+    <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
+    <hippo.services.version>${hippo.release.version}</hippo.services.version>
+    <hippo.utilities.version>${hippo.release.version}</hippo.utilities.version>
 
     <maven.plugin.site.version>3.6</maven.plugin.site.version>
     <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>

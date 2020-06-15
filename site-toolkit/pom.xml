@@ -80,15 +80,15 @@
     <ehcache-web.version>2.0.4</ehcache-web.version>
 
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
-    <hippo.commons.version>12.6.11-SNAPSHOT</hippo.commons.version>
-    <hippo.repository.version>12.6.11-SNAPSHOT</hippo.repository.version>
-    <hippo.configuration-management.version>12.6.11-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.utilities.version>12.6.11-SNAPSHOT</hippo.utilities.version>
-    <hippo.services.version>12.6.11-SNAPSHOT</hippo.services.version>
-    <hippo.services.eventbus.version>12.6.11-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.addon-search-service.version>12.6.11-SNAPSHOT</hippo.addon-search-service.version>
-    <hippo.services.contenttype.version>12.6.11-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.testutils.version>12.6.11-SNAPSHOT</hippo.testutils.version>
+    <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
+    <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
+    <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
+    <hippo.utilities.version>${hippo.release.version}</hippo.utilities.version>
+    <hippo.services.version>${hippo.release.version}</hippo.services.version>
+    <hippo.services.eventbus.version>${hippo.release.version}</hippo.services.eventbus.version>
+    <hippo.addon-search-service.version>${hippo.release.version}</hippo.addon-search-service.version>
+    <hippo.services.contenttype.version>${hippo.release.version}</hippo.services.contenttype.version>
+    <hippo.testutils.version>${hippo.release.version}</hippo.testutils.version>
 
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 

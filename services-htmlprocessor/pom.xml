@@ -36,8 +36,8 @@
     <notice.project.name>Hippo CMS7 Services - htmlprocessor</notice.project.name>
 
     <!-- runtime dependencies -->
-    <hippo.repository.version>12.6.11-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>12.6.11-SNAPSHOT</hippo.services.version>
+    <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
+    <hippo.services.version>${hippo.release.version}</hippo.services.version>
     <commons-lang.version>2.6</commons-lang.version>
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
