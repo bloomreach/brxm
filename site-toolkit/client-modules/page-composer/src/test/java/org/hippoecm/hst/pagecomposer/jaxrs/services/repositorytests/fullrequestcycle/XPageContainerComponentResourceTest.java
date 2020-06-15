@@ -34,6 +34,7 @@ import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
@@ -54,9 +55,8 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.CREATED;
-
-import org.assertj.core.api.Assertions;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -95,27 +95,39 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
     @Test
     public void create_and_delete_container_item_as_admin() throws Exception {
+        createAndDeleteItemAs(ADMIN_CREDENTIALS, true, false);
+    }
 
-        createAndDeleteItemAs(ADMIN_CREDENTIALS, true);
 
+    @Test
+    public void create_and_delete_container_item_as_admin_for_VERSIONED_XPage() throws Exception {
+        createAndDeleteItemAs(ADMIN_CREDENTIALS, true, true);
     }
 
     @Test
     public void create_and_delete_container_item_as_editor() throws Exception {
-
-        createAndDeleteItemAs(EDITOR_CREDENTIALS, true);
-
+        createAndDeleteItemAs(EDITOR_CREDENTIALS, true, false);
     }
 
+    @Test
+    public void create_and_delete_container_item_as_editor_for_VERSIONED_XPage() throws Exception {
+        createAndDeleteItemAs(EDITOR_CREDENTIALS, true, true);
+    }
 
     /**
      * Note an author cannot modify hst config pages but *CAN* modify experience pages if the cms user as role author
      */
     @Test
     public void create_and_delete_container_item_as_author() throws Exception {
-
         // author is not allowed to do a GET on ContainerItemComponentResource.getVariant()
-        createAndDeleteItemAs(AUTHOR_CREDENTIALS, true);
+        createAndDeleteItemAs(AUTHOR_CREDENTIALS, true, false);
+    }
+
+
+    @Test
+    public void create_and_delete_container_item_as_author_for_VERSIONED_XPage() throws Exception {
+        // author is not allowed to do a GET on ContainerItemComponentResource.getVariant()
+        createAndDeleteItemAs(AUTHOR_CREDENTIALS, true, true);
     }
 
     /**
@@ -135,7 +147,32 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         try {
             // since author does not have privilege hippo:author anymore, expect a FORBIDDEN
-            createAndDeleteItemAs(AUTHOR_CREDENTIALS, false);
+            createAndDeleteItemAs(AUTHOR_CREDENTIALS, false, false);
+        } finally {
+            // restore privileges
+            admin.getNode("/hippo:configuration/hippo:roles/author").setProperty("hipposys:privileges", before);
+            admin.save();
+        }
+    }
+
+    /**
+     * Note an author who does not have role hippo:author on the experience page is not allowed to modify the hst:page
+     * in the experience page document
+     */
+    @Test
+    public void create_container_item_NOT_allowed_it_not_role_author_for_VERSIONED_XPage() throws Exception {
+        // for author user, temporarily remove the role 'hippo:author' : Without this role, (s)he should not be allowed
+        // to invoked the XPageContainerComponentResource
+
+        final Session admin = createSession(ADMIN_CREDENTIALS);
+        Property privilegesProp = admin.getNode("/hippo:configuration/hippo:roles/author").getProperty("hipposys:privileges");
+        Value[] before = privilegesProp.getValues();
+        privilegesProp.remove();
+        admin.save();
+
+        try {
+            // since author does not have privilege hippo:author anymore, expect a FORBIDDEN
+            createAndDeleteItemAs(AUTHOR_CREDENTIALS, false, true);
         } finally {
             // restore privileges
             admin.getNode("/hippo:configuration/hippo:roles/author").setProperty("hipposys:privileges", before);
@@ -147,12 +184,20 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
      * The 'creds' are used to invoke the HST pipeline, the adminSession is used to invoke workflow from here (like
      * publish)
      */
-    private void createAndDeleteItemAs(final SimpleCredentials creds, final boolean allowed)
-            throws IOException, ServletException, RepositoryException, WorkflowException {
+    private void createAndDeleteItemAs(final SimpleCredentials creds, final boolean allowed,
+                                       final boolean versionedXPageTest) throws Exception {
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final String containerId;
+        if (versionedXPageTest) {// assert current unpublished variant is for branch
+            containerId = getFrozenContainer().getIdentifier();
+            // assert current unpublished variant is for a branch and not for MASTER due to getFrozenContainer
+            assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
+        } else {
+            containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        }
+
         final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
 
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
@@ -174,6 +219,11 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             return;
         }
 
+        if (versionedXPageTest) {
+            // assert current unpublished variant is now for MASTER since master should have been checked out
+            assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
+        }
+        assertRequiresReload(createResponse, versionedXPageTest);
 
         assertEquals(CREATED.getStatusCode(), createResponse.getStatus());
 
@@ -254,8 +304,6 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         final String containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
         final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
 
-        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
-
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + containerId + "./" + catalogId, null,
                 "POST");
@@ -330,6 +378,43 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         assertEquals("Expected testitem to be created before banner", "testitem", nodes.nextNode().getName());
         assertEquals("Expected testitem to be created before banner", "banner", nodes.nextNode().getName());
 
+
+        assertRequiresReload(createResponse, false);
+    }
+
+    @Test
+    public void create_item_before_for_VERSIONED_XPage() throws Exception {
+
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+        final String containerId = getFrozenContainer().getIdentifier();
+        // expect unpublished variant to be for a branch
+        assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
+
+        final String beforeItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+
+        final RequestResponseMock createRequestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + containerId + "./" + catalogId + "/" + beforeItemId, null,
+                "POST");
+
+        final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, ADMIN_CREDENTIALS);
+
+        assertEquals(CREATED.getStatusCode(), createResponse.getStatus());
+
+
+        assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
+
+        // do not reuse containerId from above since that one is from version history
+        final Node container = admin.getNodeByIdentifier(getNodeId(admin,
+                unpublishedExpPageVariant.getPath() + "/hst:page/body/container"));
+
+        final NodeIterator nodes = container.getNodes();
+        assertEquals("Expected testitem to be created before banner", "testitem", nodes.nextNode().getName());
+        assertEquals("Expected testitem to be created before banner", "banner", nodes.nextNode().getName());
+
+        // versioned XPage was modified
+        assertRequiresReload(createResponse, true);
     }
 
     @Test
@@ -337,7 +422,15 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         final String beforeItemId = UUID.randomUUID().toString();
         final String expectedMessage = String.format("Cannot find container item '%s'", beforeItemId);
-        notAllowedcreateBeforeItem(beforeItemId, expectedMessage);
+        notAllowedcreateBeforeItem(beforeItemId, expectedMessage, false);
+    }
+
+    @Test
+    public void create_item_before_non_existing_item_results_in_error_for_VERSIONED_XPage() throws Exception {
+
+        final String beforeItemId = UUID.randomUUID().toString();
+        final String expectedMessage = String.format("Cannot find container item '%s'", beforeItemId);
+        notAllowedcreateBeforeItem(beforeItemId, expectedMessage, true);
     }
 
     /**
@@ -350,24 +443,47 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         final String beforeItemId = getNodeId(admin,EXPERIENCE_PAGE_2_HANDLE_PATH + "/expPage2/hst:page/body/container/banner");
         final String expectedMessage = String.format(String.format("Order before container item '%s' is of other experience page", beforeItemId));
-        notAllowedcreateBeforeItem(beforeItemId, expectedMessage);
+        notAllowedcreateBeforeItem(beforeItemId, expectedMessage, false);
+    }
+
+    @Test
+    public void create_item_before_item_of_other_container_results_in_error_for_VERSIONED_XPage() throws Exception {
+
+        final String beforeItemId = getNodeId(admin,EXPERIENCE_PAGE_2_HANDLE_PATH + "/expPage2/hst:page/body/container/banner");
+        final String expectedMessage = String.format(String.format("Order before container item '%s' is of other experience page", beforeItemId));
+        notAllowedcreateBeforeItem(beforeItemId, expectedMessage, true);
     }
 
     @Test
     public void create_item_before_node_not_of_type_container_item_results_in_error() throws Exception {
         final String beforeItemId = unpublishedExpPageVariant.getIdentifier();
         final String expectedMessage = String.format(String.format("The container item '%s' does not have the correct type", beforeItemId));
-        notAllowedcreateBeforeItem(beforeItemId, expectedMessage);
+        notAllowedcreateBeforeItem(beforeItemId, expectedMessage, false);
+    }
+
+    @Test
+    public void create_item_before_node_not_of_type_container_item_results_in_error_for_VERSIONED_XPage() throws Exception {
+        final String beforeItemId = unpublishedExpPageVariant.getIdentifier();
+        final String expectedMessage = String.format(String.format("The container item '%s' does not have the correct type", beforeItemId));
+        notAllowedcreateBeforeItem(beforeItemId, expectedMessage, true);
     }
 
 
-    private void notAllowedcreateBeforeItem(final String beforeItemId, final String expectedMessage) throws RepositoryException, IOException, ServletException {
+    private void notAllowedcreateBeforeItem(final String beforeItemId, final String expectedMessage,
+                                            final boolean versionedXPageTest) throws Exception {
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final String containerId;
+        if (versionedXPageTest) {
+            containerId = getFrozenContainer().getIdentifier();
+            // assert current unpublished variant is for a branch and not for MASTER due to getFrozenBannerComponent
+            assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
+        } else {
+            containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        }
+
 
         final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
-
 
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + containerId + "./" + catalogId + "/" + beforeItemId, null,
@@ -381,6 +497,13 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         assertEquals(false, createResponseMap.get("success"));
 
         assertEquals(expectedMessage, createResponseMap.get("message"));
+
+        // although the invocation failed, the master branch was expected to be already checked out and thus branch
+        // property expected to be removed
+        assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
+
+        // even for failed responses, for now we do not send 'reload = true'
+        assertRequiresReload(createResponse, false);
     }
 
 
@@ -432,6 +555,67 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
                 TRUE, documentWorkflow.hints().get("publish"));
 
     }
+
+    @Test
+    public void move_container_item_within_container_for_VERSIONED_XPage() throws Exception {
+
+        JcrUtils.copy(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner",
+                unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner2");
+        admin.save();
+
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
+
+        // trigger that the unpublished has been marked changed so on 'branch' a new version will be created
+        documentWorkflow.obtainEditableInstance();
+        documentWorkflow.commitEditableInstance();
+
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+        final Node frozenContainer = getFrozenContainer();
+
+        final String containerId = frozenContainer.getIdentifier();
+        final String itemId1 = frozenContainer.getNode("banner").getIdentifier();
+        final String itemId2 = frozenContainer.getNode("banner2").getIdentifier();
+
+        final RequestResponseMock updateRequestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + containerId, null,
+                "PUT");
+
+        final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
+
+        containerRepresentation.setId(containerId);
+        // move item2 before item1
+        containerRepresentation.setChildren(Stream.of(itemId2, itemId1).collect(Collectors.toList()));
+
+        updateRequestResponse.getRequest().setContent(objectMapper.writeValueAsBytes(containerRepresentation));
+        updateRequestResponse.getRequest().setContentType("application/json;charset=UTF-8");
+
+        final MockHttpServletResponse updateResponse = render(mountId, updateRequestResponse, ADMIN_CREDENTIALS);
+
+        assertEquals(Response.Status.OK.getStatusCode(), updateResponse.getStatus());
+
+        // master should have been checked out
+        assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
+
+
+
+        // do not reuse containerId from above since that one is from version history
+        final Node container = admin.getNodeByIdentifier(getNodeId(admin,
+                unpublishedExpPageVariant.getPath() + "/hst:page/body/container"));
+        // assert container items have been flipped
+
+        final NodeIterator children = container.getNodes();
+
+        assertEquals("banner2", children.nextNode().getName());
+        assertEquals("banner", children.nextNode().getName());
+
+
+        assertEquals("Unpublished has changes, publication should be enabled",
+                TRUE, documentWorkflow.hints().get("publish"));
+
+        assertRequiresReload(updateResponse, true);
+    }
+
 
     @Test
     public void move_container_item_between_container_of_same_XPage() throws Exception {
@@ -486,7 +670,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
 
     @Test
-    public void move_container_item_between_container_of_different_XPages_is_now_allowed() throws Exception {
+    public void move_container_item_between_container_of_different_XPages_is_not_allowed() throws Exception {
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 

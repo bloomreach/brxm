@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
 import javax.ws.rs.core.MultivaluedHashMap;
@@ -40,7 +38,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContaine
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -51,7 +48,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
-import static org.apache.jackrabbit.JcrConstants.NT_FROZENNODE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
@@ -101,33 +97,16 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
     }
 
     @Test
-    public void get_container_item_of_branched_xpage_from_version_history() throws Exception {
+    public void get_container_item_of_branched_xpage_for_VERSIONED_XPage() throws Exception {
+
+        final Node frozenBannerComponent = getFrozenBannerComponent();
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
-
-        final DocumentWorkflow workflow = (DocumentWorkflow) admin.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
-
-        // now the master branch is in version history!
-        workflow.branch("foo", "Foo");
-
-        assertThat(unpublishedExpPageVariant.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString())
-                .isEqualTo("foo");
-
-        // get the master frozen container item for banner
-        final Node masterVersion = admin.getWorkspace().getVersionManager().getBaseVersion(unpublishedExpPageVariant.getPath()).getFrozenNode();
-
-        assertThat(masterVersion.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
-
-        final Node frozenBannerComponent = masterVersion.getNode("hst:page/body/container/banner");
-
-        assertTrue(frozenBannerComponent.isNodeType(NT_FROZENNODE));
-
         getComponentItemAs(ADMIN_CREDENTIALS, mountId, frozenBannerComponent.getIdentifier());
         getComponentItemAs(EDITOR_CREDENTIALS, mountId, frozenBannerComponent.getIdentifier());
         // author is also allowed to do a GET on XPageContainerItemComponentResource.getVariant()
         getComponentItemAs(AUTHOR_CREDENTIALS, mountId, frozenBannerComponent.getIdentifier());
     }
-
 
     @Test
     public void get_container_item_published_variant_not_allowed() throws Exception {
@@ -148,19 +127,33 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
     @Test
     public void retain_existing_variant_container_item_also_remains_default() throws Exception {
-        expectationsRetainingVariant(new String[]{"variant1"});
+        expectationsRetainingVariant(new String[]{"variant1"}, false);
     }
 
     @Test
     public void retain_existing_and_non_existing_variant_container_item_also_remains_default() throws Exception {
-        expectationsRetainingVariant(new String[]{"variant1", "non-existing"});
+        expectationsRetainingVariant(new String[]{"variant1", "non-existing"}, false);
     }
 
-    private void expectationsRetainingVariant(final String[] retainVariants) throws RepositoryException, IOException, ServletException, WorkflowException {
+    @Test
+    public void retain_existing_variant_container_item_also_remains_default_for_VERSIONED_XPage() throws Exception {
+        expectationsRetainingVariant(new String[]{"variant1"}, true);
+    }
+
+
+    private void expectationsRetainingVariant(final String[] retainVariants, final boolean versionedXPageTest) throws Exception {
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId;
+        if (versionedXPageTest) {
+            componentItemId = getFrozenBannerComponent().getIdentifier();
+            // assert current unpublished variant is for a branch and not for MASTER due to getFrozenBannerComponent
+            assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
+        } else {
+            componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        }
+
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + componentItemId, null, "POST");
@@ -173,6 +166,11 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        if (versionedXPageTest) {
+            // assert current unpublished variant is now for MASTER since master should have been checked out
+            assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
+        }
 
         // assert container never locked for XPage, and not publishable since it did NOT change
         assertFalse("XPage container should never get locked!!",
@@ -192,6 +190,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         assertEquals("Expected no changes because retained all the variants",
                 FALSE, documentWorkflow.hints().get("publish"));
 
+        assertRequiresReload(response, versionedXPageTest);
 
     }
 
@@ -243,14 +242,28 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
     @Test
     public void create_extra_variant_while_already_one_exists() throws Exception {
         final Set<String> set = Stream.of(new String[]{"", "variant1", "newvariant"}).collect(Collectors.toSet());
-        createVariantExpectations("newvariant", set);
+        createVariantExpectations("newvariant", set, false);
     }
 
-    private void createVariantExpectations(final String newVariant, final Set<String> variantsExpected) throws RepositoryException, IOException, ServletException {
+    @Test
+    public void create_extra_variant_while_already_one_exists_for_VERSIONED_XPage() throws Exception {
+        final Set<String> set = Stream.of(new String[]{"", "variant1", "newvariant"}).collect(Collectors.toSet());
+        createVariantExpectations("newvariant", set, true);
+    }
+
+    private void createVariantExpectations(final String newVariant, final Set<String> variantsExpected,
+                                           final boolean frozenXPageTest) throws Exception {
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId;
+        if (frozenXPageTest) {
+            componentItemId = getFrozenBannerComponent().getIdentifier();
+            // assert current unpublished variant is for a branch and not for MASTER due to getFrozenBannerComponent
+            assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
+        } else {
+            componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        }
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + componentItemId + "./" + newVariant, null, "POST");
@@ -276,6 +289,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         assertEquals(variantsExpected, new HashSet(prefixes));
 
+        assertRequiresReload(response, frozenXPageTest);
     }
 
     @Test
@@ -284,8 +298,18 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         retain_empty_variant_removes_all_except_default();
 
         final Set<String> set = Stream.of(new String[]{"", "newvariant"}).collect(Collectors.toSet());
-        createVariantExpectations("newvariant", set);
+        createVariantExpectations("newvariant", set, false);
     }
+
+    @Test
+    public void create_extra_variant_while_none_exists_for_VERSIONED_XPage() throws Exception {
+        // first remove all of them which is done in 'retain_empty_variant_removes_all_except_default'
+        retain_empty_variant_removes_all_except_default();
+
+        final Set<String> set = Stream.of(new String[]{"", "newvariant"}).collect(Collectors.toSet());
+        createVariantExpectations("newvariant", set, true);
+    }
+
 
     @Test
     public void delete_last_variant_removes_prefixes() throws Exception {
@@ -315,14 +339,13 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         assertFalse(container.getNode("banner").hasProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES));
 
-
     }
 
     @Test
     public void delete_not_last_variant() throws Exception {
         // first create new variant
         final Set<String> set = Stream.of(new String[]{"", "variant1", "newvariant"}).collect(Collectors.toSet());
-        createVariantExpectations("newvariant", set);
+        createVariantExpectations("newvariant", set, false);
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
@@ -350,7 +373,31 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         assertEquals(Stream.of(new String[]{"", "newvariant"}).collect(Collectors.toSet()), new HashSet(prefixes));
 
+    }
 
+    @Test
+    public void delete_variant_for_VERSIONED_XPage() throws Exception {
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+        final Node frozenBannerComponent = getFrozenBannerComponent();
+
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + frozenBannerComponent.getIdentifier() + "./variant1", null, "DELETE");
+
+        // Do it as author which : author should be allowed
+        final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        admin.refresh(false);
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+
+        // container should have timestamp updated
+        assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
+        assertFalse(container.getNode("banner").hasProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES));
+
+        // expected version check out
+        assertRequiresReload(response, true);
     }
 
     @Test
@@ -367,8 +414,31 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         try (Log4jInterceptor ignore = Log4jInterceptor.onWarn().deny(XPageContainerItemComponentResource.class).build()) {
             final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+            // no version checkout so not reload expected
+            assertRequiresReload(response, false);
         }
 
+    }
+
+    @Test
+    public void delete_non_existing_variant_is_a_bad_request_for_VERSIONED_XPage() throws Exception {
+
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+        final Node frozenBannerComponent = getFrozenBannerComponent();
+
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + frozenBannerComponent.getIdentifier() + "./non-existing", null, "DELETE");
+
+        // Do it as author which : author should be allowed
+        try (Log4jInterceptor ignore = Log4jInterceptor.onWarn().deny(XPageContainerItemComponentResource.class).build()) {
+            final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+
+            // Even though the variant did not exist, we first did a check out from version history, so most likely a
+            // reload is required, however for now, we do not yet include 'reload' for bad request / server errors
+            assertRequiresReload(response, false);
+        }
 
     }
 
@@ -396,6 +466,9 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        // not a frozen node checkout involved, hence no reload of page needed
+        assertRequiresReload(response, false);
 
         admin.refresh(false);
         final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
@@ -444,6 +517,9 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
+        // not a frozen node checkout involved, hence no reload of page needed
+        assertRequiresReload(response, false);
+
         admin.refresh(false);
         final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
 
@@ -462,6 +538,110 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         assertEquals("newvalue", parameters.getValue("moveToName", "newparam"));
         assertNull(parameters.getValue("variant1", "newparam"));
 
+    }
+
+
+    @Test
+    public void update_params_for_variant_for_VERSIONED_XPage() throws Exception {
+
+        final Node frozenBannerComponent = getFrozenBannerComponent();
+
+        // unpublished is for branch 'foo', where after modifying the frozen 'master' banner, we expect 'master' checked out
+        assertThat(unpublishedExpPageVariant.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString()).isEqualTo("foo");
+
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + frozenBannerComponent.getIdentifier() + "./variant1",
+                "path=/my/new/value&newparam=newvalue", "PUT");
+
+
+        final MultivaluedMap<String, String> updatedParams = new MultivaluedHashMap<>();
+        updatedParams.putSingle("path", "/my/new/value");
+        updatedParams.putSingle("newparam", "newvalue");
+
+        final MockHttpServletRequest request = requestResponse.getRequest();
+        request.setContent(objectMapper.writeValueAsBytes(updatedParams));
+        request.setContentType("application/json;charset=UTF-8");
+
+        // Do it as author which : author should be allowed
+        final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        // frozen node check out involved, hence a page reload is required
+        assertRequiresReload(response, true);
+
+        admin.refresh(false);
+
+        // assert the unpublished variant is NOW for MASTER although it was for 'foo' before
+        assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
+
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+
+        ContainerItemHelper cih = HstServices.getComponentManager().getComponent("containerItemHelper", "org.hippoecm.hst.pagecomposer");
+
+        final HstComponentParameters parameters = new HstComponentParameters(container.getNode("banner"), cih);
+        // assert parameters updated
+        assertEquals("/my/new/value", parameters.getValue("variant1", "path"));
+        assertEquals("newvalue", parameters.getValue("variant1", "newparam"));
 
     }
+
+
+    @Test
+    public void update_params_and_rename_variant_for_variant_for_VERSIONED_XPage() throws Exception {
+        final Node frozenBannerComponent = getFrozenBannerComponent();
+
+        // unpublished is for branch 'foo', where after modifying the frozen 'master' banner, we expect 'master' checked out
+        assertThat(unpublishedExpPageVariant.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString()).isEqualTo("foo");
+
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + frozenBannerComponent.getIdentifier() + "./variant1",
+                "path=/my/new/value&newparam=newvalue", "PUT");
+
+
+        final MultivaluedMap<String, String> updatedParams = new MultivaluedHashMap<>();
+        updatedParams.putSingle("path", "/my/new/value");
+        updatedParams.putSingle("newparam", "newvalue");
+
+        final MockHttpServletRequest request = requestResponse.getRequest();
+        request.setContent(objectMapper.writeValueAsBytes(updatedParams));
+        request.setContentType("application/json;charset=UTF-8");
+
+        request.addHeader("Move-To", "moveToName");
+
+        // Do it as author which : author should be allowed
+        final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        // frozen node check out involved, hence a page reload is required
+        assertRequiresReload(response, true);
+
+        admin.refresh(false);
+
+        // assert the unpublished variant is NOW for MASTER although it was for 'foo' before
+        assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
+
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+
+        // assert container never locked for XPAGE
+        assertFalse("XPage container should never get locked!!",
+                container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+
+        // container should have timestamp updated
+        assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
+
+        ContainerItemHelper cih = HstServices.getComponentManager().getComponent("containerItemHelper", "org.hippoecm.hst.pagecomposer");
+
+        final HstComponentParameters parameters = new HstComponentParameters(container.getNode("banner"), cih);
+        // assert parameters updated and new variant name 'moveToName'
+        assertEquals("/my/new/value", parameters.getValue("moveToName", "path"));
+        assertEquals("newvalue", parameters.getValue("moveToName", "newparam"));
+        assertNull(parameters.getValue("variant1", "newparam"));
+    }
+
 }

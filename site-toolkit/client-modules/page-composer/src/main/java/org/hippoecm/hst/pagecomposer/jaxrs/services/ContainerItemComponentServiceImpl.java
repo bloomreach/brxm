@@ -29,6 +29,8 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -82,15 +84,15 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
     }
 
     @Override
-    public Set<String> retainVariants(final Set<String> variants, final long versionStamp) throws RepositoryException {
+    public Pair<Set<String>, Boolean> retainVariants(final Set<String> variants, final long versionStamp) throws RepositoryException {
         Node containerItem = getCurrentContainerItem();
         Set<String> removedVariants = doRetainVariants(containerItem, variants, versionStamp);
         log.info("Removed variants: {}", removedVariants);
-        return removedVariants;
+        return new ImmutablePair<>(removedVariants, false);
     }
 
     @Override
-    public void createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException {
+    public boolean createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException {
         try {
             Node containerItem = getCurrentContainerItem();
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
@@ -101,6 +103,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
 
             componentParameters.save(versionStamp);
             log.info("Variant '{}' created successfully", variantId);
+            return false;
         } catch (IllegalStateException | IllegalArgumentException e) {
             log.warn("Could not create variant '{}'", variantId, e);
             throw new UnknownClientException("Could not create variant '" + variantId + "'");
@@ -120,7 +123,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
     }
 
     @Override
-    public void deleteVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException {
+    public boolean deleteVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException {
         try {
             final HstComponentParameters componentParameters = getCurrentHstComponentParameters();
             if (!componentParameters.hasPrefix(variantId)) {
@@ -130,6 +133,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
 
             componentParameters.save(versionStamp);
             log.info("Variant '{}' deleted successfully", variantId);
+            return false;
         } catch (IllegalStateException | IllegalArgumentException e) {
             log.warn("Could not delete variantId '{}'", variantId, e);
             throw new UnknownClientException("Could not delete the variantId");
@@ -140,13 +144,14 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
     }
 
     @Override
-    public void updateVariant(final String variantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
+    public boolean updateVariant(final String variantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
         try {
             final HstComponentParameters componentParameters = getCurrentHstComponentParameters();
             setParameters(componentParameters, variantId, params);
 
             componentParameters.save(versionStamp);
             log.info("Parameters for '{}' saved successfully.", variantId);
+            return false;
         } catch (IllegalStateException | IllegalArgumentException e) {
             log.warn("Could not save parameters for variant '{}'", variantId, e);
             throw new UnknownClientException(e.getMessage());
@@ -157,7 +162,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
     }
 
     @Override
-    public void moveAndUpdateVariant(final String oldVariantId, final String newVariantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
+    public boolean moveAndUpdateVariant(final String oldVariantId, final String newVariantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
         try {
             final Node containerItem = getCurrentContainerItem();
             final HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
@@ -167,6 +172,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
 
             componentParameters.save(versionStamp);
             log.info("Parameters renamed from '{}' to '{}' and saved successfully.", oldVariantId, newVariantId);
+            return false;
         } catch (IllegalStateException | IllegalArgumentException e) {
             logParameterSettingFailed(e);
             throw new UnknownClientException(e.getMessage());

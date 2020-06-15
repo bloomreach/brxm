@@ -32,12 +32,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
@@ -46,6 +44,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorExcept
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.String.format;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 /**
@@ -94,8 +93,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
                                    final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
         try {
             final HashSet<String> retainedVariants = new HashSet<>(Arrays.asList(variants));
-            final Set<String> removedVariants = this.containerItemComponentService.retainVariants(retainedVariants, versionStamp);
-            return ok("Removed variants:", removedVariants);
+            final Pair<Set<String>, Boolean> result = this.containerItemComponentService.retainVariants(retainedVariants, versionStamp);
+            return ok("Removed variants:", result.getLeft(), result.getRight());
         } catch (RepositoryException e) {
             log.error("Unable to cleanup the variants of the component", e);
             return error("Unable to cleanup the variants of the component", ErrorStatus.unknown(e.getMessage()));
@@ -131,11 +130,11 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
                                          final MultivaluedHashMap<String, String> params) {
         try {
             if (StringUtils.isEmpty(newVariantId)) {
-                this.containerItemComponentService.updateVariant(variantId, versionStamp, params);
-                return ok("Parameters for '" + variantId + "' saved successfully.");
+                final boolean reloadRequired = this.containerItemComponentService.updateVariant(variantId, versionStamp, params);
+                return ok(format("Parameters for '%s' saved successfully.",  variantId) , reloadRequired);
             } else {
-                this.containerItemComponentService.moveAndUpdateVariant(variantId, newVariantId, versionStamp, params);
-                return ok("Parameters renamed from '" + variantId + "' to '" + newVariantId + "' and saved successfully.");
+                final boolean reloadRequired = this.containerItemComponentService.moveAndUpdateVariant(variantId, newVariantId, versionStamp, params);
+                return ok(format("Parameters renamed from '%s' to '%s' and saved successfully.", variantId, newVariantId), reloadRequired);
             }
         } catch (ClientException e) {
             return clientError("Unable to set the parameters of component", e.getErrorStatus());
@@ -153,8 +152,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
 
         try {
-            this.containerItemComponentService.createVariant(variantId, versionStamp);
-            return created("Variant '" + variantId + "' created successfully");
+            final boolean requiresReload = this.containerItemComponentService.createVariant(variantId, versionStamp);
+            return created(format("Variant '%s' created successfully", variantId), requiresReload);
         } catch (ClientException e) {
             return clientError("Could not create variant '" + variantId + "'", e.getErrorStatus());
         } catch (RepositoryException | ServerErrorException e) {
@@ -171,8 +170,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
     public Response deleteVariant(final @PathParam("variantId") String variantId,
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
         try {
-            this.containerItemComponentService.deleteVariant(variantId, versionStamp);
-            return ok("Variant '" + variantId + "' deleted successfully");
+            final boolean requiresReload = this.containerItemComponentService.deleteVariant(variantId, versionStamp);
+            return ok(format("Variant '%s' deleted successfully", variantId), requiresReload);
         } catch (ClientException e) {
             log.warn("Could not delete variant '{}'", variantId, e);
             return clientError("Could not delete variant '" + variantId + "'", e.getErrorStatus());
