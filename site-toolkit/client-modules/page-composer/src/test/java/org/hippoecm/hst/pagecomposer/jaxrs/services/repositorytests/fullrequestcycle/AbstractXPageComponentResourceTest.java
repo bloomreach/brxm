@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -23,6 +24,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.assertj.core.api.Assertions;
+import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -31,6 +33,7 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -59,6 +62,7 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
 
         admin = (HippoSession)createSession(ADMIN_CREDENTIALS);
         // backup experience Page
@@ -100,6 +104,7 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
 
     @After
     public void tearDown() throws Exception {
+
         try {
 
             if (admin.nodeExists("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage")) {
@@ -177,5 +182,14 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
         final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
 
         Assertions.assertThat(responseMap.get("reloadRequired")).isEqualTo(expected);
+    }
+
+    protected static class TestBranchSelectionService implements BranchSelectionService {
+
+        @Override
+        public String getSelectedBranchId(final Map<String, Serializable> contextPayload) {
+            return (String)contextPayload.get("testBranchId");
+        }
+
     }
 }
