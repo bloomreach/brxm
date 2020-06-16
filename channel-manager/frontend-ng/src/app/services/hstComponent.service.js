@@ -46,7 +46,10 @@ class HstComponentService {
     const encodedVariant = encodeURIComponent(componentVariant);
 
     return this.HstService.doPutForm(parameters, componentId, encodedVariant)
-      .then(() => this.ChannelService.checkChanges());
+      .then((response) => {
+        this.ChannelService.checkChanges();
+        return response;
+      });
   }
 
   getProperties(componentId, componentVariant) {
