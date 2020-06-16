@@ -101,6 +101,7 @@ export class Container extends ComponentEntity {
   }
 
   getDropGroups() {
-    return this.isXPageComponent() ? ['xpages'] : ['default'];
+    const groupName = this.isXPageComponent() ? 'xpages' : 'default';
+    return this.isShared() ? [`${groupName}-shared`] : [groupName];
   }
 }
