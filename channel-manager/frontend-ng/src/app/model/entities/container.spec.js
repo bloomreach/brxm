@@ -318,5 +318,13 @@ describe('Container', () => {
       expect(container.getDropGroups()).toContain('default');
       expect(container.getDropGroups()).not.toContain('xpages');
     });
+
+    it('should append the suffix "-shared" to group names from a shared container', () => {
+      const container1 = new Container({ 'HST-Shared': 'true' });
+      const container2 = new Container({ 'HST-Experience-Page-Component': 'true', 'HST-Shared': 'true' });
+
+      expect(container1.getDropGroups()).toEqual(['default-shared']);
+      expect(container2.getDropGroups()).toEqual(['xpages-shared']);
+    });
   });
 });
