@@ -75,6 +75,8 @@ export default class OverlayService {
       queries: [{ all: true }],
     });
     this.$window.addEventListener('resize', () => this.sync());
+
+    this._isEditSharedContainers = await this.CommunicationService.isEditSharedContainers();
   }
 
   async _onPageChange() {
@@ -84,7 +86,6 @@ export default class OverlayService {
     }
 
     this._isEditable = await this.CommunicationService.isEditable();
-    this._isEditSharedContainers = false;
 
     await this._cssPromise;
 
@@ -435,6 +436,7 @@ export default class OverlayService {
       .addClass(container.isShared() ? 'qa-toggle-shared-containers-button' : 'qa-toggle-page-containers-button')
       .on('click', () => {
         this._isEditSharedContainers = !this._isEditSharedContainers;
+        this.CommunicationService.emit('page:edit-shared-containers', this._isEditSharedContainers);
         this.sync();
       });
   }

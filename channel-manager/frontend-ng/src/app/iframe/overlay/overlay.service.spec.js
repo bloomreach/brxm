@@ -32,7 +32,13 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm-iframe');
 
-    CommunicationService = jasmine.createSpyObj('CommunicationService', ['emit', 'getAssetUrl', 'isEditable']);
+    CommunicationService = jasmine.createSpyObj('CommunicationService', [
+      'emit',
+      'getAssetUrl',
+      'isEditable',
+      'isEditSharedContainers',
+    ]);
+
     DragDropService = jasmine.createSpyObj('DragDropService', [
       'enable',
       'disable',
@@ -69,6 +75,7 @@ describe('OverlayService', () => {
 
     spyOn(DomService, 'addCssLinks').and.returnValue($q.resolve());
     spyOn(SvgService, 'getSvg').and.callFake(() => angular.element('<svg>test</svg>'));
+    CommunicationService.isEditSharedContainers.and.returnValue(false);
 
     jasmine.getFixtures().load('iframe/overlay/overlay.service.fixture.html');
 
@@ -1076,9 +1083,9 @@ describe('OverlayService', () => {
 
     it('should resolve add mode promise on the container click', (done) => {
       const promise = OverlayService.toggleAddMode(true);
-      const containerOverlay = $document.find('.hippo-overlay > .hippo-overlay-element-container').eq(0);
 
-      containerOverlay.click();
+      $document.find('.hippo-overlay > .hippo-overlay-element-container').eq(0).click();
+
       promise.then((result) => {
         expect(result).toEqual({ container: 'container-vbox' });
         done();
@@ -1167,6 +1174,10 @@ describe('OverlayService', () => {
 
     beforeEach(() => loadIframeFixture());
 
+    it('should read the initial state from the CommunicationService', () => {
+      expect(CommunicationService.isEditSharedContainers).toHaveBeenCalled();
+    });
+
     it('should render buttons to toggle between editing shared and local containers', () => {
       const shared = $document.find('.hippo-overlay-shared');
 
@@ -1196,6 +1207,19 @@ describe('OverlayService', () => {
 
       expect(localContainerOverlay).not.toHaveClass('hippo-overlay-element-container-readonly');
       expect(sharedContainerOverlay).toHaveClass('hippo-overlay-element-container-readonly');
+    });
+
+    it('should emit "page:edit-shared-containers" state change', () => {
+      const containers = $document.find('.hippo-overlay-element-container');
+      const sharedContainerOverlay = containers.eq(5);
+      sharedContainerOverlay.find('.hippo-overlay-shared button')[0].click();
+
+      expect(CommunicationService.emit).toHaveBeenCalledWith('page:edit-shared-containers', true);
+
+      const localContainerOverlay = containers.eq(0);
+      localContainerOverlay.find('.hippo-overlay-shared button')[0].click();
+
+      expect(CommunicationService.emit).toHaveBeenCalledWith('page:edit-shared-containers', false);
     });
   });
 });
