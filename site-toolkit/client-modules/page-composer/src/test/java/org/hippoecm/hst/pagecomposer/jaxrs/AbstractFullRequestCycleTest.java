@@ -34,10 +34,13 @@ import javax.servlet.http.HttpSession;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.hippoecm.hst.container.HstFilter;
+import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.hst.mock.core.request.MockCmsSessionContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.PrivilegesAllowedInvokerPreprocessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.ConfigurationLockedTest;
+import org.junit.After;
 import org.junit.Before;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -53,15 +56,22 @@ import static org.junit.Assert.assertTrue;
 public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
 
 
+    public static final String TEST_BRANCH_ID_PAYLOAD_NAME = "testBranchId";
+
+
     protected static ObjectMapper mapper = new ObjectMapper();
 
     protected Filter filter;
+
+    protected BranchSelectionService testBranchSelectionService = contextPayload -> (String)contextPayload.get(TEST_BRANCH_ID_PAYLOAD_NAME);
 
 
     @Before
     public void setUp() throws Exception {
 
         super.setUp();
+
+        HippoServiceRegistry.register(testBranchSelectionService, BranchSelectionService.class);
 
         filter = platformComponentManager.getComponent(HstFilter.class.getName());
 
@@ -77,6 +87,13 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
         editor.logout();
     }
 
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        HippoServiceRegistry.unregister(testBranchSelectionService, BranchSelectionService.class);
+        super.tearDown();
+    }
 
     protected String[] getConfigurations(final boolean platform) {
         String classXmlFileName = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + ".xml";
@@ -113,6 +130,11 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
     }
 
     public MockHttpServletResponse render(final String mountId, final RequestResponseMock requestResponse, final Credentials authenticatedCmsUser) throws IOException, ServletException {
+        return render(mountId, requestResponse, authenticatedCmsUser, null);
+    }
+
+    public MockHttpServletResponse render(final String mountId, final RequestResponseMock requestResponse,
+                                          final Credentials authenticatedCmsUser, final String branchId) throws IOException, ServletException {
         final MockHttpServletRequest request = requestResponse.getRequest();
 
         final MockHttpSession mockHttpSession;
@@ -127,6 +149,11 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
         mockHttpSession.setAttribute(CmsSessionContext.SESSION_KEY, cmsSessionContext);
         if (mountId != null) {
             cmsSessionContext.getContextPayload().put(CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
+        }
+        if (branchId == null) {
+            cmsSessionContext.getContextPayload().remove(TEST_BRANCH_ID_PAYLOAD_NAME);
+        } else {
+            cmsSessionContext.getContextPayload().put(TEST_BRANCH_ID_PAYLOAD_NAME, branchId);
         }
 
         final MockHttpServletResponse response = requestResponse.getResponse();

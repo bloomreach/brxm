@@ -544,15 +544,149 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
     @Test
     public void update_params_for_variant_for_VERSIONED_XPage() throws Exception {
 
-        final Node frozenBannerComponent = getFrozenBannerComponent();
+        ContainerItemHelper cih = HstServices.getComponentManager().getComponent("containerItemHelper", "org.hippoecm.hst.pagecomposer");
+
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+        // this is the componentItemId of the banner for the 'Foo' branch : we'll assert later that AFTER 'foo' has moved
+        // to VERSION HISTORY, we can still update 'Foo' branch wich this componentItemId!! This MUST be supported since
+        // it is equivalent to CMS User 1 looking at master version in CM, after which CMS User 2 in content editor
+        // checks out branch 'foo' and modifies it, after which CMS User 1 does his/her action in the CM : this means
+        // that after the page was rendered in the CM but before it was modified, the workspace version got replaced. The
+        // only way this doesn't work is IF the 'foo' version does not have the 'banner' component with the same UUID.
+        // in this case an exception is expected.
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+
+        {
+            final Node frozenBannerComponent = getFrozenBannerComponent();
+
+            // unpublished is for branch 'foo', where after modifying the frozen 'master' banner, we expect 'master' checked out
+            assertThat(unpublishedExpPageVariant.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString()).isEqualTo("foo");
+
+
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + frozenBannerComponent.getIdentifier() + "./variant1",
+                    "path=/my/new/value&newparam=newvalue", "PUT");
+
+
+            final MultivaluedMap<String, String> updatedParams = new MultivaluedHashMap<>();
+            updatedParams.putSingle("path", "/my/new/value");
+            updatedParams.putSingle("newparam", "newvalue");
+
+            final MockHttpServletRequest request = requestResponse.getRequest();
+            request.setContent(objectMapper.writeValueAsBytes(updatedParams));
+            request.setContentType("application/json;charset=UTF-8");
+
+            // Do it as author which : author should be allowed
+            final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+            // frozen node check out involved, hence a page reload is required
+            assertRequiresReload(response, true);
+
+            admin.refresh(false);
+
+            // assert the unpublished variant is NOW for MASTER although it was for 'foo' before
+            assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
+
+            final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+
+            final HstComponentParameters parameters = new HstComponentParameters(container.getNode("banner"), cih);
+            // assert parameters updated
+            assertEquals("/my/new/value", parameters.getValue("variant1", "path"));
+            assertEquals("newvalue", parameters.getValue("variant1", "newparam"));
+        }
+
+        final String componentItemIdMasterBanner = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+
+        assertEquals("Even though via version history restored, UUIDs between different branches are in general " +
+                "the same.", componentItemIdMasterBanner, componentItemId);
+
+        // now componentItemId which was fetched from the workspace 'foo' branch we use to modify the 'Foo' branch
+        // which is already in version history now!!
+        {
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + componentItemId + "./variant1",
+                    "path=/my/new/value&newparam=newvalueFOO", "PUT");
+            final MultivaluedMap<String, String> updatedParams = new MultivaluedHashMap<>();
+            updatedParams.putSingle("path", "/my/new/value");
+            updatedParams.putSingle("newparam", "newvalueFOO");
+
+            final MockHttpServletRequest request = requestResponse.getRequest();
+            request.setContent(objectMapper.writeValueAsBytes(updatedParams));
+            request.setContentType("application/json;charset=UTF-8");
+
+            // Do it as author which : author should be allowed
+            final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS, "foo");
+
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+            // assert the unpublished variant is NOW for 'foo' again!
+            assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
+
+            final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+
+            final HstComponentParameters parameters = new HstComponentParameters(container.getNode("banner"), cih);
+            // assert parameters updated
+            assertEquals("/my/new/value", parameters.getValue("variant1", "path"));
+            assertEquals("newvalueFOO", parameters.getValue("variant1", "newparam"));
+        }
+
+        // now it becomes even more specific: we now delete the BANNER for the workspace 'foo' node. Now we will see
+        // that it is not possible to use 'componentItemIdMasterBanner' any more: We'll get an exception since there is
+        // no node for componentItemIdMasterBanner UUID any more...only frozen nodes with jcr:frozenUUID equal to
+        // componentItemIdMasterBanner, however, we cannot lookup those nodes. Hence in this case, the CM will return
+        // an error after which the CM reloads, not a big deal
+
+        admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner").remove();
+        admin.save();
+
+        {
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + componentItemIdMasterBanner + "./variant1",
+                    "path=/my/new/value&newparam=newvalueMaster", "PUT");
+            final MultivaluedMap<String, String> updatedParams = new MultivaluedHashMap<>();
+            updatedParams.putSingle("path", "/my/new/value");
+            updatedParams.putSingle("newparam", "newvalueMaster");
+
+            final MockHttpServletRequest request = requestResponse.getRequest();
+            request.setContent(objectMapper.writeValueAsBytes(updatedParams));
+            request.setContentType("application/json;charset=UTF-8");
+
+            // Do it as author which : author should be allowed
+            final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+
+            assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+
+        }
+    }
+
+
+    /**
+     * This test is very similar only the 'workspace' MASTER container ID is used *BUT* after that, unpublished version is
+     * replaced with a branched version, and then the 'master' branch is changed: the UUID points to a 'workspace'
+     * version which *might* not exist any more but in general does exist and in that case, the request can be fulfilled
+     *
+     */
+    @Test
+    public void update_params_for_variant_which_got_moved_to_VERSIONED_PAGE() throws Exception {
+
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+
+        // now make sure branch 'foo' is the unpublished version
+        getFrozenBannerComponent();
 
         // unpublished is for branch 'foo', where after modifying the frozen 'master' banner, we expect 'master' checked out
         assertThat(unpublishedExpPageVariant.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString()).isEqualTo("foo");
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
+        // componentItemId is for the 'master' unpublished workspace version while master is now already moved to
+        // version history! The request however should still succeed since the UUID happen to match. Master should
+        // be checked out from version history
         final RequestResponseMock requestResponse = mockGetRequestResponse(
-                "http", "localhost", "/_rp/" + frozenBannerComponent.getIdentifier() + "./variant1",
+                "http", "localhost", "/_rp/" + componentItemId + "./variant1",
                 "path=/my/new/value&newparam=newvalue", "PUT");
 
 
