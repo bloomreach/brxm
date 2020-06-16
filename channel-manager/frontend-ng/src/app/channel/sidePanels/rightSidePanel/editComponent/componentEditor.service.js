@@ -296,11 +296,16 @@ class ComponentEditorService {
   }
 
   async save() {
-    await this.HstComponentService.setParameters(
+    const { reloadRequired } = await this.HstComponentService.setParameters(
       this.component.id,
       this.component.variant,
       this._propertiesAsFormData(),
     );
+
+    if (reloadRequired) {
+      await this.HippoIframeService.reload();
+    }
+
     return this.CmsService.reportUsageStatistic('CompConfigSidePanelSave');
   }
 

@@ -112,7 +112,7 @@ describe('HstComponentService', () => {
   describe('setParameters', () => {
     beforeEach(() => {
       spyOn(HstService, 'doPutForm');
-      spyOn(ChannelService, 'checkChanges').and.returnValue($q.resolve());
+      spyOn(ChannelService, 'checkChanges');
     });
 
     it('uses the HstService to store the parameter data of a component', () => {
@@ -139,6 +139,18 @@ describe('HstComponentService', () => {
 
       HstComponentService.setParameters('id', '@variant', { param1: 1, param2: 2 });
       expect(HstService.doPutForm).toHaveBeenCalledWith({ param1: 1, param2: 2 }, 'id', '%40variant');
+    });
+
+    it('returns the response data', (done) => {
+      const mockData = {};
+      HstService.doPutForm.and.returnValue($q.resolve(mockData));
+
+      HstComponentService.setParameters().then((data) => {
+        expect(data).toBe(mockData);
+        done();
+      });
+
+      $rootScope.$digest();
     });
   });
 
