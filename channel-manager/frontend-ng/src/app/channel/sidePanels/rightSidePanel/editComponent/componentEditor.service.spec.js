@@ -763,8 +763,19 @@ describe('ComponentEditorService', () => {
       });
     });
 
+    it('reloads the page if the server requires it', () => {
+      spyOn(HippoIframeService, 'reload');
+      spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve({ reloadRequired: true }));
+      openComponentEditor();
+
+      ComponentEditor.save();
+      $rootScope.$digest();
+
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+    });
+
     it('reports user statistics', (done) => {
-      spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve());
+      spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve({}));
       openComponentEditor();
       ComponentEditor.save().then(() => {
         expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CompConfigSidePanelSave');
