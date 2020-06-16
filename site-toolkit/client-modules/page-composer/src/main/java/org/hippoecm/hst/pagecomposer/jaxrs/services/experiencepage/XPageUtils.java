@@ -24,8 +24,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -34,6 +34,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
@@ -41,7 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.jackrabbit.JcrConstants.NT_FROZENNODE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED;
-import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
@@ -141,12 +141,6 @@ class XPageUtils {
                         "id '%s' to which the XPage component '%s' belongs", targetBranchId, xPageComponentBranchId,
                         contextService.getRequestConfigIdentifier()));
             }
-        } else {
-            if (!targetBranchId.equals(currentBranchId)) {
-                throw new WorkflowException(String.format("Expected target branch id '%s' to be the same as the branch " +
-                                "id '%s' to which the XPage component '%s' belongs", targetBranchId, currentBranchId,
-                        contextService.getRequestConfigIdentifier()));
-            }
         }
 
         if (currentBranchId.equals(targetBranchId)) {
@@ -160,15 +154,12 @@ class XPageUtils {
     }
 
     /**
-     *
      * @return
      */
-    static String getBranchId(CmsSessionContext cmsSessionContext) {
-        final String branchId = (String) cmsSessionContext.getContextPayload().get(RENDER_BRANCH_ID);
-        if (StringUtils.isEmpty(branchId)) {
-            return MASTER_BRANCH_ID;
-        }
-        return branchId;
+    static String getBranchId(final CmsSessionContext cmsSessionContext) {
+        final BranchSelectionService branchSelectionService = HippoServiceRegistry.getService(BranchSelectionService.class);
+        final String selectedBranchId = branchSelectionService.getSelectedBranchId(cmsSessionContext.getContextPayload());
+        return selectedBranchId == null ? MASTER_BRANCH_ID : selectedBranchId;
     }
 
 
