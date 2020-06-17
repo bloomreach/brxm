@@ -280,6 +280,12 @@
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ExceptionResource" parent="abstractConfigResource"/>
           </constructor-arg>
         </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ComponentResource" parent="abstractConfigResource" />
+          </constructor-arg>
+        </bean>
+
       </list>
     </property>
     <property name="invoker" ref="jaxrsHstConfigServiceInvoker" />
