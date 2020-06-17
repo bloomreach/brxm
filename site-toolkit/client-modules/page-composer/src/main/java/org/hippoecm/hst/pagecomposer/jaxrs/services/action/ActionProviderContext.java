@@ -14,28 +14,17 @@
  * limitations under the License.
  *
  */
+package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
-package org.hippoecm.hst.pagecomposer.jaxrs.model;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public interface ActionProviderContext {
 
-public enum PageMenuItem {
+    String getBranchId();
 
-    @JsonProperty("tools")
-    TOOLS,
+    String getChannelId();
 
-    @JsonProperty("properties")
-    PROPERTIES,
+    String getUserId();
 
-    @JsonProperty("copy")
-    COPY,
-    @JsonProperty("move")
-    MOVE,
-
-    @JsonProperty("delete")
-    DELETE,
-
-    @JsonProperty("new")
-    NEW,
-
+    PageComposerContextService getContextService();
 }
