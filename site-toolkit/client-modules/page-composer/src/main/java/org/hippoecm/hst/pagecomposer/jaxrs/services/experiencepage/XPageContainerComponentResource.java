@@ -38,12 +38,9 @@ import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemImpl;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResourceInterface;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
@@ -149,7 +146,8 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             documentWorkflow.saveUnpublished();
 
-            return respondNewContainerItemCreated(new ContainerItemImpl(newItem, updatedTimestamp.getTimeInMillis()), isCheckedOut);
+            return respondContainerItem(new ContainerItemImpl(newItem, updatedTimestamp.getTimeInMillis()), isCheckedOut,
+                    Response.Status.CREATED, "Successfully created item");
 
         };
 
@@ -300,17 +298,5 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
         }
     }
 
-    private Response respondNewContainerItemCreated(ContainerItem newContainerItem,
-                                                    final boolean requiresReload) throws RepositoryException {
-        final Node newNode = newContainerItem.getContainerItem();
-        final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation().represent(newNode, newContainerItem.getTimeStamp());
-
-        log.info("Successfully created containerItemRepresentation '{}' with path '{}'", newNode.getName(), newNode.getPath());
-        final ExtResponseRepresentation entity = new ExtResponseRepresentation(containerItemRepresentation);
-        entity.setReloadRequired(requiresReload);
-        return Response.status(Response.Status.CREATED)
-                .entity(entity)
-                .build();
-    }
 
 }
