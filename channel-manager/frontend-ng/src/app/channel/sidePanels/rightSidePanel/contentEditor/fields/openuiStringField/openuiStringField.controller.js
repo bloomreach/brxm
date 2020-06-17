@@ -87,7 +87,11 @@ export default class OpenuiStringFieldController {
     this.value = value;
   }
 
-  getValue() {
+  getValue(...path) {
+    if (path.length) {
+      return this.ContentEditor.getDocumentFieldValue(...path);
+    }
+
     return this.value;
   }
 
