@@ -28,8 +28,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelMenuItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MenuRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.PageMenuItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.XPageMenuItem;
 
 import static java.util.stream.Collectors.toMap;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
@@ -47,17 +50,14 @@ public class ComponentResource extends AbstractConfigResource {
     private MenuRepresentation getMenuRepresentation() {
         final MenuRepresentation menu = new MenuRepresentation();
 
-        menu.setChannel(new MenuItemRepresentation(true,
-                subItems("settings", "publish", "confirm", "discard-changes", "manage-changes", "accept", "reject", "delete", "close")));
-        menu.setPage(new MenuItemRepresentation(true,
-                subItems("tools", "properties", "copy", "move", "delete", "new")));
-        menu.setXpage(new MenuItemRepresentation(true,
-                subItems("new", "copy", "delete")));
+        menu.setChannel(new MenuItemRepresentation(true, subItems(ChannelMenuItem.values())));
+        menu.setPage(new MenuItemRepresentation(true, subItems(PageMenuItem.values())));
+        menu.setXpage(new MenuItemRepresentation(true, subItems(XPageMenuItem.values())));
         return menu;
     }
 
-    private Map<String, MenuItemRepresentation> subItems(String... names) {
-        return Stream.of(names)
+    private Map<Enum<?>, MenuItemRepresentation> subItems(Enum<?>... items) {
+        return Stream.of(items)
                 .collect(toMap(Function.identity(), n -> new MenuItemRepresentation(true)));
     }
 }
