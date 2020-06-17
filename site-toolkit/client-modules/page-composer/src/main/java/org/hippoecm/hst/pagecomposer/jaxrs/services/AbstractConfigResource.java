@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
@@ -29,6 +30,8 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BaseChannelEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
@@ -271,5 +274,21 @@ public class AbstractConfigResource {
         }
         final String configurationPath = mount.getHstSite().getConfigurationPath();
         return configurationPath + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+    }
+
+    public static Response respondContainerItem(final ContainerItem containerItem,
+                                                final boolean requiresReload,
+                                                final Response.StatusType statusType,
+                                                final String msg) throws RepositoryException {
+        final Node newNode = containerItem.getContainerItem();
+        final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation().represent(newNode, containerItem.getTimeStamp());
+
+        final ExtResponseRepresentation entity = new ExtResponseRepresentation(containerItemRepresentation);
+        entity.setReloadRequired(requiresReload);
+        entity.setSuccess(true);
+        entity.setMessage(msg);
+        return Response.status(statusType)
+                .entity(entity)
+                .build();
     }
 }

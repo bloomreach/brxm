@@ -127,7 +127,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
 
 
     @Override
-    public boolean createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException {
+    public Pair<Node, Boolean> createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException {
         try {
             // use workflow session to write to preview
             final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
@@ -152,7 +152,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             documentWorkflow.saveUnpublished();
 
             log.info("Variant '{}' created successfully", variantId);
-            return isCheckedOut;
+            return new ImmutablePair<>(containerItem, isCheckedOut);
         } catch (IllegalStateException | IllegalArgumentException | WorkflowException e) {
             log.warn("Could not create variant '{}'", variantId, e);
             throw new UnknownClientException("Could not create variant '" + variantId + "'");
@@ -172,7 +172,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
     }
 
     @Override
-    public boolean deleteVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException {
+    public Pair<Node, Boolean> deleteVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException {
         try {
             // use workflow session to write to preview
             final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
@@ -198,7 +198,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             documentWorkflow.saveUnpublished();
 
             log.info("Variant '{}' deleted successfully", variantId);
-            return isCheckedOut;
+            return new ImmutablePair<>(containerItem, isCheckedOut);
         } catch (IllegalStateException | IllegalArgumentException | WorkflowException e) {
             log.warn("Could not delete variantId '{}'", variantId, e);
             throw new UnknownClientException("Could not delete the variantId");
@@ -209,7 +209,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
     }
 
     @Override
-    public boolean updateVariant(final String variantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
+    public Pair<Node, Boolean> updateVariant(final String variantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
         try {
             // use workflow session to write to preview
             final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
@@ -230,7 +230,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             documentWorkflow.saveUnpublished();
 
             log.info("Parameters for '{}' saved successfully.", variantId);
-            return isCheckedOut;
+            return new ImmutablePair<>(containerItem, isCheckedOut);
         } catch (IllegalStateException | IllegalArgumentException | WorkflowException e) {
             log.warn("Could not save parameters for variant '{}'", variantId, e);
             throw new UnknownClientException(e.getMessage());
@@ -241,7 +241,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
     }
 
     @Override
-    public boolean moveAndUpdateVariant(final String oldVariantId, final String newVariantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
+    public Pair<Node, Boolean> moveAndUpdateVariant(final String oldVariantId, final String newVariantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
         try {
             // use workflow session to write to preview
             final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
@@ -265,7 +265,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             documentWorkflow.saveUnpublished();
 
             log.info("Parameters renamed from '{}' to '{}' and saved successfully.", oldVariantId, newVariantId);
-            return isCheckedOut;
+            return new ImmutablePair<>(containerItem, isCheckedOut);
         } catch (IllegalStateException | IllegalArgumentException | WorkflowException e) {
             logParameterSettingFailed(e);
             throw new UnknownClientException(e.getMessage());
