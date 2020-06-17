@@ -244,19 +244,18 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         final ContainerAction<Response> deleteContainerItem = () -> {
 
-
-            HippoSession session = getSession();
             try {
 
                 final PageComposerContextService pageComposerContextService = getPageComposerContextService();
 
-                final DocumentWorkflow documentWorkflow = getDocumentWorkflow(session, pageComposerContextService);
+                final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession(), pageComposerContextService);
 
                 final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
-                final Node container = getWorkspaceNode(session, getPageComposerContextService().getRequestConfigIdentifier());
-
                 final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
+
+                final Node container = getWorkspaceNode(internalWorkflowSession, getPageComposerContextService().getRequestConfigIdentifier());
+
 
                 // itemUUID can belong to versioned component item, in that case, find the checked out workspace equivalent
                 final Node item = internalWorkflowSession.getNodeByIdentifier(itemUUID);
@@ -265,7 +264,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
                     // get hold of the workspace container item! Since 'checkoutCorrectBranch' did already do the checkout,
                     // and a restore from version history restores the frozen uuid, we can safely get hold of that one
                     final String workspaceUUID = item.getProperty(JcrConstants.JCR_FROZENUUID).getString();
-                    workspaceContainerItem = session.getNodeByIdentifier(workspaceUUID);
+                    workspaceContainerItem = internalWorkflowSession.getNodeByIdentifier(workspaceUUID);
                 } else {
                     workspaceContainerItem = item;
                 }
