@@ -18,46 +18,43 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Stream;
+import java.util.Set;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelMenuItem;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.MenuItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.MenuRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.PageMenuItem;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.XPageMenuItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ActionsRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Action;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService;
 
-import static java.util.stream.Collectors.toMap;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
 
 @Path("/hst:component/")
 public class ComponentResource extends AbstractConfigResource {
 
+    private ActionService actionService;
+
+    public void setActionService(final ActionService actionService) {
+        this.actionService = actionService;
+    }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
-    public Response getMenu() {
-        return tryGet(() -> ok("", getMenuRepresentation(), false));
+    public Object getActions(@QueryParam("unwrapped") boolean unwrapped) {
+        if (unwrapped) {
+            return getActionsRepresentation();
+        } else {
+            return tryGet(() -> ok("", getActionsRepresentation(), false));
+        }
     }
 
-    private MenuRepresentation getMenuRepresentation() {
-        final MenuRepresentation menu = new MenuRepresentation();
-
-        menu.setChannel(new MenuItemRepresentation(true, subItems(ChannelMenuItem.values())));
-        menu.setPage(new MenuItemRepresentation(true, subItems(PageMenuItem.values())));
-        menu.setXpage(new MenuItemRepresentation(true, subItems(XPageMenuItem.values())));
-        return menu;
-    }
-
-    private Map<Enum<?>, MenuItemRepresentation> subItems(Enum<?>... items) {
-        return Stream.of(items)
-                .collect(toMap(Function.identity(), n -> new MenuItemRepresentation(true)));
+    private ActionsRepresentation getActionsRepresentation() {
+        final Map<String, Set<Action>> actionsByCategory = actionService.getActionsByCategory(getPageComposerContextService());
+        return ActionsRepresentation.represent(actionsByCategory);
     }
 }
