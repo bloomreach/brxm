@@ -27,9 +27,9 @@ public final class MenuItemRepresentation {
     private final boolean enabled;
 
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
-    private final Map<String, MenuItemRepresentation> subItems;
+    private final Map<Enum<?>, MenuItemRepresentation> subItems;
 
-    public MenuItemRepresentation(final boolean enabled, final Map<String, MenuItemRepresentation> subItems) {
+    public MenuItemRepresentation(final boolean enabled, final Map<Enum<?>, MenuItemRepresentation> subItems) {
         this.enabled = enabled;
         this.subItems = subItems;
     }
@@ -42,7 +42,7 @@ public final class MenuItemRepresentation {
         return enabled;
     }
 
-    public Map<String, MenuItemRepresentation> getSubItems() {
+    public Map<Enum<?>, MenuItemRepresentation> getSubItems() {
         return subItems;
     }
 }
