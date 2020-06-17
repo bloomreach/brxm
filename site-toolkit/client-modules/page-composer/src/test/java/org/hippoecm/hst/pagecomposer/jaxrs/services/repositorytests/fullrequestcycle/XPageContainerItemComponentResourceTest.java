@@ -34,6 +34,7 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerItemComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
@@ -53,6 +54,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_PAR
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -520,8 +522,15 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // not a frozen node checkout involved, hence no reload of page needed
         assertRequiresReload(response, false);
 
-        admin.refresh(false);
+        final ExtResponseRepresentation extResponseRepresentation = mapper.readerFor(ExtResponseRepresentation.class).readValue(response.getContentAsString());
+
+        final Map<String, Object> data = (Map<String, Object>)extResponseRepresentation.getData();
+
         final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+
+        assertEquals("response should have the component item id", data.get("id"), componentItemId);
+
+        admin.refresh(false);
 
         // assert container never locked for XPAGE
         assertFalse("XPage container should never get locked!!",
@@ -755,12 +764,21 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // frozen node check out involved, hence a page reload is required
         assertRequiresReload(response, true);
 
+        final ExtResponseRepresentation extResponseRepresentation = mapper.readerFor(ExtResponseRepresentation.class).readValue(response.getContentAsString());
+
+        final Map<String, Object> data = (Map<String, Object>)extResponseRepresentation.getData();
+
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+
+        assertEquals("The data in the response should have the uuid of the WORKSPACE version " +
+                "of the container item", data.get("id"), container.getNode("banner").getIdentifier());
+        assertNotEquals(data.get("id"), frozenBannerComponent.getIdentifier());
+
         admin.refresh(false);
 
         // assert the unpublished variant is NOW for MASTER although it was for 'foo' before
         assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
 
-        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
 
         // assert container never locked for XPAGE
         assertFalse("XPage container should never get locked!!",

@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -38,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
@@ -130,11 +132,13 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
                                          final MultivaluedHashMap<String, String> params) {
         try {
             if (StringUtils.isEmpty(newVariantId)) {
-                final boolean reloadRequired = this.containerItemComponentService.updateVariant(variantId, versionStamp, params);
-                return ok(format("Parameters for '%s' saved successfully.",  variantId) , reloadRequired);
+                final Pair<Node, Boolean> result = this.containerItemComponentService.updateVariant(variantId, versionStamp, params);
+                return respondContainerItem(new ContainerItemImpl(result.getLeft(), 0L), result.getRight(),
+                        Response.Status.OK, format("Parameters for '%s' saved successfully.",  variantId));
             } else {
-                final boolean reloadRequired = this.containerItemComponentService.moveAndUpdateVariant(variantId, newVariantId, versionStamp, params);
-                return ok(format("Parameters renamed from '%s' to '%s' and saved successfully.", variantId, newVariantId), reloadRequired);
+                final Pair<Node, Boolean> result = this.containerItemComponentService.moveAndUpdateVariant(variantId, newVariantId, versionStamp, params);
+                return respondContainerItem(new ContainerItemImpl(result.getLeft(), 0L), result.getRight(),
+                        Response.Status.OK, format("Parameters renamed from '%s' to '%s' and saved successfully.", variantId, newVariantId));
             }
         } catch (ClientException e) {
             return clientError("Unable to set the parameters of component", e.getErrorStatus());
@@ -152,8 +156,9 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
 
         try {
-            final boolean requiresReload = this.containerItemComponentService.createVariant(variantId, versionStamp);
-            return created(format("Variant '%s' created successfully", variantId), requiresReload);
+            final Pair<Node, Boolean> result = this.containerItemComponentService.createVariant(variantId, versionStamp);
+            return respondContainerItem(new ContainerItemImpl(result.getLeft(), 0L), result.getRight(),
+                    Response.Status.CREATED, format("Variant '%s' created successfully", variantId));
         } catch (ClientException e) {
             return clientError("Could not create variant '" + variantId + "'", e.getErrorStatus());
         } catch (RepositoryException | ServerErrorException e) {
@@ -170,8 +175,9 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
     public Response deleteVariant(final @PathParam("variantId") String variantId,
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
         try {
-            final boolean requiresReload = this.containerItemComponentService.deleteVariant(variantId, versionStamp);
-            return ok(format("Variant '%s' deleted successfully", variantId), requiresReload);
+            final Pair<Node, Boolean> result = this.containerItemComponentService.deleteVariant(variantId, versionStamp);
+            return respondContainerItem(new ContainerItemImpl(result.getLeft(), 0L), result.getRight(),
+                    Response.Status.OK, format("Variant '%s' deleted successfully", variantId));
         } catch (ClientException e) {
             log.warn("Could not delete variant '{}'", variantId, e);
             return clientError("Could not delete variant '" + variantId + "'", e.getErrorStatus());

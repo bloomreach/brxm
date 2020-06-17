@@ -19,6 +19,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.Set;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -41,22 +42,25 @@ public interface ContainerItemComponentService {
     Pair<Set<String>, Boolean> retainVariants(final Set<String> variants, final long versionStamp) throws RepositoryException;
 
     /**
-     * returns true if the page requires a reload because the changes had to be done against a container item in version
-     * history (which can only happen for XPage container
+     * returns in Pair#getLeft() the {@link Node} to which the changes were written and in the Pair#getRight it returns
+     * true if the page requires a reload because the  changes had to be done against a container item in version history
+     * (which can only happen for XPage container
      */
-    boolean createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException;
+    Pair<Node, Boolean> createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException;
 
     /**
-     * returns true if the page requires a reload because the changes had to be done against a container item in version
-     * history (which can only happen for XPage container
+     * returns in Pair#getLeft() the {@link Node} to which the changes were written and in the Pair#getRight it returns
+     * true if the page requires a reload because the  changes had to be done against a container item in version history
+     * (which can only happen for XPage container
      */
-    boolean deleteVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException;
+    Pair<Node, Boolean> deleteVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException;
 
     /**
-     * returns true if the page requires a reload because the changes had to be done against a container item in version
-     * history (which can only happen for XPage container
+     * returns in Pair#getLeft() the {@link Node} to which the changes were written and in the Pair#getRight it returns
+     * true if the page requires a reload because the  changes had to be done against a container item in version history
+     * (which can only happen for XPage container
      */
-    boolean updateVariant(final String variantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException;
+    Pair<Node, Boolean> updateVariant(final String variantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException;
 
     /**
      * Saves parameters for the given new variant, and also removes the old variant. This effectively renames the old
@@ -65,9 +69,10 @@ public interface ContainerItemComponentService {
      * @param oldVariantId the old variant to remove
      * @param newVariantId the new variant to store parameters for
      * @param params     the parameters to store
-     * @return true if the page requires a reload because the changes had to be done against a container item in version
-     * history (which can only happen for XPage container
+     * @return in Pair#getLeft() the {@link Node} to which the changes were written and in the Pair#getRight it returns
+     * true if the page requires a reload because the  changes had to be done against a container item in version history
+     * (which can only happen for XPage container
      */
-    boolean moveAndUpdateVariant(final String oldVariantId, final String newVariantId,
+    Pair<Node, Boolean> moveAndUpdateVariant(final String oldVariantId, final String newVariantId,
                               final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException;
 }

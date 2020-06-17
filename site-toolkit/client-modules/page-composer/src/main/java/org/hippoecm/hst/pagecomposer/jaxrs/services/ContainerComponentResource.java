@@ -72,7 +72,7 @@ public class ContainerComponentResource extends AbstractConfigResource implement
         }
         final ContainerAction<Response> createContainerItem = () -> {
             final ContainerItem newContainerItem = containerComponentService.createContainerItem(getSession(), itemUUID, versionStamp);
-            return respondNewContainerItemCreated(newContainerItem);
+            return respondContainerItem(newContainerItem, false, Response.Status.CREATED, "Successfully created item");
         };
         return handleAction(createContainerItem);
     }
@@ -96,7 +96,7 @@ public class ContainerComponentResource extends AbstractConfigResource implement
         }
         return handleAction(() -> {
             final ContainerItem newContainerItem = containerComponentService.createContainerItem(getSession(), itemUUID, siblingItemUUID, versionStamp);
-            return respondNewContainerItemCreated(newContainerItem);
+            return respondContainerItem(newContainerItem, false, Response.Status.CREATED, "Successfully created item");
         });
     }
 
@@ -144,12 +144,4 @@ public class ContainerComponentResource extends AbstractConfigResource implement
         }
     }
 
-    private Response respondNewContainerItemCreated(ContainerItem newContainerItem) throws RepositoryException {
-        final Node newNode = newContainerItem.getContainerItem();
-        final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation().represent(newNode, newContainerItem.getTimeStamp());
-        log.info("Successfully created containerItemRepresentation '{}' with path '{}'", newNode.getName(), newNode.getPath());
-        return Response.status(Response.Status.CREATED)
-                .entity(new ExtResponseRepresentation(containerItemRepresentation))
-                .build();
-    }
 }
