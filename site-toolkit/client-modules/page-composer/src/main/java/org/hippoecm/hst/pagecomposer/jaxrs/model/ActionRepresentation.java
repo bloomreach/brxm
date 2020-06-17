@@ -14,20 +14,26 @@
  * limitations under the License.
  *
  */
-
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Action;
 
-public enum XPageMenuItem {
+public final class ActionRepresentation {
 
-    @JsonProperty("move")
-    MOVE,
+    private boolean enabled;
 
-    @JsonProperty("delete")
-    DELETE,
+    public static ActionRepresentation represent(Action action) {
+        final ActionRepresentation representation = new ActionRepresentation();
+        representation.setEnabled(action.isEnabled());
+        return representation;
+    }
 
-    @JsonProperty("new")
-    NEW,
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
+    }
 
 }

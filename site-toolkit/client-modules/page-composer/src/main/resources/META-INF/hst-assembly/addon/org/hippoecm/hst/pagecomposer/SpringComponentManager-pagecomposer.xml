@@ -282,13 +282,25 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ComponentResource" parent="abstractConfigResource" />
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ComponentResource" parent="abstractConfigResource">
+              <property name="actionService">
+                <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionServiceImpl">
+                  <property name="actionProviders" ref="actionProviders" />
+                </bean>
+              </property>
+            </bean>
           </constructor-arg>
         </bean>
-
       </list>
     </property>
     <property name="invoker" ref="jaxrsHstConfigServiceInvoker" />
+  </bean>
+  <bean id="actionProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstActionProviderImpl" />
+      </list>
+    </property>
   </bean>
 
   <!-- Pipelining -->

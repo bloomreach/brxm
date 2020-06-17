@@ -14,38 +14,8 @@
  * limitations under the License.
  *
  */
+package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
-package org.hippoecm.hst.pagecomposer.jaxrs.model;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-public enum ChannelMenuItem {
-
-    @JsonProperty("settings")
-    SETTINGS,
-
-    @JsonProperty("publish")
-    PUBLISH,
-
-    @JsonProperty("confirm")
-    CONFIRM,
-
-    @JsonProperty("discard-changes")
-    DISCARD_CHANGES,
-
-    @JsonProperty("manage-changes")
-    MANAGE_CHANGED,
-
-    @JsonProperty("accept")
-    ACCEPT,
-
-    @JsonProperty("reject")
-    REJECT,
-
-    @JsonProperty("delete")
-    DELETE,
-
-    @JsonProperty("close")
-    CLOSE,
-
+public interface Category {
+    String getName();
 }
