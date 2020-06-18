@@ -1,0 +1,30 @@
+<!--
+  Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="wrapper">
+  <img src="navapp-assets/images/error-page-main-image.png">
+
+  <div class="error-code">{{ error?.code || 500 }}</div>
+  <div class="error-message">{{ error?.message || 'ERROR_PAGE_DEFAULT_ERROR' | translate }}</div>
+  <div *ngIf="error && error.description" class="error-description">{{ error.description }}</div>
+
+  <button
+    *ngIf="isGoToHomeButtonVisible"
+    mat-flat-button
+    color="primary"
+    (click)="navigateToHome()"
+    class="go-to-home-btn">{{ 'ERROR_PAGE_BUTTON_BACK_HOME' | translate }}</button>
+</div>
