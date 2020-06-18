@@ -32,9 +32,9 @@ public class XPageLayoutContainer extends WebMarkupContainer {
 
     public XPageLayoutContainer(final String id, final IModel<IXPageLayout> xPageLayoutModel ) {
         super(id, xPageLayoutModel);
-        final IModel<String> documentType = new StringResourceModel("xpage-layout", this);
-        final Label typeLabel = new Label("xpage-layout-label", documentType);
-        add(typeLabel);
+        final IModel<String> xPageLayoutLabelModel = new StringResourceModel("xpage-layout", this);
+        final Label xPageLayoutLabel = new Label("xpage-layout-label", xPageLayoutLabelModel);
+        add(xPageLayoutLabel);
         final XPageLayoutListModel XPageLayoutListModel = new XPageLayoutListModel(layoutSupplier);
         final DropDownChoice<IXPageLayout> pageLayoutDropDownChoice = new DropDownChoice<>("xpage-layout-drop-down-choice",
                 xPageLayoutModel,
@@ -42,6 +42,7 @@ public class XPageLayoutContainer extends WebMarkupContainer {
                 choiceRenderer);
         pageLayoutDropDownChoice.setRequired(true);
         pageLayoutDropDownChoice.setNullValid(false);
+        pageLayoutDropDownChoice.setLabel(xPageLayoutLabelModel);
         add(pageLayoutDropDownChoice);
         setVisible(showXPageLayout());
     }
