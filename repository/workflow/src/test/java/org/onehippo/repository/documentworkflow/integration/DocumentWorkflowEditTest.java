@@ -261,9 +261,69 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
     }
 
     /**
+     * <p>
+     *     This test is to assert that when a new document gets created, the new DRAFT document variant can have
+     *     hippo:skipdraft children : this is because there is no unpublished version yet. On the first commit editable
+     *     instance, the hippo:skipDraft children of the draft should be *moved* (not copied) to the unpublished version!
+     * </p>
+     */
+    @Test
+    public void first_commit_editable_instance_creating_unpublished_moves_skipDraftChildren_to_unpublished() throws Exception {
+        DocumentWorkflow workflow = getDocumentWorkflow(handle);
+
+        final Node draft = workflow.obtainEditableInstance().getNode(session);
+        Node unpublished = document;
+
+        addDocumentCompounds(draft);
+
+        assertThat(unpublished.hasNode("compound1")).isFalse();
+        assertThat(unpublished.hasNode("compound2")).isFalse();
+        assertThat(unpublished.hasNode("compound3")).isFalse();
+
+
+        assertThat(draft.hasNode("compound1")).isTrue();
+        assertThat(draft.hasNode("compound2")).isTrue();
+        assertThat(draft.hasNode("compound3")).isTrue();
+
+        final String compound1UUID = draft.getNode("compound1").getIdentifier();
+        final String compound2UUID = draft.getNode("compound2").getIdentifier();
+        final String compound3UUID = draft.getNode("compound3").getIdentifier();
+
+        // now first delete the unpublished and published variants to make sure there is only a draft
+        getVariant(UNPUBLISHED).remove();
+        session.save();
+
+        // as a result of 'commitEditableInstance' we expect 'compound1' to be copied from draft to unpublished (since
+        // it does not have hippostd:skipdraft) and we expect compound2 and compound3 to be moved!!!
+        workflow.commitEditableInstance();
+
+        unpublished = getVariant(UNPUBLISHED);
+        assertThat(unpublished.hasNode("compound1")).isTrue();
+        assertThat(unpublished.hasNode("compound2")).isTrue();
+        assertThat(unpublished.hasNode("compound3")).isTrue();
+
+        assertThat(draft.hasNode("compound1")).isTrue();
+        assertThat(draft.hasNode("compound2")).isFalse();
+        assertThat(draft.hasNode("compound3")).isFalse();
+
+        assertThat(unpublished.getNode("compound1").getIdentifier()).isNotEqualTo(compound1UUID);
+        assertThat(draft.getNode("compound1").getIdentifier()).isEqualTo(compound1UUID);
+
+        // nodes compound2UUID and compound3UUID are expected to be moved, keeping the UUID intact
+        assertThat(unpublished.getNode("compound2").getIdentifier()).isEqualTo(compound2UUID);
+        assertThat(unpublished.getNode("compound3").getIdentifier()).isEqualTo(compound3UUID);
+
+        // obtain editable instance does not copy or move the skipDraft nodes again to draft
+        workflow.obtainEditableInstance();
+        assertThat(draft.hasNode("compound1")).isTrue();
+        assertThat(draft.hasNode("compound2")).isFalse();
+        assertThat(draft.hasNode("compound3")).isFalse();
+    }
+
+    /**
      * The follow test first create the following fixture
      * <pre>
-     *     + document (preview)
+     *     + document
      *       + compound1
      *         + subCompound1 (mixin hippostd:skipdraft)
      *       + compound2 (mixin hippostd:skipdraft)
