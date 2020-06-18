@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
         createDialog(false);
         clickOkButton();
 
-        tester.assertErrorMessages("'name' is required.");
+        tester.assertErrorMessages("'name' is required.", "'XPage Layout' is required.");
     }
 
     @Test
@@ -128,6 +128,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
         setUrl("archives");
 
         setName("Archives");
+        setXPageLayout("layout1");
         clickOkButton();
 
         tester.assertNoErrorMessage();
@@ -141,6 +142,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
         clickUrlActionLink();
         setUrl("news");
         setName("Another News");
+        setXPageLayout("layout1");
         clickOkButton();
 
         tester.assertErrorMessages("The URL name \'news\' is already used in this folder. Please use a different name.");
@@ -154,6 +156,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
         clickUrlActionLink();
         setUrl("news-123");
         setName("News");
+        setXPageLayout("layout1");
         clickOkButton();
 
         tester.assertErrorMessages("The name \'News\' is already used in this folder. Please use a different name.");
@@ -167,6 +170,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
         clickUrlActionLink();
         setUrl("news");
         setName("News");
+        setXPageLayout("layout1");
         clickOkButton();
 
         tester.assertErrorMessages("The URL name \'news\' and name \'News\' are already used in this folder. Please use different names.");
@@ -180,6 +184,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
         clickUrlActionLink();
         setUrl("another-news");
         setName("Another News");
+        setXPageLayout("layout1");
         clickOkButton();
 
         tester.assertErrorMessages("Failed to validate input names");
