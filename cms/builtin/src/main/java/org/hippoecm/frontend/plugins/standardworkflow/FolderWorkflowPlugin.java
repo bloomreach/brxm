@@ -377,6 +377,10 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                 }
 
                                 TreeMap<String, String> arguments = new TreeMap<>();
+                                final String xPageLayout = addDocumentModel.getXPageLayout();
+                                if (StringUtils.isNotEmpty(xPageLayout)) {
+                                    arguments.put("xPageLayout", xPageLayout);
+                                }
                                 arguments.put("name", nodeName);
                                 arguments.put("localName", localName);
                                 if (StringUtils.isNotBlank(addDocumentModel.getLanguage())) {
