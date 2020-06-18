@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -76,10 +77,13 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
 
         } catch (URISyntaxException | ParserException e) {
             throw new IOException(e);
+        } catch (FileSystemAlreadyExistsException e) {
+            // CMS-13468 Method is not threadsafe when loading modules such as hippo-cms7-commons multiple times
+            log.warn("Re-loading filesystem failed for " + artifactInfo.getCoordinates());
         }
     }
 
-    private FileSystem createZipFileSystem(final String zipFilename) throws IOException {
+    private static FileSystem createZipFileSystem(final String zipFilename) throws IOException {
         final java.nio.file.Path path = Paths.get(zipFilename);
         final URI uri = URI.create("jar:file:" + path.toUri().getPath());
         final Map<String, String> env = new HashMap<>();
