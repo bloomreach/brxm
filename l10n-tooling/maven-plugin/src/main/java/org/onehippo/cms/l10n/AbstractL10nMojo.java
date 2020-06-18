@@ -137,16 +137,12 @@ public abstract class AbstractL10nMojo extends AbstractMojo {
     private URL[] getHippoArtifactFiles() throws MalformedURLException {
         final Collection<URL> artifactFiles = new ArrayList<>();
         for (Artifact artifact : project.getDependencyArtifacts()) {
-            if (isHippoArtifact(artifact)) {
+            if (ArtifactInfo.isBloomreachArtifactGroupId(artifact.getGroupId())) {
                 artifactFiles.add(artifact.getFile().toURI().toURL());
             }
         }
         return artifactFiles.toArray(new URL[artifactFiles.size()]);
     }
 
-    private boolean isHippoArtifact(final Artifact artifact) {
-        final String groupId = artifact.getGroupId();
-        return groupId != null && (groupId.startsWith("org.onehippo.cms") || groupId.startsWith("com.onehippo.cms"));
-    }
 
 }
