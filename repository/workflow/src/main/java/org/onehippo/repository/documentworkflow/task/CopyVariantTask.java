@@ -27,6 +27,7 @@ import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.util.JcrConstants;
@@ -97,6 +98,17 @@ public class CopyVariantTask extends AbstractDocumentTask {
             targetNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
 
             copyTo(sourceNode, targetNode, srcOrDestIsDraft);
+
+            if (DRAFT.equals(getSourceState())) {
+                // it was a copy from draft to unpublished when there was not yet an unpublished, make sure to move
+                // any hippostd:skipdraft nodes from draft to unpublished
+                for (Node child : new NodeIterable(sourceNode.getNodes())) {
+                    if (child.isNodeType(HippoStdNodeType.MIXIN_SKIPDRAFT)) {
+                        // move from draft to unpublished
+                        workflowSession.move(child.getPath(), targetNode.getPath() + "/" + child.getName());
+                    }
+                }
+            }
 
             targetDoc = new DocumentVariant(targetNode);
             targetDoc.setState(getTargetState());
