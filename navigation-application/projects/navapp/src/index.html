@@ -1,0 +1,73 @@
+<!doctype html>
+<!--
+  Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <title>Navapp</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="navapp-assets/favicon.ico">
+
+    <script>
+      var urlParams = new URLSearchParams(window.location.search);
+      var language = urlParams.get('language');
+      window.NavAppSettings = {
+        userSettings: {
+          userName: 'Frank Zappa',
+          email: 'frank.zappa@bloomreach.com',
+          language: language || 'en',
+          timeZone: 'Europe/Amsterdam',
+        },
+        appSettings: {
+          basePath: '/base/path',
+          // loginPath is optional, if set it will be used after user logged out
+          loginPath: '/login',
+          // initialPath is optional. If set it navigates to the specified location
+          // initialPath: '/categories/category-ranking',
+          usageStatisticsEnabled: true,
+          navAppResourceLocation: 'http://localhost:4200',
+          loginResources: [],
+          navConfigResources: [
+            {
+              resourceType: 'IFRAME',
+              url: 'http://localhost:4201/brsm',
+            },
+            {
+              resourceType: 'REST',
+              url: 'http://localhost:4201/assets/navitems.json',
+            },
+            // {
+            //   resourceType: 'INTERNAL_REST',
+            //   url: '/ws/navitems',
+            // },
+          ],
+          iframesConnectionTimeout: 10000,
+          logLevel: 'DEBUG',
+        },
+      };
+    </script>
+  </head>
+
+  <body>
+    <brna-root></brna-root>
+
+    <script src="/loader.js" type="module"></script>
+  </body>
+
+</html>
