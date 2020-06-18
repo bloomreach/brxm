@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,9 +22,8 @@ public class AddDocumentArguments implements IClusterable {
     private String uriName;
     private String prototype;
     private String language;
-
-    public AddDocumentArguments() {
-    }
+    /* The identifier of the selected XPageLayout */
+    private String xPageLayout;
 
     public String getTargetName() {
         return targetName;
@@ -56,5 +55,13 @@ public class AddDocumentArguments implements IClusterable {
 
     public void setLanguage(final String language) {
         this.language = language;
+    }
+
+    public String getXPageLayout() {
+        return xPageLayout;
+    }
+
+    public void setXPageLayout(final String xPageLayout) {
+        this.xPageLayout = xPageLayout;
     }
 }
