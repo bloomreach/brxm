@@ -49,9 +49,9 @@ public class ComponentResourceTest extends AbstractResourceTest {
                 .statusCode(200)
                 .contentType(ContentType.JSON)
                 .body("success", equalTo(true))
-                .body("data.channel.subItems.discard-changes.enabled", equalTo(true))
-                .body("data.page.subItems.tools.enabled", equalTo(true))
-                .body("data.xpage.subItems.new.enabled", equalTo(true))
+                .body("data.channel.items.discard-changes.enabled", equalTo(true))
+                .body("data.page.items.tools.enabled", equalTo(true))
+                .body("data.xpage.items.new.enabled", equalTo(true))
         ;
     }
 }
