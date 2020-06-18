@@ -1,0 +1,73 @@
+/*
+ * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'variables';
+
+:host {
+  display: block;
+  overflow: hidden;
+
+  &.highlighted .header,
+  &.highlighted .header .mat-icon {
+    color: $menu-highlighted-text-color;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.header {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  font-size: $menu-drawer-font-size;
+  justify-content: space-between;
+  margin: 0;
+  overflow: hidden;
+  padding-right: 10px;
+  position: relative;
+  white-space: nowrap;
+
+  .mat-icon {
+    color: $menu-icon-color;
+  }
+
+  &:hover,
+  &:hover .mat-icon {
+    color: $menu-drawer-menu-hover-text-color;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.items-wrapper {
+  background-color: $menu-sub-item-bg;
+  overflow: hidden;
+  padding: 0 5px 0 10px;
+
+  > .item {
+    font-size: $menu-sub-menu-font-size;
+  }
+
+  .item:first-child {
+    padding-top: 10px;
+  }
+
+  .item:last-child {
+    padding-bottom: 10px;
+  }
+
+  &.opened {
+    margin-bottom: 6px;
+  }
+}

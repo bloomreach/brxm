@@ -1,0 +1,133 @@
+<!--
+ Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<h1>Example iframe application</h1>
+
+<hr>
+
+<h2>Status</h2>
+<table class="state">
+  <tbody>
+    <tr>
+      <td>Current client app location</td>
+      <td>{{ currentLocation }}</td>
+    </tr>
+    <tr>
+      <td>The parent window uses navapp comm lib version</td>
+      <td>{{ parentApiVersion }}</td>
+    </tr>
+    <tr>
+      <td>Last time navigated to</td>
+      <td>path: "{{ state.navigatedTo?.path }}", client app appUrl path: "{{ state.navigatedTo?.pathPrefix }}"</td>
+    </tr>
+    <tr>
+      <td>Last navigation was triggered by</td>
+      <td>{{ state.lastNavigationTriggeredBy }}</td>
+    </tr>
+    <tr>
+      <td>Navigation counter</td>
+      <td>{{ state.navigateCount }}</td>
+    </tr>
+    <tr>
+      <td>Button click counter (and user activity trigger)</td>
+      <td>{{ state.buttonClickedCounter }}</td>
+    </tr>
+    <tr>
+      <td>User activity reported counter (from navapp)</td>
+      <td>{{ state.userActivityReported }}</td>
+    </tr>
+    <tr>
+      <td>Navapp's overlay is</td>
+      <td>{{ state.overlaid ? 'shown' : 'hidden' }}</td>
+    </tr>
+    <tr>
+      <td>history.pushState counter</td>
+      <td>{{ state.historyPushStateCount }}</td>
+    </tr>
+    <tr>
+      <td>history.replaceState counter</td>
+      <td>{{ state.historyReplaceStateCount }}</td>
+    </tr>
+    <tr *ngIf="state.isBrSmMock">
+      <td>The selected siteId</td>
+      <td>{{ state.selectedSiteId ? state.selectedSiteId.siteId : 'not provided' }}</td>
+    </tr>
+    <tr *ngIf="state.isBrSmMock">
+      <td>and accountId</td>
+      <td>{{ state.selectedSiteId ? state.selectedSiteId.accountId : 'not provided' }}</td>
+    </tr>
+    <tr>
+      <td>Generate an error upon logout</td>
+      <td>{{ state.generateAnErrorUponLogout }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h4>Actions</h4>
+<ul>
+  <li><button (click)="onButtonClicked()" class="simple-button">Simple button</button></li>
+  <li>
+    <button (click)="toggleOverlay()" class="toggle-overlay-button">
+      {{ state.overlaid ? 'Unmask Navapp' : 'Mask Navapp' }}
+    </button>
+  </li>
+</ul>
+
+<h4>Navigation</h4>
+<ul>
+  <li>
+    <button (click)="navigateTo(internalPathInput.value, breadcrumbName.value)" class="navigate-button">
+      Navigate to a path in the first input with a breadcrumb in the second input
+    </button>
+    <input #internalPathInput type="text" value="seo" class="internal-path-input">
+    <input #breadcrumbName type="text" value="some breadcrumb" class="breadcrumb-name-input">
+    <br>
+    <span>Alternative input: 'experience-manager/channel1' and 'Channel1'</span>
+  </li>
+
+  <li><button (click)="navigateInternally()">history.pushState() navigation</button></li>
+  <li><button (click)="navigateInternallyWithReplaceState()">history.replaceState() navigation</button></li>
+  <li><button (click)="reloadPage()">Reload</button></li>
+</ul>
+
+<h4>Trigger an error</h4>
+<ul>
+  <li>
+    <button (click)="showError(errorMessage.value)" class="show-error-button">Show Error Page</button>
+    <input #errorMessage type="text" value="Error from the iframe app example" class="error-message-input">
+  </li>
+  <li>
+    <button (click)="sendNotAuthenticatedError()" class="send-not-authenticated-error-button">
+      Send authentication error
+    </button>
+  </li>
+  <li>
+    <button (click)="toggleLogoutErrorState()" class="toggle-logout-error-state-button">
+      Toggle logout error state
+    </button>
+  </li>
+</ul>
+
+<hr>
+
+<textarea cols="30" rows="10">
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae deleniti eum culpa voluptates laudantium cupiditate
+  nesciunt non aperiam deserunt, optio rem? Labore fugit repellat id suscipit aspernatur obcaecati, vitae soluta!
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae deleniti eum culpa voluptates laudantium cupiditate
+  nesciunt non aperiam deserunt, optio rem? Labore fugit repellat id suscipit aspernatur obcaecati, vitae soluta!
+</textarea>
