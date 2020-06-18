@@ -27,11 +27,11 @@ public final class MenuItemRepresentation {
     private final boolean enabled;
 
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
-    private final Map<Enum<?>, MenuItemRepresentation> subItems;
+    private final Map<Enum<?>, MenuItemRepresentation> items;
 
-    public MenuItemRepresentation(final boolean enabled, final Map<Enum<?>, MenuItemRepresentation> subItems) {
+    public MenuItemRepresentation(final boolean enabled, final Map<Enum<?>, MenuItemRepresentation> items) {
         this.enabled = enabled;
-        this.subItems = subItems;
+        this.items = items;
     }
 
     public MenuItemRepresentation(final boolean enabled) {
@@ -42,7 +42,7 @@ public final class MenuItemRepresentation {
         return enabled;
     }
 
-    public Map<Enum<?>, MenuItemRepresentation> getSubItems() {
-        return subItems;
+    public Map<Enum<?>, MenuItemRepresentation> getItems() {
+        return items;
     }
 }
