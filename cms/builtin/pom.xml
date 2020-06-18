@@ -27,7 +27,6 @@
   <description>Hippo CMS plugins for builtin repository workflows</description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms-builtin</artifactId>
-  <packaging>jar</packaging>
 
   <dependencies>
     <dependency>
