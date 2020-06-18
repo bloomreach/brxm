@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,15 +51,15 @@ class ArtifactInfo {
             }
         }
     }
-    
+
     /* constructor for testing purposes */
     ArtifactInfo(String artifactId) {
         pomProperties.setProperty("artifactId", artifactId);
         manifestURL = null;
     }
-    
-    boolean isHippoArtifact() {
-        return isHippoGroupId(getGroupId());
+
+    boolean isBloomreachArtifact() {
+        return isBloomreachArtifactGroupId(getGroupId());
     }
 
     String getGroupId() {
@@ -74,16 +74,20 @@ class ArtifactInfo {
         return pomProperties.getProperty("version");
     }
 
+    String getCoordinates() {
+        return String.format("%s:%s:%s", getGroupId(), getArtifactId(), getVersion());
+    }
+
     Collection<String> getEntries() {
         return entries;
     }
 
     File getJarFile() throws MalformedURLException, URISyntaxException {
-       return new File(getJarURL().toURI());
+        return new File(getJarURL().toURI());
     }
 
-    private static boolean isHippoGroupId(final String groupId) {
-        return groupId != null && (groupId.startsWith("org.onehippo.cms") || groupId.startsWith("com.onehippo.cms"));
+    public static boolean isBloomreachArtifactGroupId(final String groupId) {
+        return groupId != null && (groupId.startsWith("org.onehippo.cms") || groupId.startsWith("com.onehippo.cms") || groupId.startsWith("com.bloomreach.xm"));
     }
 
     private URL getJarURL() throws MalformedURLException {
