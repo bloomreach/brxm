@@ -276,12 +276,16 @@ public class AbstractConfigResource {
         return configurationPath + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
     }
 
-    public static Response respondContainerItem(final ContainerItem containerItem,
+    public Response respondContainerItem(final ContainerItem containerItem,
                                                 final boolean requiresReload,
                                                 final Response.StatusType statusType,
                                                 final String msg) throws RepositoryException {
-        final Node newNode = containerItem.getContainerItem();
-        final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation().represent(newNode, containerItem.getTimeStamp());
+        final Node containerItemNode = containerItem.getContainerItem();
+
+        log.info("Returning success response for container item '{}':  StatusType : {},  ReloadRequired : {}," +
+                "Message = {}", containerItemNode.getPath(), statusType, requiresReload, msg);
+
+        final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation().represent(containerItemNode, containerItem.getTimeStamp());
 
         final ExtResponseRepresentation entity = new ExtResponseRepresentation(containerItemRepresentation);
         entity.setReloadRequired(requiresReload);
