@@ -372,6 +372,12 @@
           <links>
             <link>https://javadoc.onehippo.org/${javadoc.base.version}/hippo-repository/</link>
           </links>
+          <offlineLinks>
+            <offlineLink>
+              <url>http://javadoc.onehippo.org/${javadoc.base.version}/hippo-repository/</url>
+              <location>${basedir}/../../hippo-repository/api/target/site/apidocs</location>
+            </offlineLink>
+          </offlineLinks>
         </configuration>
       </plugin>
     </plugins>
