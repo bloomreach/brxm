@@ -24,7 +24,6 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -40,8 +39,16 @@ public class ReportMojo extends AbstractRegistrarMojo {
     @Parameter(defaultValue = "${reactorProjects}", required = true, readonly = true)
     private List<MavenProject> reactorProjects;
 
+    @Parameter(property = "l10n.report.skip", defaultValue = "false")
+    private boolean skip = false;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (isSkipped()) {
+            getLog().info("Skipping hippo-cms-l10n-maven-plugin:report");
+            return;
+        }
+
         Report currentReport;
         try {
             currentReport = getRegistrar().report();
@@ -57,6 +64,10 @@ public class ReportMojo extends AbstractRegistrarMojo {
                 }
             }
         }
+    }
+
+    boolean isSkipped() {
+        return skip;
     }
 
     private void writeReport(final Report report) {

@@ -73,7 +73,6 @@
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Repository</notice.project.name>
-    <javadoc.base.version>13.1</javadoc.base.version>
 
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
@@ -100,7 +99,6 @@
     <json-lib.version>2.4</json-lib.version>
     <easymock.version>4.0.2</easymock.version>
     <powermock.version>2.0.2</powermock.version>
-    <restassured.version>4.1.2</restassured.version>
     <decentxml.version>1.4</decentxml.version>
     <commons-scxml2.version>2.0-M1</commons-scxml2.version>
     <mysql.version>8.0.17</mysql.version>

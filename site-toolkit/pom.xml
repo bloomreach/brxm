@@ -81,10 +81,6 @@
     <ehcache-core.version>2.10.6</ehcache-core.version>
     <ehcache-web.version>2.0.4</ehcache-web.version>
 
-    <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
-
-    <javadoc.base.version>13.1</javadoc.base.version>
-
     <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
@@ -101,7 +97,6 @@
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
     <mime4j.version>0.6</mime4j.version>
-    <dependency.solr.version>4.9.0</dependency.solr.version>
 
     <!-- Before updating the swagger version verify swagger yaml works. See HSTTWO-4537 -->
     <swagger-core.version>1.5.15</swagger-core.version>
@@ -463,19 +458,6 @@
         <version>${hippo.jackrabbit.version}</version>
       </dependency>
 
-      <!-- Jackrabbit ocm -->
-
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-ocm</artifactId>
-        <version>${jackrabbit-ocm.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
 
       <dependency>
         <groupId>net.sourceforge.htmlcleaner</groupId>
@@ -733,15 +715,12 @@
     <module>commons</module>
     <module>test</module>
     <module>content-beans</module>
-    <module>solr-content-beans</module>
-    <module>solr-client</module>
     <module>toolkit-resources</module>
     <module>components</module>
     <module>pagemodelapi</module>
     <module>client</module>
     <module>client-modules</module>
     <module>dependencies</module>
-    <module>sandbox</module>
   </modules>
 
   <profiles>
