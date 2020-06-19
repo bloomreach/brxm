@@ -57,12 +57,10 @@
 
     <jmxremote.port>9875</jmxremote.port>
 
-    <dependency.solr.version>4.9.0</dependency.solr.version>
-
     <json-lib.version>2.4</json-lib.version>
 
     <webjars-servlet-2.x.version>1.5</webjars-servlet-2.x.version>
-    <webjars-swagger-ui.version>2.2.10-1</webjars-swagger-ui.version>
+    <webjars-swagger-ui.version>3.26.0</webjars-swagger-ui.version>
 
     <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
 
@@ -224,7 +222,6 @@
     <module>site</module>
     <module>intranet</module>
     <module>prod-server-config</module>
-    <module>solr</module>
     <module>api-docs</module>
   </modules>
 
@@ -240,9 +237,6 @@
     </profile>
     <profile>
       <id>cargo.run</id>
-      <properties>
-        <solr.data.dir>${repo.path}/solr</solr.data.dir>
-      </properties>
       <build>
         <plugins>
           <plugin>
@@ -266,7 +260,6 @@
               <container>
                 <systemProperties>
                   <log4j.configurationFile>file://${project.basedir}/conf/log4j2.xml</log4j.configurationFile>
-                  <solr.data.dir>${solr.data.dir}</solr.data.dir>
                   <project.basedir>${project.basedir}</project.basedir>
                 </systemProperties>
               </container>
@@ -290,13 +283,6 @@
                   <type>war</type>
                   <properties>
                     <context>/intranet</context>
-                  </properties>
-                </deployable>
-                <deployable>
-                  <location>${project.basedir}/solr/target/solr.war</location>
-                  <type>war</type>
-                  <properties>
-                    <context>/solr</context>
                   </properties>
                 </deployable>
                 <deployable>
@@ -469,7 +455,6 @@
             <configuration>
               <excludes combine.children="append">
                 <exclude>conf/catalina-logging.properties</exclude>
-                <exclude>solr/src/main/webapp/**</exclude>
                 <!-- covered by 3rd-party licenses in the LICENSE file -->
                 <exclude>intranet-bootstrap/webfiles/src/main/resources/intranet/css/style.css</exclude>
                 <exclude>intranet-bootstrap/webfiles/src/main/resources/intranet/hst-whitelist.txt</exclude>

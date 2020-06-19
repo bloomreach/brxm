@@ -49,27 +49,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-solr-client</artifactId>
-      <version>${hippo.hst.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-    </dependency>
-
-    <!-- For wicket demo -->
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket</artifactId>
-      <version>1.4.16</version>
-    </dependency>
-      
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-extensions</artifactId>
-      <version>7.14.0</version>
     </dependency>
 
     <!-- testsuite dependencies -->
