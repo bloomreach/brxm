@@ -138,7 +138,7 @@ describe('EditComponentService', () => {
     it('opens the component editor', () => {
       editComponent();
 
-      expect(ComponentEditor.open).toHaveBeenCalledWith(testData);
+      expect(ComponentEditor.open).toHaveBeenCalledWith('component.id');
     });
 
     it('sets the context label to COMPONENT and the title label to the component name', () => {
