@@ -44,6 +44,7 @@
     <hippo.services.version>${hippo.release.version}</hippo.services.version>
     <hippo.services.htmlprocessor.version>${hippo.release.version}</hippo.services.htmlprocessor.version>
     <hippo.services.validation.version>${hippo.release.version}</hippo.services.validation.version>
+    <hippo.navapp.version>${hippo.release.version}</hippo.navapp.version>
 
     <commons-lang.version>2.6</commons-lang.version>
     <lib.json.version>20090211</lib.json.version>
@@ -193,6 +194,14 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-services-validation</artifactId>
         <version>${hippo.services.validation.version}</version>
+      </dependency>
+
+      <!-- NavApp -->
+      <dependency>
+        <groupId>com.bloomreach.xm</groupId>
+        <artifactId>navigation-application</artifactId>
+        <version>${hippo.navapp.version}</version>
+        <scope>provided</scope>
       </dependency>
 
       <!-- Test dependencies -->
