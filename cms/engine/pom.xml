@@ -105,6 +105,12 @@
       <artifactId>hst-commons</artifactId>
     </dependency>
 
+    <!-- NavApp -->
+    <dependency>
+      <groupId>com.bloomreach.xm</groupId>
+      <artifactId>navigation-application</artifactId>
+    </dependency>
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
