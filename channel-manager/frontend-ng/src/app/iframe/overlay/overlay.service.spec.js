@@ -328,6 +328,7 @@ describe('OverlayService', () => {
     `;
 
     await PageStructureService.updateComponent(componentC.getId(), emptyMarkup);
+    OverlayService.sync();
 
     const generatedBoxElement = PageStructureService.getPage().getComponentById('cccc').getBoxElement();
     expect(generatedBoxElement).toBeDefined();
@@ -457,6 +458,7 @@ describe('OverlayService', () => {
 
     const componentA = PageStructureService.getPage().getComponentById('aaaa');
     await PageStructureService.updateComponent(componentA.getId(), componentMarkupWithExperiment);
+    OverlayService.sync();
 
     const label = componentElementA.find('.hippo-overlay-label');
     expect(label.attr('data-qa-experiment-id')).toBe('567');
@@ -667,6 +669,7 @@ describe('OverlayService', () => {
 
     const componentA = PageStructureService.getPage().getComponentById('aaaa');
     await PageStructureService.updateComponent(componentA.getId(), componentMarkupWithoutMenuLink);
+    OverlayService.sync();
 
     expect($document.find('.hippo-overlay > .hippo-overlay-element')).toHaveLength(26);
     expect($document.find('.hippo-overlay > .hippo-overlay-element-menu-link')).toHaveLength(0);
