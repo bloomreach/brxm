@@ -1,0 +1,147 @@
+/*
+ * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Color system
+
+// Color palettes
+// Basic Colors
+$white: #fff;
+$black: #000;
+
+// Blue palette
+$blue-50: #cfe7fc;
+$blue-100: #94c9f7;
+$blue-200: #5faff5;
+$blue-300: #3399f2;
+$blue-400: #1785e6;
+$blue-500: #00b5e2;
+$blue-600: #0465ba;
+$blue-700: #0259a6;
+$blue-800: #024e96;
+$blue-900: #004280;
+$blue-a100: #99cfff;
+$blue-a200: #4da0ff;
+$blue-a400: #267dff;
+$blue-a700: #0357ff;
+
+// Orange palette
+$orange-50: #fce1cf;
+$orange-100: #f7ba94;
+$orange-200: #f59356;
+$orange-300: #f58133;
+$orange-400: #f26f18;
+$orange-500: #e35c09;
+$orange-600: #d15102;
+$orange-700: #bd4a02;
+$orange-800: #a84202;
+$orange-900: #963c00;
+$orange-a100: #ffc099;
+$orange-a200: #ff9659;
+$orange-a400: #ff751a;
+$orange-a700: #ff5203;
+
+// Red palette
+$red-50: #fccfcf;
+$red-100: #fc8c8c;
+$red-200: #fa5151;
+$red-300: #f22a2a;
+$red-400: #e61717;
+$red-500: #d40d0d;
+$red-600: #bd0606;
+$red-700: #ab0303;
+$red-800: #990202;
+$red-900: #850000;
+$red-a100: #f99;
+$red-a200: #ff596a;
+$red-a400: #ff334e;
+$red-a700: #f70029;
+
+// Grey palette
+$grey-50: #fff;
+$grey-100: #f4f4f5;
+$grey-200: #e8e8ea;
+$grey-300: #d9d9dd;
+$grey-400: #b8bcbf;
+$grey-500: #92a0a5;
+$grey-600: #697279;
+$grey-700: #39434c;
+$grey-800: #22272f;
+$grey-900: #000;
+$grey-a100: #fff;
+$grey-a200: #000;
+$grey-a400: #303030;
+$grey-a700: #39434c;
+
+// Body
+//
+// Settings for the `<body>` element.
+
+$body-bg: $white;
+$body-text-color: $grey-900;
+
+// Typography
+//
+// Font, line-height, and color for body text, headings, and more.
+$font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
+$font-weight-semibold: 500;
+$font-weight-bold: 600;
+$text-color: rgba(0, 0, 0, .87);
+
+// Menu
+$menu-top-item-height: 48px;
+$menu-top-item-small-height: 38px;
+$menu-icon-size: 24px;
+$menu-icon-margin: 16px;
+$menu-width: 224px;
+$menu-drawer-width: 200px;
+$menu-collapsed-width: ($menu-icon-size + 2 * $menu-icon-margin);
+
+$menu-drawer-font-size: 14px;
+$menu-sub-menu-font-size: 13px;
+
+$menu-bg: #303d50;
+$menu-hover-bg: #fff;
+$menu-drawer-bg: #0d2035;
+$menu-sub-item-bg: #000010;
+
+$menu-text-color: rgba(255, 255, 255, .8);
+$menu-icon-color: rgba(255, 255, 255, .7);
+$menu-icon-highlighted-secondary-color: white;
+$menu-title-text-color: rgba(255, 255, 255, 1);
+$menu-pressed-text-color: #fff;
+$menu-hover-text-color: $menu-bg;
+$menu-highlighted-text-color: #00b5e2;
+$menu-drawer-menu-hover-text-color: #fff;
+
+$menu-arrow-height: 36px;
+$menu-arrow-bg-gradient: #303d5000, #303d50fe;
+
+// Top panel
+$top-panel-height: 36px;
+$top-panel-bg: rgb(245, 245, 245);
+$top-panel-border-color: rgb(234, 232, 234);
+
+// breadcrumbs
+$breadcrumbs-active-background-color: #e0e0e0;
+$breadcrumbs-chevron-color: rgba(0, 0, 0, .6);
+
+// Site selection side panel
+$site-selection-text-color: #6a6a6a;
+$site-selection-side-panel-min-width: 300px;
+$site-selection-side-panel-max-width: 500px;
+$site-selection-side-panel-bg: white;
+$site-selection-hover-bg: rgb(220, 219, 220);
+$site-selection-active-bg: rgb(204, 234, 250);
