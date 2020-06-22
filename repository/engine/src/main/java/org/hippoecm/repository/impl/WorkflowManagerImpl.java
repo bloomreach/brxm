@@ -379,7 +379,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
                 returnObject = targetMethod.invoke(upstream, args);
                 final boolean saveRequiredForMethod = !Arrays.asList("hints","getWorkflowContext")
-                        .contains(targetMethod);
+                        .contains(targetMethod.getName());
                 if (objectPersist && saveRequiredForMethod){
                     workflowSession.save();
                 }
