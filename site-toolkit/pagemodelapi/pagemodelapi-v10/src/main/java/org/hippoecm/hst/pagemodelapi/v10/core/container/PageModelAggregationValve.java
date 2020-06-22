@@ -23,14 +23,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.HstContainerRequest;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -53,6 +49,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.pagemodelapi.common.content.beans.PageModelObjectMapperFactory;
 import org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel;
+import org.hippoecm.hst.pagemodelapi.v10.core.model.ChannelInfoModel;
+import org.hippoecm.hst.pagemodelapi.v10.core.model.ChannelModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel;
 import org.hippoecm.hst.util.ParametersInfoUtils;
@@ -60,6 +58,11 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SELF;
@@ -231,6 +234,7 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         addLinksToPageModel(aggregatedPageModel);
+        setChannelModelToPageModel(aggregatedPageModel);
 
         final int sortedComponentWindowsLen = sortedComponentWindows.length;
 
@@ -435,6 +439,23 @@ public class PageModelAggregationValve extends AggregationValve {
 
     }
 
+    /**
+     * Set channel model to the page model.
+     * @param pageModel the aggregated page model instance
+     */
+    private void setChannelModelToPageModel(final AggregatedPageModel pageModel) {
+        final ChannelModel channelModel = new ChannelModel();
+
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final Mount mount = requestContext.getResolvedMount().getMount();
+        final ChannelInfo channelInfo = mount.getChannelInfo();
+
+        if (channelInfo != null) {
+            channelModel.setChannelInfoModel(new ChannelInfoModel(channelInfo));
+        }
+
+        pageModel.setChannelModel(channelModel);
+    }
 
     /**
      * Invoke custom metadata decorators to give a chance to add more metadata for the aggregated page model.
