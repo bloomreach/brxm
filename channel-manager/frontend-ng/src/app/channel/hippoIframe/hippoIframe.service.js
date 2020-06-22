@@ -49,6 +49,7 @@ class HippoIframeService {
 
     this._onPageChange = this._onPageChange.bind(this);
     this._onEditSharedContainers = this._onEditSharedContainers.bind(this);
+    this._editSharedContainers = false;
   }
 
   initialize(hippoIframeJQueryElement, iframeJQueryElement) {
