@@ -75,8 +75,6 @@ export default class OverlayService {
       queries: [{ all: true }],
     });
     this.$window.addEventListener('resize', () => this.sync());
-
-    this._isEditSharedContainers = await this.CommunicationService.isEditSharedContainers();
   }
 
   async _onPageChange() {
@@ -86,6 +84,7 @@ export default class OverlayService {
     }
 
     this._isEditable = await this.CommunicationService.isEditable();
+    this._isEditSharedContainers = await this.CommunicationService.isEditSharedContainers();
 
     await this._cssPromise;
 
