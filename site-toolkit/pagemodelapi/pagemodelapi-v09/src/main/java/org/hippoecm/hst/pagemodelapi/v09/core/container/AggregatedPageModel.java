@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.hippoecm.hst.pagemodelapi.v09.core.model.ChannelModel;
 import org.hippoecm.hst.pagemodelapi.v09.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v09.core.model.IdentifiableLinkableMetadataBaseModel;
 
@@ -37,10 +38,11 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Aggregated page model which represents the whole output in the page model pipeline request processing.
  */
-@JsonPropertyOrder({ "id", "_meta", "_links", "page", "content" })
+@JsonPropertyOrder({ "id", "_meta", "_links", "channel", "page", "content" })
 @ApiModel(description = "Aggregated page model from Page Model JSON API requests.")
 class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
 
+    private ChannelModel channelModel;
     private JsonNode pageNode;
     private JsonNode contentNode;
 
@@ -50,6 +52,20 @@ class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
 
     public AggregatedPageModel(final String id) {
         super(id);
+    }
+
+    @JsonProperty("channel")
+    @JsonInclude(Include.NON_NULL)
+    @ApiModelProperty(
+            value = "Channel property in JSON object. For details, look up the online documentation about Page Model JSON API.",
+            dataType = "object"
+            )
+    public ChannelModel getChannelModel() {
+        return channelModel;
+    }
+
+    public void setChannelModel(ChannelModel channelModel) {
+        this.channelModel = channelModel;
     }
 
     @JsonProperty("page")
