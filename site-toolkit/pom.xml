@@ -62,10 +62,10 @@
     <jooq.version>0.9.7</jooq.version>
     <awaitility.version>3.1.6</awaitility.version>
     <junit.version>4.12</junit.version>
-    <easymock.version>3.4</easymock.version>
+    <easymock.version>4.0.2</easymock.version>
     <assertj.version>3.8.0</assertj.version>
     <!-- Make sure that powermock and easymock are compatible -->
-    <powermock.version>1.6.5</powermock.version>
+    <powermock.version>2.0.2</powermock.version>
 
     <xalan.version>2.7.2</xalan.version>
 

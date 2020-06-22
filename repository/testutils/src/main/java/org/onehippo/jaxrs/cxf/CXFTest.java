@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.Application;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.specification.RequestSender;
-import com.jayway.restassured.specification.RequestSpecification;
+import io.restassured.RestAssured;
+import io.restassured.specification.RequestSender;
+import io.restassured.specification.RequestSpecification;
 
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
