@@ -32,6 +32,9 @@
 [demosite:productdocument] > demosite:basedocument, hippostd:relaxed
   orderable
 
+[demosite:validationdocument] > demosite:basedocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+
 [demosite:wikidocument] > demosite:basedocument, hippostd:relaxed, hippotranslation:translated, relateddocs:relatabledocs
   orderable
 
