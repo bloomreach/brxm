@@ -1,0 +1,106 @@
+/*
+ * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'variables';
+
+:host {
+  background-color: $site-selection-side-panel-bg;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  max-width: $site-selection-side-panel-max-width;
+  min-width: $site-selection-side-panel-min-width;
+}
+
+.search-form {
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, .25);
+  display: grid;
+  grid-column-gap: 3px;
+  grid-template: 'icon input';
+  grid-template-columns: 50px 1fr;
+  grid-template-rows: 50px;
+  position: relative;
+  width: 100%;
+  z-index: 1;
+
+  > .mat-icon {
+    color: $site-selection-text-color;
+    grid-area: icon;
+    place-self: center end;
+  }
+
+  > .search-input {
+    border: none;
+    grid-area: input;
+    outline: none;
+    padding-right: 10px;
+  }
+}
+
+.sites-tree-wrapper {
+  .caption {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    height: 40px;
+    width: 100%;
+
+    &:hover {
+      background-color: $site-selection-hover-bg;
+
+      .mat-icon-button:hover {
+        background-color: darken($site-selection-hover-bg, 10%);
+      }
+    }
+
+    &.active {
+      background-color: $site-selection-active-bg;
+
+      .mat-icon-button:hover {
+        background-color: darken($site-selection-active-bg, 10%);
+      }
+    }
+
+    > .mat-icon {
+      flex-shrink: 0;
+      width: 40px;
+    }
+  }
+
+  .children-container {
+    margin: 0;
+    padding: 0;
+
+    > .mat-tree-node > li,
+    > .mat-nested-tree-node > li {
+      padding-left: 30px;
+    }
+  }
+
+  .site-name {
+    max-width: 100%;
+    overflow: hidden;
+    padding-right: 40px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.not-found-info {
+  margin: 20px 0;
+  text-align: center;
+}

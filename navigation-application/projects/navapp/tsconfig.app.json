@@ -1,0 +1,28 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/app",
+    "types": ["pendo-io-browser"]
+  },
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/test.ts",
+    "src/**/*.spec.ts"
+  ],
+  "typedocOptions": {
+    "exclude": "!**/src/app/models/dto/**.dto.ts",
+    "excludeNotExported": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "hideGenerator": true,
+    "mode": "file",
+    "out": "./docs/navapp",
+    "name": "Bloomreach Navigation Application"
+  }
+}

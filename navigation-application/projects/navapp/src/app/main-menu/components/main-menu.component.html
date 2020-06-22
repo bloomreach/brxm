@@ -1,0 +1,77 @@
+<!--
+  Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="static-menu">
+  <div #progressBar class="progress-bar">
+    <mat-progress-bar
+      *ngIf="isBusyIndicatorVisible"
+      mode="indeterminate"
+      class="qa-busy-indicator">
+    </mat-progress-bar>
+  </div>
+  <div class="top-elements">
+    <brna-menu-scroll [height]="availableHeightForScrollableArea">
+      <div [ngClass]="getQaClass('home')" class="home">
+        <mat-icon svgIcon="br-logo"></mat-icon>
+      </div>
+      <brna-top-level-menu-item *ngFor="let item of menuItems$ | async"
+                                [caption]="item.caption"
+                                [icon]="item.icon"
+                                [highlightedIcon]="item.icon  + '.highlighted'"
+                                [collapsed]="collapsed"
+                                [pressed]="item === drawerMenuItem"
+                                [highlighted]="isMenuItemHighlighted(item)"
+                                [disabled]="isMenuItemDisabled(item)"
+                                [ngClass]="getQaClass(item)"
+                                (menuItemClick)="onMenuItemClick(item)">
+      </brna-top-level-menu-item>
+    </brna-menu-scroll>
+  </div>
+
+  <div #bottomElements class="bottom-elements">
+    <brna-top-level-menu-item caption="{{ 'MENU_CONTAINER_HELP' | translate }}"
+                              icon="help"
+                              [collapsed]="collapsed"
+                              [pressed]="isHelpToolbarOpened"
+                              [small]="true"
+                              [ngClass]="getQaClass('help')"
+                              (menuItemClick)="onHelpMenuItemClick()">
+    </brna-top-level-menu-item>
+
+    <brna-top-level-menu-item caption="{{ 'MENU_CONTAINER_USER_ACCOUNT' | translate }}"
+                              icon="user"
+                              [collapsed]="collapsed"
+                              [pressed]="isUserToolbarOpened"
+                              [small]="true"
+                              [ngClass]="getQaClass('user')"
+                              (menuItemClick)="onUserMenuItemClick()">
+    </brna-top-level-menu-item>
+
+    <div class="trigger qa-menu-trigger" (click)="toggle()">
+      <mat-icon svgIcon="nav-expand" [@rotate-expand-collapse]="collapsed"></mat-icon>
+    </div>
+  </div>
+</div>
+
+<brna-menu-drawer *ngIf="isDrawerOpen" [config]="drawerMenuItem"></brna-menu-drawer>
+
+<brna-help-toolbar-drawer *ngIf="isHelpToolbarOpened"
+                          [(helpDrawerOpen)]="isHelpToolbarOpened">
+</brna-help-toolbar-drawer>
+
+<brna-user-toolbar-drawer *ngIf="isUserToolbarOpened"
+                          [(userDrawerOpen)]="isUserToolbarOpened">
+</brna-user-toolbar-drawer>
