@@ -30,6 +30,7 @@
     <module>essentials</module>
     <module>gallerypicker</module>
     <module>l10n-tooling</module>
+    <module>navigation-application</module>
     <module>packages</module>
     <module>poll</module>
     <module>relateddocs</module>
