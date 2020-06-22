@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstComponent;
@@ -162,9 +163,8 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * org.hippoecm.hst.core.component.HstComponent} instance, the implementation might have implemented some resolving
      * for these values.
      * <p/>
-     * Parameters are inherited from ancestor configurations. Parameters that are configured in an ancestor override
-     * parameters configured in this component. Ancestors have precedence. Note that this is opposite to {@link
-     * HstSiteMapItem#getParameter(String)}
+     * Parameters for components are inherited from ancestor configurations. In case the component configured a parameter
+     * also present on an ancestor, the parameter from the ancestor is ignored
      *
      * @param name the name of the parameter
      * @return the configured parameter value for this <code>name</code> and <code>null</code> if not existing

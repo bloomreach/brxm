@@ -1,0 +1,172 @@
+/*
+ * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'variables';
+
+@mixin showNormalIcon() {
+  .mat-icon {
+    display: block;
+  }
+
+  .mat-icon.highlighted {
+    display: none;
+  }
+}
+
+@mixin showActiveIcon() {
+  .mat-icon {
+    display: none;
+  }
+
+  .mat-icon.highlighted {
+    display: block;
+  }
+}
+
+:host {
+  cursor: pointer;
+  display: grid;
+  height: $menu-top-item-height;
+  position: relative;
+
+  &.small {
+    height: $menu-top-item-small-height;
+
+    .mat-icon {
+      width: 16px;
+    }
+  }
+
+  &.disabled {
+    cursor: default;
+
+    .mat-icon,
+    .caption {
+      opacity: .5;
+    }
+  }
+}
+
+.menu-item {
+  @include showNormalIcon;
+
+  align-items: center;
+  display: grid;
+  grid-template-columns: $menu-collapsed-width 1fr;
+  padding-right: (2 * $menu-icon-margin);
+
+  &::before {
+    background-color: $menu-highlighted-text-color;
+    content: '';
+    height: 100%;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    transition: opacity 300ms;
+    width: 2px;
+  }
+
+  &:hover {
+    @include showNormalIcon;
+
+    background-color: $menu-hover-bg;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12);
+
+    .mat-icon,
+    .caption {
+      color: $menu-hover-text-color;
+    }
+  }
+
+  &.highlighted {
+    @include showActiveIcon;
+
+    &::before {
+      opacity: 1;
+    }
+
+    .mat-icon {
+      color: $menu-icon-highlighted-secondary-color;
+      transition: color 300ms;
+    }
+
+    .caption {
+      color: $menu-highlighted-text-color;
+      transition: color 300ms;
+    }
+
+    &:hover {
+      @include showActiveIcon;
+
+      .mat-icon,
+      .caption {
+        color: $menu-hover-text-color;
+      }
+    }
+  }
+
+  &.pressed:not(:hover) {
+    background-color: $menu-drawer-bg;
+
+    .mat-icon,
+    .caption {
+      color: $menu-pressed-text-color;
+    }
+
+    &:hover {
+      .mat-icon,
+      .caption {
+        color: $menu-text-color;
+      }
+    }
+  }
+
+  &.collapsed {
+    padding-right: 0;
+
+    &:hover {
+      box-shadow: 0 2px 1px -1px rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 3px 0 rgba(0, 0, 0, .12);
+      height: 100%;
+      left: 0;
+      padding-right: (2 * $menu-icon-margin);
+      position: absolute;
+      top: 0;
+    }
+  }
+}
+
+.mat-icon {
+  color: $menu-icon-color;
+  justify-self: center;
+}
+
+.caption {
+  color: $menu-text-color;
+  white-space: nowrap;
+}
+
+// Specific styling for the bloomreach logo in the first item
+:host.home {
+  .mat-icon,
+  .highlighted .mat-icon {
+    color: $white;
+  }
+
+  .highlighted:hover .mat-icon {
+    color: $menu-hover-text-color;
+  }
+}
