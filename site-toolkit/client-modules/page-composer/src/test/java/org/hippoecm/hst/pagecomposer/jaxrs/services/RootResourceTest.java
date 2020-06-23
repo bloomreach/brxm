@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static com.jayway.restassured.http.ContentType.JSON;
+import static io.restassured.http.ContentType.JSON;
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.eq;
@@ -241,7 +241,7 @@ public class RootResourceTest extends AbstractResourceTest {
         final Channel channelFoo = new Channel("channel-foo");
         channelFoo.setProperties(properties);
 
-        final Capture<Channel> capturedArgument = new Capture<>();
+        final Capture<Channel> capturedArgument = EasyMock.newCapture();
         channelService.saveChannel(eq(mockSession), eq("channel-foo"), capture(capturedArgument));
         expectLastCall().andThrow(new IllegalStateException("something is wrong"));
 
@@ -290,8 +290,7 @@ public class RootResourceTest extends AbstractResourceTest {
     @Test
     public void deletes_channel_and_publishes_event() throws ChannelException, RepositoryException {
         mock_HstConfigurationUtils_persistChanges(1);
-
-        final List<Mount> mountsOfChannel = Arrays.asList(EasyMock.createMock(Mount.class));
+        final List<Mount> mountsOfChannel = Arrays.asList(EasyMock.<Mount>mock(Mount.class));
 
         final Channel channelFoo = new Channel("channel-foo");
 

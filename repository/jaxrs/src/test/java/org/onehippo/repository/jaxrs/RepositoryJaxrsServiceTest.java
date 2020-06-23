@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.jayway.restassured.specification.RequestSpecification;
+import io.restassured.specification.RequestSpecification;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
@@ -47,8 +47,8 @@ import org.onehippo.repository.testutils.PortUtil;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
+import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.when;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_TYPE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_VALUE;
@@ -141,7 +141,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
                 .get("http://localhost:" + portNumber + "/META-INF/cxf/")
         .then()
                 .statusCode(200)
-                .content(equalTo("Hello world from CXF"));
+                .body(equalTo("Hello world from CXF"));
     }
 
     private void expectOK(String pathAndMessage) {
@@ -163,7 +163,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
         client.get("http://localhost:" + portNumber + "/jaxrs/" + path + "/")
         .then()
                 .statusCode(200)
-                .content(equalTo(message));
+                .body(equalTo(message));
     }
 
     private void expectStatusCode(String path, int statusCode) {
@@ -226,7 +226,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
                 .get("http://localhost:" + portNumber + "/jaxrs/simple")
         .then()
                .statusCode(200)
-               .content(equalTo("simple"));
+               .body(equalTo("simple"));
     }
 
     @Test
