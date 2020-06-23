@@ -59,6 +59,10 @@ import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
 import org.hippoecm.frontend.plugins.standardworkflow.editdisplayorder.FolderSortingMechanism;
 import org.hippoecm.frontend.plugins.standardworkflow.editdisplayorder.FolderSortingMechanismDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.ChannelIdProvider;
+import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.HintsChannelIdProvider;
+import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.PlainJcrHstChannelInfoXPageLayoutProvider;
+import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.XPageLayoutProvider;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
@@ -85,6 +89,7 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
+import org.onehippo.cms7.services.hst.IXPageLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -296,6 +301,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 Collections.addAll(translated, getPluginConfig().getStringArray("workflow.translated"));
             }
 
+
             if (isActionAvailable("add", hints) && hints.containsKey("prototypes")) {
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                 for (final String category : prototypes.keySet()) {
@@ -305,6 +311,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                     final StdWorkflow<FolderWorkflow> stdWorkflow = new StdWorkflow<FolderWorkflow>("id", categoryLabel, getPluginContext(), model) {
 
                         AddDocumentArguments addDocumentModel = new AddDocumentArguments();
+                        ChannelIdProvider channelIdProvider = new HintsChannelIdProvider(hints);
 
                         @Override
                         protected Dialog createRequestDialog() {
@@ -313,7 +320,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                     category,
                                     prototypes.get(category),
                                     translated.contains(category),
-                                    this
+                                    this,
+                                    channelIdProvider.getChannelId()
                             );
                         }
 
@@ -377,9 +385,9 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                 }
 
                                 TreeMap<String, String> arguments = new TreeMap<>();
-                                final String xPageLayout = addDocumentModel.getXPageLayout();
-                                if (StringUtils.isNotEmpty(xPageLayout)) {
-                                    arguments.put("xPageLayout", xPageLayout);
+                                final IXPageLayout xPageLayout = addDocumentModel.getXPageLayout();
+                                if (xPageLayout != null) {
+                                    arguments.put("subProtoTypeUUID", xPageLayout.getSubPrototypeUUID());
                                 }
                                 arguments.put("name", nodeName);
                                 arguments.put("localName", localName);
@@ -462,15 +470,17 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
     protected AddDocumentDialog createAddDocumentDialog(AddDocumentArguments addDocumentModel,
                                                         String category, Set<String> prototypes, boolean translated,
-                                                        IWorkflowInvoker invoker) {
+                                                        IWorkflowInvoker invoker, String channelId) {
         String locale = getCodecLocale();
         IModel<StringCodec> codecModel = CodecUtils.getNodeNameCodecModel(getPluginContext(), locale);
+        XPageLayoutProvider xPageLayoutProvider = new PlainJcrHstChannelInfoXPageLayoutProvider(channelId);
 
         AddDocumentDialog dialog = new AddDocumentDialog(
                 addDocumentModel,
                 ResourceBundleModel.of(HIPPO_TEMPLATES_BUNDLE_NAME, category),
                 category,
                 prototypes,
+                () -> xPageLayoutProvider.getXPageLayouts(),
                 translated && !isLanguageKnown(),
                 invoker,
                 codecModel,

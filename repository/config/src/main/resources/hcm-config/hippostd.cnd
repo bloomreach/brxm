@@ -55,6 +55,9 @@
 [hippostd:translated] mixin
 + hippostd:translations (hippostd:translations)
 
+[hippostd:xpagefolder] mixin
+- hippostd:channelid (string)
+
 [hippostd:templatequery] > nt:query
 - hippostd:icon (string)
 - hippostd:renderer (string)
