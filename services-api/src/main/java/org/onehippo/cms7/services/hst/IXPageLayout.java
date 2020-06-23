@@ -13,10 +13,13 @@
  *
  */
 
-package org.hippoecm.frontend.plugins.standardworkflow.pagelayout;
+package org.onehippo.cms7.services.hst;
 
-public interface IXPageLayout {
+import java.io.Serializable;
+
+public interface IXPageLayout extends Serializable {
 
     String getLabel();
     String getKey();
+    String getSubPrototypeUUID();
 }
