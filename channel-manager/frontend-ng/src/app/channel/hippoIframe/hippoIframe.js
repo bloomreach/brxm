@@ -15,6 +15,7 @@
  */
 
 import hippoIframeComponent from './hippoIframe.component';
+import notificationBannerComponent from './notification-banner/notification-banner.component';
 import CommunicationService from './spa/communication.service';
 import ContainerService from './container/container.service';
 import HippoIframeService from './hippoIframe.service';
@@ -29,6 +30,7 @@ const channelHippoIframeModule = angular
     PageModule.name,
   ])
   .component('hippoIframe', hippoIframeComponent)
+  .component('notificationBanner', notificationBannerComponent)
   .service('CommunicationService', CommunicationService)
   .service('ContainerService', ContainerService)
   .service('HippoIframeService', HippoIframeService)
