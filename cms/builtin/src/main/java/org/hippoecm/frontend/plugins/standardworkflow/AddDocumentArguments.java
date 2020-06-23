@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standardworkflow;
 
 import org.apache.wicket.util.io.IClusterable;
+import org.onehippo.cms7.services.hst.IXPageLayout;
 
 public class AddDocumentArguments implements IClusterable {
     private String targetName;
@@ -23,7 +24,7 @@ public class AddDocumentArguments implements IClusterable {
     private String prototype;
     private String language;
     /* The identifier of the selected XPageLayout */
-    private String xPageLayout;
+    private IXPageLayout xPageLayout;
 
     public String getTargetName() {
         return targetName;
@@ -57,11 +58,11 @@ public class AddDocumentArguments implements IClusterable {
         this.language = language;
     }
 
-    public String getXPageLayout() {
+    public IXPageLayout getXPageLayout() {
         return xPageLayout;
     }
 
-    public void setXPageLayout(final String xPageLayout) {
+    public void setXPageLayout(final IXPageLayout xPageLayout) {
         this.xPageLayout = xPageLayout;
     }
 }
