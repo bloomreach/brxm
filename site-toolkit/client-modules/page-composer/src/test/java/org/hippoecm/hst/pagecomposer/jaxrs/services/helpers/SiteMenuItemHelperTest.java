@@ -143,7 +143,7 @@ public class SiteMenuItemHelperTest {
         modifiedItem.getRoles().add("role");
 
         mockGetAncestor();
-        final Capture<String[]> roles = new Capture<>();
+        final Capture<String[]> roles = EasyMock.newCapture();
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
         expect(node.setProperty(eq(SITEMENUITEM_PROPERTY_ROLES), capture(roles), eq(PropertyType.STRING))).andReturn(null);
         replay(mocks);
@@ -162,9 +162,9 @@ public class SiteMenuItemHelperTest {
 
         mockGetAncestor();
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
-        final Capture<String[]> names = new Capture<>();
+        final Capture<String[]> names = EasyMock.newCapture();
         expect(node.setProperty(eq(GENERAL_PROPERTY_PARAMETER_NAMES), capture(names), eq(PropertyType.STRING))).andReturn(null);
-        final Capture<String[]> values = new Capture<>();
+        final Capture<String[]> values = EasyMock.newCapture();
         expect(node.setProperty(eq(GENERAL_PROPERTY_PARAMETER_VALUES), capture(values), eq(PropertyType.STRING))).andReturn(null);
         replay(mocks);
 
@@ -262,7 +262,7 @@ public class SiteMenuItemHelperTest {
         mockGetAncestor();
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
 
-        final Capture<String> linkCapture = new Capture<>();
+        final Capture<String> linkCapture = EasyMock.newCapture();
         expect(node.setProperty(eq(SITEMENUITEM_PROPERTY_EXTERNALLINK), capture(linkCapture))).andReturn(null);
 
         expect(node.hasProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)).andReturn(true);
@@ -302,7 +302,7 @@ public class SiteMenuItemHelperTest {
         mockGetAncestor();
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
 
-        final Capture<String> linkCapture = new Capture<>();
+        final Capture<String> linkCapture = EasyMock.newCapture();
         expect(node.setProperty(eq(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM), capture(linkCapture))).andReturn(null);
 
         expect(node.hasProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK)).andReturn(true);
