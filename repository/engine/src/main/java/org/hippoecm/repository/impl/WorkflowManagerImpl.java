@@ -375,11 +375,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 resetInteraction = true;
             }
             Method targetMethod = null;
+            WorkflowAction wfActionAnno = null;
             try {
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
+                wfActionAnno = AnnotationUtils.findMethodAnnotation(targetMethod, WorkflowAction.class);
                 returnObject = targetMethod.invoke(upstream, args);
-                final boolean saveRequiredForMethod = !Arrays.asList("hints","getWorkflowContext")
-                        .contains(targetMethod.getName());
+                final boolean saveRequiredForMethod = wfActionAnno == null || wfActionAnno.mutates();
                 if (objectPersist && saveRequiredForMethod){
                     workflowSession.save();
                 }
@@ -404,7 +405,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     tlInteraction.remove();
                     tlInteractionId.remove();
                 }
-                WorkflowAction wfActionAnno = AnnotationUtils.findMethodAnnotation(targetMethod, WorkflowAction.class);
+
                 if (wfActionAnno == null || wfActionAnno.loggable()) {
                     logWorkflowStep(targetMethod, args, returnObject, interaction, interactionId, exception);
                 }
