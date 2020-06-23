@@ -108,6 +108,11 @@
     <nodejs.version>v8.13.0</nodejs.version>
     <npm.version>6.4.1</npm.version>
 
+    <!-- test dependencies -->
+    <restassured.version>4.1.2</restassured.version>
+    <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
+    <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
+
     <!-- END properties versions with dependency management -->
     <maven.required.version>3.2.3</maven.required.version>
 
@@ -588,6 +593,20 @@
         <version>${jaxrs.version}</version>
       </dependency>
 
+      <!-- test dependencies -->
+      <dependency>
+        <groupId>io.rest-assured</groupId>
+        <artifactId>rest-assured</artifactId>
+        <version>${restassured.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <!-- org.apache.sling.javax.activation is used by rest-assured -->
+      <dependency>
+        <groupId>org.apache.sling</groupId>
+        <artifactId>org.apache.sling.javax.activation</artifactId>
+        <version>${sling-javax-activation.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
