@@ -30,18 +30,20 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.WorkflowDialog;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer;
-import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.model.SerializableSupplier;
 import org.hippoecm.frontend.plugins.standardworkflow.components.LanguageField;
-import org.hippoecm.frontend.plugins.standardworkflow.pagelayout.XPageLayoutContainer;
+import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.XPageLayoutContainer;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.AddDocumentValidator;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.StringCodec;
+import org.onehippo.cms7.services.hst.IXPageLayout;
 
 public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
 
@@ -52,7 +54,7 @@ public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
     private final IModel<StringCodec> nodeNameCodecModel;
 
     public AddDocumentDialog(AddDocumentArguments addDocumentModel, IModel<String> title, String category,
-                             Set<String> prototypes, boolean translated, final IWorkflowInvoker invoker,
+                             Set<String> prototypes, SerializableSupplier<List<IXPageLayout>> xPageLayoutSupplier, boolean translated, final IWorkflowInvoker invoker,
                              IModel<StringCodec> nodeNameCodec, ILocaleProvider localeProvider, final WorkflowDescriptorModel workflowDescriptorModel) {
         super(invoker, Model.of(addDocumentModel));
 
@@ -117,8 +119,9 @@ public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
         }
         add(languageField);
 
-
-        add(new XPageLayoutContainer("xpage-layout",new PropertyModel<>(addDocumentModel,"xPageLayout")));
+        add(new XPageLayoutContainer("xpage-layout",
+                new PropertyModel<>(addDocumentModel, "xPageLayout"),
+                xPageLayoutSupplier));
 
         add(new AddDocumentValidator(this, nameUriContainer, workflowDescriptorModel));
 
