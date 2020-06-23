@@ -13,12 +13,10 @@
  *
  */
 
-package org.hippoecm.frontend.plugins.standardworkflow.pagelayout;
+package org.hippoecm.frontend.plugins.standardworkflow.xpagelayout;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -27,16 +25,20 @@ import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.SerializableSupplier;
+import org.onehippo.cms7.services.hst.IXPageLayout;
 
 public class XPageLayoutContainer extends WebMarkupContainer {
 
-    public XPageLayoutContainer(final String id, final IModel<IXPageLayout> xPageLayoutModel ) {
+    public XPageLayoutContainer(final String id, final IModel<IXPageLayout> xPageLayoutModel
+            , final SerializableSupplier<List<IXPageLayout>> xPageLayoutProvider) {
         super(id, xPageLayoutModel);
-        final IModel<String> xPageLayoutLabelModel = new StringResourceModel("xpage-layout", this);
+        final IModel<String> xPageLayoutLabelModel = new StringResourceModel("xpage-layout",
+                this);
         final Label xPageLayoutLabel = new Label("xpage-layout-label", xPageLayoutLabelModel);
         add(xPageLayoutLabel);
-        final XPageLayoutListModel XPageLayoutListModel = new XPageLayoutListModel(layoutSupplier);
-        final DropDownChoice<IXPageLayout> pageLayoutDropDownChoice = new DropDownChoice<>("xpage-layout-drop-down-choice",
+        final XPageLayoutListModel XPageLayoutListModel = new XPageLayoutListModel(xPageLayoutProvider);
+        final DropDownChoice<IXPageLayout> pageLayoutDropDownChoice = new DropDownChoice<>(
+                "xpage-layout-drop-down-choice",
                 xPageLayoutModel,
                 XPageLayoutListModel,
                 choiceRenderer);
@@ -44,19 +46,13 @@ public class XPageLayoutContainer extends WebMarkupContainer {
         pageLayoutDropDownChoice.setNullValid(false);
         pageLayoutDropDownChoice.setLabel(xPageLayoutLabelModel);
         add(pageLayoutDropDownChoice);
-        setVisible(showXPageLayout());
+        setVisible(!xPageLayoutProvider.get().isEmpty());
     }
-
-    SerializableSupplier<List<IXPageLayout>> layoutSupplier = () -> Stream.of(
-            new XPageLayout("layout1", "Layout 1"),
-            new XPageLayout("layout2", "Layout 2"),
-            new XPageLayout("layout3", "Layout 3"))
-            .collect(Collectors.toList());
 
     IChoiceRenderer<IXPageLayout> choiceRenderer =
             new IChoiceRenderer<IXPageLayout>() {
                 @Override
-                public Object getDisplayValue(final IXPageLayout object) {
+                public String getDisplayValue(final IXPageLayout object) {
                     return object.getLabel();
                 }
 
@@ -75,9 +71,5 @@ public class XPageLayoutContainer extends WebMarkupContainer {
                     return null;
                 }
             };
-
-    public boolean showXPageLayout(){
-        return true;
-    }
 
 }
