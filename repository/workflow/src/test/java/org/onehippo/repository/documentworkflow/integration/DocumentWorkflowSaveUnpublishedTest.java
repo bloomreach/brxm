@@ -25,10 +25,16 @@ import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.assertj.core.api.Assertions;
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.event.HippoEvent;
@@ -36,15 +42,21 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.events.HippoWorkflowEvent;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.publish;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MEMBERS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_NAME;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_TEXT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_USER;
 import static org.hippoecm.repository.util.JcrUtils.getDateProperty;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.onehippo.repository.documentworkflow.HintsBuilder.ACTION_SAVE_UNPUBLISHED;
 
 public class DocumentWorkflowSaveUnpublishedTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -175,6 +187,122 @@ public class DocumentWorkflowSaveUnpublishedTest extends AbstractDocumentWorkflo
         Assertions.assertThat(getDocumentWorkflow(handle).hints())
                 .describedAs("Can't saveUnpublished because there is no unpublished variant")
                 .containsEntry(ACTION_SAVE_UNPUBLISHED, false);
+    }
+
+
+    @Test
+    public void saveUnpublished_not_allowed_if_someone_else_is_holder_of_the_draft() throws Exception {
+
+        JcrUtils.copy(session, "/hippo:configuration/hippo:users/admin", "/hippo:configuration/hippo:users/admin2");
+
+        session.save();
+
+        final Session admin2 = server.login(new SimpleCredentials("admin2", "admin".toCharArray()));
+
+        try {
+            // claim the holder for 'admin'
+            documentWorkflow.obtainEditableInstance();
+
+            final Node admin2Handle = admin2.getNode(handle.getPath());
+            final DocumentWorkflow admin2DocWorkflow = getDocumentWorkflow(admin2Handle);
+
+            assertFalse("'admin' should be holder, 'admin2' can't obtain editable instance",
+                    (Boolean)admin2DocWorkflow.hints().get("obtainEditableInstance"));
+
+            // note the condition below is important to meet since used for Channel Mgr to check whether CM user can
+            // make changes to the unpublished: (s)he isn't allowed to do so if someone else is the holder for the
+            // draft
+            assertTrue("'admin' should be holder and can just invoke obtainEditableInstance again",
+                    (Boolean)documentWorkflow.hints().get("obtainEditableInstance"));
+
+            try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+                admin2DocWorkflow.obtainEditableInstance();
+                fail("Expected 'admin2' should not be allowed to obtain instance");
+            }catch (WorkflowException e) {
+                // expected
+            }
+
+
+            final String uuid = UUID.randomUUID().toString();
+            // make changes to the unpublished node with 'admin2' and then make sure that 'saveUnpublished' is still not
+            // allowed
+            assertFalse((Boolean)admin2DocWorkflow.hints().get("saveUnpublished"));
+            admin2DocWorkflow.getWorkflowContext().getInternalWorkflowSession()
+                    .getNodeByIdentifier(getVariant(UNPUBLISHED).getIdentifier())
+                    .setProperty(HIPPO_NAME, uuid);
+
+            // NOTE it is a choice that a user cannot make changes to unpublished when someone else is editing the
+            // draft since technically it could be a valid option
+            assertFalse("'admin' is holder of the draft hence #saveUnpublished not allowed for 'admin2'",
+                    (Boolean)admin2DocWorkflow.hints().get("saveUnpublished"));
+
+            try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+                admin2DocWorkflow.saveUnpublished();
+                fail("Expected 'admin2' should not be  allowed to save unpublished");
+            }catch (WorkflowException e) {
+                // expected
+            }
+
+            // now make changes to the unpublished with 'admin' backed session (who is holder of draft)
+            // and make sure (s)he can invoke 'saveUnpublished'
+
+            assertFalse((Boolean)documentWorkflow.hints().get("saveUnpublished"));
+
+            documentWorkflow.getWorkflowContext().getInternalWorkflowSession()
+                    .getNodeByIdentifier(getVariant(UNPUBLISHED).getIdentifier())
+                    .setProperty(HIPPO_NAME, uuid);
+
+            assertTrue((Boolean)documentWorkflow.hints().get("saveUnpublished"));
+
+            documentWorkflow.saveUnpublished();
+
+        } finally {
+            admin2.logout();
+            session.getNode("/hippo:configuration/hippo:users/admin2").remove();
+            session.save();
+        }
+    }
+
+    @Test
+    public void saveUnpublished_allowed_if_someone_else_is_holder_of_the_draft_but_document_transferable() throws Exception {
+        // after saveDraft, someone else should be allowed to save the unpublished since document has become transferable
+        JcrUtils.copy(session, "/hippo:configuration/hippo:users/admin", "/hippo:configuration/hippo:users/admin2");
+
+        session.save();
+
+        final Session admin2 = server.login(new SimpleCredentials("admin2", "admin".toCharArray()));
+
+        try {
+            // claim the holder for 'admin'
+            documentWorkflow.obtainEditableInstance();
+
+            // save draft by 'admin'
+            documentWorkflow.saveDraft();
+
+            final Node admin2Handle = admin2.getNode(handle.getPath());
+            final DocumentWorkflow admin2DocWorkflow = getDocumentWorkflow(admin2Handle);
+
+            assertTrue("Altough 'admin' is holder, 'admin2' can obtain editable instance since draft has been saved",
+                    (Boolean)admin2DocWorkflow.hints().get("obtainEditableInstance"));
+
+            final String uuid = UUID.randomUUID().toString();
+            // make changes to the unpublished node with 'admin2' and then make sure that 'saveUnpublished' is allowed
+            assertFalse((Boolean)admin2DocWorkflow.hints().get("saveUnpublished"));
+            admin2DocWorkflow.getWorkflowContext().getInternalWorkflowSession()
+                    .getNodeByIdentifier(getVariant(UNPUBLISHED).getIdentifier())
+                    .setProperty(HIPPO_NAME, uuid);
+
+            assertTrue("Altough 'admin' is holder of the draft, #saveUnpublished is allowed for 'admin2' since " +
+                            "draft has been saved",
+                    (Boolean)admin2DocWorkflow.hints().get("saveUnpublished"));
+
+            admin2DocWorkflow.saveUnpublished();
+
+        } finally {
+            admin2.logout();
+            session.getNode("/hippo:configuration/hippo:users/admin2").remove();
+            session.save();
+        }
     }
 
 }

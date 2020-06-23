@@ -33,7 +33,6 @@ import javax.jcr.version.Version;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
@@ -46,6 +45,7 @@ import org.onehippo.cms7.services.lock.LockResource;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
+import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_ID;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_NAME;
@@ -507,7 +507,8 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
             final DocumentHandle documentHandle = workflowExecutor.getData();
             if (!documentHandle.getDocuments().isEmpty()) {
                 // Only add the hint if there is at least one variant to comply with no-document state in scxml.
-                hints.put(DocumentWorkflowAction.saveUnpublished().getAction(), isUnpublishedModifiedInWorkflow(documentHandle));
+                hints.put(DocumentWorkflowAction.saveUnpublished().getAction(),
+                        isUnpublishedModifiedInWorkflow(documentHandle) && isEditable(documentHandle));
             }
         } catch (RepositoryException e) {
             final String message = String.format("Workflow %s execution failed", getScxmlId());
@@ -518,7 +519,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     private void triggerSaveUnpublishedAction() throws WorkflowException {
         try {
             final DocumentHandle documentHandle = workflowExecutor.getData();
-            if (!isUnpublishedModifiedInWorkflow(documentHandle)) {
+            if (! (isUnpublishedModifiedInWorkflow(documentHandle) && isEditable(documentHandle))) {
                 final String message = String.format(
                         "Cannot invoke workflow %s action %s: action not allowed or undefined",
                         getScxmlId(), DocumentWorkflowAction.saveUnpublished().getAction());
@@ -531,13 +532,38 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         }
     }
 
-    private boolean isUnpublishedModifiedInWorkflow(DocumentHandle documentHandle) throws RepositoryException {
+    private boolean isUnpublishedModifiedInWorkflow(final DocumentHandle documentHandle) throws RepositoryException {
         final DocumentVariant unpublishedVariant = documentHandle.getDocuments().get(UNPUBLISHED);
         if (unpublishedVariant == null) {
             return false;
         }
         final HippoSession internalWorkflowSession = (HippoSession) getWorkflowContext().getInternalWorkflowSession();
         return internalWorkflowSession.pendingChanges(unpublishedVariant.getNode(), null).hasNext();
+    }
+
+    /**
+     * equivalent to 'def boolean isEditable()' in scxml, only now without those scxml changes for BC support
+     *
+     * @return true if - draft does not exist OR - draft exists and not currently edited (no holder) OR
+     * - edited by current user OR - transferable
+     */
+
+    private boolean isEditable(final DocumentHandle documentHandle) throws RepositoryException {
+        final DocumentVariant draft = documentHandle.getDocuments().get(DRAFT);
+        if (draft == null) {
+            return true;
+        }
+        final String holder = draft.getHolder();
+        if (holder == null) {
+            return true;
+        }
+
+        if (holder.equals(getWorkflowContext().getUserIdentity())) {
+            return true;
+        }
+
+        return draft.isTransferable() && !documentHandle.isRequestPending();
+
     }
 
 }
