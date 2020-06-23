@@ -76,7 +76,7 @@ public class AbstractDocumentWorkflowIntegrationTest extends RepositoryTestCase 
     }
 
     protected DocumentWorkflow getDocumentWorkflow(final Node handle) throws RepositoryException {
-        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        WorkflowManager workflowManager = ((HippoWorkspace) handle.getSession().getWorkspace()).getWorkflowManager();
         return (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
     }
 
