@@ -13,12 +13,13 @@
  *
  */
 
-package org.hippoecm.frontend.plugins.standardworkflow.pagelayout;
+package org.hippoecm.frontend.plugins.standardworkflow.xpagelayout;
 
 import java.util.List;
 
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.model.SerializableSupplier;
+import org.onehippo.cms7.services.hst.IXPageLayout;
 
 public class XPageLayoutListModel
         extends LoadableDetachableModel<List<IXPageLayout>> {

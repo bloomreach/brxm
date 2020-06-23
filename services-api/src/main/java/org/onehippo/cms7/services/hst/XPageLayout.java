@@ -13,7 +13,7 @@
  *
  */
 
-package org.hippoecm.frontend.plugins.standardworkflow.pagelayout;
+package org.onehippo.cms7.services.hst;
 
 import java.util.Objects;
 
@@ -21,10 +21,12 @@ public class XPageLayout implements IXPageLayout {
 
     private final String label;
     private final String key;
+    private final String subPrototypeUUID;
 
-    public XPageLayout(final String key, final String label) {
+    public XPageLayout(final String key, final String label, final String subPrototypeUUID) {
         this.label = label;
         this.key = key;
+        this.subPrototypeUUID = subPrototypeUUID;
     }
 
     @Override
@@ -38,6 +40,11 @@ public class XPageLayout implements IXPageLayout {
     }
 
     @Override
+    public String getSubPrototypeUUID() {
+        return subPrototypeUUID;
+    }
+
+    @Override
     public boolean equals(final Object o) {
         if (this == o) {
             return true;
@@ -47,19 +54,12 @@ public class XPageLayout implements IXPageLayout {
         }
         final XPageLayout that = (XPageLayout) o;
         return Objects.equals(getLabel(), that.getLabel()) &&
-                Objects.equals(getKey(), that.getKey());
+                Objects.equals(getKey(), that.getKey()) &&
+                Objects.equals(getSubPrototypeUUID(), that.getSubPrototypeUUID());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getLabel(), getKey());
-    }
-
-    @Override
-    public String toString() {
-        return "PageLayout{" +
-                "label='" + label + '\'' +
-                ", key='" + key + '\'' +
-                '}';
+        return Objects.hash(getLabel(), getKey(), getSubPrototypeUUID());
     }
 }
