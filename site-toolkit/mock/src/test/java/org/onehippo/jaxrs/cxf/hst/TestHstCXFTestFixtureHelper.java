@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.jaxrs.cxf.CXFTest;
 
-import static com.jayway.restassured.RestAssured.when;
+import static io.restassured.RestAssured.when;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
