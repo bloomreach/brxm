@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.onehippo.cms7.services.htmlprocessor;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
-import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorConfig;
 import org.onehippo.cms7.services.htmlprocessor.filter.Element;
 import org.onehippo.cms7.services.htmlprocessor.serialize.HtmlSerializer;
 import org.onehippo.repository.mock.MockNode;
@@ -50,13 +49,14 @@ public class HtmlProcessorConfigTest {
         configNode.setProperty("charset", "UTF-16");
         configNode.setProperty("omitComments", true);
         configNode.setProperty("omitJavascriptProtocol", false);
+        configNode.setProperty("omitDataProtocol", false);
         configNode.setProperty("convertLineEndings", false);
         configNode.setProperty("filter", true);
         configNode.setProperty("serializer", HtmlSerializer.COMPACT.name());
 
         configNode.addNode("a", "hipposys:moduleconfig");
-        MockNode div = configNode.addNode("div", "hipposys:moduleconfig");
-        div.setProperty("attributes", new String[] {"class", "id"});
+        final MockNode divConfigNode = configNode.addNode("div", "hipposys:moduleconfig");
+        divConfigNode.setProperty("attributes", new String[] {"class", "id"});
 
         config.reconfigure(configNode);
 
@@ -65,12 +65,16 @@ public class HtmlProcessorConfigTest {
         assertTrue(config.isFilter());
         assertTrue(config.isOmitComments());
         assertFalse(config.isOmitJavascriptProtocol());
+        assertFalse(config.isOmitDataProtocol());
         assertFalse(config.isConvertLineEndings());
 
-        assertThat(config.getWhitelistElements(), CoreMatchers.hasItems(
-                Element.create("a"),
-                Element.create("div", "class", "id")
-        ));
+        final Element a = Element.create("a")
+                .setOmitJsProtocol(false)
+                .setOmitDataProtocol(false);
+        final Element div = Element.create("div", "class", "id")
+                .setOmitJsProtocol(false)
+                .setOmitDataProtocol(false);
+        assertThat(config.getWhitelistElements(), CoreMatchers.hasItems(a, div));
     }
 
     @Test
