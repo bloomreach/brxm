@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -124,37 +124,6 @@ public class HtmlProcessorTest {
 
         final String write = processor.write("<!-- comment --><p>text</p>", null);
         assertEquals("<p>text</p>", write);
-    }
-
-    @Test
-    public void javascriptProtocolInAttributesCanBeStripped() throws Exception {
-        final HtmlProcessorConfig config = new HtmlProcessorConfig();
-        config.setFilter(true);
-        final List<Element> whiteList = new ArrayList<>();
-        final Element element = Element.create("a", "href", "onclick");
-        whiteList.add(element);
-        config.setWhitelistElements(whiteList);
-        config.setConvertLineEndings(false);
-        config.setOmitComments(true);
-        config.setOmitJavascriptProtocol(true);
-        processor = new HtmlProcessorImpl(config);
-
-        String read = processor.read("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>",
-                                     null);
-        assertEquals("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>", read);
-
-        String write = processor.write("<a onclick=\"javascript:lancerPu('XXXcodepuXXX')\" href=\"#\">XXXTexteXXX</a>",
-                                       null);
-        assertEquals("<a onclick=\"\" href=\"#\">XXXTexteXXX</a>", write);
-
-        config.setOmitJavascriptProtocol(false);
-        processor = new HtmlProcessorImpl(config);
-        read = processor.read("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>", null);
-        assertEquals("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>", read);
-
-        write = processor.write("<a onclick=\"javascript:lancerPu('XXXcodepuXXX')\" href=\"#\">XXXTexteXXX</a>", null);
-        assertEquals("<a onclick=\"javascript:lancerPu('XXXcodepuXXX')\" href=\"#\">XXXTexteXXX</a>", write);
-
     }
 
     @Test
