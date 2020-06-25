@@ -15,7 +15,6 @@
  */
 package org.onehippo.cms7.services.htmlprocessor.filter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -206,44 +205,50 @@ public class WhitelistHtmlFilterTest {
     }
 
     @Test
-    public void testCleanDataProtocol() throws Exception {
-        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
-        addToWhitelist(Element.create("a", "href"));
+    public void testCleanDataProtocol() {
+        final Element iframe = Element.create("iframe", "src");
+        addToWhitelist(iframe);
 
-        // href attribute contains data:
-        TagNode result = filterHtml("<a href=\"data:testData\">data</a>");
-        TagNode a = result.findElementByName("a", true);
-        assertNotNull(a);
-        assertEquals("", a.getAttributeByName("href"));
-
-        // href attribute contains data: + space
-        result = filterHtml("<a href=\"data: testData\">data</a>");
-        a = result.findElementByName("a", true);
-        assertNotNull(a);
-        assertEquals("", a.getAttributeByName("href"));
+        expectEmptyAttributes(iframe, "<iframe src=\"data:text/html;base64,PHN2Zy9vbmxvYWQ9YWxlcnQoMSk+\"></iframe>");
     }
 
     @Test
-    public void testDataPrefixOfFileNameIsNotCleaned() throws Exception {
-        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
-        addToWhitelist(Element.create("a", "href"));
+    public void testCleanDataProtocolArgumentFalse() {
+        addToWhitelist(Element.create("iframe", "src").setOmitDataProtocol(false));
 
-        // href attribute start with 'data' but is not a data protocol
-        TagNode result = filterHtml("<a href=\"data-science.pdf\">data science</a>");
-        TagNode a = result.findElementByName("a", true);
-        assertNotNull(a);
-        assertEquals("data-science.pdf", a.getAttributeByName("href"));
+        // src attribute contains data:
+        final TagNode result = filterHtml("<iframe src=\"data:testData\"></iframe>");
+        final TagNode iframe = result.findElementByName("iframe", true);
+        assertNotNull(iframe);
+        assertEquals("data:testData", iframe.getAttributeByName("src"));
     }
 
     @Test
-    public void testCleanDataProtocolNewLine() throws Exception {
-        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
-        addToWhitelist(Element.create("a", "href"));
+    public void testDataPrefixOfFileNameIsNotCleaned() {
+        addToWhitelist(Element.create("iframe", "src"));
+
+        // src attribute starts with 'data' but is not a data protocol
+        final TagNode result = filterHtml("<iframe src=\"data-science.html\"></a>");
+        final TagNode iframe = result.findElementByName("iframe", true);
+        assertNotNull(iframe);
+        assertEquals("data-science.html", iframe.getAttributeByName("src"));
+    }
+
+    @Test
+    public void testCleanDataProtocolWithWhitespace() {
+        final Element iframe = Element.create("iframe", "src");
+        addToWhitelist(iframe);
+
         // check new lines
-        TagNode result = filterHtml("<a href=\"data\n:testData\">data</a>");
-        TagNode a = result.findElementByName("a", true);
-        assertNotNull(a);
-        assertEquals("data :testData", a.getAttributeByName("href"));
+        expectEmptyAttributes(iframe, "<iframe src=\"dat&#x0A;a:testData\"></iframe>");
+        expectEmptyAttributes(iframe, "<iframe src=\"data\n:testData\"></iframe>");
+
+        // spaces
+        expectEmptyAttributes(iframe, "<iframe src=\"data : testData\"></iframe>");
+        expectEmptyAttributes(iframe, "<iframe src=\"data  :  &#160;testData\"></iframe>");
+
+        // tabs and CR
+        expectEmptyAttributes(iframe, "<iframe src=\"dat\ta\t:\rtestData\"></iframe>");
     }
 
     private TagNode filterHtml(final String html) {
