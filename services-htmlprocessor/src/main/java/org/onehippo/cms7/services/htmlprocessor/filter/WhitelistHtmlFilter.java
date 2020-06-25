@@ -36,17 +36,14 @@ public class WhitelistHtmlFilter implements HtmlFilter {
     private static final Pattern WHITESPACE = Pattern.compile("[\\s]");
 
     private final Map<String, Element> elements = new HashMap<>();
-    private final boolean omitJavascriptProtocol;
 
     public WhitelistHtmlFilter() {
-        omitJavascriptProtocol = true;
     }
 
-    public WhitelistHtmlFilter(final List<Element> whitelist, final boolean omitJavascriptProtocol) {
+    public WhitelistHtmlFilter(final List<Element> whitelist) {
         if (whitelist != null) {
             whitelist.forEach(this::add);
         }
-        this.omitJavascriptProtocol = omitJavascriptProtocol;
     }
 
     @Override
@@ -92,6 +89,11 @@ public class WhitelistHtmlFilter implements HtmlFilter {
                     if (allowedElement.isOmitJsProtocol() && cleanedValue.startsWith(JAVASCRIPT_PROTOCOL)) {
                         return StringUtils.EMPTY;
                     }
+
+                    if (allowedElement.isOmitDataProtocol() && cleanedValue.startsWith(DATA_PROTOCOL)) {
+                        return StringUtils.EMPTY;
+                    }
+
                     return value;
                 }));
         node.setAttributes(attributes);
