@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,14 +32,16 @@ public class HtmlProcessorConfig implements Serializable {
     private static final String DEFAULT_CHARSET = "UTF-8";
     private static final boolean DEFAULT_FILTER = false;
     private static final boolean DEFAULT_OMIT_COMMENTS = false;
-    private static final boolean DEFAULT_OMIT_JAVASCRIPT_PROTOCOL = true;
+    private static final boolean DEFAULT_OMIT_DATA_PROTOCOL = true;
+    private static final boolean DEFAULT_OMIT_JS_PROTOCOL = true;
     private static final boolean DEFAULT_CONVERT_LINE_ENDINGS = true;
     private static final HtmlSerializer DEFAULT_SERIALIZER = HtmlSerializer.SIMPLE;
 
     // repository property names
     private static final String CHARSET = "charset";
     private static final String OMIT_COMMENTS = "omitComments";
-    private static final String OMIT_JAVASCRIPT_PROTOCOL = "omitJavascriptProtocol";
+    private static final String OMIT_DATA_PROTOCOL = "omitDataProtocol";
+    private static final String OMIT_JS_PROTOCOL = "omitJavascriptProtocol";
     private static final String CONVERT_LINE_ENDINGS = "convertLineEndings";
     private static final String SERIALIZER = "serializer";
     private static final String FILTER = "filter";
@@ -48,7 +50,8 @@ public class HtmlProcessorConfig implements Serializable {
     private String charset;
     private HtmlSerializer serializer;
     private boolean omitComments;
-    private boolean omitJavascriptProtocol;
+    private boolean omitDataProtocol;
+    private boolean omitJsProtocol;
     private boolean filter;
     private boolean convertLineEndings;
     private List<Element> whitelistElements;
@@ -59,7 +62,8 @@ public class HtmlProcessorConfig implements Serializable {
         convertLineEndings = DEFAULT_CONVERT_LINE_ENDINGS;
         serializer = DEFAULT_SERIALIZER;
         omitComments = DEFAULT_OMIT_COMMENTS;
-        omitJavascriptProtocol = DEFAULT_OMIT_JAVASCRIPT_PROTOCOL;
+        omitDataProtocol = DEFAULT_OMIT_DATA_PROTOCOL;
+        omitJsProtocol = DEFAULT_OMIT_JS_PROTOCOL;
     }
 
     public void reconfigure(final Node node) throws RepositoryException {
@@ -67,25 +71,33 @@ public class HtmlProcessorConfig implements Serializable {
         convertLineEndings = JcrUtils.getBooleanProperty(node, CONVERT_LINE_ENDINGS, DEFAULT_CONVERT_LINE_ENDINGS);
         filter = JcrUtils.getBooleanProperty(node, FILTER, DEFAULT_FILTER);
         omitComments = JcrUtils.getBooleanProperty(node, OMIT_COMMENTS, DEFAULT_OMIT_COMMENTS);
-        omitJavascriptProtocol = JcrUtils.getBooleanProperty(node, OMIT_JAVASCRIPT_PROTOCOL, DEFAULT_OMIT_JAVASCRIPT_PROTOCOL);
+        omitDataProtocol = JcrUtils.getBooleanProperty(node, OMIT_DATA_PROTOCOL, DEFAULT_OMIT_DATA_PROTOCOL);
+        omitJsProtocol = JcrUtils.getBooleanProperty(node, OMIT_JS_PROTOCOL, DEFAULT_OMIT_JS_PROTOCOL);
 
         final String serializerName = JcrUtils.getStringProperty(node, SERIALIZER, DEFAULT_SERIALIZER.name());
         serializer = HtmlSerializer.valueOfOrDefault(serializerName);
 
         if (node.hasNodes()) {
-            final String[] emptyAttr = new String[]{};
             whitelistElements = new ArrayList<>();
             final NodeIterator filters = node.getNodes();
             while (filters.hasNext()) {
-                final Node filterNode = filters.nextNode();
-                final String[] attributes = JcrUtils.getMultipleStringProperty(filterNode, ATTRIBUTES, emptyAttr);
-                final String configName = filterNode.getName();
-                final int offset = configName.lastIndexOf('.');
-                final String elementName = offset != -1 ? configName.substring(offset + 1) : configName;
-                final Element element = Element.create(elementName, attributes);
+                final Element element = createElement(filters.nextNode());
                 whitelistElements.add(element);
             }
         }
+    }
+
+    private Element createElement(final Node node) throws RepositoryException {
+        final String[] attributes = JcrUtils.getMultipleStringProperty(node, ATTRIBUTES, new String[]{});
+        final boolean omitJsForElement = JcrUtils.getBooleanProperty(node, OMIT_JS_PROTOCOL, omitJsProtocol);
+        final boolean omitDataForElement = JcrUtils.getBooleanProperty(node, OMIT_DATA_PROTOCOL, omitDataProtocol);
+        final String configName = node.getName();
+        final int offset = configName.lastIndexOf('.');
+        final String elementName = offset != -1 ? configName.substring(offset + 1) : configName;
+
+        return Element.create(elementName, attributes)
+                .setOmitJsProtocol(omitJsForElement)
+                .setOmitDataProtocol(omitDataForElement);
     }
 
     public void setSerializer(final HtmlSerializer serializer) {
@@ -102,14 +114,6 @@ public class HtmlProcessorConfig implements Serializable {
 
     public String getCharset() {
         return charset;
-    }
-
-    public void setOmitComments(final boolean omitComments) {
-        this.omitComments = omitComments;
-    }
-
-    public boolean isOmitComments() {
-        return omitComments;
     }
 
     public void setFilter(final boolean filter) {
@@ -136,12 +140,27 @@ public class HtmlProcessorConfig implements Serializable {
         this.convertLineEndings = convertLineEndings;
     }
 
-    public boolean isOmitJavascriptProtocol() {
-        return omitJavascriptProtocol;
+    public void setOmitComments(final boolean omitComments) {
+        this.omitComments = omitComments;
+    }
+
+    public boolean isOmitComments() {
+        return omitComments;
+    }
+
+    public void setOmitDataProtocol(final boolean omitDataProtocol) {
+        this.omitDataProtocol = omitDataProtocol;
+    }
+    public boolean isOmitDataProtocol() {
+        return omitDataProtocol;
     }
 
     public void setOmitJavascriptProtocol(final boolean omitJsProtocol) {
-        this.omitJavascriptProtocol = omitJsProtocol;
+        this.omitJsProtocol = omitJsProtocol;
+    }
+
+    public boolean isOmitJavascriptProtocol() {
+        return omitJsProtocol;
     }
 
 }
