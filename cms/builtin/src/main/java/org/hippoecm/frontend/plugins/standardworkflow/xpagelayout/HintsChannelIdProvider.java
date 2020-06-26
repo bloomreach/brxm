@@ -21,7 +21,6 @@ import java.util.Objects;
 
 public class HintsChannelIdProvider implements ChannelIdProvider {
 
-    private static final String UNDEFINED_CHANNEL_ID = "undefined";
     public static final String CHANNEL_ID = "channelId";
     private final Map<String, Serializable> hints;
 
@@ -32,6 +31,6 @@ public class HintsChannelIdProvider implements ChannelIdProvider {
 
     @Override
     public String getChannelId() {
-        return hints.containsKey(CHANNEL_ID) ? (String) hints.get(CHANNEL_ID) : UNDEFINED_CHANNEL_ID;
+        return hints.containsKey(CHANNEL_ID) ? (String) hints.get(CHANNEL_ID) : XPageLayoutConstants.UNDEFINED_CHANNEL_ID;
     }
 }
