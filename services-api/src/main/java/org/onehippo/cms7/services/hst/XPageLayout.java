@@ -62,4 +62,13 @@ public class XPageLayout implements IXPageLayout {
     public int hashCode() {
         return Objects.hash(getLabel(), getKey(), getSubPrototypeUUID());
     }
+
+    @Override
+    public String toString() {
+        return new org.apache.commons.lang3.builder.ToStringBuilder(this)
+                .append("label", label)
+                .append("key", key)
+                .append("subPrototypeUUID", subPrototypeUUID)
+                .toString();
+    }
 }
