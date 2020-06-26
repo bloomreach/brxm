@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 
 public class HstChannelInfoXPageLayoutProviderTest {
 
-    public static final Logger log = LoggerFactory.getLogger(HstChannelInfoXPageLayoutProviderTest.class);
+    private static final Logger log = LoggerFactory.getLogger(HstChannelInfoXPageLayoutProviderTest.class);
 
     @Test
     public void getXPageLayouts() {
