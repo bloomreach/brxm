@@ -30,6 +30,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.util.ListModel;
 import org.easymock.EasyMock;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -50,13 +51,13 @@ import static org.junit.Assert.assertNotNull;
 public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
 
     private StringCodec stringCodec;
-    private static SerializableSupplier<List<IXPageLayout>> supplier =   () -> Stream.of(
+    private static List<IXPageLayout> xPageLayoutList =   Stream.of(
             new XPageLayout("layout1", "Layout 1","uuid"),
             new XPageLayout("layout2", "Layout 2", "uuid"),
             new XPageLayout("layout3", "Layout 3", "uuid"))
             .collect(Collectors.toList());
 
-    private void createDialog(final boolean workflowError, SerializableSupplier<List<IXPageLayout>> xPageLayoutListSupplier) throws Exception {
+    private void createDialog(final boolean workflowError, List<IXPageLayout> xPageLayoutList) throws Exception {
         final WorkflowDescriptorModel workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
 
         final IWorkflowInvoker invoker = mockWorkflowInvoker();
@@ -72,7 +73,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
                 Model.of("Add document dialog title"),
                 "category test",
                 new HashSet<>(Collections.singletonList("cat1")),
-                xPageLayoutListSupplier,
+                new ListModel(xPageLayoutList),
                 false,
                 invoker,
                 stringCodecModel,
@@ -104,7 +105,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
 
     @Test
     public void dialogCreatedWithInitialStates() throws Exception {
-        createDialog(false, supplier);
+        createDialog(false, xPageLayoutList);
 
         final FormComponent<String> nameComponent = getNameField();
         assertNotNull(nameComponent);
@@ -123,7 +124,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
 
     @Test
     public void clickOKWithEmptyInputs() throws Exception {
-        createDialog(false, supplier);
+        createDialog(false, xPageLayoutList);
         clickOkButton();
 
         tester.assertErrorMessages("'name' is required.", "'XPage Layout' is required.");
@@ -131,7 +132,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
 
     @Test
     public void clickOKWithEmptyInputs_NoXPage() throws Exception {
-        createDialog(false, () -> Collections.emptyList());
+        createDialog(false, Collections.emptyList());
         clickOkButton();
 
         tester.assertErrorMessages("'name' is required.");
@@ -139,7 +140,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
 
     @Test
     public void addFolderWithNewNames() throws Exception {
-        createDialog(false, supplier);
+        createDialog(false, xPageLayoutList);
 
         EasyMock.expect(stringCodec.encode(eq("archives"))).andReturn("archives");
         EasyMock.replay(stringCodec);
@@ -156,7 +157,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
 
     @Test
     public void addFolderWithExistedUriName() throws Exception {
-        createDialog(false, supplier);
+        createDialog(false, xPageLayoutList);
 
         // disable the translation from Name to uriName
         clickUrlActionLink();
@@ -170,7 +171,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
 
     @Test
     public void addFolderWithExistingLocalizedName() throws Exception {
-        createDialog(false, supplier);
+        createDialog(false, xPageLayoutList);
 
         // disable the translation from Name to uriName
         clickUrlActionLink();
@@ -184,7 +185,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
 
     @Test
     public void addFolderWithExistedUriNameAndLocalizedName() throws Exception {
-        createDialog(false, supplier);
+        createDialog(false, xPageLayoutList);
 
         // disable the translation from Name to uriName
         clickUrlActionLink();
@@ -198,7 +199,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
 
     @Test
     public void addFolderWithWorkflowException() throws Exception {
-        createDialog(true, supplier);
+        createDialog(true, xPageLayoutList);
 
         // disable the translation from Name to uriName
         clickUrlActionLink();
