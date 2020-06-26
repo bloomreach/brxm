@@ -38,6 +38,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResource;
@@ -62,6 +63,7 @@ import org.hippoecm.frontend.plugins.standardworkflow.editdisplayorder.FolderSor
 import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.ChannelIdProvider;
 import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.HintsChannelIdProvider;
 import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.PlainJcrHstChannelInfoXPageLayoutProvider;
+import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.XPageLayoutConstants;
 import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.XPageLayoutProvider;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IBrowseService;
@@ -480,7 +482,15 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 ResourceBundleModel.of(HIPPO_TEMPLATES_BUNDLE_NAME, category),
                 category,
                 prototypes,
-                () -> xPageLayoutProvider.getXPageLayouts(),
+                new LoadableDetachableModel<List<IXPageLayout>>() {
+                    @Override
+                    protected List<IXPageLayout> load() {
+                        if (!XPageLayoutConstants.UNDEFINED_CHANNEL_ID.equals(channelId)){
+                            return xPageLayoutProvider.getXPageLayouts();
+                        }
+                        return Collections.emptyList();
+                    }
+                },
                 translated && !isLanguageKnown(),
                 invoker,
                 codecModel,
