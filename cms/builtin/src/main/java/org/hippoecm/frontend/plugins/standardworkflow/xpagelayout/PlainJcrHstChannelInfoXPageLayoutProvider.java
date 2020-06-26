@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standardworkflow.xpagelayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.repository.api.HippoSession;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,10 +45,8 @@ import org.slf4j.LoggerFactory;
  */
 public class PlainJcrHstChannelInfoXPageLayoutProvider implements XPageLayoutProvider {
 
-    public static final Logger log = LoggerFactory.getLogger(PlainJcrHstChannelInfoXPageLayoutProvider.class);
-    public static final String X_PAGE_LAYOUTS = "XPageLayouts";
-    public static final String HST_CHANNELINFO = "hst:channelinfo";
-    public static final String HST_CHANNEL = "hst:channel";
+    private static final Logger log = LoggerFactory.getLogger(PlainJcrHstChannelInfoXPageLayoutProvider.class);
+    private static final String X_PAGE_LAYOUTS = "XPageLayouts";
 
     private final String channelId;
 
@@ -57,26 +57,25 @@ public class PlainJcrHstChannelInfoXPageLayoutProvider implements XPageLayoutPro
 
     @Override
     public List<IXPageLayout> getXPageLayouts() {
-        List<IXPageLayout> result = new ArrayList<>();
         final HippoSession jcrSession = UserSession.get().getJcrSession();
         try {
-            final Node channelNode = jcrSession.getNode(channelId);
-            if (channelNode.isNodeType(HST_CHANNEL)){
-                final Node channelInfoNode = channelNode.getNode(HST_CHANNELINFO);
-                if (channelInfoNode.isNodeType(HST_CHANNELINFO)){
-                    if (channelInfoNode.hasProperty(X_PAGE_LAYOUTS)){
-                        final String xPageLayoutsString= channelInfoNode.getProperty(X_PAGE_LAYOUTS).getString();
-                        result = parseXPageLayoutsJSONString(xPageLayoutsString);
+            if (!XPageLayoutConstants.UNDEFINED_CHANNEL_ID.equals(channelId)) {
+                final Node channelNode = jcrSession.getNode(channelId);
+                if (channelNode.isNodeType(HstNodeTypes.NODENAME_HST_CHANNEL)) {
+                    final Node channelInfoNode = channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
+                    if (channelInfoNode.isNodeType(HstNodeTypes.NODENAME_HST_CHANNELINFO) &&
+                            (channelInfoNode.hasProperty(X_PAGE_LAYOUTS))) {
+                        final String xPageLayoutsString = channelInfoNode.getProperty(X_PAGE_LAYOUTS).getString();
+                        return parseXPageLayoutsJSONString(xPageLayoutsString);
                     }
+                } else {
+                    log.debug("Node : { identifier : {} } is not a channel, please provide the uuid of a channel", channelId);
                 }
             }
-            else{
-                log.debug("Node : { identifier : {} } is not a channel, please provide the uuid of a channel", channelId);
-            }
         } catch (RepositoryException e) {
-            log.debug("Something went wrong when reading the xpagelayouts",e);
+            log.debug("Something went wrong when reading the xpagelayouts", e);
         }
-        return result;
+        return Collections.emptyList();
     }
 
     List<IXPageLayout> parseXPageLayoutsJSONString(final String xPageLayoutsString) {
