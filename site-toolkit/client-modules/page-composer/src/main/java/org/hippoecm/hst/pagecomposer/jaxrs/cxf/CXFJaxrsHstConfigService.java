@@ -247,7 +247,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
         }
 
-        if (node.getName().equals(HstNodeTypes.NODENAME_HST_PAGE) && node.getParent().isNodeType(HstNodeTypes.MIXINTYPE_HST_XPAGE)) {
+        if (node.getName().equals(HstNodeTypes.NODENAME_HST_XPAGE) && node.getParent().isNodeType(HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN)) {
             // found hst:page, parent must be hippo:document and must be unpublished variant
             Node unpublished = node.getParent();
             if (unpublished.getParent().isNodeType(HippoNodeType.NT_HANDLE) &&
