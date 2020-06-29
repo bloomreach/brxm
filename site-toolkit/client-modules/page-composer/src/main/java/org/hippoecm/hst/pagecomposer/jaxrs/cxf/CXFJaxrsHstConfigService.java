@@ -76,8 +76,6 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     public static final String REQUEST_EXPERIENCE_PAGE_HANDLE_UUID_ATRRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.expPageUnpulbishedUUID";
 
 
-
-
     private Repository repository;
     private Credentials credentials;
     private PreviewDecorator previewDecorator;
@@ -186,31 +184,38 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     private String adjustEndpointPath(Node node, HstRequestContext requestContext) throws RepositoryException {
         final StringBuilder builder = new StringBuilder();
         Node xPageUnpublishedVariant = getXPageUnpublishedVariant(node);
+        final String nodeType = getNodeType(node);
         if (xPageUnpublishedVariant != null) {
             requestContext.setAttribute(REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE, Boolean.TRUE);
             // never store the Node since backed by an hst config user which can be returned to the pool after this work
             requestContext.setAttribute(REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE, xPageUnpublishedVariant.getIdentifier());
             requestContext.setAttribute(REQUEST_EXPERIENCE_PAGE_HANDLE_UUID_ATRRIBUTE, xPageUnpublishedVariant.getParent().getIdentifier());
-            builder.append("/experiencepage/");
+            if (HstNodeTypes.NODETYPE_HST_COMPONENT.equals(nodeType)) {
+                builder.append("/");
+            } else {
+                builder.append("/experiencepage/");
+            }
         } else {
             builder.append("/");
         }
-        if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-            builder.append(HippoNodeType.NT_DOCUMENT);
-        } else {
-            if (node.isNodeType(NT_FROZEN_NODE)) {
-                // map to the nodetype of the 'non-frozen' version
-                builder.append(node.getProperty(JCR_FROZEN_PRIMARY_TYPE).getString());
-            } else {
-                builder.append(node.getPrimaryNodeType().getName());
-            }
-        }
+        builder.append(nodeType);
         builder.append("/");
         final String optionalPathSuffix = requestContext.getPathSuffix();
         if (optionalPathSuffix != null) {
             builder.append(optionalPathSuffix);
         }
         return builder.toString();
+    }
+
+    private String getNodeType(final Node node) throws RepositoryException {
+        if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            return HippoNodeType.NT_DOCUMENT;
+        }
+        if (node.isNodeType(NT_FROZEN_NODE)) {
+            // map to the nodetype of the 'non-frozen' version
+            return node.getProperty(JCR_FROZEN_PRIMARY_TYPE).getString();
+        }
+        return node.getPrimaryNodeType().getName();
     }
 
     /**
