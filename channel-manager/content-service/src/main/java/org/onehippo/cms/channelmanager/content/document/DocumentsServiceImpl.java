@@ -38,7 +38,6 @@ import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.hippoecm.repository.util.WorkflowUtils.Variant;
-import org.jetbrains.annotations.NotNull;
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
@@ -414,7 +413,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             }
 
             if (newDocumentInfo.isExperiencePage()) {
-                document.addMixin(HstNodeTypes.MIXINTYPE_HST_XPAGE);
+                document.addMixin(HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN);
             }
 
             session.save();
