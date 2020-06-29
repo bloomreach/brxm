@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 
 /**
@@ -116,15 +117,26 @@ public class ParametersInfoAnnotationUtils {
     }
 
     /**
-     * Find the <code>ParametersInfo</code> annotation from the {@code componentConfig} directly.
+     * Find the <code>ParametersInfo</code> annotation from the {@code componentConfig} directly using current thread classloader
      * @param componentConfig ComponentConfiguration instance
      * @return the type of <code>ParametersInfo</code>
      */
     public static ParametersInfo getParametersInfoAnnotation(final HstComponentConfiguration componentConfig) {
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        return getParametersInfoAnnotation(componentConfig, classLoader);
+    }
+
+    /**
+     * Find the <code>ParametersInfo</code> annotation from the {@code componentConfig} directly using custom classloader
+     * @param componentConfig ComponentConfiguration instance
+     * @param classLoader Classloader to lookup componentClass at
+     * @return the type of <code>ParametersInfo</code>
+     */
+    public static ParametersInfo getParametersInfoAnnotation(final HstComponentConfiguration componentConfig,
+                                                             final ClassLoader classLoader) {
         if (componentConfig != null) {
             Class<?> componentClazz = null;
 
-            final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             try {
                 String componentClassName = componentConfig.getComponentClassName();
                 componentClazz = classLoader.loadClass(componentClassName);
@@ -160,9 +172,12 @@ public class ParametersInfoAnnotationUtils {
             Class<?> componentClazz = null;
             String componentClassName = null;
 
+            final Node componentNode = componentItemNode.hasProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION) ? componentItemNode.getSession()
+                    .getNode(componentItemNode.getProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION).getValue().getString()) : componentItemNode;
+
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            if (componentItemNode.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME)) {
-                componentClassName = componentItemNode.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString();
+            if (componentNode.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME)) {
+                componentClassName = componentNode.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString();
                 final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
                 final ComponentManager componentManager = hstModelRegistry.getHstModel(classLoader).getComponentManager();
                 final Object component = componentManager.getComponent(componentClassName);

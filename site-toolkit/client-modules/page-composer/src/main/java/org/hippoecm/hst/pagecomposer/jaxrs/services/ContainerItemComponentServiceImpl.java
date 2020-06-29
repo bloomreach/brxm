@@ -30,6 +30,10 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -77,7 +81,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
     public ContainerItemComponentRepresentation getVariant(final String variantId, final String localeString) throws ClientException, RepositoryException, ServerErrorException {
         try {
             return represent(getCurrentContainerItem(), getLocale(localeString), variantId);
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             throw new ServerErrorException(e);
         }
     }
@@ -221,28 +225,30 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
      * @param locale the locale to get localized names, can be null
      * @param prefix the parameter prefix
      * @throws RepositoryException    Thrown if the repository exception occurred during reading of the properties.
-     * @throws ClassNotFoundException thrown when this class can't instantiate the component class.
      */
     private ContainerItemComponentRepresentation represent(final Node componentItemNode,
                                                            final Locale locale,
-                                                           final String prefix) throws RepositoryException, ClassNotFoundException {
+                                                           final String prefix) throws RepositoryException {
         final String contentPath = getContentPath();
+        final Mount editingMount = pageComposerContextService.getEditingMount();
+        final HstSite hstSite = editingMount.getHstSite();
+        final String componentCanonicalPath = componentItemNode.getPath();
 
+        final HstComponentsConfiguration componentsConfiguration = hstSite.getComponentsConfiguration();
+        final Map<String, HstComponentConfiguration> componentConfigurations = componentsConfiguration.getComponentConfigurations();
+        final HstComponentConfiguration componentReference = componentConfigurations.values().stream() //TODO SS: Optimize loop
+                .filter(x -> x.getCanonicalStoredLocation().equals(componentCanonicalPath)).findFirst()
+                .orElseThrow(() -> new RuntimeException(String.format("Component representation is not found: '%s'", componentCanonicalPath)));
 
-        ParametersInfo parametersInfo = executeWithWebsiteClassLoader(node -> {
-            try {
-                return ParametersInfoAnnotationUtils.getParametersInfoAnnotation(node);
-            } catch (RepositoryException e) {
-                throw new RuntimeException(e);
-            }
-        }, componentItemNode);
+        ParametersInfo parametersInfo = executeWithWebsiteClassLoader(node ->
+                ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentReference), componentItemNode);
 
         if (parametersInfo == null) {
             parametersInfo = defaultMissingParametersInfo;
         }
 
-        List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parametersInfo, locale, contentPath, prefix, componentItemNode,
-                containerItemHelper, propertyPresentationFactories);
+        final List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parametersInfo.type(), locale, contentPath, prefix, componentItemNode,
+                containerItemHelper, propertyPresentationFactories, componentReference);
 
         ContainerItemComponentRepresentation representation = new ContainerItemComponentRepresentation();
         representation.setProperties(properties);

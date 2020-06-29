@@ -23,16 +23,18 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.InvalidNodeTypeException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ItemNotFoundException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
-import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 
 public class ContainerComponentServiceImpl implements ContainerComponentService {
@@ -77,7 +79,11 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
             // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
             // containerNode. Find a correct newName and create a new node.
             final String newItemNodeName = findNewName(catalogItem.getName(), containerNode);
-            final Node newItem = JcrUtils.copy(session, catalogItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
+
+            final Node newItem = containerNode.addNode(newItemNodeName, catalogItem.getPrimaryNodeType().getName());
+
+            final String componentIdRef = getCatalogItemId(catalogItem);
+            newItem.setProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION, componentIdRef);
 
             HstConfigurationUtils.persistChanges(session);
 
@@ -87,6 +93,23 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
             log.warn("Exception during creating new container item: {}", catalogItemUUID);
             throw e;
         }
+    }
+
+    private String getCatalogItemId(Node catalogItem) throws RepositoryException {
+        final HstSite hstSite = pageComposerContextService.getEditingMount().getHstSite();
+        final List<HstComponentConfiguration> availableContainerItems = hstSite.getComponentsConfiguration().getAvailableContainerItems();
+        final String catalogItemPath = catalogItem.getPath();
+        final HstComponentConfiguration catalogItemConfiguration =
+                availableContainerItems.stream()
+                        .filter(item -> item.getCanonicalStoredLocation().equals(catalogItemPath))
+                        .findFirst().orElse(null);
+
+        if (catalogItemConfiguration == null) {
+            //TODO SS: Add arguments to log, incorrect exception type
+            throw new RepositoryException("Component is not found");
+        }
+
+        return catalogItemConfiguration.getId();
     }
 
     @Override

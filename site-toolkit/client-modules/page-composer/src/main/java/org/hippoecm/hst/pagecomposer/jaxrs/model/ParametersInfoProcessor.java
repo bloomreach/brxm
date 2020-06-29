@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,10 +35,17 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hippoecm.hst.configuration.components.DropdownListParameterConfig;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
+import org.hippoecm.hst.configuration.components.DynamicParameterConfig;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.ImageSetPathParameterConfig;
+import org.hippoecm.hst.configuration.components.JcrPathParameterConfig;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.EmptyValueListProvider;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
+import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -46,6 +54,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
+import org.hippoecm.hst.platform.configuration.components.DynamicComponentParameter;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
@@ -54,7 +63,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
-public class ParametersInfoProcessor {
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
+public abstract class ParametersInfoProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(ParametersInfoProcessor.class);
 
@@ -71,23 +83,63 @@ public class ParametersInfoProcessor {
         if (classType == null) {
             return Collections.emptyList();
         }
-        final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap = 
+        final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap =
                 createPropertyMap(contentPath, classType, resourceBundles, locale);
         return orderPropertiesByFieldGroup(classType, resourceBundles, propertyMap);
     }
 
     public static List<ContainerItemComponentPropertyRepresentation> getPopulatedProperties(
-            final ParametersInfo parametersInfo,
+            final Class<?> infoClassType,
             final Locale locale,
             final String contentPath,
             final String prefix,
             final Node containerItemNode,
             final ContainerItemHelper containerItemHelper,
-            final List<PropertyRepresentationFactory> propertyPresentationFactories) throws RepositoryException {
+            final List<PropertyRepresentationFactory> propertyPresentationFactories,
+            final HstComponentConfiguration componentReference) throws RepositoryException {
 
-        final List<ContainerItemComponentPropertyRepresentation> properties = 
-                getProperties(parametersInfo, locale, contentPath);
+        final ResourceBundle[] resourceBundles = getResourceBundles(infoClassType, locale);
 
+        final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap = new LinkedHashMap<>();
+
+        for (final DynamicParameter jcrComponentParameter : componentReference.getDynamicComponentParameters()) {
+            final ContainerItemComponentPropertyRepresentation property = new ContainerItemComponentPropertyRepresentation();
+            property.setName(jcrComponentParameter.getName());
+            property.setDefaultValue(jcrComponentParameter.getDefaultValue());
+            property.setRequired(jcrComponentParameter.isRequired());
+            property.setHiddenInChannelManager(jcrComponentParameter.isHideInChannelManager());
+            if (jcrComponentParameter.getValueType() != null) {
+                property.setType(ParameterType.valueOf(jcrComponentParameter.getValueType()));
+            }
+
+            final DynamicParameterConfig componentParameterConfig = jcrComponentParameter.getComponentParameterConfig();
+            if (componentParameterConfig != null) {
+                if (componentParameterConfig instanceof JcrPathParameterConfig) {
+                    populateJcrPathProperties(property, (JcrPathParameterConfig) componentParameterConfig, contentPath);
+                } else if (componentParameterConfig instanceof DropdownListParameterConfig) {
+                    populateDropdownListProperties(property, (DropdownListParameterConfig) componentParameterConfig, resourceBundles, locale);
+                } else if (componentParameterConfig instanceof ImageSetPathParameterConfig) {
+                    populateImageSetPathProperties(property, (ImageSetPathParameterConfig) componentParameterConfig);
+                }
+            }
+
+            if (isNotEmpty(jcrComponentParameter.getFieldGroup())) {
+                property.setGroupLabel(getResourceValue(resourceBundles, jcrComponentParameter.getFieldGroup(), jcrComponentParameter.getFieldGroup()));
+            }
+
+            String label = getResourceValue(resourceBundles, jcrComponentParameter.getName(), null);
+            if (label == null) {
+                label = isEmpty(jcrComponentParameter.getDisplayName()) ? jcrComponentParameter.getName()
+                        : jcrComponentParameter.getDisplayName();
+            }
+            property.setLabel(label);
+            property.setHint(getResourceValue(resourceBundles, jcrComponentParameter.getName() + HINT_POSTFIX, null));
+
+            propertyMap.put(property.getName(), property);
+        }
+
+        final List<ContainerItemComponentPropertyRepresentation> properties = orderPropertiesByFieldGroup(infoClassType, resourceBundles, propertyMap);
+        properties.sort(Comparator.comparing(ContainerItemComponentPropertyRepresentation::getGroupLabel, Comparator.nullsFirst(Comparator.naturalOrder())));
         final HstComponentParameters componentParameters = 
                 new HstComponentParameters(containerItemNode, containerItemHelper);
 
@@ -97,7 +149,7 @@ public class ParametersInfoProcessor {
             int index = 0;
             for (final PropertyRepresentationFactory factory : propertyPresentationFactories) {
                 try {
-                    final ContainerItemComponentPropertyRepresentation property = factory.createProperty(parametersInfo, 
+                    final ContainerItemComponentPropertyRepresentation property = factory.createProperty(
                             locale, contentPath, prefix, containerItemNode, containerItemHelper, componentParameters, 
                             properties);
                     if (property != null) {
@@ -106,7 +158,7 @@ public class ParametersInfoProcessor {
                     }
                 } catch (final RuntimeException e) {
                     if (log.isDebugEnabled()) {
-                        log.warn("PropertyRepresentationFactory '{}' threw exception.", factory.getClass().getName(), 
+                        log.warn("PropertyRepresentationFactory '{}' threw exception.", factory.getClass().getName(),
                                 e);
                     } else {
                         log.warn("PropertyRepresentationFactory '{}' threw exception: {}", factory.getClass().getName(), 
@@ -154,16 +206,9 @@ public class ParametersInfoProcessor {
         final String value = componentParameters.getValue(prefix, property.getName());
         if (value != null && !value.isEmpty()) {
             property.setValue(value);
-            if (contentPath != null 
-                    && !contentPath.isEmpty() 
-                    && property.getType().equals(ParameterType.JCR_PATH.xtype)) {
-                final String absPath;
-                if (value.startsWith("/")) {
-                    absPath = value;
-                } else {
-                    absPath = contentPath + "/" + value;
-                }
-                final DocumentRepresentation docRepresentation = 
+            if (isNotEmpty(contentPath) && property.getType().equals(ParameterType.JCR_PATH.xtype)) {
+                final String absPath = value.startsWith("/") ? value : contentPath + "/" + value;
+                final DocumentRepresentation docRepresentation =
                         DocumentUtils.getDocumentRepresentationHstConfigUser(absPath);
                 final String displayName = docRepresentation.getDisplayName();
                 if (displayName != null && !displayName.isEmpty()) {
@@ -209,55 +254,17 @@ public class ParametersInfoProcessor {
                 final Annotation annotation = ParameterType.getTypeAnnotation(method);
                 if (annotation instanceof JcrPath) {
                     // for JcrPath we need some extra processing
-                    final JcrPath jcrPath = (JcrPath) annotation;
-                    prop.setPickerConfiguration(jcrPath.pickerConfiguration());
-                    prop.setPickerInitialPath(jcrPath.pickerInitialPath());
-                    String pickerRootPath = jcrPath.pickerRootPath();
-                    if (StringUtils.isEmpty(pickerRootPath)) {
-                        pickerRootPath = contentPath;
-                    }
-                    prop.setPickerRootPath(pickerRootPath);
-                    prop.setPickerPathIsRelative(jcrPath.isRelative());
-                    prop.setPickerRemembersLastVisited(jcrPath.pickerRemembersLastVisited());
-                    prop.setPickerSelectableNodeTypes(jcrPath.pickerSelectableNodeTypes());
+                    final DynamicComponentParameter.JcrPathParameterConfigImpl jcrPath = new DynamicComponentParameter.JcrPathParameterConfigImpl(
+                            (JcrPath) annotation);
+                    populateJcrPathProperties(prop, jcrPath, contentPath);
                 } else if (annotation instanceof DropDownList) {
-                    final DropDownList dropDownList = (DropDownList) annotation;
-                    String values[] = dropDownList.value();
-
-                    ValueListProvider valueListProvider = null;
-                    final Class<?> valueListProviderClass = dropDownList.valueListProvider();
-                    if (valueListProviderClass != null
-                            && !EmptyValueListProvider.class.equals(valueListProviderClass)) {
-                        try {
-                            valueListProvider = (ValueListProvider) valueListProviderClass.newInstance();
-                        } catch (final Exception e) {
-                            log.error("Failed to create or invoke the custom valueListProvider: '{}'.",
-                                    valueListProviderClass, e);
-                        }
-                    }
-
-                    final String[] displayValues;
-
-                    if (valueListProvider == null) {
-                        displayValues = new String[values.length];
-                        for (int i = 0; i < values.length; i++) {
-                            displayValues[i] = getResourceSubValue(resourceBundles, propAnnotation.name(), values[i]);
-                        }
-                    } else {
-                        final List<String> valueList = valueListProvider.getValues();
-                        values = valueList.toArray(new String[valueList.size()]);
-                        displayValues = new String[values.length];
-                        String value;
-                        String displayValue;
-                        for (int i = 0; i < values.length; i++) {
-                            value = values[i];
-                            displayValue = valueListProvider.getDisplayValue(value, locale);
-                            displayValues[i] = (displayValue != null) ? displayValue : value;
-                        }
-                    }
-
-                    prop.setDropDownListValues(values);
-                    prop.setDropDownListDisplayValues(displayValues);
+                    final DynamicComponentParameter.DropdownListParameterConfigImpl dropdownList = new DynamicComponentParameter.DropdownListParameterConfigImpl(
+                            (DropDownList) annotation);
+                    populateDropdownListProperties(prop, dropdownList, resourceBundles, locale);
+                } else if (annotation instanceof ImageSetPath) {
+                    final DynamicComponentParameter.ImageSetPathParameterConfigImpl imageSetPath = new DynamicComponentParameter.ImageSetPathParameterConfigImpl(
+                            (ImageSetPath) annotation);
+                    populateImageSetPathProperties(prop, imageSetPath);
                 }
 
                 final ParameterType type = ParameterType.getType(method, annotation);
@@ -267,6 +274,71 @@ public class ParametersInfoProcessor {
             }
         }
         return propertyMap;
+    }
+    
+    private static void populateDropdownListProperties(final ContainerItemComponentPropertyRepresentation prop,
+            final DropdownListParameterConfig dropdownList, final ResourceBundle[] resourceBundles, final Locale locale) {
+        
+        
+        String values[] = dropdownList.getValues();
+
+        ValueListProvider valueListProvider = null;
+        final Class<?> valueListProviderClass = dropdownList.getValueListProvider();
+        if (valueListProviderClass != null
+                && !EmptyValueListProvider.class.equals(valueListProviderClass)) {
+            try {
+                valueListProvider = (ValueListProvider) valueListProviderClass.newInstance();
+            } catch (final Exception e) {
+                log.error("Failed to create or invoke the custom valueListProvider: '{}'.",
+                        valueListProviderClass, e);
+            }
+        }
+
+        final String[] displayValues;
+
+        if (valueListProvider == null) {
+            displayValues = new String[values.length];
+            for (int i = 0; i < values.length; i++) {
+                displayValues[i] = getResourceSubValue(resourceBundles, prop.getName(), values[i]);
+            }
+        } else {
+            final List<String> valueList = valueListProvider.getValues();
+            values = valueList.toArray(new String[valueList.size()]);
+            displayValues = new String[values.length];
+            String value;
+            String displayValue;
+            for (int i = 0; i < values.length; i++) {
+                value = values[i];
+                displayValue = valueListProvider.getDisplayValue(value, locale);
+                displayValues[i] = (displayValue != null) ? displayValue : value;
+            }
+        }
+
+        prop.setDropDownListValues(values);
+        prop.setDropDownListDisplayValues(displayValues);
+        
+    }
+ 
+    private static void populateImageSetPathProperties(final ContainerItemComponentPropertyRepresentation prop,
+            final ImageSetPathParameterConfig imageSet) {
+        prop.setPickerConfiguration(imageSet.getPickerConfiguration());
+        prop.setPickerInitialPath(imageSet.getPickerInitialPath());
+        prop.setPickerRemembersLastVisited(imageSet.isPickerRemembersLastVisited());
+        prop.setPickerSelectableNodeTypes(imageSet.getPickerSelectableNodeTypes());
+    }
+ 
+    private static void populateJcrPathProperties(final ContainerItemComponentPropertyRepresentation prop,
+                                                  final JcrPathParameterConfig jcrPath, final String contentPath) {
+        prop.setPickerConfiguration(jcrPath.getPickerConfiguration());
+        prop.setPickerInitialPath(jcrPath.getPickerInitialPath());
+        String pickerRootPath = jcrPath.getPickerRootPath();
+        if (StringUtils.isEmpty(pickerRootPath)) {
+            pickerRootPath = contentPath;
+        }
+        prop.setPickerRootPath(pickerRootPath);
+        prop.setPickerPathIsRelative(jcrPath.isRelative());
+        prop.setPickerRemembersLastVisited(jcrPath.isPickerRemembersLastVisited());
+        prop.setPickerSelectableNodeTypes(jcrPath.getPickerSelectableNodeTypes());
     }
 
     private static List<ContainerItemComponentPropertyRepresentation> orderPropertiesByFieldGroup(
@@ -381,6 +453,25 @@ public class ParametersInfoProcessor {
         final List<ResourceBundle> resourceBundles = new ArrayList<>();
 
         final List<Class<?>> breadthFirstInterfaceHierarchy = getBreadthFirstInterfaceHierarchy(parameterInfo.type());
+        for (final Class<?> clazz : breadthFirstInterfaceHierarchy) {
+            final ResourceBundle bundle = getResourceBundle(clazz, locale);
+            if (bundle != null) {
+                resourceBundles.add(bundle);
+            }
+        }
+        return resourceBundles.toArray(new ResourceBundle[resourceBundles.size()]);
+    }
+
+    /**
+     * @return the ResourceBundles for Parameter Info Class including the bundles for the super interfaces
+     * for <code><parameterInfo.type()</code> and <code>locale</code>. The resource bundles are ordered according the
+     * interface hierarchy BREADTH FIRST traversal. Empty array if there are no resource bundles at all
+     */
+    protected static final ResourceBundle[] getResourceBundles(final Class<?> componentClass, final Locale locale) {
+
+        final List<ResourceBundle> resourceBundles = new ArrayList<>();
+
+        final List<Class<?>> breadthFirstInterfaceHierarchy = getBreadthFirstInterfaceHierarchy(componentClass);
         for (final Class<?> clazz : breadthFirstInterfaceHierarchy) {
             final ResourceBundle bundle = getResourceBundle(clazz, locale);
             if (bundle != null) {
