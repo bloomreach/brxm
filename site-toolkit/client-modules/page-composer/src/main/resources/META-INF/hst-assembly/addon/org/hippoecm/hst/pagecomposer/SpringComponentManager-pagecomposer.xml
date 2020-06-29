@@ -283,11 +283,14 @@
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ComponentResource" parent="abstractConfigResource">
-              <property name="actionService">
-                <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionServiceImpl">
-                  <property name="actionProviders" ref="actionProviders" />
-                </bean>
-              </property>
+              <property name="actionService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService" />
+            </bean>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.XPageResource" parent="abstractConfigResource">
+              <property name="actionService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService" />
             </bean>
           </constructor-arg>
         </bean>
@@ -301,6 +304,9 @@
         <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstActionProviderImpl" />
       </list>
     </property>
+  </bean>
+  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionServiceImpl">
+    <property name="actionProviders" ref="actionProviders" />
   </bean>
 
   <!-- Pipelining -->
