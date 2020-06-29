@@ -38,9 +38,9 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.util.ListModel;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -482,15 +482,9 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 ResourceBundleModel.of(HIPPO_TEMPLATES_BUNDLE_NAME, category),
                 category,
                 prototypes,
-                new LoadableDetachableModel<List<IXPageLayout>>() {
-                    @Override
-                    protected List<IXPageLayout> load() {
-                        if (!XPageLayoutConstants.UNDEFINED_CHANNEL_ID.equals(channelId)){
-                            return xPageLayoutProvider.getXPageLayouts();
-                        }
-                        return Collections.emptyList();
-                    }
-                },
+                new ListModel(XPageLayoutConstants.UNDEFINED_CHANNEL_ID.equals(channelId)?
+                        Collections.emptyList():
+                        xPageLayoutProvider.getXPageLayouts()),
                 translated && !isLanguageKnown(),
                 invoker,
                 codecModel,
