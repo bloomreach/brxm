@@ -59,18 +59,17 @@ public class PlainJcrHstChannelInfoXPageLayoutProvider implements XPageLayoutPro
     public List<IXPageLayout> getXPageLayouts() {
         final HippoSession jcrSession = UserSession.get().getJcrSession();
         try {
-            if (!XPageLayoutConstants.UNDEFINED_CHANNEL_ID.equals(channelId)) {
-                final Node channelNode = jcrSession.getNode(channelId);
-                if (channelNode.isNodeType(HstNodeTypes.NODENAME_HST_CHANNEL)) {
-                    final Node channelInfoNode = channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
-                    if (channelInfoNode.isNodeType(HstNodeTypes.NODENAME_HST_CHANNELINFO) &&
-                            (channelInfoNode.hasProperty(X_PAGE_LAYOUTS))) {
-                        final String xPageLayoutsString = channelInfoNode.getProperty(X_PAGE_LAYOUTS).getString();
-                        return parseXPageLayoutsJSONString(xPageLayoutsString);
-                    }
-                } else {
-                    log.debug("Node : { identifier : {} } is not a channel, please provide the uuid of a channel", channelId);
-                }
+            final Node channelNode = jcrSession.getNode(channelId);
+            if (!channelNode.isNodeType(HstNodeTypes.NODENAME_HST_CHANNEL)) {
+                log.debug("Node : { identifier : {} } is not a channel, please provide the uuid of a channel", channelId);
+                return Collections.emptyList();
+            }
+
+            final Node channelInfoNode = channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
+            if (channelInfoNode.isNodeType(HstNodeTypes.NODENAME_HST_CHANNELINFO) &&
+                    (channelInfoNode.hasProperty(X_PAGE_LAYOUTS))) {
+                final String xPageLayoutsString = channelInfoNode.getProperty(X_PAGE_LAYOUTS).getString();
+                return parseXPageLayoutsJSONString(xPageLayoutsString);
             }
         } catch (RepositoryException e) {
             log.debug("Something went wrong when reading the xpagelayouts", e);
