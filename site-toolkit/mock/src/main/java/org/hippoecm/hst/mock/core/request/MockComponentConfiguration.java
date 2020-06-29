@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -144,6 +146,16 @@ public class MockComponentConfiguration implements ComponentConfiguration {
 
     public void setXType(String xType) {
         this.xType = xType;
+    }
+
+    @Override
+    public List<DynamicParameter> getDynamicComponentParameters() {
+        return null;
+    }
+
+    @Override
+    public Optional<DynamicParameter> getDynamicComponentParameter(String name) {
+        return Optional.empty();
     }
 
     @Override

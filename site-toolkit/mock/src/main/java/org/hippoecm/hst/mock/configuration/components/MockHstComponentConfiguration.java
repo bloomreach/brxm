@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 
@@ -67,6 +68,11 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     private Calendar lockedOn;
     private Calendar lastModified;
     private boolean markedDeleted;
+    private String componentDefinition;
+
+    private String hstTemplate;
+
+    private List<DynamicParameter> dynamicComponentParameters;
 
     public MockHstComponentConfiguration(String id) {
         this.id = id;
@@ -305,6 +311,15 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
         this.label = label;
     }
 
+    @Override
+    public String getComponentDefinition() {
+        return this.componentDefinition;
+    }
+
+    public void setComponentDefinition(String componentDefinition) {
+        this.componentDefinition = componentDefinition;
+    }
+
     public String getIconPath() {
         return iconPath;
     }
@@ -353,6 +368,15 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
         return lastModified;
     }
 
+    @Override
+    public String getHstTemplate() {
+        return hstTemplate;
+    }
+
+    public void setHstTemplate(String hstTemplate) {
+        this.hstTemplate = hstTemplate;
+    }
+
     public void setLastModified(final Calendar lastModified) {
         this.lastModified = lastModified;
     }
@@ -365,4 +389,12 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
         this.markedDeleted = markedDeleted;
     }
 
+    @Override
+    public List<DynamicParameter> getDynamicComponentParameters() {
+        return dynamicComponentParameters;
+    }
+
+    public void setDynamicComponentParameters(List<DynamicParameter> dynamicComponentParameters) {
+        this.dynamicComponentParameters = dynamicComponentParameters;
+    }
 }
