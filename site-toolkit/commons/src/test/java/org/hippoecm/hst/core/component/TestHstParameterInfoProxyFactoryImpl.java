@@ -15,12 +15,16 @@
  */
 package org.hippoecm.hst.core.component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.configuration.components.DynamicComponentInfo;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.container.TestRequestContextProvider;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -85,7 +89,7 @@ public class TestHstParameterInfoProxyFactoryImpl {
         expect(request.getRequestContext()).andReturn(requestContext).anyTimes();
         resolvedSiteMapItem = createNiceMock(ResolvedSiteMapItem.class);
         expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem).anyTimes();
-        parameterConfig = createNiceMock(ParameterConfiguration.class);
+        parameterConfig = createNiceMock(ComponentConfiguration.class);
 
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             String name = entry.getKey();
@@ -136,6 +140,31 @@ public class TestHstParameterInfoProxyFactoryImpl {
         assertEquals(combinedInfo1String, combinedInfo2String);
     }
 
+    private void initDynamicComponentInfoObjects() {
+
+        final ArrayList<DynamicParameter> dynamicComponents = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            final DynamicParameter dynamicParameter = createNiceMock(DynamicParameter.class);
+            expect(dynamicParameter.isResidual()).andReturn(true);
+            expect(dynamicParameter.getName()).andReturn("residualParameter" + i).anyTimes();
+            expect(dynamicParameter.getDefaultValue()).andReturn("residualParameterValue" + i);
+            dynamicComponents.add(dynamicParameter);
+        }
+        for (int i = 2; i < 4; i++) {
+            final DynamicParameter dynamicParameter = createNiceMock(DynamicParameter.class);
+            expect(dynamicParameter.isResidual()).andReturn(false);
+            expect(dynamicParameter.getName()).andReturn("namedParameter" + i).anyTimes();
+            expect(dynamicParameter.getDefaultValue()).andReturn("namedParameterValue" + i);
+            dynamicComponents.add(dynamicParameter);
+        }
+
+        expect(((ComponentConfiguration) parameterConfig).getDynamicComponentParameters()).andReturn(dynamicComponents);
+
+        for (final DynamicParameter dynamicParameter : dynamicComponents) {
+            replay(dynamicParameter);
+        }
+    }
+    
     @Test
     public void testMultiInheritedParametersInfoType() throws Exception {
         replay(mocks);
@@ -148,6 +177,53 @@ public class TestHstParameterInfoProxyFactoryImpl {
         assertEquals(params.get("name"), combinedInfo.getName());
     }
 
+    @Test
+    public void testResidualParameterValuesMethodInDynamicComponentInfo() throws Exception {
+        initDynamicComponentInfoObjects();
+        replay(mocks);
+        final ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
+        final CombinedInfo combinedInfo = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo,
+                parameterConfig, request, converter);
+
+        final Map<String, Object> result = combinedInfo.getResidualParameterValues();
+        assertEquals("The size of the map returned from getResidualParameterValues method is not correct",
+                result.size(), 2);
+        for (int i = 0; i < 2; i++) {
+            final Object value = result.get("residualParameter" + i);
+            assertNotNull("The value of residual parameter with name residualParameter" + i + " is null", value);
+            assertEquals("The value of residual parameter with name residualParameter" + i + " is not correct", value,
+                    "residualParameterValue" + i);
+        }
+    }
+
+    @Test
+    public void testDynamicComponentParametersMethodInDynamicComponentInfo() throws Exception {
+        initDynamicComponentInfoObjects();
+        replay(mocks);
+        final ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
+        final CombinedInfo combinedInfo = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo,
+                parameterConfig, request, converter);
+
+        final List<DynamicParameter> dynamicComponents = combinedInfo.getDynamicComponentParameters();
+        assertEquals("The size of the map returned from getResidualParameterValues method is not correct",
+                dynamicComponents.size(), 4);
+        for (int i = 0; i < 4; i++) {
+            final DynamicParameter dynamicParameter = dynamicComponents.get(i);
+            if (dynamicParameter.getName().startsWith("residualParameter")) {
+                assertTrue("The residual parameter with name residualParameter" + i + " is not marked as residual",
+                        dynamicParameter.isResidual());
+                assertEquals(
+                        "The default value of residual parameter with name residualParameter" + i + " is not correct",
+                        dynamicParameter.getDefaultValue(), "residualParameterValue" + i);
+            } else if (dynamicParameter.getName().startsWith("namedParameter")) {
+                assertFalse("The named parameter with name namedParameter" + i + " is marked as residual",
+                        dynamicParameter.isResidual());
+                assertEquals("The default value of named parameter with name namedParameter" + i + " is not correct",
+                        dynamicParameter.getDefaultValue(), "namedParameterValue" + i);
+            }
+        }
+    }
+    
     @Test
     public void component_rendering_request_parameters_have_precedence() {
 
@@ -193,7 +269,7 @@ public class TestHstParameterInfoProxyFactoryImpl {
 
     }
 
-    public interface CombinedInfo extends SearchInfo, CellInfo {
+    public interface CombinedInfo extends SearchInfo, CellInfo, DynamicComponentInfo{
 
         @Parameter(name = "name")
         public String getName();

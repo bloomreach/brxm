@@ -244,8 +244,7 @@ public class ParametersInfoProcessorTest {
      */
     @Test
     public void assertBreadthFirstInterfaceHierarchy() {
-        final ParametersInfoProcessor parametersInfoProcessor = new ParametersInfoProcessor();
-        final List<Class<?>> hierarchy = parametersInfoProcessor.getBreadthFirstInterfaceHierarchy(a.class);
+        final List<Class<?>> hierarchy = ParametersInfoProcessor.getBreadthFirstInterfaceHierarchy(a.class);
         assertEquals(hierarchy.get(0), a.class);
         assertEquals(hierarchy.get(1), b.class);
         assertEquals(hierarchy.get(2), c.class);

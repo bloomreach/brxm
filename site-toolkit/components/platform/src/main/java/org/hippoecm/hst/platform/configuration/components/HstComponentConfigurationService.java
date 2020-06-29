@@ -15,15 +15,18 @@
  */
 package org.hippoecm.hst.platform.configuration.components;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,14 +34,20 @@ import org.hippoecm.hst.builtin.components.StandardContainerComponent;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.provider.jcr.JCRValueProvider;
+import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.internal.StringPool;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
@@ -54,7 +63,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private HstComponentConfiguration parent;
 
-    private String id;
+    private final String id;
 
     private String name;
 
@@ -90,12 +99,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private String referenceComponent;
 
+    private String componentDefinition;
+
     private String pageErrorHandlerClassName;
 
     private List<String> usedChildReferenceNames = new ArrayList<String>();
     private int autocreatedCounter = 0;
 
     private Map<String, String> parameters = new LinkedHashMap<String, String>();
+
+    //named and residual component parameters
+    private List<DynamicParameter> hstDynamicComponentParameters = new LinkedList<DynamicParameter>();
 
     // the set of parameter prefixes
     private Set<String> parameterNamePrefixSet = new HashSet<String>();
@@ -268,6 +282,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             throw new ModelLoadingException("Unknown componentType '" + node.getNodeTypeName() + "' for '" + canonicalStoredLocation + "'. Cannot build configuration.");
         }
 
+        this.componentDefinition = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION));
+
         this.parametersInfoClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME));
 
         this.referenceName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
@@ -332,6 +348,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
         }
 
+        final List<HstNode> componentParameterNodes = node.getNodes(HstNodeTypes.NODETYPE_HST_DYNAMIC_PARAMETER);
+        for (final HstNode componentParameterNode : componentParameterNodes) {
+            final DynamicParameter hstComponentParameter = new DynamicComponentParameter(componentParameterNode);
+            hstDynamicComponentParameters.add(hstComponentParameter);
+        }
 
         if (node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_STANDALONE)) {
             this.standalone = node.getValueProvider().getBoolean(HstNodeTypes.COMPONENT_PROPERTY_STANDALONE);
@@ -516,6 +537,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return this.type;
     }
 
+
     public String getHstTemplate() {
         return this.hstTemplate;
     }
@@ -560,6 +582,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return parameters;
     }
 
+    @Override
+    public List<DynamicParameter> getDynamicComponentParameters() {
+        return hstDynamicComponentParameters;
+    }
+
+    @Override
+    public Optional<DynamicParameter> getDynamicComponentParameter(String name) {
+        return Optional.ofNullable(hstDynamicComponentParameters.stream()
+                .filter(hstComponentParameter -> hstComponentParameter.getName().equals(name)).findAny().orElse(null));
+    }
+    
     @Override
     public Set<String> getParameterPrefixes() {
         return parameterNamePrefixSet;
@@ -611,6 +644,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return referenceComponent;
     }
 
+    public String getComponentDefinition() {
+        return componentDefinition;
+    }
 
     public String getPageErrorHandlerClassName() {
         return pageErrorHandlerClassName;
@@ -759,6 +795,55 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         // the copy is populated
         populated.add(copy);
         return copy;
+    }
+
+    /**
+     * Adds annotation based component parameter definitions
+     * @param websiteClassLoader Classloader of website application components belong to
+     */
+    protected void populateAnnotationComponentParameters(ClassLoader websiteClassLoader) {
+        if (isEmpty(this.getComponentClassName())) {
+            return;
+        }
+        final ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(this, websiteClassLoader);
+        if (parametersInfo != null) {
+            for (final Method method : parametersInfo.type().getMethods()) {
+                if (method.isAnnotationPresent(Parameter.class)) {
+                    final Parameter parameter = method.getAnnotation(Parameter.class);
+                    for (final DynamicParameter dynamicParameter : hstDynamicComponentParameters) {
+                        if (parameter.name().equals(dynamicParameter.getName())) {
+                            hstDynamicComponentParameters.remove(dynamicParameter);
+                            break;
+                        }
+                    }
+                    hstDynamicComponentParameters.add(new DynamicComponentParameter(parameter, method));
+                }
+            }
+        }
+    }
+
+    protected void populateCatalogItemReference(final List<HstComponentConfiguration> availableContainerItems) {
+        final Optional<HstComponentConfiguration> catalogItem = availableContainerItems.stream()
+                .filter(c -> c.getId().equals(this.getComponentDefinition())).findFirst();
+        catalogItem.ifPresent(catalogItemRef -> {
+            if (this.componentClassName == null) {
+                this.componentClassName = catalogItemRef.getComponentClassName();
+            }
+
+            if (this.hstTemplate == null) {
+                this.hstTemplate = catalogItemRef.getHstTemplate();
+            }
+
+            if (this.iconPath == null) {
+                this.iconPath = catalogItemRef.getIconPath();
+            }
+
+            if (this.label == null) {
+                this.label = catalogItemRef.getLabel();
+            }
+
+            this.hstDynamicComponentParameters = catalogItemRef.getDynamicComponentParameters();
+        });
     }
 
     protected void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations,
