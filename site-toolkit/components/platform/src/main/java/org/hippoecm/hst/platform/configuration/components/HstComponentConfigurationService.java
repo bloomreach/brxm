@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_PAGE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_XPAGE;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
 
@@ -129,6 +129,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * whether this {@link HstComponentConfigurationService} can serve as prototype.
      */
     private boolean prototype;
+
+    private boolean xpage;
+
+    /**
+     * hst:component of type 'xpage' or 'containercomponent' are expected to have a qualifier (auto created property). Can be
+     * null
+     */
+    private String qualifier;
 
     /**
      * <code>true</code> when this {@link HstComponentConfiguration} is configured to render standalone in case of {@link HstURL#COMPONENT_RENDERING_TYPE}
@@ -260,7 +268,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.componentClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
 
         final String nodeTypeName = node.getNodeTypeName();
-        if (HstNodeTypes.NODETYPE_HST_COMPONENT.equals(nodeTypeName) || NODETYPE_HST_PAGE.equals(nodeTypeName)) {
+
+        this.xpage = NODETYPE_HST_XPAGE.equals(nodeTypeName);
+
+        if (HstNodeTypes.NODETYPE_HST_COMPONENT.equals(nodeTypeName) || NODETYPE_HST_XPAGE.equals(nodeTypeName)) {
             type = Type.COMPONENT;
         } else if (NODETYPE_HST_CONTAINERCOMPONENT.equals(nodeTypeName)) {
             type = Type.CONTAINER_COMPONENT;
@@ -312,10 +323,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.pageErrorHandlerClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME));
 
         this.label = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_LABEL));
+        this.qualifier = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_QUALIFIER));
         this.iconPath = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_ICON_PATH));
 
         if (type == Type.CONTAINER_COMPONENT || type == Type.CONTAINER_ITEM_COMPONENT) {
             this.xtype = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_XTYPE));
+            if (xtype == null) {
+                xtype = "HST.vBox";
+            }
         }
         String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
@@ -732,6 +747,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     @Override
+    public boolean isXPage() {
+        return xpage;
+    }
+
+    @Override
+    public String getQualifier() {
+        return qualifier;
+    }
+
+    @Override
     public boolean isExperiencePageComponent() {
         return experiencePageComponent;
     }
@@ -755,6 +780,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.referenceName = child.referenceName;
         copy.hstTemplate = child.hstTemplate;
         copy.label = child.label;
+        copy.qualifier = child.qualifier;
         copy.iconPath = child.iconPath;
         copy.renderPath = child.renderPath;
         copy.isNamedRenderer = child.isNamedRenderer;
@@ -844,6 +870,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 if (this.label == null) {
                     this.label = referencedComp.label;
+                }
+                if (this.qualifier == null) {
+                    this.qualifier = referencedComp.qualifier;
                 }
                 if (this.iconPath == null) {
                     this.iconPath = referencedComp.iconPath;
@@ -978,6 +1007,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.label == null) {
             this.label = childToMerge.label;
+        }
+        if (this.qualifier == null) {
+            this.qualifier = childToMerge.qualifier;
         }
         if (this.iconPath == null) {
             this.iconPath = childToMerge.iconPath;
