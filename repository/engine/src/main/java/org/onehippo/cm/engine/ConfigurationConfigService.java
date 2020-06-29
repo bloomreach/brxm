@@ -648,7 +648,7 @@ public class ConfigurationConfigService {
         for (Property property : new PropertyIterable(node.getProperties())) {
             final ItemDefinition definition = property.getDefinition();
             final String name = property.getName();
-            if (!definition.isProtected() && !definition.isMandatory() && !isKnownDerivedPropertyName(name)) {
+            if (!definition.isProtected() && !definition.isMandatory() && !definition.isAutoCreated() && !isKnownDerivedPropertyName(name)) {
                 names.add(name);
             }
         }
