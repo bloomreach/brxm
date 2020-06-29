@@ -35,6 +35,7 @@ import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.unmodifiableMap;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT;
@@ -57,6 +58,9 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
      * configured below 'hst:prototypepages'
      */
     private Map<String, HstComponentConfiguration> prototypePages = new HashMap<>();
+
+
+    private Map<String, HstComponentConfiguration> xPages = new HashMap<>();
 
     /*
      * The Map of all containter items. These are the hst:containeritemcomponent's that are configured as child of hst:containeritemcomponent's
@@ -89,7 +93,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         String[] mainComponentNodeNames = {HstNodeTypes.NODENAME_HST_COMPONENTS,
                 HstNodeTypes.NODENAME_HST_ABSTRACTPAGES,
                 HstNodeTypes.NODENAME_HST_PAGES,
-                HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES};
+                HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES,
+                HstNodeTypes.NODENAME_HST_XPAGES};
 
         final String rootConfigurationPathPrefix = ccn.getConfigurationRootNode().getValueProvider().getPath() + "/";
 
@@ -104,7 +109,14 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             init(componentNodes, mainComponentNodeName, rootConfigurationPathPrefix, referableContainers, nonPrototypeRootComponents);
         }
 
-        prototypePages = Collections.unmodifiableMap(prototypePages);
+        prototypePages = unmodifiableMap(prototypePages);
+
+        // from the nonPrototypeRootComponents, take the root components which are an XPage component and put them in a
+        // map where the key is the (unique within 1 hst:configuration) xpage name
+        xPages = unmodifiableMap(
+                nonPrototypeRootComponents.stream()
+                        .filter(hcc -> hcc.isXPage())
+                        .collect(Collectors.toMap(hcc -> hcc.getName(), hcc -> hcc)));
 
         // populate all the available containeritems that are part of hst:catalog. These container items do *not* need to be enhanced as they
         // are *never* used directly. They are only to be used by the page composer that can drop these containeritems into containers
@@ -128,7 +140,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         if (nonPrototypeRootComponents.isEmpty()) {
             canonicalComponentConfigurations = Collections.emptyMap();
         } else {
-            canonicalComponentConfigurations = Collections.unmodifiableMap(
+            canonicalComponentConfigurations = unmodifiableMap(
                     flattened(nonPrototypeRootComponents)
                             .collect(Collectors
                                     .toMap(hstComponentConfiguration -> hstComponentConfiguration.getId(),
@@ -144,7 +156,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
          * 4: Adding parameters from parent components to child components and override them when they already are present
          */
         
-        templateResourceMap = Collections.unmodifiableMap(getTemplateResourceMap(ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_TEMPLATES)));
+        templateResourceMap = unmodifiableMap(getTemplateResourceMap(ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_TEMPLATES)));
 
         populateComponentReferences(canonicalComponentConfigurations);
 
@@ -217,6 +229,11 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     @Override
     public Map<String, HstComponentConfiguration> getPrototypePages() {
         return prototypePages;
+    }
+
+    @Override
+    public Map<String, HstComponentConfiguration> getXPages() {
+        return xPages;
     }
 
 
@@ -339,7 +356,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private boolean isHstComponentType(final HstNode node) {
         return HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
                 || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
-                || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName());
+                || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())
+                || HstNodeTypes.NODETYPE_HST_XPAGE.equals(node.getNodeTypeName());
     }
     
     private void initCatalog(final CompositeConfigurationNodes.CompositeConfigurationNode catalog,

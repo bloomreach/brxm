@@ -319,8 +319,30 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      */
     boolean isMarkedDeleted();
 
+
     /**
-     * @return {@code true} if this component is part of an experience page
+     * @return {@core true} if this {@link HstComponentConfiguration} is an XPage: Note *ONLY* root hst components can
+     * be an 'xpage HstComponentConfiguration' and that this is different than {@link #isExperiencePageComponent} : the
+     * {@link #isExperiencePageComponent} indicates whether the component is stored below an experience page document
+     * variant, while this {@link #isXPage()} indicates whether the hst component stored in HST CONFIG (!!) is an XPage
+     * (layout)
+     */
+    boolean isXPage();
+
+
+    /**
+     * <p>
+     *     In case the component has a qualifier, it is returned. Typically, an hst:xpage and hst:containercomponent will have
+     *     an autocreated qualifier with as value a uuid: This can be used a stable identifier across different (versions) of
+     *     the same node, for example for an HST Config branch it can have the same value (opposed to the uuid of the node)
+     *     and across unpublished/published versions below a document variant the xpage containers can have a stable uuid
+     * </p>
+     * @return the qualifier if available for this {@link HstComponentConfiguration}, otherwise n{@code null}
+     */
+    String getQualifier();
+
+    /**
+     * @return {@code true} if this component is part of a component STORED below an experience page document variant
      */
     boolean isExperiencePageComponent();
 
