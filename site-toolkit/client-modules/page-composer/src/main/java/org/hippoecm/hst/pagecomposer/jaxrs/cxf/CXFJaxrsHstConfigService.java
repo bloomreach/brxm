@@ -54,6 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_FROZENUUID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_MOUNT;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.EDITING_HST_MODEL_LINK_CREATOR_ATTR;
@@ -190,10 +191,10 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             // never store the Node since backed by an hst config user which can be returned to the pool after this work
             requestContext.setAttribute(REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE, xPageUnpublishedVariant.getIdentifier());
             requestContext.setAttribute(REQUEST_EXPERIENCE_PAGE_HANDLE_UUID_ATRRIBUTE, xPageUnpublishedVariant.getParent().getIdentifier());
-            if (HstNodeTypes.NODETYPE_HST_COMPONENT.equals(nodeType)) {
-                builder.append("/");
-            } else {
+            if (NODETYPE_HST_CONTAINERCOMPONENT.equals(nodeType) || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(nodeType)) {
                 builder.append("/experiencepage/");
+            } else {
+                builder.append("/");
             }
         } else {
             builder.append("/");
