@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package org.hippoecm.hst.platform.configuration;
+
+import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -40,6 +42,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ContainerComponentConfigurationsIT extends AbstractTestConfigurations {
 
@@ -105,6 +108,13 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         final HstComponentConfiguration canonicalContainer = testComponent.getChildByName("canonicalContainer");
         assertNotNull(canonicalContainer);
         assertNotNull(canonicalContainer.getChildByName("item"));
+
+        assertNotNull("Container should have an auto-created qualifier",canonicalContainer.getQualifier());
+        try {
+            UUID.fromString(canonicalContainer.getQualifier());
+        } catch (IllegalArgumentException e) {
+            fail("Qualifier expected to be a uuid");
+        }
     }
 
     private void add_non_workspace_referencing_correct_container(final Node parent, final String containerName) throws Exception {
@@ -702,6 +712,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         componentItem.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"name1"});
         componentItem.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"value1"});
         saveSession();
+
         //hstSitesManager.invalidate();
         return highestAncestorPath;
     }
@@ -712,4 +723,5 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
     public String getLocalhostSubProjectMountId() throws RepositoryException {
         return session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite").getIdentifier();
     }
+
 }

@@ -100,12 +100,14 @@
 + * (hst:abstractcomponent)
 
 [hst:containercomponent] > hst:abstractcomponent orderable
-- hst:xtype (string) mandatory
+- hst:xtype (string)
 - hst:lockedby (string)
 - hst:lockedon (date)
 - hst:lastmodified (date)
 - hst:lastmodifiedby (string)
 - hst:label (string)
+// a qualifier is an autocreated uuid which is KEPT as-is across copies of the node
+- hst:qualifier (string) = '${fn:new-uuid()}' autocreated
 + * (hst:containeritemcomponent)
 
 [hst:containeritempackage] > nt:base, mix:referenceable orderable
@@ -136,6 +138,18 @@
 - hst:lastmodified (date)
 - hst:lastmodifiedby (string)
 + * (hst:abstractcomponent)
+
+[hst:xpage] > hst:component, hippostd:skipdraft
+- hst:xref (string)
+- hst:label (string)
+
+[hst:xpages] > nt:base, mix:referenceable
++ * (hst:xpage)
+
+
+// the mixin to set on a document variant to support XPage below it
+[hst:xpagemixin] > hippostdpubwf:audittrace mixin
++ hst:xpage (hst:xpage) = hst:xpage
 
 [hst:sitemapitemhandler] > nt:base, mix:referenceable
 - hst:sitemapitemhandlerclassname (string) mandatory
@@ -270,6 +284,7 @@
 + hst:components (hst:components) = hst:components
 + hst:abstractpages (hst:pages) = hst:pages
 + hst:pages (hst:pages) = hst:pages
++ hst:xpages (hst:xpages) = hst:xpages
 + hst:prototypepages (hst:pages) = hst:pages
 + hst:sitemap (hst:sitemap) = hst:sitemap
 + hst:templates (hst:templates) = hst:templates
@@ -481,8 +496,4 @@
 - hst:payload (string)
 
 
-[hst:page] > hst:component, hippostd:skipdraft
-
-[hst:xpage] > hippostdpubwf:audittrace mixin
-+ hst:page (hst:page) = hst:page
 

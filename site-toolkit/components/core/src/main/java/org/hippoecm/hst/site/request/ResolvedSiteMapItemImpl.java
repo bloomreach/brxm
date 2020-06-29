@@ -38,8 +38,8 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_XPAGE;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_XPAGE;
 
 /**
  * ResolvedSiteMapItemImpl
@@ -188,9 +188,9 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
 
                 final Node node = contentBean.getNode();
                 try {
-                    if (node.isNodeType(MIXINTYPE_HST_XPAGE) && node.hasNode(NODENAME_HST_PAGE)) {
+                    if (node.isNodeType(MIXINTYPE_HST_XPAGE_MIXIN) && node.hasNode(NODENAME_HST_XPAGE)) {
                         // experience page!
-                        final Node page = node.getNode(NODENAME_HST_PAGE);
+                        final Node page = node.getNode(NODENAME_HST_XPAGE);
                         // this is a node of type hst:component, fetch the hst component configuration for it
                         final ExperiencePageService experiencePageService
                                 = HippoServiceRegistry.getService(ExperiencePageService.class);
