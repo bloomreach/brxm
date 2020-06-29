@@ -30,6 +30,7 @@ import org.hippoecm.hst.configuration.model.HstNode;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_XPAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
 
@@ -219,56 +220,60 @@ public class CompositeConfigurationNodes {
 
             final String relativeInheritPath = compositeConfigurationNodeRelPath;
             final boolean isMainConfigNodeInherited = (mainConfigNode == null);
-            for (HstNode inherited : orderedRootConfigurationNodeInheritanceList) {
-                // for hst:containers the relativeInheritPath starts with hst:workspace
-                String workspaceAccountedRelativeInheritPath = relativeInheritPath;
-                if (relativeInheritPath.startsWith(NODENAME_HST_WORKSPACE)) {
-                    if (inherited.getNodeTypeName().equals(NODETYPE_HST_WORKSPACE)) {
-                        log.debug("Merging explicitly inherited workspace configuration for '{}'",
-                                inherited.getValueProvider().getPath());
-                        // hst:inheritsfrom is something like ../common/hst:workspace
+            if (compositeConfigurationNodeRelPath.endsWith(NODENAME_HST_XPAGES)) {
+                log.debug("For config node '{}' we do not support inheritance", NODENAME_HST_XPAGES);
+            } else {
+                for (HstNode inherited : orderedRootConfigurationNodeInheritanceList) {
+                    // for hst:containers the relativeInheritPath starts with hst:workspace
+                    String workspaceAccountedRelativeInheritPath = relativeInheritPath;
+                    if (relativeInheritPath.startsWith(NODENAME_HST_WORKSPACE)) {
+                        if (inherited.getNodeTypeName().equals(NODETYPE_HST_WORKSPACE)) {
+                            log.debug("Merging explicitly inherited workspace configuration for '{}'",
+                                    inherited.getValueProvider().getPath());
+                            // hst:inheritsfrom is something like ../common/hst:workspace
 
-                        // remove the hst:workspace part : in inherited HstNode already
-                        workspaceAccountedRelativeInheritPath = relativeInheritPath.substring(NODENAME_HST_WORKSPACE.length() + 1);
-                    } else if (inherited.getParent().getNodeTypeName().equals(NODETYPE_HST_WORKSPACE)
-                            && inherited.getValueProvider().getPath().endsWith(relativeInheritPath)) {
+                            // remove the hst:workspace part : in inherited HstNode already
+                            workspaceAccountedRelativeInheritPath = relativeInheritPath.substring(NODENAME_HST_WORKSPACE.length() + 1);
+                        } else if (inherited.getParent().getNodeTypeName().equals(NODETYPE_HST_WORKSPACE)
+                                && inherited.getValueProvider().getPath().endsWith(relativeInheritPath)) {
 
-                        log.debug("Merging explicitly inherited workspace configuration for '{}'",
-                                inherited.getValueProvider().getPath());
-                        // hst:inheritsfrom is something like ../common/hst:workspace/hst:pages
-                        workspaceAccountedRelativeInheritPath = "";
+                            log.debug("Merging explicitly inherited workspace configuration for '{}'",
+                                    inherited.getValueProvider().getPath());
+                            // hst:inheritsfrom is something like ../common/hst:workspace/hst:pages
+                            workspaceAccountedRelativeInheritPath = "";
 
-                    } else {
-                        log.debug("Do not merge workspace nodes since not explicitly inherited");
-                        continue;
+                        } else {
+                            log.debug("Do not merge workspace nodes since not explicitly inherited");
+                            continue;
+                        }
+                    } else if (inherited.getParent().getNodeTypeName().equals(NODETYPE_HST_WORKSPACE)) {
+                        if (inherited.getValueProvider().getPath().endsWith(relativeInheritPath)) {
+                            log.debug("Merging explicitly inherited workspace child configuration for '{}'",
+                                    inherited.getValueProvider().getPath());
+                            // hst:inheritsfrom is something like ../common/hst:workspace/hst:pages
+                            workspaceAccountedRelativeInheritPath = "";
+                        } else {
+                            log.debug("Do not merge workspace nodes '{}' since '{}' is explicitly inherited",
+                                    relativeInheritPath, inherited.getValueProvider().getPath());
+                            continue;
+                        }
                     }
-                } else if (inherited.getParent().getNodeTypeName().equals(NODETYPE_HST_WORKSPACE)) {
-                    if (inherited.getValueProvider().getPath().endsWith(relativeInheritPath)) {
-                        log.debug("Merging explicitly inherited workspace child configuration for '{}'",
-                                inherited.getValueProvider().getPath());
-                        // hst:inheritsfrom is something like ../common/hst:workspace/hst:pages
-                        workspaceAccountedRelativeInheritPath = "";
+                    if (mainConfigNode == null) {
+                        if (workspaceAccountedRelativeInheritPath.isEmpty()) {
+                            mainConfigNode = inherited;
+                        } else {
+                            mainConfigNode = inherited.getNode(workspaceAccountedRelativeInheritPath);
+                        }
                     } else {
-                        log.debug("Do not merge workspace nodes '{}' since '{}' is explicitly inherited",
-                                relativeInheritPath, inherited.getValueProvider().getPath());
-                        continue;
-                    }
-                }
-                if (mainConfigNode == null) {
-                    if (workspaceAccountedRelativeInheritPath.isEmpty()) {
-                        mainConfigNode = inherited;
-                    } else {
-                        mainConfigNode = inherited.getNode(workspaceAccountedRelativeInheritPath);
-                    }
-                } else {
-                    HstNode inheritedMainConfigNode;
-                    if (workspaceAccountedRelativeInheritPath.isEmpty()) {
-                        inheritedMainConfigNode = inherited;
-                    } else {
-                        inheritedMainConfigNode = inherited.getNode(workspaceAccountedRelativeInheritPath);
-                    }
-                    if (inheritedMainConfigNode != null) {
-                        fallbackMainConfigNodes.add(inheritedMainConfigNode);
+                        HstNode inheritedMainConfigNode;
+                        if (workspaceAccountedRelativeInheritPath.isEmpty()) {
+                            inheritedMainConfigNode = inherited;
+                        } else {
+                            inheritedMainConfigNode = inherited.getNode(workspaceAccountedRelativeInheritPath);
+                        }
+                        if (inheritedMainConfigNode != null) {
+                            fallbackMainConfigNodes.add(inheritedMainConfigNode);
+                        }
                     }
                 }
             }
