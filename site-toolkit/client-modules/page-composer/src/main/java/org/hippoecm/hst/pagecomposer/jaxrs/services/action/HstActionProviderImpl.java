@@ -46,6 +46,7 @@ public class HstActionProviderImpl implements ActionProvider {
 
     private Stream<HstAction> pageActions(final PageComposerContextService contextService) {
         return contextService.getEditingPreviewChannel().isConfigurationLocked()
+                || contextService.isExperiencePageRequest()
                 ? Stream.empty()
                 : HstAction.actions(page());
     }
