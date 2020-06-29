@@ -191,9 +191,10 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
      *                           HstComponentsConfigurationService} will be
      *                           returned if present in cache  @return a {@link HstComponentsConfigurationService}
      *                           instance or <code>null</code> when no found for <code>configurationPath</code>
+     * @param websiteClassloader Classloader of the website for which components configuration is initialized
      */
     public synchronized HstComponentsConfiguration getComponentsConfiguration(final String configurationPath,
-                                                                 final boolean createIfNotInCache) throws ModelLoadingException {
+                                                                 final boolean createIfNotInCache, final ClassLoader websiteClassloader) throws ModelLoadingException {
 
         final CompositeConfigurationNodes ccn = getCompositeConfigurationNodes(configurationPath,
                 HstNodeTypes.NODENAME_HST_ABSTRACTPAGES,
@@ -226,7 +227,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
         }
 
 
-        hstComponentsConfiguration = new HstComponentsConfigurationService(ccn, commonCatalogItems.orNull());
+        hstComponentsConfiguration = new HstComponentsConfigurationService(ccn, commonCatalogItems.orNull(), websiteClassloader);
         final List<String> events = ccn.getCompositeConfigurationDependencyPaths();
 
         // the commmon catalog, default at /hst:hst/hst:configurations/hst:catalog is a special node that is always included

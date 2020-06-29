@@ -33,8 +33,11 @@ import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT;
@@ -50,7 +53,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
      * canonicalComponentConfigurations are component configurations that are retrievable through getComponentConfiguration(String id),
      * They are the HstComponentConfiguration items that are not the result of enhancing but present without enhancing
      */
-    private Map<String, HstComponentConfiguration> canonicalComponentConfigurations;
+    private final Map<String, HstComponentConfiguration> canonicalComponentConfigurations;
 
     /*
      * prototypePages are component configurations that are retrievable through getComponentConfiguration(String id) and are directly
@@ -72,7 +75,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private final Map<String, Template> templateResourceMap;
 
     public HstComponentsConfigurationService(final CompositeConfigurationNodes ccn,
-                                             final List<HstComponentConfiguration> commonCatalogItem) throws ModelLoadingException {
+                                             final List<HstComponentConfiguration> commonCatalogItem,
+                                             final ClassLoader websiteClassLoader) throws ModelLoadingException {
 
         id = ccn.getConfigurationRootNode().getValueProvider().getPath();
 
@@ -112,7 +116,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
         if (catalog != null) {
             log.debug("Initializing the catalog");
-            initCatalog(catalog, rootConfigurationPathPrefix);
+            initCatalog(catalog, rootConfigurationPathPrefix, websiteClassLoader);
         }
 
         if (commonCatalogItem != null) {
@@ -146,17 +150,23 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         
         templateResourceMap = Collections.unmodifiableMap(getTemplateResourceMap(ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_TEMPLATES)));
 
-        enhanceComponentTree(templateResourceMap, nonPrototypeRootComponents);
-
+        enhanceComponentTree(templateResourceMap, nonPrototypeRootComponents, websiteClassLoader);
     }
 
-    private void enhanceComponentTree(Map<String, Template> templateResourceMap, final List<HstComponentConfiguration> childComponents) {
+    private void enhanceComponentTree(Map<String, Template> templateResourceMap, final List<HstComponentConfiguration> childComponents, ClassLoader websiteClassLoader) {
         // merging referenced components:  to avoid circular population, hold a list of already populated configs
         List<HstComponentConfiguration> populated = new ArrayList<HstComponentConfiguration>();
         for (HstComponentConfiguration child : canonicalComponentConfigurations.values()) {
             if (!populated.contains(child)) {
-                ((HstComponentConfigurationService) child).populateComponentReferences(canonicalComponentConfigurations,
-                        populated);
+                if (isNotEmpty(child.getComponentDefinition())) {
+                    ((HstComponentConfigurationService) child).populateCatalogItemReference(availableContainerItems);
+                } else {
+                    //Legacy component instances support. If component instance does not have a component definition reference,
+                    //explicitly populate component parameters
+                    ((HstComponentConfigurationService) child).populateAnnotationComponentParameters(websiteClassLoader);
+                    ((HstComponentConfigurationService) child).populateComponentReferences(canonicalComponentConfigurations,
+                            populated);
+                }
             }
         }
 
@@ -281,7 +291,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     }
     
     private void initCatalog(final CompositeConfigurationNodes.CompositeConfigurationNode catalog,
-                             final String rootConfigurationPathPrefix) {
+                             final String rootConfigurationPathPrefix, ClassLoader websiteClassLoader) {
         
         for(HstNode itemPackage :catalog.getCompositeChildren().values()){
             if(HstNodeTypes.NODETYPE_HST_CONTAINERITEM_PACKAGE.equals(itemPackage.getNodeTypeName())) {
@@ -290,9 +300,14 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                     {
                         try {
                             // create a HstComponentConfigurationService that does not traverse to descendant components: this is not needed for the catalog. Hence, the argument 'false'
-                            HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(containerItem,
-                                    null, HstNodeTypes.NODENAME_HST_COMPONENTS , true, null, rootConfigurationPathPrefix, null);
+                            //TODO SS: Support hst:compontentdefinition property at catalog item level
+                            //Calculate template ID
+                            final String componentId = createCatalogItemId(containerItem);
+                            final HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(containerItem,
+                                    null, HstNodeTypes.NODENAME_HST_COMPONENTS , true, null, rootConfigurationPathPrefix, componentId);
+                            componentConfiguration.populateAnnotationComponentParameters(websiteClassLoader);
                             availableContainerItems.add(componentConfiguration);
+
                             log.debug("Added catalog component to availableContainerItems with key '{}'", componentConfiguration.getId());
                         } catch (ModelLoadingException e) {
                             if (log.isDebugEnabled()) {
@@ -312,6 +327,11 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                         (HstNodeTypes.NODETYPE_HST_CONTAINERITEM_PACKAGE));
             }
         }
+    }
+
+    private String createCatalogItemId(final HstNode containerItem) {
+        final JcrPath catalogItemJcrPath = JcrPaths.getPath(containerItem.getValueProvider().getPath());
+        return catalogItemJcrPath.subpath(catalogItemJcrPath.getSegmentCount() - 2).toString().substring(1);
     }
 
     private Map<String, Template> getTemplateResourceMap(CompositeConfigurationNodes.CompositeConfigurationNode templateNodes) throws ModelLoadingException {

@@ -20,10 +20,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.util.PropertyParser;
@@ -126,6 +128,16 @@ public class ComponentConfigurationImpl implements ComponentConfiguration {
 
     public String getParametersInfoClassName() {
         return componentConfiguration.getParametersInfoClassName();
+    }
+
+    @Override
+    public List<DynamicParameter> getDynamicComponentParameters() {
+        return componentConfiguration.getDynamicComponentParameters();
+    }
+
+    @Override
+    public Optional<DynamicParameter> getDynamicComponentParameter(String name) {
+        return componentConfiguration.getDynamicComponentParameter(name);
     }
 
     @Override

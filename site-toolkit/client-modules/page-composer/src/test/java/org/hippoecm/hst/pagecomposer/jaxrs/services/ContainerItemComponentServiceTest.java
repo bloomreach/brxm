@@ -16,9 +16,13 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -28,17 +32,27 @@ import javax.xml.bind.JAXBException;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.mock.configuration.components.MockHstComponentConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
+import org.hippoecm.hst.platform.configuration.components.DynamicComponentParameter;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockNodeFactory;
 
+import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -79,7 +93,46 @@ public class ContainerItemComponentServiceTest extends AbstractPageComposerTest{
     private void configureMockContainerItemComponent(final Node node) throws RepositoryException {
         EasyMock.expect(mockPageComposerContextService.getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT))
                 .andReturn(node).anyTimes();
+
+        Mount editingMount = createMock(Mount.class);
+        HstSite hstSite = createMock(HstSite.class);
+        HstComponentsConfiguration componentsConfiguration = createMock(HstComponentsConfiguration.class);
+        EasyMock.expect(mockPageComposerContextService.getEditingMount())
+                .andReturn(editingMount).anyTimes();
+
+        EasyMock.expect(editingMount.getHstSite())
+                .andReturn(hstSite).anyTimes();
+
+        EasyMock.expect(hstSite.getComponentsConfiguration())
+                .andReturn(componentsConfiguration).anyTimes();
+
+        final List<Parameter> parameters = Arrays.stream(DummyInfo.class.getMethods()).map(x -> x.getAnnotation(Parameter.class)).collect(Collectors.toList());
+
+        final MockHstComponentConfiguration componentReference = new MockHstComponentConfiguration("id");
+        componentReference.setComponentClassName(DummyComponent.class.getName());
+        componentReference.setCanonicalStoredLocation("/");
+        List<DynamicParameter> dynamicParameters = getDynamicParameters(parameters);
+        componentReference.setDynamicComponentParameters(dynamicParameters);
+        final HashMap<String, HstComponentConfiguration> componentConfigurations = new HashMap<>();
+        componentConfigurations.put("/", componentReference);
+
+        EasyMock.expect(componentsConfiguration.getComponentConfigurations())
+                .andReturn(componentConfigurations).anyTimes();
+
         EasyMock.replay(mockPageComposerContextService);
+        EasyMock.replay(editingMount);
+        EasyMock.replay(hstSite);
+        EasyMock.replay(componentsConfiguration);
+    }
+
+    @NotNull
+    private List<DynamicParameter> getDynamicParameters(List<Parameter> parameters) {
+        List<DynamicParameter> dynamicParameters = new ArrayList<>();
+        for (Parameter parameter : parameters) {
+            DynamicParameter dynamicParameter = new DynamicComponentParameter(parameter, "STRING");
+            dynamicParameters.add(dynamicParameter);
+        }
+        return dynamicParameters;
     }
 
     @Test

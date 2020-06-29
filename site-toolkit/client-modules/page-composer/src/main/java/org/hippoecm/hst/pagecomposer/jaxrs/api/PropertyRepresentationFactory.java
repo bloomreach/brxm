@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import javax.jcr.Node;
 
-import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
@@ -28,8 +27,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 public interface PropertyRepresentationFactory {
 
     /**
-     *
-     * @param parametersInfo
      * @param locale
      * @param contentPath
      * @param prefix
@@ -43,7 +40,6 @@ public interface PropertyRepresentationFactory {
      * @throws {@link java.lang.RuntimeException} in case some unexpected exception occurs
      */
     ContainerItemComponentPropertyRepresentation createProperty(
-            final ParametersInfo parametersInfo,
             final Locale locale,
             final String contentPath,
             final String prefix,

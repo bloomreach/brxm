@@ -15,12 +15,16 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.mock.configuration.components.MockHstComponentConfiguration;
 import org.junit.Test;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_PARAMETER_PREFIX;
@@ -60,9 +64,12 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"bar"});
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"barValue"});
 
+        final MockHstComponentConfiguration componentReference = createComponentReference();
+
         List<ContainerItemComponentPropertyRepresentation> properties =
-                getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper, propertyPresentationFactories);
+                getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
+                        containerItemNode, helper, propertyPresentationFactories, componentReference);
+
         assertEquals(1, properties.size());
         final ContainerItemComponentPropertyRepresentation prop = properties.get(0);
         assertEquals("bar", prop.getName());
@@ -75,10 +82,12 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"bar"});
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"barValue"});
 
+        final MockHstComponentConfiguration componentReference = createComponentReference();
+
         {
             List<ContainerItemComponentPropertyRepresentation> prefixedProperties =
-                    getPopulatedProperties(parameterInfo, null, null, "some-prefix",
-                            containerItemNode, helper, propertyPresentationFactories);
+                    getPopulatedProperties(parameterInfo.type(), null, null, "some-prefix",
+                            containerItemNode, helper, propertyPresentationFactories, componentReference);
 
             assertEquals(1, prefixedProperties.size());
             final ContainerItemComponentPropertyRepresentation prefixedProp = prefixedProperties.get(0);
@@ -92,8 +101,8 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
 
         {
             List<ContainerItemComponentPropertyRepresentation> prefixedProperties =
-                    getPopulatedProperties(parameterInfo, null, null, "some-prefix",
-                            containerItemNode, helper, propertyPresentationFactories);
+                    getPopulatedProperties(parameterInfo.type(), null, null, "some-prefix",
+                            containerItemNode, helper, propertyPresentationFactories, componentReference);
 
 
             final ContainerItemComponentPropertyRepresentation prefixedProp = prefixedProperties.get(0);

@@ -31,6 +31,7 @@ import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.mock.configuration.components.MockHstComponentConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.property.SwitchTemplatePropertyRepresentationFactory;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.junit.After;
@@ -106,10 +107,11 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
 
     @Test
     public void no_template_variants() throws RepositoryException {
+        final MockHstComponentConfiguration componentReference = createComponentReference();
 
         List<ContainerItemComponentPropertyRepresentation> properties =
-                getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper, propertyPresentationFactories);
+                getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
+                        containerItemNode, helper, propertyPresentationFactories, componentReference);
 
         // because *no* template variants present, no 'switchTemplate' ContainerItemComponentPropertyRepresentation
         // is avaible
@@ -130,9 +132,10 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         layoutFolder.addNode("layout-variant1.ftl","nt:file").addNode("jcr:content", "nt:resource");
         layoutFolder.addNode("layout-variant2.ftl","nt:file").addNode("jcr:content", "nt:resource");
 
+        final MockHstComponentConfiguration componentReference = createComponentReference();
         List<ContainerItemComponentPropertyRepresentation> properties =
-                getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper, propertyPresentationFactories);
+                getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
+                        containerItemNode, helper, propertyPresentationFactories, componentReference);
 
         // because there are variants for templates available, there must be added a
         // 'switchTemplate' ContainerItemComponentPropertyRepresentation
@@ -180,11 +183,11 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         layoutFolder.addNode("layout-variant2.ftl","nt:file").addNode("jcr:content", "nt:resource");
 
         Locale[] locales = new Locale[]{null, Locale.FRENCH, Locale.FRANCE};
-
+        final MockHstComponentConfiguration componentReference = createComponentReference();
         for (Locale locale : locales) {
             List<ContainerItemComponentPropertyRepresentation> properties =
-                    getPopulatedProperties(parameterInfo, locale, null, DEFAULT_PARAMETER_PREFIX,
-                            containerItemNode, helper, propertyPresentationFactories);
+                    getPopulatedProperties(parameterInfo.type(), locale, null, DEFAULT_PARAMETER_PREFIX,
+                            containerItemNode, helper, propertyPresentationFactories, componentReference);
 
             String[] expectedSortedDisplayValues = {
                     "layout.ftl",
@@ -215,11 +218,11 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         }
 
         Locale[] locales = new Locale[]{null, new Locale(""), Locale.FRENCH, Locale.FRANCE};
-
+        final MockHstComponentConfiguration componentReference = createComponentReference();
         for (Locale locale : locales) {
             List<ContainerItemComponentPropertyRepresentation> properties =
-                    getPopulatedProperties(parameterInfo, locale, null, DEFAULT_PARAMETER_PREFIX,
-                            containerItemNode, helper, propertyPresentationFactories);
+                    getPopulatedProperties(parameterInfo.type(), locale, null, DEFAULT_PARAMETER_PREFIX,
+                            containerItemNode, helper, propertyPresentationFactories, componentReference);
 
             String[] expectedSortedDisplayValues = {
                     "Layout",
@@ -246,9 +249,10 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         layoutFolder.addNode("layout-variant1.XXX","nt:file").addNode("jcr:content", "nt:resource");
         layoutFolder.addNode("layout-variant2.YYY","nt:file").addNode("jcr:content", "nt:resource");
 
+        final MockHstComponentConfiguration componentReference = createComponentReference();
         List<ContainerItemComponentPropertyRepresentation> properties =
-                getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper, propertyPresentationFactories);
+                getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
+                        containerItemNode, helper, propertyPresentationFactories, componentReference);
         // because *no* template variants that end with .ftl are present, no 'switchTemplate' ContainerItemComponentPropertyRepresentation
         // is avaible
         assertEquals(1, properties.size());
@@ -256,8 +260,8 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
 
         layoutFolder.addNode("layout-variant2.ftl","nt:file").addNode("jcr:content", "nt:resource");
         List<ContainerItemComponentPropertyRepresentation> propertiesNew =
-                getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper, propertyPresentationFactories);
+                getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
+                        containerItemNode, helper, propertyPresentationFactories, componentReference);
 
         assertEquals(2, propertiesNew.size());
     }
@@ -277,9 +281,11 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         layoutFolder.addNode("layout-variant1.ftl","nt:file").addNode("jcr:content", "nt:resource");
         layoutFolder.addNode("layout-variant2.ftl","nt:file").addNode("jcr:content", "nt:resource");
 
+        final MockHstComponentConfiguration componentReference = createComponentReference();
+
         List<ContainerItemComponentPropertyRepresentation> properties =
-                getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper, propertyPresentationFactories);
+                getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
+                        containerItemNode, helper, propertyPresentationFactories, componentReference);
 
         // 'switchTemplate' ContainerItemComponentPropertyRepresentation is *always* the first
         final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
@@ -302,9 +308,10 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         layoutFolder.addNode("layout-variant1.ftl","nt:file").addNode("jcr:content", "nt:resource");
         layoutFolder.addNode("layout-variant2.ftl","nt:file").addNode("jcr:content", "nt:resource");
 
+        final MockHstComponentConfiguration componentReference = createComponentReference();
         List<ContainerItemComponentPropertyRepresentation> properties =
-                getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper, propertyPresentationFactories);
+                getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
+                        containerItemNode, helper, propertyPresentationFactories, componentReference);
 
 
         // 'switchTemplate' ContainerItemComponentPropertyRepresentation is *always* the first
@@ -332,8 +339,8 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
 
         // and for NL
         List<ContainerItemComponentPropertyRepresentation> propertiesNL =
-                getPopulatedProperties(parameterInfo, new Locale("nl"), null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper, propertyPresentationFactories);
+                getPopulatedProperties(parameterInfo.type(), new Locale("nl"), null, DEFAULT_PARAMETER_PREFIX,
+                        containerItemNode, helper, propertyPresentationFactories, componentReference);
 
         final ContainerItemComponentPropertyRepresentation switchTemplatePropNL = propertiesNL.get(0);
         String[] expectedDisplayValuesNL = {
@@ -352,6 +359,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES,
                 new String[]{"barValue", "webfile:/ftl/main/layout/non-existing.ftl"});
 
+        final MockHstComponentConfiguration componentReference = createComponentReference();
 
         for (int i = 0; i < 2; i++) {
             if (i == 1) {
@@ -362,8 +370,8 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
             }
 
             List<ContainerItemComponentPropertyRepresentation> properties =
-                    getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                            containerItemNode, helper, propertyPresentationFactories);
+                    getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
+                            containerItemNode, helper, propertyPresentationFactories, componentReference);
 
             // even though there are no variant ftl templates, we still have the switchTemplateProp because there is a
             // value for TEMPLATE_PARAM_NAME param. If in this case we would not add a switchTemplateProp, then from the
@@ -410,10 +418,12 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
 
         Locale[] locales = new Locale[]{null, new Locale(""), Locale.FRENCH, Locale.FRANCE};
 
+        final MockHstComponentConfiguration componentReference = createComponentReference();
+
         for (Locale locale : locales) {
             List<ContainerItemComponentPropertyRepresentation> properties =
-                    getPopulatedProperties(parameterInfo, locale, null, DEFAULT_PARAMETER_PREFIX,
-                            containerItemNode, helper, propertyPresentationFactories);
+                    getPopulatedProperties(parameterInfo.type(), locale, null, DEFAULT_PARAMETER_PREFIX,
+                            containerItemNode, helper, propertyPresentationFactories, componentReference);
 
             final String[] expectedSortedDisplayValues;
 
@@ -472,12 +482,13 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         layoutFolder.addNode("layout-variant1.ftl","nt:file").addNode("jcr:content", "nt:resource");
         layoutFolder.addNode("layout-variant2.ftl","nt:file").addNode("jcr:content", "nt:resource");
 
+        final MockHstComponentConfiguration componentReference = createComponentReference();
         {
             // DEFAULT PREFIX
             String prefix = null;
             List<ContainerItemComponentPropertyRepresentation> properties =
-                    getPopulatedProperties(parameterInfo, null, null, DEFAULT_PARAMETER_PREFIX,
-                            containerItemNode, helper, propertyPresentationFactories);
+                    getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
+                            containerItemNode, helper, propertyPresentationFactories, componentReference);
 
             // 'switchTemplate' ContainerItemComponentPropertyRepresentation is *always* the first
             final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);
@@ -489,8 +500,8 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
             // "some-prefix"
             String prefix = null;
             List<ContainerItemComponentPropertyRepresentation> properties =
-                    getPopulatedProperties(parameterInfo, null, null, "some-prefix",
-                            containerItemNode, helper, propertyPresentationFactories);
+                    getPopulatedProperties(parameterInfo.type(), null, null, "some-prefix",
+                            containerItemNode, helper, propertyPresentationFactories, componentReference);
 
             // 'switchTemplate' ContainerItemComponentPropertyRepresentation is *always* the first
             final ContainerItemComponentPropertyRepresentation switchTemplateProp = properties.get(0);

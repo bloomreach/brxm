@@ -34,7 +34,6 @@ import javax.jcr.Session;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ParameterType;
@@ -143,8 +142,7 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
     }
 
     @Override
-    public ContainerItemComponentPropertyRepresentation createProperty(final ParametersInfo parametersInfo,
-                                                                       final Locale locale,
+    public ContainerItemComponentPropertyRepresentation createProperty(final Locale locale,
                                                                        final String contentPath,
                                                                        final String prefix,
                                                                        final Node containerItemNode,

@@ -1,0 +1,123 @@
+/*
+ *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.hst.component.support.bean.dynamic;
+
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.configuration.components.DynamicComponentInfo;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
+import org.hippoecm.hst.configuration.components.ImageSetPathParameterConfig;
+import org.hippoecm.hst.configuration.components.JcrPathParameterConfig;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+
+/**
+ * An HST component implementation that provides dynamic behavior on top of the {@link BaseHstComponent}.
+ *
+ * <p>
+ * Any subclass of this class must include the annotation {@link ParametersInfo}, which must specify the interface
+ * {@link DynamicComponentInfo} or an extension of it as its {@link ParametersInfo#type()}.
+ * </p>
+ * <p>
+ * The component exposes all its params:
+ *      In Page Model API it's handled by the API itself.
+ *      For FTL, the component sets the parameters in the request, using the attribute
+ *          "org.hippoecm.hst.utilsParameterUtils.parametersInfo".
+ * </p>
+ * <p>
+ * The component also finds all parameters of type JcrPath and ImageSetPath, resolves the beans that are referenced and
+ * sets those beans as separate models in the request, each by the name of its parameter.
+ * </p>
+ * <p>
+ * In Page Model API, these will appear as top level {parametername - ref} entries under attribute "models", for example:
+ * <pre>
+ *     models: {
+ *         document1: {ref: "xxx" },
+ *         document2: {ref: "yyy" }
+ *     }
+ * </pre>
+ * </p>
+ * <p>
+ * In FTL, they are accessible via FTL's expression language, for example:
+ * <code>${document1.title?html}</code>
+ *</p>
+ * @version $Id$
+ */
+@ParametersInfo(type = DynamicComponentInfo.class)
+public class BaseHstDynamicComponent extends BaseHstComponent {
+
+    private static Logger log = LoggerFactory.getLogger(BaseHstDynamicComponent.class);
+
+    @Override
+    public void doBeforeRender(final HstRequest request, final HstResponse response) throws HstComponentException {
+        super.doBeforeRender(request, response);
+
+        DynamicComponentInfo componentParametersInfo = getComponentParametersInfo(request);
+
+        processParams(componentParametersInfo, request);
+    }
+
+    /**
+     * Process the component parameters
+     *
+     * Resolves beans of all parameters of type JcrPath or ImageSetPath and sets them
+     * as separate models into the request.
+     *
+     * @param componentParametersInfo The configuration of the current component
+     * @param request      HstRequest
+     */
+    protected void processParams(final DynamicComponentInfo componentParametersInfo, final HstRequest request) {
+        for (DynamicParameter param: componentParametersInfo.getDynamicComponentParameters()) {
+            try {
+                if (param.getComponentParameterConfig() instanceof JcrPathParameterConfig) {
+                    request.setModel(param.getName(),
+                            getContentBeanForPath(getComponentParameter(param.getName()), request));
+                } else if (param.getComponentParameterConfig() instanceof ImageSetPathParameterConfig) {
+                    ObjectBeanManager objectBeanManager = request.getRequestContext().getObjectBeanManager();
+                    Object image = objectBeanManager.getObject(getComponentParameter(param.getName()));
+                    request.setModel(param.getName(), image);
+                }
+            } catch (ObjectBeanManagerException obme) {
+                log.error("Problem fetching or converting bean", obme);
+            }
+        }
+    }
+
+    /**
+     * Finds a HippoBean for a given path. If path is null or empty, null will be returned
+     *
+     * @param documentPath relative document (content) path
+     * @param request      HstRequest
+     * @return bean for the specified path
+     */
+    protected HippoBean getContentBeanForPath(final String documentPath, HstRequest request) {
+        final HstRequestContext context = request.getRequestContext();
+        if (!Strings.isNullOrEmpty(documentPath)) {
+            final HippoBean root = context.getSiteContentBaseBean();
+            return root.getBean(documentPath);
+        }
+        return null;
+    }
+}

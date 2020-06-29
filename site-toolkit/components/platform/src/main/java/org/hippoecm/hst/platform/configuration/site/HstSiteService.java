@@ -44,6 +44,7 @@ import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.platform.linking.LocationMapTreeComponentDocuments;
 import org.hippoecm.hst.platform.linking.LocationMapTreeSiteMap;
 import org.hippoecm.hst.site.HstServices;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,7 @@ public class HstSiteService implements HstSite {
     private String configurationPath;
     private MountSiteMapConfiguration mountSiteMapConfiguration;
     private final HstConfigurationLoadingCache hstConfigurationLoadingCache;
+    private final ClassLoader websiteClassloader;
 
     HstSiteService(final HstNode site,
                    final Mount mount,
@@ -85,6 +87,8 @@ public class HstSiteService implements HstSite {
         name = site.getValueProvider().getName();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         this.mountSiteMapConfiguration = mountSiteMapConfiguration;
+        this.websiteClassloader = HippoWebappContextRegistry.get().getContext(mountSiteMapConfiguration.getContextPath())
+                .getServletContext().getClassLoader();
         findAndSetConfigurationPath(site, hstNodeLoadingCache, isPreviewSite);
         init(site, mount, isPreviewSite, hstNodeLoadingCache, null);
     }
@@ -109,6 +113,8 @@ public class HstSiteService implements HstSite {
         name = site.getValueProvider().getName();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         this.mountSiteMapConfiguration = mountSiteMapConfiguration;
+        this.websiteClassloader = HippoWebappContextRegistry.get().getContext(mountSiteMapConfiguration.getContextPath())
+                .getServletContext().getClassLoader();
         this.configurationPath = configurationPath;
         if (configurationPath.endsWith("-preview")) {
             hasPreviewConfiguration = true;
@@ -146,7 +152,8 @@ public class HstSiteService implements HstSite {
 
         loadChannel(site, mount, isPreviewSite, hstNodeLoadingCache, master);
 
-        HstComponentsConfiguration ccs = hstConfigurationLoadingCache.getComponentsConfiguration(configurationPath, false);
+        HstComponentsConfiguration ccs = hstConfigurationLoadingCache.getComponentsConfiguration(configurationPath,
+                false, websiteClassloader);
         if (ccs != null) {
             log.debug("Reusing cached HstComponentsConfiguration for '{}'", configurationPath);
             componentsConfiguration = Optional.of(ccs);
@@ -300,7 +307,8 @@ public class HstSiteService implements HstSite {
             }
             try {
                 long start = System.currentTimeMillis();
-                HstComponentsConfiguration ccs = hstConfigurationLoadingCache.getComponentsConfiguration(configurationPath, true);
+                HstComponentsConfiguration ccs = hstConfigurationLoadingCache.getComponentsConfiguration(configurationPath,
+                        true, websiteClassloader);
                 componentsConfiguration = Optional.of(ccs);
                 if (siteMap != null) {
                     checkAndLogAccessibleRootComponents(ccs, siteMap.get());
