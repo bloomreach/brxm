@@ -46,9 +46,7 @@
   <properties>
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
     <hippo.cms.version>${hippo.release.version}</hippo.cms.version>
-    <hippo.plugin.selections.version>${hippo.release.version}</hippo.plugin.selections.version>
-
-    <testng.version>6.0.1</testng.version>
+    <hippo.plugin.selections.version>${hippo.release.version}</hippo.plugin.selections.version>    
   </properties>
 
   <repositories>
@@ -100,14 +98,7 @@
         <artifactId>hippo-plugin-selections-addon-cms</artifactId>
         <version>${hippo.plugin.selections.version}</version>
         <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.testng</groupId>
-        <artifactId>testng</artifactId>
-        <version>${testng.version}</version>
-        <scope>test</scope>
-      </dependency>
+      </dependency>      
 
     </dependencies>
   </dependencyManagement>
