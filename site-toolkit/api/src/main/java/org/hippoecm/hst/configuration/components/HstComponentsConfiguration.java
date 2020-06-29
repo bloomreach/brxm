@@ -57,6 +57,11 @@ public interface HstComponentsConfiguration {
         public Map<String, HstComponentConfiguration> getPrototypePages() {
             return Collections.emptyMap();
         }
+
+        @Override
+        public Map<String, HstComponentConfiguration> getXPages() {
+            return Collections.emptyMap();
+        }
     };
 
     /**
@@ -105,9 +110,18 @@ public interface HstComponentsConfiguration {
     Map<String, HstComponentConfiguration> getPrototypePages();
 
     /**
+     * @return the map of {@link HstComponentConfiguration}s that are xpage layouts where the keys are the names of the
+     * XPage node names (since XPages are only allowed below a single hst configuration node without inheriting from
+     * parent configurations, the node name is unique within a {@link HstComponentsConfiguration}). Unmodifiable
+     *         instance will be returned. Empty map will be returned if no xpages are available
+     */
+    Map<String, HstComponentConfiguration>  getXPages();
+
+    /**
      * @return a depth-first stream of all {@code childComponents} plus their descendants
      */
     default Stream<HstComponentConfiguration> flattened(final List<HstComponentConfiguration> childComponents) {
         return childComponents.stream().flatMap(HstComponentConfiguration::flattened);
     }
+
 }
