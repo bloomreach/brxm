@@ -33,7 +33,7 @@ public class XPageLayoutContainer extends WebMarkupContainer {
     public XPageLayoutContainer(final String id, final IModel<IXPageLayout> xPageLayoutModel
             , final IModel<List<IXPageLayout>> xPageLayoutListModel) {
         super(id, xPageLayoutModel);
-        final IModel<String> xPageLayoutLabelModel = ResourceBundleModel.of(HIPPO_CMS_XPAGES,"x-page-layout");
+        final IModel<String> xPageLayoutLabelModel = ResourceBundleModel.of(HIPPO_CMS_XPAGES, "x-page-layout");
         final Label xPageLayoutLabel = new Label("xpage-layout-label", xPageLayoutLabelModel);
         add(xPageLayoutLabel);
         final DropDownChoice<IXPageLayout> pageLayoutDropDownChoice = new DropDownChoice<IXPageLayout>(
