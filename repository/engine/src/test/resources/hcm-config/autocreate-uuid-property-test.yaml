@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /autocreate-test:
+      jcr:primaryType: nt:unstructured
+      /autocreate-uuid-node:
+        jcr:primaryType: hippo:testcardocument
+      /bootstrapped-autocreate-node:
+        jcr:primaryType: hippo:testcardocument
+        hippo:uuid: bootstrapped-fixed
