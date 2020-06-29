@@ -32,6 +32,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Action;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService;
 
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
 
 @Path("/hst:component/")
 public class ComponentResource extends AbstractConfigResource {
@@ -44,7 +45,7 @@ public class ComponentResource extends AbstractConfigResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
+    @PrivilegesAllowed({CHANNEL_VIEWER_PRIVILEGE_NAME, XPAGE_REQUIRED_PRIVILEGE_NAME})
     public Object getActions(@QueryParam("unwrapped") boolean unwrapped) {
         if (unwrapped) {
             return getActionsRepresentation();
