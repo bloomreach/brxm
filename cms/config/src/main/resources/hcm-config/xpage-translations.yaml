@@ -1,7 +1,0 @@
-definitions:
-  config:
-    /hippo:configuration/hippo:translations/hippo:cms/xpage:
-      jcr:primaryType: hipposys:resourcebundles
-      /en:
-        jcr:primaryType: hipposys:resourcebundle
-        x-page-layout: Xpage layout
