@@ -33,7 +33,6 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import javax.jcr.AccessDeniedException;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -50,8 +49,6 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionManager;
 
-import org.apache.commons.lang3.StringUtils;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Folder;
 import org.hippoecm.repository.api.HierarchyResolver;
@@ -128,12 +125,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     private static final Logger log = LoggerFactory.getLogger(FolderWorkflowImpl.class);
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATES_PATH = "/hippo:configuration/hippo:queries/hippo:templates";
-    /* Key of argument that contains the uuid of the selected sub prototype for the xpage. */
-    public static final String SUB_PROTO_TYPE_UUID = "subProtoTypeUUID";
-    /* Mixin to indicate that the draft variant is an xpage ( and allows an hst:page as subnode ). */
-    public static final String MIXIN_HST_XPAGE = "hst:xpage";
-    /* Name of the sub prototype sub node of the draft variant */
-    public static final String HST_PAGE = "hst:page";
     private final Session userSession;
     private final Session rootSession;
     private final WorkflowContext workflowContext;
@@ -195,9 +186,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             if (hasSubjectAuthorPermission) {
                 info.put("reorder", isEnabled);
             }
-        }
-        if (subject.isNodeType("hippostd:xpagefolder")){
-            info.put("channelId", subject.getProperty("hippostd:channelid").getString());
         }
         return info;
     }
@@ -405,7 +393,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         if (!result.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
                             result.addMixin(JcrConstants.MIX_REFERENCEABLE);
                         }
-                        copySubProtoTypeToDraftVariant(arguments, result);
                         break;
                     }
                 } else if (prototypeNode.getName().equals(template)) {
@@ -447,28 +434,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
     }
 
-    private void copySubProtoTypeToDraftVariant(final Map<String, String> arguments, final Node result)
-            throws RepositoryException {
-        if (arguments.containsKey(SUB_PROTO_TYPE_UUID)) {
-            final String subProtoTypeUUID = arguments.get(SUB_PROTO_TYPE_UUID);
-            try{
-                final Node hstPage = rootSession.getNodeByIdentifier(subProtoTypeUUID);
-                log.debug("Adding mixin : {} to draft variant: { path : {} }",
-                        MIXIN_HST_XPAGE, JcrUtils.getNodePathQuietly(result));
-                result.addMixin(MIXIN_HST_XPAGE);
-                log.debug("Copying subPrototype : { uuid: {} } to draft variant : { path: {} }",
-                        subProtoTypeUUID, JcrUtils.getNodePathQuietly(result));
-                JcrUtils.copy(hstPage, HST_PAGE, result);
-            }
-            catch (ItemNotFoundException e){
-                String message = String.format("Cannot find sub prototype with uuid: %s. Please make " +
-                        "sure that the subPrototypes property of the hst:channelinfo node contains a " +
-                        "valid sub prototype uuid.", subProtoTypeUUID);
-                throw new RepositoryException(message, e);
-            }
-        }
-    }
-
     private void doArchive(final Node handle, final String atticPath) throws RepositoryException {
         rootSession.move(handle.getPath(), atticPath + "/" + atticName(atticPath, handle));
         rootSession.save();
@@ -491,7 +456,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         } catch (RepositoryException ex) {
             log.error("error while deleting document variants from attic", ex);
         }
-        rootSession.save();
+
     }
 
     private void clear(final Node node) throws RepositoryException {
