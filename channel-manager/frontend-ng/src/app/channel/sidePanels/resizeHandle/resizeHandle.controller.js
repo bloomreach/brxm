@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,15 +31,6 @@ class resizeHandleController {
       .on('mousedown', this._onMouseDown.bind(this));
   }
 
-  _resize(newWidth) {
-    if (newWidth === this.element.width()) {
-      return;
-    }
-
-    this.element.css('width', newWidth);
-    this.onResize({ newWidth });
-  }
-
   _onMouseDown(event) {
     if (event.which !== MOUSE_LEFT) {
       return;
@@ -48,7 +39,7 @@ class resizeHandleController {
     event.preventDefault();
 
     this.offset = event.pageX;
-    this.initialWidth = this.element.width();
+    this.initialWidth = this.elementWidth;
     this.maxWidth = Math.floor($('body').width() / 2);
 
     this._createMask();
@@ -63,10 +54,9 @@ class resizeHandleController {
 
     const diff = event.pageX - this.offset;
     let newWidth = this.isInversed ? this.initialWidth - diff : this.initialWidth + diff;
-    newWidth = Math.max(newWidth, this.minWidth);
     newWidth = Math.min(newWidth, this.maxWidth);
 
-    this._resize(newWidth);
+    this.onResize({ newWidth });
   }
 
   _onMouseUp() {

@@ -14,14 +14,16 @@
   limitations under the License.
   -->
 
-<md-sidenav layout-fill
+<md-sidenav class="md-sidenav-left left-side-panel qa-left-side-panel md-bloomreach-theme"
             layout="row"
-            md-is-open="$ctrl.isOpen"
-            md-is-locked-open="$ctrl.isLockedOpen()"
-            class="md-sidenav-left left-side-panel qa-left-side-panel md-bloomreach-theme"
-            ng-class="{'sidepanel-lifted': $ctrl.isSidePanelLifted()}"
+            layout-fill
             md-component-id="left-side-panel"
-            md-disable-backdrop>
+            md-disable-backdrop
+            md-is-locked-open="$ctrl.isLockedOpen()"
+            md-is-open="$ctrl.isOpen"
+            ng-class="{'sidepanel-lifted': $ctrl.isSidePanelLifted()}"
+            style="width: {{$ctrl.width + 'px'}}">
+
   <md-tabs flex
            md-border-bottom
            md-no-pagination
@@ -44,9 +46,8 @@
 
   <mask />
 
-  <resize-handle element="$ctrl.sideNavElement"
-                 min-width="320"
-                 on-resize="$ctrl.onResize(newWidth)"
-                 handle-position="right">
+  <resize-handle element-width="$ctrl.width"
+                 handle-position="right"
+                 on-resize="$ctrl.onResize(newWidth)">
   </resize-handle>
 </md-sidenav>
