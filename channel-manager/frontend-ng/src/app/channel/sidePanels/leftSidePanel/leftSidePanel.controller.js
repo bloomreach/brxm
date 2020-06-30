@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,12 @@
  */
 
 const LS_KEY_PANEL_WIDTH = 'channelManager.sidePanel.left.width';
+const MIN_WIDTH = 290;
 
 class LeftSidePanelCtrl {
   constructor(
     $element,
+    $scope,
     localStorageService,
     CatalogService,
     ChannelService,
@@ -29,6 +31,7 @@ class LeftSidePanelCtrl {
     'ngInject';
 
     this.$element = $element;
+    this.$scope = $scope;
     this.localStorageService = localStorageService;
     this.CatalogService = CatalogService;
     this.ChannelService = ChannelService;
@@ -38,9 +41,12 @@ class LeftSidePanelCtrl {
   }
 
   $onInit() {
-    this.lastSavedWidth = this.localStorageService.get(LS_KEY_PANEL_WIDTH) || '320px';
     this.sideNavElement = this.$element.find('.left-side-panel');
-    this.sideNavElement[0].style.width = this.lastSavedWidth;
+    this.width = Math.max(this._getStoredWidth(), MIN_WIDTH);
+  }
+
+  _getStoredWidth() {
+    return parseInt(this.localStorageService.get(LS_KEY_PANEL_WIDTH), 10) || -1;
   }
 
   $postLink() {
@@ -48,8 +54,13 @@ class LeftSidePanelCtrl {
   }
 
   onResize(newWidth) {
-    this.lastSavedWidth = `${newWidth}px`;
-    this.localStorageService.set(LS_KEY_PANEL_WIDTH, this.lastSavedWidth);
+    if (newWidth < MIN_WIDTH && this.width === MIN_WIDTH) {
+      return;
+    }
+
+    this.width = Math.max(newWidth, MIN_WIDTH);
+    this.localStorageService.set(LS_KEY_PANEL_WIDTH, this.width);
+    this.$scope.$digest();
   }
 
   get selectedTab() {

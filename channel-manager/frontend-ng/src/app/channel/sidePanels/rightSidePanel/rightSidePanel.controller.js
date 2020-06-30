@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
  */
 
 const LS_KEY_PANEL_WIDTH = 'channelManager.sidePanel.right.width';
+const MIN_WIDTH = 400;
 
 class RightSidePanelCtrl {
   constructor(
     $element,
     $mdConstant,
+    $scope,
     $transitions,
     $window,
     SidePanelService,
@@ -29,6 +31,7 @@ class RightSidePanelCtrl {
     'ngInject';
 
     this.$element = $element;
+    this.$scope = $scope;
     this.$transitions = $transitions;
     this.$window = $window;
 
@@ -47,14 +50,17 @@ class RightSidePanelCtrl {
   }
 
   $onInit() {
-    this.lastSavedWidth = this.localStorageService.get(LS_KEY_PANEL_WIDTH) || '440px';
     this.sideNavElement = this.$element.find('.right-side-panel');
-    this.sideNavElement[0].style.width = this.lastSavedWidth;
+    this.width = Math.max(this._getStoredWidth(), MIN_WIDTH);
 
     this.$transitions.onBefore({ from: 'hippo-cm.channel', to: 'hippo-cm.channel.*.**' }, () => this._openPanel());
     this.$transitions.onSuccess({ from: 'hippo-cm.channel.**', to: 'hippo-cm.channel' }, () => this._closePanel());
     this.$transitions.onSuccess({ from: 'hippo-cm.channel.*', to: 'hippo-cm.channel.*.**' }, () => this._focusPanel());
     this.$transitions.onError({ from: 'hippo-cm.channel.**' }, () => this._focusPanel());
+  }
+
+  _getStoredWidth() {
+    return parseInt(this.localStorageService.get(LS_KEY_PANEL_WIDTH), 10) || -1;
   }
 
   $postLink() {
@@ -66,8 +72,13 @@ class RightSidePanelCtrl {
   }
 
   onResize(newWidth) {
-    this.lastSavedWidth = `${newWidth}px`;
-    this.localStorageService.set(LS_KEY_PANEL_WIDTH, this.lastSavedWidth);
+    if (newWidth < MIN_WIDTH && this.width === MIN_WIDTH) {
+      return;
+    }
+
+    this.width = Math.max(newWidth, MIN_WIDTH);
+    this.localStorageService.set(LS_KEY_PANEL_WIDTH, this.width);
+    this.$scope.$digest();
   }
 
   isLoading() {
