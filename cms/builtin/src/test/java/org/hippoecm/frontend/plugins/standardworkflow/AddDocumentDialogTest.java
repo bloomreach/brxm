@@ -127,7 +127,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
         createDialog(false, xPageLayoutList);
         clickOkButton();
 
-        tester.assertErrorMessages("'name' is required.", "'XPage Layout' is required.");
+        tester.assertErrorMessages("'name' is required.", "'???x-page-layout???' is required.");
     }
 
     @Test
