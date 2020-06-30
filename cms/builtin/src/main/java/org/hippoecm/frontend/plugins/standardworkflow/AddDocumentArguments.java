@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 package org.hippoecm.frontend.plugins.standardworkflow;
 
 import org.apache.wicket.util.io.IClusterable;
-import org.onehippo.cms7.services.hst.IXPageLayout;
 
 public class AddDocumentArguments implements IClusterable {
     private String targetName;
     private String uriName;
     private String prototype;
     private String language;
-    /* The identifier of the selected XPageLayout */
-    private IXPageLayout xPageLayout;
+
+    public AddDocumentArguments() {
+    }
 
     public String getTargetName() {
         return targetName;
@@ -56,13 +56,5 @@ public class AddDocumentArguments implements IClusterable {
 
     public void setLanguage(final String language) {
         this.language = language;
-    }
-
-    public IXPageLayout getXPageLayout() {
-        return xPageLayout;
-    }
-
-    public void setXPageLayout(final IXPageLayout xPageLayout) {
-        this.xPageLayout = xPageLayout;
     }
 }

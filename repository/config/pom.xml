@@ -25,6 +25,7 @@
   <name>Repository Default Configuration</name>
   <description>Hippo Repository default configuration</description>
   <artifactId>hippo-repository-config</artifactId>
+  <packaging>jar</packaging>
 
   <build>
     <defaultGoal>package</defaultGoal>
