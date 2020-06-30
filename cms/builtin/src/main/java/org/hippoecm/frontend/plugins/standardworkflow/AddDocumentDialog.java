@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -30,19 +31,17 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.addon.workflow.WorkflowDialog;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.standardworkflow.components.LanguageField;
-import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.XPageLayoutContainer;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.AddDocumentValidator;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.StringCodec;
-import org.onehippo.cms7.services.hst.IXPageLayout;
 
 public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
 
@@ -53,7 +52,7 @@ public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
     private final IModel<StringCodec> nodeNameCodecModel;
 
     public AddDocumentDialog(AddDocumentArguments addDocumentModel, IModel<String> title, String category,
-                             Set<String> prototypes, IModel<List<IXPageLayout>> xPageLayoutListModel, boolean translated, final IWorkflowInvoker invoker,
+                             Set<String> prototypes, boolean translated, final IWorkflowInvoker invoker,
                              IModel<StringCodec> nodeNameCodec, ILocaleProvider localeProvider, final WorkflowDescriptorModel workflowDescriptorModel) {
         super(invoker, Model.of(addDocumentModel));
 
@@ -117,10 +116,6 @@ public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
             languageField.setVisible(false);
         }
         add(languageField);
-
-        add(new XPageLayoutContainer("xpage-layout",
-                new PropertyModel<>(addDocumentModel, "xPageLayout"),
-                xPageLayoutListModel));
 
         add(new AddDocumentValidator(this, nameUriContainer, workflowDescriptorModel));
 
