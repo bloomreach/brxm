@@ -98,6 +98,20 @@
           </dependencies>
           <executions>
             <execution>
+              <id>initialisation</id>
+              <phase>initialize</phase>
+              <goals>
+                <goal>run</goal>
+              </goals>
+              <configuration>
+                <target>
+                  <delete>
+                    <fileset dir="${project.build.directory}" />
+                  </delete>
+                </target>
+              </configuration>
+            </execution>
+            <execution>
               <phase>process-resources</phase>
               <configuration>
                 <target>
