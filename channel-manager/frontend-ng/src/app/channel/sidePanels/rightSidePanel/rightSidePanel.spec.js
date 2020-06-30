@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,66 @@ describe('RightSidePanel', () => {
     $rootScope.$digest();
   });
 
+  describe('$onInit', () => {
+    it('restores the panel width from local storage when stored as a number', () => {
+      spyOn($ctrl.localStorageService, 'get').and.returnValue('800');
+
+      $ctrl.$onInit();
+
+      expect($ctrl.width).toBe(800);
+    });
+
+    it('restores the panel width from local storage when stored as a dimension', () => {
+      spyOn($ctrl.localStorageService, 'get').and.returnValue('600px');
+
+      $ctrl.$onInit();
+
+      expect($ctrl.width).toBe(600);
+    });
+
+    it('falls back to the minimum width if the panel width is unknown', () => {
+      spyOn($ctrl.localStorageService, 'get').and.returnValue(null);
+
+      $ctrl.$onInit();
+
+      expect($ctrl.width).toBe(400);
+    });
+  });
+
+  describe('onResize', () => {
+    it('updates the panel width', () => {
+      $ctrl.width = 400;
+      $ctrl.onResize(800);
+
+      expect($ctrl.width).toBe(800);
+    });
+
+    it('respects the minimum width boundary', () => {
+      $ctrl.width = 500;
+
+      $ctrl.onResize(100);
+
+      expect($ctrl.width).toBe(400);
+    });
+
+    it('stores the new panel width in local storage', () => {
+      spyOn($ctrl.localStorageService, 'set');
+      $ctrl.onResize(800);
+
+      expect($ctrl.localStorageService.set).toHaveBeenCalledWith('channelManager.sidePanel.right.width', 800);
+    });
+
+    it('ignores new width if less than the minimum width while current width is equal to the minimum width', () => {
+      $ctrl.width = 400;
+      spyOn($ctrl.localStorageService, 'set');
+
+      $ctrl.onResize(390);
+
+      expect($ctrl.width).toBe(400);
+      expect($ctrl.localStorageService.set).not.toHaveBeenCalled();
+    });
+  });
+
   it('initializes the right side panel with the side panel service upon $postLink', () => {
     $ctrl.$onInit();
     $ctrl.$postLink();
@@ -136,13 +196,6 @@ describe('RightSidePanel', () => {
     expect($window.dispatchEvent.calls.mostRecent().args[0].type).toEqual(evt.type);
   });
 
-  it('updates local storage on resize', () => {
-    $ctrl.onResize(800);
-
-    expect($ctrl.lastSavedWidth).toBe('800px');
-    expect($ctrl.localStorageService.get('channelManager.sidePanel.right.width')).toBe('800px');
-  });
-
   it('detects ESC keypress', () => {
     const e = angular.element.Event('keydown');
     e.which = 27;
@@ -152,37 +205,13 @@ describe('RightSidePanel', () => {
     expect($ctrl.close).toHaveBeenCalled();
   });
 
-  it('ignores other keypresses', () => {
+  it('ignores other keys', () => {
     const e = angular.element.Event('keydown');
     e.which = 28;
 
     spyOn($ctrl, 'close');
     $ctrl.$element.trigger(e);
     expect($ctrl.close).not.toHaveBeenCalled();
-  });
-
-  it('loads last saved width of right side panel', () => {
-    spyOn($ctrl.localStorageService, 'get').and.callFake(() => '800px');
-
-    $ctrl.$onInit();
-
-    expect($ctrl.localStorageService.get).toHaveBeenCalledWith('channelManager.sidePanel.right.width');
-    expect($ctrl.lastSavedWidth).toBe('800px');
-
-    $ctrl.localStorageService.get.and.callFake(() => null);
-
-    $ctrl.$onInit();
-
-    expect($ctrl.localStorageService.get).toHaveBeenCalledWith('channelManager.sidePanel.right.width');
-    expect($ctrl.lastSavedWidth).toBe('440px');
-  });
-
-  it('sets the last saved width on the sideNavElement', () => {
-    spyOn($ctrl.localStorageService, 'get').and.returnValue('800px');
-
-    $ctrl.$onInit();
-
-    expect(sideNavElement.css('width')).toBe('800px');
   });
 
   it('knows when it is locked open', () => {
