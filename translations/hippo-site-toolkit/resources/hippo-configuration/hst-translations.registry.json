@@ -1,0 +1,15 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.MenuDynamicComponentInfo/menu" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    }
+  }
+}

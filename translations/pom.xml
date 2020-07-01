@@ -96,6 +96,7 @@
     <module>selections</module>
     <module>seo-support</module>
     <module>taxonomy</module>
+    <module>hippo-site-toolkit</module>
   </modules>
 
   <build>

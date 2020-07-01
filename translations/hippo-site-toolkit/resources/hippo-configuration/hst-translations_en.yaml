@@ -1,0 +1,6 @@
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/component/support/bean/info/dynamic/MenuDynamicComponentInfo
+    : /en:
+        jcr:primaryType: hipposys:resourcebundle
+        menu: Menu name
