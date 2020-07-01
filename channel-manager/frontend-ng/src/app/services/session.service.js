@@ -24,7 +24,6 @@ class SessionService {
 
     this._canWrite = false; // TODO: remove completely as part of CMS-13416
     this._canManageChanges = false;
-    this._canDeleteChannel = false;
     this._isCrossChannelPageCopySupported = false;
     this._initCallbacks = {};
   }
@@ -40,7 +39,6 @@ class SessionService {
         if (privileges) {
           this._canWrite = true; // TODO: remove completely as part of CMS-13416
           this._canManageChanges = privileges.canManageChanges;
-          this._canDeleteChannel = privileges.canDeleteChannel;
           this._isCrossChannelPageCopySupported = privileges.crossChannelPageCopySupported;
         }
         this._serveInitCallbacks();
@@ -53,10 +51,6 @@ class SessionService {
 
   canManageChanges() {
     return this._canManageChanges;
-  }
-
-  canDeleteChannel() {
-    return this._canDeleteChannel;
   }
 
   isCrossChannelPageCopySupported() {
