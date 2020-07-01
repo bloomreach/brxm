@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ class ChannelMenuService extends MenuService {
     EditComponentService,
     FeedbackService,
     HippoIframeService,
+    PageService,
     SessionService,
     SiteMapService,
     ProjectService,
@@ -57,70 +58,79 @@ class ChannelMenuService extends MenuService {
     const menu = this.defineMenu('channel', {
       iconName: 'mdi-alert',
       isIconVisible: () => this._hasAnyChanges(),
+      isVisible: () => PageService.hasActions('channel'),
       translationKey: 'TOOLBAR_BUTTON_CHANNEL',
     });
+
+    function isEnabled(action) {
+      return PageService.isActionEnabled('channel', action);
+    }
+
+    function isVisible(action) {
+      return PageService.hasAction('channel', action);
+    }
 
     menu
       .addAction('settings', {
         iconName: 'mdi-settings',
-        isEnabled: () => this._isChannelSettingsAvailable(),
-        isVisible: () => this._hasWriteAccess(),
+        isEnabled: () => isEnabled('settings'),
+        isVisible: () => isVisible('settings'),
         onClick: () => this._showChannelSettings(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_SETTINGS',
       })
       .addDivider({
-        isVisible: () => this._hasWriteAccess(),
+        isVisible: () => isVisible('settings'),
       })
       .addAction('publish', {
         iconName: 'mdi-publish',
         isEnabled: () => this._hasOwnChanges(),
-        isVisible: () => this._hasWriteAccess() && !this._isBranch(),
+        isVisible: () => isVisible('publish') && !this._isBranch(),
         onClick: () => this._publish(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_PUBLISH',
       })
       .addAction('confirm', {
         iconName: 'mdi-publish',
         isEnabled: () => this._hasOwnChanges(),
-        isVisible: () => this._hasWriteAccess() && this._isBranch(),
+        isVisible: () => isVisible('confirm') && this._isBranch(),
         onClick: () => this._publish(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_SUBMIT',
       })
       .addAction('discard-changes', {
         isEnabled: () => this._hasOwnChanges(),
-        isVisible: () => this._hasWriteAccess(),
+        isVisible: () => isVisible('discard-changes'),
         onClick: () => this._discardChanges(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES',
       })
       .addAction('manage-changes', {
-        isEnabled: () => this._hasChangesToManage() && !this._hasOnlyOwnChanges(),
-        isVisible: () => this._hasWriteAccess(),
+        isEnabled: () => isEnabled('manage-changes') && this._hasChanges() && !this._hasOnlyOwnChanges(),
+        isVisible: () => isVisible('manage-changes'),
         onClick: () => this._showManageChanges(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES',
       })
       .addDivider({
-        isVisible: () => this._hasWriteAccess() && this._isBranch(),
+        isVisible: () => this._isBranch() && (isVisible('accept') || isVisible('reject')),
       })
       .addAction('accept', {
         iconName: 'mdi-check',
         isEnabled: () => this.ProjectService.isAcceptEnabled(),
-        isVisible: () => this._hasWriteAccess() && this._isBranch(),
+        isVisible: () => isVisible('accept') && this._isBranch(),
         onClick: () => this._accept(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_ACCEPT',
       })
       .addAction('reject', {
         iconName: 'mdi-close',
         isEnabled: () => this.ProjectService.isRejectEnabled(),
-        isVisible: () => this._hasWriteAccess() && this._isBranch(),
+        isVisible: () => isVisible('reject') && this._isBranch(),
         onClick: () => this._reject(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_REJECT',
       })
       .addDivider({
-        isVisible: () => this._hasWriteAccess(),
+        isVisible: () => isVisible('delete'),
       })
       .addAction('delete', {
         iconName: 'mdi-delete',
-        isEnabled: () => this._isChannelDeletionAvailable(),
-        isVisible: () => this._hasWriteAccess(),
+        isEnabled: () => isEnabled('delete'),
+        isVisible: () => isVisible('delete'),
         onClick: () => this._deleteChannel(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_DELETE',
       })
@@ -136,18 +146,9 @@ class ChannelMenuService extends MenuService {
     return this.ProjectService.isBranch();
   }
 
-  _hasWriteAccess() {
-    return this.SessionService.hasWriteAccess();
-  }
-
   // Settings
   _showChannelSettings() {
     this.showSubPage('channel-settings');
-  }
-
-  _isChannelSettingsAvailable() {
-    return this.ChannelService.isEditable()
-           && this.ChannelService.getChannel().hasCustomProperties;
   }
 
   // Changes
@@ -173,6 +174,10 @@ class ChannelMenuService extends MenuService {
 
   _hasChangesToManage() {
     return this._canManageChanges() && this._getChangedBySet().length > 0;
+  }
+
+  _hasChanges() {
+    return this._getChangedBySet().length > 0;
   }
 
   _getChangedBySet() {
@@ -257,11 +262,6 @@ class ChannelMenuService extends MenuService {
         this.SiteMapService.load(this.ChannelService.getSiteMapId());
       })
       .catch(response => this._handleError('ERROR_CHANGE_DISCARD_FAILED', response));
-  }
-
-  // Delete
-  _isChannelDeletionAvailable() {
-    return this.SessionService.canDeleteChannel();
   }
 
   _deleteChannel() {
