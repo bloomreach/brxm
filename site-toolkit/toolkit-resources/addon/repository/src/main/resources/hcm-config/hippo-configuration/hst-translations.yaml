@@ -8,3 +8,22 @@ definitions:
           jcr:primaryType: hipposys:resourcebundles
           /onehippo:
             jcr:primaryType: hipposys:resourcebundles
+          /hippoecm:
+            jcr:primaryType: hipposys:resourcebundles
+            /hst:
+              jcr:primaryType: hipposys:resourcebundles
+              /component:
+                jcr:primaryType: hipposys:resourcebundles
+                /support:
+                  jcr:primaryType: hipposys:resourcebundles
+                  /bean:
+                    jcr:primaryType: hipposys:resourcebundles
+                    /info:
+                      jcr:primaryType: hipposys:resourcebundles
+                      /dynamic:
+                        jcr:primaryType: hipposys:resourcebundles
+                        /MenuDynamicComponentInfo:
+                          jcr:primaryType: hipposys:resourcebundles
+                          /en:
+                            jcr:primaryType: hipposys:resourcebundle
+                            menu: Menu name
