@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import FeedbackService from './feedback.service';
 import HippoGlobal from './hippoGlobal.service';
 import HstComponentService from './hstComponent.service';
 import HstService from './hst.service';
+import PageService from './page.service';
 import PathService from './path.service';
 import PickerService from './picker.service';
 import ProjectService from './project.service';
@@ -55,6 +56,7 @@ const servicesModule = angular
   .service('HippoGlobal', HippoGlobal)
   .service('HstComponentService', HstComponentService)
   .service('HstService', HstService)
+  .service('PageService', PageService)
   .service('PathService', PathService)
   .service('PickerService', PickerService)
   .service('ProjectService', ProjectService)
