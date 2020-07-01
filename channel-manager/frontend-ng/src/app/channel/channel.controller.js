@@ -29,6 +29,7 @@ class ChannelCtrl {
     PageStructureService,
     ProjectService,
     SidePanelService,
+    XPageMenuService,
   ) {
     'ngInject';
 
@@ -45,10 +46,12 @@ class ChannelCtrl {
     this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
     this.SidePanelService = SidePanelService;
+    this.XPageMenuService = XPageMenuService;
 
     this.menus = [
       ChannelMenuService.getMenu(subPage => this.showSubpage(subPage)),
       PageMenuService.getMenu(subPage => this.showSubpage(subPage)),
+      XPageMenuService.getMenu(subPage => this.showSubpage(subPage)),
     ];
   }
 
