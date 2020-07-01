@@ -16,38 +16,97 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.onehippo.cms7.services.hst.Channel;
 
 import static java.util.stream.Collectors.toSet;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.channel;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_CLOSE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_DELETE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_DISCARD_CHANGES;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_MANAGE_CHANGES;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_PUBLISH;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_SETTINGS;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.page;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.xpage;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
+import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
 
 public class HstActionProviderImpl implements ActionProvider {
 
     @Override
     public Set<Action> getActions(final ActionProviderContext context) {
-        final Stream<HstAction> channelActions = HstAction.actions(channel());
-        final Stream<HstAction> pageActions = pageActions(context.getContextService());
-        final Stream<HstAction> xpageActions = xPageActions(context.getContextService());
-        return Stream.concat(channelActions, Stream.concat(pageActions, xpageActions))
-                .map(hstAction -> hstAction.toAction(true))
-                .collect(toSet());
+        return Stream.of(
+                channelActions(context),
+                pageActions(context),
+                xPageActions(context)
+        ).flatMap(Set::stream).collect(toSet());
     }
 
-    private Stream<HstAction> xPageActions(final PageComposerContextService contextService) {
+    private Set<Action> channelActions(final ActionProviderContext context) {
+
+        final Set<Action> channelAction = new HashSet<>();
+        final PageComposerContextService contextService = context.getContextService();
+
+        channelAction.add(CHANNEL_CLOSE.toAction(true));
+
+        final Channel previewChannel = contextService.getEditingPreviewChannel();
+        final boolean master = previewChannel.getBranchOf() == null;
+        final boolean channelAdmin = isChannelAdmin(context);
+        final String userId = getUserId(context);
+        channelAction.add(CHANNEL_DELETE.toAction(channelAdmin && previewChannel.isDeletable() && !previewChannel.isConfigurationLocked()));
+        channelAction.add(CHANNEL_DISCARD_CHANGES.toAction(previewChannel.getChangedBySet().contains(userId)));
+        channelAction.add(CHANNEL_MANAGE_CHANGES.toAction(channelAdmin && !previewChannel.isConfigurationLocked()));
+        channelAction.add(CHANNEL_PUBLISH.toAction(master && !previewChannel.getChangedBySet().isEmpty()));
+        channelAction.add(CHANNEL_SETTINGS.toAction(previewChannel.getHasCustomProperties()));
+
+        return channelAction;
+    }
+
+    private Set<Action> xPageActions(final ActionProviderContext context) {
+        final PageComposerContextService contextService = context.getContextService();
         return contextService.isExperiencePageRequest()
-                ? HstAction.actions(xpage())
-                : Stream.empty();
+                ? HstAction.actions(xpage()).map(hstAction -> hstAction.toAction(true)).collect(toSet())
+                : Collections.emptySet();
     }
 
-    private Stream<HstAction> pageActions(final PageComposerContextService contextService) {
+    private Set<Action> pageActions(final ActionProviderContext context) {
+        final PageComposerContextService contextService = context.getContextService();
         return contextService.getEditingPreviewChannel().isConfigurationLocked()
                 || contextService.isExperiencePageRequest()
-                ? Stream.empty()
-                : HstAction.actions(page());
+                ? Collections.emptySet()
+                : HstAction.actions(page()).map(hstAction -> hstAction.toAction(true)).collect(toSet());
     }
+
+    private boolean isChannelAdmin(final ActionProviderContext context) {
+        final PageComposerContextService contextService = context.getContextService();
+        try {
+            final Session session = contextService.getRequestContext().getSession(false);
+            final boolean inRoleLive = isInRole(session, contextService.getEditingLiveConfigurationPath(), CHANNEL_ADMIN_PRIVILEGE_NAME);
+            if (contextService.hasPreviewConfiguration()) {
+                return inRoleLive && isInRole(session, contextService.getEditingPreviewConfigurationPath(), CHANNEL_ADMIN_PRIVILEGE_NAME);
+            }
+            return inRoleLive;
+        } catch (RepositoryException e) {
+            return false;
+        }
+    }
+
+    private String getUserId(ActionProviderContext context) {
+        try {
+            return context.getContextService().getRequestContext().getSession(false).getUserID();
+        } catch (RepositoryException e) {
+            throw new RuntimeRepositoryException(e);
+        }
+    }
+
+
 }

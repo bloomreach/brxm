@@ -22,9 +22,8 @@ public enum HstAction {
 
     CHANNEL_SETTINGS("settings", HstCategories.channel()),
     CHANNEL_PUBLISH("publish", HstCategories.channel()),
-    CHANNEL_CONFIRM("confirm", HstCategories.channel()),
     CHANNEL_DISCARD_CHANGES("discard-changes", HstCategories.channel()),
-    CHANNEL_MANAGE_CHANGED("manage-changes", HstCategories.channel()),
+    CHANNEL_MANAGE_CHANGES("manage-changes", HstCategories.channel()),
     CHANNEL_DELETE("delete", HstCategories.channel()),
     CHANNEL_CLOSE("close", HstCategories.channel()),
 
