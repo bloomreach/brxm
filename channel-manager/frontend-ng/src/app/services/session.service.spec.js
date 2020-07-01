@@ -72,7 +72,6 @@ describe('SessionService', () => {
     it('should not allow anything before initializing', () => {
       expect(SessionService.hasWriteAccess()).toEqual(false);
       expect(SessionService.canManageChanges()).toEqual(false);
-      expect(SessionService.canDeleteChannel()).toEqual(false);
       expect(SessionService.isCrossChannelPageCopySupported()).toEqual(false);
     });
 
@@ -80,7 +79,6 @@ describe('SessionService', () => {
       HstService.initializeSession.and.returnValue($q.when({
         canWrite: true,
         canManageChanges: true,
-        canDeleteChannel: true,
         crossChannelPageCopySupported: true,
       }));
       SessionService.initializeState();
@@ -88,7 +86,6 @@ describe('SessionService', () => {
 
       expect(SessionService.hasWriteAccess()).toEqual(true);
       expect(SessionService.canManageChanges()).toEqual(true);
-      expect(SessionService.canDeleteChannel()).toEqual(true);
       expect(SessionService.isCrossChannelPageCopySupported()).toEqual(true);
     });
 
@@ -98,7 +95,6 @@ describe('SessionService', () => {
 
       expect(SessionService.hasWriteAccess()).toEqual(false);
       expect(SessionService.canManageChanges()).toEqual(false);
-      expect(SessionService.canDeleteChannel()).toEqual(false);
       expect(SessionService.isCrossChannelPageCopySupported()).toEqual(false);
     });
 
