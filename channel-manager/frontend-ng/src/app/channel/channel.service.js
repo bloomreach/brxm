@@ -135,9 +135,6 @@ class ChannelService {
     this.CatalogService.load(this.getMountId());
     this.SiteMapService.load(this.getSiteMapId());
 
-    if (this.SessionService.hasWriteAccess()) {
-      this._augmentChannelWithPrototypeInfo();
-    }
     this.updateNavLocation();
   }
 
@@ -284,20 +281,6 @@ class ChannelService {
 
   getSiteMapId() {
     return this.channel.siteMapId;
-  }
-
-  async _augmentChannelWithPrototypeInfo() {
-    const data = await this.getNewPageModel();
-
-    this._hasPrototypes = data.prototypes && data.prototypes.length > 0;
-  }
-
-  hasPrototypes() {
-    return this._hasPrototypes;
-  }
-
-  hasWorkspace() {
-    return this.channel.workspaceExists;
   }
 
   async getNewPageModel(mountId) {
