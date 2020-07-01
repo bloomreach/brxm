@@ -17,9 +17,11 @@
 package org.hippoecm.frontend.plugins.login;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -35,11 +37,10 @@ import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
-import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginPage;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.WicketFaviconService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.settings.GlobalSettings;
@@ -89,11 +90,11 @@ public class LoginPlugin extends RenderPlugin {
         add(termsAndConditions);
 
         final HttpServletRequest httpRequest = (HttpServletRequest) this.getRequest().getContainerRequest();
-        final String loginMessage = httpRequest.getParameter(LOGIN_MESSAGE_URL_QUERY_NAME);
-        if (loginMessage != null) {
-            info(this.getString(loginMessage));
-        }
-        
+        Optional.ofNullable(httpRequest.getParameter(LOGIN_MESSAGE_URL_QUERY_NAME))
+                .map(queryParameter -> getString(queryParameter, null, ""))
+                .filter(StringUtils::isNotBlank)
+                .ifPresent(this::info);
+
         final boolean autoComplete = getPluginConfig().getAsBoolean(AUTOCOMPLETE, true);
         String[] localeArray = GlobalSettings.get().getStringArray(LOCALES);
         if (localeArray == null || localeArray.length == 0) {
