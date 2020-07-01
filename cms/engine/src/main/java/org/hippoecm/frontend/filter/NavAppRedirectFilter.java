@@ -16,11 +16,13 @@
 package org.hippoecm.frontend.filter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.servlet.Filter;
@@ -52,6 +54,8 @@ public class NavAppRedirectFilter implements Filter {
 
     public static final String INITIAL_PATH_QUERY_PARAMETER = "initialPath";
 
+    public static final String CUSTOM_WHITELISTED_PATH_PREFIXES_PARAMETER = "customWhiteListedPathPrefixes";
+
     private static final String HTTP_METHOD_GET = "GET";
 
     static final List<String> WHITE_LISTED_PATH_PREFIXES = Arrays.asList(
@@ -71,9 +75,22 @@ public class NavAppRedirectFilter implements Filter {
             "oidc"
     );
 
+    private static List<String> whiteListedPathPrefixes;
+
     @Override
     public void init(FilterConfig filterConfig) {
-        // This filter is stateless and has no init parameters.
+        final String value = filterConfig.getInitParameter(CUSTOM_WHITELISTED_PATH_PREFIXES_PARAMETER);
+        if (value == null) {
+            log.debug("Init parameter {} is not present, using hard coded path prefixes."
+                    , CUSTOM_WHITELISTED_PATH_PREFIXES_PARAMETER);
+            whiteListedPathPrefixes = WHITE_LISTED_PATH_PREFIXES;
+        } else {
+            whiteListedPathPrefixes = new ArrayList<>(WHITE_LISTED_PATH_PREFIXES);
+            final List<String> customWhiteListedPathPrefixes =
+                    Stream.of(value.split(",")).map(String::trim).collect(Collectors.toList());
+            log.debug("Adding custom path prefixes: {}", customWhiteListedPathPrefixes);
+            whiteListedPathPrefixes.addAll(customWhiteListedPathPrefixes);
+        }
     }
 
     @Override
@@ -118,7 +135,7 @@ public class NavAppRedirectFilter implements Filter {
         }
 
         final String segment = getSegmentAfterContextPath(request);
-        if (WHITE_LISTED_PATH_PREFIXES.stream().anyMatch(segment::equals)) {
+        if (whiteListedPathPrefixes.stream().anyMatch(segment::equals)) {
             return false;
         }
 
