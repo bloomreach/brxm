@@ -66,8 +66,6 @@ public class RepositoryParametersInfoProcessorTest extends AbstractPageComposerT
     private static final String configurationRoot =
             "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/RepositoryParametersInfoProcessorTest$TestParameterInfo";
     private static final String[] contents = {
-            "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm", "hipposys:resourcebundles",
-            "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst", "hipposys:resourcebundles",
             "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer", "hipposys:resourcebundles",
             "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs", "hipposys:resourcebundles",
             "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs/services", "hipposys:resourcebundles",
