@@ -414,7 +414,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             }
 
             if (newDocumentInfo.isExperiencePage()) {
-                document.addMixin(HstNodeTypes.MIXINTYPE_HST_PAGE);
+                document.addMixin(HstNodeTypes.MIXINTYPE_HST_XPAGE);
             }
 
             session.save();
