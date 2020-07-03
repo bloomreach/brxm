@@ -209,7 +209,7 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
 
         } finally {
             adminSession.getNode(pathToExperiencePage).remove();
-            JcrUtils.copy(adminSession, "/backupArticleAsExpPage", pathToExperiencePage);
+            adminSession.move("/backupArticleAsExpPage", pathToExperiencePage);
             adminSession.save();
         }
 
