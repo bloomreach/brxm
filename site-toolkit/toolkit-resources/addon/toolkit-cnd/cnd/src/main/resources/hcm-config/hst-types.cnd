@@ -140,7 +140,7 @@
 + * (hst:abstractcomponent)
 
 [hst:xpage] > hst:component, hippostd:skipdraft
-- hst:xref (string)
+- hst:pageref (string)
 - hst:label (string)
 
 [hst:xpages] > nt:base, mix:referenceable

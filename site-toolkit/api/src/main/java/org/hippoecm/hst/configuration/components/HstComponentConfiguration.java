@@ -319,17 +319,6 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      */
     boolean isMarkedDeleted();
 
-
-    /**
-     * @return {@core true} if this {@link HstComponentConfiguration} is an XPage: Note *ONLY* root hst components can
-     * be an 'xpage HstComponentConfiguration' and that this is different than {@link #isExperiencePageComponent} : the
-     * {@link #isExperiencePageComponent} indicates whether the component is stored below an experience page document
-     * variant, while this {@link #isXPage()} indicates whether the hst component stored in HST CONFIG (!!) is an XPage
-     * (layout)
-     */
-    boolean isXPage();
-
-
     /**
      * <p>
      *     In case the component has a qualifier, it is returned. Typically, an hst:xpage and hst:containercomponent will have
