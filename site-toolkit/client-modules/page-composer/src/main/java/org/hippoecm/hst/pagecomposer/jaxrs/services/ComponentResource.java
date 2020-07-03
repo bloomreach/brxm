@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
@@ -46,12 +45,8 @@ public class ComponentResource extends AbstractConfigResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @PrivilegesAllowed({CHANNEL_VIEWER_PRIVILEGE_NAME, XPAGE_REQUIRED_PRIVILEGE_NAME})
-    public Object getActions(@QueryParam("unwrapped") boolean unwrapped) {
-        if (unwrapped) {
-            return getActionsRepresentation();
-        } else {
-            return tryGet(() -> ok("", getActionsRepresentation(), false));
-        }
+    public Object getActions() {
+        return tryGet(() -> ok("", getActionsRepresentation(), false));
     }
 
     private ActionsRepresentation getActionsRepresentation() {
