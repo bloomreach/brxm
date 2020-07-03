@@ -30,6 +30,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ActionsRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Category;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction;
 import org.hippoecm.repository.api.HippoSession;
@@ -171,7 +172,13 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
     }
 
     private ActionsRepresentation getActions(MockHttpServletResponse response) throws UnsupportedEncodingException, JsonProcessingException {
-        return mapper.readValue(response.getContentAsString(), ActionsRepresentation.class);
+        final ExtResponseRepresentation extResponseRepresentation = mapper.readValue(response.getContentAsString(), ExtResponseRepresentation.class);
+        // Jackson's representation for the data object is a map of maps.
+        // However, for assertions we prefer the ActionRepresentation.
+        // So 1st we map the data to a string
+        final String dataAsString = mapper.writeValueAsString(extResponseRepresentation.getData());
+        // and then back again to an ActionRepresentation
+        return mapper.readValue(dataAsString, ActionsRepresentation.class);
     }
 
     private Map<String, Boolean> flatten(ActionsRepresentation actionsRepresentation) {
