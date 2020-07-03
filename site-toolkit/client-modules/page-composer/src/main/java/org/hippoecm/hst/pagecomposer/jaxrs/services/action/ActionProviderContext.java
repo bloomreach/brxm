@@ -16,6 +16,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
+import java.util.Optional;
+
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 
 public interface ActionProviderContext {
@@ -23,6 +25,8 @@ public interface ActionProviderContext {
     String getBranchId();
 
     String getChannelId();
+
+    Optional<String> getXPageId();
 
     String getUserId();
 
