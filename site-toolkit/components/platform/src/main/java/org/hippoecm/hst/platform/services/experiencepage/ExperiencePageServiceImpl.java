@@ -19,12 +19,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -39,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.XPAGE_PROPERTY_PAGEREF;
 import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
 
@@ -102,8 +105,18 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
             //final Map<String, HstComponentConfigurationService> containerConfigurations = containers.entrySet().stream()
 
             final Map<String, HstComponentConfigurationService> documentContainers = documentContainersNodes.entrySet().stream()
+                    .filter(entry -> {
+                        final boolean container = NODETYPE_HST_CONTAINERCOMPONENT.equals(entry.getValue().getNodeTypeName());
+                        if (!container) {
+                            log.info("Skip Node : only container node types allowed below hst:xpage document but found node of type " +
+                                    "'{}' for '{}'", entry.getValue().getNodeTypeName(), entry.getValue().getValueProvider().getPath());
+                        }
+                        return container;
+                    })
                     .collect(Collectors.toMap(entry -> entry.getKey(), entry ->
                             new HstComponentConfigurationService(entry.getValue(), null, ROOT_EXPERIENCE_PAGES_NAME, Collections.emptyMap(), rootConfigurationPrefix)));
+
+
 
             // mark the container items as experience page components
             documentContainers.values().forEach(config -> config.flattened().forEach(c ->
