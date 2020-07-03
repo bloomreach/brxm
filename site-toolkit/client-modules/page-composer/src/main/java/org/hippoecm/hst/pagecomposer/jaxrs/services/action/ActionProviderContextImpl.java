@@ -29,9 +29,10 @@ final class ActionProviderContextImpl implements ActionProviderContext {
     private final String channelId;
     private final String xPageId;
     private final String userId;
+    private final String siteMapItemUuid;
     private final PageComposerContextService contextService;
 
-    public ActionProviderContextImpl(PageComposerContextService contextService) {
+    public ActionProviderContextImpl(PageComposerContextService contextService, String siteMapItemUuid) {
         try {
             this.userId = contextService.getRequestContext().getSession().getUserID();
         } catch (RepositoryException e) {
@@ -46,6 +47,7 @@ final class ActionProviderContextImpl implements ActionProviderContext {
         }
         this.xPageId = contextService.getExperiencePageHandleUUID();
         this.contextService = contextService;
+        this.siteMapItemUuid = siteMapItemUuid;
     }
 
     @Override
@@ -66,6 +68,11 @@ final class ActionProviderContextImpl implements ActionProviderContext {
     @Override
     public String getUserId() {
         return userId;
+    }
+
+    @Override
+    public String getSiteMapItemUuid() {
+        return siteMapItemUuid;
     }
 
     @Override

@@ -17,9 +17,14 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.jcr.RepositoryException;
 
@@ -30,14 +35,10 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms7.services.hst.Channel;
 
 import static java.util.Collections.singletonList;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.channel;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.page;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.xpage;
 
 @RunWith(EasyMockRunner.class)
 public class ActionServiceImplTest {
@@ -46,65 +47,41 @@ public class ActionServiceImplTest {
     @Mock
     private PageComposerContextService contextService;
     @Mock
-    Function<PageComposerContextService, ActionProviderContext> contextProvider;
+    private BiFunction<PageComposerContextService, String, ActionProviderContext> contextProvider;
     @Mock
-    private ActionProviderContext context;
-    @Mock
-    private Channel channel;
+    private ActionProvider actionProvider;
 
     @Before
     public void setUp() throws RepositoryException {
         service = new ActionServiceImpl(contextProvider);
-        service.setActionProviders(singletonList(new HstActionProviderImpl()));
-
-        expect(contextProvider.apply(contextService)).andStubReturn(context);
-        replay(contextProvider);
-        expect(context.getContextService()).andStubReturn(contextService);
-        replay(context);
+        service.setActionProviders(singletonList(actionProvider));
     }
 
     @Test
-    public void get_menu() {
-
-        expect(contextService.getEditingPreviewChannel()).andStubReturn(channel);
-        expect(contextService.isExperiencePageRequest()).andReturn(true);
-        replay(contextService);
-
-        final Map<String, Set<Action>> actions = service.getActionsByCategory(contextService);
-
-        Assertions.assertThat(actions.get(channel().getName())).isNotEmpty();
-        Assertions.assertThat(actions.get(page().getName())).isNotEmpty();
-        Assertions.assertThat(actions.get(xpage().getName())).isNotEmpty();
-    }
-
-
-    @Test
-    public void get_menu_no_xpage() {
-
-        expect(contextService.getEditingPreviewChannel()).andStubReturn(channel);
-        expect(contextService.isExperiencePageRequest()).andReturn(false);
-        replay(contextService);
-
-        final Map<String, Set<Action>> actions = service.getActionsByCategory(contextService);
-
-        Assertions.assertThat(actions.get(channel().getName())).isNotEmpty();
-        Assertions.assertThat(actions.get(page().getName())).isNotEmpty();
-        Assertions.assertThat(actions.get(xpage().getName())).isNull();
+    public void get_actions_empty() {
+        final Map<String, Set<Action>> actions = service.getActionsByCategory(contextService, "test");
+        Assertions.assertThat(actions).isEmpty();
     }
 
     @Test
-    public void get_menu_page_disabled() {
+    public void get_actions_grouped_by_category() {
 
-        expect(channel.isConfigurationLocked()).andReturn(true);
-        replay(channel);
-        expect(contextService.getEditingPreviewChannel()).andStubReturn(channel);
-        expect(contextService.isExperiencePageRequest()).andReturn(false);
-        replay(contextService);
+        final int nrOfCategories = ThreadLocalRandom.current().nextInt(2, 32);
+        final int nrOfActions = ThreadLocalRandom.current().nextInt(2, 32);
+        final Set<Action> actionSet = IntStream.range(0, nrOfCategories)
+                .mapToObj(i -> "c-" + i)
+                .flatMap(category -> Collections.nCopies(nrOfActions, category).stream())
+                .map(category -> new Action(UUID.randomUUID().toString(), category, true))
+                .collect(Collectors.toSet());
 
-        final Map<String, Set<Action>> actions = service.getActionsByCategory(contextService);
+        expect(actionProvider.getActions(null))
+                .andReturn(actionSet);
+        replay(actionProvider);
 
-        Assertions.assertThat(actions.get(channel().getName())).isNotEmpty();
-        Assertions.assertThat(actions.get(page().getName())).isNull();
-        Assertions.assertThat(actions.get(xpage().getName())).isNull();
+        final Map<String, Set<Action>> actionsByCategory = service.getActionsByCategory(contextService, "test");
+        Assertions.assertThat(actionsByCategory.size()).isEqualTo(nrOfCategories);
+        actionsByCategory.values().forEach(
+                actions -> Assertions.assertThat(actions.size()).isEqualTo(nrOfActions));
     }
+
 }
