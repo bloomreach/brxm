@@ -23,5 +23,5 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 
 public interface ActionService {
 
-    Map<String, Set<Action>> getActionsByCategory(PageComposerContextService contextService);
+    Map<String, Set<Action>> getActionsByCategory(PageComposerContextService contextService, String siteMapItemUuid);
 }

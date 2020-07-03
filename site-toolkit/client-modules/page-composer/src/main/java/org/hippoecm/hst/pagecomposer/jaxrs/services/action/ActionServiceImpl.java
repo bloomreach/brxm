@@ -18,20 +18,22 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toSet;
 
 public final class ActionServiceImpl implements ActionService {
 
-    private final Function<PageComposerContextService, ActionProviderContext> contextProvider;
+    private final BiFunction<PageComposerContextService, String, ActionProviderContext> contextProvider;
     private List<ActionProvider> actionProviders;
 
-    ActionServiceImpl(Function<PageComposerContextService, ActionProviderContext> contextProvider) {
+    ActionServiceImpl(BiFunction<PageComposerContextService, String, ActionProviderContext> contextProvider) {
         this.contextProvider = contextProvider;
     }
 
@@ -44,10 +46,10 @@ public final class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public Map<String, Set<Action>> getActionsByCategory(final PageComposerContextService contextService) {
-        final ActionProviderContext context = contextProvider.apply(contextService);
+    public Map<String, Set<Action>> getActionsByCategory(PageComposerContextService contextService, String siteMapItemUuid) {
+        final ActionProviderContext context = contextProvider.apply(contextService, siteMapItemUuid);
         return actionProviders.stream()
-                .map(actionProvider -> actionProvider.getActions(context))
+                .map(actionProvider -> Optional.ofNullable(actionProvider.getActions(context)).orElse(emptySet()))
                 .flatMap(Set::stream)
                 .collect(groupingBy(Action::getCategory, toSet()));
     }

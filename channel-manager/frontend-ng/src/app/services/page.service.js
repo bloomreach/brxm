@@ -36,7 +36,7 @@ class PageService {
     }
 
     const meta = page.getMeta();
-    this.HstService.doGet(meta.getPageId())
+    this.HstService.doGet(`${meta.getPageId()}./item/${meta.getSiteMapItemId()}`)
       .then(({ data: { actions, states } }) => {
         this.actions = actions;
         this.states = states;
