@@ -35,6 +35,7 @@ import org.junit.runner.RunWith;
 import io.restassured.http.ContentType;
 import static java.util.Collections.singleton;
 import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -73,7 +74,7 @@ public class ComponentResourceTest extends AbstractResourceTest {
         actions.put(channel().getName(), singleton(CHANNEL_DISCARD_CHANGES.toAction(true)));
         actions.put(page().getName(), singleton(PAGE_COPY.toAction(true)));
         actions.put(xpage().getName(), singleton(XPAGE_DELETE.toAction(true)));
-        expect(actionService.getActionsByCategory(anyObject())).andReturn(actions);
+        expect(actionService.getActionsByCategory(anyObject(), anyString())).andReturn(actions);
         replay(actionService);
         // If you want to see the JSON use prettyPeek
         given().when()
@@ -92,7 +93,7 @@ public class ComponentResourceTest extends AbstractResourceTest {
     @Test
     public void test_get_menu_without_page_and_xpage() {
         final Map<String, Set<Action>> actions = new HashMap<>();
-        expect(actionService.getActionsByCategory(anyObject())).andReturn(actions);
+        expect(actionService.getActionsByCategory(anyObject(), anyString())).andReturn(actions);
         actions.put(channel().getName(), singleton(CHANNEL_DISCARD_CHANGES.toAction(true)));
         replay(actionService);
         // If you want to see the JSON use prettyPeek

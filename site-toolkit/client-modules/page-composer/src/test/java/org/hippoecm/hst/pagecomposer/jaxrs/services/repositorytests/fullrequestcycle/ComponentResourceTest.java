@@ -162,7 +162,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
 
     private MockHttpServletResponse getActionsRequest(String containerId) throws RepositoryException, IOException, ServletException {
 
-        final String pathInfo = "/_rp/" + containerId;
+        final String pathInfo = "/_rp/" + containerId + "./item/foo" ;
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
         final RequestResponseMock requestResponseMock = mockGetRequestResponse("http", "localhost", pathInfo, null, "GET");

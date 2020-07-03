@@ -30,5 +30,7 @@ public interface ActionProviderContext {
 
     String getUserId();
 
+    String getSiteMapItemUuid();
+
     PageComposerContextService getContextService();
 }
