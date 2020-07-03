@@ -16,6 +16,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
+import java.util.Optional;
+
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
@@ -25,6 +27,7 @@ final class ActionProviderContextImpl implements ActionProviderContext {
 
     private final String branchId;
     private final String channelId;
+    private final String xPageId;
     private final String userId;
     private final PageComposerContextService contextService;
 
@@ -41,6 +44,7 @@ final class ActionProviderContextImpl implements ActionProviderContext {
         } else {
             this.channelId = liveOrPreviewChannelId;
         }
+        this.xPageId = contextService.getExperiencePageHandleUUID();
         this.contextService = contextService;
     }
 
@@ -52,6 +56,11 @@ final class ActionProviderContextImpl implements ActionProviderContext {
     @Override
     public String getChannelId() {
         return channelId;
+    }
+
+    @Override
+    public Optional<String> getXPageId() {
+        return Optional.ofNullable(xPageId);
     }
 
     @Override
