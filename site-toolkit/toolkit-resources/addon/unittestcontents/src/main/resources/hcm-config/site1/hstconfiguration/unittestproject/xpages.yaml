@@ -10,6 +10,7 @@ definitions:
           jcr:primaryType: hst:component
           /container1:
             jcr:primaryType: hst:containercomponent
+            hst:qualifier: 430df2da-3dc8-40b5-bed5-bdc44b8445c6
             hst:xtype: HST.vBox
             /banner:
               jcr:primaryType: hst:containeritemcomponent
@@ -19,8 +20,5 @@ definitions:
               hst:template: banner
           /container2:
             jcr:primaryType: hst:containercomponent
+            hst:qualifier: 430df2da-3dc8-40b5-bed5-bdc44b8445c7
             hst:xtype: HST.vBox
-          /container3:
-            jcr:primaryType: hst:containercomponent
-            hst:xtype: HST.vBox
-            hst:qualifier: bootstrapped-qualifier

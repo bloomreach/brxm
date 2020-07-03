@@ -21,15 +21,13 @@ import java.util.UUID;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.hippoecm.repository.util.Utilities;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
@@ -43,11 +41,13 @@ public class XPageFixtureIT extends AbstractTestConfigurations {
     public void setUp() throws Exception {
         super.setUp();
         session = createSession();
+        createHstConfigBackup(session);
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
+        restoreHstConfigBackup(session);
         session.logout();
         super.tearDown();
     }
@@ -55,14 +55,27 @@ public class XPageFixtureIT extends AbstractTestConfigurations {
     @Test
     public void xpage_fixture_test() throws Exception {
 
-        assertTrue(session.getRootNode().hasNode("hst:hst/hst:configurations/unittestproject/hst:xpages"));
+        // just for the purpose of testing the 'hst:qualifier' property being auto created, first remove the hst:qualifier
+        // properties from the bootstrapped example and then copy the node and confirm copy has new hst:qualifier props
+
+        // reason why the bootstrap contains the 'hst:qualifier' property is because the 'xpage1' is used in the
+        // hst-unittestcontent.yaml and relies on the present 'hst:qualifier' property of 'xpage1' to be stable
 
         final Node xpages = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:xpages");
 
-        final Node xpage1 = xpages.getNode("xpage1");
-        assertFalse("property 'hst:qualifier' is not expected on xpage", xpage1.hasProperty("hst:qualifier"));
+        final Node mainOrigin = xpages.getNode("xpage1/main");
+        mainOrigin.getNode("container1").getProperty("hst:qualifier").remove();
+        mainOrigin.getNode("container2").getProperty("hst:qualifier").remove();
 
-        final Node main = xpage1.getNode("main");
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:xpages/xpage1",
+                "/hst:hst/hst:configurations/unittestproject/hst:xpages/xpage1-copy");
+
+        session.save();
+
+        final Node xpageCopy = xpages.getNode("xpage1-copy");
+        assertFalse("property 'hst:qualifier' is not expected on xpage", xpageCopy.hasProperty("hst:qualifier"));
+
+        final Node main = xpageCopy.getNode("main");
         assertFalse("main is of type hst:component which should not get an hst:qualifier", main.hasProperty("hst:qualifier"));
 
         final Node container1 = main.getNode("container1");
@@ -77,10 +90,6 @@ public class XPageFixtureIT extends AbstractTestConfigurations {
         assertTrue("property hst:qualifier is expected to be autocreated", container2.hasProperty("hst:qualifier"));
         validateTag(container2.getProperty("hst:qualifier").getString());
 
-
-        final Node container3 = main.getNode("container3");
-        assertTrue("property hst:qualifier is expected to be imported from yaml config", container3.hasProperty("hst:qualifier"));
-        assertEquals("bootstrapped-qualifier", container3.getProperty("hst:qualifier").getString());
     }
 
     private void validateTag(final String expectedUUID) {
