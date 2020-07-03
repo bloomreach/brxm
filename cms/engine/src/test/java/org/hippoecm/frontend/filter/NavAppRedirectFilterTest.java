@@ -76,6 +76,7 @@ public class NavAppRedirectFilterTest {
     @Before
     public void setUp() {
         filter = new NavAppRedirectFilter();
+        filter.init(new MockFilterConfig());
         HippoServiceRegistry.register(navigationItemService, NavigationItemService.class);
     }
 
