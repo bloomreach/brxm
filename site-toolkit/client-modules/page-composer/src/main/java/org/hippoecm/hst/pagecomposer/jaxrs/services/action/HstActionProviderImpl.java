@@ -16,6 +16,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +25,7 @@ import java.util.stream.Stream;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.onehippo.cms7.services.hst.Channel;
@@ -35,7 +37,6 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHAN
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_MANAGE_CHANGES;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_PUBLISH;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_SETTINGS;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.page;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.xpage;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
 import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
@@ -83,7 +84,22 @@ public class HstActionProviderImpl implements ActionProvider {
         return contextService.getEditingPreviewChannel().isConfigurationLocked()
                 || contextService.isExperiencePageRequest()
                 ? Collections.emptySet()
-                : HstAction.actions(page()).map(hstAction -> hstAction.toAction(true)).collect(toSet());
+                : getPageActions(context);
+    }
+
+    private Set<Action> getPageActions(final ActionProviderContext context) {
+        final Channel previewChannel = context.getContextService().getEditingPreviewChannel();
+        final Collection<HstComponentConfiguration> prototypePages = context.getContextService().getEditingPreviewSite().getComponentsConfiguration().getPrototypePages().values();
+        final Set<Action> actions = new HashSet<>();
+        actions.add(HstAction.PAGE_COPY.toAction(true));
+        actions.add(HstAction.PAGE_DELETE.toAction(true));
+        actions.add(HstAction.PAGE_MOVE.toAction(true));
+        actions.add(HstAction.PAGE_NEW.toAction(
+                previewChannel.isWorkspaceExists()
+                        && prototypePages.stream().anyMatch(cfg -> !cfg.isInherited())));
+        actions.add(HstAction.PAGE_PROPERTIES.toAction(true));
+        actions.add(HstAction.PAGE_TOOLS.toAction(true));
+        return actions;
     }
 
     private boolean isChannelAdmin(final ActionProviderContext context) {
