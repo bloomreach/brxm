@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -43,14 +44,17 @@ public class ComponentResource extends AbstractConfigResource {
     }
 
     @GET
+    @Path("/item/{siteMapItemUuid}")
     @Produces(MediaType.APPLICATION_JSON)
     @PrivilegesAllowed({CHANNEL_VIEWER_PRIVILEGE_NAME, XPAGE_REQUIRED_PRIVILEGE_NAME})
-    public Object getActions() {
-        return tryGet(() -> ok("", getActionsRepresentation(), false));
+    public Object getActions(
+            @PathParam("siteMapItemUuid") String siteMapItemUuid
+    ) {
+        return tryGet(() -> ok("", getActionsRepresentation(siteMapItemUuid), false));
     }
 
-    private ActionsRepresentation getActionsRepresentation() {
-        final Map<String, Set<Action>> actionsByCategory = actionService.getActionsByCategory(getPageComposerContextService());
+    private ActionsRepresentation getActionsRepresentation(String siteMapItemUuid) {
+        final Map<String, Set<Action>> actionsByCategory = actionService.getActionsByCategory(getPageComposerContextService(), siteMapItemUuid);
         return ActionsRepresentation.represent(actionsByCategory);
     }
 }
