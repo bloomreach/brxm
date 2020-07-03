@@ -17,45 +17,9 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.util.Map;
-import java.util.Set;
-
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
-import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ActionsRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Action;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService;
-
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
 
 @Path("/hst:page/")
-public class XPageResource extends AbstractConfigResource {
+public class XPageResource extends ComponentResource {
 
-    private ActionService actionService;
-
-    public void setActionService(final ActionService actionService) {
-        this.actionService = actionService;
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed({CHANNEL_VIEWER_PRIVILEGE_NAME, XPAGE_REQUIRED_PRIVILEGE_NAME})
-    public Object getActions(@QueryParam("unwrapped") boolean unwrapped) {
-        if (unwrapped) {
-            return getActionsRepresentation();
-        } else {
-            return tryGet(() -> ok("", getActionsRepresentation(), false));
-        }
-    }
-
-    private ActionsRepresentation getActionsRepresentation() {
-        final Map<String, Set<Action>> actionsByCategory = actionService.getActionsByCategory(getPageComposerContextService());
-        return ActionsRepresentation.represent(actionsByCategory);
-    }
 }
