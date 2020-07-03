@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.builtin.components.StandardContainerComponent;
@@ -34,15 +35,19 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.experiencepage.ExperiencePageLoadingException;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_XPAGE;
+import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
 
@@ -132,6 +137,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private boolean xpage;
 
+    // true if this is an explicit xpage layout component (aka not inherited component but directly below the hst:xpage
+    private boolean xpageLayoutComponent;
+
     /**
      * hst:component of type 'xpage' or 'containercomponent' are expected to have a qualifier (auto created property). Can be
      * null
@@ -207,6 +215,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private Boolean markedDeleted;
     private boolean experiencePageComponent;
 
+    /**
+     * detached is true for components returned from {@link #copy(boolean)} implying that the
+     * specific {@link HstComponentConfigurationService} is detached from the HST in memory model
+     */
+    private boolean detached;
+
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
         this.id = StringPool.get(id);
@@ -269,7 +283,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         final String nodeTypeName = node.getNodeTypeName();
 
-        this.xpage = NODETYPE_HST_XPAGE.equals(nodeTypeName);
+        xpage = NODETYPE_HST_XPAGE.equals(nodeTypeName);
+
+        if (isAncestorXPage(this)) {
+            xpageLayoutComponent = true;
+        }
 
         if (HstNodeTypes.NODETYPE_HST_COMPONENT.equals(nodeTypeName) || NODETYPE_HST_XPAGE.equals(nodeTypeName)) {
             type = Type.COMPONENT;
@@ -328,7 +346,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         if (type == Type.CONTAINER_COMPONENT || type == Type.CONTAINER_ITEM_COMPONENT) {
             this.xtype = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_XTYPE));
-            if (xtype == null) {
+            if (xtype == null && type == Type.CONTAINER_COMPONENT) {
+                // set default ot HST.bBox for container
                 xtype = "HST.vBox";
             }
         }
@@ -425,6 +444,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             childConfByName.put(StringPool.get(childComponent.getName()), childComponent);
             log.debug("Added component service with key '{}'", id);
         }
+    }
+
+    private boolean isAncestorXPage(final HstComponentConfigurationService comp) {
+        if (comp == null){
+            return false;
+        }
+        if (comp.isXPage()) {
+            return true;
+        }
+
+        return isAncestorXPage((HstComponentConfigurationService) comp.getParent());
     }
 
     private HstComponentConfigurationService loadChildComponent(final HstNode child,
@@ -746,9 +776,22 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return markedDeleted == null ? false : markedDeleted;
     }
 
-    @Override
+    /**
+     * @return {@core true} if this {@link HstComponentConfiguration} is an XPage: Note *ONLY* root hst components can
+     * be an 'xpage HstComponentConfiguration' and that this is different than {@link #isExperiencePageComponent} : the
+     * {@link #isExperiencePageComponent} indicates whether the component is stored below an experience page document
+     * variant, while this {@link #isXPage()} indicates whether the hst component stored in HST CONFIG (!!) is an XPage
+     * (layout)
+     */
     public boolean isXPage() {
         return xpage;
+    }
+
+    /**
+     * @return {@code true} if this component configuration is stored canonically below an XPage Layout (config)
+     */
+    public boolean isXpageLayoutComponent() {
+        return xpageLayoutComponent;
     }
 
     @Override
@@ -765,12 +808,36 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.experiencePageComponent = experiencePageComponent;
     }
 
-    private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
-                                                      HstComponentConfigurationService child,
-                                                      Map<String, HstComponentConfiguration> rootComponentConfigurations) {
-        if (child.getReferenceComponent() != null) {
-            // populate child component if not yet happened
-            child.populateComponentReferences(rootComponentConfigurations);
+    /**
+     * <p>
+     *     The returned copy is *DETACHED* from the HST Model and a complete independent
+     *     HstComponentConfigurationService (tree). Therefor all the components in this returned deep copy will have
+     *     {@link HstComponentConfigurationService#detached equal to true}
+     * </p>
+     * @return A deep copy of {@code source} with parent = null and a new random uuid as id
+     * {@link HstComponentConfigurationService#getId()}
+     */
+    public HstComponentConfigurationService copy(final boolean includeContainerItems) {
+        final HstComponentConfigurationService hstComponentConfigurationService =
+                deepCopy(null, UUID.randomUUID().toString(), this, null, includeContainerItems);
+        hstComponentConfigurationService.flattened().forEach(config -> ((HstComponentConfigurationService)config).detached = true);
+        return hstComponentConfigurationService;
+    }
+
+    private HstComponentConfigurationService deepCopy(final HstComponentConfigurationService parent, String newId,
+                                                      final HstComponentConfigurationService child,
+                                                      final Map<String, HstComponentConfiguration> rootComponentConfigurations,
+                                                      final boolean includeContainerItems) {
+        if (rootComponentConfigurations == null) {
+            if (isNotBlank(child.getReferenceComponent()) && !child.referencesPopulated) {
+                throw new IllegalStateException("If 'rootComponentConfigurations' is null, all components references " +
+                        "are expected to be resolved already");
+            }
+        } else {
+            if (child.getReferenceComponent() != null) {
+                // populate child component if not yet happened
+                child.populateComponentReferences(rootComponentConfigurations);
+            }
         }
         HstComponentConfigurationService copy = new HstComponentConfigurationService(newId);
         copy.parent = parent;
@@ -781,6 +848,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.hstTemplate = child.hstTemplate;
         copy.label = child.label;
         copy.qualifier = child.qualifier;
+        copy.xpage = child.xpage;
+        copy.xpageLayoutComponent = child.xpageLayoutComponent;
         copy.iconPath = child.iconPath;
         copy.renderPath = child.renderPath;
         copy.isNamedRenderer = child.isNamedRenderer;
@@ -804,23 +873,24 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.suppressWasteMessage = child.suppressWasteMessage;
         copy.parameters = new LinkedHashMap<String, String>(child.parameters);
         copy.parameterNamePrefixSet = new HashSet<String>(child.parameterNamePrefixSet);
-        // localParameters have no merging, but for copy, the localParameters are copied 
+        // localParameters have no merging, but for copy, the localParameters are copied
         copy.localParameters = new LinkedHashMap<String, String>(child.localParameters);
         copy.usedChildReferenceNames = new ArrayList<String>(child.usedChildReferenceNames);
         copy.lockedBy = child.lockedBy;
         copy.lockedOn = child.lockedOn;
         copy.lastModified = child.lastModified;
         copy.markedDeleted = child.markedDeleted;
-        for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
-            String descId = StringPool.get(copy.id + descendant.id);
-            HstComponentConfigurationService copyDescendant = deepCopy(copy, descId, descendant,
-                    rootComponentConfigurations);
-            copy.componentConfigurations.put(copyDescendant.id, copyDescendant);
-            copy.orderedListConfigs.add(copyDescendant);
-            copy.childConfByName.put(StringPool.get(copyDescendant.getName()), copyDescendant);
-            // do not need them by name for copies
+        if (type != Type.CONTAINER_COMPONENT || includeContainerItems) {
+            for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
+                String descId = StringPool.get(copy.id + descendant.id);
+                HstComponentConfigurationService copyDescendant = deepCopy(copy, descId, descendant,
+                        rootComponentConfigurations, includeContainerItems);
+                copy.componentConfigurations.put(copyDescendant.id, copyDescendant);
+                copy.orderedListConfigs.add(copyDescendant);
+                copy.childConfByName.put(StringPool.get(copyDescendant.getName()), copyDescendant);
+                // do not need them by name for copies
+            }
         }
-
 
         // the copy is populated
         //populated.add(copy);
@@ -1117,10 +1187,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         String newId = StringPool.get(this.id + "-" + childToMerge.id);
 
         HstComponentConfigurationService copy = deepCopy(this, newId, childToMerge,
-                rootComponentConfigurations);
-
-        // a copy is always shared
-        copy.shared = true;
+                rootComponentConfigurations, true);
 
         this.componentConfigurations.put(copy.getId(), copy);
         this.childConfByName.put(copy.getName(), copy);
@@ -1325,6 +1392,80 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 child.setReferenceName(StringPool.get(autoRefName));
             }
         }
+    }
+
+    public void removeChild(HstComponentConfiguration child) {
+        componentConfigurations.remove(child.getId());
+        orderedListConfigs.remove(child);
+        childConfByName.remove(child.getName());
+    }
+
+
+    public void transformXpageLayoutContainer(final HstComponentConfigurationService xPageDocumentContainer) {
+        if (!detached) {
+            throw new ExperiencePageLoadingException("Not allowed to transform a 'non-hst-model-detached' " +
+                    "HstComponentConfigurationService into an XPage for a Document");
+        }
+
+        if (getComponentType() != CONTAINER_COMPONENT || xPageDocumentContainer.getComponentType() !=  CONTAINER_COMPONENT) {
+            throw new ExperiencePageLoadingException(format("Not allowed to merge XpageDocument container '%s' with " +
+                    "non-container component '%s'", xPageDocumentContainer.getCanonicalStoredLocation(), getCanonicalStoredLocation()));
+        }
+
+        // assert the root component of the container to merge with is an 'xpage' component
+        HstComponentConfigurationService root = this;
+        while (root.getParent() != null) {
+            root = (HstComponentConfigurationService)root.getParent();
+        }
+        if (!root.isXPage()) {
+            throw new ExperiencePageLoadingException(format("Not allowed to merge XpageDocument container '%s' with " +
+                    "container component '%s' which is not part of an XPage Layout",
+                    xPageDocumentContainer.getCanonicalStoredLocation(), getCanonicalStoredLocation()));
+        }
+
+        // for the Channel Mgr interactions, make sure to *ONLY* replace the identifier and canonical stored location of
+        // the MERGED HST config contariner
+        canonicalIdentifier = xPageDocumentContainer.getCanonicalIdentifier();
+        canonicalStoredLocation = xPageDocumentContainer.getCanonicalStoredLocation();
+
+        // mark the component to be an exp page container
+        experiencePageComponent = true;
+        // since the XPage document contains the container, we mark it shared
+        shared = false;
+
+        // even when the container comes from inherited common configuration, an XPage Document can hijack it via the
+        // hst:qualifier making it effectively a non-inherited and non-shared container!
+        inherited = false;
+
+        // replace all the existing children with those from 'xPageDocumentContainer'
+        orderedListConfigs = xPageDocumentContainer.orderedListConfigs;
+        componentConfigurations = xPageDocumentContainer.componentConfigurations;
+        childConfByName = xPageDocumentContainer.childConfByName;
+
+    }
+
+
+    /**
+     * This is a very specific transformation: Although the container really is still from the XPage layout config, it
+     * is a container that is not present in the current request based XPage document variant, hence we have to 'fake' it
+     * in such that it becomes visible in the Channel Manager: Only we fake it in without potential component items from
+     * XPage Layout : When in the CM someone adds a container item to it, we make sure the correct container gets added
+     * to the Xpage in the Document!
+     */
+    public void transformXpageLayoutContainer() {
+
+        // mark the component to be an exp page container (even though this is a copy config from Xpage Config!
+        experiencePageComponent = true;
+
+        // shared FALSE because the CM needs to be able to interact with the component as PART OF an Xpage Document!
+        shared = false;
+        // even when the container comes from inherited common configuration, an XPage Document can hijack it via the
+        // hst:qualifier making it effectively a non-inherited and non-shared container!
+        inherited = false;
+        // remove any child items present in Xpage Layout
+        orderedListConfigs = Collections.emptyList();
+        componentConfigurations = Collections.emptyMap();
+        childConfByName = Collections.emptyMap();
     }
 
     @Override

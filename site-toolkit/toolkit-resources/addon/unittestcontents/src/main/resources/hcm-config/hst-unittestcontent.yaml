@@ -230,20 +230,18 @@ definitions:
                   hippostd:content: My Experience Page 1
                 /hst:xpage:
                   jcr:primaryType: hst:xpage
-                  hst:xref: hst:abstractpages/basepage
-                  /body:
-                    jcr:primaryType: hst:component
-                    hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
-                    hst:template: detail
-                    /container:
+                  hst:pageref: xpage1
+                  /430df2da-3dc8-40b5-bed5-bdc44b8445c6:
+                    jcr:primaryType: hst:containercomponent
+                    /banner:
+                      jcr:primaryType: hst:containeritemcomponent
+                      hst:componentclassname: org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent
+                      hst:parameternameprefixes: ['', variant1]
+                      hst:parameternames: [path, path]
+                      hst:parametervalues: [/content/document, /content/variant1]
+                      hst:template: banner
+                  /430df2da-3dc8-40b5-bed5-bdc44b8445c7:
                       jcr:primaryType: hst:containercomponent
-                      hst:xtype: hst.vbox
-                      /banner:
-                        jcr:primaryType: hst:containeritemcomponent
-                        hst:componentclassname: org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent
-                        hst:parameternameprefixes: ['', variant1]
-                        hst:parameternames: [path, path]
-                        hst:parametervalues: [/content/document, /content/variant1]
             /expPage2:
               jcr:primaryType: hippo:handle
               jcr:mixinTypes: ['mix:referenceable']
@@ -265,19 +263,18 @@ definitions:
                   hippostd:content: My Experience Page 2
                 /hst:xpage:
                   jcr:primaryType: hst:xpage
-                  hst:xref: hst:abstractpages/basepage
-                  /body:
-                    jcr:primaryType: hst:component
-                    hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
-                    hst:template: detail
-                    /container:
-                      jcr:primaryType: hst:containercomponent
-                      hst:xtype: hst.vbox
-                      /banner:
-                        jcr:primaryType: hst:containeritemcomponent
-                        hst:componentclassname: org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent
-                        hst:parameternames: [path]
-                        hst:parametervalues: [/content/document]
+                  hst:pageref: xpage1
+                  /430df2da-3dc8-40b5-bed5-bdc44b8445c6:
+                    jcr:primaryType: hst:containercomponent
+                    /banner:
+                      jcr:primaryType: hst:containeritemcomponent
+                      hst:componentclassname: org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent
+                      hst:parameternameprefixes: ['', variant1]
+                      hst:parameternames: [path]
+                      hst:parametervalues: [/content/document]
+                      hst:template: banner
+                  /430df2da-3dc8-40b5-bed5-bdc44b8445c7:
+                    jcr:primaryType: hst:containercomponent
           /News:
             jcr:primaryType: hippostd:folder
             jcr:mixinTypes: ['mix:referenceable']
@@ -377,11 +374,11 @@ definitions:
                       hippostd:content: My articleAsExpPage Page 1
                     /hst:xpage:
                       jcr:primaryType: hst:xpage
-                      hst:xref: hst:abstractpages/basepage
-                      /body:
-                        jcr:primaryType: hst:component
-                        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
-                        hst:template: detail
+                      hst:pageref: xpage1
+                      /430df2da-3dc8-40b5-bed5-bdc44b8445c6:
+                        jcr:primaryType: hst:containercomponent
+                      /430df2da-3dc8-40b5-bed5-bdc44b8445c7:
+                        jcr:primaryType: hst:containercomponent
             /2008:
               jcr:primaryType: hippostd:folder
               jcr:mixinTypes: ['mix:referenceable']

@@ -62,6 +62,7 @@ public interface HstNodeTypes {
     String NODETYPE_HST_XPAGE = "hst:xpage";
     String NODENAME_HST_XPAGE = "hst:xpage";
     String NODENAME_HST_XPAGES = "hst:xpages";
+    String XPAGE_PROPERTY_PAGEREF = "hst:pageref";
 
     String MIXINTYPE_HST_EDITABLE = "hst:editable";
     String EDITABLE_PROPERTY_STATE = "hst:state";
