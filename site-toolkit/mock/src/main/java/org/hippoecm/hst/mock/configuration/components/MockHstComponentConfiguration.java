@@ -376,11 +376,6 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     }
 
     @Override
-    public boolean isXPage() {
-        return false;
-    }
-
-    @Override
     public String getQualifier() {
         return null;
     }

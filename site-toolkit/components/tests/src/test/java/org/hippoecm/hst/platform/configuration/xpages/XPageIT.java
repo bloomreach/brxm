@@ -85,7 +85,6 @@ public class XPageIT extends AbstractTestConfigurations {
 
         final HstComponentConfiguration container1 = main.getChildByName("container1");
         final HstComponentConfiguration container2 = main.getChildByName("container2");
-        final HstComponentConfiguration container3 = main.getChildByName("container3");
 
         try {
             UUID.fromString(container1.getQualifier());
@@ -98,9 +97,6 @@ public class XPageIT extends AbstractTestConfigurations {
             fail("Expected qualifier of form UUID on 'container1'");
         }
 
-        assertThat(container3.getQualifier())
-                .as("A qualifier was bootstrapped and should not be overridden")
-                .isEqualTo("bootstrapped-qualifier");
     }
 
     /**
