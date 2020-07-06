@@ -18,11 +18,13 @@ package org.hippoecm.hst.core.container;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstComponentMetadata;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 
 /**
@@ -54,44 +56,37 @@ public class HstComponentFactoryImpl implements HstComponentFactory, ComponentMa
     }
     
     public HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig, Mount mount) throws HstComponentException {
+
+        final ResolvedSiteMapItem resolvedSiteMapItem = RequestContextProvider.get().getResolvedSiteMapItem();
+        if (resolvedSiteMapItem != null && resolvedSiteMapItem.isExperiencePage()) {
+            // do not add request based compConfig tp component registry!
+            try {
+                HstComponent component = instantiateComponent(compConfig, requestContainerConfig);
+                return component;
+            } catch (Exception e) {
+                throw new HstComponentException(String.format("Could not instantiate Experience Page Component '%s' with class name '%s'",
+                        compConfig.getCanonicalStoredLocation(), compConfig.getComponentClassName()), e);
+            }
+        }
+
         String componentId = getComponentId(compConfig, mount);
 
         final  HstComponentRegistry componentRegistry = mount.getVirtualHost().getVirtualHosts().getComponentRegistry();
         HstComponent component = componentRegistry.getComponent(requestContainerConfig, componentId);
 
         if (component == null) {
-            String componentClassName = StringUtils.trim(compConfig.getComponentClassName());
             try {
-                Class<?> compClass;
-
-                if (StringUtils.isNotEmpty(componentClassName)) {
-                    // first try to retrieve component bean from the componentManager by classname.
-                    component = componentManager.getComponent(componentClassName);
-
-                    // if component not found from componentManager, instantiate it from classname.
-                    if (component == null) {
-                        compClass = Class.forName(componentClassName);
-                        component = (HstComponent) compClass.newInstance();
-                    }
-                } else {
-                    compClass = defaultHstComponentClass;
-                    componentClassName = defaultHstComponentClassName;
-                    component = (HstComponent) compClass.newInstance();
-                }
-
-                ComponentConfiguration compConfigImpl = new ComponentConfigurationImpl(compConfig);
-                component.init(requestContainerConfig.getServletContext(), compConfigImpl);
-
+                component = instantiateComponent(compConfig, requestContainerConfig);
             } catch (ClassNotFoundException e) {
-                HstComponentException exc = new HstComponentException("Cannot find the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
+                HstComponentException exc = new HstComponentException("Cannot find the class of " + compConfig.getCanonicalStoredLocation() + ": " + compConfig.getComponentClassName());
                 componentRegistry.registerComponent(requestContainerConfig, componentId, new FailedComponent(exc));
                 throw  exc;
             } catch (InstantiationException e) {
-                HstComponentException exc = new HstComponentException("Cannot instantiate the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
+                HstComponentException exc = new HstComponentException("Cannot instantiate the class of " + compConfig.getCanonicalStoredLocation() + ": " + compConfig.getComponentClassName());
                 componentRegistry.registerComponent(requestContainerConfig, componentId, new FailedComponent(exc));
                 throw exc;
             } catch (IllegalAccessException e) {
-                HstComponentException exc = new HstComponentException("Illegal access to the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
+                HstComponentException exc = new HstComponentException("Illegal access to the class of " + compConfig.getCanonicalStoredLocation() + ": " + compConfig.getComponentClassName());
                 componentRegistry.registerComponent(requestContainerConfig, componentId, new FailedComponent(exc));
                 throw exc;
             }
@@ -101,10 +96,38 @@ public class HstComponentFactoryImpl implements HstComponentFactory, ComponentMa
         if (component instanceof FailedComponent) {
             throw ((FailedComponent)component).exc;
         }
+
         return component;
         
     }
-    
+
+    private HstComponent instantiateComponent(final HstComponentConfiguration compConfig,
+                                              final HstContainerConfig requestContainerConfig)
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+
+        String componentClassName = StringUtils.trim(compConfig.getComponentClassName());
+        Class<?> compClass;
+
+        HstComponent component;
+        if (StringUtils.isNotEmpty(componentClassName)) {
+            // first try to retrieve component bean from the componentManager by classname.
+            component = componentManager.getComponent(componentClassName);
+
+            // if component not found from componentManager, instantiate it from classname.
+            if (component == null) {
+                compClass = Class.forName(componentClassName);
+                component = (HstComponent) compClass.newInstance();
+            }
+        } else {
+            compClass = defaultHstComponentClass;
+            component = (HstComponent) compClass.newInstance();
+        }
+
+        ComponentConfiguration compConfigImpl = new ComponentConfigurationImpl(compConfig);
+        component.init(requestContainerConfig.getServletContext(), compConfigImpl);
+        return component;
+    }
+
     public HstComponentMetadata getComponentMetadata(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig, Mount mount) throws HstComponentException {
         String componentId = getComponentId(compConfig, mount);
         final  HstComponentRegistry componentRegistry = mount.getVirtualHost().getVirtualHosts().getComponentRegistry();
