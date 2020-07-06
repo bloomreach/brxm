@@ -16,21 +16,78 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
-import java.util.Optional;
+public class ActionProviderContext {
 
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+    private boolean experiencePageRequest;
+    private boolean masterBranchSelected;
 
-public interface ActionProviderContext {
+    private String userId;
+    private String branchId;
 
-    String getBranchId();
+    private ChannelActionContext channelActionContext;
+    private PageActionContext pageActionContext;
+    private XPageActionContext xPageActionContext;
 
-    String getChannelId();
+    public boolean isExperiencePageRequest() {
+        return experiencePageRequest;
+    }
 
-    Optional<String> getXPageId();
+    public boolean isMasterBranchSelected() {
+        return masterBranchSelected;
+    }
 
-    String getUserId();
+    public String getUserId() {
+        return userId;
+    }
 
-    String getSiteMapItemUuid();
+    public String getBranchId() {
+        return branchId;
+    }
 
-    PageComposerContextService getContextService();
+    public ChannelActionContext getChannelActionContext() {
+        return channelActionContext;
+    }
+
+    public PageActionContext getPageActionContext() {
+        return pageActionContext;
+    }
+
+    public XPageActionContext getXPageActionContext() {
+        return xPageActionContext;
+    }
+
+    ActionProviderContext setMasterBranchSelected(final boolean masterBranchSelected) {
+        this.masterBranchSelected = masterBranchSelected;
+        return this;
+    }
+
+    ActionProviderContext setExperiencePageRequest(final boolean experiencePageRequest) {
+        this.experiencePageRequest = experiencePageRequest;
+        return this;
+    }
+
+    ActionProviderContext setUserId(final String userId) {
+        this.userId = userId;
+        return this;
+    }
+
+    ActionProviderContext setBranchId(final String branchId) {
+        this.branchId = branchId;
+        return this;
+    }
+
+    ActionProviderContext setChannelActionContext(ChannelActionContext channelActionContext) {
+        this.channelActionContext = channelActionContext;
+        return this;
+    }
+
+    ActionProviderContext setPageActionContext(final PageActionContext pageActionContext) {
+        this.pageActionContext = pageActionContext;
+        return this;
+    }
+
+    ActionProviderContext setXPageActionContext(final XPageActionContext xPageActionContext) {
+        this.xPageActionContext = xPageActionContext;
+        return this;
+    }
 }

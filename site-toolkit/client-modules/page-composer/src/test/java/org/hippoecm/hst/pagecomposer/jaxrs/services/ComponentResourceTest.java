@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.RepositoryException;
 import javax.ws.rs.Path;
 
 import org.easymock.EasyMockRunner;
@@ -69,7 +70,7 @@ public class ComponentResourceTest extends AbstractResourceTest {
     }
 
     @Test
-    public void test_get_menu() {
+    public void test_get_menu() throws RepositoryException {
         final Map<String, Set<Action>> actions = new HashMap<>();
         actions.put(channel().getName(), singleton(CHANNEL_DISCARD_CHANGES.toAction(true)));
         actions.put(page().getName(), singleton(PAGE_COPY.toAction(true)));
@@ -78,7 +79,7 @@ public class ComponentResourceTest extends AbstractResourceTest {
         replay(actionService);
         // If you want to see the JSON use prettyPeek
         given().when()
-                .get(MOCK_PATH).prettyPeek()
+                .get(MOCK_PATH + "/item/foo").prettyPeek()
                 .then()
                 .statusCode(200)
                 .contentType(ContentType.JSON)
@@ -91,14 +92,14 @@ public class ComponentResourceTest extends AbstractResourceTest {
     }
 
     @Test
-    public void test_get_menu_without_page_and_xpage() {
+    public void test_get_menu_without_page_and_xpage() throws RepositoryException {
         final Map<String, Set<Action>> actions = new HashMap<>();
         expect(actionService.getActionsByCategory(anyObject(), anyString())).andReturn(actions);
         actions.put(channel().getName(), singleton(CHANNEL_DISCARD_CHANGES.toAction(true)));
         replay(actionService);
         // If you want to see the JSON use prettyPeek
         given().when()
-                .get(MOCK_PATH).prettyPeek()
+                .get(MOCK_PATH + "/item/foo").prettyPeek()
                 .then()
                 .statusCode(200)
                 .contentType(ContentType.JSON)

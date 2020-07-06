@@ -20,6 +20,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.RepositoryException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -53,7 +54,7 @@ public class ComponentResource extends AbstractConfigResource {
         return tryGet(() -> ok("", getActionsRepresentation(siteMapItemUuid), false));
     }
 
-    private ActionsRepresentation getActionsRepresentation(String siteMapItemUuid) {
+    private ActionsRepresentation getActionsRepresentation(String siteMapItemUuid) throws RepositoryException {
         final Map<String, Set<Action>> actionsByCategory = actionService.getActionsByCategory(getPageComposerContextService(), siteMapItemUuid);
         return ActionsRepresentation.represent(actionsByCategory);
     }
