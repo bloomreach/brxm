@@ -44,6 +44,7 @@ public class MockResolvedSiteMapItem implements ResolvedSiteMapItem {
     private HstComponentConfiguration hstComponentConfiguration;
     private String namedPipeline;
     private ResolvedMount resolvedMount;
+    private boolean experiencePage;
 
     public String getRelativeContentPath() {
         return relativeContentPath;
@@ -184,5 +185,13 @@ public class MockResolvedSiteMapItem implements ResolvedSiteMapItem {
     public void setResolvedMount(ResolvedMount resolvedMount) {
         this.resolvedMount = resolvedMount;
     }
-    
+
+    @Override
+    public boolean isExperiencePage() {
+        return experiencePage;
+    }
+
+    public void setExperiencePage(final boolean experiencePage) {
+        this.experiencePage = experiencePage;
+    }
 }
