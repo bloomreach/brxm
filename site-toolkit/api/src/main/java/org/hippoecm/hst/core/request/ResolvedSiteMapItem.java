@@ -136,4 +136,9 @@ public interface ResolvedSiteMapItem {
      * @return the root <code>HstComponentConfiguration</code> that is configured on the backing {@link #getHstSiteMapItem()} of this ResolvedSiteMapItem
      */
     HstComponentConfiguration getHstComponentConfiguration();
+
+    /**
+     * @return {@code true} if an Experience Page is being rendered
+     */
+    boolean isExperiencePage();
 }
