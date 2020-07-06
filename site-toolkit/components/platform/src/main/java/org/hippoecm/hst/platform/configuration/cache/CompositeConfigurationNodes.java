@@ -221,7 +221,27 @@ public class CompositeConfigurationNodes {
             final String relativeInheritPath = compositeConfigurationNodeRelPath;
             final boolean isMainConfigNodeInherited = (mainConfigNode == null);
             if (compositeConfigurationNodeRelPath.endsWith(NODENAME_HST_XPAGES)) {
-                log.debug("For config node '{}' we do not support inheritance", NODENAME_HST_XPAGES);
+                log.debug("For config node '{}' we do not support inheritance other than from the live configuration", NODENAME_HST_XPAGES);
+                if (configurationRootNode.getValueProvider().getPath().endsWith("-preview")) {
+                    // xpages are not copied to the -preview if not stored below hst:workspace, hence only inherit the
+                    // xpages from the FIRST 'orderedRootConfigurationNodeInheritanceList' which is the LIVE config
+                    // of this preview which contains the xpages!
+                    if (mainConfigNode == null) {
+                        if (orderedRootConfigurationNodeInheritanceList.isEmpty()) {
+                            log.warn("Expected preview config to inherit from 'live' but not the case for '{}'",
+                                    configurationRootNode.getValueProvider().getPath());
+                        } else {
+                            mainConfigNode = orderedRootConfigurationNodeInheritanceList.get(0).getNode(HstNodeTypes.NODENAME_HST_XPAGES);
+                        }
+                    } else {
+                        log.warn("hst:xpages expected to NOT be present in 'preview' configuration");
+                    }
+                }
+
+                if (mainConfigNode == null) {
+                    log.info("No hst:xpages configured for '{}'", configurationRootNode.getValueProvider().getPath());
+                }
+
             } else {
                 for (HstNode inherited : orderedRootConfigurationNodeInheritanceList) {
                     // for hst:containers the relativeInheritPath starts with hst:workspace
