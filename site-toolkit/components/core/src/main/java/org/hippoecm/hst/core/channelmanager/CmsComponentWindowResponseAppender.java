@@ -101,9 +101,10 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         pageMetaData.put(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
         // provide info for CM that the page is an experience page: The top hst component for experience pages
         // always has compConfig.isExperiencePageComponent() = true
-        pageMetaData.put(ChannelManagerConstants.HST_EXPERIENCE_PAGE,  String.valueOf(compConfig.isExperiencePageComponent()));
-
         final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+
+        pageMetaData.put(ChannelManagerConstants.HST_EXPERIENCE_PAGE,  String.valueOf(resolvedSiteMapItem.isExperiencePage()));
+
         if (resolvedSiteMapItem != null) {
             final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
             pageMetaData.put(ChannelManagerConstants.HST_SITEMAPITEM_ID, ((CanonicalInfo) hstSiteMapItem).getCanonicalIdentifier());
