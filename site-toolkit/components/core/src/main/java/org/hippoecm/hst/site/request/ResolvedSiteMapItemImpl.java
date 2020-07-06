@@ -58,6 +58,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     private String pathInfo;
     private String pageTitle;
     private PropertyParser pp;
+    private boolean experiencePage;
 
     public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem, Properties params, String pathInfo, ResolvedMount resolvedMount) {
         this.pathInfo = PathUtils.normalizePath(pathInfo);
@@ -175,6 +176,15 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         return hstSiteMapItem.getUsers();
     }
 
+    @Override
+    public boolean isExperiencePage() {
+        if (hstComponentConfiguration == null) {
+            // init
+            resolveComponentConfiguration();
+        }
+        return experiencePage;
+    }
+
     private void resolveComponentConfiguration() {
 
         if (getRelativeContentPath() != null) {
@@ -197,6 +207,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
 
                         final HstComponentConfiguration config = experiencePageService.loadExperiencePage(page, this);
                         hstComponentConfiguration = Optional.of(config);
+                        experiencePage = true;
                         return;
                     }
                 } catch (RepositoryException e) {
