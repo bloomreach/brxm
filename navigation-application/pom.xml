@@ -201,7 +201,9 @@
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
                 <exclude>**/node/**/*</exclude>
+                <exclude>coverage/**</exclude>
                 <exclude>dist/**</exclude>
+                <exclude>docs/**</exclude>
               </excludes>
             </configuration>
           </plugin>
