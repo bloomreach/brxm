@@ -16,14 +16,12 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
-import java.util.Map;
-import java.util.Set;
-
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 
-public interface ActionService {
+public class XPageActionContextFactory {
 
-    Map<String, Set<Action>> getActionsByCategory(PageComposerContextService contextService, String siteMapItemUuid) throws RepositoryException;
+    public XPageActionContext make(final PageComposerContextService contextService) {
+        return new XPageActionContext()
+                .setXPageId(contextService.getExperiencePageHandleUUID());
+    }
 }

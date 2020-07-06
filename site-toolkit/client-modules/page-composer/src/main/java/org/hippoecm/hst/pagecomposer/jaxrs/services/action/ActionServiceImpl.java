@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
+
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 
@@ -30,15 +31,11 @@ import static java.util.stream.Collectors.toSet;
 
 public final class ActionServiceImpl implements ActionService {
 
-    private final BiFunction<PageComposerContextService, String, ActionProviderContext> contextProvider;
+    private final ActionProviderContextFactory contextFactory;
     private List<ActionProvider> actionProviders;
 
-    ActionServiceImpl(BiFunction<PageComposerContextService, String, ActionProviderContext> contextProvider) {
-        this.contextProvider = contextProvider;
-    }
-
-    public ActionServiceImpl() {
-        this(ActionProviderContextImpl::new);
+    ActionServiceImpl(ActionProviderContextFactory contextFactory) {
+        this.contextFactory = contextFactory;
     }
 
     public void setActionProviders(final List<ActionProvider> actionProviders) {
@@ -46,8 +43,8 @@ public final class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public Map<String, Set<Action>> getActionsByCategory(PageComposerContextService contextService, String siteMapItemUuid) {
-        final ActionProviderContext context = contextProvider.apply(contextService, siteMapItemUuid);
+    public Map<String, Set<Action>> getActionsByCategory(PageComposerContextService contextService, String siteMapItemUuid) throws RepositoryException {
+        final ActionProviderContext context = contextFactory.make(contextService, siteMapItemUuid);
         return actionProviders.stream()
                 .map(actionProvider -> Optional.ofNullable(actionProvider.getActions(context)).orElse(emptySet()))
                 .flatMap(Set::stream)
