@@ -127,18 +127,6 @@ describe('BrPageComponent', () => {
   });
 
   describe('ngOnChanges', () => {
-    it('should use a page instance from inputs when configuraton is changed', () => {
-      component.configuration = {} as Configuration;
-      component.page = page;
-      component.ngOnChanges({
-        configuration: new SimpleChange(undefined, component.configuration, true),
-        page: new SimpleChange(undefined, component.page, true),
-      });
-
-      expect(initialize).not.toBeCalled();
-      expect(component.state.getValue()).toBe(component.page);
-    });
-
     it('should destroy a previous page', () => {
       const previousPage = {} as Page;
 
@@ -166,16 +154,6 @@ describe('BrPageComponent', () => {
       expect(initialize).toBeCalled();
     });
 
-    it('should use a page instance from inputs when configuration was not changed', () => {
-      component.page = page;
-      component.ngOnChanges({
-        page: new SimpleChange(undefined, component.page, true),
-      });
-
-      expect(initialize).not.toBeCalled();
-      expect(component.state.getValue()).toBe(component.page);
-    });
-
     it('should initialize a page from the configuration', async () => {
       mocked(initialize).mockResolvedValueOnce(page);
       component.configuration = { cmsBaseUrl: 'something' } as Configuration;
@@ -190,13 +168,12 @@ describe('BrPageComponent', () => {
           cmsBaseUrl: 'something',
           httpClient: expect.any(Function),
         }),
-        undefined,
       );
       expect(component.state.getValue()).toBe(page);
     });
 
-    it('should initialize a page from the page model', async () => {
-      mocked(initialize).mockResolvedValueOnce(page);
+    it('should initialize a page from the page model', () => {
+      mocked(initialize as unknown as () => Page).mockReturnValueOnce(page);
       component.configuration = { cmsBaseUrl: 'something' } as Configuration;
       component.page = {} as PageModel;
       component.ngOnChanges({
@@ -204,16 +181,14 @@ describe('BrPageComponent', () => {
         page: new SimpleChange(undefined, component.page, true),
       });
 
-      await new Promise(process.nextTick);
-
       expect(initialize).toBeCalledWith(expect.any(Object), component.page);
       expect(component.state.getValue()).toBe(page);
     });
 
-    it('should initialize a page from the transferred state', async () => {
+    it('should initialize a page from the transferred state', () => {
       const state = {};
 
-      mocked(initialize).mockResolvedValueOnce(page);
+      mocked(initialize as unknown as () => Page).mockReturnValueOnce(page);
       mocked(isPlatformBrowserSpy).and.returnValue(true);
       transferState.hasKey.mockReturnValueOnce(true);
       transferState.get.mockReturnValueOnce(state);
@@ -223,16 +198,14 @@ describe('BrPageComponent', () => {
         configuration: new SimpleChange(undefined, component.configuration, true),
       });
 
-      await new Promise(process.nextTick);
-
       expect(transferState.get).toBeCalledWith(component.stateKey, undefined);
       expect(transferState.remove).toBeCalledWith(component.stateKey);
       expect(initialize).toBeCalledWith(expect.any(Object), state);
       expect(component.state.getValue()).toBe(page);
     });
 
-    it('should initialize a page using the page model from the inputs instead of the transferred state', async () => {
-      mocked(initialize).mockResolvedValueOnce(page);
+    it('should initialize a page using the page model from the inputs instead of the transferred state', () => {
+      mocked(initialize as unknown as () => Page).mockReturnValueOnce(page);
       mocked(isPlatformBrowserSpy).and.returnValue(true);
       transferState.hasKey.mockReturnValueOnce(true);
 
@@ -242,8 +215,6 @@ describe('BrPageComponent', () => {
         configuration: new SimpleChange(undefined, component.configuration, true),
         page: new SimpleChange(undefined, component.page, true),
       });
-
-      await new Promise(process.nextTick);
 
       expect(transferState.remove).toBeCalledWith(component.stateKey);
       expect(initialize).toBeCalledWith(expect.any(Object), component.page);
@@ -264,12 +235,13 @@ describe('BrPageComponent', () => {
       expect(transferState.hasKey).not.toBeCalled();
       expect(transferState.get).not.toBeCalled();
       expect(transferState.remove).not.toBeCalled();
-      expect(initialize).toBeCalledWith(expect.any(Object), undefined);
+      expect(initialize).toBeCalledWith(expect.any(Object));
     });
 
     it('should update a page in the transferred state', () => {
       const model = {} as PageModel;
 
+      mocked(initialize as unknown as () => Page).mockReturnValueOnce(page);
       mocked(isPlatformServerSpy).and.returnValue(true);
       page.toJSON.mockReturnValue(model);
 
@@ -279,7 +251,6 @@ describe('BrPageComponent', () => {
         configuration: new SimpleChange(undefined, component.configuration, true),
         page: new SimpleChange(undefined, component.page, true),
       });
-      component.ngOnInit();
 
       expect(transferState.set).toBeCalledWith(component.stateKey, model);
     });
