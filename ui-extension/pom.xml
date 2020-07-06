@@ -221,6 +221,8 @@
 
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
+                <exclude>coverage/**</exclude>
+                <exclude>dist/**</exclude>
               </excludes>
             </configuration>
           </plugin>
