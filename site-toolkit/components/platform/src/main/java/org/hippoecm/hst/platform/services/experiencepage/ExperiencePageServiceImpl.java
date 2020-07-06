@@ -86,7 +86,7 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
             if (xPageLayout == null) {
                 throw new ExperiencePageLoadingException(String.format("Cannot load XPage '%s' because XPage " +
                         "'%s' not found below at '%s'", hstNode.getValueProvider().getPath(),
-                        pageref, hstSite.getConfigurationPath() + NODENAME_HST_PAGES));
+                        pageref, hstSite.getConfigurationPath() + "/" + NODENAME_HST_PAGES));
             }
 
             final HstComponentConfigurationService copy = xPageLayout.copy(false);
