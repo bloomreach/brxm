@@ -87,10 +87,10 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(channel(), CHANNEL_PUBLISH), false)
                 .put(key(channel(), CHANNEL_SETTINGS), false)
                 .put(key(page(), PAGE_COPY), true)
-                .put(key(page(), PAGE_DELETE), true)
-                .put(key(page(), PAGE_MOVE), true)
-                .put(key(page(), PAGE_NEW), true)
-                .put(key(page(), PAGE_PROPERTIES), true)
+                .put(key(page(), PAGE_DELETE), false)
+                .put(key(page(), PAGE_MOVE), false)
+                .put(key(page(), PAGE_NEW), false)
+                .put(key(page(), PAGE_PROPERTIES), false)
                 .put(key(page(), PAGE_TOOLS), true)
                 .build();
         Assertions.assertThat(actions)
@@ -162,7 +162,10 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
 
     private MockHttpServletResponse getActionsRequest(String containerId) throws RepositoryException, IOException, ServletException {
 
-        final String pathInfo = "/_rp/" + containerId + "./item/foo" ;
+
+        final String homeSiteMapItemUuid = getNodeId("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home");
+
+        final String pathInfo = "/_rp/" + containerId + "./item/" + homeSiteMapItemUuid ;
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
         final RequestResponseMock requestResponseMock = mockGetRequestResponse("http", "localhost", pathInfo, null, "GET");
@@ -191,7 +194,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         return category.getName() + "." + action.getName();
     }
 
-    private Node getVariant(final Node handle, final String state) throws RepositoryException, WorkflowException {
+    private Node getVariant(final Node handle, final String state) throws RepositoryException {
         for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
             if (state.equals(JcrUtils.getStringProperty(variant, HIPPOSTD_STATE, null))) {
                 return variant;

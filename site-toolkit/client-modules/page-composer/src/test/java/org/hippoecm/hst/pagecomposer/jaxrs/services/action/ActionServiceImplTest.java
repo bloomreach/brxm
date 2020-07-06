@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -47,24 +46,24 @@ public class ActionServiceImplTest {
     @Mock
     private PageComposerContextService contextService;
     @Mock
-    private BiFunction<PageComposerContextService, String, ActionProviderContext> contextProvider;
+    private ActionProviderContextFactory contextFactory;
     @Mock
     private ActionProvider actionProvider;
 
     @Before
     public void setUp() throws RepositoryException {
-        service = new ActionServiceImpl(contextProvider);
+        service = new ActionServiceImpl(contextFactory);
         service.setActionProviders(singletonList(actionProvider));
     }
 
     @Test
-    public void get_actions_empty() {
+    public void get_actions_empty() throws RepositoryException {
         final Map<String, Set<Action>> actions = service.getActionsByCategory(contextService, "test");
         Assertions.assertThat(actions).isEmpty();
     }
 
     @Test
-    public void get_actions_grouped_by_category() {
+    public void get_actions_grouped_by_category() throws RepositoryException {
 
         final int nrOfCategories = ThreadLocalRandom.current().nextInt(2, 32);
         final int nrOfActions = ThreadLocalRandom.current().nextInt(2, 32);
