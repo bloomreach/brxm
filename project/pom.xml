@@ -1345,6 +1345,7 @@
                 <exclude>target/**</exclude>
                 <exclude>*/target/**</exclude>
                 <exclude>*/*/target/**</exclude>
+                <exclude>**/node_modules/**</exclude>
                 <!-- exclude IntelliJ module files of sub-projects -->
                 <exclude>**/*.iml</exclude>
                 <!-- exclude IntelliJ Atlassian plugin file -->
