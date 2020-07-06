@@ -306,6 +306,21 @@
     </property>
   </bean>
   <bean id="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionServiceImpl">
+    <constructor-arg>
+      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionProviderContextFactory">
+        <constructor-arg>
+          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ChannelActionContextFactory" />
+        </constructor-arg>
+        <constructor-arg>
+          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.PageActionContextFactory">
+            <constructor-arg ref="siteMapHelper" />
+          </bean>
+        </constructor-arg>
+        <constructor-arg>
+          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.XPageActionContextFactory" />
+        </constructor-arg>
+      </bean>
+    </constructor-arg>
     <property name="actionProviders" ref="actionProviders" />
   </bean>
 
