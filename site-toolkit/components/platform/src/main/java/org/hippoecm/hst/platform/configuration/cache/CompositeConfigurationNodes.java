@@ -29,6 +29,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_XPAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
@@ -38,13 +39,13 @@ public class CompositeConfigurationNodes {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstNodeImpl.class);
 
-    private List<String> compositeConfigurationDependenyPaths = new ArrayList<String>();
+    final private List<String> compositeConfigurationDependenyPaths = new ArrayList<String>();
 
-    private HstNode configurationRootNode;
-    private Map<String, CompositeConfigurationNode> compositeConfigurationNodes = new HashMap<>();
-    private List<String> compositeConfigurationNodeRelPaths;
+    final private HstNode configurationRootNode;
+    final private Map<String, CompositeConfigurationNode> compositeConfigurationNodes = new HashMap<>();
+    final private List<String> compositeConfigurationNodeRelPaths;
     private boolean compositeConfigurationNodesLoaded;
-    private List<HstNode> orderedRootConfigurationNodeInheritanceList = new ArrayList<>();
+    final private List<HstNode> orderedRootConfigurationNodeInheritanceList = new ArrayList<>();
     private List<UUID> cacheKey;
 
 
@@ -221,27 +222,11 @@ public class CompositeConfigurationNodes {
             final String relativeInheritPath = compositeConfigurationNodeRelPath;
             final boolean isMainConfigNodeInherited = (mainConfigNode == null);
             if (compositeConfigurationNodeRelPath.endsWith(NODENAME_HST_XPAGES)) {
-                log.debug("For config node '{}' we do not support inheritance other than from the live configuration", NODENAME_HST_XPAGES);
-                if (configurationRootNode.getValueProvider().getPath().endsWith("-preview")) {
-                    // xpages are not copied to the -preview if not stored below hst:workspace, hence only inherit the
-                    // xpages from the FIRST 'orderedRootConfigurationNodeInheritanceList' which is the LIVE config
-                    // of this preview which contains the xpages!
-                    if (mainConfigNode == null) {
-                        if (orderedRootConfigurationNodeInheritanceList.isEmpty()) {
-                            log.warn("Expected preview config to inherit from 'live' but not the case for '{}'",
-                                    configurationRootNode.getValueProvider().getPath());
-                        } else {
-                            mainConfigNode = orderedRootConfigurationNodeInheritanceList.get(0).getNode(HstNodeTypes.NODENAME_HST_XPAGES);
-                        }
-                    } else {
-                        log.warn("hst:xpages expected to NOT be present in 'preview' configuration");
-                    }
-                }
 
+                mainConfigNode = findXPagesMainConfigNode();
                 if (mainConfigNode == null) {
                     log.info("No hst:xpages configured for '{}'", configurationRootNode.getValueProvider().getPath());
                 }
-
             } else {
                 for (HstNode inherited : orderedRootConfigurationNodeInheritanceList) {
                     // for hst:containers the relativeInheritPath starts with hst:workspace
@@ -307,6 +292,55 @@ public class CompositeConfigurationNodes {
 
         }
         return compositeConfigurationNodes;
+    }
+
+    private HstNode findXPagesMainConfigNode() {
+        log.debug("Finding the XPages node '{}' from a master live branch since never copied to -preview or " +
+                "branch config", NODENAME_HST_XPAGES);
+
+        if (configurationRootNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_ID) != null) {
+            // we are dealing with a branch, for PaaS (opposite for SaaS later) the xPage layouts are never copied to the branch!
+            if (orderedRootConfigurationNodeInheritanceList.isEmpty()) {
+                log.warn("Expected branch config to inherit from 'master' but not the case for '{}'",
+                        configurationRootNode.getValueProvider().getPath());
+                return null;
+            }
+
+            int index = 0;
+            HstNode hstNode = orderedRootConfigurationNodeInheritanceList.get(index);
+            while (hstNode != null && hstNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_ID) != null) {
+              // still a branch (for example -preview branch inherits from live branch)
+                index++;
+                hstNode = orderedRootConfigurationNodeInheritanceList.get(index);
+            }
+            if (hstNode == null) {
+                log.warn("Expected '{}' to inherit from 'master; configuration the non-workspace items but it does " +
+                        "not inherit from master", configurationRootNode.getValueProvider().getPath());
+                return null;
+            }
+
+            // 'hstNode' is for the live master config
+            return hstNode.getNode(NODENAME_HST_XPAGES);
+
+        } else if (configurationRootNode.getValueProvider().getPath().endsWith("-preview")) {
+            // xpages are not copied to the -preview if not stored below hst:workspace, hence only inherit the
+            // xpages from the FIRST 'orderedRootConfigurationNodeInheritanceList' which is the LIVE config
+            // of this preview which contains the xpages!
+            if (configurationRootNode.getNode(NODENAME_HST_XPAGES) != null) {
+                log.warn("hst:xpages expected to NOT be present in 'preview' configuration, use the hst:xpages from " +
+                        "live config");
+            }
+
+            if (orderedRootConfigurationNodeInheritanceList.isEmpty()) {
+                log.warn("Expected preview config to inherit from 'live' but not the case for '{}'",
+                        configurationRootNode.getValueProvider().getPath());
+                return null;
+            }
+            return orderedRootConfigurationNodeInheritanceList.get(0).getNode(NODENAME_HST_XPAGES);
+
+        }
+
+        return configurationRootNode.getNode(NODENAME_HST_XPAGES);
     }
 
     /**
