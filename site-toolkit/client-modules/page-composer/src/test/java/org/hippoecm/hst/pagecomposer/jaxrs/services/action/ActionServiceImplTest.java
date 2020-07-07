@@ -44,7 +44,7 @@ public class ActionServiceImplTest {
 
     private ActionServiceImpl service;
     @Mock
-    private PageComposerContextService contextService;
+    private ActionContext actionContext;
     @Mock
     private ActionProviderContextFactory contextFactory;
     @Mock
@@ -58,7 +58,7 @@ public class ActionServiceImplTest {
 
     @Test
     public void get_actions_empty() throws RepositoryException {
-        final Map<String, Set<Action>> actions = service.getActionsByCategory(contextService, "test");
+        final Map<String, Set<Action>> actions = service.getActionsByCategory(actionContext);
         Assertions.assertThat(actions).isEmpty();
     }
 
@@ -77,7 +77,7 @@ public class ActionServiceImplTest {
                 .andReturn(actionSet);
         replay(actionProvider);
 
-        final Map<String, Set<Action>> actionsByCategory = service.getActionsByCategory(contextService, "test");
+        final Map<String, Set<Action>> actionsByCategory = service.getActionsByCategory(actionContext);
         Assertions.assertThat(actionsByCategory.size()).isEqualTo(nrOfCategories);
         actionsByCategory.values().forEach(
                 actions -> Assertions.assertThat(actions.size()).isEqualTo(nrOfActions));
