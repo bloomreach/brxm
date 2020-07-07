@@ -16,17 +16,16 @@
 package org.hippoecm.hst.platform.services.experiencepage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -79,17 +78,17 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
             }
 
             final HstSite hstSite = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap().getSite();
-            final HstComponentsConfigurationService componentsConfiguration = (HstComponentsConfigurationService)hstSite.getComponentsConfiguration();
+            final HstComponentsConfigurationService componentsConfiguration = (HstComponentsConfigurationService) hstSite.getComponentsConfiguration();
             final HstComponentConfigurationService xPageLayout =
                     (HstComponentConfigurationService) componentsConfiguration.getXPages().get(pageref);
 
             if (xPageLayout == null) {
                 throw new ExperiencePageLoadingException(String.format("Cannot load XPage '%s' because XPage " +
-                        "'%s' not found below at '%s'", hstNode.getValueProvider().getPath(),
+                                "'%s' not found below at '%s'", hstNode.getValueProvider().getPath(),
                         pageref, hstSite.getConfigurationPath() + "/" + NODENAME_HST_PAGES));
             }
 
-            final HstComponentConfigurationService copy = xPageLayout.copy(false);
+            final HstComponentConfigurationService copy = xPageLayout.copy(hstNode.getValueProvider().getIdentifier(), false);
 
 
             // the root configuration prefix is *JUST* the path to the hstPage itself (hstPage is typically a
@@ -117,10 +116,9 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                             new HstComponentConfigurationService(entry.getValue(), null, ROOT_EXPERIENCE_PAGES_NAME, Collections.emptyMap(), rootConfigurationPrefix)));
 
 
-
             // mark the container items as experience page components
             documentContainers.values().forEach(config -> config.flattened().forEach(c ->
-                    ((HstComponentConfigurationService)c).setExperiencePageComponent(true)));
+                    ((HstComponentConfigurationService) c).setExperiencePageComponent(true)));
 
             // into the 'copy' of the xpage, now glue the 'containerConfigurations' from the XPage document variant:
             // it is however not a full replacement since all configuration from the 'hst config containers' should be
@@ -160,7 +158,7 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                     // Experience Page
                     log.warn("Experience Page Container component should have property '{}' but is missing. Remove " +
                             "container from request time XPage configuration", pageLayoutContainer.getCanonicalStoredLocation());
-                    ((HstComponentConfigurationService)pageLayoutContainer.getParent()).removeChild(pageLayoutContainer);
+                    ((HstComponentConfigurationService) pageLayoutContainer.getParent()).removeChild(pageLayoutContainer);
                 }
 
 
@@ -177,7 +175,7 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                     pageLayoutContainer.transformXpageLayoutContainer(documentContainer);
 
                     // enhance the not yet enhanced XPage container items
-                    componentsConfiguration.enhanceComponentTree(documentContainer.getChildren().values());
+                    componentsConfiguration.enhanceComponentTree(documentContainer.getChildren().values(), false);
 
                     // TODO for the new feature of container items backreferencing the catalog item, make sure
                     // TODO the catalog item inheritance works
@@ -191,9 +189,14 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                 // any left documentContainers are container that are not present (any more) in the XPAge Layout. Log an
                 // info message about these
                 documentContainers.values().forEach(config -> log.info("Document XPage contains container '{}' which " +
-                        "is not represented by any hst:qualifier in XPage Layout '{}' and will as a result be ignored",
+                                "is not represented by any hst:qualifier in XPage Layout '{}' and will as a result be ignored",
                         config.getCanonicalStoredLocation(), xPageLayout.getCanonicalStoredLocation()));
             }
+
+            // reset all the reference names to get reference names stable for this specific XPage document (so next
+            // request has same stable reference names (namespaces)
+
+            setReferenceNames(Collections.singletonList(copy));
 
             return copy;
         } finally {
@@ -216,4 +219,11 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
         }
     }
 
+    public void setReferenceNames(final Collection<HstComponentConfiguration> components) {
+        int counter = 0;
+        for (HstComponentConfiguration component : components) {
+            ((HstComponentConfigurationService)component).setReferenceName("p" + ++counter);
+            setReferenceNames(component.getChildren().values());
+        }
+    }
 }
