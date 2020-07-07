@@ -31,7 +31,6 @@ public class ChannelActionContext {
     private boolean crossChannelPageCopySupported;
     private boolean workspaceExists;
     private boolean hasPrototypes;
-    private boolean hasPageModifiableChannels;
     private Set<String> changeBySet;
 
     public String getChannelId() {
@@ -74,10 +73,6 @@ public class ChannelActionContext {
         return hasPrototypes;
     }
 
-    public boolean hasPageModifiableChannels() {
-        return hasPageModifiableChannels;
-    }
-
     ChannelActionContext setChannelAdmin(final boolean channelAdmin) {
         this.channelAdmin = channelAdmin;
         return this;
@@ -85,8 +80,6 @@ public class ChannelActionContext {
 
     ChannelActionContext setChannel(final Channel channel) {
         this.channel = channel;
-        this.configurationLocked = channel.isConfigurationLocked();
-        this.deletable = channel.isDeletable();
         this.channelId = channel.getId();
         if (channelId.endsWith("-preview")) {
             channelId = channelId.substring(0, channelId.lastIndexOf("-preview"));
@@ -107,8 +100,13 @@ public class ChannelActionContext {
         return this;
     }
 
-    ChannelActionContext setHasPageModifiableChannels(final boolean hasPageModifiableChannels) {
-        this.hasPageModifiableChannels = hasPageModifiableChannels;
+    ChannelActionContext setDeletable(final boolean deletable) {
+        this.deletable = deletable;
+        return this;
+    }
+
+    ChannelActionContext setConfigurationLocked(final boolean configurationLocked) {
+        this.configurationLocked = configurationLocked;
         return this;
     }
 }

@@ -57,7 +57,6 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.PAGE
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.PAGE_MOVE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.PAGE_NEW;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.PAGE_PROPERTIES;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.PAGE_TOOLS;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_DELETE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_MOVE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_NEW;
@@ -83,15 +82,14 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(channel(), CHANNEL_CLOSE), true)
                 .put(key(channel(), CHANNEL_DELETE), false)
                 .put(key(channel(), CHANNEL_DISCARD_CHANGES), false)
-                .put(key(channel(), CHANNEL_MANAGE_CHANGES), true)
+                .put(key(channel(), CHANNEL_MANAGE_CHANGES), false)
                 .put(key(channel(), CHANNEL_PUBLISH), false)
                 .put(key(channel(), CHANNEL_SETTINGS), false)
                 .put(key(page(), PAGE_COPY), true)
                 .put(key(page(), PAGE_DELETE), false)
                 .put(key(page(), PAGE_MOVE), false)
-                .put(key(page(), PAGE_NEW), false)
+                .put(key(page(), PAGE_NEW), true)
                 .put(key(page(), PAGE_PROPERTIES), false)
-                .put(key(page(), PAGE_TOOLS), true)
                 .build();
         Assertions.assertThat(actions)
                 .describedAs("A page component request contains all channel and page components")
@@ -148,12 +146,12 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(channel(), CHANNEL_CLOSE), true)
                 .put(key(channel(), CHANNEL_DELETE), false)
                 .put(key(channel(), CHANNEL_DISCARD_CHANGES), false)
-                .put(key(channel(), CHANNEL_MANAGE_CHANGES), true)
+                .put(key(channel(), CHANNEL_MANAGE_CHANGES), false)
                 .put(key(channel(), CHANNEL_PUBLISH), false)
                 .put(key(channel(), CHANNEL_SETTINGS), false)
-                .put(key(xpage(), XPAGE_DELETE), true)
-                .put(key(xpage(), XPAGE_MOVE), true)
-                .put(key(xpage(), XPAGE_NEW), true)
+                .put(key(xpage(), XPAGE_DELETE), false)
+                .put(key(xpage(), XPAGE_MOVE), false)
+                .put(key(xpage(), XPAGE_NEW), false)
                 .build();
         Assertions.assertThat(actions)
                 .describedAs("A page component request contains all channel and page components")
@@ -165,7 +163,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
 
         final String homeSiteMapItemUuid = getNodeId("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home");
 
-        final String pathInfo = "/_rp/" + containerId + "./item/" + homeSiteMapItemUuid ;
+        final String pathInfo = "/_rp/" + containerId + "./item/" + homeSiteMapItemUuid;
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
         final RequestResponseMock requestResponseMock = mockGetRequestResponse("http", "localhost", pathInfo, null, "GET");

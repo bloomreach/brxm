@@ -37,15 +37,15 @@ public class ActionProviderContextFactory {
         this.xPageActionContextFactory = xPageActionContextFactory;
     }
 
-    public ActionProviderContext make(PageComposerContextService contextService, String siteMapItemUuid) throws RepositoryException {
-        final String userId = contextService.getRequestContext().getSession().getUserID();
+    public ActionProviderContext make(ActionContext actionContext) throws RepositoryException {
+        final PageComposerContextService contextService = actionContext.getContextService();
         return new ActionProviderContext()
                 .setExperiencePageRequest(contextService.isExperiencePageRequest())
                 .setMasterBranchSelected(BranchConstants.MASTER_BRANCH_ID.equals(contextService.getSelectedBranchId()))
-                .setUserId(userId)
+                .setUserId(actionContext.getUserId())
                 .setBranchId(contextService.getSelectedBranchId())
-                .setChannelActionContext(channelActionContextFactory.make(contextService))
-                .setPageActionContext(pageActionContextFactory.make(contextService, siteMapItemUuid, userId))
+                .setChannelActionContext(channelActionContextFactory.make(actionContext))
+                .setPageActionContext(pageActionContextFactory.make(actionContext))
                 .setXPageActionContext(xPageActionContextFactory.make(contextService));
     }
 
