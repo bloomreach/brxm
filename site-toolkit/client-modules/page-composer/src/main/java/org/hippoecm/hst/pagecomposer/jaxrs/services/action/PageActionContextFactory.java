@@ -16,6 +16,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
@@ -33,8 +35,10 @@ public class PageActionContextFactory {
         this.siteMapHelper = siteMapHelper;
     }
 
-    public PageActionContext make(PageComposerContextService contextService, String siteMapItemUuid, String userId) {
-
+    public PageActionContext make(ActionContext actionContext) throws RepositoryException {
+        final PageComposerContextService contextService = actionContext.getContextService();
+        final String siteMapItemUuid = actionContext.getSiteMapItemUuid();
+        final String userId = actionContext.getUserId();
         final HstSiteMapItem siteMapItem = siteMapHelper.getConfigObject(siteMapItemUuid);
         final Mount mount = contextService.getEditingMount();
         final String homePagePathInfo = HstSiteMapUtils.getPath(mount, mount.getHomePage());

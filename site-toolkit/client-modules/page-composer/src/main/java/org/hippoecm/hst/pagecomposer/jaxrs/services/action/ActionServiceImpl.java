@@ -23,8 +23,6 @@ import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
-
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toSet;
@@ -43,8 +41,8 @@ public final class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public Map<String, Set<Action>> getActionsByCategory(PageComposerContextService contextService, String siteMapItemUuid) throws RepositoryException {
-        final ActionProviderContext context = contextFactory.make(contextService, siteMapItemUuid);
+    public Map<String, Set<Action>> getActionsByCategory(ActionContext actionContext) throws RepositoryException {
+        final ActionProviderContext context = contextFactory.make(actionContext);
         return actionProviders.stream()
                 .map(actionProvider -> Optional.ofNullable(actionProvider.getActions(context)).orElse(emptySet()))
                 .flatMap(Set::stream)
