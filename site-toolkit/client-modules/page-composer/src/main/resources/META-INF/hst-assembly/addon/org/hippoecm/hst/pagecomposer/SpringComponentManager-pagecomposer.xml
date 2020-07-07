@@ -309,7 +309,9 @@
     <constructor-arg>
       <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionProviderContextFactory">
         <constructor-arg>
-          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ChannelActionContextFactory" />
+          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ChannelActionContextFactory">
+            <constructor-arg ref="channelService" />
+          </bean>
         </constructor-arg>
         <constructor-arg>
           <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.PageActionContextFactory">

@@ -27,7 +27,6 @@ public enum HstAction {
     CHANNEL_DELETE("delete", HstCategories.channel()),
     CHANNEL_CLOSE("close", HstCategories.channel()),
 
-    PAGE_TOOLS("tools", HstCategories.page()),
     PAGE_PROPERTIES("properties", HstCategories.page()),
     PAGE_COPY("copy", HstCategories.page()),
     PAGE_MOVE("move", HstCategories.page()),

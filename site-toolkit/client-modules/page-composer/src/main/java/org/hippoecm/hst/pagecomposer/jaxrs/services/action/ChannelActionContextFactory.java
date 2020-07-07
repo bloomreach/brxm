@@ -21,32 +21,44 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
-import org.onehippo.cms7.services.hst.Channel;
 
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
 import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
 
 public class ChannelActionContextFactory implements ComponentManagerAware {
 
+    private final ChannelService channelService;
     private boolean crossChannelPageCopySupported;
+
+    public ChannelActionContextFactory(final ChannelService channelService) {
+        this.channelService = channelService;
+    }
 
     @Override
     public void setComponentManager(ComponentManager componentManager) {
-        crossChannelPageCopySupported = componentManager.getContainerConfiguration().getBoolean("cross.channel.page.copy.supported", false);
+        crossChannelPageCopySupported = componentManager.getContainerConfiguration()
+                .getBoolean("cross.channel.page.copy.supported", false);
     }
 
-    ChannelActionContext make(PageComposerContextService contextService) {
-        final Channel channel = contextService.getEditingPreviewChannel();
-        return new ChannelActionContext()
-                .setChannel(channel)
+    ChannelActionContext make(ActionContext actionContext) {
+        final PageComposerContextService contextService = actionContext.getContextService();
+        final ChannelActionContext channelActionContext = new ChannelActionContext()
                 .setChannelAdmin(isChannelAdmin(contextService))
                 .setCrossChannelPageCopySupported(crossChannelPageCopySupported)
-                .setHasPrototypes(!contextService.getEditingMount().getHstSite().getComponentsConfiguration().getPrototypePages().values().isEmpty())
-                // TODO (meggermont): how can I determine this without knowing the hostGroup?
-                .setHasPageModifiableChannels(true);
+                .setHasPrototypes(!hasPrototypes(contextService));
+        channelService.getChannelByMountId(actionContext.getMountId(), actionContext.getHostGroup())
+                .ifPresent(channel -> channelActionContext
+                        .setChannel(channel)
+                        .setDeletable(channelService.canChannelBeDeleted(channel) && channelService.isMaster(channel))
+                        .setConfigurationLocked(channel.isConfigurationLocked()));
+        return channelActionContext;
     }
 
+    private boolean hasPrototypes(final PageComposerContextService contextService) {
+        return !contextService.getEditingMount().getHstSite().getComponentsConfiguration().getPrototypePages().values().isEmpty();
+    }
 
     private boolean isChannelAdmin(PageComposerContextService contextService) {
         try {
@@ -60,4 +72,5 @@ public class ChannelActionContextFactory implements ComponentManagerAware {
             return false;
         }
     }
+
 }
