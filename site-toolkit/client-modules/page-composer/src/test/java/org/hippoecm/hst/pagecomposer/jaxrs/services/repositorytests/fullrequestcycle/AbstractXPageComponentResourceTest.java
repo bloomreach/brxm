@@ -138,7 +138,7 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
     protected Node getFrozenBannerComponent() throws Exception {
         final Node masterVersion = versionMasterByBranching();
 
-        final Node frozenBannerComponent = masterVersion.getNode("hst:page/body/container/banner");
+        final Node frozenBannerComponent = masterVersion.getNode("hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         assertTrue(frozenBannerComponent.isNodeType(NT_FROZENNODE));
         return frozenBannerComponent;
@@ -148,7 +148,7 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
     protected Node getFrozenContainer() throws Exception {
         final Node masterVersion = versionMasterByBranching();
 
-        final Node frozenContainer = masterVersion.getNode("hst:page/body/container");
+        final Node frozenContainer = masterVersion.getNode("hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
         assertTrue(frozenContainer.isNodeType(NT_FROZENNODE));
         return frozenContainer;
