@@ -241,7 +241,14 @@ definitions:
                       hst:parametervalues: [/content/document, /content/variant1]
                       hst:template: banner
                   /430df2da-3dc8-40b5-bed5-bdc44b8445c7:
-                      jcr:primaryType: hst:containercomponent
+                    jcr:primaryType: hst:containercomponent
+                    /banner:
+                      jcr:primaryType: hst:containeritemcomponent
+                      hst:componentclassname: org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent
+                      hst:parameternameprefixes: ['']
+                      hst:parameternames: [path]
+                      hst:parametervalues: [/content/document]
+                      hst:template: banner
             /expPage2:
               jcr:primaryType: hippo:handle
               jcr:mixinTypes: ['mix:referenceable']
