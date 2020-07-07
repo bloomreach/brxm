@@ -74,7 +74,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
 
-        final String containerId = getNodeId(admin,publishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final String containerId = getNodeId(admin,publishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
         failCreateAssertions(mountId, catalogId, containerId);
 
@@ -195,7 +195,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             // assert current unpublished variant is for a branch and not for MASTER due to getFrozenContainer
             assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
         } else {
-            containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
         }
 
         final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
@@ -234,7 +234,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         final String createdUUID = map.get("id").toString();
 
         // assertion on newly created item
-        assertTrue(admin.nodeExists(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
+        assertTrue(admin.nodeExists(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/testitem"));
         assertTrue(admin.getNodeByIdentifier(createdUUID) != null);
 
         // assert document can now be published
@@ -247,7 +247,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         // now publish the document,
         documentWorkflow.publish();
         // assert that published variant now has extra container item 'testitem'
-        assertTrue(admin.nodeExists(publishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
+        assertTrue(admin.nodeExists(publishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/testitem"));
 
 
         // now delete
@@ -265,7 +265,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         }
 
         // published variant still has the container item
-        assertTrue(admin.nodeExists(publishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
+        assertTrue(admin.nodeExists(publishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/testitem"));
 
         // after delete, the unpublished has become publishable again
         assertEquals("Unpublished has changes, publication should be enabled",
@@ -274,7 +274,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         documentWorkflow.publish();
 
         // published variant should not have the container item any more
-        assertFalse(admin.nodeExists(publishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
+        assertFalse(admin.nodeExists(publishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/testitem"));
 
         // now assert an existing component item (or catalog) not from the current XPAGE cannot be deleted via
         // the container id
@@ -301,7 +301,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final String containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
         final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
 
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
@@ -335,7 +335,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
             final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final String containerId = getNodeId(admin,unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final String containerId = getNodeId(admin,unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
             final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
 
             final RequestResponseMock createRequestResponse = mockGetRequestResponse(
@@ -360,8 +360,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
-        final String beforeItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
+        final String beforeItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
         final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
 
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
@@ -391,7 +391,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         // expect unpublished variant to be for a branch
         assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
 
-        final String beforeItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String beforeItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
         final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
 
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
@@ -407,7 +407,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         // do not reuse containerId from above since that one is from version history
         final Node container = admin.getNodeByIdentifier(getNodeId(admin,
-                unpublishedExpPageVariant.getPath() + "/hst:page/body/container"));
+                unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6"));
 
         final NodeIterator nodes = container.getNodes();
         assertEquals("Expected testitem to be created before banner", "testitem", nodes.nextNode().getName());
@@ -441,7 +441,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
     @Test
     public void create_item_before_item_of_other_container_results_in_error() throws Exception {
 
-        final String beforeItemId = getNodeId(admin,EXPERIENCE_PAGE_2_HANDLE_PATH + "/expPage2/hst:page/body/container/banner");
+        final String beforeItemId = getNodeId(admin,EXPERIENCE_PAGE_2_HANDLE_PATH + "/expPage2/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
         final String expectedMessage = String.format(String.format("Order before container item '%s' is of other experience page", beforeItemId));
         notAllowedcreateBeforeItem(beforeItemId, expectedMessage, false);
     }
@@ -449,7 +449,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
     @Test
     public void create_item_before_item_of_other_container_results_in_error_for_VERSIONED_XPage() throws Exception {
 
-        final String beforeItemId = getNodeId(admin,EXPERIENCE_PAGE_2_HANDLE_PATH + "/expPage2/hst:page/body/container/banner");
+        final String beforeItemId = getNodeId(admin,EXPERIENCE_PAGE_2_HANDLE_PATH + "/expPage2/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
         final String expectedMessage = String.format(String.format("Order before container item '%s' is of other experience page", beforeItemId));
         notAllowedcreateBeforeItem(beforeItemId, expectedMessage, true);
     }
@@ -479,7 +479,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             // assert current unpublished variant is for a branch and not for MASTER due to getFrozenBannerComponent
             assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
         } else {
-            containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
         }
 
 
@@ -510,15 +510,15 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
     @Test
     public void move_container_item_within_container() throws Exception {
 
-        JcrUtils.copy(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner",
-                unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner2");
+        JcrUtils.copy(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner",
+                unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner2");
         admin.save();
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
-        final String itemId1 = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
-        final String itemId2 = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner2");
+        final String containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
+        final String itemId1 = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
+        final String itemId2 = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner2");
 
         final RequestResponseMock updateRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + containerId, null,
@@ -559,8 +559,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
     @Test
     public void move_container_item_within_container_for_VERSIONED_XPage() throws Exception {
 
-        JcrUtils.copy(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner",
-                unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner2");
+        JcrUtils.copy(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner",
+                unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner2");
         admin.save();
 
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
@@ -601,7 +601,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         // do not reuse containerId from above since that one is from version history
         final Node container = admin.getNodeByIdentifier(getNodeId(admin,
-                unpublishedExpPageVariant.getPath() + "/hst:page/body/container"));
+                unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6"));
         // assert container items have been flipped
 
         final NodeIterator children = container.getNodes();
@@ -621,14 +621,14 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
     public void move_container_item_between_container_of_same_XPage() throws Exception {
 
         // first create a second container
-        JcrUtils.copy(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container",
-                unpublishedExpPageVariant.getPath() + "/hst:page/body/container2");
+//        JcrUtils.copy(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6",
+//                unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c7");
         admin.save();
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String targetContainerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container2");
-        final String itemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String targetContainerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c7");
+        final String itemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         final RequestResponseMock updateRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + targetContainerId, null,
@@ -657,7 +657,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         assertEquals("Expected postfix '1' to banner moved to container to avoid same name",
                 "banner1", children.nextNode().getName());
 
-        final Node sourceContainer = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final Node sourceContainer = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
         assertEquals(0l, sourceContainer.getNodes().getSize());
 
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
@@ -675,8 +675,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
         // Container of a different XPage than itemId
-        final String targetContainerId = getNodeId(admin, "/unittestcontent/documents/unittestproject/experiences/expPage2/expPage2/hst:page/body/container");
-        final String itemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String targetContainerId = getNodeId(admin, "/unittestcontent/documents/unittestproject/experiences/expPage2/expPage2/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
+        final String itemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         final RequestResponseMock updateRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + targetContainerId, null,
@@ -732,7 +732,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
             final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final String targetContainerId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final String targetContainerId = getNodeId(session, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
             final String itemFromHstConfig = getNodeId(session, "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main/container/banner");
 
@@ -763,7 +763,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String containerId = getNodeId(admin,unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final String containerId = getNodeId(admin,unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
         final RequestResponseMock updateRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + containerId, null,
@@ -788,7 +788,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final String containerId = getNodeId(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
         final RequestResponseMock updateRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + containerId, null,
@@ -823,7 +823,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             documentWorkflow.requestPublication();
 
             final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
-            final String containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final String containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
             final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
 
             final RequestResponseMock createRequestResponse = mockGetRequestResponse(
