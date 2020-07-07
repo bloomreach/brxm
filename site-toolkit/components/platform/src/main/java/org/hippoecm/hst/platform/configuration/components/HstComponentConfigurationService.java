@@ -216,7 +216,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private boolean experiencePageComponent;
 
     /**
-     * detached is true for components returned from {@link #copy(boolean)} implying that the
+     * detached is true for components returned from {@link #copy(String, boolean)} implying that the
      * specific {@link HstComponentConfigurationService} is detached from the HST in memory model
      */
     private boolean detached;
@@ -812,14 +812,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * <p>
      *     The returned copy is *DETACHED* from the HST Model and a complete independent
      *     HstComponentConfigurationService (tree). Therefor all the components in this returned deep copy will have
-     *     {@link HstComponentConfigurationService#detached equal to true}
+     *     {@link HstComponentConfigurationService#detached equal to true}.
+     *
      * </p>
-     * @return A deep copy of {@code source} with parent = null and a new random uuid as id
-     * {@link HstComponentConfigurationService#getId()}
+     * @return A deep copy of {@code source} with parent = null and root component having id {@code id}
      */
-    public HstComponentConfigurationService copy(final boolean includeContainerItems) {
+    public HstComponentConfigurationService copy(final String id, final boolean includeContainerItems) {
         final HstComponentConfigurationService hstComponentConfigurationService =
-                deepCopy(null, UUID.randomUUID().toString(), this, null, includeContainerItems);
+                deepCopy(null, id, this, null, includeContainerItems);
         hstComponentConfigurationService.flattened().forEach(config -> ((HstComponentConfigurationService)config).detached = true);
         return hstComponentConfigurationService;
     }
