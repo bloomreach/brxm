@@ -159,7 +159,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         
         templateResourceMap = unmodifiableMap(getTemplateResourceMap(ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_TEMPLATES)));
 
-        enhanceComponentTree(nonPrototypeRootComponents);
+        enhanceComponentTree(nonPrototypeRootComponents, true);
 
     }
 
@@ -169,13 +169,17 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
     }
 
-    public void enhanceComponentTree(final Collection<HstComponentConfiguration> childComponents) {
+    public void enhanceComponentTree(final Collection<HstComponentConfiguration> childComponents, final boolean hstConfigModel) {
 
         populateComponentReferences(canonicalComponentConfigurations);
 
-        //  autocreating missing referenceNames
-        for (HstComponentConfiguration child : childComponents) {
-            autocreateReferenceNames(child);
+
+        if (hstConfigModel) {
+            //  autocreating missing referenceNames : never needed for request based XPage config since for XPage we
+            // reset the entire namespaces since cloned (detached) from HST Model altogether
+            for (HstComponentConfiguration child : childComponents) {
+                autocreateReferenceNames(child);
+            }
         }
 
 
@@ -209,8 +213,12 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             ((HstComponentConfigurationService) child).populateIsCompositeCacheable();
         }
 
-        for (HstComponentConfiguration child : childComponents) {
-            ((HstComponentConfigurationService) child).makeCollectionsImmutableAndOptimize();
+        if (hstConfigModel) {
+            // for request based XPages, do not bother to optimize memory usage since xpage config GC-ed at the end
+            // of request
+            for (HstComponentConfiguration child : childComponents) {
+                ((HstComponentConfigurationService) child).makeCollectionsImmutableAndOptimize();
+            }
         }
 
     }
