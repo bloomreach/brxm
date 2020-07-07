@@ -67,7 +67,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         getComponentItemAs(ADMIN_CREDENTIALS, mountId, componentItemId);
         getComponentItemAs(EDITOR_CREDENTIALS, mountId, componentItemId);
@@ -115,7 +115,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String componentItemId = getNodeId(admin, publishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, publishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + componentItemId + "./hippo-default/en", null, "GET");
@@ -153,7 +153,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
             // assert current unpublished variant is for a branch and not for MASTER due to getFrozenBannerComponent
             assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
         } else {
-            componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+            componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
         }
 
 
@@ -176,11 +176,11 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         // assert container never locked for XPage, and not publishable since it did NOT change
         assertFalse("XPage container should never get locked!!",
-                admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container").hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+                admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6").hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
 
-        admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner").getProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES);
+        admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner").getProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES);
 
-        final String[] variants = JcrUtils.getMultipleStringProperty(admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner"),
+        final String[] variants = JcrUtils.getMultipleStringProperty(admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner"),
                 COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES, null);
 
         assertThat(variants)
@@ -199,13 +199,13 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
     @Test
     public void retain_empty_variant_removes_all_except_default() throws Exception {
 
-        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
         assertTrue("Container has some variants bootstrapped",
                 container.getNode("banner").hasProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES));
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + componentItemId, null, "POST");
@@ -264,7 +264,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
             // assert current unpublished variant is for a branch and not for MASTER due to getFrozenBannerComponent
             assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
         } else {
-            componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+            componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
         }
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
@@ -277,7 +277,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
 
         admin.refresh(false);
-        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
         // assert container never locked for XPAGE
         assertFalse("XPage container should never get locked!!",
@@ -318,7 +318,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + componentItemId + "./variant1", null, "DELETE");
@@ -330,7 +330,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
 
         admin.refresh(false);
-        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
         // assert container never locked for XPAGE
         assertFalse("XPage container should never get locked!!",
@@ -351,7 +351,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + componentItemId + "./variant1", null, "DELETE");
@@ -362,7 +362,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
         admin.refresh(false);
-        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
         // assert container never locked for XPAGE
         assertFalse("XPage container should never get locked!!",
@@ -392,7 +392,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
         admin.refresh(false);
-        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
         // container should have timestamp updated
         assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
@@ -407,7 +407,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + componentItemId + "./non-existing", null, "DELETE");
@@ -449,7 +449,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + componentItemId + "./variant1",
@@ -473,7 +473,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         assertRequiresReload(response, false);
 
         admin.refresh(false);
-        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
         // assert container never locked for XPAGE
         assertFalse("XPage container should never get locked!!",
@@ -497,7 +497,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + componentItemId + "./variant1",
@@ -526,7 +526,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         final Map<String, Object> data = (Map<String, Object>)extResponseRepresentation.getData();
 
-        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
         assertEquals("response should have the component item id", data.get("id"), componentItemId);
 
@@ -564,7 +564,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // that after the page was rendered in the CM but before it was modified, the workspace version got replaced. The
         // only way this doesn't work is IF the 'foo' version does not have the 'banner' component with the same UUID.
         // in this case an exception is expected.
-        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         {
             final Node frozenBannerComponent = getFrozenBannerComponent();
@@ -599,7 +599,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
             // assert the unpublished variant is NOW for MASTER although it was for 'foo' before
             assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
 
-            final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
             final HstComponentParameters parameters = new HstComponentParameters(container.getNode("banner"), cih);
             // assert parameters updated
@@ -607,7 +607,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
             assertEquals("newvalue", parameters.getValue("variant1", "newparam"));
         }
 
-        final String componentItemIdMasterBanner = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemIdMasterBanner = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         assertEquals("Even though via version history restored, UUIDs between different branches are in general " +
                 "the same.", componentItemIdMasterBanner, componentItemId);
@@ -634,7 +634,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
             // assert the unpublished variant is NOW for 'foo' again!
             assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
 
-            final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+            final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
             final HstComponentParameters parameters = new HstComponentParameters(container.getNode("banner"), cih);
             // assert parameters updated
@@ -648,7 +648,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // componentItemIdMasterBanner, however, we cannot lookup those nodes. Hence in this case, the CM will return
         // an error after which the CM reloads, not a big deal
 
-        admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner").remove();
+        admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner").remove();
         admin.save();
 
         {
@@ -681,7 +681,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
     @Test
     public void update_params_for_variant_which_got_moved_to_VERSIONED_PAGE() throws Exception {
 
-        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:page/body/container/banner");
+        final String componentItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         // now make sure branch 'foo' is the unpublished version
         getFrozenBannerComponent();
@@ -720,7 +720,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // assert the unpublished variant is NOW for MASTER although it was for 'foo' before
         assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isFalse();
 
-        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
         ContainerItemHelper cih = HstServices.getComponentManager().getComponent("containerItemHelper", "org.hippoecm.hst.pagecomposer");
 
@@ -768,7 +768,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         final Map<String, Object> data = (Map<String, Object>)extResponseRepresentation.getData();
 
-        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:page/body/container");
+        final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
         assertEquals("The data in the response should have the uuid of the WORKSPACE version " +
                 "of the container item", data.get("id"), container.getNode("banner").getIdentifier());
