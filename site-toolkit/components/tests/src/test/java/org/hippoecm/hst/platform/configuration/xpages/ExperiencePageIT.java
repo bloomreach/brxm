@@ -65,7 +65,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import static org.apache.commons.lang3.StringUtils.substringAfterLast;
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createNiceMock;
@@ -74,8 +74,8 @@ import static org.easymock.EasyMock.replay;
 import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 
 @RunWith(PowerMockRunner.class)
@@ -227,7 +227,7 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
 
         assertThat(root.getReferenceName())
                 .as("The root component for the experience page expected to have namespace 'r'")
-                .startsWith("r");
+                .isEqualTo("p1");
 
         assertThat(root.isXPage())
                 .as("Expected experience page although it inherits from which inherits from 'hst:abstractpages/basepage'")
@@ -241,21 +241,21 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
         assertThat(header).as("'header' component expected to part of Page Layout (config)").isNotNull();
         assertThat(header.isExperiencePageComponent()).isFalse();
         assertThat(header.isShared()).isTrue();
-        assertThat(header.getReferenceName()).startsWith("r");
+        assertThat(header.getReferenceName()).startsWith("p");
 
 
         HstComponentConfiguration leftmenu = root.getChildByName("leftmenu");
         assertThat(leftmenu).as("'leftmenu' component expected to part of Page Layout (config)").isNotNull();
         assertThat(leftmenu.isExperiencePageComponent()).isFalse();
         assertThat(header.isShared()).isTrue();
-        assertThat(leftmenu.getReferenceName()).startsWith("r");
+        assertThat(leftmenu.getReferenceName()).startsWith("p");
 
 
         HstComponentConfiguration main = root.getChildByName("main");
         assertThat(main).as("'main' component expected to part of Page Layout (config)").isNotNull();
         assertThat(main.isExperiencePageComponent()).isFalse();
         assertThat(main.isShared()).isTrue();
-        assertThat(main.getReferenceName()).startsWith("r");
+        assertThat(main.getReferenceName()).startsWith("p");
 
         HstComponentConfiguration container1 = main.getChildByName("container1");
 
@@ -297,7 +297,7 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
 
         // container should never be marked as inherited because would mean not editable
         assertThat(container1.isInherited()).isFalse();
-        assertThat(container1.getReferenceName()).startsWith("r");
+        assertThat(container1.getReferenceName()).startsWith("p");
 
         if (handleName.equals("expPage1")) {
             HstComponentConfiguration banner = container1.getChildByName("banner");
@@ -311,7 +311,7 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
             }
             assertThat(banner.isExperiencePageComponent()).isTrue();
             assertThat(banner.isShared()).isFalse();
-            assertThat(banner.getReferenceName()).startsWith("r");
+            assertThat(banner.getReferenceName()).startsWith("p");
         } else if (handleName.equals("articleAsExpPage")) {
             // articleAsExpPage does not have a banner item
             assertThat(container1.getChildByName("banner"))
@@ -323,7 +323,7 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
         assertThat(container2).as("'container2' component expected to be part of Experience Page explicitly").isNotNull();
         assertThat(container2.isExperiencePageComponent()).isTrue();
         assertThat(container2.isShared()).isFalse();
-        assertThat(container2.getReferenceName()).startsWith("r");
+        assertThat(container2.getReferenceName()).startsWith("p");
 
     }
 
@@ -416,7 +416,7 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
 
             assertThat(container1.getChildren().size())
             .as("Execpted that the banner item was removed from the XPage Layout container represented in a " +
-                    "reqeust based XPage config").isEqualTo(0);
+                    "request based XPage config").isEqualTo(0);
             assertThat(container1.isExperiencePageComponent())
                     .as("Even though config from XPage layout hst config, still expected to be marked as " +
                             "experiece component")
@@ -560,5 +560,35 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
              adminSession.save();
 
          }
+    }
+
+    @Test
+    public void xPage_doc_results_in_stable_child_order_namespaces_and_id_if_no_changes_occur() throws Exception {
+
+        final String pathToExperiencePage = "/unittestcontent/documents/unittestproject/experiences/expPage1";
+
+        final GenericHttpServletRequestWrapper containerRequest = createContainerRequest("expPage1");
+        initContext(pathToExperiencePage, null);
+
+        final HstComponentConfiguration a = resolve(containerRequest).getHstComponentConfiguration();
+        final HstComponentConfiguration b = resolve(containerRequest).getHstComponentConfiguration();
+
+        compareReferenceNamesComponentOrderAndIds(a, b);
+    }
+
+    private void compareReferenceNamesComponentOrderAndIds(final HstComponentConfiguration a, final HstComponentConfiguration b) {
+
+        assertEquals(format("Expected '%s' to have same name as '%s'", a.getCanonicalStoredLocation(), b.getCanonicalStoredLocation()),
+                a.getName(), b.getName());
+        assertEquals(format("Expected '%s' to have same reference name (namespace) as '%s'", a.getCanonicalStoredLocation(), b.getCanonicalStoredLocation()),
+                a.getReferenceName(), b.getReferenceName());
+
+        assertEquals(format("Expected '%s' to have same id as '%s'", a.getCanonicalStoredLocation(), b.getCanonicalStoredLocation()),
+                a.getId(), b.getId());
+
+        for (HstComponentConfiguration aChild : a.getChildren().values()) {
+            HstComponentConfiguration bChild = b.getChildByName(aChild.getName());
+            compareReferenceNamesComponentOrderAndIds(aChild, bChild);
+        }
     }
 }
