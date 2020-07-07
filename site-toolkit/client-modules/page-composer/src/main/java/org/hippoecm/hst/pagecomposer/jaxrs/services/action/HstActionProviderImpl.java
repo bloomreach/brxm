@@ -28,7 +28,8 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHAN
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_MANAGE_CHANGES;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_PUBLISH;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_SETTINGS;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.xpage;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_MOVE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_NEW;
 
 public class HstActionProviderImpl implements ActionProvider {
 
@@ -58,11 +59,14 @@ public class HstActionProviderImpl implements ActionProvider {
 
         channelAction.add(CHANNEL_MANAGE_CHANGES.toAction(
                 context.isChannelAdmin()
+                        && !context.getChangedBySet().isEmpty()
                         && !context.isConfigurationLocked()));
 
-        channelAction.add(CHANNEL_PUBLISH.toAction(
-                context.isChannelAdmin()
-                        && !context.getChangedBySet().isEmpty()));
+        if (actionProviderContext.isMasterBranchSelected()) {
+            channelAction.add(CHANNEL_PUBLISH.toAction(
+                    context.isChannelAdmin()
+                            && context.getChangedBySet().contains(actionProviderContext.getUserId())));
+        }
 
         channelAction.add(CHANNEL_SETTINGS.toAction(
                 context.hasCustomProperties()));
@@ -72,8 +76,15 @@ public class HstActionProviderImpl implements ActionProvider {
 
     private Set<Action> xPageActions(ActionProviderContext context) {
         return context.isExperiencePageRequest()
-                ? HstAction.actions(xpage()).map(hstAction -> hstAction.toAction(true)).collect(toSet())
+                ? getXPageActions()
                 : Collections.emptySet();
+    }
+
+    private Set<Action> getXPageActions() {
+        // TODO (meggermont): decide which actions we really need
+        return Stream.of(HstAction.XPAGE_DELETE, XPAGE_MOVE, XPAGE_NEW)
+                .map(action -> action.toAction(false))
+                .collect(toSet());
     }
 
     private Set<Action> pageActions(ActionProviderContext context) {
@@ -92,7 +103,7 @@ public class HstActionProviderImpl implements ActionProvider {
         actions.add(HstAction.PAGE_COPY.toAction(
                 !pageActionContext.isLocked()
                         && (channelActionContext.hasWorkspace()
-                        || (channelActionContext.isCrossChannelPageCopySupported() && channelActionContext.hasPageModifiableChannels()))));
+                        || channelActionContext.isCrossChannelPageCopySupported())));
 
         actions.add(HstAction.PAGE_DELETE.toAction(
                 !pageActionContext.isHomePage()
@@ -116,12 +127,6 @@ public class HstActionProviderImpl implements ActionProvider {
                         && !pageActionContext.isLocked()
                         && !pageActionContext.isInherited()
                         && pageActionContext.isWorkspaceConfigured()));
-
-        // TODO (meggermont): Let CmsActionProvider provide PAGE_TOOLS
-        // Only in the CMS we can determine if PAGE_TOOLS Is enabled or not because
-        // JcrUiExtensionLoader loads extensions from the repository. So we should
-        // implement a CMS ActionProvider and add it to the actionProviders list.
-        actions.add(HstAction.PAGE_TOOLS.toAction(true));
 
         return actions;
     }

@@ -21,9 +21,7 @@ import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
-
 public interface ActionService {
 
-    Map<String, Set<Action>> getActionsByCategory(PageComposerContextService contextService, String siteMapItemUuid) throws RepositoryException;
+    Map<String, Set<Action>> getActionsByCategory(ActionContext actionContext) throws RepositoryException;
 }
