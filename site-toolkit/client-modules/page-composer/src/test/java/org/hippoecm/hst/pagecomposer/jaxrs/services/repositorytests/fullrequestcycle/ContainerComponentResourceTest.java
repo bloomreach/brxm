@@ -246,7 +246,7 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
 
         final String targetContainerId = getNodeId(PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container");
 
-        final String itemFromXPage = getNodeId("/unittestcontent/documents/unittestproject/experiences/expPage1/expPage1/hst:page/body/container/banner");
+        final String itemFromXPage = getNodeId("/unittestcontent/documents/unittestproject/experiences/expPage1/expPage1/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
 
         final RequestResponseMock updateContainerReqRes = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + targetContainerId, null, "PUT");
