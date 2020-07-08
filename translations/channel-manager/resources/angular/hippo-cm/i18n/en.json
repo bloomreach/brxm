@@ -268,7 +268,7 @@
   "OK": "OK",
   "CONFIRM_DISCARD_CHANGES_TO_COMPONENT": "Discard unsaved changes to component '{{component}}'?",
   "FEEDBACK_CANCEL_REQUEST": "Cancel request",
-  "KEEP_DRAFT": "Keep draft",
+  "KEEP_DRAFT": "Save as draft",
   "FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE": "This document can only be edited in the content editor.",
   "CREATE_DOCUMENT": "Create document",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Failed to retrieve the list of global variants",
