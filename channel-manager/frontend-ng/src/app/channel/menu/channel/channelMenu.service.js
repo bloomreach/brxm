@@ -83,44 +83,44 @@ class ChannelMenuService extends MenuService {
       })
       .addAction('publish', {
         iconName: 'mdi-publish',
-        isEnabled: () => this._hasOwnChanges(),
-        isVisible: () => isVisible('publish') && !this._isBranch(),
+        isEnabled: () => isEnabled('publish'),
+        isVisible: () => isVisible('publish'),
         onClick: () => this._publish(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_PUBLISH',
       })
       .addAction('confirm', {
         iconName: 'mdi-publish',
-        isEnabled: () => this._hasOwnChanges(),
-        isVisible: () => isVisible('confirm') && this._isBranch(),
+        isEnabled: () => isEnabled('confirm'),
+        isVisible: () => isVisible('confirm'),
         onClick: () => this._publish(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_SUBMIT',
       })
       .addAction('discard-changes', {
-        isEnabled: () => this._hasOwnChanges(),
+        isEnabled: () => isEnabled('discard-changes'),
         isVisible: () => isVisible('discard-changes'),
         onClick: () => this._discardChanges(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES',
       })
       .addAction('manage-changes', {
-        isEnabled: () => isEnabled('manage-changes') && this._hasChanges() && !this._hasOnlyOwnChanges(),
+        isEnabled: () => isEnabled('manage-changes'),
         isVisible: () => isVisible('manage-changes'),
         onClick: () => this._showManageChanges(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES',
       })
       .addDivider({
-        isVisible: () => this._isBranch() && (isVisible('accept') || isVisible('reject')),
+        isVisible: () => isVisible('accept') || isVisible('reject'),
       })
       .addAction('accept', {
         iconName: 'mdi-check',
-        isEnabled: () => this.ProjectService.isAcceptEnabled(),
-        isVisible: () => isVisible('accept') && this._isBranch(),
+        isEnabled: () => isEnabled('accept'),
+        isVisible: () => isVisible('accept'),
         onClick: () => this._accept(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_ACCEPT',
       })
       .addAction('reject', {
         iconName: 'mdi-close',
-        isEnabled: () => this.ProjectService.isRejectEnabled(),
-        isVisible: () => isVisible('reject') && this._isBranch(),
+        isEnabled: () => isEnabled('reject'),
+        isVisible: () => isVisible('reject'),
         onClick: () => this._reject(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_REJECT',
       })
@@ -135,6 +135,8 @@ class ChannelMenuService extends MenuService {
         translationKey: 'TOOLBAR_MENU_CHANNEL_DELETE',
       })
       .addAction('close', {
+        isEnabled: () => isEnabled('close'),
+        isVisible: () => isVisible('close'),
         onClick: () => this._closeChannel(),
         translationKey: 'TOOLBAR_MENU_CHANNEL_CLOSE',
       });
@@ -174,10 +176,6 @@ class ChannelMenuService extends MenuService {
 
   _hasChangesToManage() {
     return this._canManageChanges() && this._getChangedBySet().length > 0;
-  }
-
-  _hasChanges() {
-    return this._getChangedBySet().length > 0;
   }
 
   _getChangedBySet() {
