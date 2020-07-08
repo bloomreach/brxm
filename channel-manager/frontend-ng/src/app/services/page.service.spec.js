@@ -59,7 +59,7 @@ describe('PageService', () => {
       $rootScope.$emit('page:change');
       $rootScope.$digest();
 
-      expect(HstService.doGet).toHaveBeenCalledWith('pageId./item/siteMapItemId');
+      expect(HstService.doGet).toHaveBeenCalledWith('pageId', 'item', 'siteMapItemId');
       expect(PageService.actions).toBe(actions);
       expect(PageService.states).toBe(states);
     });
