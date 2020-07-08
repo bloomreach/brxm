@@ -208,9 +208,9 @@ describe('ChannelMenuService', () => {
 
     it('should hide the "publish" action if the selected project is not the master branch', () => {
       addAction('publish');
-      spyOn(ProjectService, 'isBranch').and.returnValue(true);
-
-      expect(getItem('publish').isVisible()).toBe(false);
+      expect(getItem('publish').isVisible()).toBe(true);
+      addAction('publish', false);
+      expect(getItem('publish').isEnabled()).toBe(false);
     });
 
     it('should show the "publish" action if the selected project is the master branch', () => {
@@ -224,9 +224,9 @@ describe('ChannelMenuService', () => {
       addAction('publish');
 
       const publish = getItem('publish');
-      expect(publish.isEnabled()).toBe(false);
+      expect(publish.isEnabled()).toBe(true);
 
-      ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser'] });
+      addAction('publish', false);
       expect(publish.isEnabled()).toBe(false);
     });
 
@@ -272,9 +272,9 @@ describe('ChannelMenuService', () => {
 
     it('should hide the "confirm" action if the selected project is the master branch', () => {
       addAction('confirm');
-      spyOn(ProjectService, 'isBranch').and.returnValue(false);
-
-      expect(getItem('confirm').isVisible()).toBe(false);
+      expect(getItem('confirm').isVisible()).toBe(true);
+      addAction('confirm', false);
+      expect(getItem('confirm').isEnabled()).toBe(false);
     });
 
     it('should show the "confirm" action if the selected project is not the master branch', () => {
@@ -288,9 +288,9 @@ describe('ChannelMenuService', () => {
       addAction('confirm');
 
       const confirm = getItem('confirm');
-      expect(confirm.isEnabled()).toBe(false);
+      expect(confirm.isEnabled()).toBe(true);
 
-      ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser'] });
+      addAction('confirm', false);
       expect(confirm.isEnabled()).toBe(false);
     });
 
@@ -322,9 +322,9 @@ describe('ChannelMenuService', () => {
       addAction('discard-changes');
 
       const discard = getItem('discard-changes');
-      expect(discard.isEnabled()).toBe(false);
+      expect(discard.isEnabled()).toBe(true);
 
-      ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser'] });
+      addAction('discard-changes', false);
       expect(discard.isEnabled()).toBe(false);
     });
 
@@ -391,10 +391,7 @@ describe('ChannelMenuService', () => {
       expect(manage.isEnabled()).toBe(false);
 
       addAction('manage-changes', true);
-      expect(manage.isEnabled()).toBe(false);
-
-      ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'] });
-      expect(manage.isEnabled()).toBe(false);
+      expect(manage.isEnabled()).toBe(true);
     });
 
     it('should show an enabled "manage changes" action if there are changes by other users', () => {
@@ -417,11 +414,9 @@ describe('ChannelMenuService', () => {
     });
 
     it('should show a disabled "accept" action if a branch is selected for a project not in review', () => {
-      spyOn(ProjectService, 'isAcceptEnabled').and.returnValue(false);
-      spyOn(ProjectService, 'isBranch').and.returnValue(true);
       addAction('accept');
-
       expect(getItem('accept').isVisible()).toBe(true);
+      addAction('accept', false);
       expect(getItem('accept').isEnabled()).toBe(false);
     });
 
@@ -450,11 +445,9 @@ describe('ChannelMenuService', () => {
     });
 
     it('shows a disabled "reject" action if a branch is selected for a project not in review', () => {
-      spyOn(ProjectService, 'isBranch').and.returnValue(true);
-      spyOn(ProjectService, 'isRejectEnabled').and.returnValue(false);
       addAction('reject');
-
       expect(getItem('reject').isVisible()).toBe(true);
+      addAction('reject', false);
       expect(getItem('reject').isEnabled()).toBe(false);
     });
 
@@ -592,6 +585,7 @@ describe('ChannelMenuService', () => {
 
   describe('close', () => {
     it('should always show an enabled "close" action', () => {
+      addAction("close");
       expect(getItem('close').isVisible()).toBe(true);
       expect(getItem('close').isEnabled()).toBe(true);
     });

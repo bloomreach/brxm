@@ -90,7 +90,7 @@ class PageMenuService extends MenuService {
         translationKey: 'TOOLBAR_MENU_PAGE_DELETE',
       })
       .addDivider({
-        isVisible: () => isVisible('copy') || isVisible('page', 'move') || isVisible('delete'),
+        isVisible: () => isVisible('copy') || isVisible('move') || isVisible('delete'),
       })
       .addAction('new', {
         isEnabled: () => isEnabled('new'),
