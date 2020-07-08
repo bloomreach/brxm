@@ -123,10 +123,13 @@ class ProjectService {
   }
 
   accept(channelId) {
-    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/channel/approve`;
+    const contextPath = this.ConfigService.getCmsContextPath();
+    const request = {
+      method: 'POST',
+      url: `${contextPath}ws/projects/${this.selectedProject.id}/channel/approve/${channelId}`,
+    };
 
-    return this.$http
-      .post(url, channelId)
+    return this.$http(request)
       .then((response) => { this.selectedProject = response.data; })
       .catch(() => {
         this.FeedbackService.showError('PROJECT_OUT_OF_SYNC', {});
