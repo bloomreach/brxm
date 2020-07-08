@@ -97,6 +97,21 @@ describe('ProjectService', () => {
     $httpBackend.flush();
   });
 
+  it('accepts a channel', () => {
+    const channelId = 'testChannel';
+    const acceptedProject = Object.assign({}, currentProject, {
+      id: 'acceptedProject',
+    });
+
+    $httpBackend
+      .expectPOST(`/test/ws/projects/${currentProject.id}/channel/approve/${channelId}`)
+      .respond(200, acceptedProject);
+
+    ProjectService.accept(channelId);
+    $httpBackend.flush();
+    expect(ProjectService.selectedProject).toEqual(acceptedProject);
+  });
+
   it('rejects a channel while providing a message', () => {
     const channelId = 'testChannel';
     const message = 'testMessage';
