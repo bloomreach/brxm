@@ -1271,6 +1271,9 @@
                 <license implementation="org.apache.rat.analysis.license.AppliedApacheSoftwareLicense20">
                   <copyrightOwner>Hippo B\.V\. \(http://www\.onehippo\.com\)</copyrightOwner>
                 </license>
+                <license implementation="org.apache.rat.analysis.license.AppliedApacheSoftwareLicense20">
+                  <copyrightOwner>Bloomreach</copyrightOwner>
+                </license>
               </licenses>
               <licenseFamilies>
                 <licenseFamily implementation="org.apache.rat.license.Apache20LicenseFamily">
