@@ -61,6 +61,7 @@ const VISITOR_COOKIE_MAX_AGE_IN_SECONDS = 365 * 24 * 60 * 60;
 @Component({
   async asyncData(context) {
     const configuration = {
+      apiBaseUrl: process.env.VUE_APP_API_BASE_URL,
       cmsBaseUrl: process.env.VUE_APP_CMS_BASE_URL!,
       spaBaseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
       request: {
