@@ -18,10 +18,8 @@ package org.hippoecm.repository;
 import java.util.UUID;
 
 import javax.jcr.Node;
-import javax.jcr.nodetype.ConstraintViolationException;
 
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -32,96 +30,78 @@ import static org.junit.Assert.fail;
 public class PropertyUuidTest extends RepositoryTestCase {
 
     @Test
-    public void property_uuid_placement() throws Exception {
+    public void property_identifier_placement() throws Exception {
 
         final Node test = session.getRootNode().addNode("test", "nt:unstructured");
 
         final Node car = test.addNode("car", "hippo:testcardocument");
 
+        assertThat(car.hasProperty("hippo:identifier"))
+                .as("Expected 'hippo:identifier' autocreated")
+                .isTrue();
+
+        final String identifier = car.getProperty("hippo:identifier").getString();
+
+        validateUUID(identifier);
+
         final Node car2 = JcrUtils.copy(session, car.getPath(), test.getPath() + "/car2");
 
         session.save();
 
-        assertThat(car.getProperty("hippo:uuid").getString())
-                .isEqualTo(car2.getProperty("hippo:uuid").getString());
+        assertThat(identifier)
+                .as("Expected autocreated property to be consistent across copy")
+                .isEqualTo(car2.getProperty("hippo:identifier").getString());
 
-        assertThat(car.getProperty("hippo:uuid2").getString())
-                .isEqualTo(car2.getProperty("hippo:uuid2").getString());
 
         String[] content = new String[]{
                 "/test/car3", "hippo:testcardocument",
                 "/test/car4", "hippo:testcardocument",
-                "hippo:uuid", "foo",
+                "hippo:identifier", "foo",
+                "/test/car5", "hippo:testcardocument",
         };
 
         build(content, session);
 
         session.save();
 
-        assertThat(session.getNode("/test/car3").hasProperty("hippo:uuid")).isTrue();
-        // bootstrapping is possible for 'non protected property'
-        assertThat(session.getNode("/test/car4").getProperty("hippo:uuid").getString()).isEqualTo("foo");
+        assertThat(session.getNode("/test/car3").hasProperty("hippo:identifier")).isTrue();
+        // setting value is possible for auto created property 'hippo:identifier'
+        assertThat(session.getNode("/test/car4").getProperty("hippo:identifier").getString()).isEqualTo("foo");
 
-        // set extra property with replacement function replaces value with uuid
 
-        car.setProperty("hippo:brand", "${fn:new-uuid()}");
+        assertThat(session.getNode("/test/car3").getProperty("hippo:identifier").getString())
+                .as("Every newly created node (not a copy) should get a unique new identifier")
+                .isNotEqualTo(session.getNode("/test/car5").getProperty("hippo:identifier").getString());
 
-        // ${fn:new-uuid()} should be replaced by a uuid
-        assertThat(car.getProperty("hippo:brand").getString()).isNotEqualTo("${fn:new-uuid()}");
-
-        try {
-            UUID.fromString(car.getProperty("hippo:brand").getString());
-        } catch (IllegalArgumentException e) {
-            fail("property value for foo should be a uuid");
-        }
-
-        // not allowed to set protected property
-        String[] content2 = new String[]{
-                "/test/car5", "hippo:testcardocument",
-                "hippo:uuid2", "foo",
-        };
-
-        try {
-            build(content2, session);
-            fail("hippo:uuid2 is protected and should not be allowed to be bootstrapped");
-        } catch (ConstraintViolationException e) {
-            // expected
-        }
+        test.addMixin("hippo:identifiable");
+        assertThat(test.hasProperty("hippo:identifier"))
+                .as("Adding mixin 'hippo:identifiable' should result in autocreated 'hippo:identifier' property");
     }
 
     @Test
-    public void property_uuid_placement_yaml_fixture() throws Exception {
+    public void property_identifier_placement_yaml_fixture() throws Exception {
         assertThat(session.nodeExists("/autocreate-test"))
                 .as("expected 'autocreate-test' to be have been bootstrapped")
                 .isTrue();
 
         final Node autocreate_uuid_node = session.getNode("/autocreate-test/autocreate-uuid-node");
 
-        assertThat(autocreate_uuid_node.hasProperty("hippo:uuid2"))
-                .as("Expected 'hippo:uuid2' to be autocreated, see 'hippo:testcardocument'")
-                .isTrue();;
-        assertThat(autocreate_uuid_node.hasProperty("hippo:uuid"))
-                .as("Expected 'hippo:uuid' to be autocreated, see 'hippo:testcardocument'")
+        assertThat(autocreate_uuid_node.hasProperty("hippo:identifier"))
+                .as("Expected 'hippo:identifier' to be autocreated, see 'hippo:testcardocument'")
                 .isTrue();;
 
-        validateUUID(autocreate_uuid_node.getProperty("hippo:uuid2").getString());
-        validateUUID(autocreate_uuid_node.getProperty("hippo:uuid").getString());
+        validateUUID(autocreate_uuid_node.getProperty("hippo:identifier").getString());
 
 
         final Node bootstrapped_autocreate_node = session.getNode("/autocreate-test/bootstrapped-autocreate-node");
 
-        assertThat(bootstrapped_autocreate_node.hasProperty("hippo:uuid2"))
-                .as("Expected 'hippo:uuid2' to be autocreated, see 'hippo:testcardocument'")
-                .isTrue();;
-        assertThat(bootstrapped_autocreate_node.hasProperty("hippo:uuid"))
-                .as("Expected 'hippo:uuid' to be autocreated, see 'hippo:testcardocument'")
+        assertThat(bootstrapped_autocreate_node.hasProperty("hippo:identifier"))
+                .as("Expected 'hippo:identifier' to be bootstrapped")
                 .isTrue();;
 
-        validateUUID(bootstrapped_autocreate_node.getProperty("hippo:uuid2").getString());
+        final String bootstrapped = bootstrapped_autocreate_node.getProperty("hippo:identifier").getString();
 
-        final String bootstrapped = bootstrapped_autocreate_node.getProperty("hippo:uuid").getString();
-
-        assertEquals("hippo:uuid can also be bootstrapped by yaml even though autocreated as uuid if missing",
+        assertEquals("hippo:identifier can also be bootstrapped by yaml even though autocreated as uuid if missing",
                 "bootstrapped-fixed", bootstrapped);
 
     }
