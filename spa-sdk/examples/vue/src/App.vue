@@ -58,20 +58,23 @@ import Menu from './components/BrMenu.vue';
 import NewsList from './components/BrNewsList.vue';
 
 @Component({
-  data: () => ({
-    configuration: {
-      httpClient: axios,
-      cmsBaseUrl: process.env.VUE_APP_CMS_BASE_URL,
-      spaBaseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
-      request: {},
-    },
-    mapping: {
-      Banner,
-      Content,
-      menu: Menu,
-      'News List': NewsList,
-    },
-  }),
+  data(this: App) {
+    return {
+      configuration: {
+        httpClient: axios,
+        apiBaseUrl: process.env.VUE_APP_API_BASE_URL,
+        cmsBaseUrl: process.env.VUE_APP_CMS_BASE_URL,
+        spaBaseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
+        request: { path: this.$route.fullPath },
+      },
+      mapping: {
+        Banner,
+        Content,
+        menu: Menu,
+        'News List': NewsList,
+      },
+    };
+  },
 })
 export default class App extends Vue {
   configuration!: Configuration;
