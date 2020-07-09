@@ -115,7 +115,6 @@ public interface HstNodeTypes {
     String COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES = "hst:parameternameprefixes";
     String COMPONENT_PROPERTY_ICON_PATH = "hst:iconpath";
     String COMPONENT_PROPERTY_LABEL = "hst:label";
-    String COMPONENT_PROPERTY_QUALIFIER = "hst:qualifier";
     String COMPONENT_PROPERTY_COMPONENT_FILTER_TAG = "hst:componentfiltertag";
     String COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE = "hst:suppresswastemessage";
 

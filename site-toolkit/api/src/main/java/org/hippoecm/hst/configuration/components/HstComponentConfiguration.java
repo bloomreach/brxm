@@ -321,14 +321,14 @@ public interface HstComponentConfiguration extends HstComponentInfo {
 
     /**
      * <p>
-     *     In case the component has a qualifier, it is returned. Typically, an hst:xpage and hst:containercomponent will have
-     *     an autocreated qualifier with as value a uuid: This can be used a stable identifier across different (versions) of
+     *     In case the component has a hippo:identifier, it is returned. Typically, an hst:containercomponent will have
+     *     an autocreated hippo:identifier with as value a uuid: This can be used a stable identifier across different (versions) of
      *     the same node, for example for an HST Config branch it can have the same value (opposed to the uuid of the node)
      *     and across unpublished/published versions below a document variant the xpage containers can have a stable uuid
      * </p>
-     * @return the qualifier if available for this {@link HstComponentConfiguration}, otherwise n{@code null}
+     * @return the hippo identifier if available for this {@link HstComponentConfiguration}, otherwise {@code null}
      */
-    String getQualifier();
+    String getHippoIdentifier();
 
     /**
      * @return {@code true} if this component is part of a component STORED below an experience page document variant

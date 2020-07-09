@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.builtin.components.StandardContainerComponent;
@@ -48,6 +47,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINER
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_XPAGE;
 import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_IDENTIFIER;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
 
@@ -141,10 +141,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private boolean xpageLayoutComponent;
 
     /**
-     * hst:component of type 'xpage' or 'containercomponent' are expected to have a qualifier (auto created property). Can be
-     * null
+     * hst:component of type 'xpage' or 'containercomponent' are expected to have a hippo:identifier
+     * (auto created property). Can be null
      */
-    private String qualifier;
+    private String hippoIdentifier;
 
     /**
      * <code>true</code> when this {@link HstComponentConfiguration} is configured to render standalone in case of {@link HstURL#COMPONENT_RENDERING_TYPE}
@@ -341,7 +341,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.pageErrorHandlerClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME));
 
         this.label = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_LABEL));
-        this.qualifier = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_QUALIFIER));
+        this.hippoIdentifier = StringPool.get(node.getValueProvider().getString(HIPPO_IDENTIFIER));
         this.iconPath = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_ICON_PATH));
 
         if (type == Type.CONTAINER_COMPONENT || type == Type.CONTAINER_ITEM_COMPONENT) {
@@ -795,8 +795,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     @Override
-    public String getQualifier() {
-        return qualifier;
+    public String getHippoIdentifier() {
+        return hippoIdentifier;
     }
 
     @Override
@@ -847,7 +847,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.referenceName = child.referenceName;
         copy.hstTemplate = child.hstTemplate;
         copy.label = child.label;
-        copy.qualifier = child.qualifier;
+        copy.hippoIdentifier = child.hippoIdentifier;
         copy.xpage = child.xpage;
         copy.xpageLayoutComponent = child.xpageLayoutComponent;
         copy.iconPath = child.iconPath;
@@ -941,8 +941,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (this.label == null) {
                     this.label = referencedComp.label;
                 }
-                if (this.qualifier == null) {
-                    this.qualifier = referencedComp.qualifier;
+                if (this.hippoIdentifier == null) {
+                    this.hippoIdentifier = referencedComp.hippoIdentifier;
                 }
                 if (this.iconPath == null) {
                     this.iconPath = referencedComp.iconPath;
@@ -1078,8 +1078,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (this.label == null) {
             this.label = childToMerge.label;
         }
-        if (this.qualifier == null) {
-            this.qualifier = childToMerge.qualifier;
+        if (this.hippoIdentifier == null) {
+            this.hippoIdentifier = childToMerge.hippoIdentifier;
         }
         if (this.iconPath == null) {
             this.iconPath = childToMerge.iconPath;
@@ -1434,7 +1434,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         shared = false;
 
         // even when the container comes from inherited common configuration, an XPage Document can hijack it via the
-        // hst:qualifier making it effectively a non-inherited and non-shared container!
+        // hippo:identifier making it effectively a non-inherited and non-shared container!
         inherited = false;
 
         // replace all the existing children with those from 'xPageDocumentContainer'
@@ -1460,7 +1460,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         // shared FALSE because the CM needs to be able to interact with the component as PART OF an Xpage Document!
         shared = false;
         // even when the container comes from inherited common configuration, an XPage Document can hijack it via the
-        // hst:qualifier making it effectively a non-inherited and non-shared container!
+        // hippo:identifier making it effectively a non-inherited and non-shared container!
         inherited = false;
         // remove any child items present in Xpage Layout
         orderedListConfigs = Collections.emptyList();

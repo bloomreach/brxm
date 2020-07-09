@@ -376,7 +376,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     }
 
     @Override
-    public String getQualifier() {
+    public String getHippoIdentifier() {
         return null;
     }
 
