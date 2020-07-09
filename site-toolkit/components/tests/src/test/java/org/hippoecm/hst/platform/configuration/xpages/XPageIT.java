@@ -76,7 +76,7 @@ public class XPageIT extends AbstractTestConfigurations {
         assertThat(xpage1).as("XPage should be available by node name").isNotNull();
         assertThat(xpage1.getLabel()).isEqualTo("XPage 1");
 
-        assertThat(xpage1.getQualifier()).as("XPage is not expected to have an auto created 'hst:qualifier'").isNull();
+        assertThat(xpage1.getHippoIdentifier()).as("XPage is not expected to have an auto created 'hippo:identifier'").isNull();
 
         // TODO org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils and use it to common util but not now to
         // TODO avoid too many GIT changes (and possibly conflicts, will do later)
@@ -87,14 +87,14 @@ public class XPageIT extends AbstractTestConfigurations {
         final HstComponentConfiguration container2 = main.getChildByName("container2");
 
         try {
-            UUID.fromString(container1.getQualifier());
+            UUID.fromString(container1.getHippoIdentifier());
         } catch (IllegalArgumentException e) {
-            fail("Expected qualifier of form UUID on 'container1'");
+            fail("Expected hippo:identifier of form UUID on 'container1'");
         }
         try {
-            UUID.fromString(container2.getQualifier());
+            UUID.fromString(container2.getHippoIdentifier());
         } catch (IllegalArgumentException e) {
-            fail("Expected qualifier of form UUID on 'container1'");
+            fail("Expected hippo:identifier of form UUID on 'container2'");
         }
 
     }
@@ -116,7 +116,7 @@ public class XPageIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void xpage_hst_model_have_a_stable_qualifier_across_copy() throws Exception {
+    public void xpage_hst_model_have_a_stable_hippoIdentifier_across_copy() throws Exception {
 
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:xpages/xpage1",
                 "/hst:hst/hst:configurations/unittestproject/hst:xpages/xpage2");
@@ -133,11 +133,11 @@ public class XPageIT extends AbstractTestConfigurations {
         final HstComponentConfiguration xpage1 = xPages.get("xpage1");
         final HstComponentConfiguration xpage2 = xPages.get("xpage2");
 
-        // assert that autocreated 'qualifier' property is intact after copy (normally important for copying between preview/live
+        // assert that autocreated 'hippo:identifier' property is intact after copy (normally important for copying between preview/live
         // or branches of hst config
-        assertThat(xpage1.getChildByName("main").getChildByName("container1").getQualifier())
-                .as("Expected 'qualifier' property intact between copy")
-                .isEqualTo(xpage2.getChildByName("main").getChildByName("container1").getQualifier());
+        assertThat(xpage1.getChildByName("main").getChildByName("container1").getHippoIdentifier())
+                .as("Expected 'hippo:identifier' property intact between copy")
+                .isEqualTo(xpage2.getChildByName("main").getChildByName("container1").getHippoIdentifier());
 
     }
 
