@@ -109,11 +109,11 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         assertNotNull(canonicalContainer);
         assertNotNull(canonicalContainer.getChildByName("item"));
 
-        assertNotNull("Container should have an auto-created qualifier",canonicalContainer.getQualifier());
+        assertNotNull("Container should have an auto-created hippo:identifier",canonicalContainer.getHippoIdentifier());
         try {
-            UUID.fromString(canonicalContainer.getQualifier());
+            UUID.fromString(canonicalContainer.getHippoIdentifier());
         } catch (IllegalArgumentException e) {
-            fail("Qualifier expected to be a uuid");
+            fail("Identifier expected to be a uuid");
         }
     }
 
