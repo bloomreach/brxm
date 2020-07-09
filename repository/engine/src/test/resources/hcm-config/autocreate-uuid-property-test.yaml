@@ -4,6 +4,8 @@ definitions:
       jcr:primaryType: nt:unstructured
       /autocreate-uuid-node:
         jcr:primaryType: hippo:testcardocument
+        jcr:mixinTypes: ['hippo:identifiable']
       /bootstrapped-autocreate-node:
         jcr:primaryType: hippo:testcardocument
-        hippo:uuid: bootstrapped-fixed
+        jcr:mixinTypes: ['hippo:identifiable']
+        hippo:identifier: bootstrapped-fixed
