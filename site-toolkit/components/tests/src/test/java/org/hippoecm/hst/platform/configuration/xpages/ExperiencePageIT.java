@@ -47,6 +47,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
@@ -71,6 +72,7 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_IDENTIFIER;
 import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -500,14 +502,14 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
      * xpage1 Page Layout inherits from : "hst:referencecomponent: hst:abstractpages/basepage" FROM common configuration!
      *
      * If we add a 'container' to /hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage then
-     * the hst:qualifier of this container WON'T be replaced with the document page container (for now! A future FEATURE
+     * the hippo:identifier of this container WON'T be replaced with the document page container (for now! A future FEATURE
      * could be supporting hijacking a (shared/inherited) CONTAINER for a single XPage document which we now do not
      * support
      *
      * @throws Exception
      */
     @Test
-    public void xPage_doc_supports_qualifier_from_xpage_layout_inherited_from_base() throws Exception {
+    public void xPage_doc_supports_hippoIdentifier_from_xpage_layout_inherited_from_base() throws Exception {
 
         final String pathToExperiencePage = "/unittestcontent/documents/unittestproject/experiences/expPage1";
 
@@ -516,14 +518,14 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
              JcrUtils.copy(adminSession, pathToExperiencePage, "/backupExpPage1");
              final Node newContainer = adminSession.getNode("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage")
                      .addNode("test-container", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
-             final String qualifier = newContainer.getProperty(HstNodeTypes.COMPONENT_PROPERTY_QUALIFIER).getString();
+             final String hippoIdentifier = newContainer.getProperty(HIPPO_IDENTIFIER).getString();
 
-             // make sure the XPage document now uses the 'abstract base page' qualifier
+             // make sure the XPage document now uses the 'abstract base page' hippoIdentifier
 
              final String xpagePath = pathToExperiencePage + "/expPage1/hst:xpage";
 
              adminSession.move(xpagePath + "/430df2da-3dc8-40b5-bed5-bdc44b8445c6",
-                     xpagePath + "/" + qualifier);
+                     xpagePath + "/" + hippoIdentifier);
 
              adminSession.save();
 
@@ -537,7 +539,7 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
              assertThat(testContainer).as("'test-container' component expected to part of inherited Page Layout (config)").isNotNull();
              assertThat(testContainer.isExperiencePageComponent())
                      .as("test-container is from shared and should not be possible to hijack by Experiece Page " +
-                             "Document (yet, future feature?), even though the hst:qualifier matches")
+                             "Document (yet, future feature?), even though the hippo:identifier matches")
                      .isFalse();
              assertThat(testContainer.isShared()).isTrue();
 

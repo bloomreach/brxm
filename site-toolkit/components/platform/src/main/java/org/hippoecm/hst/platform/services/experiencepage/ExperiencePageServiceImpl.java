@@ -100,7 +100,7 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
 
             // get the hst containers of an XPage below a document variant in isolation!
             // the 'keys' are the node names of 'containers' below the XPage document variant which MAP to the
-            // hst:qualifier in the hst:containercomponent in the XPage hst configuration!
+            // hippo:identifier in the hst:containercomponent in the XPage hst configuration!
             //final Map<String, HstComponentConfigurationService> containerConfigurations = containers.entrySet().stream()
 
             final Map<String, HstComponentConfigurationService> documentContainers = documentContainersNodes.entrySet().stream()
@@ -137,7 +137,7 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                     // If the container is a NON-EXPLICIT-XPAGE-LAYOUT container, for example inherited 'header' container
                     // it does not need transformation to Experience Page Container : We do not TRANSFORM such components
                     // Note that in the future we might want to support it: then for example a shared header container
-                    // can be hijacked in an XPage document through the qualifier id
+                    // can be hijacked in an XPage document through the hippoIdentifier id
                     continue;
                 }
 
@@ -151,9 +151,9 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                 // for example later added to the XPage hst config), then add the 'container' empty with the
                 // UUID of the hst config XPage container: Then WHEN in the CM a webmaster interacts with that
                 // container, the Page Composer code will add the container to the XPage!
-                final String qualifier = pageLayoutContainer.getQualifier();
+                final String hippoIdentifier = pageLayoutContainer.getHippoIdentifier();
 
-                if (qualifier == null) {
+                if (hippoIdentifier == null) {
                     // check whether the page layout container was coming from, say, abstractpages or from an
                     // Experience Page
                     log.warn("Experience Page Container component should have property '{}' but is missing. Remove " +
@@ -162,14 +162,14 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                 }
 
 
-                final HstComponentConfigurationService documentContainer = documentContainers.get(qualifier);
+                final HstComponentConfigurationService documentContainer = documentContainers.get(hippoIdentifier);
                 if (documentContainer == null) {
                     log.debug("XPage Document container for component '{}' does not exist, use the container " +
                             "from the HST Page layout config so items can be added via CM still", pageLayoutContainer.getCanonicalStoredLocation());
 
                     pageLayoutContainer.transformXpageLayoutContainer();
                 } else {
-                    mergedDocumentContainers.add(qualifier);
+                    mergedDocumentContainers.add(hippoIdentifier);
                     // Replace the UUID and canonical stored location of the container and add the XPage document
                     // children
                     pageLayoutContainer.transformXpageLayoutContainer(documentContainer);
@@ -184,12 +184,12 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
             }
 
             if (log.isInfoEnabled()) {
-                mergedDocumentContainers.forEach(qualifier -> documentContainers.remove(qualifier));
+                mergedDocumentContainers.forEach(hippoIdentifier -> documentContainers.remove(hippoIdentifier));
 
                 // any left documentContainers are container that are not present (any more) in the XPAge Layout. Log an
                 // info message about these
                 documentContainers.values().forEach(config -> log.info("Document XPage contains container '{}' which " +
-                                "is not represented by any hst:qualifier in XPage Layout '{}' and will as a result be ignored",
+                                "is not represented by any hippo:identifier in XPage Layout '{}' and will as a result be ignored",
                         config.getCanonicalStoredLocation(), xPageLayout.getCanonicalStoredLocation()));
             }
 

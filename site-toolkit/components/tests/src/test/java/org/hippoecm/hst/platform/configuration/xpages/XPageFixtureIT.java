@@ -22,12 +22,14 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_IDENTIFIER;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
@@ -55,17 +57,17 @@ public class XPageFixtureIT extends AbstractTestConfigurations {
     @Test
     public void xpage_fixture_test() throws Exception {
 
-        // just for the purpose of testing the 'hst:qualifier' property being auto created, first remove the hst:qualifier
-        // properties from the bootstrapped example and then copy the node and confirm copy has new hst:qualifier props
+        // just for the purpose of testing the 'hippo:identifier' property being auto created, first remove the hippo:identifier
+        // properties from the bootstrapped example and then copy the node and confirm copy has new hippo:identifier props
 
-        // reason why the bootstrap contains the 'hst:qualifier' property is because the 'xpage1' is used in the
-        // hst-unittestcontent.yaml and relies on the present 'hst:qualifier' property of 'xpage1' to be stable
+        // reason why the bootstrap contains the 'hippo:identifier' property is because the 'xpage1' is used in the
+        // hst-unittestcontent.yaml and relies on the present 'hippo:identifier' property of 'xpage1' to be stable
 
         final Node xpages = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:xpages");
 
         final Node mainOrigin = xpages.getNode("xpage1/main");
-        mainOrigin.getNode("container1").getProperty("hst:qualifier").remove();
-        mainOrigin.getNode("container2").getProperty("hst:qualifier").remove();
+        mainOrigin.getNode("container1").getProperty(HIPPO_IDENTIFIER).remove();
+        mainOrigin.getNode("container2").getProperty(HIPPO_IDENTIFIER).remove();
 
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:xpages/xpage1",
                 "/hst:hst/hst:configurations/unittestproject/hst:xpages/xpage1-copy");
@@ -73,22 +75,22 @@ public class XPageFixtureIT extends AbstractTestConfigurations {
         session.save();
 
         final Node xpageCopy = xpages.getNode("xpage1-copy");
-        assertFalse("property 'hst:qualifier' is not expected on xpage", xpageCopy.hasProperty("hst:qualifier"));
+        assertFalse("property 'hippo:identifier' is not expected on xpage", xpageCopy.hasProperty(HIPPO_IDENTIFIER));
 
         final Node main = xpageCopy.getNode("main");
-        assertFalse("main is of type hst:component which should not get an hst:qualifier", main.hasProperty("hst:qualifier"));
+        assertFalse("main is of type hst:component which should not get an hippo:identifier", main.hasProperty(HIPPO_IDENTIFIER));
 
         final Node container1 = main.getNode("container1");
-        assertTrue("property hst:qualifier is expected to be autocreated", container1.hasProperty("hst:qualifier"));
-        validateTag(container1.getProperty("hst:qualifier").getString());
+        assertTrue("property hippo:identifier is expected to be autocreated", container1.hasProperty(HIPPO_IDENTIFIER));
+        validateTag(container1.getProperty(HIPPO_IDENTIFIER).getString());
 
         final Node banner = container1.getNode("banner");
-        assertFalse("property hst:qualifier not expected on the banner component", banner.hasProperty("hst:qualifier"));
+        assertFalse("property hippo:identifier not expected on the banner component", banner.hasProperty(HIPPO_IDENTIFIER));
 
 
         final Node container2 = main.getNode("container2");
-        assertTrue("property hst:qualifier is expected to be autocreated", container2.hasProperty("hst:qualifier"));
-        validateTag(container2.getProperty("hst:qualifier").getString());
+        assertTrue("property hippo:identifier is expected to be autocreated", container2.hasProperty(HIPPO_IDENTIFIER));
+        validateTag(container2.getProperty(HIPPO_IDENTIFIER).getString());
 
     }
 

@@ -99,15 +99,13 @@
 - hst:componentfiltertag (string)
 + * (hst:abstractcomponent)
 
-[hst:containercomponent] > hst:abstractcomponent orderable
+[hst:containercomponent] > hst:abstractcomponent, hippo:identifiable orderable
 - hst:xtype (string)
 - hst:lockedby (string)
 - hst:lockedon (date)
 - hst:lastmodified (date)
 - hst:lastmodifiedby (string)
 - hst:label (string)
-// a qualifier is an autocreated uuid which is KEPT as-is across copies of the node
-- hst:qualifier (string) = '${fn:new-uuid()}' autocreated
 + * (hst:containeritemcomponent)
 
 [hst:containeritempackage] > nt:base, mix:referenceable orderable
