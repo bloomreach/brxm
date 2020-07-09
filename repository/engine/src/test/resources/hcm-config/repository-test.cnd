@@ -30,7 +30,7 @@
 - *
 - * multiple
 
-[hippo:testcardocument] > hippo:document
+[hippo:testcardocument] > hippo:document, hippo:identifiable
 + * (nt:base) = hippo:ntunstructured multiple
 - hippo:product (string)
 - hippo:brand (string)
@@ -38,8 +38,6 @@
 - hippo:date (date)
 - hippo:travelled (long)
 - hippo:price (double)
-- hippo:uuid (string) = '${fn:new-uuid()}' autocreated
-- hippo:uuid2 (string) = '${fn:new-uuid()}' autocreated protected
 
 [hippo:testtagdocument] > hippo:document
 - * (String) multiple
