@@ -42,9 +42,10 @@ export default class Index extends React.Component<IndexProps> {
   static async getInitialProps(context: NextPageContext) {
     const cookies = parseCookies(context);
     const configuration = {
+      apiBaseUrl: publicRuntimeConfig.apiBaseUrl,
       cmsBaseUrl: publicRuntimeConfig.cmsBaseUrl,
       spaBaseUrl: publicRuntimeConfig.spaBaseUrl,
-      request: { path: context.asPath || '' },
+      request: { path: context.asPath ?? '' },
       visitor:  cookies[VISITOR_COOKIE]
         ? JSON.parse(cookies[VISITOR_COOKIE])
         : Index.visitor,

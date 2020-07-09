@@ -23,6 +23,7 @@ import { Banner, Content, Menu, NewsList } from './components';
 export default function App(props: RouteComponentProps) {
   const configuration = {
     httpClient: axios,
+    apiBaseUrl: process.env.REACT_APP_API_BASE_URL,
     cmsBaseUrl: process.env.REACT_APP_CMS_BASE_URL!,
     spaBaseUrl: process.env.REACT_APP_SPA_BASE_URL,
     request: {
