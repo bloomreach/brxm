@@ -1,6 +1,6 @@
 # This is not the branch you're looking for...
 
-BloomReach only provides the git trees for the release tags of Bloomreach Experience CMS, as explained on https://documentation.bloomreach.com/about/open-source-release-policy.html
+Bloomreach only provides the git trees for the release tags of Bloomreach Experience CMS, as explained on https://documentation.bloomreach.com/about/open-source-release-policy.html
 
 To checkout the code for a specific release tag, after cloning this repository, use the following:
 
