@@ -65,6 +65,7 @@ import NewsList from './components/BrNewsList.vue';
         apiBaseUrl: process.env.VUE_APP_API_BASE_URL,
         cmsBaseUrl: process.env.VUE_APP_CMS_BASE_URL,
         spaBaseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
+        endpointQueryParameter: 'brxm',
         request: { path: this.$route.fullPath },
       },
       mapping: {
