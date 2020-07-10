@@ -39,6 +39,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.onehippo.cms.channelmanager.content.document.DocumentVersionService;
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
@@ -68,17 +69,21 @@ public class ContentResource {
     private final WorkflowService workflowService;
     private final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
     private final BranchSelectionService branchSelectionService;
+    private final DocumentVersionService documentVersionService;
 
     public ContentResource(final SessionRequestContextProvider userSessionProvider,
                            final DocumentsService documentsService,
                            final WorkflowService workflowService,
                            final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService,
-                           final BranchSelectionService branchSelectionService) {
+                           final BranchSelectionService branchSelectionService,
+                           final DocumentVersionService documentVersionService
+    ) {
         this.sessionRequestContextProvider = userSessionProvider;
         this.documentService = documentsService;
         this.workflowService = workflowService;
         this.contextPayloadService = contextPayloadService;
         this.branchSelectionService = branchSelectionService;
+        this.documentVersionService = documentVersionService;
     }
 
     @POST
@@ -132,6 +137,17 @@ public class ContentResource {
             @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
                 (userContext) -> documentService.getDocument(id, branchId, userContext)
+        );
+    }
+
+    @GET
+    @Path("documents/{documentId}/{branchId}/versions")
+    public Response getDocumentVersionInfos(
+            @PathParam("documentId") final String id,
+            @PathParam("branchId") final String branchId,
+            @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK,
+                userContext -> documentVersionService.getVersionInfos(id, branchId, userContext)
         );
     }
 

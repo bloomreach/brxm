@@ -29,10 +29,12 @@ import java.util.stream.Collectors;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.document.DocumentVersionService;
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.hippoecm.hst.core.internal.BranchSelectionService;
@@ -46,6 +48,7 @@ import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
 import org.onehippo.cms.channelmanager.content.workflows.WorkflowService;
 import org.onehippo.jaxrs.cxf.CXFTest;
+import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -54,12 +57,14 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -79,6 +84,7 @@ public class ContentResourceTest extends CXFTest {
     private DocumentTypesService documentTypesService;
     private Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
     private BranchSelectionService branchSelectionService;
+    private DocumentVersionService documentVersionService;
 
     @Before
     public void setup() throws Exception {
@@ -87,6 +93,7 @@ public class ContentResourceTest extends CXFTest {
         documentTypesService = createMock(DocumentTypesService.class);
         contextPayloadService = createMock(Function.class);
         branchSelectionService = createMock(BranchSelectionService.class);
+        documentVersionService = createMock(DocumentVersionService.class);
 
         userContext = new TestUserContext();
         final Locale locale = userContext.getLocale();
@@ -106,7 +113,14 @@ public class ContentResourceTest extends CXFTest {
         expect(DocumentTypesService.get()).andReturn(documentTypesService).anyTimes();
 
         final CXFTest.Config config = new CXFTest.Config();
-        config.addServerSingleton(new ContentResource(sessionRequestContextProvider, documentsService, workflowService, contextPayloadService, branchSelectionService));
+        config.addServerSingleton(new ContentResource(
+                sessionRequestContextProvider,
+                documentsService,
+                workflowService,
+                contextPayloadService,
+                branchSelectionService,
+                documentVersionService
+        ));
         config.addServerSingleton(new JacksonJsonProvider());
 
         setup(config);
@@ -419,6 +433,21 @@ public class ContentResourceTest extends CXFTest {
                 .statusCode(404);
 
         verifyAll();
+    }
+
+    @Test
+    public void getVersions() {
+        final String documentId = "uuid";
+        final String branchId = BranchConstants.MASTER_BRANCH_ID;
+
+        expect(documentVersionService.getVersionInfos(eq(documentId), eq(branchId), anyObject()))
+                .andReturn(emptyList());
+        replayAll();
+
+        when()
+                .get("documents/{documentId}/{branchId}/versions", documentId, branchId)
+        .then()
+                .statusCode(HttpStatus.SC_OK);
     }
 
     private String normalizeJsonResource(final String resourcePath) {
