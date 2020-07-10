@@ -45,6 +45,7 @@ describe('UrlBuilderImpl', () => {
       ${options4} | ${'/news/2019/?a=b'}      | ${'http://localhost:8080/site/spa/resourceapi/2019/?a=b'}
       ${options5} | ${'/news/2019/?a=b'}      | ${'http://localhost:8080/site/spa/resourceapi/2019/?a=b'}
       ${options6} | ${'/news/2019/?a=b'}      | ${'http://localhost:8080/site/spa/resourceapi/2019/?a=b'}
+      ${{}}       | ${'/news/2019/?a=b'}      | ${'/resourceapi/news/2019/?a=b'}
     `('should create the Page Model API URL for "$path" using options "$options"', ({ options, path, expected }) => {
       const builder = new UrlBuilderImpl(options);
 
@@ -81,6 +82,7 @@ describe('UrlBuilderImpl', () => {
       ${options3} | ${'//host/site/spa'}      | ${'/'}
       ${options4} | ${'/site/spa/news?a=b'}   | ${'/something/news?a=b&param=value#header'}
       ${options4} | ${'/site/spa/news#hash'}  | ${'/something/news?param=value#hash'}
+      ${{}}       | ${'/site/spa/news'}       | ${'/site/spa/news'}
     `('should create an SPA URL for "$path" using options "$options"', ({ options, path, expected }) => {
       const builder = new UrlBuilderImpl(options);
 
