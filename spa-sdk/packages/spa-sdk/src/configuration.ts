@@ -48,7 +48,7 @@ export interface ConfigurationWithProxy extends ApiOptions, CmsOptions {
  */
 export interface ConfigurationWithJwt extends ApiOptions, CmsOptions, UrlBuilderOptions {
   /**
-   * The query string parameter used to pass authorization header.
+   * The query string parameter used to pass authorization header value.
    * By default, `token` parameter is used.
    */
   authorizationQueryParameter?: string;
