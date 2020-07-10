@@ -37,17 +37,7 @@ const model = {
 };
 const config = {
   httpClient: jest.fn(),
-  options: {
-    live: {
-      cmsBaseUrl: 'http://localhost:8080/site/my-spa',
-    },
-    preview: {
-      cmsBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
-    },
-  },
-  request: {
-    path: '/',
-  },
+  request: { path: '/' },
 };
 
 describe('Spa', () => {
