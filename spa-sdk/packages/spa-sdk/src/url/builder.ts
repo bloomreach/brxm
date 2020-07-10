@@ -60,15 +60,10 @@ export class UrlBuilderImpl {
   private cmsBaseUrl!: ReturnType<typeof parseUrl>;
   private spaBaseUrl!: ReturnType<typeof parseUrl>;
 
-  constructor(private options: UrlBuilderOptions = { cmsBaseUrl: '' }) {
-    this.initialize(options);
-  }
-
-  initialize(options: UrlBuilderOptions) {
-    this.options = options;
-    this.apiBaseUrl = parseUrl(options.apiBaseUrl || `${options.cmsBaseUrl}${DEFAULT_API_BASE_URL}`);
+  constructor(options: UrlBuilderOptions) {
+    this.apiBaseUrl = parseUrl(options.apiBaseUrl ?? `${options.cmsBaseUrl}${DEFAULT_API_BASE_URL}`);
     this.cmsBaseUrl = parseUrl(options.cmsBaseUrl);
-    this.spaBaseUrl = parseUrl(options.spaBaseUrl || DEFAULT_SPA_BASE_URL);
+    this.spaBaseUrl = parseUrl(options.spaBaseUrl ?? DEFAULT_SPA_BASE_URL);
   }
 
   getApiUrl(link: string) {
