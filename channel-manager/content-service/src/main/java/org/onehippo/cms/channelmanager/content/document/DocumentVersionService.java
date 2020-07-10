@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,17 @@
  */
 package org.onehippo.cms.channelmanager.content.document;
 
-import java.util.List;
-
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentVersionInfo;
 
 public interface DocumentVersionService {
     /**
-     * Returns a {@link DocumentVersionInfo} list for the document with the given id.
+     * Returns a {@link DocumentVersionInfo} instance for the document with the given id.
      *
      * @param uuid        UUID of the document for which to get version info
      * @param branchId    Id of the requested document branch
      * @param userContext Properties of the user that executes the request
      * @return list of version info
      */
-    List<DocumentVersionInfo> getVersionInfos(String uuid, final String branchId, UserContext userContext);
+    DocumentVersionInfo getVersionInfo(String uuid, final String branchId, UserContext userContext);
 }

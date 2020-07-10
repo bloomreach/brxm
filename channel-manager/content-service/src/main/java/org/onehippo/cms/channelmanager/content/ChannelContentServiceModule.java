@@ -27,13 +27,15 @@ import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.DocumentVersionServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
-import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.onehippo.cms.channelmanager.content.document.util.BranchSelectionServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.BranchingService;
 import org.onehippo.cms.channelmanager.content.document.util.BranchingServiceImpl;
+import org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils;
+import org.onehippo.cms.channelmanager.content.document.util.DocumentHandleUtils;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspectorImpl;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
@@ -84,7 +86,11 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         this.documentsService = new DocumentsServiceImpl();
         this.workflowsService = new WorkflowServiceImpl();
         this.contextPayloadService = request -> Optional.ofNullable(CmsSessionContext.getContext(request.getSession()).getContextPayload()).orElse(Collections.emptyMap());
-        this.documentVersionService = new DocumentVersionServiceImpl();
+
+        this.documentVersionService = new DocumentVersionServiceImpl(
+                (userContext, uuid) ->
+                        ContentWorkflowUtils.getDocumentWorkflow(DocumentHandleUtils.getHandle(uuid, userContext.getSession()))
+        );
         addEventListener(new HippoNamespacesEventListener() {
             @Override
             public void onEvent(final EventIterator events) {

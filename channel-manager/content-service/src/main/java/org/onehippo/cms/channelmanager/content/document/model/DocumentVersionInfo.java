@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,22 @@
  */
 package org.onehippo.cms.channelmanager.content.document.model;
 
-import java.util.Calendar;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DocumentVersionInfo {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "UTC", pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private final Calendar createdAt;
+    private final List<Version> versions;
 
     @JsonCreator
-    public DocumentVersionInfo(@JsonProperty("createdAt") final Calendar createdAt) {
-        this.createdAt = createdAt;
+    public DocumentVersionInfo(
+            @JsonProperty("versions") List<Version> versions) {
+        this.versions = versions;
     }
 
-    public Calendar getCreatedAt() {
-        return createdAt;
+    public List<Version> getVersions() {
+        return versions;
     }
 }
