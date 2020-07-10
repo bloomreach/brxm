@@ -70,6 +70,9 @@ Option | Required | Default | Description
 `request` | yes | _none_ | Current user's request.
 `request.path` | yes | _none_ | The path part of the URL, including a query string if present (e.g. `/path/to/page?foo=1`).
 `request.headers` | no | `{}` | An object holding request headers. It should contain a `Cookie` header if rendering is happening on the server-side.
+`serverId` | no | _none_ | Cluster node identifier. By default, the SDK will try to extract the value from the request query string using `serverIdQueryParameter` option.
+`serverIdHeader` | no | `"Server-Id"` | Header identifying the current cluster node.
+`serverIdQueryParameter` | no | `"server-id"` | The query string parameter used to pass a cluster node identifier.
 `spaBaseUrl` | no | `""` | Base URL of the SPA (e.g. `/account` or `//www.example.com`). This option will be ignored if `options` is present.
 `visitor` | no | _none_ | An object holding information about the current visitor.
 `visitor.id` | yes | _none_ | The current visitor identifier.
