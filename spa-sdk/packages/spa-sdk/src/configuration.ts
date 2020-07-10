@@ -54,6 +54,15 @@ export interface ConfigurationWithJwt extends ApiOptions, CmsOptions, UrlBuilder
   authorizationQueryParameter?: string;
 
   /**
+   * The query string parameter used as the brXM endpoint (`cmsBaseUrl`).
+   * The option will be ignored if the `cmsBaseUrl` option is not empty.
+   * In case when this option is used, the `apiBaseUrl` will be prepended with the value from the query parameter.
+   * This option should be used only for testing or debugging.
+   * By default, the option is disabled.
+   */
+  endpointQueryParameter?: string;
+
+  /**
    * The query string parameter used to pass a cluster node identifier.
    * By default, `server-id` parameter is used.
    */
