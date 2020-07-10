@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,66 @@
  */
 package org.onehippo.cms.channelmanager.content.document;
 
-import java.util.Collections;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.function.BiFunction;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.repository.HippoStdPubWfNodeType;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentVersionInfo;
+import org.onehippo.cms.channelmanager.content.document.model.Version;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 public class DocumentVersionServiceImpl implements DocumentVersionService {
+
+    private final BiFunction<UserContext, String, DocumentWorkflow> workflowGetter;
+
+    public DocumentVersionServiceImpl(
+            BiFunction<UserContext, String, DocumentWorkflow> workflowGetter
+    ) {
+        this.workflowGetter = workflowGetter;
+    }
+
     @Override
-    public List<DocumentVersionInfo> getVersionInfos(
+    public DocumentVersionInfo getVersionInfo(
             String uuid,
             String branchId,
             UserContext userContext
     ) {
-        return Collections.emptyList();
+        final DocumentWorkflow documentWorkflow = workflowGetter.apply(userContext, uuid);
+        try {
+            final SortedMap<Calendar, Set<String>> versions = documentWorkflow.listVersions();
+            final List<Version> versionInfos = new ArrayList<>();
+            for (Calendar historic : versions.keySet()) {
+                final Node frozenNode = documentWorkflow.retrieveVersion(historic).getNode(userContext.getSession());
+                final String frozenBranchId = JcrUtils.getStringProperty(frozenNode, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+                if (frozenBranchId.equals(branchId)) {
+                    versionInfos.add(create(historic, frozenNode));
+                }
+            }
+            return new DocumentVersionInfo(versionInfos);
+        } catch (WorkflowException | RemoteException | RepositoryException e) {
+            throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
+        }
     }
+
+    private Version create(Calendar historic, Node frozenNode) throws RepositoryException {
+        final String userName = JcrUtils.getStringProperty(frozenNode, HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY, null);
+        return new Version(historic, userName, frozenNode.getIdentifier());
+    }
+
 }

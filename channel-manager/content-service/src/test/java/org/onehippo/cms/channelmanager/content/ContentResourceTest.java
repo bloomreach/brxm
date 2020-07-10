@@ -38,6 +38,7 @@ import org.onehippo.cms.channelmanager.content.document.DocumentVersionService;
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.hippoecm.hst.core.internal.BranchSelectionService;
+import org.onehippo.cms.channelmanager.content.document.model.DocumentVersionInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
@@ -64,7 +65,6 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -440,8 +440,8 @@ public class ContentResourceTest extends CXFTest {
         final String documentId = "uuid";
         final String branchId = BranchConstants.MASTER_BRANCH_ID;
 
-        expect(documentVersionService.getVersionInfos(eq(documentId), eq(branchId), anyObject()))
-                .andReturn(emptyList());
+        expect(documentVersionService.getVersionInfo(eq(documentId), eq(branchId), anyObject()))
+                .andReturn(new DocumentVersionInfo(emptyList()));
         replayAll();
 
         when()

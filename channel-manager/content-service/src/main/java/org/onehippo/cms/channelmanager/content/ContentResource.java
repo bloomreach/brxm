@@ -147,7 +147,7 @@ public class ContentResource {
             @PathParam("branchId") final String branchId,
             @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                userContext -> documentVersionService.getVersionInfos(id, branchId, userContext)
+                userContext -> documentVersionService.getVersionInfo(id, branchId, userContext)
         );
     }
 
