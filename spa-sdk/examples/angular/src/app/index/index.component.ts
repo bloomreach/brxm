@@ -64,6 +64,7 @@ export class IndexComponent implements OnInit {
       apiBaseUrl,
       cmsBaseUrl,
       spaBaseUrl,
+      endpointQueryParameter: 'brxm',
       request: {
         connection: request?.connection,
         headers: request?.headers['x-forwarded-for']
