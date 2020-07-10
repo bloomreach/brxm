@@ -145,7 +145,7 @@ function initializeWithJwt(config: ConfigurationWithJwt, model?: PageModel) {
   return onReady(
     spa.initialize(model ?? path),
     (spa) => {
-      if (spa.getPage()?.isPreview()) {
+      if (spa.getPage()?.isPreview() && config.cmsBaseUrl) {
         const { origin } = parseUrl(config.cmsBaseUrl);
         postMessage.initialize({ ...config, origin });
         cms.initialize(config);

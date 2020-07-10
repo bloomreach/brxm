@@ -32,7 +32,7 @@ export interface UrlBuilderOptions {
   /**
    * Base URL of the CMS.
    */
-  cmsBaseUrl: string;
+  cmsBaseUrl?: string;
 
   /**
    * Base URL of the SPA. Everything after it will be interpreted as a route into the page model.
@@ -56,13 +56,13 @@ export interface UrlBuilder {
 }
 
 export class UrlBuilderImpl {
-  private apiBaseUrl!: ReturnType<typeof parseUrl>;
-  private cmsBaseUrl!: ReturnType<typeof parseUrl>;
-  private spaBaseUrl!: ReturnType<typeof parseUrl>;
+  private apiBaseUrl: ReturnType<typeof parseUrl>;
+  private cmsBaseUrl: ReturnType<typeof parseUrl>;
+  private spaBaseUrl: ReturnType<typeof parseUrl>;
 
   constructor(options: UrlBuilderOptions) {
-    this.apiBaseUrl = parseUrl(options.apiBaseUrl ?? `${options.cmsBaseUrl}${DEFAULT_API_BASE_URL}`);
-    this.cmsBaseUrl = parseUrl(options.cmsBaseUrl);
+    this.apiBaseUrl = parseUrl(options.apiBaseUrl ?? `${options.cmsBaseUrl ?? ''}${DEFAULT_API_BASE_URL}`);
+    this.cmsBaseUrl = parseUrl(options.cmsBaseUrl ?? '');
     this.spaBaseUrl = parseUrl(options.spaBaseUrl ?? DEFAULT_SPA_BASE_URL);
   }
 

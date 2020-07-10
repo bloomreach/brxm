@@ -54,9 +54,9 @@ export class IndexComponent implements OnInit {
 
   constructor(
     router: Router,
-    @Inject(API_BASE_URL) apiBaseUrl: string,
-    @Inject(CMS_BASE_URL) cmsBaseUrl: string,
-    @Inject(SPA_BASE_URL) spaBaseUrl: string,
+    @Inject(API_BASE_URL) apiBaseUrl?: string,
+    @Inject(CMS_BASE_URL) cmsBaseUrl?: string,
+    @Inject(SPA_BASE_URL) spaBaseUrl?: string,
     @Inject(REQUEST) @Optional() private request?: Request,
     @Inject(RESPONSE) @Optional() private response?: Response,
   ) {
