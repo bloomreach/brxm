@@ -113,11 +113,10 @@ function initializeSpa(api: Api, url: UrlBuilder) {
 }
 
 function initializeWithProxy(config: ConfigurationWithProxy, model?: PageModel) {
-  const url =  new UrlBuilderImpl();
   const options = isMatched(config.request.path, config.options.preview.spaBaseUrl)
     ? config.options.preview
     : config.options.live;
-  url.initialize(options);
+  const url =  new UrlBuilderImpl(options);
   const api = new ApiImpl(url, config);
   const spa = initializeSpa(api, url);
 
@@ -127,7 +126,6 @@ function initializeWithProxy(config: ConfigurationWithProxy, model?: PageModel) 
 }
 
 function initializeWithJwt(config: ConfigurationWithJwt, model?: PageModel) {
-  const url =  new UrlBuilderImpl();
   const authorizationParameter = config.authorizationQueryParameter || DEFAULT_AUTHORIZATION_PARAMETER;
   const serverIdParameter = config.serverIdQueryParameter || DEFAULT_SERVER_ID_PARAMETER;
   const { url: path, searchParams } = extractSearchParams(
@@ -137,7 +135,7 @@ function initializeWithJwt(config: ConfigurationWithJwt, model?: PageModel) {
   const authorizationToken = searchParams.get(authorizationParameter) || undefined;
   const serverId = searchParams.get(serverIdParameter) || undefined;
 
-  url.initialize({
+  const url =  new UrlBuilderImpl({
     ...config,
     spaBaseUrl: appendSearchParams(config.spaBaseUrl ?? '', searchParams),
   });
