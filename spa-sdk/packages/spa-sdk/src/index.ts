@@ -114,13 +114,13 @@ function initializeSpa(api: Api, url: UrlBuilder) {
 
 function initializeWithProxy(config: ConfigurationWithProxy, model?: PageModel) {
   const url =  new UrlBuilderImpl();
-  const api = new ApiImpl(url);
-  const spa = initializeSpa(api, url);
   const options = isMatched(config.request.path, config.options.preview.spaBaseUrl)
     ? config.options.preview
     : config.options.live;
   url.initialize(options);
-  api.initialize(config);
+  const api = new ApiImpl(url, config);
+  const spa = initializeSpa(api, url);
+
   cms14.initialize(config);
 
   return spa.initialize(model ?? config.request.path);
@@ -128,8 +128,6 @@ function initializeWithProxy(config: ConfigurationWithProxy, model?: PageModel) 
 
 function initializeWithJwt(config: ConfigurationWithJwt, model?: PageModel) {
   const url =  new UrlBuilderImpl();
-  const api = new ApiImpl(url);
-  const spa = initializeSpa(api, url);
   const authorizationParameter = config.authorizationQueryParameter || DEFAULT_AUTHORIZATION_PARAMETER;
   const serverIdParameter = config.serverIdQueryParameter || DEFAULT_SERVER_ID_PARAMETER;
   const { url: path, searchParams } = extractSearchParams(
@@ -143,7 +141,8 @@ function initializeWithJwt(config: ConfigurationWithJwt, model?: PageModel) {
     ...config,
     spaBaseUrl: appendSearchParams(config.spaBaseUrl ?? '', searchParams),
   });
-  api.initialize({ authorizationToken, serverId, ...config });
+  const api = new ApiImpl(url, { authorizationToken, serverId, ...config });
+  const spa = initializeSpa(api, url);
 
   return onReady(
     spa.initialize(model ?? path),
