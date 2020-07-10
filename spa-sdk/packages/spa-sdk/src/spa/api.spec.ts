@@ -49,8 +49,7 @@ describe('ApiImpl', () => {
       getApiUrl: jest.fn((path: string) => `http://example.com${path}`),
     } as unknown as jest.Mocked<UrlBuilder>;
 
-    api = new ApiImpl(urlBuilder);
-    api.initialize(config);
+    api = new ApiImpl(urlBuilder, config);
   });
 
   describe('getPage', () => {
@@ -77,7 +76,7 @@ describe('ApiImpl', () => {
     });
 
     it('should not include x-forwarded-for header when the remote address could not be determined', async () => {
-      api.initialize({ httpClient: config.httpClient, request: { path: config.request.path } });
+      const api = new ApiImpl(urlBuilder, { httpClient: config.httpClient, request: { path: config.request.path } });
       await api.getPage(config.request.path);
 
       expect(config.httpClient).toBeCalledWith(expect.not.objectContaining({
@@ -88,7 +87,7 @@ describe('ApiImpl', () => {
     });
 
     it('should not include visitor header when visitor configuration is not defined', async () => {
-      api.initialize({ httpClient: config.httpClient, request: { path: config.request.path } });
+      const api = new ApiImpl(urlBuilder, { httpClient: config.httpClient, request: { path: config.request.path } });
       await api.getPage(config.request.path);
 
       expect(config.httpClient).toBeCalledWith(expect.not.objectContaining({
@@ -99,7 +98,7 @@ describe('ApiImpl', () => {
     });
 
     it('should include a custom authorization header', async () => {
-      api.initialize({
+      const api = new ApiImpl(urlBuilder, {
         authorizationHeader: 'X-Auth',
         authorizationToken: 'token',
         httpClient: config.httpClient,
@@ -115,7 +114,7 @@ describe('ApiImpl', () => {
     });
 
     it('should fall back to the default authorization header', async () => {
-      api.initialize({
+      const api = new ApiImpl(urlBuilder, {
         authorizationToken: 'token',
         httpClient: config.httpClient,
         request: { path: config.request.path },
@@ -130,7 +129,7 @@ describe('ApiImpl', () => {
     });
 
     it('should include a custom server-id header', async () => {
-      api.initialize({
+      const api = new ApiImpl(urlBuilder, {
         serverIdHeader: 'X-Custom-Server-Id',
         serverId: 'some',
         httpClient: config.httpClient,
@@ -146,7 +145,7 @@ describe('ApiImpl', () => {
     });
 
     it('should fall back to the default server-id header', async () => {
-      api.initialize({
+      const api = new ApiImpl(urlBuilder, {
         serverId: 'some',
         httpClient: config.httpClient,
         request: { path: config.request.path },
