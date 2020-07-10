@@ -68,8 +68,9 @@ Option | Required | Default | Description
 `options.preview.cmsBaseUrl` | yes | _none_ | Base URL of the live site (e.g. `http://localhost:8080/site/_cmsinternal` or `http://localhost:8080/site/_cmsinternal/channel`).
 `options.preview.spaBaseUrl` | no | `""` | Base URL of the live SPA (e.g. `/site/_cmsinternal?bloomreach-preview=true` or `/site/_cmsinternal/channel?bloomreach-preview=true`). This path and query string parameters will be used to detect whether it is a preview mode or not.
 `request` | yes | _none_ | Current user's request.
+`request.connection` | no | _none_ | Current request remote connection containing the remote address. This option is used in [the Relevance Module](https://documentation.bloomreach.com/14/library/enterprise/enterprise-features/targeting/targeting.html).
+`request.headers` | no | `{}` | An object holding request headers. It should contain a `Cookie` header if rendering is happening on the server-side in the UrlRewriter-based setup.
 `request.path` | yes | _none_ | The path part of the URL, including a query string if present (e.g. `/path/to/page?foo=1`).
-`request.headers` | no | `{}` | An object holding request headers. It should contain a `Cookie` header if rendering is happening on the server-side.
 `serverId` | no | _none_ | Cluster node identifier. By default, the SDK will try to extract the value from the request query string using `serverIdQueryParameter` option.
 `serverIdHeader` | no | `"Server-Id"` | Header identifying the current cluster node.
 `serverIdQueryParameter` | no | `"server-id"` | The query string parameter used to pass a cluster node identifier.
