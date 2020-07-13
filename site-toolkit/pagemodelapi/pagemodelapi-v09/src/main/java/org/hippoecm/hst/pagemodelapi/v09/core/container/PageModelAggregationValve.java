@@ -294,7 +294,9 @@ public class PageModelAggregationValve extends AggregationValve {
                 requestContext.getServletRequest().getAttribute(ContainerConstants.PAGE_MODEL_API_VERSION));
 
         final Channel channel = requestContext.getResolvedMount().getMount().getChannel();
-        if (channel.getBranchId() == null) {
+        if (channel == null || channel.getBranchId() == null) {
+            // even though channel can be null, it means kind of that there is only a master 'branch' even though there
+            // is not channel
             aggregatedPageModel.putMetadata("branch", MASTER_BRANCH_ID);
         } else {
             aggregatedPageModel.putMetadata("branch", channel.getBranchId());
