@@ -289,7 +289,7 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.XPageResource" parent="abstractConfigResource">
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageResource" parent="abstractConfigResource">
               <property name="actionService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService" />
             </bean>
           </constructor-arg>
