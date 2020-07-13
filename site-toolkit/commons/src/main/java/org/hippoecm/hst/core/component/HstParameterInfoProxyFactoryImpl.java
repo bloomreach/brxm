@@ -158,9 +158,8 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
                             parameterValue = hstComponentParameter.getDefaultValue();
                         }
 
-                        //TODO: hstComponentParameter.getFieldType() should be used instead of String
-                        componentParameters.put(hstComponentParameter.getName(),
-                                converter.convert(parameterValue, String.class));
+                        componentParameters.put(hstComponentParameter.getName(), converter.convert(parameterValue,
+                                hstComponentParameter.getValueType().getDefaultReturnType()));
                     }
                 }
                 return Collections.unmodifiableMap(componentParameters);

@@ -35,6 +35,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
+import org.hippoecm.hst.configuration.components.ParameterValueType;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -106,7 +107,9 @@ public class ContainerItemComponentServiceTest extends AbstractPageComposerTest{
         EasyMock.expect(hstSite.getComponentsConfiguration())
                 .andReturn(componentsConfiguration).anyTimes();
 
-        final List<Parameter> parameters = Arrays.stream(DummyInfo.class.getMethods()).map(x -> x.getAnnotation(Parameter.class)).collect(Collectors.toList());
+		final List<Parameter> parameters = Arrays.stream(DummyInfo.class.getMethods())
+				.map(x -> x.getAnnotation(Parameter.class))
+				.sorted((param1, param2) -> param1.name().compareTo(param2.name())).collect(Collectors.toList());
 
         final MockHstComponentConfiguration componentReference = new MockHstComponentConfiguration("id");
         componentReference.setComponentClassName(DummyComponent.class.getName());
@@ -129,7 +132,7 @@ public class ContainerItemComponentServiceTest extends AbstractPageComposerTest{
     private List<DynamicParameter> getDynamicParameters(List<Parameter> parameters) {
         List<DynamicParameter> dynamicParameters = new ArrayList<>();
         for (Parameter parameter : parameters) {
-            DynamicParameter dynamicParameter = new DynamicComponentParameter(parameter, "STRING");
+            DynamicParameter dynamicParameter = new DynamicComponentParameter(parameter, ParameterValueType.STRING);
             dynamicParameters.add(dynamicParameter);
         }
         return dynamicParameters;

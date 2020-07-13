@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestproject/hst:workspace:
+      jcr:primaryType: hst:workspace
+      /hst:containers:
+        jcr:primaryType: hst:containercomponentfolder
+        /residualparamstestcontainer:
+          jcr:primaryType: hst:containercomponent
+          hst:label: Residual Params test container
+          hst:xtype: hst.vbox
+          /testcatalogiteminstance:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentdefinition: hst:components/default-catalog/testcatalogitem
+            hst:parameternames: [document, param1, param2, paramWithDefaultValue, integerParam, decimalParam, booleanParam, dateParam, dropdownParam]
+            hst:parametervalues: [News/News1, value 1 in container item, value 2 in container item, "", "15", "20.5", "true", "2020-03-19T11:09:27", value1]

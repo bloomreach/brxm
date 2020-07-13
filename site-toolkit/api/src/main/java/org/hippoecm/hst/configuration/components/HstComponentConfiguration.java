@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -204,6 +204,11 @@ public interface HstComponentConfiguration extends HstComponentInfo {
         return Collections.emptyList();
     }
 
+    /**
+     * Returns the list of a component's field groups
+     * @return
+     */
+    List<DynamicFieldGroup> getFieldGroups();
 
     /**
      * Returns a reference to a catalog item
@@ -294,6 +299,11 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * @return the xtype of this ComponentConfiguration and <code>null</code> if the component does not have an xtype
      */
     String getXType();
+
+    /**
+     * Allows to 'map' a specific component (catalog item type) to their implementation logic.
+     */
+    String getCType();
 
     /**
      * The filter tag (see {@link org.hippoecm.hst.core.request.HstRequestContext#getComponentFilterTags}) for this

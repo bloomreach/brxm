@@ -44,14 +44,9 @@ public interface DynamicParameter {
     boolean isHideInChannelManager();
 
     /**
-     * @return the group name of the parameter
-     */
-    String getFieldGroup();
-
-    /**
      * @return the type of the parameter
      */
-    String getValueType();
+    ParameterValueType getValueType();
 
     /**
      * @return <code>true</code> if this is a residual parameter 
