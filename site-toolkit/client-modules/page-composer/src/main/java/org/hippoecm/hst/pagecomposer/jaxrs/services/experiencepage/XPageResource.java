@@ -15,11 +15,13 @@
  *
  */
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage;
 
 import javax.ws.rs.Path;
 
-@Path("/hst:page/")
+import org.hippoecm.hst.pagecomposer.jaxrs.services.ComponentResource;
+
+@Path("/experiencepage/hst:xpage/")
 public class XPageResource extends ComponentResource {
 
 }
