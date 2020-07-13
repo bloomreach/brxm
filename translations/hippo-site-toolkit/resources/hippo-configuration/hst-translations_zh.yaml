@@ -4,3 +4,23 @@ definitions:
     : /zh:
         jcr:primaryType: hipposys:resourcebundle
         menu: 菜单名称
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/component/support/bean/info/dynamic/DocumentQueryDynamicComponentInfo
+    : /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        scope.hint: 存储库中的路径
+        sorting.group: 排序
+        sortOrder#desc: 降序
+        hideFutureItems: 隐藏未来文档
+        list.group: 选择内容
+        pageSize: 页面大小
+        dateField: 包含文档日期的字段（供隐藏）
+        includeSubtypes: 包括文档子类型
+        sortField.hint: 使用技术名称
+        dateField.hint: 使用技术名称
+        documentTypes: 文档类型
+        scope: 文档路径
+        sortOrder: 排序顺序
+        sortField: 排序字段
+        sortOrder#asc: 升序
+        filter.group: 分页
+        documentTypes.hint: 使用技术名称（以逗号分隔）

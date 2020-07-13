@@ -4,3 +4,24 @@ definitions:
     : /de:
         jcr:primaryType: hipposys:resourcebundle
         menu: Menübezeichnung
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/component/support/bean/info/dynamic/DocumentQueryDynamicComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        scope.hint: Der Pfad im Datenspeicher
+        sorting.group: Sortieren
+        sortOrder#desc: Absteigend
+        hideFutureItems: Zukünftige Dokumente ausblenden
+        list.group: Inhaltsauswahl
+        pageSize: Seitenformat
+        dateField: Feld mit Dokumentdatum (zum Ausblenden)
+        includeSubtypes: Dokumentuntertypen einschließen
+        sortField.hint: Den technischen Namen verwenden
+        dateField.hint: Den technischen Namen verwenden
+        documentTypes: Dokumenttypen
+        scope: Dokumentpfad
+        sortOrder: Sortierreihenfolge
+        sortField: Sortierfeld
+        sortOrder#asc: Aufsteigend
+        hidePastItems: Vergangene Dokumente ausblenden
+        filter.group: Nummerierung
+        documentTypes.hint: Die technischen Namen verwenden, durch Komma getrennt

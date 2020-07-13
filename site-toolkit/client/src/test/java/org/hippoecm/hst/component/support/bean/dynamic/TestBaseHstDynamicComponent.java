@@ -25,8 +25,8 @@ import org.hippoecm.hst.configuration.components.DropdownListParameterConfig;
 import org.hippoecm.hst.configuration.components.DynamicComponentInfo;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.DynamicParameterConfig;
-import org.hippoecm.hst.configuration.components.ImageSetPathParameterConfig;
 import org.hippoecm.hst.configuration.components.JcrPathParameterConfig;
+import org.hippoecm.hst.configuration.components.ParameterValueType;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
@@ -81,12 +81,8 @@ public class TestBaseHstDynamicComponent {
                 } else {
                     if ("document1".equals(args[0])) {
                         return "banners/banner1";
-                    } else if ("document2".equals(args[0])) {
-                        return "banners/banner2";
                     } else if ("image1".equals(args[0])) {
-                        return "images/image1";
-                    } else if ("image2".equals(args[0])) {
-                        return "images/image2";
+                        return "/content/images/image1";
                     }
                 }
                 return null;
@@ -94,12 +90,12 @@ public class TestBaseHstDynamicComponent {
         }, new Class [] { ComponentConfiguration.class });
 
         List<DynamicParameter> componentParameters = new ArrayList<>();
-        componentParameters.add(createHstComponentParameter("document1", JcrPathParameterConfig.class));
-        componentParameters.add(createHstComponentParameter("document2", JcrPathParameterConfig.class));
-        componentParameters.add(createHstComponentParameter("image1", ImageSetPathParameterConfig.class));
-        componentParameters.add(createHstComponentParameter("image2", ImageSetPathParameterConfig.class));
-        componentParameters.add(createHstComponentParameter("dropdown1", DropdownListParameterConfig.class));
-        componentParameters.add(createHstComponentParameter("dropdown2", DropdownListParameterConfig.class));
+        componentParameters.add(createHstComponentParameter("document1", new RelativeJcrPathParameterConfig()));
+        componentParameters.add(createHstComponentParameter("image1", new AbsoluteJcrPathParameterConfig()));
+        componentParameters.add(
+            createHstComponentParameter("dropdown1", createNiceMock(DropdownListParameterConfig.class)));
+        componentParameters.add(
+            createHstComponentParameter("dropdown2", createNiceMock(DropdownListParameterConfig.class)));
         componentParameters.add(createHstComponentParameter("string1", null));
         componentParameters.add(createHstComponentParameter("string2", null));
 
@@ -113,10 +109,8 @@ public class TestBaseHstDynamicComponent {
         HippoBean image2 = createNiceMock(HippoBean.class);
         ObjectBeanManager objectBeanManager = createNiceMock(ObjectBeanManager.class);
         expect(siteContentBean.getBean("banners/banner1")).andReturn(document1).anyTimes();
-        expect(siteContentBean.getBean("banners/banner2")).andReturn(document2).anyTimes();
         expect(requestContext.getSiteContentBaseBean()).andReturn(siteContentBean).anyTimes();
-        expect(objectBeanManager.getObject("images/image1")).andReturn(image1).anyTimes();
-        expect(objectBeanManager.getObject("images/image2")).andReturn(image2).anyTimes();
+        expect(objectBeanManager.getObject("/content/images/image1")).andReturn(image1).anyTimes();
         expect(requestContext.getObjectBeanManager()).andReturn(objectBeanManager).anyTimes();
         replay(requestContext, siteContentBean, objectBeanManager);
 
@@ -125,11 +119,9 @@ public class TestBaseHstDynamicComponent {
         MockHstResponse hstResponse = new MockHstResponse();
         baseHstDynamicComponent.doBeforeRender(hstRequest, hstResponse);
 
-        assertEquals(4, hstRequest.getModelsMap().size());
+        assertEquals(2, hstRequest.getModelsMap().size());
         assertEquals(document1, hstRequest.getModelsMap().get("document1"));
-        assertEquals(document2, hstRequest.getModelsMap().get("document2"));
         assertEquals(image1, hstRequest.getModelsMap().get("image1"));
-        assertEquals(image2, hstRequest.getModelsMap().get("image2"));
     }
 
     @Test(expected = NullPointerException.class)
@@ -173,7 +165,7 @@ public class TestBaseHstDynamicComponent {
         dynamicComponentWithWrongAnnotation.doBeforeRender(hstRequest, hstResponse);
     }
 
-    private DynamicParameter createHstComponentParameter(String name, Class<? extends DynamicParameterConfig> parameterConfigClass) {
+    private DynamicParameter createHstComponentParameter(String name, DynamicParameterConfig dynamicParameterConfig) {
         return new DynamicParameter(){
 
             @Override
@@ -202,12 +194,7 @@ public class TestBaseHstDynamicComponent {
             }
 
             @Override
-            public String getFieldGroup() {
-                return null;
-            }
-
-            @Override
-            public String getValueType() {
+            public ParameterValueType getValueType() {
                 return null;
             }
 
@@ -218,12 +205,85 @@ public class TestBaseHstDynamicComponent {
 
             @Override
             public DynamicParameterConfig getComponentParameterConfig() {
-                if (parameterConfigClass != null) {
-                    return createNiceMock(parameterConfigClass);
-                }
-                return null;
+                return dynamicParameterConfig;
             }
         };
+    }
+
+    private static class RelativeJcrPathParameterConfig implements JcrPathParameterConfig {
+
+        @Override
+        public String getPickerConfiguration() {
+            return null;
+        }
+
+        @Override
+        public String getPickerInitialPath() {
+            return null;
+        }
+
+        @Override
+        public boolean isPickerRemembersLastVisited() {
+            return false;
+        }
+
+        @Override
+        public String[] getPickerSelectableNodeTypes() {
+            return new String[0];
+        }
+
+        @Override
+        public boolean isRelative() {
+            return true;
+        }
+
+        @Override
+        public String getPickerRootPath() {
+            return null;
+        }
+
+        @Override
+        public Type getType() {
+            return null;
+        }
+    }
+
+    private static class AbsoluteJcrPathParameterConfig implements JcrPathParameterConfig {
+
+        @Override
+        public String getPickerConfiguration() {
+            return null;
+        }
+
+        @Override
+        public String getPickerInitialPath() {
+            return null;
+        }
+
+        @Override
+        public boolean isPickerRemembersLastVisited() {
+            return false;
+        }
+
+        @Override
+        public String[] getPickerSelectableNodeTypes() {
+            return new String[0];
+        }
+
+        @Override
+        public boolean isRelative() {
+            return false;
+        }
+
+        @Override
+        public String getPickerRootPath() {
+            return null;
+        }
+
+        @Override
+        public Type getType() {
+            return null;
+        }
     }
 
     @ParametersInfo(type = DynamicComponentInfo.class)

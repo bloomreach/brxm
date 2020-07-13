@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
     private final String name;
     private final String componentClass;
     private final String type;
+    private final String ctype;
     private final String label;
     private Map<String, Object> models;
     private Set<ComponentWindowModel> components;
@@ -53,6 +54,8 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
         xtype = componentType.equals(HstComponentConfiguration.Type.CONTAINER_COMPONENT)
                 ? StringUtils.lowerCase(window.getComponent().getComponentConfiguration().getXType())
                 : null;
+
+        ctype = window.getComponent().getComponentConfiguration().getCType();
 
         label = window.getComponentInfo().getLabel();
 
@@ -90,6 +93,11 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
 
     public String getXtype() {
         return xtype;
+    }
+
+    @JsonInclude(Include.NON_NULL)
+    public String getCtype() {
+        return ctype;
     }
 
     /**
