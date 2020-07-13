@@ -123,6 +123,7 @@
 [hst:componentdefinition]
  - hst:componentdefinition (string)
  - hst:componentclassname (string)
+ - hst:template (string)
  - hst:ctype (string)
  - hst:xtype (string)
  - hst:iconpath (string)
