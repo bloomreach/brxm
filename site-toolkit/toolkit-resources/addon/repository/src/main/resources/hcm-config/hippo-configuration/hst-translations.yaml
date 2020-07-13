@@ -27,3 +27,25 @@ definitions:
                           /en:
                             jcr:primaryType: hipposys:resourcebundle
                             menu: Menu name
+                        /DocumentQueryDynamicComponentInfo:
+                          jcr:primaryType: hipposys:resourcebundles
+                          /en:
+                            jcr:primaryType: hipposys:resourcebundle
+                            pageSize: Nr. of posts to show
+                            sortField: Sort field
+                            sortField.hint: Use the technical name
+                            documentTypes: Document types
+                            documentTypes.hint: Use the technical names, comma separated
+                            includeSubtypes: Include document subtypes
+                            scope: Documents path
+                            scope.hint: The path in the repository
+                            list.group: Content selection
+                            dateField: Field that contains document date (for hiding)
+                            dateField.hint: Use the technical name
+                            hidePastItems: Hide past items
+                            hideFutureItems: Hide future items
+                            sortOrder: Sort order
+                            sortOrder#asc: Ascending
+                            sortOrder#desc: Descending
+                            filter.group: Pagination
+                            sorting.group: Sorting

@@ -19,9 +19,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -34,17 +33,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.DropdownListParameterConfig;
+import org.hippoecm.hst.configuration.components.DynamicFieldGroup;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.DynamicParameterConfig;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.ImageSetPathParameterConfig;
 import org.hippoecm.hst.configuration.components.JcrPathParameterConfig;
+import org.hippoecm.hst.configuration.components.ParameterValueType;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.EmptyValueListProvider;
-import org.hippoecm.hst.core.parameters.FieldGroup;
-import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -55,13 +56,12 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.hippoecm.hst.platform.configuration.components.DynamicComponentParameter;
+import org.hippoecm.hst.platform.configuration.components.ResourceBundleListProvider;
+import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -75,17 +75,37 @@ public abstract class ParametersInfoProcessor {
 
     private static final Set<CacheKey> FAILED_BUNDLES_TO_LOAD = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    public static List<ContainerItemComponentPropertyRepresentation> getProperties(final ParametersInfo parameterInfo,
-            final Locale locale, final String contentPath) {
-        
-        final ResourceBundle[] resourceBundles = getResourceBundles(parameterInfo, locale);
-        final Class<?> classType = parameterInfo.type();
-        if (classType == null) {
-            return Collections.emptyList();
+    private static void setParameterType(final ContainerItemComponentPropertyRepresentation property,
+            final DynamicParameter jcrComponentParameter) {
+        if (jcrComponentParameter.getValueType() == null) {
+            return;
         }
-        final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap =
-                createPropertyMap(contentPath, classType, resourceBundles, locale);
-        return orderPropertiesByFieldGroup(classType, resourceBundles, propertyMap);
+
+        final ParameterValueType valueType = jcrComponentParameter.getValueType();
+
+        final DynamicParameterConfig componentParameterConfig = jcrComponentParameter.getComponentParameterConfig();
+        if (componentParameterConfig != null && componentParameterConfig.getType() == DynamicParameterConfig.Type.JCR_PATH
+                && DynamicParameterConfig.Type.JCR_PATH.supportsReturnType(valueType)) {
+            property.setType(ParameterType.JCR_PATH);
+        } else if (componentParameterConfig != null && componentParameterConfig.getType() == DynamicParameterConfig.Type.DROPDOWN_LIST
+                && DynamicParameterConfig.Type.DROPDOWN_LIST.supportsReturnType(valueType)) {
+            property.setType(ParameterType.VALUE_FROM_LIST);
+        } else if (componentParameterConfig != null && componentParameterConfig.getType() == DynamicParameterConfig.Type.IMAGESET_PATH
+                && DynamicParameterConfig.Type.IMAGESET_PATH.supportsReturnType(valueType)) {
+            //TODO Handle image set value type
+            property.setType(ParameterType.STRING);
+        } else if (jcrComponentParameter.getValueType() == ParameterValueType.INTEGER
+                || jcrComponentParameter.getValueType() == ParameterValueType.DECIMAL) {
+            property.setType(ParameterType.NUMBER);
+        } else {
+            try {
+                property.setType(ParameterType.valueOf(jcrComponentParameter.getValueType().name()));
+            } catch (IllegalArgumentException e) {
+                log.error("Dynamic parameter value type is not matched with any frontend parameter type: {} ",
+                        jcrComponentParameter.getValueType().name());
+                property.setType(ParameterType.STRING);
+            }
+        }
     }
 
     public static List<ContainerItemComponentPropertyRepresentation> getPopulatedProperties(
@@ -98,7 +118,7 @@ public abstract class ParametersInfoProcessor {
             final List<PropertyRepresentationFactory> propertyPresentationFactories,
             final HstComponentConfiguration componentReference) throws RepositoryException {
 
-        final ResourceBundle[] resourceBundles = getResourceBundles(infoClassType, locale);
+        final ResourceBundle[] resourceBundles = getResourceBundles(infoClassType, locale, componentReference);
 
         final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap = new LinkedHashMap<>();
 
@@ -108,23 +128,18 @@ public abstract class ParametersInfoProcessor {
             property.setDefaultValue(jcrComponentParameter.getDefaultValue());
             property.setRequired(jcrComponentParameter.isRequired());
             property.setHiddenInChannelManager(jcrComponentParameter.isHideInChannelManager());
-            if (jcrComponentParameter.getValueType() != null) {
-                property.setType(ParameterType.valueOf(jcrComponentParameter.getValueType()));
-            }
+            setParameterType(property, jcrComponentParameter);
 
             final DynamicParameterConfig componentParameterConfig = jcrComponentParameter.getComponentParameterConfig();
             if (componentParameterConfig != null) {
-                if (componentParameterConfig instanceof JcrPathParameterConfig) {
+                if (componentParameterConfig.getType() == DynamicParameterConfig.Type.JCR_PATH) {
                     populateJcrPathProperties(property, (JcrPathParameterConfig) componentParameterConfig, contentPath);
-                } else if (componentParameterConfig instanceof DropdownListParameterConfig) {
-                    populateDropdownListProperties(property, (DropdownListParameterConfig) componentParameterConfig, resourceBundles, locale);
-                } else if (componentParameterConfig instanceof ImageSetPathParameterConfig) {
+                } else if (componentParameterConfig.getType() == DynamicParameterConfig.Type.DROPDOWN_LIST) {
+                    populateDropdownListProperties(property, (DropdownListParameterConfig) componentParameterConfig,
+                            resourceBundles, locale);
+                } else if (componentParameterConfig.getType() == DynamicParameterConfig.Type.IMAGESET_PATH) {
                     populateImageSetPathProperties(property, (ImageSetPathParameterConfig) componentParameterConfig);
                 }
-            }
-
-            if (isNotEmpty(jcrComponentParameter.getFieldGroup())) {
-                property.setGroupLabel(getResourceValue(resourceBundles, jcrComponentParameter.getFieldGroup(), jcrComponentParameter.getFieldGroup()));
             }
 
             String label = getResourceValue(resourceBundles, jcrComponentParameter.getName(), null);
@@ -138,10 +153,10 @@ public abstract class ParametersInfoProcessor {
             propertyMap.put(property.getName(), property);
         }
 
-        final List<ContainerItemComponentPropertyRepresentation> properties = orderPropertiesByFieldGroup(infoClassType, resourceBundles, propertyMap);
-        properties.sort(Comparator.comparing(ContainerItemComponentPropertyRepresentation::getGroupLabel, Comparator.nullsFirst(Comparator.naturalOrder())));
-        final HstComponentParameters componentParameters = 
-                new HstComponentParameters(containerItemNode, containerItemHelper);
+
+        final List<ContainerItemComponentPropertyRepresentation> properties = orderParametersByFieldGroup(componentReference, propertyMap, resourceBundles);
+
+        final HstComponentParameters componentParameters = new HstComponentParameters(containerItemNode, containerItemHelper);
 
         setValueForProperties(properties, prefix, componentParameters, contentPath);
 
@@ -181,7 +196,7 @@ public abstract class ParametersInfoProcessor {
         setValueForProperties(properties, prefix, componentParameters, null);
     }
 
-    public static void setValueForProperties(final List<ContainerItemComponentPropertyRepresentation> properties,
+    public static void setValueForProperties(final Collection<ContainerItemComponentPropertyRepresentation> properties,
                                              final String prefix, final HstComponentParameters componentParameters, 
                                              final String contentPath) {
         for (final ContainerItemComponentPropertyRepresentation prop : properties) {
@@ -254,15 +269,15 @@ public abstract class ParametersInfoProcessor {
                 final Annotation annotation = ParameterType.getTypeAnnotation(method);
                 if (annotation instanceof JcrPath) {
                     // for JcrPath we need some extra processing
-                    final DynamicComponentParameter.JcrPathParameterConfigImpl jcrPath = new DynamicComponentParameter.JcrPathParameterConfigImpl(
+                    final JcrPathParameterConfig jcrPath = new DynamicComponentParameter.JcrPathParameterConfigImpl(
                             (JcrPath) annotation);
                     populateJcrPathProperties(prop, jcrPath, contentPath);
                 } else if (annotation instanceof DropDownList) {
-                    final DynamicComponentParameter.DropdownListParameterConfigImpl dropdownList = new DynamicComponentParameter.DropdownListParameterConfigImpl(
+                    final DropdownListParameterConfig dropdownList = new DynamicComponentParameter.DropdownListParameterConfigImpl(
                             (DropDownList) annotation);
                     populateDropdownListProperties(prop, dropdownList, resourceBundles, locale);
                 } else if (annotation instanceof ImageSetPath) {
-                    final DynamicComponentParameter.ImageSetPathParameterConfigImpl imageSetPath = new DynamicComponentParameter.ImageSetPathParameterConfigImpl(
+                    final ImageSetPathParameterConfig imageSetPath = new DynamicComponentParameter.ImageSetPathParameterConfigImpl(
                             (ImageSetPath) annotation);
                     populateImageSetPathProperties(prop, imageSetPath);
                 }
@@ -282,19 +297,36 @@ public abstract class ParametersInfoProcessor {
         
         String values[] = dropdownList.getValues();
 
-        ValueListProvider valueListProvider = null;
-        final Class<?> valueListProviderClass = dropdownList.getValueListProvider();
-        if (valueListProviderClass != null
-                && !EmptyValueListProvider.class.equals(valueListProviderClass)) {
-            try {
-                valueListProvider = (ValueListProvider) valueListProviderClass.newInstance();
-            } catch (final Exception e) {
-                log.error("Failed to create or invoke the custom valueListProvider: '{}'.",
-                        valueListProviderClass, e);
-            }
-        }
+		ValueListProvider valueListProvider = null;
+		final Class<?> valueListProviderClass = dropdownList.getValueListProvider();
+		final String sourceId = dropdownList.getSourceId();
 
-        final String[] displayValues;
+		if (StringUtils.isNotEmpty(sourceId)
+				&& (valueListProviderClass == null || EmptyValueListProvider.class.equals(valueListProviderClass))) {
+			valueListProvider = new ResourceBundleListProvider(dropdownList.getSourceId());
+		}
+
+		if (valueListProviderClass != null && !EmptyValueListProvider.class.equals(valueListProviderClass)) {
+			try {
+				if (!StringUtils.isEmpty(sourceId)) {
+					try {
+						valueListProvider = (ValueListProvider) valueListProviderClass.getConstructor(String.class)
+								.newInstance(sourceId);
+					} catch (NoSuchMethodException e) {
+						log.warn(
+								"ValueListProvider class constructor with String parameter does not exist. SourceId: {} ValueListProvider: {}",
+								sourceId, valueListProviderClass);
+					}
+				}
+				if (valueListProvider == null) {
+					valueListProvider = (ValueListProvider) valueListProviderClass.newInstance();
+				}
+			} catch (final Exception e) {
+				log.error("Failed to create or invoke the custom valueListProvider: '{}'.", valueListProviderClass, e);
+			}
+		}
+
+		final String[] displayValues;
 
         if (valueListProvider == null) {
             displayValues = new String[values.length];
@@ -341,72 +373,31 @@ public abstract class ParametersInfoProcessor {
         prop.setPickerSelectableNodeTypes(jcrPath.getPickerSelectableNodeTypes());
     }
 
-    private static List<ContainerItemComponentPropertyRepresentation> orderPropertiesByFieldGroup(
-            final Class<?> classType, final ResourceBundle[] resourceBundles, final Map<String, 
-            ContainerItemComponentPropertyRepresentation> propertyMap) {
+    /**
+     * Order parameters according to Field Group layout, i.e. put them in order they're specified in FieldGroup definition
+     */
+    private static List<ContainerItemComponentPropertyRepresentation> orderParametersByFieldGroup(
+            final HstComponentConfiguration componentReference,
+            final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap,
+            final ResourceBundle[] resourceBundles) {
 
-        // LinkedHashMultimap is a insertion ordered map that does not allow duplicate key-value entries
-        final Multimap<String, ContainerItemComponentPropertyRepresentation> fieldGroupProperties = 
-                LinkedHashMultimap.create();
-
-        for (final Class<?> interfaceClass : getBreadthFirstInterfaceHierarchy(classType)) {
-            final FieldGroupList fieldGroupList = interfaceClass.getAnnotation(FieldGroupList.class);
-            final Set<String> uniquePropertiesForInterfaceClass = new HashSet<>();
-            if (fieldGroupList != null) {
-                final FieldGroup[] fieldGroups = fieldGroupList.value();
-                if (fieldGroups != null && fieldGroups.length > 0) {
-                    for (final FieldGroup fieldGroup : fieldGroups) {
-                        final String titleKey = fieldGroup.titleKey();
-                        final String groupLabel = getResourceValue(resourceBundles, titleKey, titleKey);
-                        if (fieldGroup.value().length == 0) {
-                            // store place holder for group
-                            fieldGroupProperties.put(titleKey, null);
-                        }
-                        for (final String propertyName : fieldGroup.value()) {
-                            final ContainerItemComponentPropertyRepresentation property = propertyMap.get(propertyName);
-                            if (!uniquePropertiesForInterfaceClass.add(propertyName)) {
-                                log.warn("Ignoring duplicate parameter '{}' in field group '{}' of parameters info " +
-                                                "interface '{}'", propertyName, titleKey, classType.getCanonicalName());
-                            } else if (property == null) {
-                                log.warn("Ignoring unknown parameter '{}' in field group '{}' of parameters info " +
-                                                "interface '{}'", propertyName, titleKey, classType.getCanonicalName());
-                            } else if (fieldGroupProperties.containsValue(property)) {
-                                // valid if FieldGroup is (re)defined in inherited Info Class
-                                log.debug("Parameter '{}' in field group '{}' of parameters info interface '{}' was " +
-                                                "already added to list.", propertyName, fieldGroup.titleKey(), 
-                                        classType.getCanonicalName());
-                            } else {
-                                log.debug("Adding parameter '{}' to field group '{}' of parameters info interface '{}'",
-                                        propertyName, titleKey, classType.getCanonicalName());
-                                property.setGroupLabel(groupLabel);
-                                fieldGroupProperties.put(titleKey, property);
-                            }
-                        }
-                    }
+        final Map<String, ContainerItemComponentPropertyRepresentation> itemsMap = new LinkedHashMap<>();
+        for (final DynamicFieldGroup fieldGroup : componentReference.getFieldGroups()) {
+            for (final String parameterName : fieldGroup.getParameters()) {
+                final ContainerItemComponentPropertyRepresentation item = propertyMap.get(parameterName);
+                if (item != null) {
+                    final String titleKey = fieldGroup.getTitleKey();
+                    item.setGroupLabel(getResourceValue(resourceBundles, titleKey, titleKey));
+                    itemsMap.put(parameterName, item);
                 }
             }
         }
 
-        final List<ContainerItemComponentPropertyRepresentation> orderedByFieldGroupProperties = new ArrayList<>();
+        propertyMap.entrySet().stream()
+                .filter(entry -> !itemsMap.containsKey(entry.getKey()))
+                .map(Map.Entry::getValue).forEach(v -> itemsMap.put(v.getName(), v));
 
-        for (final String titleKey : fieldGroupProperties.keySet()) {
-            for (final ContainerItemComponentPropertyRepresentation property : fieldGroupProperties.get(titleKey)) {
-                if (property == null) {
-                    // can happen due to place holder for group
-                    continue;
-                }
-                orderedByFieldGroupProperties.add(property);
-            }
-        }
-
-        for (final ContainerItemComponentPropertyRepresentation property : propertyMap.values()) {
-            if (orderedByFieldGroupProperties.contains(property)) {
-                continue;
-            }
-            orderedByFieldGroupProperties.add(property);
-        }
-
-        return orderedByFieldGroupProperties;
+        return Lists.newArrayList(itemsMap.values());
     }
 
     private static String getResourceValue(final ResourceBundle[] bundles, final String key, 
@@ -481,6 +472,42 @@ public abstract class ParametersInfoProcessor {
         return resourceBundles.toArray(new ResourceBundle[resourceBundles.size()]);
     }
 
+    /**
+     * @return resource bundles for Parameter Info Class including the bundles for the super interfaces
+     * for <code><parameterInfo.type()</code> and resource bundle document defined for the relevant catalog item
+     * with the given <code>locale</code>. The resource bundles are ordered according the
+     * interface hierarchy BREADTH FIRST traversal and then lastly the resource bundle documents are added if found any.
+     * Empty array if there are no resource bundles at all
+     */
+    protected static final ResourceBundle[] getResourceBundles(final Class<?> componentClass, final Locale locale,
+            final HstComponentConfiguration componentReference) {
+
+        final List<ResourceBundle> resourceBundles = new ArrayList<>();
+
+        final List<Class<?>> breadthFirstInterfaceHierarchy = getBreadthFirstInterfaceHierarchy(componentClass);
+        for (final Class<?> clazz : breadthFirstInterfaceHierarchy) {
+            final ResourceBundle bundle = getResourceBundle(clazz, locale);
+            if (bundle != null) {
+                resourceBundles.add(bundle);
+            }
+        }
+		if (componentReference != null && componentReference.getComponentDefinition() != null) {
+			final String resourceKey = StringUtils.replace(componentReference.getComponentDefinition(), "/", ".");
+
+			final ResourceBundle bundle = getResourceBundle(StringUtils.substringAfter(resourceKey, "."), locale);
+			if (bundle != null) {
+				resourceBundles.add(bundle);
+			}
+
+			try {
+				resourceBundles.addAll(Arrays.asList(ResourceBundleUtils.getBundle(resourceKey, locale, false)));
+			} catch (MissingResourceException e) {
+				log.info("Resource bundle document not found with the id: {}", resourceKey);
+			}
+		}
+        return resourceBundles.toArray(new ResourceBundle[resourceBundles.size()]);
+    }
+
     static List<Class<?>> getBreadthFirstInterfaceHierarchy(final Class<?> clazz) {
         final List<Class<?>> interfaceHierarchyList = new ArrayList<>();
         interfaceHierarchyList.add(clazz);
@@ -508,17 +535,16 @@ public abstract class ParametersInfoProcessor {
      * when it cannot be loaded
      */
     protected static final ResourceBundle getResourceBundle(final ParametersInfo parameterInfo, final Locale locale) {
-        return getResourceBundle(parameterInfo.type(), locale);
+        return getResourceBundle(parameterInfo.type().getName(), locale);
     }
 
-    public static ResourceBundle getResourceBundle(final Class<?> clazz, final Locale locale) {
+    private static ResourceBundle getResourceBundle(final String typeName, final Locale locale) {
         final Locale localeOrDefault;
         if (locale == null) {
             localeOrDefault = Locale.getDefault();
         } else {
             localeOrDefault = locale;
         }
-        final String typeName = clazz.getName();
         final CacheKey bundleKey = new CacheKey(typeName, localeOrDefault);
         if (FAILED_BUNDLES_TO_LOAD.contains(bundleKey)) {
             return null;
@@ -526,7 +552,7 @@ public abstract class ParametersInfoProcessor {
 
         final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
         if (localizationService != null) {
-            final String bundleName = COMPONENT_PARAMETERS_TRANSLATION_LOCATION + "." + clazz.getName();
+            final String bundleName = COMPONENT_PARAMETERS_TRANSLATION_LOCATION + "." + typeName;
             final org.onehippo.repository.l10n.ResourceBundle repositoryResourceBundle =
                     localizationService.getResourceBundle(bundleName, localeOrDefault);
             if (repositoryResourceBundle != null) {
@@ -541,8 +567,12 @@ public abstract class ParametersInfoProcessor {
                     "panel will show displayName values instead of internationalized labels.", typeName, locale);
             FAILED_BUNDLES_TO_LOAD.add(bundleKey);
             return null;
-        }
-    }
+		}
+	}
+
+	public static ResourceBundle getResourceBundle(final Class<?> clazz, final Locale locale) {
+		return getResourceBundle(clazz.getName(), locale);
+	}
 
     private static class CacheKey {
         private final String type;

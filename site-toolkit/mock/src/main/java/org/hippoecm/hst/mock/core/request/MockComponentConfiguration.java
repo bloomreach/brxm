@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ public class MockComponentConfiguration implements ComponentConfiguration {
     private String canonicalIdentifier;
     private Type componentType;
     private String xType;
+    private String cType;
     private String parametersInfoClassName;
 
     public String getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
@@ -146,6 +147,14 @@ public class MockComponentConfiguration implements ComponentConfiguration {
 
     public void setXType(String xType) {
         this.xType = xType;
+    }
+
+    public String getCType() {
+        return cType;
+    }
+
+    public void setCType(String cType) {
+        this.cType = cType;
     }
 
     @Override

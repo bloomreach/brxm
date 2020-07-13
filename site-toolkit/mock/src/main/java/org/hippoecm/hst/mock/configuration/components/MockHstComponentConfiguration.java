@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.mock.configuration.components;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,9 +25,11 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.hippoecm.hst.configuration.components.DynamicFieldGroup;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.core.parameters.FieldGroup;
 
 
 /**
@@ -54,6 +57,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     private String namedResourceServer;
     private String pageErrorHandlerClassName;
     private String xType;
+    private String cType;
     private String label;
     private String iconPath;
     private boolean inherited;
@@ -69,6 +73,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     private Calendar lastModified;
     private boolean markedDeleted;
     private String componentDefinition;
+    private List<DynamicFieldGroup> fieldGroups = new ArrayList<>();
 
     private String hstTemplate;
 
@@ -242,9 +247,18 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public String getXType() {
         return xType;
     }
-    
+
     public void setXType(String xType) {
         this.xType = xType;
+    }
+
+    @Override
+    public String getCType() {
+        return cType;
+    }
+
+    public void setCType(String cType) {
+        this.cType = cType;
     }
 
     @Override
@@ -318,6 +332,15 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
 
     public void setComponentDefinition(String componentDefinition) {
         this.componentDefinition = componentDefinition;
+    }
+
+    @Override
+    public List<DynamicFieldGroup> getFieldGroups() {
+        return fieldGroups;
+    }
+
+    public void setFieldGroups(List<DynamicFieldGroup> fieldGroups) {
+        this.fieldGroups = fieldGroups;
     }
 
     public String getIconPath() {
