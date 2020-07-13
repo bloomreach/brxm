@@ -57,7 +57,6 @@ import org.hippoecm.hst.pagemodelapi.v10.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel;
 import org.hippoecm.hst.util.ParametersInfoUtils;
 import org.onehippo.cms7.services.hst.Channel;
-import org.onehippo.repository.branch.BranchConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -223,7 +222,9 @@ public class PageModelAggregationValve extends AggregationValve {
                 requestContext.getServletRequest().getAttribute(ContainerConstants.PAGE_MODEL_API_VERSION));
 
         final Channel channel = requestContext.getResolvedMount().getMount().getChannel();
-        if (channel.getBranchId() == null) {
+        if (channel == null || channel.getBranchId() == null) {
+            // even though channel can be null, it means kind of that there is only a master 'branch' even though there
+            // is not channel
             aggregatedPageModel.putMetadata("branch", MASTER_BRANCH_ID);
         } else {
             aggregatedPageModel.putMetadata("branch", channel.getBranchId());
