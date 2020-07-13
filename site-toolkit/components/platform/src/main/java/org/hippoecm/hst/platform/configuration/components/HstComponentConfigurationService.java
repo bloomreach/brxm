@@ -216,7 +216,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private boolean experiencePageComponent;
 
     /**
-     * detached is true for components returned from {@link #copy(String, boolean)} implying that the
+     * detached is true for components returned from {@link #copy(String, String, boolean)} implying that the
      * specific {@link HstComponentConfigurationService} is detached from the HST in memory model
      */
     private boolean detached;
@@ -815,11 +815,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      *     {@link HstComponentConfigurationService#detached equal to true}.
      *
      * </p>
-     * @return A deep copy of {@code source} with parent = null and root component having id {@code id}
+     * @return A deep copy of {@code source} with parent = null and root component having {@link #getId()}
+     * equal to {@code canonicalIdentifier}, {@link #getCanonicalIdentifier()} equal to {@code canonicalIdentifier}
+     * and {@link #getCanonicalStoredLocation()} equal to {@code canonicalStoredLocation}
      */
-    public HstComponentConfigurationService copy(final String id, final boolean includeContainerItems) {
+    public HstComponentConfigurationService copy(final String canonicalIdentifier, final String canonicalStoredLocation,
+                                                 final boolean includeContainerItems) {
         final HstComponentConfigurationService hstComponentConfigurationService =
-                deepCopy(null, id, this, null, includeContainerItems);
+                deepCopy(null, canonicalIdentifier, this, null, includeContainerItems);
+        hstComponentConfigurationService.canonicalIdentifier = canonicalIdentifier;
+        hstComponentConfigurationService.canonicalStoredLocation = canonicalStoredLocation;
         hstComponentConfigurationService.flattened().forEach(config -> ((HstComponentConfigurationService)config).detached = true);
         return hstComponentConfigurationService;
     }
