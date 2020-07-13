@@ -65,6 +65,19 @@ describe('initialize', () => {
     expect(page.getTitle()).toBe('Homepage');
   });
 
+  it('should initialize using endpoint from the query string', async () => {
+    httpClient.mockClear();
+    page = await initialize({
+      httpClient,
+      apiBaseUrl: '/api',
+      endpointQueryParameter: 'brxm',
+      request: { path: '/?brxm=http://example.com' },
+    });
+
+    expect(httpClient).toBeCalled();
+    expect(httpClient.mock.calls[0]).toMatchSnapshot();
+  });
+
   it('should be a page entity', () => {
     expect(page.getTitle()).toBe('Homepage');
   });

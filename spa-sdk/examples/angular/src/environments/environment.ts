@@ -15,7 +15,8 @@
  */
 
 export const environment = {
-  cmsBaseUrl: 'http://localhost:8080/site',
-  spaBaseUrl: '',
+  apiBaseUrl: undefined,
+  cmsBaseUrl: undefined,
+  spaBaseUrl: undefined,
   production: false,
 };
