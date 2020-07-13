@@ -235,6 +235,21 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
                 .as("Expected experience page although it inherits from which inherits from 'hst:abstractpages/basepage'")
                 .isTrue();
 
+        /**
+         * Although the root component for an XPage really comes from the XPage Layout, the actual HST-Page-Id should be from
+         * the XPage Document and not the XPage layout, hence the canonical identifier and stored location should be from
+         * the XPage document
+         */
+        final Node docXPage = adminSession.getNode(pathToExperiencePage + "/" + handleName + "/hst:xpage");
+        assertThat(docXPage.getIdentifier())
+                .as("Expected for the root XPage component the identifier of the  XPage document and not the " +
+                        "layout")
+                .isEqualTo(root.getCanonicalIdentifier());
+        assertThat(docXPage.getPath())
+                .as("Expected for the root XPage component the identifier of the  XPage document and not the " +
+                        "layout")
+                .isEqualTo( root.getCanonicalStoredLocation());
+
         // the XPage for a runtime request gets 'copied' into a request bound XPage and the 'root' is of course
         // always shared (although not the request runtime instance, but the backing hst config component is)
         assertThat(root.isShared()).isTrue();
@@ -273,7 +288,7 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
         // VERY IMPORTANT : the canonical ID and the canonical stored location should be from the XPage document
         // which OVERRIDES the container ID and location from the Page Layout Config
 
-        final Node xPageDocContainer1 = adminSession.getNode(pathToExperiencePage + "/" + handleName + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
+        final Node xPageDocContainer1 = docXPage.getNode("430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
         // even for xpage doc from version history, canonical stored location will be workspace location, see
         // org.hippoecm.hst.content.beans.version.HippoBeanFrozenNodeUtils
@@ -593,4 +608,5 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
             compareReferenceNamesComponentOrderAndIds(aChild, bChild);
         }
     }
+
 }
