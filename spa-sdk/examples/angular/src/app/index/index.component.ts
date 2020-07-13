@@ -29,6 +29,7 @@ import { ContentComponent } from '../content/content.component';
 import { MenuComponent } from '../menu/menu.component';
 import { NewsListComponent } from '../news-list/news-list.component';
 
+export const API_BASE_URL = new InjectionToken<string>('brXM API Base URL');
 export const CMS_BASE_URL = new InjectionToken<string>('brXM Base URL');
 export const SPA_BASE_URL = new InjectionToken<string>('SPA Base URL');
 
@@ -53,14 +54,17 @@ export class IndexComponent implements OnInit {
 
   constructor(
     router: Router,
-    @Inject(CMS_BASE_URL) cmsBaseUrl: string,
-    @Inject(SPA_BASE_URL) spaBaseUrl: string,
+    @Inject(API_BASE_URL) apiBaseUrl?: string,
+    @Inject(CMS_BASE_URL) cmsBaseUrl?: string,
+    @Inject(SPA_BASE_URL) spaBaseUrl?: string,
     @Inject(REQUEST) @Optional() private request?: Request,
     @Inject(RESPONSE) @Optional() private response?: Response,
   ) {
     this.configuration = {
+      apiBaseUrl,
       cmsBaseUrl,
       spaBaseUrl,
+      endpointQueryParameter: 'brxm',
       request: {
         connection: request?.connection,
         headers: request?.headers['x-forwarded-for']
