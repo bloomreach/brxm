@@ -585,7 +585,7 @@ describe('ChannelMenuService', () => {
 
   describe('close', () => {
     it('should always show an enabled "close" action', () => {
-      addAction("close");
+      addAction('close');
       expect(getItem('close').isVisible()).toBe(true);
       expect(getItem('close').isEnabled()).toBe(true);
     });
