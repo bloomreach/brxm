@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 
 public class ContainerComponentServiceImpl implements ContainerComponentService {
@@ -46,11 +47,20 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     static final class ContainerItemImpl implements ContainerItem {
 
         private final Node containerItem;
+        private final HstComponentConfiguration componentDefinition;
         private final long timeStamp;
 
-        public ContainerItemImpl(Node containerItem, long timeStamp) {
+
+        public ContainerItemImpl(final Node containerItem,
+                                 final HstComponentConfiguration componentDefinition, final long timeStamp) {
             this.containerItem = containerItem;
+            this.componentDefinition = componentDefinition;
             this.timeStamp = timeStamp;
+        }
+
+        @Override
+        public HstComponentConfiguration getComponentDefinition() {
+            return componentDefinition;
         }
 
         @Override
@@ -80,22 +90,22 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
             // containerNode. Find a correct newName and create a new node.
             final String newItemNodeName = findNewName(catalogItem.getName(), containerNode);
 
-            final Node newItem = containerNode.addNode(newItemNodeName, catalogItem.getPrimaryNodeType().getName());
+            final Node newItem = containerNode.addNode(newItemNodeName, NODETYPE_HST_CONTAINERITEMCOMPONENT);
 
-            final String componentIdRef = getCatalogItemId(catalogItem);
-            newItem.setProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION, componentIdRef);
+            final HstComponentConfiguration componentDefinition = getCatalogItem(catalogItem);
+            newItem.setProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION, componentDefinition.getId());
 
             HstConfigurationUtils.persistChanges(session);
 
             final long newVersionStamp = getVersionStamp(containerNode);
-            return new ContainerItemImpl(newItem, newVersionStamp);
+            return new ContainerItemImpl(newItem, componentDefinition, newVersionStamp);
         } catch (RepositoryException e) {
             log.warn("Exception during creating new container item: {}", catalogItemUUID);
             throw e;
         }
     }
 
-    private String getCatalogItemId(Node catalogItem) throws RepositoryException {
+    private HstComponentConfiguration getCatalogItem(Node catalogItem) throws RepositoryException {
         final HstSite hstSite = pageComposerContextService.getEditingMount().getHstSite();
         final List<HstComponentConfiguration> availableContainerItems = hstSite.getComponentsConfiguration().getAvailableContainerItems();
         final String catalogItemPath = catalogItem.getPath();
@@ -105,11 +115,11 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
                         .findFirst().orElse(null);
 
         if (catalogItemConfiguration == null) {
-            //TODO SS: Add arguments to log, incorrect exception type
-            throw new RepositoryException("Component is not found");
+            throw new RepositoryException(String.format("Catalog item '%s' at path '%s' could not be found",
+                    catalogItem.getName(), catalogItem.getPath()));
         }
 
-        return catalogItemConfiguration.getId();
+        return catalogItemConfiguration;
     }
 
     @Override
@@ -219,7 +229,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     private Node getContainerItem(final Session session, final String itemUUID) throws RepositoryException {
         final Node containerItem = session.getNodeByIdentifier(itemUUID);
 
-        if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+        if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT) && !containerItem.isNodeType(NODETYPE_HST_COMPONENTDEFINITION)) {
             log.warn("The container component '{}' does not have the correct type. ", itemUUID);
             throw new InvalidNodeTypeException("The container component does not have the correct type.", itemUUID);
         }

@@ -22,4 +22,6 @@ public interface DropdownListParameterConfig extends DynamicParameterConfig {
     String[] getValues();
 
     Class<? extends ValueListProvider> getValueListProvider();
+
+    String getSourceId();
 }

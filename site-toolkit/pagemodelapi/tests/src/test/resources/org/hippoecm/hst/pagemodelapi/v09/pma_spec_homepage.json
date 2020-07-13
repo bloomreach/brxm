@@ -1,5 +1,5 @@
 {
-  "id":"r26",
+  "id":"r27",
   "_meta":{
     "version":"0.9",
     "branch":"master"
@@ -15,7 +15,7 @@
     }
   },
   "page":{
-    "id":"r26",
+    "id":"r27",
     "name":"homepage",
     "componentClass":"org.hippoecm.hst.pagemodelapi.common.components.GenericDetailComponent",
     "type":"COMPONENT",
@@ -495,13 +495,13 @@
     },
     "components":[
       {
-        "id":"r26_r1",
+        "id":"r27_r1",
         "name":"header",
         "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
         "type":"COMPONENT",
         "components":[
           {
-            "id":"r26_r1_r1",
+            "id":"r27_r1_r1",
             "name":"title",
             "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
             "type":"COMPONENT",
@@ -512,10 +512,10 @@
             },
             "_links":{
               "componentRendering":{
-                "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r26_r1_r1"
+                "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r1"
               },
               "self":{
-                "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r26_r1_r1",
+                "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r1",
                 "type":"external"
               }
             }
@@ -528,16 +528,16 @@
         },
         "_links":{
           "componentRendering":{
-            "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r26_r1"
+            "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1"
           },
           "self":{
-            "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r26_r1",
+            "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1",
             "type":"external"
           }
         }
       },
       {
-        "id":"r26_r2",
+        "id":"r27_r2",
         "name":"leftmenu",
         "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
         "type":"COMPONENT",
@@ -548,10 +548,10 @@
         },
         "_links":{
           "componentRendering":{
-            "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r26_r2"
+            "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r2"
           },
           "self":{
-            "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r26_r2",
+            "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r2",
             "type":"external"
           }
         }
@@ -570,10 +570,10 @@
     },
     "_links":{
       "componentRendering":{
-        "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r26"
+        "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27"
       },
       "self":{
-        "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r26",
+        "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27",
         "type":"external"
       }
     }
