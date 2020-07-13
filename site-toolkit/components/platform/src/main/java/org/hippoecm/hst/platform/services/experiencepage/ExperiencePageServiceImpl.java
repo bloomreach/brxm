@@ -88,7 +88,8 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                         pageref, hstSite.getConfigurationPath() + "/" + NODENAME_HST_PAGES));
             }
 
-            final HstComponentConfigurationService copy = xPageLayout.copy(hstNode.getValueProvider().getIdentifier(), false);
+            final HstComponentConfigurationService copy = xPageLayout.copy(hstNode.getValueProvider().getIdentifier(),
+                    hstNode.getValueProvider().getPath(), false);
 
 
             // the root configuration prefix is *JUST* the path to the hstPage itself (hstPage is typically a
