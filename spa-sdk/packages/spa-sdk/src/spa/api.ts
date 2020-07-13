@@ -80,13 +80,7 @@ export interface Api {
 }
 
 export class ApiImpl implements Api {
-  private options!: ApiOptions;
-
-  constructor(private urlBuilder: UrlBuilder) {}
-
-  initialize(options: ApiOptions) {
-    this.options = options;
-  }
+  constructor(private urlBuilder: UrlBuilder, private options: ApiOptions) {}
 
   getPage(path: string) {
     const url = this.urlBuilder.getApiUrl(path);

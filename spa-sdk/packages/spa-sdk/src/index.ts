@@ -112,43 +112,47 @@ function initializeSpa(api: Api, url: UrlBuilder) {
   return new Spa(eventBus, api, pageFactory);
 }
 
-function initializeWithProxy(config: ConfigurationWithProxy, model?: PageModel) {
-  const url =  new UrlBuilderImpl();
-  const api = new ApiImpl(url);
+function initializeWithProxy(configuration: ConfigurationWithProxy, model?: PageModel) {
+  const options = isMatched(configuration.request.path, configuration.options.preview.spaBaseUrl)
+    ? configuration.options.preview
+    : configuration.options.live;
+  const url =  new UrlBuilderImpl(options);
+  const api = new ApiImpl(url, configuration);
   const spa = initializeSpa(api, url);
-  const options = isMatched(config.request.path, config.options.preview.spaBaseUrl)
-    ? config.options.preview
-    : config.options.live;
-  url.initialize(options);
-  api.initialize(config);
-  cms14.initialize(config);
 
-  return spa.initialize(model ?? config.request.path);
+  cms14.initialize(configuration);
+
+  return spa.initialize(model ?? configuration.request.path);
 }
 
-function initializeWithJwt(config: ConfigurationWithJwt, model?: PageModel) {
-  const url =  new UrlBuilderImpl();
-  const api = new ApiImpl(url);
-  const spa = initializeSpa(api, url);
-  const authorizationParameter = config.authorizationQueryParameter || DEFAULT_AUTHORIZATION_PARAMETER;
-  const serverIdParameter = config.serverIdQueryParameter || DEFAULT_SERVER_ID_PARAMETER;
+function initializeWithJwt(configuration: ConfigurationWithJwt, model?: PageModel) {
+  const authorizationParameter = configuration.authorizationQueryParameter ?? DEFAULT_AUTHORIZATION_PARAMETER;
+  const endpointParameter = configuration.endpointQueryParameter ?? '';
+  const serverIdParameter = configuration.serverIdQueryParameter ?? DEFAULT_SERVER_ID_PARAMETER;
   const { url: path, searchParams } = extractSearchParams(
-    config.request.path,
-    [authorizationParameter, serverIdParameter],
+    configuration.request.path,
+    [authorizationParameter, serverIdParameter, endpointParameter].filter(Boolean),
   );
-  const authorizationToken = searchParams.get(authorizationParameter) || undefined;
-  const serverId = searchParams.get(serverIdParameter) || undefined;
+  const authorizationToken = searchParams.get(authorizationParameter) ?? undefined;
+  const endpoint = searchParams.get(endpointParameter) ?? undefined;
+  const serverId = searchParams.get(serverIdParameter) ?? undefined;
+  const config = {
+    ...configuration,
+    apiBaseUrl: configuration.cmsBaseUrl || !configuration.apiBaseUrl || !endpoint
+      ? configuration.apiBaseUrl
+      : `${endpoint}${configuration.apiBaseUrl}`,
+    cmsBaseUrl: configuration.cmsBaseUrl ?? endpoint,
+    spaBaseUrl: appendSearchParams(configuration.spaBaseUrl ?? '', searchParams),
+  };
 
-  url.initialize({
-    ...config,
-    spaBaseUrl: appendSearchParams(config.spaBaseUrl ?? '', searchParams),
-  });
-  api.initialize({ authorizationToken, serverId, ...config });
+  const url =  new UrlBuilderImpl(config);
+  const api = new ApiImpl(url, { authorizationToken, serverId, ...config });
+  const spa = initializeSpa(api, url);
 
   return onReady(
     spa.initialize(model ?? path),
     (spa) => {
-      if (spa.getPage()?.isPreview()) {
+      if (spa.getPage()?.isPreview() && config.cmsBaseUrl) {
         const { origin } = parseUrl(config.cmsBaseUrl);
         postMessage.initialize({ ...config, origin });
         cms.initialize(config);
@@ -162,27 +166,27 @@ function initializeWithJwt(config: ConfigurationWithJwt, model?: PageModel) {
 /**
  * Initializes the page model.
  *
- * @param config Configuration of the SPA integration with brXM.
+ * @param configuration Configuration of the SPA integration with brXM.
  * @param model Preloaded page model.
  */
-export function initialize(config: Configuration, model: Page | PageModel): Page;
+export function initialize(configuration: Configuration, model: Page | PageModel): Page;
 
 /**
  * Initializes the page model.
  *
- * @param config Configuration of the SPA integration with brXM.
+ * @param configuration Configuration of the SPA integration with brXM.
  */
-export async function initialize(config: Configuration): Promise<Page>;
+export async function initialize(configuration: Configuration): Promise<Page>;
 
-export function initialize(config: Configuration, model?: Page | PageModel): Page | Promise<Page> {
+export function initialize(configuration: Configuration, model?: Page | PageModel): Page | Promise<Page> {
   if (isPage(model)) {
     return model;
   }
 
   return onReady(
-    isConfigurationWithProxy(config)
-      ? initializeWithProxy(config, model)
-      : initializeWithJwt(config, model),
+    isConfigurationWithProxy(configuration)
+      ? initializeWithProxy(configuration, model)
+      : initializeWithJwt(configuration, model),
     (spa) => {
       const page = spa.getPage()!;
       pages.set(page, spa);
