@@ -28,7 +28,7 @@
   min-height: $menu-top-item-height;
 
   .mat-icon {
-    color: $white;
+    color: $menu-text-color-light;
     display: grid;
     grid-template-columns: $menu-collapsed-width 1fr;
   }
