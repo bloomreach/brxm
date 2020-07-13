@@ -133,11 +133,11 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         final DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow("default", hippoSession.getNodeByIdentifier(handleId));
         documentWorkflow.depublish();
         documentWorkflow.publish();
-        final String containerId = getVariant(documentWorkflow.getNode(), UNPUBLISHED).getNode("hst:page/body").getIdentifier();
+        final String documentXPageId = getVariant(documentWorkflow.getNode(), UNPUBLISHED).getNode("hst:xpage").getIdentifier();
         hippoSession.save();
         hippoSession.logout();
 
-        final MockHttpServletResponse response = getActionsRequest(containerId);
+        final MockHttpServletResponse response = getActionsRequest(documentXPageId);
         Assertions.assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
 
         final Map<String, Boolean> actions = flatten(getActions(response));
