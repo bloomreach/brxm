@@ -191,11 +191,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             // never store the Node since backed by an hst config user which can be returned to the pool after this work
             requestContext.setAttribute(REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE, xPageUnpublishedVariant.getIdentifier());
             requestContext.setAttribute(REQUEST_EXPERIENCE_PAGE_HANDLE_UUID_ATRRIBUTE, xPageUnpublishedVariant.getParent().getIdentifier());
-            if (NODETYPE_HST_CONTAINERCOMPONENT.equals(nodeType) || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(nodeType)) {
-                builder.append("/experiencepage/");
-            } else {
-                builder.append("/");
-            }
+            builder.append("/experiencepage/");
         } else {
             builder.append("/");
         }
