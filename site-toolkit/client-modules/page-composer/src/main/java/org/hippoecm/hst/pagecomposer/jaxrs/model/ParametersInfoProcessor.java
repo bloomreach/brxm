@@ -499,11 +499,6 @@ public abstract class ParametersInfoProcessor {
 				resourceBundles.add(bundle);
 			}
 
-			try {
-				resourceBundles.addAll(Arrays.asList(ResourceBundleUtils.getBundle(resourceKey, locale, false)));
-			} catch (MissingResourceException e) {
-				log.info("Resource bundle document not found with the id: {}", resourceKey);
-			}
 		}
         return resourceBundles.toArray(new ResourceBundle[resourceBundles.size()]);
     }
