@@ -22,7 +22,6 @@ import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Folder;
 import org.hippoecm.repository.api.MappingException;
@@ -90,6 +89,14 @@ public interface FolderWorkflow extends Workflow {
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
+     * @param jcrTemplateNode the JcrTemplateNode that will instruct which mixins, properties and children to add to the newly created document
+     * @see #add(String, String, String) only including an JcrTemplateNode object to add extra mixins, properties and children to
+     * the newly created node
+     */
+    String add(String category, String type, String relPath, JcrTemplateNode jcrTemplateNode)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
      * Adds a new document to this container document from the specified category of the indicated type.  This call is similar
      * to #add(String,String,relPath) but instead of specifying a new name, a list or rewrite rules to be applied (which include
      * the new name of the document) is provided.  This allows you to set the new name (use <code>./_name</code> and
@@ -98,23 +105,7 @@ public interface FolderWorkflow extends Workflow {
      *
      * @param category  the category of document type to create
      * @param type      the actual document type within the category
-     * @param arguments the key-value pairs which can be used for rewrite rules or a special key-value pair in case a
-     *                  new document is created:
-     *                  <ul>
-     *                      <li>
-     *                          key 'extraMixins' with as value comma separated mixin names to be added to the created
-     *                          document variant
-     *                      </li>
-     *                      <li>
-     *                          key 'subPrototypeUUIDs' with as value comma separated UUIDs of the node that will be
-     *                          copied as-is below the created document variant. The JCR Node beloning to the UUID must
-     *                          be of type {@link HippoStdNodeType#MIXIN_SUB_PROTOTYPE}
-     *                      </li>
-     *                  </ul>
-     *                  Note that the supplied extra mixins must be allowed, and if they involve mandatory constraints
-     *                  like a mandatory child node, then these need to be provided by sub prototypes. Of course a sub
-     *                  prototype should not be some folder or another very large structure and can never be the parent
-     *                  of the current folder : in such cases, a RepositoryException will be thrown
+     * @param arguments the rewrite rule to be applied
      * @return the absolute JCR path to the created document
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws MappingException    indicates that the work-flow call failed because of configuration problems
@@ -122,6 +113,15 @@ public interface FolderWorkflow extends Workflow {
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
     public String add(String category, String type, Map<String, String> arguments)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+
+    /**
+     * @param jcrTemplateNode the JcrTemplateNode that will instruct which mixins, properties and children to add to the newly created document
+     * @see #add(String, String, Map) only including an JcrTemplateNode object to add extra mixins, properties and children to
+     * the newly created node
+     */
+    String add(String category, String type, Map<String, String> arguments, JcrTemplateNode jcrTemplateNode)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
