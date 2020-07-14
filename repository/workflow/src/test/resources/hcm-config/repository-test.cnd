@@ -109,5 +109,9 @@
  */
 [hippo:testhtmlmixin] mixin
 + * (hippo:testhtml) = hippo:testhtml multiple
+- hippo:testsinglevaluedstring (string)
+- hippo:testsinglevaluedboolean (boolean)
+- hippo:testmultivaluedstring (string) multiple
+- hippo:testmultivaluedboolean (boolean) multiple
 
 [hippo:testhtmlmixin2] mixin
