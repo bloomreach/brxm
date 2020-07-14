@@ -254,6 +254,7 @@
     <module>content-service</module>
     <module>frontend-api</module>
     <module>frontend</module>
+    <module>ui</module>
     <module>frontend-ng</module>
     <module>repository</module>
     <module>documentation</module>
