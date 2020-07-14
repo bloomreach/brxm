@@ -9,4 +9,5 @@ cache/
 dll/
 .awcache/
 /frontend-ng/node/
+/ui/node/
 /frontend-ng/node_modules/
