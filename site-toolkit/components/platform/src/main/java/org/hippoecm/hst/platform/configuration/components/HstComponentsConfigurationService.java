@@ -33,15 +33,17 @@ import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
-import org.onehippo.cm.model.path.JcrPath;
-import org.onehippo.cm.model.path.JcrPaths;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEM_PACKAGE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT;
 import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
+import static org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache.createCatalogItemId;
+import static org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache.isCatalogItem;
 
 public class HstComponentsConfigurationService implements HstComponentsConfiguration {
 
@@ -162,8 +164,14 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                     ((HstComponentConfigurationService) child).populateCatalogItemReference(availableContainerItems);
                 } else {
                     //Legacy component instances support. If component instance does not have a component definition reference,
-                    //explicitly populate component parameters
+                    //explicitly populate component parameters.
+                    //TODO SS: In case of legacy component instances, there is an extra memory overhead because
+                    // field group information & parameter definitions are stored on a component instance level,
+                    // instead of storing that on a catalog item level.
+                    // More over, field group info has no use during delivery and really belongs to a catalog item level
+                    //
                     ((HstComponentConfigurationService) child).populateAnnotationComponentParameters(websiteClassLoader);
+                    ((HstComponentConfigurationService) child).populateFieldGroups(websiteClassLoader);
                     ((HstComponentConfigurationService) child).populateComponentReferences(canonicalComponentConfigurations,
                             populated);
                 }
@@ -287,27 +295,24 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private boolean isHstComponentType(final HstNode node) {
         return HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
                 || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
-                || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName());
+                || NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName());
     }
     
     private void initCatalog(final CompositeConfigurationNodes.CompositeConfigurationNode catalog,
                              final String rootConfigurationPathPrefix, ClassLoader websiteClassLoader) {
         
         for(HstNode itemPackage :catalog.getCompositeChildren().values()){
-            if(HstNodeTypes.NODETYPE_HST_CONTAINERITEM_PACKAGE.equals(itemPackage.getNodeTypeName())) {
+            if(NODETYPE_HST_CONTAINERITEM_PACKAGE.equals(itemPackage.getNodeTypeName())) {
                 for(HstNode containerItem : itemPackage.getNodes()) {
-                    if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(containerItem.getNodeTypeName()))
-                    {
+                    if(isCatalogItem(containerItem)) {
                         try {
                             // create a HstComponentConfigurationService that does not traverse to descendant components: this is not needed for the catalog. Hence, the argument 'false'
-                            //TODO SS: Support hst:compontentdefinition property at catalog item level
-                            //Calculate template ID
                             final String componentId = createCatalogItemId(containerItem);
                             final HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(containerItem,
                                     null, HstNodeTypes.NODENAME_HST_COMPONENTS , true, null, rootConfigurationPathPrefix, componentId);
                             componentConfiguration.populateAnnotationComponentParameters(websiteClassLoader);
+                            componentConfiguration.populateFieldGroups(websiteClassLoader);
                             availableContainerItems.add(componentConfiguration);
-
                             log.debug("Added catalog component to availableContainerItems with key '{}'", componentConfiguration.getId());
                         } catch (ModelLoadingException e) {
                             if (log.isDebugEnabled()) {
@@ -316,8 +321,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                                 log.warn("Skipping catalog component '{}' : '{}'", containerItem.getValueProvider().getPath(), e.toString());
                             }
                         }
-                    }
-                    else {
+                    } else {
                         log.warn("Skipping catalog component '{}' because is not of type '{}'", containerItem.getValueProvider().getPath(),
                                 (HstNodeTypes.NODETYPE_HST_COMPONENT));
                     }
@@ -327,11 +331,6 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                         (HstNodeTypes.NODETYPE_HST_CONTAINERITEM_PACKAGE));
             }
         }
-    }
-
-    private String createCatalogItemId(final HstNode containerItem) {
-        final JcrPath catalogItemJcrPath = JcrPaths.getPath(containerItem.getValueProvider().getPath());
-        return catalogItemJcrPath.subpath(catalogItemJcrPath.getSegmentCount() - 2).toString().substring(1);
     }
 
     private Map<String, Template> getTemplateResourceMap(CompositeConfigurationNodes.CompositeConfigurationNode templateNodes) throws ModelLoadingException {

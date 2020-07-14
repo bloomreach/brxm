@@ -49,6 +49,7 @@ public class ComponentRepresentation {
 
     private String type;
     private String xtype;
+    private String ctype;
     private long lastModifiedTimestamp;
 
     public ComponentRepresentation represent(HstComponentConfiguration componentConfiguration, Mount mount) {
@@ -70,6 +71,7 @@ public class ComponentRepresentation {
         template = componentConfiguration.getRenderPath();
         type = componentConfiguration.getComponentType().toString();
         xtype = componentConfiguration.getXType();
+        ctype = componentConfiguration.getCType();
         label = componentConfiguration.getLabel();
         iconPath = componentConfiguration.getIconPath();
 
@@ -128,6 +130,14 @@ public class ComponentRepresentation {
 
     public void setXtype(String xtype) {
         this.xtype = xtype;
+    }
+
+    public String getCtype() {
+        return ctype;
+    }
+
+    public void setCtype(String ctype) {
+        this.ctype = ctype;
     }
 
     public String getId() {

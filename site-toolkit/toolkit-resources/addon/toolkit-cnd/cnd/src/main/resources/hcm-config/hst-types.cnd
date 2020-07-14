@@ -93,46 +93,56 @@
 [hst:fieldconfig] abstract
 
 [hst:jcrpath] > hst:fieldconfig
- - hst:pickerconfiguration (string) = 'cms-pickers/documents'
- - hst:pickerinitialpath (string) = ''
- - hst:pickerrememberslastvisited (boolean) = true
+ - hst:pickerconfiguration (string)
+ - hst:pickerinitialpath (string)
+ - hst:pickerrememberslastvisited (boolean)
  - hst:pickerselectablenodetypes (string) multiple
- - hst:relative (boolean) = false
- - hst:pickerrootpath (String) = ''
+ - hst:relative (boolean)
+ - hst:pickerrootpath (String)
 
 [hst:dropdown] > hst:fieldconfig
 - hst:value (string) multiple
 - hst:valuelistprovider (string)
+- hst:sourceid (string)
 
 [hst:imagesetpath] > hst:fieldconfig
- - hst:previewvariant (string) = ''
- - hst:pickerconfiguration (string) = 'cms-pickers/images'
- - hst:pickerinitialpath (string) = ''
- - hst:pickerrememberslastvisited (boolean) = true
+ - hst:previewvariant (string)
+ - hst:pickerconfiguration (string)
+ - hst:pickerinitialpath (string)
+ - hst:pickerrememberslastvisited (boolean)
  - hst:pickerselectablenodetypes (String) multiple < 'hippogallery:imageset'
 
 [hst:dynamicparameter]
- - hst:required (boolean) = false
- - hst:valuetype (string) = 'STRING'
- - hst:defaultvalue (string) = ''
- - hst:displayname (string) = ''
- - hst:hideinchannelmanager (boolean) = false
- - hst:fieldgroup (string) = ''
+ - hst:required (boolean)
+ - hst:valuetype (string)
+ - hst:defaultvalue (string)
+ - hst:displayname (string)
+ - hst:hideinchannelmanager (boolean)
  + hst:fieldconfig (hst:fieldconfig)
+
+[hst:componentdefinition]
+ - hst:componentdefinition (string)
+ - hst:componentclassname (string)
+ - hst:template (string)
+ - hst:ctype (string)
+ - hst:xtype (string)
+ - hst:iconpath (string)
+ - hst:label (string)
+ - hst:fieldgroups (string) multiple
+//Should be used only for field group parameter
+ - * (string) multiple
+ + * (hst:dynamicparameter)
 
 [hst:containeritemcomponent] > hst:abstractcomponent orderable
 //A reference to a catalog item
 - hst:componentdefinition (string)
 - hst:xtype (string)
-//Component type
-- hst:ctype (string)
 // the label of the hst:containeritemcomponent
 - hst:label (string)
 // icon path relative to the sites webapp
 - hst:iconpath (string)
 - hst:componentfiltertag (string)
 + * (hst:abstractcomponent)
-+ * (hst:dynamicparameter)
 
 [hst:containercomponent] > hst:abstractcomponent orderable
 - hst:xtype (string) mandatory
@@ -145,6 +155,7 @@
 
 [hst:containeritempackage] > nt:base, mix:referenceable orderable
 + * (hst:containeritemcomponent)
++ * (hst:componentdefinition)
 
 [hst:containercomponentfolder] > nt:base orderable
 + * (hst:containercomponentfolder)

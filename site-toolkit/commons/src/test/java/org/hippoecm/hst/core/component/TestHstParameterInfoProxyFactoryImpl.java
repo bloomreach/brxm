@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
  */
 package org.hippoecm.hst.core.component;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +26,13 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.hippoecm.hst.configuration.components.DynamicComponentInfo;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
+import org.hippoecm.hst.configuration.components.ParameterValueType;
 import org.hippoecm.hst.container.TestRequestContextProvider;
 import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.parameters.DefaultHstParameterValueConverter;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
@@ -59,7 +65,7 @@ public class TestHstParameterInfoProxyFactoryImpl {
     private HstRequest request;
     private ResolvedSiteMapItem resolvedSiteMapItem;
     private ParameterConfiguration parameterConfig;
-    private HstParameterValueConverter converter;
+    private HstParameterValueConverter converter = new DefaultHstParameterValueConverter();
     private Object[] mocks;
 
     private Map<String, Object> params = new HashMap<String, Object>();
@@ -70,19 +76,32 @@ public class TestHstParameterInfoProxyFactoryImpl {
         params.put("name", "Combined");
     }
 
+    private HashMap<String, Object[]> dynamicComponentParameters = new HashMap<>();
+    {
+        dynamicComponentParameters.put("residualStringParam",
+                new Object[] { ParameterValueType.STRING, "residualParameterValue" });
+        dynamicComponentParameters.put("residualBoolean", new Object[] { ParameterValueType.BOOLEAN, Boolean.TRUE });
+        dynamicComponentParameters.put("residualInteger", new Object[] { ParameterValueType.INTEGER, new Long(100) });
+        dynamicComponentParameters.put("residualDecimal",
+                new Object[] { ParameterValueType.DECIMAL, new Double(100.03) });
+        try {
+            dynamicComponentParameters.put("residualDate",
+                    new Object[] { ParameterValueType.DATE,
+                            DateUtils.parseDate("2020-03-19T11:09:27",
+                                    DefaultHstParameterValueConverter.ISO_DATE_FORMAT,
+                                    DefaultHstParameterValueConverter.ISO_DATETIME_FORMAT) });
+            dynamicComponentParameters.put("residualDatetime",
+                    new Object[] { ParameterValueType.DATE,
+                            DateUtils.parseDate("2020-03-19", DefaultHstParameterValueConverter.ISO_DATE_FORMAT,
+                                    DefaultHstParameterValueConverter.ISO_DATETIME_FORMAT) });
+        } catch (ParseException e) {
+            //nothing to do
+        }
+    }
+    
     @Before
     public void setUp() throws Exception {
         component = new TestComponent();
-        converter = new HstParameterValueConverter() {
-            @Override
-            public Object convert(String parameterValue, Class<?> returnType)
-                    throws HstParameterValueConversionException {
-                if (returnType == int.class || returnType == Integer.class) {
-                    return Integer.parseInt(parameterValue);
-                }
-                return parameterValue;
-            }
-        };
 
         request = createNiceMock(HstRequest.class);
         requestContext = createNiceMock(HstRequestContext.class);
@@ -100,6 +119,37 @@ public class TestHstParameterInfoProxyFactoryImpl {
         mocks = new Object[]{parameterConfig, request, requestContext, resolvedSiteMapItem};
 
         TestRequestContextProvider.setCurrentRequestContext(requestContext);
+        
+        final ArrayList<DynamicParameter> dynamicParameters = new ArrayList<>();
+        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DefaultHstParameterValueConverter.ISO_DATETIME_FORMAT);
+        for(Map.Entry<String, Object[]> entry : dynamicComponentParameters.entrySet()) {
+            final DynamicParameter dynamicParameter = createNiceMock(DynamicParameter.class);
+            expect(dynamicParameter.isResidual()).andReturn(true);
+            expect(dynamicParameter.getName()).andReturn(entry.getKey()).anyTimes();
+            expect(dynamicParameter.getValueType()).andReturn((ParameterValueType)entry.getValue()[0]);
+            if (((ParameterValueType) entry.getValue()[0]).name().equals(ParameterValueType.DATE.name())) {
+                expect(parameterConfig.getParameter(entry.getKey(), resolvedSiteMapItem))
+                        .andReturn(simpleDateFormat.format((Date) entry.getValue()[1]));
+            } else {
+                expect(parameterConfig.getParameter(entry.getKey(), resolvedSiteMapItem))
+                        .andReturn(entry.getValue()[1].toString());
+            }
+            dynamicParameters.add(dynamicParameter);
+        }
+        for (int i = 0; i < 2; i++) {
+            final DynamicParameter dynamicParameter = createNiceMock(DynamicParameter.class);
+            expect(dynamicParameter.isResidual()).andReturn(false);
+            expect(dynamicParameter.getName()).andReturn("namedParameter" + i).anyTimes();
+            expect(dynamicParameter.getDefaultValue()).andReturn("namedParameterValue" + i);
+            expect(dynamicParameter.getValueType()).andReturn(ParameterValueType.STRING);
+            dynamicParameters.add(dynamicParameter);
+        }
+
+        expect(((ComponentConfiguration) parameterConfig).getDynamicComponentParameters()).andReturn(dynamicParameters);
+
+        for (final DynamicParameter dynamicParameter : dynamicParameters) {
+            replay(dynamicParameter);
+        }
     }
 
     @After
@@ -140,31 +190,6 @@ public class TestHstParameterInfoProxyFactoryImpl {
         assertEquals(combinedInfo1String, combinedInfo2String);
     }
 
-    private void initDynamicComponentInfoObjects() {
-
-        final ArrayList<DynamicParameter> dynamicComponents = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
-            final DynamicParameter dynamicParameter = createNiceMock(DynamicParameter.class);
-            expect(dynamicParameter.isResidual()).andReturn(true);
-            expect(dynamicParameter.getName()).andReturn("residualParameter" + i).anyTimes();
-            expect(dynamicParameter.getDefaultValue()).andReturn("residualParameterValue" + i);
-            dynamicComponents.add(dynamicParameter);
-        }
-        for (int i = 2; i < 4; i++) {
-            final DynamicParameter dynamicParameter = createNiceMock(DynamicParameter.class);
-            expect(dynamicParameter.isResidual()).andReturn(false);
-            expect(dynamicParameter.getName()).andReturn("namedParameter" + i).anyTimes();
-            expect(dynamicParameter.getDefaultValue()).andReturn("namedParameterValue" + i);
-            dynamicComponents.add(dynamicParameter);
-        }
-
-        expect(((ComponentConfiguration) parameterConfig).getDynamicComponentParameters()).andReturn(dynamicComponents);
-
-        for (final DynamicParameter dynamicParameter : dynamicComponents) {
-            replay(dynamicParameter);
-        }
-    }
-    
     @Test
     public void testMultiInheritedParametersInfoType() throws Exception {
         replay(mocks);
@@ -178,48 +203,58 @@ public class TestHstParameterInfoProxyFactoryImpl {
     }
 
     @Test
+    public void testResidualParameterValueTypesInDynamicComponentInfo() throws Exception {
+        replay(mocks);
+        final ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
+        final CombinedInfo combinedInfo = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo,
+                parameterConfig, request, converter);
+        final Map<String, Object> residualParameters = combinedInfo.getResidualParameterValues();
+        for (final Map.Entry<String, Object[]> entry : dynamicComponentParameters.entrySet()) {
+            final Object value = residualParameters.get(entry.getKey());
+            assertNotNull("The value of residual parameter with name " + entry.getKey() + " is null", value);
+            assertEquals("The value type of residual parameter with name " + entry.getKey() + " is not correct",
+                    ((ParameterValueType) entry.getValue()[0]).getDefaultReturnType(), value.getClass());
+            assertEquals("The value of residual parameter with name " + entry.getKey() + " is not correct",
+                    entry.getValue()[1].toString(), value.toString());
+        }
+    }
+   
+    @Test
     public void testResidualParameterValuesMethodInDynamicComponentInfo() throws Exception {
-        initDynamicComponentInfoObjects();
         replay(mocks);
         final ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
         final CombinedInfo combinedInfo = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo,
                 parameterConfig, request, converter);
 
-        final Map<String, Object> result = combinedInfo.getResidualParameterValues();
+        final Map<String, Object> residualParameters = combinedInfo.getResidualParameterValues();
         assertEquals("The size of the map returned from getResidualParameterValues method is not correct",
-                result.size(), 2);
-        for (int i = 0; i < 2; i++) {
-            final Object value = result.get("residualParameter" + i);
-            assertNotNull("The value of residual parameter with name residualParameter" + i + " is null", value);
-            assertEquals("The value of residual parameter with name residualParameter" + i + " is not correct", value,
-                    "residualParameterValue" + i);
+                residualParameters.size(), dynamicComponentParameters.size());
+        for (final Map.Entry<String, Object[]> entry : dynamicComponentParameters.entrySet()) {
+            final Object value = residualParameters.get(entry.getKey());
+            assertNotNull("The value of residual parameter with name " + entry.getKey() + " is null", value);
+            assertEquals("The value of residual parameter with name " + entry.getKey() + " is not correct",
+                    value.toString(), entry.getValue()[1].toString());
         }
     }
 
     @Test
     public void testDynamicComponentParametersMethodInDynamicComponentInfo() throws Exception {
-        initDynamicComponentInfoObjects();
         replay(mocks);
         final ParametersInfo parametersInfo = component.getClass().getAnnotation(ParametersInfo.class);
         final CombinedInfo combinedInfo = paramInfoProxyFactory.createParameterInfoProxy(parametersInfo,
                 parameterConfig, request, converter);
 
-        final List<DynamicParameter> dynamicComponents = combinedInfo.getDynamicComponentParameters();
+        final List<DynamicParameter> dynamicParameters = combinedInfo.getDynamicComponentParameters();
         assertEquals("The size of the map returned from getResidualParameterValues method is not correct",
-                dynamicComponents.size(), 4);
-        for (int i = 0; i < 4; i++) {
-            final DynamicParameter dynamicParameter = dynamicComponents.get(i);
+                dynamicParameters.size(), dynamicComponentParameters.size()+2);
+        for (final DynamicParameter dynamicParameter : dynamicParameters) {
             if (dynamicParameter.getName().startsWith("residualParameter")) {
-                assertTrue("The residual parameter with name residualParameter" + i + " is not marked as residual",
+                assertTrue(
+                        "The residual parameter with name " + dynamicParameter.getName() + " is not marked as residual",
                         dynamicParameter.isResidual());
-                assertEquals(
-                        "The default value of residual parameter with name residualParameter" + i + " is not correct",
-                        dynamicParameter.getDefaultValue(), "residualParameterValue" + i);
             } else if (dynamicParameter.getName().startsWith("namedParameter")) {
-                assertFalse("The named parameter with name namedParameter" + i + " is marked as residual",
+                assertFalse("The named parameter with name " + dynamicParameter.getName() + " is marked as residual",
                         dynamicParameter.isResidual());
-                assertEquals("The default value of named parameter with name namedParameter" + i + " is not correct",
-                        dynamicParameter.getDefaultValue(), "namedParameterValue" + i);
             }
         }
     }
