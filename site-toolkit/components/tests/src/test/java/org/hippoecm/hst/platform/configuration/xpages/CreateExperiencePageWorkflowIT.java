@@ -20,7 +20,6 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
