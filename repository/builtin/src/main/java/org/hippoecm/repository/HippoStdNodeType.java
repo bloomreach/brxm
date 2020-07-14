@@ -138,8 +138,6 @@ public interface HippoStdNodeType {
 
     String MIXIN_SKIPDRAFT = "hippostd:skipdraft";
 
-    String MIXIN_SUB_PROTOTYPE = "hippostd:subprototype";
-
     /**
      * The property in a hippostd:html node instance that hold the HTML fragment.
      */

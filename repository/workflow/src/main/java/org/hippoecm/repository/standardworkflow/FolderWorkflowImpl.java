@@ -50,7 +50,6 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionManager;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Folder;
 import org.hippoecm.repository.api.HierarchyResolver;
@@ -71,7 +70,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_EXCLUDE_PRIMARY_TYPES;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_MODIFY;
-import static org.hippoecm.repository.HippoStdNodeType.MIXIN_SUB_PROTOTYPE;
 import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
 import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROTOTYPE;
@@ -351,15 +349,23 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
     }
 
-    public String add(String category, String template, String name) throws WorkflowException, RepositoryException, RemoteException {
-        Map<String, String> arguments = new TreeMap<>();
-        arguments.put("name", name);
-        return add(category, template, arguments);
+    public String add(final String category, final String type, final String relPath) throws WorkflowException, RepositoryException, RemoteException {
+        return add(category, type, relPath, null);
     }
 
-    public String add(String category, String template, Map<String, String> arguments) throws WorkflowException, RepositoryException {
+    @Override
+    public String add(final String category, final String type, final String relPath, final JcrTemplateNode jcrTemplateNode) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Map<String, String> arguments = new TreeMap<>();
+        arguments.put("name", relPath);
+        return add(category, type, arguments, jcrTemplateNode);
+    }
+
+    public String add(final String category, final String type, final Map<String, String> arguments) throws WorkflowException, RepositoryException {
+        return add(category, type, arguments, null);
+    }
+
+    public String add(final String category, final String type, final Map<String, String> arguments, final JcrTemplateNode jcrTemplateNode) throws WorkflowException, RepositoryException {
         String name = arguments.get("name");
-        rootSession.save();
 
         final QueryManager qmgr = userSession.getWorkspace().getQueryManager();
         final Node queryFolder = userSession.getNode(TEMPLATES_PATH);
@@ -389,7 +395,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 prototypeNode = rootSession.getNodeByIdentifier(prototypeNode.getIdentifier());
                 if (prototypeNode.getName().equals(HIPPO_PROTOTYPE)) {
                     String documentType = prototypeNode.getPrimaryNodeType().getName();
-                    if (documentType.equals(template)) {
+                    if (documentType.equals(type)) {
                         // create handle ourselves, if not already exists
                         if (!target.hasNode(name) || !target.getNode(name).isNodeType(NT_HANDLE)
                                 || target.getNode(name).hasNode(name)) {
@@ -408,7 +414,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         copySubProtoTypeToDraftVariant(arguments, result);
                         break;
                     }
-                } else if (prototypeNode.getName().equals(template)) {
+                } else if (prototypeNode.getName().equals(type)) {
                     final ExpandingCopyHandler handler = new ExpandingCopyHandler(target, renames, rootSession.getValueFactory());
                     result = JcrUtils.copyTo(prototypeNode, handler);
                     if (result.isNodeType(NT_HANDLE)) {
@@ -431,39 +437,18 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             if (result != null) {
                 if (handleNode != null && result.isNodeType(HippoNodeType.NT_DOCUMENT)
                         && !result.hasProperty(HippoNodeType.HIPPO_AVAILABILITY)) {
-
                     result.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
-                    final String extraMixins = arguments.get("extraMixins");
-                    if (StringUtils.isNotBlank(extraMixins)) {
-                        final String[] mixins = StringUtils.split(extraMixins, ",");
-                        for (String mixin : mixins) {
-                            // in case the mixin is invalid, just throw repository exception
-                            result.addMixin(StringUtils.trim(mixin));
-                        }
-                    }
-                    final String subPrototypeUUIDs = arguments.get("subPrototypeUUIDs");
-                    if (StringUtils.isNotBlank(subPrototypeUUIDs)) {
-                        final String[] prototypeUUIDs = StringUtils.split(subPrototypeUUIDs,",");
-                        for (String prototypeUUID : prototypeUUIDs) {
-                            // in case prototypeUUID not found, just throw repository exception
-                            final Node prototypeNode = rootSession.getNodeByIdentifier(StringUtils.trim(prototypeUUID));
-                            if (!prototypeNode.isNodeType(MIXIN_SUB_PROTOTYPE)) {
-                                throw new WorkflowException(String.format("Node '%s' is not allowed as subprototype " +
-                                        "since is not of type '%s'", prototypeNode.getPath(), MIXIN_SUB_PROTOTYPE));
-                            }
-                            JcrUtils.copy(rootSession, prototypeNode.getPath(),
-                                    result.getPath() + "/" + prototypeNode.getName());
-                        }
-                    }
                 }
+                append(result, jcrTemplateNode, true);
                 rootSession.save();
                 return result.getPath();
             } else if (handleNode != null) {
+                append(result, jcrTemplateNode, true);
                 rootSession.save();
                 return handleNode.getPath();
             } else {
                 throw new WorkflowException("No document or folder was added: the query at " + TEMPLATES_PATH + "/" + category
-                        + " did not return a matching prototype for '" + template + "'");
+                        + " did not return a matching prototype for '" + type + "'");
             }
         } finally {
             rootSession.refresh(false);
@@ -492,6 +477,33 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
     }
 
+    private void append(Node current, final JcrTemplateNode jcrTemplateNode, final boolean documentVariantRoot) throws RepositoryException {
+        if (jcrTemplateNode == null) {
+            return;
+        }
+        if (!documentVariantRoot) {
+            // since not root, first create a new current
+            current = current.addNode(jcrTemplateNode.getNodeName(), jcrTemplateNode.getPrimaryNodeType());
+        }
+        addMixinsAndProperties(current, jcrTemplateNode);
+        for (JcrTemplateNode child : jcrTemplateNode.getChildren()) {
+            append(current, child, false);
+        }
+    }
+
+    private void addMixinsAndProperties(final Node jcrNode, final JcrTemplateNode jcrTemplateNode) throws RepositoryException {
+        for (String mixin : jcrTemplateNode.getMixinNames()) {
+            jcrNode.addMixin(mixin);
+        }
+        for (Map.Entry<String, Value[]> entry : jcrTemplateNode.getMultiValuedProperties().entrySet()) {
+            jcrNode.setProperty(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<String, Value> entry : jcrTemplateNode.getSingleValuedProperties().entrySet()) {
+            jcrNode.setProperty(entry.getKey(), entry.getValue());
+        }
+    }
+
+
     private void doArchive(final Node handle, final String atticPath) throws RepositoryException {
         rootSession.move(handle.getPath(), atticPath + "/" + atticName(atticPath, handle));
         try {
@@ -513,7 +525,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         } catch (RepositoryException ex) {
             log.error("error while deleting document variants from attic", ex);
         }
-        rootSession.save();
+
     }
 
     private void clear(final Node node) throws RepositoryException {
