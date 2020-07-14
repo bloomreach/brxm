@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import javax.ws.rs.Path;
 import javax.xml.bind.JAXBException;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.mock.configuration.components.MockHstComponentConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -82,8 +83,12 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
         final Node node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerComponentResourceTest-test-containeritem.xml");
         final Node containerItemNode = node.getNode("foo-component");
 
+        final MockHstComponentConfiguration componentDefinition = new MockHstComponentConfiguration("id");
+        componentDefinition.setXType(containerItemNode.getProperty("hst:xtype").getString());
+        componentDefinition.setComponentClassName(containerItemNode.getProperty("hst:componentclassname").getString());
 
         expect(mockContainerItem.getContainerItem()).andReturn(containerItemNode).anyTimes();
+        expect(mockContainerItem.getComponentDefinition()).andReturn(componentDefinition).anyTimes();
         expect(mockContainerItem.getTimeStamp()).andReturn(3456L);
 
         expect(containerComponentService.createContainerItem(mockSession, "cafebabe-cafe-babe-cafe-babecafebabe", 1234))

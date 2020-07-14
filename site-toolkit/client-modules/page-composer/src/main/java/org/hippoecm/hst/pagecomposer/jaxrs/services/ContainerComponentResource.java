@@ -154,7 +154,8 @@ public class ContainerComponentResource extends AbstractConfigResource {
 
     private Response respondNewContainerItemCreated(ContainerItem newContainerItem) throws RepositoryException {
         final Node newNode = newContainerItem.getContainerItem();
-        final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation().represent(newNode, newContainerItem.getTimeStamp());
+        final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation()
+                .represent(newNode, newContainerItem.getComponentDefinition(), newContainerItem.getTimeStamp());
 
         log.info("Successfully created containerItemRepresentation '{}' with path '{}'", newNode.getName(), newNode.getPath());
         return Response.status(Response.Status.CREATED)
