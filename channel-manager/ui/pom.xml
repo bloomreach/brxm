@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,18 +20,18 @@
   <parent>
     <artifactId>hippo-addon-channel-manager</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>14.3.0-SNAPSHOT</version>
+    <version>100.4.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>hippo-addon-channel-manager-frontend-ng</artifactId>
-  <name>Addon Channel Manager Frontend (angular.js)</name>
+  <artifactId>hippo-addon-channel-manager-ui</artifactId>
+  <name>Addon Channel Manager Frontend (Angular)</name>
   <packaging>jar</packaging>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.sources>.</sonar.sources>
-    <sonar.inclusions>src/**/*.js</sonar.inclusions>
-    <sonar.exclusions>src/**/*.spec.js</sonar.exclusions>
+    <sonar.inclusions>src/**/*.ts</sonar.inclusions>
+    <sonar.exclusions>src/**/*.spec.ts</sonar.exclusions>
     <sonar.javascript.lcov.reportPaths>coverage/lcov.info</sonar.javascript.lcov.reportPaths>
   </properties>
 
@@ -45,12 +45,6 @@
     <dependency>
       <groupId>com.bloomreach.xm</groupId>
       <artifactId>navigation-application</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-channel-manager-ui</artifactId>
-      <version>${project.version}</version>
     </dependency>
   </dependencies>
 
@@ -95,7 +89,7 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>run build</arguments>
+              <arguments>run build:prod</arguments>
             </configuration>
           </execution>
           <execution>
@@ -105,17 +99,7 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>run test:single-run</arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>npm generate license files</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <configuration>
-              <arguments>run license</arguments>
+              <arguments>run test:once</arguments>
             </configuration>
           </execution>
         </executions>
