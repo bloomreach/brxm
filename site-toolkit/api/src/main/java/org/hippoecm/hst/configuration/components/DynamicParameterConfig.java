@@ -15,6 +15,33 @@
  */
 package org.hippoecm.hst.configuration.components;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
+import static org.hippoecm.hst.configuration.components.ParameterValueType.STRING;
+
 public interface DynamicParameterConfig {
 
+    enum Type {
+        JCR_PATH(new ParameterValueType[] {STRING}),
+        IMAGESET_PATH(new ParameterValueType[] {STRING}),
+        DROPDOWN_LIST(new ParameterValueType[] {STRING});
+
+        private HashSet<ParameterValueType> supportedReturnTypes = null;
+
+        Type(ParameterValueType[] supportedReturnTypes) {
+            if (supportedReturnTypes != null) {
+                this.supportedReturnTypes = new HashSet<>(Arrays.asList(supportedReturnTypes));
+            }
+        }
+
+        public boolean supportsReturnType(ParameterValueType returnType) {
+            return supportedReturnTypes != null && supportedReturnTypes.contains(returnType);
+        }
+    }
+
+    /**
+     * @return the type of parameter config
+     */
+    Type getType();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_COMPONENTDEFINITION;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 
 /**
  * <p>
@@ -222,7 +224,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
             if (commonCatalogNode == null) {
                 commonCatalogItems = Optional.absent();
             } else {
-                commonCatalogItems = Optional.of(getCommonCatalog(commonCatalogNode));
+                commonCatalogItems = Optional.of(getCommonCatalog(commonCatalogNode, websiteClassloader));
             }
         }
 
@@ -284,18 +286,19 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
     }
 
 
-    private List<HstComponentConfiguration> getCommonCatalog(final HstNode commonCatalog) {
+    private List<HstComponentConfiguration> getCommonCatalog(final HstNode commonCatalog, final ClassLoader websiteClassLoader) {
 
         List<HstComponentConfiguration> commonCatalogItemsList = new ArrayList<>();
         for(HstNode itemPackage :commonCatalog.getNodes()){
             if(HstNodeTypes.NODETYPE_HST_CONTAINERITEM_PACKAGE.equals(itemPackage.getNodeTypeName())) {
                 for(HstNode containerItem : itemPackage.getNodes()) {
-                    if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(containerItem.getNodeTypeName()))
-                    {
+                    if(isCatalogItem(containerItem)) {
                         try {
                             // create a HstComponentConfigurationService that does not traverse to descendant components: this is not needed for the catalog. Hence, the argument 'false'
-                            HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(containerItem,
-                                    null, HstNodeTypes.NODENAME_HST_COMPONENTS , true, null, commonCatalogPath, null);
+                            final String componentId = createCatalogItemId(containerItem);
+                            HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(containerItem,
+                                    null, HstNodeTypes.NODENAME_HST_COMPONENTS , true, null, commonCatalogPath, componentId);
+                            componentConfiguration.populateAnnotationComponentParameters(websiteClassLoader);
                             commonCatalogItemsList.add(componentConfiguration);
                             log.debug("Added catalog component to availableContainerItems with key '{}'", componentConfiguration.getId());
                         } catch (ModelLoadingException e) {
@@ -305,8 +308,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
                                 log.warn("Skipping catalog component '{}' : '{}'", containerItem.getValueProvider().getPath(), e.toString());
                             }
                         }
-                    }
-                    else {
+                    } else {
                         log.warn("Skipping catalog component '{}' because is not of type '{}'", containerItem.getValueProvider().getPath(),
                                 (HstNodeTypes.NODETYPE_HST_COMPONENT));
                     }
@@ -317,6 +319,15 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
             }
         }
         return commonCatalogItemsList;
+    }
+
+    public static String createCatalogItemId(final HstNode containerItem) {
+        return containerItem.getParent().getName() + "/" + containerItem.getName();
+    }
+
+    public static boolean isCatalogItem(final HstNode containerItem) {
+        return NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(containerItem.getNodeTypeName()) ||
+                NODETYPE_HST_COMPONENTDEFINITION.equals(containerItem.getNodeTypeName());
     }
 
 }

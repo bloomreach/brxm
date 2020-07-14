@@ -18,7 +18,7 @@ package org.hippoecm.hst.component.support.bean.dynamic;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.configuration.components.DynamicComponentInfo;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
-import org.hippoecm.hst.configuration.components.ImageSetPathParameterConfig;
+import org.hippoecm.hst.configuration.components.DynamicParameterConfig;
 import org.hippoecm.hst.configuration.components.JcrPathParameterConfig;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
@@ -47,7 +47,7 @@ import com.google.common.base.Strings;
  *          "org.hippoecm.hst.utilsParameterUtils.parametersInfo".
  * </p>
  * <p>
- * The component also finds all parameters of type JcrPath and ImageSetPath, resolves the beans that are referenced and
+ * The component also finds all parameters of type JcrPath, resolves the beans that are referenced and
  * sets those beans as separate models in the request, each by the name of its parameter.
  * </p>
  * <p>
@@ -82,7 +82,7 @@ public class BaseHstDynamicComponent extends BaseHstComponent {
     /**
      * Process the component parameters
      *
-     * Resolves beans of all parameters of type JcrPath or ImageSetPath and sets them
+     * Resolves beans of all parameters of type JcrPath and sets them
      * as separate models into the request.
      *
      * @param componentParametersInfo The configuration of the current component
@@ -91,13 +91,11 @@ public class BaseHstDynamicComponent extends BaseHstComponent {
     protected void processParams(final DynamicComponentInfo componentParametersInfo, final HstRequest request) {
         for (DynamicParameter param: componentParametersInfo.getDynamicComponentParameters()) {
             try {
-                if (param.getComponentParameterConfig() instanceof JcrPathParameterConfig) {
-                    request.setModel(param.getName(),
-                            getContentBeanForPath(getComponentParameter(param.getName()), request));
-                } else if (param.getComponentParameterConfig() instanceof ImageSetPathParameterConfig) {
-                    ObjectBeanManager objectBeanManager = request.getRequestContext().getObjectBeanManager();
-                    Object image = objectBeanManager.getObject(getComponentParameter(param.getName()));
-                    request.setModel(param.getName(), image);
+                DynamicParameterConfig componentParameterConfig = param.getComponentParameterConfig();
+                if (componentParameterConfig instanceof JcrPathParameterConfig) {
+                    HippoBean bean = getContentBeanForPath(getComponentParameter(param.getName()), request,
+                        ((JcrPathParameterConfig)componentParameterConfig).isRelative());
+                    request.setModel(param.getName(), bean);
                 }
             } catch (ObjectBeanManagerException obme) {
                 log.error("Problem fetching or converting bean", obme);
@@ -112,11 +110,17 @@ public class BaseHstDynamicComponent extends BaseHstComponent {
      * @param request      HstRequest
      * @return bean for the specified path
      */
-    protected HippoBean getContentBeanForPath(final String documentPath, HstRequest request) {
-        final HstRequestContext context = request.getRequestContext();
+    protected HippoBean getContentBeanForPath(final String documentPath, HstRequest request, boolean relative)
+        throws ObjectBeanManagerException {
         if (!Strings.isNullOrEmpty(documentPath)) {
-            final HippoBean root = context.getSiteContentBaseBean();
-            return root.getBean(documentPath);
+            if (relative) {
+                final HstRequestContext context = request.getRequestContext();
+                final HippoBean root = context.getSiteContentBaseBean();
+                return root.getBean(documentPath);
+            } else {
+                ObjectBeanManager objectBeanManager = request.getRequestContext().getObjectBeanManager();
+                return (HippoBean) objectBeanManager.getObject(documentPath);
+            }
         }
         return null;
     }

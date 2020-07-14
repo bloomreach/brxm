@@ -20,11 +20,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 
 public interface ContainerComponentService {
     interface ContainerItem {
         Node getContainerItem();
+
+        HstComponentConfiguration getComponentDefinition();
 
         long getTimeStamp();
     }

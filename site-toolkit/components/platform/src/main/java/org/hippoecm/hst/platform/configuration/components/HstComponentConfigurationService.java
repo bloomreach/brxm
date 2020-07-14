@@ -17,7 +17,9 @@ package org.hippoecm.hst.platform.configuration.components;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,26 +30,36 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.builtin.components.StandardContainerComponent;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.DynamicFieldGroup;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.core.parameters.FieldGroup;
+import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
-import org.hippoecm.hst.provider.jcr.JCRValueProvider;
+import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Arrays.stream;
+import static org.apache.commons.lang3.ArrayUtils.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_FIELD_GROUPS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
@@ -63,11 +75,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private HstComponentConfiguration parent;
 
-    private final String id;
+    protected String id;
 
     private String name;
 
-    private String componentClassName;
+    protected String componentClassName;
 
     private String parametersInfoClassName;
 
@@ -84,6 +96,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String serveResourcePath;
 
     private String xtype;
+
+    private String ctype;
 
     /**
      * Components of type {@link Type#CONTAINER_ITEM_COMPONENT} can have a filter tag to trigger their rendering.
@@ -109,14 +123,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private Map<String, String> parameters = new LinkedHashMap<String, String>();
 
     //named and residual component parameters
-    private List<DynamicParameter> hstDynamicComponentParameters = new LinkedList<DynamicParameter>();
+    protected List<DynamicParameter> hstDynamicComponentParameters = new LinkedList<DynamicParameter>();
 
     // the set of parameter prefixes
     private Set<String> parameterNamePrefixSet = new HashSet<String>();
 
     private Map<String, String> localParameters = new LinkedHashMap<String, String>();
 
-    private String canonicalStoredLocation;
+    protected String canonicalStoredLocation;
 
     private String canonicalIdentifier;
 
@@ -198,9 +212,15 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private Calendar lastModified;
     private Boolean markedDeleted;
 
+    protected List<DynamicFieldGroup> fieldGroups = new ArrayList<>();
+
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
         this.id = StringPool.get(id);
+    }
+
+    //Test constructor
+    protected HstComponentConfigurationService() {
     }
 
     /**
@@ -268,7 +288,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                         "org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent", StandardContainerComponent.class.getName());
                 componentClassName = StandardContainerComponent.class.getName();
             }
-        } else if (HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
+        } else if (HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())
+                || HstNodeTypes.NODETYPE_HST_COMPONENTDEFINITION.equals(node.getNodeTypeName())) {
             type = Type.CONTAINER_ITEM_COMPONENT;
             componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
             if (!isCatalogItem && (parent == null || !(Type.CONTAINER_COMPONENT.equals(parent.getComponentType())))) {
@@ -354,6 +375,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             hstDynamicComponentParameters.add(hstComponentParameter);
         }
 
+        if (isCatalogItem) {
+            readJcrFieldGroups(node);
+        }
+
         if (node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_STANDALONE)) {
             this.standalone = node.getValueProvider().getBoolean(HstNodeTypes.COMPONENT_PROPERTY_STANDALONE);
         }
@@ -396,7 +421,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
 
         if (isCatalogItem) {
-            // do not load children 
+            this.ctype = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_CTYPE));
+            // do not load children
             return;
         }
         for (HstNode child : node.getNodes()) {
@@ -516,10 +542,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
     }
 
+    @Override
     public HstComponentConfiguration getParent() {
         return parent;
     }
 
+    @Override
     public String getComponentClassName() {
         return this.componentClassName;
     }
@@ -529,10 +557,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return parametersInfoClassName;
     }
 
+    @Override
     public String getXType() {
         return this.xtype;
     }
 
+    @Override
+    public String getCType() {
+        return this.ctype;
+    }
+
+    @Override
     public Type getComponentType() {
         return this.type;
     }
@@ -589,10 +624,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     @Override
     public Optional<DynamicParameter> getDynamicComponentParameter(String name) {
-        return Optional.ofNullable(hstDynamicComponentParameters.stream()
-                .filter(hstComponentParameter -> hstComponentParameter.getName().equals(name)).findAny().orElse(null));
+        return hstDynamicComponentParameters.stream()
+                .filter(hstComponentParameter -> hstComponentParameter.getName().equals(name)).findAny();
     }
-    
+
+    public List<DynamicFieldGroup> getFieldGroups() {
+        return fieldGroups;
+    }
+
     @Override
     public Set<String> getParameterPrefixes() {
         return parameterNamePrefixSet;
@@ -801,7 +840,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * Adds annotation based component parameter definitions
      * @param websiteClassLoader Classloader of website application components belong to
      */
-    protected void populateAnnotationComponentParameters(ClassLoader websiteClassLoader) {
+    public void populateAnnotationComponentParameters(final ClassLoader websiteClassLoader) {
         if (isEmpty(this.getComponentClassName())) {
             return;
         }
@@ -810,17 +849,153 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             for (final Method method : parametersInfo.type().getMethods()) {
                 if (method.isAnnotationPresent(Parameter.class)) {
                     final Parameter parameter = method.getAnnotation(Parameter.class);
-                    for (final DynamicParameter dynamicParameter : hstDynamicComponentParameters) {
-                        if (parameter.name().equals(dynamicParameter.getName())) {
-                            hstDynamicComponentParameters.remove(dynamicParameter);
-                            break;
-                        }
-                    }
+                    //Remove jcr based parameter if a named parameter with the same name exists.
+                    //TODO SS: Check of parameter is overridable (value type is the same)
+                    hstDynamicComponentParameters.stream()
+                            .filter(dynamicParameter -> parameter.name().equals(dynamicParameter.getName()))
+                            .findFirst()
+                            .ifPresent(dynamicParameter -> hstDynamicComponentParameters.remove(dynamicParameter));
                     hstDynamicComponentParameters.add(new DynamicComponentParameter(parameter, method));
                 }
             }
         }
     }
+
+    /**
+     * Read Field Groups from JCR
+     * @param node hst:containeritemcomponent node which might contain field group configuration
+     */
+    void readJcrFieldGroups(final HstNode node) {
+        final Set<String> uniqueParameterNames = new HashSet<>();
+        final ValueProvider valueProvider = node.getValueProvider();
+        stream(nullToEmpty(valueProvider.getStrings(COMPONENT_PROPERTY_FIELD_GROUPS)))
+                .filter(StringUtils::isNotEmpty).distinct().map(StringPool::get)
+                .forEach(groupName -> {
+                    final List<String> groupParameterNames = stream(nullToEmpty(
+                            valueProvider.getStrings(COMPONENT_PROPERTY_FIELD_GROUPS + "." + groupName)))
+                            .filter(StringUtils::isNotEmpty).filter(x -> !uniqueParameterNames.contains(x)).distinct().map(StringPool::get)
+                            .collect(Collectors.toList());
+                    uniqueParameterNames.addAll(groupParameterNames);
+                    final DynamicFieldGroup fieldGroup = new DynamicFieldGroup(groupName, groupParameterNames);
+                    this.fieldGroups.add(fieldGroup);
+                });
+    }
+
+    /**
+     * Populate Field Groups from JCR & Annotation models
+     * @param websiteClassLoader Website classloader
+     */
+    protected void populateFieldGroups(ClassLoader websiteClassLoader) {
+        if (isEmpty(this.getComponentClassName())) {
+            return;
+        }
+        final ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(this, websiteClassLoader);
+        populateFieldGroups(parametersInfo);
+    }
+
+
+    /**
+     * Populate Field Groups from JCR & Annotation models
+     * @param parametersInfo Parameters Info of a component class.
+     */
+    void populateFieldGroups(final ParametersInfo parametersInfo) {
+        final Map<String, DynamicFieldGroup> jcrGroupMap = this.fieldGroups.stream()
+                .collect(Collectors.toMap(DynamicFieldGroup::getTitleKey, Function.identity()));
+        final Collection<DynamicFieldGroup> annotatedFieldGroups = populateAnnotatedFieldGroups(parametersInfo, jcrGroupMap);
+        final Collection<DynamicFieldGroup> combinedGroups = mergeFieldGroups(annotatedFieldGroups, this.fieldGroups);
+        cleanDuplicateParameters(combinedGroups);
+        this.fieldGroups = new ArrayList<>(combinedGroups);
+    }
+
+    /**
+     * Populate field groups from annotations
+     */
+    @SuppressWarnings("unchecked")
+    private Collection<DynamicFieldGroup> populateAnnotatedFieldGroups(final ParametersInfo parametersInfo,
+                                                                       final Map<String, DynamicFieldGroup> jcrGroups) {
+        if (parametersInfo ==  null) {
+            return Collections.EMPTY_LIST;
+        }
+
+        final List<DynamicFieldGroup> annotatedFieldGroups = new ArrayList<>();
+        final Set<String> uniqueParametersList = new HashSet<>();
+        final Stream<FieldGroup> fieldGroupStream = getAnnotatedFieldGroups(parametersInfo.type());
+
+        fieldGroupStream.filter(fg -> !jcrGroups.containsKey(fg.titleKey())).forEach(fieldGroup -> {
+            final List<String> uniqueParams = stream(fieldGroup.value()).distinct()
+                    .filter(fg -> !uniqueParametersList.contains(fg)).collect(Collectors.toList());
+            uniqueParametersList.addAll(uniqueParams);
+            final DynamicFieldGroup dynamicFieldGroup = new DynamicFieldGroup(fieldGroup.titleKey(), uniqueParams);
+            if (!annotatedFieldGroups.contains(dynamicFieldGroup)) {
+                annotatedFieldGroups.add(dynamicFieldGroup);
+            } else {
+                //If group already exists, populate extra parameters. check if parameter is unknown and ignore it.
+                final DynamicFieldGroup existingGroup = annotatedFieldGroups.get(annotatedFieldGroups.indexOf(dynamicFieldGroup));
+                final List<String> parameters = existingGroup.getParameters();
+                stream(fieldGroup.value()).filter(parameterName -> !parameters.contains(parameterName))
+                        .distinct().forEach(parameters::add);
+            }
+        });
+        return annotatedFieldGroups;
+    }
+
+    /**
+     * Return flattened stream of Field Groups in order they're defined on a class level
+     * @param componentClass ParametersInfo type.
+     */
+    private Stream<FieldGroup> getAnnotatedFieldGroups(final Class<?> componentClass) {
+        return getBreadthFirstInterfaceHierarchy(componentClass).stream()
+                .filter(interfaceClass -> interfaceClass.getAnnotation(FieldGroupList.class) != null)
+                .map(interfaceClass -> interfaceClass.getAnnotation(FieldGroupList.class))
+                .flatMap(fgl -> stream(fgl.value()));
+    }
+
+
+    /**
+     * Remove duplicated group parameters
+     */
+    private void cleanDuplicateParameters(final Collection<DynamicFieldGroup> groups) {
+        final Set<String> uniqueParamNames = new HashSet<>();
+        groups.forEach(group -> group.getParameters().removeIf(parameter -> !uniqueParamNames.add(parameter)));
+    }
+
+    /**
+     * Merge annotated and jcr defined field groups. If a field group is defined both
+     * through annotation & JCR definition, then JCR definition wins, i.e. annotation based definition
+     * is replaced by the one from JCR
+     * @param annotatedFieldGroups Annotation based definitions
+     * @param jcrFieldGroups JCR based definitions
+     * @return A LinkedMaop
+     */
+    @NotNull
+    private Collection<DynamicFieldGroup> mergeFieldGroups(final Collection<DynamicFieldGroup> annotatedFieldGroups,
+                                                            final Collection<DynamicFieldGroup> jcrFieldGroups) {
+        return Stream.concat(annotatedFieldGroups.stream(), jcrFieldGroups.stream())
+                .collect(Collectors.toMap(DynamicFieldGroup::getTitleKey, Function.identity(), (left, right) -> right, LinkedHashMap::new)).values();
+    }
+
+    static List<Class<?>> getBreadthFirstInterfaceHierarchy(final Class<?> clazz) {
+        final List<Class<?>> interfaceHierarchyList = new ArrayList<>();
+        interfaceHierarchyList.add(clazz);
+        populateBreadthFirstSuperInterfaces(clazz.getInterfaces(), interfaceHierarchyList);
+        return interfaceHierarchyList;
+    }
+
+    private static void populateBreadthFirstSuperInterfaces(final Class<?>[] interfaces,
+                                                            final List<Class<?>> populatedSuperInterfaces) {
+
+        populatedSuperInterfaces.addAll(Arrays.asList(interfaces));
+        final List<Class<?>> superInterfaces = new ArrayList<>();
+        for (final Class<?> clazz : interfaces) {
+            superInterfaces.addAll(Arrays.asList(clazz.getInterfaces()));
+        }
+        if (superInterfaces.size() == 0) {
+            return;
+        }
+        populateBreadthFirstSuperInterfaces(superInterfaces.toArray(new Class[superInterfaces.size()]),
+                populatedSuperInterfaces);
+    }
+
 
     protected void populateCatalogItemReference(final List<HstComponentConfiguration> availableContainerItems) {
         final Optional<HstComponentConfiguration> catalogItem = availableContainerItems.stream()
@@ -830,6 +1005,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 this.componentClassName = catalogItemRef.getComponentClassName();
             }
 
+            if (this.xtype == null) {
+                this.xtype = catalogItemRef.getXType();
+            }
+
+            if (this.ctype == null) {
+                this.ctype = catalogItemRef.getCType();
+            }
+
             if (this.hstTemplate == null) {
                 this.hstTemplate = catalogItemRef.getHstTemplate();
             }
@@ -837,6 +1020,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             if (this.iconPath == null) {
                 this.iconPath = catalogItemRef.getIconPath();
             }
+
+            this.fieldGroups = catalogItemRef.getFieldGroups();
 
             if (this.label == null) {
                 this.label = catalogItemRef.getLabel();

@@ -18,12 +18,15 @@ package org.hippoecm.hst.platform.configuration.components;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.components.DropdownListParameterConfig;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.DynamicParameterConfig;
 import org.hippoecm.hst.configuration.components.ImageSetPathParameterConfig;
 import org.hippoecm.hst.configuration.components.JcrPathParameterConfig;
+import org.hippoecm.hst.configuration.components.ParameterValueType;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.EmptyValueListProvider;
@@ -45,7 +48,6 @@ public class DynamicComponentParameter implements DynamicParameter{
     public static final String HST_DEFAULT_VALUE = "hst:defaultvalue";
     public static final String HST_DISPLAY_NAME = "hst:displayname";
     public static final String HST_HIDE_IN_CHANNEL_MANAGER = "hst:hideinchannelmanager";
-    public static final String HST_FIELD_GROUP = "hst:fieldgroup";
     public static final String HST_VALUE_TYPE = "hst:valuetype";
     public static final String HST_JCRPATH_TYPE = "hst:jcrpath";
     public static final String HST_IMAGESETPATH_TYPE = "hst:imagesetpath";
@@ -53,6 +55,7 @@ public class DynamicComponentParameter implements DynamicParameter{
     public static final String DEFAULT_STRING_TYPE = "STRING";
 
     public static final String DEFAULT_CMS_PICKERS_DOCUMENTS = "cms-pickers/documents";
+    public static final String DEFAULT_CMS_PICKERS_IMAGES = "cms-pickers/images";
     public static final String PICKER_CONFIGURATION = "hst:pickerconfiguration";
     public static final String PICKER_INITIAL_PATH = "hst:pickerinitialpath";
     public static final String PICKER_REMEMBERS_LAST_VISITED = "hst:pickerrememberslastvisited";
@@ -118,7 +121,11 @@ public class DynamicComponentParameter implements DynamicParameter{
             return pickerRootPath;
         }
 
-        
+        @Override
+        public Type getType() {
+            return Type.JCR_PATH;
+        }
+
         @Override
         public String toString() {
             return "JcrPathProperty{" +
@@ -155,7 +162,7 @@ public class DynamicComponentParameter implements DynamicParameter{
             previewVariant = ofNullable(valueProvider.getString(PREVIEW_VARIANT))
                     .orElse("");
             pickerConfiguration = ofNullable(valueProvider.getString(PICKER_CONFIGURATION))
-                    .orElse(DEFAULT_CMS_PICKERS_DOCUMENTS);
+                    .orElse(DEFAULT_CMS_PICKERS_IMAGES);
             pickerInitialPath = ofNullable(valueProvider.getString(PICKER_INITIAL_PATH))
                     .orElse(EMPTY);
             pickerRemembersLastVisited = ofNullable(valueProvider.getBoolean(PICKER_REMEMBERS_LAST_VISITED))
@@ -186,6 +193,11 @@ public class DynamicComponentParameter implements DynamicParameter{
         }
 
         @Override
+        public Type getType() {
+            return Type.IMAGESET_PATH;
+        }
+
+        @Override
         public String toString() {
             return "ImageSetPath{" +     
                     "previewVariant='" + previewVariant + '\'' +
@@ -201,28 +213,35 @@ public class DynamicComponentParameter implements DynamicParameter{
     public static class DropdownListParameterConfigImpl implements DropdownListParameterConfig {
         public static final String VALUE = "hst:value";
         public static final String VALUE_LIST_PROVIDER = "hst:valuelistprovider";
+        public static final String VALUE_SOURCE_ID = "hst:sourceid";
 
         private final String[] values;
         private Class<? extends ValueListProvider> valueListProvider = EmptyValueListProvider.class;
+        private final String sourceId;
 
         public DropdownListParameterConfigImpl(final DropDownList annotation) {
             values = annotation.value();
             valueListProvider = annotation.valueListProvider();
+            sourceId = EMPTY;
         }
 
         public DropdownListParameterConfigImpl(final HstNode dropdownNode) {
-            final ValueProvider valueProvider = dropdownNode.getValueProvider();
-            try {
-                final Class<? extends ValueListProvider> valueListProviderClass = (Class<? extends ValueListProvider>) Class
-                        .forName(valueProvider.getString(VALUE_LIST_PROVIDER));
-                if (valueListProviderClass != null) {
-                    valueListProvider = valueListProviderClass;
-                }
-            } catch (ClassNotFoundException e) {
-                log.warn("The class name defined in hst:valueListProvider property is not found: {}",
-                        valueProvider.getString(VALUE_LIST_PROVIDER));
-            }
-            values = ofNullable(valueProvider.getStrings(VALUE)).orElse(new String[] {});
+			final ValueProvider valueProvider = dropdownNode.getValueProvider();
+			final String valuelistprovider = valueProvider.getString(VALUE_LIST_PROVIDER);
+			if (!StringUtils.isEmpty(valuelistprovider)) {
+				try {
+					final Class<? extends ValueListProvider> valueListProviderClass = (Class<? extends ValueListProvider>) Class
+							.forName(valuelistprovider);
+					if (valueListProviderClass != null) {
+						valueListProvider = valueListProviderClass;
+					}
+				} catch (ClassNotFoundException e) {
+					log.warn("The class name defined in hst:valueListProvider property is not found: {}",
+							valuelistprovider);
+				}
+			}
+			values = ofNullable(valueProvider.getStrings(VALUE)).orElse(new String[] {});
+			sourceId =  ofNullable(valueProvider.getString(VALUE_SOURCE_ID)).orElse(EMPTY);
         }
 
         public String[] getValues() {
@@ -232,6 +251,16 @@ public class DynamicComponentParameter implements DynamicParameter{
         public Class<? extends ValueListProvider> getValueListProvider() {
             return valueListProvider;
         }
+
+        @Override
+        public Type getType() {
+            return Type.DROPDOWN_LIST;
+        }
+
+		@Override
+		public String getSourceId() {
+			return sourceId;
+		}
     }
 
     private final String name;
@@ -239,8 +268,7 @@ public class DynamicComponentParameter implements DynamicParameter{
     private final String defaultValue;
     private final String displayName;
     private final boolean hideInChannelManager;
-    private final String fieldGroup;
-    private final String valueType;
+    private final ParameterValueType valueType;
     private final boolean residual;
 
     private DynamicParameterConfig hstComponentParameterConfig;
@@ -250,11 +278,10 @@ public class DynamicComponentParameter implements DynamicParameter{
         final ValueProvider valueProvider = parameterNode.getValueProvider();
         name = valueProvider.getName();
 		required = ofNullable(valueProvider.getBoolean(HST_REQUIRED)).orElse(false);
-        valueType = ofNullable(valueProvider.getString(HST_VALUE_TYPE)).orElse(DEFAULT_STRING_TYPE);
+
         defaultValue = ofNullable(valueProvider.getString(HST_DEFAULT_VALUE)).orElse(EMPTY);
         displayName = ofNullable(valueProvider.getString(HST_DISPLAY_NAME)).orElse(EMPTY);
         hideInChannelManager = ofNullable(valueProvider.getBoolean(HST_HIDE_IN_CHANNEL_MANAGER)).orElse(false);
-        fieldGroup = valueProvider.getString(HST_FIELD_GROUP);
         residual = true;
 
         for (final HstNode childNode : parameterNode.getNodes()) {
@@ -270,6 +297,18 @@ public class DynamicComponentParameter implements DynamicParameter{
                 break;
             }
         }
+
+        final Optional<ParameterValueType> parameterValueType = ParameterValueType
+                .getValueType(valueProvider.getString(HST_VALUE_TYPE));
+        if (parameterValueType.isPresent()) {
+            this.valueType = parameterValueType.get();
+		} else {
+			if (hstComponentParameterConfig == null) {
+				log.warn("Defined value type is not a valid type.String type is set : {} Path: {}",
+						valueProvider.getString(HST_VALUE_TYPE), valueProvider.getPath());
+			}
+			this.valueType = ParameterValueType.STRING;
+		}
 	}
 
     public DynamicComponentParameter(final Parameter parameter, final Method method) {
@@ -278,39 +317,31 @@ public class DynamicComponentParameter implements DynamicParameter{
         defaultValue = parameter.defaultValue();
         hideInChannelManager = parameter.hideInChannelManager();
         displayName = parameter.displayName();
-        fieldGroup = null;
         residual = false;
+        valueType = ParameterValueType.getValueType(method);
 
-        String customType = null;
         for (final Annotation annotation : method.getAnnotations()) {
             if (annotation.annotationType() == JcrPath.class) {
-                hstComponentParameterConfig = new DynamicComponentParameter.JcrPathParameterConfigImpl(
-                        (JcrPath) annotation);
-                customType = DynamicParameterType.JCR_PATH.name();
+                hstComponentParameterConfig = new JcrPathParameterConfigImpl((JcrPath) annotation);
             } else if (annotation.annotationType() == ImageSetPath.class) {
                 hstComponentParameterConfig = new ImageSetPathParameterConfigImpl((ImageSetPath) annotation);
-                //TODO SS: Handle ImageSetPath type
             } else if (annotation.annotationType() == DropDownList.class) {
                 hstComponentParameterConfig = new DropdownListParameterConfigImpl((DropDownList) annotation);
-                customType = DynamicParameterType.VALUE_FROM_LIST.name();
             }
             if (hstComponentParameterConfig != null) {
                 // Only one property is allowed
                 break;
             }
         }
-
-        valueType = customType != null ? customType : DynamicParameterType.getType(method, parameter).name();
     }
 
     //Test Constructor
-    public DynamicComponentParameter(final Parameter parameter, String parameterValueType) {
+    public DynamicComponentParameter(final Parameter parameter, final ParameterValueType parameterValueType) {
         name = parameter.name();
         required = parameter.required();
         defaultValue = parameter.defaultValue();
         hideInChannelManager = parameter.hideInChannelManager();
         displayName = parameter.displayName();
-        fieldGroup = null;
         residual = false;
         valueType = parameterValueType;
     }
@@ -335,11 +366,7 @@ public class DynamicComponentParameter implements DynamicParameter{
         return hideInChannelManager;
     }
 
-    public String getFieldGroup() {
-        return fieldGroup;
-    }
-
-    public String getValueType() {
+    public ParameterValueType getValueType() {
         return valueType;
     }
 
@@ -356,7 +383,6 @@ public class DynamicComponentParameter implements DynamicParameter{
                 ", defaultValue='" + defaultValue + '\'' +
                 ", displayName='" + displayName + '\'' +
                 ", hideInChannelManager=" + hideInChannelManager +
-                ", fieldGroup='" + fieldGroup + '\'' +
                 ", hstComponentParameterConfig=" + hstComponentParameterConfig +
                 '}';
     }

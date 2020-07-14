@@ -4,3 +4,24 @@ definitions:
     : /en:
         jcr:primaryType: hipposys:resourcebundle
         menu: Menu name
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/component/support/bean/info/dynamic/DocumentQueryDynamicComponentInfo
+    : /en:
+        jcr:primaryType: hipposys:resourcebundle
+        scope.hint: The path in the repository
+        sorting.group: Sorting
+        sortOrder#desc: Descending
+        hideFutureItems: Hide future items
+        list.group: Content selection
+        pageSize: Nr. of posts to show
+        dateField: Field that contains document date (for hiding)
+        includeSubtypes: Include document subtypes
+        sortField.hint: Use the technical name
+        dateField.hint: Use the technical name
+        documentTypes: Document types
+        scope: Documents path
+        sortOrder: Sort order
+        sortField: Sort field
+        sortOrder#asc: Ascending
+        hidePastItems: Hide past items
+        filter.group: Pagination
+        documentTypes.hint: Use the technical names, comma separated
