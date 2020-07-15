@@ -104,12 +104,11 @@ public class ContainerItemComponentServiceTest extends AbstractPageComposerTest{
         EasyMock.expect(editingMount.getHstSite())
                 .andReturn(hstSite).anyTimes();
 
-        EasyMock.expect(hstSite.getComponentsConfiguration())
-                .andReturn(componentsConfiguration).anyTimes();
+        EasyMock.expect(hstSite.getComponentsConfiguration()).andReturn(componentsConfiguration).anyTimes();
 
-		final List<Parameter> parameters = Arrays.stream(DummyInfo.class.getMethods())
-				.map(x -> x.getAnnotation(Parameter.class))
-				.sorted((param1, param2) -> param1.name().compareTo(param2.name())).collect(Collectors.toList());
+        final List<Parameter> parameters = Arrays.stream(DummyInfo.class.getMethods())
+                .map(x -> x.getAnnotation(Parameter.class))
+                .sorted((param1, param2) -> param1.name().compareTo(param2.name())).collect(Collectors.toList());
 
         final MockHstComponentConfiguration componentReference = new MockHstComponentConfiguration("id");
         componentReference.setComponentClassName(DummyComponent.class.getName());
