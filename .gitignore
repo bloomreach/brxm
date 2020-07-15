@@ -1,0 +1,10 @@
+target/
+!enterprise/replication/replication-source/engine/src/main/java/com/onehippo/cms7/replication/target/
+
+.idea
+*.iml
+.classpath
+.project
+.settings/
+overlays/
+.mvn/.gradle-enterprise
