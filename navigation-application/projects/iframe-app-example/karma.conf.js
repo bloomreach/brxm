@@ -39,8 +39,8 @@ module.exports = function (config) {
     },
     reporters: ['progress', 'kjhtml', 'junit'],
     junitReporter: {
-      outputDir: '../target/surefire-reports',
-      outputFile: 'TEST-karma.xml',
+      outputDir: '../../target/surefire-reports',
+      outputFile: 'TEST-iframe-app-example.xml',
       useBrowserName: false
     },
     port: 9876,
