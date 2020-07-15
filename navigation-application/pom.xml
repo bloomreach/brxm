@@ -170,6 +170,9 @@
   <profiles>
     <profile>
       <id>fast-frontends</id>
+      <activation>
+        <property><name>fast-frontends</name></property>
+      </activation>
       <build>
         <plugins>
           <plugin>
@@ -193,7 +196,7 @@
     <profile>
       <id>slow-frontends</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <property><name>!fast-frontends</name></property>
       </activation>
       <build>
         <plugins>
