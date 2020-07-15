@@ -276,9 +276,6 @@ describe('ChannelService', () => {
 
     expect(ChannelService.getChannel()).toEqual(channelMock);
     expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
-    expect(HstService.doGetWithParams).toHaveBeenCalledWith(channelMock.mountId, undefined, 'newpagemodel');
-    expect(ChannelService.hasPrototypes()).toBe(true);
-    expect(ChannelService.hasWorkspace()).toBe(true);
   });
 
   describe('matchesChannel', () => {
