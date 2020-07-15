@@ -82,20 +82,18 @@ public class DynamicComponentParameter implements DynamicParameter{
             pickerRootPath = annotation.pickerRootPath();
         }
 
-		public JcrPathParameterConfigImpl(final HstNode jcrPathNode) {
+        public JcrPathParameterConfigImpl(final HstNode jcrPathNode) {
             final ValueProvider valueProvider = jcrPathNode.getValueProvider();
             pickerConfiguration = ofNullable(valueProvider.getString(PICKER_CONFIGURATION))
                     .orElse(DEFAULT_CMS_PICKERS_DOCUMENTS);
-			pickerInitialPath = ofNullable(valueProvider.getString(PICKER_INITIAL_PATH))
-                    .orElse(EMPTY);
-			pickerRemembersLastVisited = ofNullable(valueProvider.getBoolean(PICKER_REMEMBERS_LAST_VISITED))
+            pickerInitialPath = ofNullable(valueProvider.getString(PICKER_INITIAL_PATH)).orElse(EMPTY);
+            pickerRemembersLastVisited = ofNullable(valueProvider.getBoolean(PICKER_REMEMBERS_LAST_VISITED))
                     .orElse(true);
-			pickerSelectableNodeTypes = ofNullable(valueProvider.getStrings(PICKER_SELECTABLE_NODE_TYPES))
-                    .orElse(new String[]{});
-			relative = ofNullable(valueProvider.getBoolean(RELATIVE))
-                    .orElse(false);
-			pickerRootPath = ofNullable(valueProvider.getString(PICKER_ROOT_PATH)).orElse(EMPTY);
-		}
+            pickerSelectableNodeTypes = ofNullable(valueProvider.getStrings(PICKER_SELECTABLE_NODE_TYPES))
+                    .orElse(new String[] {});
+            relative = ofNullable(valueProvider.getBoolean(RELATIVE)).orElse(false);
+            pickerRootPath = ofNullable(valueProvider.getString(PICKER_ROOT_PATH)).orElse(EMPTY);
+        }
 
         public String getPickerConfiguration() {
             return pickerConfiguration;
@@ -226,22 +224,22 @@ public class DynamicComponentParameter implements DynamicParameter{
         }
 
         public DropdownListParameterConfigImpl(final HstNode dropdownNode) {
-			final ValueProvider valueProvider = dropdownNode.getValueProvider();
-			final String valuelistprovider = valueProvider.getString(VALUE_LIST_PROVIDER);
-			if (!StringUtils.isEmpty(valuelistprovider)) {
-				try {
-					final Class<? extends ValueListProvider> valueListProviderClass = (Class<? extends ValueListProvider>) Class
-							.forName(valuelistprovider);
-					if (valueListProviderClass != null) {
-						valueListProvider = valueListProviderClass;
-					}
-				} catch (ClassNotFoundException e) {
-					log.warn("The class name defined in hst:valueListProvider property is not found: {}",
-							valuelistprovider);
-				}
-			}
-			values = ofNullable(valueProvider.getStrings(VALUE)).orElse(new String[] {});
-			sourceId =  ofNullable(valueProvider.getString(VALUE_SOURCE_ID)).orElse(EMPTY);
+            final ValueProvider valueProvider = dropdownNode.getValueProvider();
+            final String valuelistprovider = valueProvider.getString(VALUE_LIST_PROVIDER);
+            if (!StringUtils.isEmpty(valuelistprovider)) {
+                try {
+                    final Class<? extends ValueListProvider> valueListProviderClass = (Class<? extends ValueListProvider>) Class
+                            .forName(valuelistprovider);
+                    if (valueListProviderClass != null) {
+                        valueListProvider = valueListProviderClass;
+                    }
+                } catch (ClassNotFoundException e) {
+                    log.warn("The class name defined in hst:valueListProvider property is not found: {}",
+                            valuelistprovider);
+                }
+            }
+            values = ofNullable(valueProvider.getStrings(VALUE)).orElse(new String[] {});
+            sourceId = ofNullable(valueProvider.getString(VALUE_SOURCE_ID)).orElse(EMPTY);
         }
 
         public String[] getValues() {
@@ -257,10 +255,10 @@ public class DynamicComponentParameter implements DynamicParameter{
             return Type.DROPDOWN_LIST;
         }
 
-		@Override
-		public String getSourceId() {
-			return sourceId;
-		}
+        @Override
+        public String getSourceId() {
+            return sourceId;
+        }
     }
 
     private final String name;
@@ -274,10 +272,10 @@ public class DynamicComponentParameter implements DynamicParameter{
     private DynamicParameterConfig hstComponentParameterConfig;
 
     //TODO SS: Add more constructors, or introduce a factory, residual property should be not controlled by constructor!!!
-	public DynamicComponentParameter(final HstNode parameterNode) {
+    public DynamicComponentParameter(final HstNode parameterNode) {
         final ValueProvider valueProvider = parameterNode.getValueProvider();
         name = valueProvider.getName();
-		required = ofNullable(valueProvider.getBoolean(HST_REQUIRED)).orElse(false);
+        required = ofNullable(valueProvider.getBoolean(HST_REQUIRED)).orElse(false);
 
         defaultValue = ofNullable(valueProvider.getString(HST_DEFAULT_VALUE)).orElse(EMPTY);
         displayName = ofNullable(valueProvider.getString(HST_DISPLAY_NAME)).orElse(EMPTY);
@@ -302,14 +300,14 @@ public class DynamicComponentParameter implements DynamicParameter{
                 .getValueType(valueProvider.getString(HST_VALUE_TYPE));
         if (parameterValueType.isPresent()) {
             this.valueType = parameterValueType.get();
-		} else {
-			if (hstComponentParameterConfig == null) {
-				log.warn("Defined value type is not a valid type.String type is set : {} Path: {}",
-						valueProvider.getString(HST_VALUE_TYPE), valueProvider.getPath());
-			}
-			this.valueType = ParameterValueType.STRING;
-		}
-	}
+        } else {
+            if (hstComponentParameterConfig == null) {
+                log.warn("Defined value type is not a valid type.String type is set : {} Path: {}",
+                        valueProvider.getString(HST_VALUE_TYPE), valueProvider.getPath());
+            }
+            this.valueType = ParameterValueType.STRING;
+        }
+    }
 
     public DynamicComponentParameter(final Parameter parameter, final Method method) {
         name = parameter.name();
