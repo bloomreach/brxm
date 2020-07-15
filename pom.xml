@@ -89,19 +89,6 @@
         <module>archetype</module>
       </modules>
     </profile>
-<<<<<<< HEAD
-=======
-    <profile>
-      <id>spa.sdk</id>
-      <activation>
-        <property>
-          <name>!no-spa-sdk</name>
-        </property>
-      </activation>
-      <modules>
-        <module>spa-sdk</module>
-      </modules>
-    </profile>
     <profile>
       <id>pedantic</id>
       <build>
@@ -119,6 +106,5 @@
         </plugins>
       </build>
     </profile>
->>>>>>> d4adb021d31... TRIVIAL Improve top-level packaging for community releases
   </profiles>
 </project>
