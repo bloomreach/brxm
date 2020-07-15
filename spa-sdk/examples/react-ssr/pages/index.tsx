@@ -73,12 +73,14 @@ export default class Index extends React.Component<IndexProps> {
       );
     }
 
-    // Limit the number of hosts that are allowed to embed your application.
-    // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
-    context?.res?.setHeader(
-      'Content-Security-Policy',
-      `frame-ancestors 'self' ${configuration.cmsBaseUrl ? new URL(configuration.cmsBaseUrl).host : ''}`
-    );
+    if (configuration.cmsBaseUrl) {
+      // Limit the number of hosts that are allowed to embed your application.
+      // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
+      context?.res?.setHeader(
+        'Content-Security-Policy',
+        `frame-ancestors 'self' ${new URL(configuration.cmsBaseUrl, `http://${context.req?.headers.host}`).host}`,
+      );
+    }
 
     return { configuration, page };
   }
