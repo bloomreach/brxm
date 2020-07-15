@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-import channelMenuModule from './channel/channelMenu.module';
-import menuComponent from './menu.component';
-import pageMenuModule from './page/pageMenu.module';
-import xpageMenuModule from './xpage/xpageMenu.module';
+import ngMessages from 'angular-messages';
 
-const menuModule = angular
-  .module('hippo-cm.channel.menu', [
-    channelMenuModule.name,
-    pageMenuModule.name,
-    xpageMenuModule.name,
+import xpageMenuService from './xpageMenu.service';
+
+const xpageMenuModule = angular
+  .module('hippo-cm.channel.menu.xpage', [
+    ngMessages,
   ])
-  .component('dropdownMenu', menuComponent);
+  .service('XPageMenuService', xpageMenuService);
 
-export default menuModule;
+export default xpageMenuModule;
