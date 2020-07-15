@@ -110,68 +110,68 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
                 };
             }
         };
-        
-		PowerMock.mockStatic(ResourceBundleUtils.class);
-		expect(ResourceBundleUtils.getBundle("dropdown-resource", null, false)).andReturn(catalogitemResourcebundle)
-				.anyTimes();
-		expect(ResourceBundleUtils.getBundle("hst:components.common-catalog.catalogitem", null, false))
-				.andReturn(catalogitemResourcebundle);
-		PowerMock.replayAll();
 
-		final DynamicParameter dynamicParameter = EasyMock.createMock(DynamicParameter.class);
-		expect(dynamicParameter.getName()).andReturn("residualParameter").anyTimes();
-		expect(dynamicParameter.getDefaultValue()).andReturn("residualParamDefault");
-		expect(dynamicParameter.getValueType()).andReturn(ParameterValueType.STRING).anyTimes();
-		expect(dynamicParameter.isRequired()).andReturn(true);
-		expect(dynamicParameter.isHideInChannelManager()).andReturn(false);
-		expect(dynamicParameter.getDisplayName()).andReturn(null);
-      
-		ValueProvider valueProvider = EasyMock.mock(ValueProvider.class);
-		expect(valueProvider.getString(DropdownListParameterConfigImpl.VALUE_LIST_PROVIDER)).andReturn(null);
-		expect(valueProvider.getStrings(DropdownListParameterConfigImpl.VALUE)).andReturn(null);
-		expect(valueProvider.getString(DropdownListParameterConfigImpl.VALUE_LIST_PROVIDER)).andReturn(null);
-		expect(valueProvider.getString(DropdownListParameterConfigImpl.VALUE_SOURCE_ID)).andReturn("dropdown-resource");
+        PowerMock.mockStatic(ResourceBundleUtils.class);
+        expect(ResourceBundleUtils.getBundle("dropdown-resource", null, false)).andReturn(catalogitemResourcebundle)
+                .anyTimes();
+        expect(ResourceBundleUtils.getBundle("hst:components.common-catalog.catalogitem", null, false))
+                .andReturn(catalogitemResourcebundle);
+        PowerMock.replayAll();
 
-		HstNode dropdownNode = EasyMock.mock(HstNode.class);
-		expect(dropdownNode.getValueProvider()).andReturn(valueProvider).anyTimes();
+        final DynamicParameter dynamicParameter = EasyMock.createMock(DynamicParameter.class);
+        expect(dynamicParameter.getName()).andReturn("residualParameter").anyTimes();
+        expect(dynamicParameter.getDefaultValue()).andReturn("residualParamDefault");
+        expect(dynamicParameter.getValueType()).andReturn(ParameterValueType.STRING).anyTimes();
+        expect(dynamicParameter.isRequired()).andReturn(true);
+        expect(dynamicParameter.isHideInChannelManager()).andReturn(false);
+        expect(dynamicParameter.getDisplayName()).andReturn(null);
 
-		EasyMock.replay(valueProvider, dropdownNode);
-        
-        DropdownListParameterConfig dropdownListParameterConfig = new DynamicComponentParameter.DropdownListParameterConfigImpl(dropdownNode);
+        ValueProvider valueProvider = EasyMock.mock(ValueProvider.class);
+        expect(valueProvider.getString(DropdownListParameterConfigImpl.VALUE_LIST_PROVIDER)).andReturn(null);
+        expect(valueProvider.getStrings(DropdownListParameterConfigImpl.VALUE)).andReturn(null);
+        expect(valueProvider.getString(DropdownListParameterConfigImpl.VALUE_LIST_PROVIDER)).andReturn(null);
+        expect(valueProvider.getString(DropdownListParameterConfigImpl.VALUE_SOURCE_ID)).andReturn("dropdown-resource");
+
+        HstNode dropdownNode = EasyMock.mock(HstNode.class);
+        expect(dropdownNode.getValueProvider()).andReturn(valueProvider).anyTimes();
+
+        EasyMock.replay(valueProvider, dropdownNode);
+
+        DropdownListParameterConfig dropdownListParameterConfig = new DynamicComponentParameter.DropdownListParameterConfigImpl(
+                dropdownNode);
         expect(dynamicParameter.getComponentParameterConfig()).andReturn(dropdownListParameterConfig).anyTimes();
-		EasyMock.replay(dynamicParameter);
-        
+        EasyMock.replay(dynamicParameter);
+
         componentReference.getDynamicComponentParameters().add(dynamicParameter);
 
         componentReference.setComponentDefinition("hst:components/common-catalog/catalogitem");
     }
 
-	@Test
+    @Test
     public void get_populated_properties_with_dropdown_field_config_with_source_id() throws RepositoryException {
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"bar", "residualParameter"});
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"barValue", "residualParameterValue"});
         
         final MockHstComponentConfiguration componentReference = createComponentReference();
         initDynamicParameterConfiguration(componentReference);
- 
-        
-        List<ContainerItemComponentPropertyRepresentation> properties =
-                getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper, propertyPresentationFactories, componentReference);
 
-		assertEquals(2, properties.size());
-		final ContainerItemComponentPropertyRepresentation prop = properties.get(0);
-		assertEquals("bar", prop.getName());
-		assertEquals("barValue", prop.getValue());
+        List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parameterInfo.type(),
+                null, null, DEFAULT_PARAMETER_PREFIX, containerItemNode, helper, propertyPresentationFactories,
+                componentReference);
 
-		final ContainerItemComponentPropertyRepresentation prop2 = properties.get(1);
-		assertArrayEquals(new String[] { "residualParameter" }, prop2.getDropDownListValues());
-		assertArrayEquals(new String[] { "residualParamLabel" }, prop2.getDropDownListDisplayValues());
-	}
-	
+        assertEquals(2, properties.size());
+        final ContainerItemComponentPropertyRepresentation prop = properties.get(0);
+        assertEquals("bar", prop.getName());
+        assertEquals("barValue", prop.getValue());
+
+        final ContainerItemComponentPropertyRepresentation prop2 = properties.get(1);
+        assertArrayEquals(new String[] { "residualParameter" }, prop2.getDropDownListValues());
+        assertArrayEquals(new String[] { "residualParamLabel" }, prop2.getDropDownListDisplayValues());
+    }
+
     @Test
     public void get_populated_prefixed_properties() throws RepositoryException {
-        containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"bar"});
+        containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[] { "bar" });
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"barValue"});
 
         final MockHstComponentConfiguration componentReference = createComponentReference();

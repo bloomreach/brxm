@@ -38,31 +38,31 @@ public class ResourceBundleListProvider implements ValueListProvider {
 
     private final String resourceBundleId;
 
-	public ResourceBundleListProvider(final String resourceBundleId) {
-		this.resourceBundleId = resourceBundleId;
-	}
+    public ResourceBundleListProvider(final String resourceBundleId) {
+        this.resourceBundleId = resourceBundleId;
+    }
 
-	@Override
-	public List<String> getValues() {
-		try {
-			final ResourceBundle bundle = ResourceBundleUtils.getBundle(resourceBundleId, null, false);
-			return Collections.list(bundle.getKeys());
-		} catch (MissingResourceException e) {
-			log.warn("The resource bundle document is not found, bundle id: {}", resourceBundleId);
-			return Collections.EMPTY_LIST;
-		}
-	}
+    @Override
+    public List<String> getValues() {
+        try {
+            final ResourceBundle bundle = ResourceBundleUtils.getBundle(resourceBundleId, null, false);
+            return Collections.list(bundle.getKeys());
+        } catch (MissingResourceException e) {
+            log.warn("The resource bundle document is not found, bundle id: {}", resourceBundleId);
+            return Collections.EMPTY_LIST;
+        }
+    }
 
-	@Override
-	public String getDisplayValue(String value) {
-		return getDisplayValue(value, null);
-	}
+    @Override
+    public String getDisplayValue(String value) {
+        return getDisplayValue(value, null);
+    }
 
-	@Override
-	public String getDisplayValue(String value, Locale locale) {
-		final ResourceBundle bundle = ResourceBundleUtils.getBundle(resourceBundleId, locale, false);
-		final String displayValue = bundle.getString(value);
-		return StringUtils.isNotBlank(displayValue) ? displayValue : resourceBundleId;
-	}
+    @Override
+    public String getDisplayValue(String value, Locale locale) {
+        final ResourceBundle bundle = ResourceBundleUtils.getBundle(resourceBundleId, locale, false);
+        final String displayValue = bundle.getString(value);
+        return StringUtils.isNotBlank(displayValue) ? displayValue : resourceBundleId;
+    }
 
 }
