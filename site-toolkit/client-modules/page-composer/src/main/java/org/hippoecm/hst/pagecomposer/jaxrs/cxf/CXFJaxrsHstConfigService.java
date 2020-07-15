@@ -54,6 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_FROZENUUID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_MOUNT;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.EDITING_HST_MODEL_LINK_CREATOR_ATTR;
@@ -74,8 +75,6 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     public static final String REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.isExpPage";
     public static final String REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.expPageHandleUUID";
     public static final String REQUEST_EXPERIENCE_PAGE_HANDLE_UUID_ATRRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.expPageUnpulbishedUUID";
-
-
 
 
     private Repository repository;
@@ -186,6 +185,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     private String adjustEndpointPath(Node node, HstRequestContext requestContext) throws RepositoryException {
         final StringBuilder builder = new StringBuilder();
         Node xPageUnpublishedVariant = getXPageUnpublishedVariant(node);
+        final String nodeType = getNodeType(node);
         if (xPageUnpublishedVariant != null) {
             requestContext.setAttribute(REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE, Boolean.TRUE);
             // never store the Node since backed by an hst config user which can be returned to the pool after this work
@@ -195,22 +195,24 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         } else {
             builder.append("/");
         }
-        if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-            builder.append(HippoNodeType.NT_DOCUMENT);
-        } else {
-            if (node.isNodeType(NT_FROZEN_NODE)) {
-                // map to the nodetype of the 'non-frozen' version
-                builder.append(node.getProperty(JCR_FROZEN_PRIMARY_TYPE).getString());
-            } else {
-                builder.append(node.getPrimaryNodeType().getName());
-            }
-        }
+        builder.append(nodeType);
         builder.append("/");
         final String optionalPathSuffix = requestContext.getPathSuffix();
         if (optionalPathSuffix != null) {
             builder.append(optionalPathSuffix);
         }
         return builder.toString();
+    }
+
+    private String getNodeType(final Node node) throws RepositoryException {
+        if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            return HippoNodeType.NT_DOCUMENT;
+        }
+        if (node.isNodeType(NT_FROZEN_NODE)) {
+            // map to the nodetype of the 'non-frozen' version
+            return node.getProperty(JCR_FROZEN_PRIMARY_TYPE).getString();
+        }
+        return node.getPrimaryNodeType().getName();
     }
 
     /**
