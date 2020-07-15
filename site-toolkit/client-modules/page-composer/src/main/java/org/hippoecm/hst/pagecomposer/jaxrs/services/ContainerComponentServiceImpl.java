@@ -64,10 +64,15 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
             // containerNode. Find a correct newName and create a new node.
             final String newItemNodeName = findNewName(catalogItem.getName(), containerNode);
 
-            final Node newItem = containerNode.addNode(newItemNodeName, NODETYPE_HST_CONTAINERITEMCOMPONENT);
-
             final HstComponentConfiguration componentDefinition = getCatalogItem(pageComposerContextService, catalogItem);
-            newItem.setProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION, componentDefinition.getId());
+            final Node newItem;
+            if (catalogItem.getPrimaryNodeType().getName().equals(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                //If it is a legacy catalog item, i.e. it's type is hst:containeritemcomponent, copy the whole catalog item node
+                newItem = JcrUtils.copy(session, catalogItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
+            } else {
+                newItem = containerNode.addNode(newItemNodeName, NODETYPE_HST_CONTAINERITEMCOMPONENT);
+                newItem.setProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION, componentDefinition.getId());
+            }
 
             HstConfigurationUtils.persistChanges(session);
 
