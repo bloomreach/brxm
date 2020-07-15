@@ -96,32 +96,35 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
     @Test
     public void test_api_residual_parameters_v10_assertion() throws Exception {
-		final String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0");
+        final String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0");
 
         final JsonNode root = mapper.readTree(actual);
-        final String dynamicParam1 = root.path("page").path("uid2").path("meta").path("paramsInfo").path("param1").asText();
-        assertEquals("Field 'dynamicParameter1' does not contain expected value", "value 1 in container item", dynamicParam1);
+        final String dynamicParam1 = root.path("page").path("uid2").path("meta").path("paramsInfo").path("param1")
+                .asText();
+        assertEquals("Field 'dynamicParameter1' does not contain expected value", "value 1 in container item",
+                dynamicParam1);
 
-        final String dynamicParam2 = root.path("page").path("uid2").path("meta").path("paramsInfo").path("param2").asText();
+        final String dynamicParam2 = root.path("page").path("uid2").path("meta").path("paramsInfo").path("param2")
+                .asText();
         assertEquals("Field 'param2' does not contain expected value", "value 2 in container item", dynamicParam2);
-        
-		final int integerParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("integerParam")
-				.asInt();
-		assertEquals("Field 'integerParam' does not contain expected value", 15, integerParam);
 
-		final double decimalParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("decimalParam")
-				.asDouble();
-		assertEquals("Field 'decimalParam' does not contain expected value", 20.5, decimalParam, 0);
+        final int integerParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("integerParam")
+                .asInt();
+        assertEquals("Field 'integerParam' does not contain expected value", 15, integerParam);
 
-		final boolean booleanParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("booleanParam")
-				.asBoolean();
-		assertEquals("Field 'booleanParam' does not contain expected value", true, booleanParam);
+        final double decimalParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("decimalParam")
+                .asDouble();
+        assertEquals("Field 'decimalParam' does not contain expected value", 20.5, decimalParam, 0);
 
-		final Date dateParam = new Date(
-				root.path("page").path("uid2").path("meta").path("paramsInfo").path("dateParam").asLong());
+        final boolean booleanParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("booleanParam")
+                .asBoolean();
+        assertEquals("Field 'booleanParam' does not contain expected value", true, booleanParam);
 
-		assertEquals("Field 'dateParam' does not contain expected value",
-				DateUtils.parseDate("2020-03-19T11:09:27", "yyyy-MM-dd'T'HH:mm:ss"), dateParam);
+        final Date dateParam = new Date(
+                root.path("page").path("uid2").path("meta").path("paramsInfo").path("dateParam").asLong());
+
+        assertEquals("Field 'dateParam' does not contain expected value",
+                DateUtils.parseDate("2020-03-19T11:09:27", "yyyy-MM-dd'T'HH:mm:ss"), dateParam);
 
         assertTrue("Field 'document' is missing", root.path("page").path("uid2").path("models").has("document"));
         final String news1Reference = root.path("page").path("uid2").path("models").path("document").path("$ref").asText();

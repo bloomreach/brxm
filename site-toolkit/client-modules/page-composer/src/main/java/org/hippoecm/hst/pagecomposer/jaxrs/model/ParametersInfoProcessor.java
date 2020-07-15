@@ -297,36 +297,36 @@ public abstract class ParametersInfoProcessor {
         
         String values[] = dropdownList.getValues();
 
-		ValueListProvider valueListProvider = null;
-		final Class<?> valueListProviderClass = dropdownList.getValueListProvider();
-		final String sourceId = dropdownList.getSourceId();
+        ValueListProvider valueListProvider = null;
+        final Class<?> valueListProviderClass = dropdownList.getValueListProvider();
+        final String sourceId = dropdownList.getSourceId();
 
-		if (StringUtils.isNotEmpty(sourceId)
-				&& (valueListProviderClass == null || EmptyValueListProvider.class.equals(valueListProviderClass))) {
-			valueListProvider = new ResourceBundleListProvider(dropdownList.getSourceId());
-		}
+        if (StringUtils.isNotEmpty(sourceId)
+                && (valueListProviderClass == null || EmptyValueListProvider.class.equals(valueListProviderClass))) {
+            valueListProvider = new ResourceBundleListProvider(dropdownList.getSourceId());
+        }
 
-		if (valueListProviderClass != null && !EmptyValueListProvider.class.equals(valueListProviderClass)) {
-			try {
-				if (!StringUtils.isEmpty(sourceId)) {
-					try {
-						valueListProvider = (ValueListProvider) valueListProviderClass.getConstructor(String.class)
-								.newInstance(sourceId);
-					} catch (NoSuchMethodException e) {
-						log.warn(
-								"ValueListProvider class constructor with String parameter does not exist. SourceId: {} ValueListProvider: {}",
-								sourceId, valueListProviderClass);
-					}
-				}
-				if (valueListProvider == null) {
-					valueListProvider = (ValueListProvider) valueListProviderClass.newInstance();
-				}
-			} catch (final Exception e) {
-				log.error("Failed to create or invoke the custom valueListProvider: '{}'.", valueListProviderClass, e);
-			}
-		}
+        if (valueListProviderClass != null && !EmptyValueListProvider.class.equals(valueListProviderClass)) {
+            try {
+                if (!StringUtils.isEmpty(sourceId)) {
+                    try {
+                        valueListProvider = (ValueListProvider) valueListProviderClass.getConstructor(String.class)
+                                .newInstance(sourceId);
+                    } catch (NoSuchMethodException e) {
+                        log.warn(
+                                "ValueListProvider class constructor with String parameter does not exist. SourceId: {} ValueListProvider: {}",
+                                sourceId, valueListProviderClass);
+                    }
+                }
+                if (valueListProvider == null) {
+                    valueListProvider = (ValueListProvider) valueListProviderClass.newInstance();
+                }
+            } catch (final Exception e) {
+                log.error("Failed to create or invoke the custom valueListProvider: '{}'.", valueListProviderClass, e);
+            }
+        }
 
-		final String[] displayValues;
+        final String[] displayValues;
 
         if (valueListProvider == null) {
             displayValues = new String[values.length];
@@ -491,15 +491,15 @@ public abstract class ParametersInfoProcessor {
                 resourceBundles.add(bundle);
             }
         }
-		if (componentReference != null && componentReference.getComponentDefinition() != null) {
-			final String resourceKey = StringUtils.replace(componentReference.getComponentDefinition(), "/", ".");
+        if (componentReference != null && componentReference.getComponentDefinition() != null) {
+            final String resourceKey = StringUtils.replace(componentReference.getComponentDefinition(), "/", ".");
 
-			final ResourceBundle bundle = getResourceBundle(StringUtils.substringAfter(resourceKey, "."), locale);
-			if (bundle != null) {
-				resourceBundles.add(bundle);
-			}
+            final ResourceBundle bundle = getResourceBundle(StringUtils.substringAfter(resourceKey, "."), locale);
+            if (bundle != null) {
+                resourceBundles.add(bundle);
+            }
 
-		}
+        }
         return resourceBundles.toArray(new ResourceBundle[resourceBundles.size()]);
     }
 
@@ -562,12 +562,12 @@ public abstract class ParametersInfoProcessor {
                     "panel will show displayName values instead of internationalized labels.", typeName, locale);
             FAILED_BUNDLES_TO_LOAD.add(bundleKey);
             return null;
-		}
-	}
+        }
+    }
 
-	public static ResourceBundle getResourceBundle(final Class<?> clazz, final Locale locale) {
-		return getResourceBundle(clazz.getName(), locale);
-	}
+    public static ResourceBundle getResourceBundle(final Class<?> clazz, final Locale locale) {
+        return getResourceBundle(clazz.getName(), locale);
+    }
 
     private static class CacheKey {
         private final String type;
