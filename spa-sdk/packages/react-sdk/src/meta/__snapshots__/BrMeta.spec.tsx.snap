@@ -1,6 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`BrMeta componentDidMount should render meta-data surrounding children 1`] = `<a />`;
+exports[`BrMeta componentDidMount should render meta-data surrounding children 1`] = `
+<span
+  style="display: none;"
+/>
+`;
 
 exports[`BrMeta componentDidMount should render meta-data surrounding children 2`] = `<b />`;
 
