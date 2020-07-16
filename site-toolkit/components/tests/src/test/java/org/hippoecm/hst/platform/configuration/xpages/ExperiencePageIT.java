@@ -241,14 +241,18 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
          * the XPage document
          */
         final Node docXPage = adminSession.getNode(pathToExperiencePage + "/" + handleName + "/hst:xpage");
-        assertThat(docXPage.getIdentifier())
-                .as("Expected for the root XPage component the identifier of the  XPage document and not the " +
-                        "layout")
-                .isEqualTo(root.getCanonicalIdentifier());
+        if (branch == null) {
+            assertThat(docXPage.getIdentifier())
+                    .as("Expected for the root XPage component the identifier of the  XPage document and not the " +
+                            "layout")
+                    .isEqualTo(root.getCanonicalIdentifier());
+        } else {
+            assertCanonicalIdentifierFromVersionHistory(root);
+        }
         assertThat(docXPage.getPath())
                 .as("Expected for the root XPage component the identifier of the  XPage document and not the " +
-                        "layout")
-                .isEqualTo( root.getCanonicalStoredLocation());
+                        "layout, NOTE, even for XPage doc loaded from VERSION HISTORY we expect WORKSPACE docXPage path!")
+                .isEqualTo(root.getCanonicalStoredLocation());
 
         // the XPage for a runtime request gets 'copied' into a request bound XPage and the 'root' is of course
         // always shared (although not the request runtime instance, but the backing hst config component is)
