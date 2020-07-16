@@ -37,6 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.UserContext;
+import org.onehippo.cms.channelmanager.content.document.model.DocumentVersionInfo;
 import org.onehippo.cms.channelmanager.content.document.model.Version;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.mock.MockNode;
@@ -97,32 +98,34 @@ public class DocumentVersionServiceImplTest {
     @Test
     public void master_versions() throws RepositoryException {
 
-        final Calendar createdAt = Calendar.getInstance();
-        this.versions.put(createdAt, Collections.emptySet());
+        final Calendar timestamp = Calendar.getInstance();
+        this.versions.put(timestamp, Collections.emptySet());
         final String userName = "user name";
         mockFrozenNode.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY, userName);
 
         final List<Version> versions = sut.getVersionInfo(null, MASTER_BRANCH_ID, userContext).getVersions();
 
         assertThat(versions.size(), is(1));
-        assertThat(versions.get(0).getCreatedAt(), is(createdAt));
+        assertThat(versions.get(0).getTimestamp(), is(timestamp));
         assertThat(versions.get(0).getUserName(), is(userName));
     }
 
     @Test
-    public void branch_versions() throws RepositoryException {
+    public void branch_versions_with_current_version() throws RepositoryException {
 
-        final Calendar createdAt = Calendar.getInstance();
-        this.versions.put(createdAt, Collections.emptySet());
+        final Calendar timestamp = Calendar.getInstance();
+        this.versions.put(timestamp, Collections.emptySet());
         final String userName = "user name";
         mockFrozenNode.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY, userName);
         final String branchId = "branch id";
         mockFrozenNode.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, branchId);
 
-        final List<Version> versions = sut.getVersionInfo(null, branchId, userContext).getVersions();
+        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockFrozenNode.getIdentifier(), branchId, userContext);
+        final List<Version> versions = versionInfo.getVersions();
 
+        assertThat(versionInfo.getCurrentVersion(), is(mockFrozenNode.getIdentifier()));
         assertThat(versions.size(), is(1));
-        assertThat(versions.get(0).getCreatedAt(), is(createdAt));
+        assertThat(versions.get(0).getTimestamp(), is(timestamp));
         assertThat(versions.get(0).getUserName(), is(userName));
     }
 }
