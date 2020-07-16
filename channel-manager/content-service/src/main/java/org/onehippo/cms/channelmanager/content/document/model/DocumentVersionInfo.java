@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.document.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,14 +25,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class DocumentVersionInfo {
 
     private final List<Version> versions;
+    private final String currentVersion;
 
     @JsonCreator
     public DocumentVersionInfo(
-            @JsonProperty("versions") List<Version> versions) {
+            @JsonProperty("versions") List<Version> versions,
+            @JsonProperty("currentVersion") String currentVersion) {
+        Objects.requireNonNull(versions);
         this.versions = versions;
+        this.currentVersion = currentVersion;
     }
 
     public List<Version> getVersions() {
         return versions;
+    }
+
+    public String getCurrentVersion() {
+        return currentVersion;
     }
 }

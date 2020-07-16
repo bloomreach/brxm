@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -67,7 +68,12 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                     versionInfos.add(create(historic, frozenNode));
                 }
             }
-            return new DocumentVersionInfo(versionInfos);
+            final String currentVersion = versionInfos.stream()
+                    .map(Version::getVersionId)
+                    .filter(Predicate.isEqual(uuid))
+                    .findFirst()
+                    .orElse(null);
+            return new DocumentVersionInfo(versionInfos, currentVersion);
         } catch (WorkflowException | RemoteException | RepositoryException e) {
             throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
         }
