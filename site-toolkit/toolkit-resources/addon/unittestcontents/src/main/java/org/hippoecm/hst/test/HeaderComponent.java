@@ -13,15 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
+package org.hippoecm.hst.test;
 
-import org.hippoecm.hst.core.parameters.JcrPath;
-import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 
-public interface BannerComponentInfo {
-
-    @Parameter(name = "path", defaultValue = "/some/default")
-    @JcrPath(isRelative = true)
-    String getPath();
+@ParametersInfo(type = HeaderComponentInfo.class)
+public class HeaderComponent {
 
 }
+
+

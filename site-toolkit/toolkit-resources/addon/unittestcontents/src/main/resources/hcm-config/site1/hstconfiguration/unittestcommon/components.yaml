@@ -4,6 +4,7 @@ definitions:
       jcr:primaryType: hst:components
       /header:
         jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.test.HeaderComponent
         hst:template: header
         /title:
           jcr:primaryType: hst:component

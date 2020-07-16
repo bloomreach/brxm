@@ -235,16 +235,17 @@ definitions:
                     jcr:primaryType: hst:containercomponent
                     /banner:
                       jcr:primaryType: hst:containeritemcomponent
-                      hst:componentclassname: org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent
+                      hst:componentclassname: org.hippoecm.hst.test.BannerComponent
                       hst:parameternameprefixes: ['', variant1]
                       hst:parameternames: [path, path]
                       hst:parametervalues: [/content/document, /content/variant1]
                       hst:template: banner
+                    # TODO add a new STYLE BANNER!!!
                   /430df2da-3dc8-40b5-bed5-bdc44b8445c7:
                     jcr:primaryType: hst:containercomponent
                     /banner:
                       jcr:primaryType: hst:containeritemcomponent
-                      hst:componentclassname: org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent
+                      hst:componentclassname: org.hippoecm.hst.test.BannerComponent
                       hst:parameternameprefixes: ['']
                       hst:parameternames: [path]
                       hst:parametervalues: [/content/document]
@@ -275,7 +276,7 @@ definitions:
                     jcr:primaryType: hst:containercomponent
                     /banner:
                       jcr:primaryType: hst:containeritemcomponent
-                      hst:componentclassname: org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent
+                      hst:componentclassname: org.hippoecm.hst.test.BannerComponent
                       hst:parameternameprefixes: ['', variant1]
                       hst:parameternames: [path]
                       hst:parametervalues: [/content/document]
