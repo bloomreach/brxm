@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
+package org.hippoecm.hst.test;
 
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 
