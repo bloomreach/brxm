@@ -25,23 +25,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Version {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "UTC", pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private final Calendar createdAt;
+    private final Calendar timestamp;
     private final String userName;
-    private final String uuid;
+    private final String versionId;
 
     @JsonCreator
     public Version(
-            @JsonProperty("createdAt") Calendar createdAt,
+            @JsonProperty("timestamp") Calendar timestamp,
             @JsonProperty("userName") String userName,
-            @JsonProperty("uuid") String uuid
+            @JsonProperty("versionId") String versionId
     ) {
-        this.createdAt = createdAt;
+        this.timestamp = timestamp;
         this.userName = userName;
-        this.uuid = uuid;
+        this.versionId = versionId;
     }
 
-    public Calendar getCreatedAt() {
-        return createdAt;
+    public Calendar getTimestamp() {
+        return timestamp;
     }
 
     public String getUserName() {
@@ -52,7 +52,7 @@ public class Version {
         return "";
     }
 
-    public String getUuid() {
-        return uuid;
+    public String getVersionId() {
+        return versionId;
     }
 }
