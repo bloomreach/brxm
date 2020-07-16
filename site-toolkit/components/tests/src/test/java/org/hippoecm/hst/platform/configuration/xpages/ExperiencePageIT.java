@@ -44,6 +44,8 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.test.BannerComponentInfo;
+import org.hippoecm.hst.test.HeaderComponentInfo;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.repository.api.Document;
@@ -264,6 +266,14 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
         assertThat(header.isShared()).isTrue();
         assertThat(header.getReferenceName()).startsWith("p");
 
+        // copied header component also has the dynamic parameter REFERENCE copied!
+        assertThat(header.getDynamicComponentParameters().size())
+                .as("Expected one dynamic parameter see " + HeaderComponentInfo.class.getName())
+                .isEqualTo(1);
+
+        assertThat(header.getDynamicComponentParameter("header").get().getDefaultValue())
+                .isEqualTo("Yes My Header");
+
 
         HstComponentConfiguration leftmenu = root.getChildByName("leftmenu");
         assertThat(leftmenu).as("'leftmenu' component expected to part of Page Layout (config)").isNotNull();
@@ -279,7 +289,6 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
         assertThat(main.getReferenceName()).startsWith("p");
 
         HstComponentConfiguration container1 = main.getChildByName("container1");
-
 
         // the NAME (and most other properties!!!) is inherited from the Page Layout!!!
         assertThat(container1.getName()).as("Although the container name in the XPage Document variant " +
@@ -323,6 +332,13 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
         if (handleName.equals("expPage1")) {
             HstComponentConfiguration banner = container1.getChildByName("banner");
             assertThat(banner).as("'banner' component expected to be part of Experience Page explicitly").isNotNull();
+
+            assertThat(banner.getDynamicComponentParameters().size())
+                    .as("Expected one dynamic parameter see " + BannerComponentInfo.class.getName())
+                    .isEqualTo(1);
+
+            assertThat(banner.getDynamicComponentParameter("path").get().getDefaultValue())
+                    .isEqualTo("/some/default");
 
             assertThat(banner.getCanonicalStoredLocation()).isEqualTo(xPageDocContainer1.getPath() + "/banner");
             if (branch == null) {
