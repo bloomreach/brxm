@@ -15,7 +15,6 @@
  */
 
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { MetaCollection } from '@bloomreach/spa-sdk';
 
 interface BrMetaProps {
@@ -23,6 +22,8 @@ interface BrMetaProps {
 }
 
 export class BrMeta extends React.Component<BrMetaProps> {
+  private headRef = React.createRef<HTMLElement>();
+
   private tailRef = React.createRef<HTMLElement>();
 
   componentDidMount() {
@@ -40,7 +41,7 @@ export class BrMeta extends React.Component<BrMetaProps> {
   }
 
   private renderMeta() {
-    const head = ReactDOM.findDOMNode(this);
+    const head = this.headRef?.current;
     const tail = this.tailRef?.current;
 
     if (!head || !tail) {
@@ -53,8 +54,9 @@ export class BrMeta extends React.Component<BrMetaProps> {
   render() {
     return (
       <>
+        {this.props.meta.length > 0 && <span style={{ display: 'none' }} ref={this.headRef} />}
         {this.props.children}
-        {this.props.meta.length ? <span style={{ display: 'none' }} ref={this.tailRef} /> : null}
+        {this.props.meta.length > 0 && <span style={{ display: 'none' }} ref={this.tailRef} />}
       </>
     );
   }
