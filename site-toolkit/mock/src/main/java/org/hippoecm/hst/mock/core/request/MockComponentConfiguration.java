@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -40,6 +42,7 @@ public class MockComponentConfiguration implements ComponentConfiguration {
     private String canonicalIdentifier;
     private Type componentType;
     private String xType;
+    private String cType;
     private String parametersInfoClassName;
 
     public String getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
@@ -144,6 +147,24 @@ public class MockComponentConfiguration implements ComponentConfiguration {
 
     public void setXType(String xType) {
         this.xType = xType;
+    }
+
+    public String getCType() {
+        return cType;
+    }
+
+    public void setCType(String cType) {
+        this.cType = cType;
+    }
+
+    @Override
+    public List<DynamicParameter> getDynamicComponentParameters() {
+        return null;
+    }
+
+    @Override
+    public Optional<DynamicParameter> getDynamicComponentParameter(String name) {
+        return Optional.empty();
     }
 
     @Override

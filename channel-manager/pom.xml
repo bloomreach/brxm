@@ -254,6 +254,7 @@
     <module>content-service</module>
     <module>frontend-api</module>
     <module>frontend</module>
+    <module>ui</module>
     <module>frontend-ng</module>
     <module>repository</module>
     <module>documentation</module>
@@ -324,6 +325,7 @@
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
                 <exclude>frontend-ng/coverage/**/*</exclude>
+                <exclude>frontend-ng/.cache/**</exclude>
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
               </excludes>

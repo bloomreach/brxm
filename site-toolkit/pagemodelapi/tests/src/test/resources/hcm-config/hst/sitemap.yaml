@@ -10,3 +10,6 @@ definitions:
       /httpsessionpage:
         jcr:primaryType: hst:sitemapitem
         hst:componentconfigurationid: hst:pages/httpsessionpage
+      /residualparamstest:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/residualparamstestpage

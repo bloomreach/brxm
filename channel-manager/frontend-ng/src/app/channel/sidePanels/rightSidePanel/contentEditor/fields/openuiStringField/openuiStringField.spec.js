@@ -62,6 +62,7 @@ describe('OpenuiStringField', () => {
     spyOn(ContentEditor, 'confirmClose');
     spyOn(ContentEditor, 'isDocumentDirty');
     spyOn(ContentEditor, 'getDocument');
+    spyOn(ContentEditor, 'getDocumentFieldValue');
 
     extension = {
       initialHeightInPixels: 150,
@@ -151,8 +152,18 @@ describe('OpenuiStringField', () => {
     });
   });
 
-  it('gets value', () => {
-    expect($ctrl.getValue()).toBe('test-value');
+  describe('getValue', () => {
+    it('should get the current field value', () => {
+      expect($ctrl.getValue()).toBe('test-value');
+      expect(ContentEditor.getDocumentFieldValue).not.toHaveBeenCalled();
+    });
+
+    it('should get the current field value', () => {
+      ContentEditor.getDocumentFieldValue.and.returnValue('something');
+
+      expect($ctrl.getValue('a', 'b', 'c')).toBe('something');
+      expect(ContentEditor.getDocumentFieldValue).toHaveBeenCalledWith('a', 'b', 'c');
+    });
   });
 
   it('sets value', () => {

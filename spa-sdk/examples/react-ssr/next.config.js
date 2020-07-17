@@ -29,6 +29,7 @@ if (fs.existsSync(dotenvPath)) {
 module.exports = {
   assetPrefix: process.env.PUBLIC_URL || '/',
   publicRuntimeConfig: {
+    apiBaseUrl: process.env.API_BASE_URL,
     cmsBaseUrl: process.env.CMS_BASE_URL,
     spaBaseUrl: process.env.SPA_BASE_URL,
   },

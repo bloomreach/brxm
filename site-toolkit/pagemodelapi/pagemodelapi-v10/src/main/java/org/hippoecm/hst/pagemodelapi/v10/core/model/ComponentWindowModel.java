@@ -33,12 +33,13 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
 /**
  * Component window model representation.
  */
-@JsonPropertyOrder({"id", "links", "meta","name", "label", "type", "xtype", "componentClass", "children", "models"})
+@JsonPropertyOrder({"id", "links", "meta","name", "label", "type", "xtype", "ctype", "componentClass", "children", "models"})
 public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel implements PageModelEntity {
 
     private final String name;
     private final String componentClass;
     private final String type;
+    private final String ctype;
     private final String label;
     private Map<String, Object> models;
     private Set<ComponentWindowModel> components;
@@ -56,6 +57,8 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
         xtype = componentType.equals(HstComponentConfiguration.Type.CONTAINER_COMPONENT)
                 ? StringUtils.lowerCase(window.getComponent().getComponentConfiguration().getXType())
                 : null;
+
+        ctype = window.getComponent().getComponentConfiguration().getCType();
 
         label = window.getComponentInfo().getLabel();
 
@@ -107,6 +110,11 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
 
     public String getXtype() {
         return xtype;
+    }
+
+    @JsonInclude(Include.NON_NULL)
+    public String getCtype() {
+        return ctype;
     }
 
     /**
