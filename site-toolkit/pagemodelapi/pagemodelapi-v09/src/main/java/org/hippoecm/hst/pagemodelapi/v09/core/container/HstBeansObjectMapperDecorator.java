@@ -27,9 +27,11 @@ import org.hippoecm.hst.content.beans.standard.HippoHtmlBean;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.configuration.components.DynamicComponentInfo;
 import org.hippoecm.hst.core.sitemenu.EditableMenuItem;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenuItem;
 import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.DefaultJsonIgnoreTypeMixin;
+import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.DynamicComponentInfoMixin;
 import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.EditableMenuItemMixin;
 import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.HippoHtmlBeanMixin;
 import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.HippoResourceBeanMixin;
@@ -55,6 +57,8 @@ class HstBeansObjectMapperDecorator {
         defaultMixins.put(HstLink.class, HstLinkMixin.class);
         defaultMixins.put(HstSiteMenuItem.class, HstSiteMenuItemMixin.class);
         defaultMixins.put(EditableMenuItem.class, EditableMenuItemMixin.class);
+
+        defaultMixins.put(DynamicComponentInfo.class, DynamicComponentInfoMixin.class);
     }
 
     private HstBeansObjectMapperDecorator() {

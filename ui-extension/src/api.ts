@@ -408,6 +408,15 @@ export interface FieldScope {
   getValue(): Promise<string>;
 
   /**
+   * Gets the current document field value.
+   * @since 14.3
+   * @param path The path is a string array pointing to the field or a nested subfield within the current document.
+   *  For the multiple values fields, use zero-based indicies to access specific values.
+   * @return A promise that resolves with the field value.
+   */
+  getValue(...path: string[]): Promise<any>;
+
+  /**
    * Gets the field value to compare the current value to.
    * Only valid when the document editor mode is [[DocumentEditorMode.Compare]].
    *

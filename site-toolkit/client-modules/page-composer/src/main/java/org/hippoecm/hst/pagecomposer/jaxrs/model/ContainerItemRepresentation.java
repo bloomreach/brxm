@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 
 /**
  * This class can probably be removed once new items are added through the in-memory model instead of created
@@ -29,27 +30,22 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 
 public class ContainerItemRepresentation extends ComponentRepresentation {
 
-    public ContainerItemRepresentation represent(Node node, final long newLastModifiedTimestamp) throws RepositoryException {
+    public ContainerItemRepresentation represent(final Node node, final HstComponentConfiguration templateConfig,
+                                                 final long newLastModifiedTimestamp) throws RepositoryException {
         setId(node.getIdentifier());
         setName(node.getName());
         setPath(node.getPath());
         setParentId(node.getParent().getIdentifier());
-        if (node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE)) {
-            setTemplate(node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE).getString());
-        }
-        if (node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_LABEL)) {
-            setLabel(node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_LABEL).getString());
-        }
-        setType(HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT.toString());
-        if (node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE)) {
-            setXtype(node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE).getString());
+
+        if (templateConfig instanceof HstComponentConfigurationService) {
+            setTemplate(((HstComponentConfigurationService)templateConfig).getHstTemplate());
         }
 
-        setComponentClassName(node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME) ?
-                node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString() : "");
-
+        setLabel(templateConfig.getLabel());
+        setXtype(templateConfig.getXType());
+        setComponentClassName(templateConfig.getComponentClassName());
         setLastModifiedTimestamp(newLastModifiedTimestamp);
-
+        setType(HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT.toString());
         return this;
     }
 

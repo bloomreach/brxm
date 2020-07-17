@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-addon-channel-manager-frontend-ng</artifactId>
-  <name>Addon Channel Manager Frontend Next Generation</name>
+  <name>Addon Channel Manager Frontend (angular.js)</name>
   <packaging>jar</packaging>
 
   <properties>
@@ -42,10 +42,15 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- NavApp -->
     <dependency>
       <groupId>com.bloomreach.xm</groupId>
       <artifactId>navigation-application</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-channel-manager-ui</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 
@@ -101,6 +106,16 @@
             </goals>
             <configuration>
               <arguments>run test:single-run</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm generate license files</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run license</arguments>
             </configuration>
           </execution>
         </executions>

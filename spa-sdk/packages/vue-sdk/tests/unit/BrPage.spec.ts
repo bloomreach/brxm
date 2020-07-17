@@ -16,7 +16,7 @@
 
 import { mocked } from 'ts-jest/utils';
 import { shallowMount } from '@vue/test-utils';
-import { Component, Configuration, PageModel, Page, destroy, initialize, isPage } from '@bloomreach/spa-sdk';
+import { Component, Configuration, PageModel, Page, destroy, initialize } from '@bloomreach/spa-sdk';
 import BrPage from '@/BrPage.vue';
 
 jest.mock('@bloomreach/spa-sdk');
@@ -39,19 +39,6 @@ describe('BrPage', () => {
       expect(wrapper.html()).toEqual('');
     });
 
-    it('should render a pre-initialized page', async () => {
-      const component = {} as Component;
-      mocked(isPage).mockReturnValueOnce(true);
-      page.getComponent.mockReturnValue(component);
-
-      const wrapper = shallowMount(BrPage, { propsData: { page } });
-      await wrapper.vm.$nextTick();
-
-      const nodeComponent = wrapper.findComponent({ name: 'br-node-component' });
-
-      expect(nodeComponent.props()).toEqual({ component });
-    });
-
     it('should fetch a page model', async () => {
       const component = {} as Component;
       const configuration = {} as Configuration;
@@ -63,14 +50,14 @@ describe('BrPage', () => {
 
       const nodeComponent = wrapper.findComponent({ name: 'br-node-component' });
 
-      expect(initialize).toBeCalledWith(configuration, undefined);
+      expect(initialize).toBeCalledWith(configuration);
       expect(nodeComponent.props()).toEqual({ component });
     });
 
     it('should initialize a prefetched model', async () => {
       const configuration = {} as Configuration;
       const model = {} as PageModel;
-      mocked(initialize).mockResolvedValueOnce(page);
+      mocked((initialize as unknown) as () => Page).mockReturnValueOnce(page);
 
       shallowMount(BrPage, { propsData: { configuration, page: model } });
       await new Promise(process.nextTick);
@@ -80,16 +67,15 @@ describe('BrPage', () => {
 
     it('should initialize a page on configuration change', async () => {
       const configuration = { request: { path: 'a' } } as Configuration;
-      const model = {} as PageModel;
       mocked(initialize).mockResolvedValueOnce(page);
 
-      const wrapper = shallowMount(BrPage, { propsData: { configuration, page: model } });
+      const wrapper = shallowMount(BrPage, { propsData: { configuration } });
       await new Promise(process.nextTick);
 
       wrapper.setProps({ configuration: { request: { path: 'b' } } });
       await new Promise(process.nextTick);
 
-      expect(initialize).toBeCalledWith({ request: { path: 'b' } }, undefined);
+      expect(initialize).toBeCalledWith({ request: { path: 'b' } });
     });
 
     it('should destroy previously initialized page', async () => {
@@ -108,7 +94,7 @@ describe('BrPage', () => {
 
   describe('destroyed', () => {
     it('should destroy a page upon component destruction', async () => {
-      mocked(isPage).mockReturnValueOnce(true);
+      mocked((initialize as unknown) as () => Page).mockReturnValueOnce(page);
 
       const wrapper = shallowMount(BrPage, { propsData: { page } });
       await wrapper.vm.$nextTick();
@@ -120,7 +106,7 @@ describe('BrPage', () => {
 
   describe('mounted', () => {
     it('should sync a page on mount', async () => {
-      mocked(isPage).mockReturnValueOnce(true);
+      mocked((initialize as unknown) as () => Page).mockReturnValueOnce(page);
 
       const wrapper = shallowMount(BrPage, { propsData: { page } });
       await wrapper.vm.$nextTick();

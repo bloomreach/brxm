@@ -19,14 +19,15 @@ package org.hippoecm.hst.pagemodelapi.v10;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
@@ -43,8 +44,10 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_LINK_URL_PREFIX;
 import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST;
 import static org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider.ApiVersion.V10;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -91,6 +94,54 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         assertions(actual, expected);
     }
 
+    @Test
+    public void test_api_residual_parameters_v10_assertion() throws Exception {
+        final String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0");
+
+        final JsonNode root = mapper.readTree(actual);
+        final String dynamicParam1 = root.path("page").path("uid2").path("meta").path("paramsInfo").path("param1")
+                .asText();
+        assertEquals("Field 'dynamicParameter1' does not contain expected value", "value 1 in container item",
+                dynamicParam1);
+
+        final String dynamicParam2 = root.path("page").path("uid2").path("meta").path("paramsInfo").path("param2")
+                .asText();
+        assertEquals("Field 'param2' does not contain expected value", "value 2 in container item", dynamicParam2);
+
+        final int integerParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("integerParam")
+                .asInt();
+        assertEquals("Field 'integerParam' does not contain expected value", 15, integerParam);
+
+        final double decimalParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("decimalParam")
+                .asDouble();
+        assertEquals("Field 'decimalParam' does not contain expected value", 20.5, decimalParam, 0);
+
+        final boolean booleanParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("booleanParam")
+                .asBoolean();
+        assertEquals("Field 'booleanParam' does not contain expected value", true, booleanParam);
+
+        final Date dateParam = new Date(
+                root.path("page").path("uid2").path("meta").path("paramsInfo").path("dateParam").asLong());
+
+        assertEquals("Field 'dateParam' does not contain expected value",
+                DateUtils.parseDate("2020-03-19T11:09:27", "yyyy-MM-dd'T'HH:mm:ss"), dateParam);
+
+        assertTrue("Field 'document' is missing", root.path("page").path("uid2").path("models").has("document"));
+        final String news1Reference = root.path("page").path("uid2").path("models").path("document").path("$ref").asText();
+        assertEquals("Output does not contain reference to news document", news1Reference, "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3");
+        assertTrue("News document is missing from the pma output", root.path("page").has("u303d40ebf98c4d6184c7a1ba14b5ceb3"));                
+    }
+
+    @Test
+    public void test_api_residual_parameters_default_value_v10_assertion() throws Exception {
+        final String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0");
+
+        final JsonNode root = mapper.readTree(actual);
+        final String dynamicParamDefaultValue = root.path("page").path("uid2").path("meta").path("paramsInfo").path("paramWithDefaultValue").asText();
+        final int paramCount = root.path("page").path("uid2").path("meta").path("paramsInfo").size();
+        assertEquals("Number of parameters inside paramsinfo", 9, paramCount);
+        assertEquals("Field 'paramWithDefaultValue' does not contain expected value", "a default value", dynamicParamDefaultValue);
+    }
 
     /**
      * This test specifically confirms that _cmsinternal preview Channel Manager PMA requests will

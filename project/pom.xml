@@ -57,7 +57,7 @@
     <jta.version>1.1.1</jta.version>
     <mail.version>1.4.7</mail.version>
     <slf4j.version>1.7.30</slf4j.version>
-    <log4j2.version>2.11.1</log4j2.version>
+    <log4j2.version>2.13.3</log4j2.version>
     <guava.version>27.0-jre</guava.version>
 
     <!-- Apache Commons -->
@@ -1323,6 +1323,9 @@
                 <license implementation="org.apache.rat.analysis.license.AppliedApacheSoftwareLicense20">
                   <copyrightOwner>Hippo B\.V\. \(http://www\.onehippo\.com\)</copyrightOwner>
                 </license>
+                <license implementation="org.apache.rat.analysis.license.AppliedApacheSoftwareLicense20">
+                  <copyrightOwner>Bloomreach</copyrightOwner>
+                </license>
               </licenses>
               <licenseFamilies>
                 <licenseFamily implementation="org.apache.rat.license.Apache20LicenseFamily">
@@ -1338,6 +1341,8 @@
                 <exclude>**/*.properties</exclude>
                 <exclude>**/*.yaml</exclude>
                 <exclude>**/*.bin</exclude>
+                <exclude>**/.browserslistrc</exclude>
+                <exclude>**/.editorconfig</exclude>
                 <exclude>**/MANIFEST.MF</exclude>
                 <exclude>**/README.md</exclude>
                 <exclude>**/README.adoc</exclude>
@@ -1345,6 +1350,7 @@
                 <exclude>target/**</exclude>
                 <exclude>*/target/**</exclude>
                 <exclude>*/*/target/**</exclude>
+                <exclude>**/node_modules/**</exclude>
                 <!-- exclude IntelliJ module files of sub-projects -->
                 <exclude>**/*.iml</exclude>
                 <!-- exclude IntelliJ Atlassian plugin file -->

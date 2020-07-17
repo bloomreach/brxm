@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -69,8 +69,21 @@ class OpenUiStringPlugin {
     Hippo.openDocumentById(id, 'view');
   }
 
-  getFieldValue() {
-    return this.element.getValue();
+  getFieldValue(...path) {
+    if (!path.length) {
+      return this.element.getValue();
+    }
+
+    return new Promise((resolve, reject) => {
+      Wicket.Ajax.get({
+        dt: 'json',
+        wr: false,
+        u: this.parameters.documentFieldsUrl,
+        ep: path.map(value => ({ value, name: 'path' })),
+        coh: [(settings, { responseJSON: { data } }) => resolve(data)],
+        fh: [(settings, xhr, { message }) => reject(new Error(message))],
+      });
+    });
   }
 
   setFieldValue(value) {
