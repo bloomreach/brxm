@@ -84,7 +84,7 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
         String[] content = new String[] {
                 "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage", "hst:containeritempackage",
                 "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem", "hst:containeritemcomponent",
-                   "hst:componentclassname", "org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent",
+                   "hst:componentclassname", "org.hippoecm.hst.test.BannerComponent",
         };
 
         RepositoryTestCase.build(content, admin);
