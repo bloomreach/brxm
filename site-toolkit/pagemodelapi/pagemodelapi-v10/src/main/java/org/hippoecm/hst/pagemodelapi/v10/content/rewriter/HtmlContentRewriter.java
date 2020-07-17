@@ -84,10 +84,10 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
                             final ContentNode textContent = new ContentNode(anchorTag.getText().toString());
                             anchorTag.getParent().insertChildAfter(anchorTag, textContent);
                             anchorTag.getParent().removeChild(anchorTag);
-                            continue;
                         } else {
                             log.info("Could not create a link for '{}'.", documentPath);
                         }
+                        continue;
                     }
 
                     // use link model because the hst link we want is from the 'site mount' and not from the
