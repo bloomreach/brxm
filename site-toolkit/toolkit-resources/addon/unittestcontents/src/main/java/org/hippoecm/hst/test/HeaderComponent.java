@@ -15,10 +15,11 @@
  */
 package org.hippoecm.hst.test;
 
+import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 
 @ParametersInfo(type = HeaderComponentInfo.class)
-public class HeaderComponent {
+public class HeaderComponent extends GenericHstComponent {
 
 }
 
