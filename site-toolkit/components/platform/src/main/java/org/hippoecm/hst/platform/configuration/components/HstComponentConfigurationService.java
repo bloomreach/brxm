@@ -1158,6 +1158,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 this.ctype = catalogItemRef.getCType();
             }
 
+            if (this.hstTemplate == null) {
+                this.hstTemplate = catalogItemRef.getHstTemplate();
+            }
+
             if (this.iconPath == null) {
                 this.iconPath = catalogItemRef.getIconPath();
             }

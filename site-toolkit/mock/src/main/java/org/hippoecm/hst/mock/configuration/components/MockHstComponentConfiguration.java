@@ -76,6 +76,8 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     private String componentDefinition;
     private List<DynamicFieldGroup> fieldGroups = new ArrayList<>();
 
+    private String hstTemplate;
+
     private List<DynamicParameter> dynamicComponentParameters;
 
     public MockHstComponentConfiguration(String id) {
@@ -397,6 +399,15 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     @Override
     public Calendar getLastModified() {
         return lastModified;
+    }
+
+    @Override
+    public String getHstTemplate() {
+        return hstTemplate;
+    }
+
+    public void setHstTemplate(String hstTemplate) {
+        this.hstTemplate = hstTemplate;
     }
 
     public void setLastModified(final Calendar lastModified) {
