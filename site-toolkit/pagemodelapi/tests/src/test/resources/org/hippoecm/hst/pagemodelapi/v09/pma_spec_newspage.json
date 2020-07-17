@@ -517,7 +517,7 @@
       {
         "id":"r14_r2",
         "name":"header",
-        "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+        "componentClass":"org.hippoecm.hst.test.HeaderComponent",
         "type":"COMPONENT",
         "components":[
           {
