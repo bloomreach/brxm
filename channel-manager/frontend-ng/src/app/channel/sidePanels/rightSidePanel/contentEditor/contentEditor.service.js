@@ -107,6 +107,45 @@ function hasFields(document) {
   return document.fields && Object.keys(document.fields).length > 0;
 }
 
+function normalizeFields(fields, values, [node, ...path]) {
+  return Object.fromEntries(Object.entries(values).map(([id, value]) => {
+    if (node != null && id !== node) {
+      return [id, value];
+    }
+
+    const field = fields.find(({ id: fieldId }) => fieldId === id);
+    const normalized = normalizeValues(field, value, path); // eslint-disable-line no-use-before-define
+
+    return [id, field.multiple ? normalized : normalized[0]];
+  }));
+}
+
+function normalizeValues(field, values, path) {
+  const node = field.multiple && path.length
+    ? parseInt(path.shift(), 10)
+    : undefined;
+
+  return values.map((value, index) => (node != null && index !== node
+    ? value
+    : normalizeValue(field, value, path))); // eslint-disable-line no-use-before-define
+}
+
+function normalizeValue(field, value, path) {
+  if (field.type === 'COMPOUND') {
+    return normalizeFields(field.fields, value.fields, path);
+  }
+
+  if (field.type === 'CHOICE') {
+    return normalizeValue(
+      field.choices[value.chosenId],
+      value.chosenValue,
+      path,
+    );
+  }
+
+  return value.value;
+}
+
 class ErrorResponse {
   constructor(reason, params) {
     this.data = {
@@ -169,6 +208,13 @@ class ContentEditorService {
       return this.document.info.errorMessages || [];
     }
     return [];
+  }
+
+  getDocumentFieldValue(...path) {
+    return path.reduce(
+      (result, key) => result && result[key],
+      normalizeFields(this.getDocumentType().fields, this.getDocument().fields, path),
+    );
   }
 
   getPublicationState() {

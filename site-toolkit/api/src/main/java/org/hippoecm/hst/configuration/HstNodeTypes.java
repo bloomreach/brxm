@@ -33,9 +33,12 @@ public interface HstNodeTypes {
     String NODETYPE_HST_ABSTRACT_COMPONENT = "hst:abstractcomponent";
     String NODETYPE_HST_COMPONENT = "hst:component";
     String NODETYPE_HST_COMPONENTS = "hst:components";
+    String NODETYPE_HST_DYNAMIC_PARAMETER = "hst:dynamicparameter";
+    String NODETYPE_HST_FIELD_GROUP = "hst:fieldgroup";
     String NODETYPE_HST_CONTAINERCOMPONENTREFERENCE = "hst:containercomponentreference";
     String NODETYPE_HST_CONTAINERCOMPONENT = "hst:containercomponent";
     String NODETYPE_HST_CONTAINERITEMCOMPONENT = "hst:containeritemcomponent";
+    String NODETYPE_HST_COMPONENTDEFINITION = "hst:componentdefinition";
     String NODETYPE_HST_CATALOG = "hst:catalog";
     String NODETYPE_HST_WORKSPACE = "hst:workspace";
     String NODETYPE_HST_CONTAINERITEM_PACKAGE = "hst:containeritempackage";
@@ -100,13 +103,15 @@ public interface HstNodeTypes {
     String VIRTUALHOST_PROPERTY_CUSTOM_HTTPS_SUPPORT = "hst:customhttpssupport";
 
     String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
-    String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
+    String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";    
     String COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME = "hst:parametersinfoclassname";
     String COMPONENT_PROPERTY_TEMPLATE = "hst:template";
     String COMPONENT_PROPERTY_RESOURCE_TEMPLATE = "hst:resourcetemplate";
     String COMPONENT_PROPERTY_XTYPE = "hst:xtype";
+    String COMPONENT_PROPERTY_CTYPE = "hst:ctype";
     String COMPONENT_PROPERTY_REFERECENCENAME = "hst:referencename";
     String COMPONENT_PROPERTY_REFERECENCECOMPONENT = "hst:referencecomponent";
+    String COMPONENT_PROPERTY_COMPONENTDEFINITION = "hst:componentdefinition";
     String COMPONENT_PROPERTY_CONTENTBASEPATH = "hst:componentcontentbasepath";
     String COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME = "hst:page_errorhandlerclassname";
     String COMPONENT_PROPERTY_STANDALONE = "hst:standalone";
@@ -117,6 +122,7 @@ public interface HstNodeTypes {
     String COMPONENT_PROPERTY_LABEL = "hst:label";
     String COMPONENT_PROPERTY_COMPONENT_FILTER_TAG = "hst:componentfiltertag";
     String COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE = "hst:suppresswastemessage";
+    String COMPONENT_PROPERTY_FIELD_GROUPS = "hst:fieldgroups";
 
     String TEMPLATE_PROPERTY_RENDERPATH = "hst:renderpath";
     String TEMPLATE_PROPERTY_IS_NAMED = "hst:isnamed";

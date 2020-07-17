@@ -52,6 +52,10 @@ The `initialize` function supports several options you may use to customize page
 Option | Required | Default | Description
 --- | :---: | --- | ---
 `apiBaseUrl` | no | `cmsBaseUrl` + `"/resourceapi"` | Base URL of the Page Model API (e.g. `http://localhost:8080/site/resourceapi` or `http://localhost:8080/site/channel/resourceapi`). This option will be ignored if `options` is present.
+`authorizationHeader` | no | `"Authorization"` | Authorization header for the Page Model API.
+`authorizationQueryParameter` | no | `"token"` | The query string parameter used to pass authorization header value.
+`authorizationToken` | no | _none_ | Authorization token for the Page Model API. By default, the SDK will try to extract the token from the request query string using `authorizationQueryParameter` option.
+`endpointQueryParameter` | no | _none_ | The query string parameter used as the brXM endpoint (`cmsBaseUrl`). The option will be ignored if the `cmsBaseUrl` option is not empty. In case when this option is used, the `apiBaseUrl` will be prepended with the value from the query parameter. This option should be used only for testing or debugging. By default, the option is disabled.
 `cmsBaseUrl` | _exclusive_ | _none_ | Base URL of the site (e.g. `http://localhost:8080/site` or `http://localhost:8080/site/channel`). This option is exclusive and should not be used together with `options`.
 `httpClient` | yes | _none_ | The HTTP client that will be used to fetch the page model. Signature is similar to [Axios](https://github.com/axios/axios#axiosconfig) client.
 `options` | _exclusive_ | _none_ | The CMS URL options. This option is exclusive and should not be used together with `cmsBaseUrl`. Use this property to enable the UrlRewriter-based setup. The option is **deprecated** and will be removed in the next major release.
@@ -64,8 +68,12 @@ Option | Required | Default | Description
 `options.preview.cmsBaseUrl` | yes | _none_ | Base URL of the live site (e.g. `http://localhost:8080/site/_cmsinternal` or `http://localhost:8080/site/_cmsinternal/channel`).
 `options.preview.spaBaseUrl` | no | `""` | Base URL of the live SPA (e.g. `/site/_cmsinternal?bloomreach-preview=true` or `/site/_cmsinternal/channel?bloomreach-preview=true`). This path and query string parameters will be used to detect whether it is a preview mode or not.
 `request` | yes | _none_ | Current user's request.
+`request.connection` | no | _none_ | Current request remote connection containing the remote address. This option is used in [the Relevance Module](https://documentation.bloomreach.com/14/library/enterprise/enterprise-features/targeting/targeting.html).
+`request.headers` | no | `{}` | An object holding request headers. It should contain a `Cookie` header if rendering is happening on the server-side in the UrlRewriter-based setup.
 `request.path` | yes | _none_ | The path part of the URL, including a query string if present (e.g. `/path/to/page?foo=1`).
-`request.headers` | no | `{}` | An object holding request headers. It should contain a `Cookie` header if rendering is happening on the server-side.
+`serverId` | no | _none_ | Cluster node identifier. By default, the SDK will try to extract the value from the request query string using `serverIdQueryParameter` option.
+`serverIdHeader` | no | `"Server-Id"` | Header identifying the current cluster node.
+`serverIdQueryParameter` | no | `"server-id"` | The query string parameter used to pass a cluster node identifier.
 `spaBaseUrl` | no | `""` | Base URL of the SPA (e.g. `/account` or `//www.example.com`). This option will be ignored if `options` is present.
 `visitor` | no | _none_ | An object holding information about the current visitor.
 `visitor.id` | yes | _none_ | The current visitor identifier.

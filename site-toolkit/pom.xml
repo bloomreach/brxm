@@ -63,6 +63,7 @@
     <awaitility.version>3.1.6</awaitility.version>
     <junit.version>4.12</junit.version>
     <easymock.version>4.0.2</easymock.version>
+    <mockito.version>3.3.3</mockito.version>
     <assertj.version>3.8.0</assertj.version>
     <!-- Make sure that powermock is compatible with easymock and mockito -->
     <powermock.version>2.0.2</powermock.version>
@@ -750,6 +751,7 @@
                 <exclude>toolkit-resources/addon/unittestcontents/src/main/resources/**/*.xml</exclude>
                 <!-- javascript file that ends up in browser html is not allowed to show copyright -->
                 <exclude>components/core/src/main/resources/org/hippoecm/hst/core/container/simple-io-template.js</exclude>
+                <exclude>**/target/**</exclude>
               </excludes>
             </configuration>
           </plugin>

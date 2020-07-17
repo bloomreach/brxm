@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.onehippo.cms7.services.htmlprocessor.filter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -158,115 +157,98 @@ public class WhitelistHtmlFilterTest {
     }
 
     @Test
-    public void testCleanJavascriptInAttributes() throws Exception {
-        addToWhitelist(Element.create("img", "src"));
-        final TagNode result = filterHtml("<img src=\"jAvAsCrIpT:alert()\"");
+    public void testCleanJavascriptInAttributes() {
+        final Element a = Element.create("a", "href");
+        addToWhitelist(a);
 
-        // src attribute contains javascript
-        final TagNode img = result.findElementByName("img", true);
-        assertNotNull(img);
-        assertEquals("", img.getAttributeByName("src"));
+        // href attribute contains javascript:
+        expectEmptyAttributes(a, "<a href=\"javascript:lancerPu('XXXcodepuXXX')\">Text</a>");
     }
 
     // Verify fix for CMS-7701 - See comment https://issues.onehippo.com/browse/CMS-7701?focusedCommentId=274200&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-274200
     @Test
-    public void testCleanEncodedJavascriptInAttributes() throws Exception {
-        addToWhitelist(Element.create("a", "href"));
+    public void testCleanEncodedJavascriptInAttributes() {
+        final Element a = Element.create("a", "href");
+        addToWhitelist(a);
+
         // href attribute contains encoded javascript
-        final TagNode result = filterHtml("<a href=\"&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;" +
+        expectEmptyAttributes(a, "<a href=\"&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;" +
                                             "&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;\">link</a>");
-
-        final TagNode img = result.findElementByName("a", true);
-        assertNotNull(img);
-        assertEquals("", img.getAttributeByName("href"));
     }
 
     @Test
-    public void testCleanJavascriptProtocolArgumentTrue() throws Exception {
-        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
-        addToWhitelist(Element.create("a", "href", "onclick"));
+    public void testCleanJavascriptProtocolArgumentFalse() {
+        addToWhitelist(Element.create("a", "href").setOmitJsProtocol(false));
 
-        // src attribute contains javascript:
-        TagNode result = filterHtml("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>");
-        TagNode a = result.findElementByName("a", true);
-        assertNotNull(a);
-        assertEquals("", a.getAttributeByName("onclick"));
-
-        // src attribute contains javascript: + space
-        result = filterHtml("<a href=\"#\" onclick=\"javascript: lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>");
-        a = result.findElementByName("a", true);
-        assertNotNull(a);
-        assertEquals("", a.getAttributeByName("onclick"));
-    }
-
-    @Test
-    public void testCleanJavascriptProtocolArgumentFalse() throws Exception {
-        filter = new WhitelistHtmlFilter(new ArrayList<>(), false);
-        addToWhitelist(Element.create("a", "href", "onclick"));
-        final TagNode result = filterHtml("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>");
-
-        // src attribute contains javascript:
+        // href attribute contains javascript:
+        final TagNode result = filterHtml("<a href=\"javascript:lancerPu('XXXcodepuXXX')\">Text</a>");
         final TagNode a = result.findElementByName("a", true);
         assertNotNull(a);
-        assertEquals("javascript:lancerPu('XXXcodepuXXX')", a.getAttributeByName("onclick"));
+        assertEquals("javascript:lancerPu('XXXcodepuXXX')", a.getAttributeByName("href"));
     }
 
     @Test
-    public void testCleanJavascriptProtocolNewLine() throws Exception {
-        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
-        addToWhitelist(Element.create("a", "href"));
+    public void testCleanJavascriptProtocolWithWhitespace() {
+        final Element a = Element.create("a", "href");
+        addToWhitelist(a);
 
         // check new lines
-        TagNode result = filterHtml("<a href=\"jav&#x0A;ascript:alert('XSS');\">test</a>");
-        TagNode a = result.findElementByName("a", true);
-        assertNotNull(a);
-        assertEquals("", a.getAttributeByName("href"));
+        expectEmptyAttributes(a, "<a href=\"jav&#x0A;ascript:alert('XSS');\">test</a>");
+        expectEmptyAttributes(a, "<a href=\"javascript\n:alert('XSS');\">test</a>");
 
-        result = filterHtml("<a href=\"javascript\n:alert('XSS');\">test</a>");
-        a = result.findElementByName("a", true);
-        assertNotNull(a);
-        assertEquals("javascript :alert('XSS');", a.getAttributeByName("href"));
+        // spaces
+        expectEmptyAttributes(a, "<a href=\"javascript : alert('XSS');\">test</a>");
+        expectEmptyAttributes(a, "<a href=\"javascript  :  &#160;alert('XSS');\">test</a>");
+
+        // tabs and CR
+        expectEmptyAttributes(a, "<a href=\"java\tscript\t:\ralert('XSS');\">test</a>");
     }
 
     @Test
-    public void testCleanDataProtocol() throws Exception {
-        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
-        addToWhitelist(Element.create("a", "href"));
+    public void testCleanDataProtocol() {
+        final Element iframe = Element.create("iframe", "src");
+        addToWhitelist(iframe);
 
-        // href attribute contains data:
-        TagNode result = filterHtml("<a href=\"data:testData\">data</a>");
-        TagNode a = result.findElementByName("a", true);
-        assertNotNull(a);
-        assertEquals("", a.getAttributeByName("href"));
-
-        // href attribute contains data: + space
-        result = filterHtml("<a href=\"data: testData\">data</a>");
-        a = result.findElementByName("a", true);
-        assertNotNull(a);
-        assertEquals("", a.getAttributeByName("href"));
+        expectEmptyAttributes(iframe, "<iframe src=\"data:text/html;base64,PHN2Zy9vbmxvYWQ9YWxlcnQoMSk+\"></iframe>");
     }
 
     @Test
-    public void testDataPrefixOfFileNameIsNotCleaned() throws Exception {
-        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
-        addToWhitelist(Element.create("a", "href"));
+    public void testCleanDataProtocolArgumentFalse() {
+        addToWhitelist(Element.create("iframe", "src").setOmitDataProtocol(false));
 
-        // href attribute start with 'data' but is not a data protocol
-        TagNode result = filterHtml("<a href=\"data-science.pdf\">data science</a>");
-        TagNode a = result.findElementByName("a", true);
-        assertNotNull(a);
-        assertEquals("data-science.pdf", a.getAttributeByName("href"));
+        // src attribute contains data:
+        final TagNode result = filterHtml("<iframe src=\"data:testData\"></iframe>");
+        final TagNode iframe = result.findElementByName("iframe", true);
+        assertNotNull(iframe);
+        assertEquals("data:testData", iframe.getAttributeByName("src"));
     }
 
     @Test
-    public void testCleanDataProtocolNewLine() throws Exception {
-        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
-        addToWhitelist(Element.create("a", "href"));
+    public void testDataPrefixOfFileNameIsNotCleaned() {
+        addToWhitelist(Element.create("iframe", "src"));
+
+        // src attribute starts with 'data' but is not a data protocol
+        final TagNode result = filterHtml("<iframe src=\"data-science.html\"></a>");
+        final TagNode iframe = result.findElementByName("iframe", true);
+        assertNotNull(iframe);
+        assertEquals("data-science.html", iframe.getAttributeByName("src"));
+    }
+
+    @Test
+    public void testCleanDataProtocolWithWhitespace() {
+        final Element iframe = Element.create("iframe", "src");
+        addToWhitelist(iframe);
+
         // check new lines
-        TagNode result = filterHtml("<a href=\"data\n:testData\">data</a>");
-        TagNode a = result.findElementByName("a", true);
-        assertNotNull(a);
-        assertEquals("data :testData", a.getAttributeByName("href"));
+        expectEmptyAttributes(iframe, "<iframe src=\"dat&#x0A;a:testData\"></iframe>");
+        expectEmptyAttributes(iframe, "<iframe src=\"data\n:testData\"></iframe>");
+
+        // spaces
+        expectEmptyAttributes(iframe, "<iframe src=\"data : testData\"></iframe>");
+        expectEmptyAttributes(iframe, "<iframe src=\"data  :  &#160;testData\"></iframe>");
+
+        // tabs and CR
+        expectEmptyAttributes(iframe, "<iframe src=\"dat\ta\t:\rtestData\"></iframe>");
     }
 
     private TagNode filterHtml(final String html) {
@@ -281,4 +263,11 @@ public class WhitelistHtmlFilterTest {
         Arrays.stream(elements).forEach(element -> filter.add(element));
     }
 
+    private void expectEmptyAttributes(final Element element, final String payload) {
+        final TagNode result = filterHtml(payload);
+        final TagNode tag = result.findElementByName(element.getName(), true);
+
+        assertNotNull(tag);
+        element.getAttributes().forEach(attr -> assertEquals("", tag.getAttributeByName(attr)));
+    }
 }

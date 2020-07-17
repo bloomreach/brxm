@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.mock.configuration.components;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,8 +25,11 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.hippoecm.hst.configuration.components.DynamicFieldGroup;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.core.parameters.FieldGroup;
 
 
 /**
@@ -53,10 +57,10 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     private String namedResourceServer;
     private String pageErrorHandlerClassName;
     private String xType;
+    private String cType;
     private String label;
     private String iconPath;
     private boolean inherited;
-    private boolean shared;
     private boolean prototype;
     private boolean standalone;
     private boolean async;
@@ -68,6 +72,12 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     private Calendar lockedOn;
     private Calendar lastModified;
     private boolean markedDeleted;
+    private String componentDefinition;
+    private List<DynamicFieldGroup> fieldGroups = new ArrayList<>();
+
+    private String hstTemplate;
+
+    private List<DynamicParameter> dynamicComponentParameters;
 
     public MockHstComponentConfiguration(String id) {
         this.id = id;
@@ -237,19 +247,23 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public String getXType() {
         return xType;
     }
-    
+
     public void setXType(String xType) {
         this.xType = xType;
     }
 
     @Override
-    public boolean isInherited() {
-        return inherited;
+    public String getCType() {
+        return cType;
+    }
+
+    public void setCType(String cType) {
+        this.cType = cType;
     }
 
     @Override
-    public boolean isShared() {
-        return shared;
+    public boolean isInherited() {
+        return inherited;
     }
 
     @Override
@@ -259,10 +273,6 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     
     public void setInherited(boolean inherited) {
         this.inherited = inherited;
-    }
-
-    public void setShared(final boolean shared) {
-        this.shared = shared;
     }
 
     @Override
@@ -315,6 +325,24 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
         this.label = label;
     }
 
+    @Override
+    public String getComponentDefinition() {
+        return this.componentDefinition;
+    }
+
+    public void setComponentDefinition(String componentDefinition) {
+        this.componentDefinition = componentDefinition;
+    }
+
+    @Override
+    public List<DynamicFieldGroup> getFieldGroups() {
+        return fieldGroups;
+    }
+
+    public void setFieldGroups(List<DynamicFieldGroup> fieldGroups) {
+        this.fieldGroups = fieldGroups;
+    }
+
     public String getIconPath() {
         return iconPath;
     }
@@ -363,6 +391,15 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
         return lastModified;
     }
 
+    @Override
+    public String getHstTemplate() {
+        return hstTemplate;
+    }
+
+    public void setHstTemplate(String hstTemplate) {
+        this.hstTemplate = hstTemplate;
+    }
+
     public void setLastModified(final Calendar lastModified) {
         this.lastModified = lastModified;
     }
@@ -376,12 +413,11 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     }
 
     @Override
-    public String getHippoIdentifier() {
-        return null;
+    public List<DynamicParameter> getDynamicComponentParameters() {
+        return dynamicComponentParameters;
     }
 
-    @Override
-    public boolean isExperiencePageComponent() {
-        return false;
+    public void setDynamicComponentParameters(List<DynamicParameter> dynamicComponentParameters) {
+        this.dynamicComponentParameters = dynamicComponentParameters;
     }
 }

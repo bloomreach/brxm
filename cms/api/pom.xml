@@ -214,7 +214,6 @@
         <filtering>false</filtering>
         <directory>${basedir}/src/main/resources</directory>
         <includes>
-          <include>**/ADDITIONAL-LICENSES.yml</include>
           <include>**/*.js</include>
           <include>**/*.css</include>
           <include>**/*.png</include>
@@ -328,6 +327,16 @@
             </goals>
             <configuration>
               <arguments>run build</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm generate license files</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run license</arguments>
             </configuration>
           </execution>
         </executions>

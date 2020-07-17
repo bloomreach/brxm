@@ -483,11 +483,11 @@
                 <exclude>login/.npmrc</exclude>
                 <exclude>login/.stylelintrc</exclude>
                 <!-- front-end build external dependencies -->
-                <exclude>api/node_modules/**</exclude>
-                <exclude>console/frontend/node_modules/**</exclude>
-                <exclude>login/node_modules/**</exclude>
+                <exclude>**/node_modules/**</exclude>
+                <exclude>**/node/**</exclude>
+                <exclude>**/target/**</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
-                <exclude>engine/node_modules/**</exclude>
+                <exclude>editor/repository/workspaces/**</exclude>
                 <exclude>engine/.npmrc</exclude>
               </excludes>
             </configuration>

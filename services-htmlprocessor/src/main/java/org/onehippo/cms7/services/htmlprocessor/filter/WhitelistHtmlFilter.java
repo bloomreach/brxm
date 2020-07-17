@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.htmlcleaner.TagNode;
 import org.onehippo.cms7.services.htmlprocessor.serialize.CharacterReferenceNormalizer;
 import org.slf4j.Logger;
@@ -28,24 +29,21 @@ import org.slf4j.LoggerFactory;
 
 public class WhitelistHtmlFilter implements HtmlFilter {
 
-    public static final Logger log = LoggerFactory.getLogger(WhitelistHtmlFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(WhitelistHtmlFilter.class);
 
     private static final String JAVASCRIPT_PROTOCOL = "javascript:";
     private static final String DATA_PROTOCOL = "data:";
-    private static final Pattern CRLFTAB = Pattern.compile("[\r\n\t]");
+    private static final Pattern WHITESPACE = Pattern.compile("[\\s]");
 
     private final Map<String, Element> elements = new HashMap<>();
-    private final boolean omitJavascriptProtocol;
 
     public WhitelistHtmlFilter() {
-        omitJavascriptProtocol = true;
     }
 
-    public WhitelistHtmlFilter(final List<Element> whitelist, final boolean omitJavascriptProtocol) {
+    public WhitelistHtmlFilter(final List<Element> whitelist) {
         if (whitelist != null) {
             whitelist.forEach(this::add);
         }
-        this.omitJavascriptProtocol = omitJavascriptProtocol;
     }
 
     @Override
@@ -82,26 +80,26 @@ public class WhitelistHtmlFilter implements HtmlFilter {
         final Map<String, String> attributes =
                 node.getAttributes().entrySet().stream()
                 .filter(attribute -> allowedElement.hasAttribute(attribute.getKey()))
-                .collect(Collectors.toMap(attribute -> attribute.getKey(), attribute -> {
+                .collect(Collectors.toMap(Map.Entry::getKey, attribute -> {
                     final String value = attribute.getValue();
-                    final String normalizedValue =
-                            cleanCRLFTAB(CharacterReferenceNormalizer.normalizeAttributeContent(value.toLowerCase().trim()));
-                    if (omitJavascriptProtocol &&
-                            (normalizedValue.startsWith(JAVASCRIPT_PROTOCOL) ||
-                                    checkDataAttrValue(node.getName(), attribute.getKey(), normalizedValue))) {
-                        return "";
+                    final String trimmedValue = value.toLowerCase().trim();
+                    final String normalizedValue = CharacterReferenceNormalizer.normalizeAttributeContent(trimmedValue);
+                    final String cleanedValue = cleanWhitespace(normalizedValue);
+
+                    if (allowedElement.isOmitJsProtocol() && cleanedValue.startsWith(JAVASCRIPT_PROTOCOL)) {
+                        return StringUtils.EMPTY;
                     }
+
+                    if (allowedElement.isOmitDataProtocol() && cleanedValue.startsWith(DATA_PROTOCOL)) {
+                        return StringUtils.EMPTY;
+                    }
+
                     return value;
                 }));
         node.setAttributes(attributes);
     }
 
-    private static String cleanCRLFTAB(final String value) {
-        return CRLFTAB.matcher(value).replaceAll("");
-    }
-
-    private boolean checkDataAttrValue(final String tagName, final String attrName, final String attrValue) {
-        return attrValue.startsWith(DATA_PROTOCOL) &&
-                (("a".equals(tagName) && "href".equals(attrName)) || ("object".equals(tagName) && "data".equals(attrName)));
+    private static String cleanWhitespace(final String value) {
+        return WHITESPACE.matcher(value).replaceAll("");
     }
 }
