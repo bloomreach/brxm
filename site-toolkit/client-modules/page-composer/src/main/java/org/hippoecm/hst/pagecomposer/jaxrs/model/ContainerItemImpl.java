@@ -17,19 +17,30 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+
 public class ContainerItemImpl implements ContainerItem {
 
     private final Node containerItem;
+    private final HstComponentConfiguration componentDefinition;
     private final long timeStamp;
 
-    public ContainerItemImpl(Node containerItem, long timeStamp) {
+
+    public ContainerItemImpl(final Node containerItem,
+                             final HstComponentConfiguration componentDefinition, final long timeStamp) {
         this.containerItem = containerItem;
+        this.componentDefinition = componentDefinition;
         this.timeStamp = timeStamp;
     }
 
     @Override
     public Node getContainerItem() {
         return containerItem;
+    }
+
+    @Override
+    public HstComponentConfiguration getComponentDefinition() {
+        return componentDefinition;
     }
 
     @Override

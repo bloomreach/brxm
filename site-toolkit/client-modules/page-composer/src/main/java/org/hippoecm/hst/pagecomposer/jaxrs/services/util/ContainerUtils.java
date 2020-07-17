@@ -16,7 +16,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.util;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javax.jcr.ItemNotFoundException;
@@ -25,13 +24,16 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 
@@ -47,7 +49,7 @@ public class ContainerUtils {
         try {
             final Node containerItem = session.getNodeByIdentifier(itemUUID);
 
-            if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+            if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT) && !containerItem.isNodeType(NODETYPE_HST_COMPONENTDEFINITION)) {
                 log.info("The container component '{}' does not have the correct type. ", itemUUID);
                 throw new ClientException(String.format("The container item '%s' does not have the correct type",
                         itemUUID), ClientError.INVALID_NODE_TYPE);
@@ -158,5 +160,56 @@ public class ContainerUtils {
         }
     }
 
+    public static HstComponentConfiguration getCatalogItem(final PageComposerContextService pageComposerContextService,
+                                                           final Node catalogItem) throws RepositoryException {
+        final HstSite hstSite = pageComposerContextService.getEditingMount().getHstSite();
+        final List<HstComponentConfiguration> availableContainerItems = hstSite.getComponentsConfiguration().getAvailableContainerItems();
+        final String catalogItemPath = catalogItem.getPath();
+        final HstComponentConfiguration catalogItemConfiguration =
+                availableContainerItems.stream()
+                        .filter(item -> item.getCanonicalStoredLocation().equals(catalogItemPath))
+                        .findFirst().orElse(null);
+
+        if (catalogItemConfiguration == null) {
+            throw new RepositoryException(String.format("Catalog item '%s' at path '%s' could not be found",
+                    catalogItem.getName(), catalogItem.getPath()));
+        }
+
+        return catalogItemConfiguration;
+    }
+
+    /**
+     * returns the HstComponentConfiguration templateConfig (componentDefinition) in case the {@code componentItem} links
+     * back to catalog item. For the old-style component items where the catalog item is not back-referenced, {@code null}
+     * is returned
+     */
+    public static HstComponentConfiguration getComponentDefinitionByComponentItem(final PageComposerContextService pageComposerContextService,
+                                                                                  final Node componentItem) throws RepositoryException {
+        if (!componentItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+            throw new IllegalArgumentException(String.format("Can only get catalog item for a "));
+        }
+
+        final HstSite hstSite = pageComposerContextService.getEditingMount().getHstSite();
+
+        final String componentDefinition = JcrUtils.getStringProperty(componentItem, NODETYPE_HST_COMPONENTDEFINITION, null);
+        if (componentDefinition == null) {
+            // old style component item not linked back to catalog item
+            return null;
+        }
+
+        final List<HstComponentConfiguration> availableContainerItems = hstSite.getComponentsConfiguration().getAvailableContainerItems();
+
+        final HstComponentConfiguration catalogItemConfiguration =
+                availableContainerItems.stream()
+                        .filter(item -> item.getId().equals(componentDefinition))
+                        .findFirst().orElse(null);
+
+        if (catalogItemConfiguration == null) {
+            throw new RepositoryException(String.format("Catalog item for component definition '%s' not found for component " +
+                    "'%'", componentDefinition, componentItem.getPath()));
+        }
+
+        return catalogItemConfiguration;
+    }
 
 }
