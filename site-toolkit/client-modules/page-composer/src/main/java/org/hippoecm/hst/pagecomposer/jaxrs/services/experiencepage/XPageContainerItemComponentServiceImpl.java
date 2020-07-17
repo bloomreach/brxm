@@ -33,9 +33,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.experiencepage.ExperiencePageService;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
@@ -50,6 +54,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.util.PageComposerUtil;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -336,23 +341,27 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
     private ContainerItemComponentRepresentation represent(final Node componentItemNode,
                                                            final Locale locale,
                                                            final String prefix) throws RepositoryException, ClassNotFoundException {
+
         final String contentPath = getContentPath();
 
+        final Mount editingMount = pageComposerContextService.getEditingMount();
+        final HstSite hstSite = editingMount.getHstSite();
 
-        ParametersInfo parametersInfo = executeWithWebsiteClassLoader(node -> {
-            try {
-                return ParametersInfoAnnotationUtils.getParametersInfoAnnotation(node);
-            } catch (RepositoryException e) {
-                throw new RuntimeException(e);
-            }
-        }, componentItemNode);
+        final ExperiencePageService experiencePageService
+                = HippoServiceRegistry.getService(ExperiencePageService.class);
+
+        final HstComponentConfiguration config = experiencePageService.loadExperiencePageComponentItem(componentItemNode, hstSite,
+                PageComposerUtil.getEditingSiteClassLoader());
+
+        ParametersInfo parametersInfo = executeWithWebsiteClassLoader(node ->
+                ParametersInfoAnnotationUtils.getParametersInfoAnnotation(config), componentItemNode);
 
         if (parametersInfo == null) {
             parametersInfo = defaultMissingParametersInfo;
         }
 
-        List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parametersInfo, locale, contentPath, prefix, componentItemNode,
-                containerItemHelper, propertyPresentationFactories);
+        List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parametersInfo.type(), locale, contentPath, prefix, componentItemNode,
+                containerItemHelper, propertyPresentationFactories, config);
 
         ContainerItemComponentRepresentation representation = new ContainerItemComponentRepresentation();
         representation.setProperties(properties);
@@ -378,8 +387,8 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
      * @throws RepositoryException when something went wrong in the repository
      */
     private void doCreateVariant(final Node containerItem,
-                         final XPageComponentParameters componentParameters,
-                         final String variantId) throws RepositoryException, IllegalStateException {
+                                 final XPageComponentParameters componentParameters,
+                                 final String variantId) throws RepositoryException, IllegalStateException {
 
         Map<String, String> annotatedParameters = PageComposerUtil.getAnnotatedDefaultValues(containerItem);
 

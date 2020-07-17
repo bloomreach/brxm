@@ -18,9 +18,12 @@ package org.hippoecm.hst.experiencepage;
 import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 public interface ExperiencePageService {
 
-    HstComponentConfiguration loadExperiencePage(Node hstPage, ResolvedSiteMapItem resolvedSiteMapItem);
+    HstComponentConfiguration loadExperiencePage(Node hstPage, HstSite hstSite, ClassLoader websiteClassLoader);
+
+    HstComponentConfiguration loadExperiencePageComponentItem(Node componentItem, HstSite hstSite, ClassLoader websiteClassLoader);
 }

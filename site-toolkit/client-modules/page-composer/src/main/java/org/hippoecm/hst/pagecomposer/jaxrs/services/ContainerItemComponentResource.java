@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.getComponentDefinitionByComponentItem;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 /**
@@ -112,7 +113,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
     @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     @Override
     public ContainerItemComponentRepresentation getVariant(final @PathParam("variant") String variant,
-                               final @PathParam("locale") String localeString) {
+                                                           final @PathParam("locale") String localeString) {
         try {
             return this.containerItemComponentService.getVariant(variant, localeString);
         } catch (Exception e) {
@@ -133,11 +134,15 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
         try {
             if (StringUtils.isEmpty(newVariantId)) {
                 final Pair<Node, Boolean> result = this.containerItemComponentService.updateVariant(variantId, versionStamp, params);
-                return respondContainerItem(new ContainerItemImpl(result.getLeft(), 0L), result.getRight(),
+                final Node containerItemNode = result.getLeft();
+                return respondContainerItem(new ContainerItemImpl(containerItemNode,
+                                getComponentDefinitionByComponentItem(getPageComposerContextService(), containerItemNode), 0L), result.getRight(),
                         Response.Status.OK, format("Parameters for '%s' saved successfully.",  variantId));
             } else {
                 final Pair<Node, Boolean> result = this.containerItemComponentService.moveAndUpdateVariant(variantId, newVariantId, versionStamp, params);
-                return respondContainerItem(new ContainerItemImpl(result.getLeft(), 0L), result.getRight(),
+                final Node containerItemNode = result.getLeft();
+                return respondContainerItem(new ContainerItemImpl(containerItemNode,
+                                getComponentDefinitionByComponentItem(getPageComposerContextService(), containerItemNode), 0L), result.getRight(),
                         Response.Status.OK, format("Parameters renamed from '%s' to '%s' and saved successfully.", variantId, newVariantId));
             }
         } catch (ClientException e) {
@@ -157,7 +162,9 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
 
         try {
             final Pair<Node, Boolean> result = this.containerItemComponentService.createVariant(variantId, versionStamp);
-            return respondContainerItem(new ContainerItemImpl(result.getLeft(), 0L), result.getRight(),
+            final Node containerItemNode = result.getLeft();
+            return respondContainerItem(new ContainerItemImpl(containerItemNode,
+                            getComponentDefinitionByComponentItem(getPageComposerContextService(), containerItemNode), 0L), result.getRight(),
                     Response.Status.CREATED, format("Variant '%s' created successfully", variantId));
         } catch (ClientException e) {
             return clientError("Could not create variant '" + variantId + "'", e.getErrorStatus());
@@ -176,7 +183,9 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
         try {
             final Pair<Node, Boolean> result = this.containerItemComponentService.deleteVariant(variantId, versionStamp);
-            return respondContainerItem(new ContainerItemImpl(result.getLeft(), 0L), result.getRight(),
+            final Node containerItemNode = result.getLeft();
+            return respondContainerItem(new ContainerItemImpl(containerItemNode,
+                            getComponentDefinitionByComponentItem(getPageComposerContextService(), containerItemNode), 0L), result.getRight(),
                     Response.Status.OK, format("Variant '%s' deleted successfully", variantId));
         } catch (ClientException e) {
             log.warn("Could not delete variant '{}'", variantId, e);

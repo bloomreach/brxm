@@ -26,9 +26,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.experiencepage.ExperiencePageLoadingException;
 import org.hippoecm.hst.experiencepage.ExperiencePageService;
@@ -36,13 +38,18 @@ import org.hippoecm.hst.platform.configuration.cache.HstNodeImpl;
 import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.platform.configuration.components.HstComponentsConfigurationService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_FROZENPRIMARYTYPE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.XPAGE_PROPERTY_PAGEREF;
 import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
+import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 
 public class ExperiencePageServiceImpl implements ExperiencePageService {
 
@@ -59,7 +66,8 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
     }
 
     @Override
-    public HstComponentConfiguration loadExperiencePage(final Node hstPage, final ResolvedSiteMapItem resolvedSiteMapItem) {
+    public HstComponentConfiguration loadExperiencePage(final Node hstPage, final HstSite hstSite,
+                                                        final ClassLoader websiteClassLoader) {
 
         final ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
 
@@ -77,7 +85,6 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                         "for '%s'", hstNode.getValueProvider().getPath(), XPAGE_PROPERTY_PAGEREF));
             }
 
-            final HstSite hstSite = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap().getSite();
             final HstComponentsConfigurationService componentsConfiguration = (HstComponentsConfigurationService) hstSite.getComponentsConfiguration();
             final HstComponentConfigurationService xPageLayout =
                     (HstComponentConfigurationService) componentsConfiguration.getXPages().get(pageref);
@@ -176,10 +183,10 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                     pageLayoutContainer.transformXpageLayoutContainer(documentContainer);
 
                     // enhance the not yet enhanced XPage container items
+
+                    componentsConfiguration.populateComponentReferences(documentContainer.getChildren().values(), websiteClassLoader);
                     componentsConfiguration.enhanceComponentTree(documentContainer.getChildren().values(), false);
 
-                    // TODO for the new feature of container items backreferencing the catalog item, make sure
-                    // TODO the catalog item inheritance works
                 }
 
             }
@@ -204,16 +211,57 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
             Thread.currentThread().setContextClassLoader(currentClassLoader);
         }
 
-
     }
 
-    private HstNodeImpl getHstNode(final Node hstPage) {
+    @Override
+    public HstComponentConfiguration loadExperiencePageComponentItem(final Node componentItem, final HstSite hstSite,
+                                                                     final ClassLoader websiteClassLoader) {
+        try {
+            if (!componentItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT) &&
+                    !NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(getStringProperty(componentItem, JCR_FROZENPRIMARYTYPE, null))) {
+                throw new IllegalArgumentException(String.format("Only (frozen) nodes of type '%s' are allowed but was of type '%s'",
+                        NODETYPE_HST_CONTAINERITEMCOMPONENT, componentItem.getPrimaryNodeType().getName()));
+            }
+        } catch (RepositoryException e) {
+            throw new RuntimeRepositoryException(e);
+        }
+
+        final ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+
+        try {
+            // set the classloader of the platform webapp to load the model
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+
+            final HstNodeImpl hstNode = getHstNode(componentItem);
+
+            final HstComponentConfigurationService containerItem =
+                    new HstComponentConfigurationService(hstNode, null, ROOT_EXPERIENCE_PAGES_NAME, Collections.emptyMap(), hstNode.getValueProvider().getPath());
+
+
+            containerItem.setExperiencePageComponent(true);
+
+            final List<HstComponentConfiguration> singletonList = Collections.singletonList(containerItem);
+            setReferenceNames(singletonList);
+
+
+            final HstComponentsConfigurationService componentsConfiguration = (HstComponentsConfigurationService) hstSite.getComponentsConfiguration();
+
+            componentsConfiguration.populateComponentReferences(singletonList, websiteClassLoader);
+            componentsConfiguration.enhanceComponentTree(singletonList, false);
+
+            return containerItem;
+        } finally {
+            Thread.currentThread().setContextClassLoader(currentClassLoader);
+        }
+    }
+
+    private HstNodeImpl getHstNode(final Node jcrNode) {
         try {
 
             // The hstPage can be a frozen node and then every property is protected, hence we need to include
             // protected properties (which we don't want for in memory model since takes pointless memory but does not
             // matter for Experience Pages since used only once
-            return new HstNodeImpl(hstPage, null, true);
+            return new HstNodeImpl(jcrNode, null, true);
 
         } catch (RepositoryException e) {
             throw new ExperiencePageLoadingException("Failed to load HstPage" , e);

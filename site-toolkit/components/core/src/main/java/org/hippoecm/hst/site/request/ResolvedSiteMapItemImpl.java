@@ -205,7 +205,8 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
                         final ExperiencePageService experiencePageService
                                 = HippoServiceRegistry.getService(ExperiencePageService.class);
 
-                        final HstComponentConfiguration config = experiencePageService.loadExperiencePage(page, this);
+                        final HstComponentConfiguration config = experiencePageService.loadExperiencePage(page, getHstSiteMapItem().getHstSiteMap().getSite(),
+                                this.getClass().getClassLoader());
                         hstComponentConfiguration = Optional.of(config);
                         experiencePage = true;
                         return;

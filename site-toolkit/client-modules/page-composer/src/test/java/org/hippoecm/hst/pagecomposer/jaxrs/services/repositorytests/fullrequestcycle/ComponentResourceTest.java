@@ -66,7 +66,8 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 
-public class ComponentResourceTest extends AbstractComponentResourceTest {
+public class
+ComponentResourceTest extends AbstractComponentResourceTest {
 
     @Test
     public void test_actions_for_unlocked_page_component() throws RepositoryException, IOException, ServletException {
