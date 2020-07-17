@@ -78,7 +78,10 @@ public class GenericDetailComponent extends GenericHstComponent {
 
         // include an object of type IdentifiableLinkableMetadataBaseModel to make sure that even if 'links' or
         // 'meta' is null, the fields are still present in the PMA output
-        final ApiVersionProvider.ApiVersion apiVersion = ApiVersionProvider.get();
+        ApiVersionProvider.ApiVersion apiVersion = ApiVersionProvider.get();
+        if (apiVersion == null) {
+            apiVersion = ApiVersionProvider.ApiVersion.V09;
+        }
         switch (apiVersion) {
             case V09:
                     request.setModel("testLinkAndMetaNull", new org.hippoecm.hst.pagemodelapi.v09.core.model.IdentifiableLinkableMetadataBaseModel("some-id"));
