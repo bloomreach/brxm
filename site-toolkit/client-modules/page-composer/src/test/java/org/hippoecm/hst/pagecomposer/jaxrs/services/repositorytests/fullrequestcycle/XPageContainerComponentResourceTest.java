@@ -723,7 +723,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
                     "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main/container", "hst:containercomponent",
                     "hst:xtype", "hst.vbox",
                     "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main/container/banner", "hst:containeritemcomponent",
-                    "hst:componentclassname", "org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent",
+                    "hst:componentclassname", "org.hippoecm.hst.test.BannerComponent",
             };
 
             RepositoryTestCase.build(content, session);
