@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { Configuration, PageModel, Page, initialize, isPage, destroy } from '@bloomreach/spa-sdk';
+import { Configuration, PageModel, Page, initialize, destroy } from '@bloomreach/spa-sdk';
 import { Component, Prop, Provide, Vue, Watch } from 'vue-property-decorator';
 import BrNodeComponent from './BrNodeComponent.vue';
 
@@ -58,7 +58,7 @@ export default class BrPage extends Vue {
 
   private state?: Page;
 
-  private loading?: Promise<void>;
+  private loading?: Promise<Page>;
 
   @Provide() private mapping$() {
     return this.mapping;
@@ -86,20 +86,16 @@ export default class BrPage extends Vue {
 
   @Watch('configuration', { immediate: true, deep: true })
   private async update(current: Configuration, previous?: Configuration) {
-    this.destroy();
-    this.loading = this.initialize(previous ? undefined : this.page);
-    await this.loading;
-    delete this.loading;
-  }
-
-  private async initialize(page?: Page | PageModel) {
-    if (isPage(page)) {
-      this.state = page;
+    if (!previous && this.page) {
+      this.state = initialize(this.configuration, this.page);
 
       return;
     }
 
-    this.state = await initialize(this.configuration, page);
+    this.destroy();
+    this.loading = initialize(this.configuration);
+    this.state = await this.loading;
+    delete this.loading;
   }
 
   private destroy() {

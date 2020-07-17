@@ -53,17 +53,25 @@ export class Spa {
 
   /**
    * Initializes the SPA.
-   * @param path Page path.
-   * @param model Preloaded page model.
+   * @param model A preloaded page model or URL to a page model.
    */
-  async initialize(path: string, model?: PageModel): Promise<Page> {
-    this.page = this.pageFactory.create(model || await this.api.getPage(path));
+  initialize(model: PageModel | string): this | Promise<this> {
+    if (typeof model === 'string') {
+      return this.api.getPage(model)
+        .then(this.hydrate.bind(this));
+    }
+
+    return this.hydrate(model);
+  }
+
+  private hydrate(model: PageModel) {
+    this.page = this.pageFactory.create(model);
 
     if (this.page.isPreview()) {
       this.eventBus.on('cms.update', this.onCmsUpdate);
     }
 
-    return this.page;
+    return this;
   }
 
   /**
@@ -72,5 +80,12 @@ export class Spa {
   destroy() {
     this.eventBus.off('cms.update', this.onCmsUpdate);
     delete this.page;
+  }
+
+  /**
+   * @returns The current page instance.
+   */
+  getPage(): Page | undefined {
+    return this.page;
   }
 }

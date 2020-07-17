@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +45,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.mock.MockSession;
+import org.springframework.mock.web.MockFilterConfig;
 
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
@@ -54,6 +56,7 @@ import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hippoecm.frontend.filter.NavAppRedirectFilter.CUSTOM_WHITELISTED_PATH_PREFIXES_PARAMETER;
 import static org.junit.Assert.assertThat;
 
 @RunWith(EasyMockRunner.class)
@@ -73,6 +76,7 @@ public class NavAppRedirectFilterTest {
     @Before
     public void setUp() {
         filter = new NavAppRedirectFilter();
+        filter.init(new MockFilterConfig());
         HippoServiceRegistry.register(navigationItemService, NavigationItemService.class);
     }
 
@@ -305,6 +309,28 @@ public class NavAppRedirectFilterTest {
         assertThat(capturedLocation, containsString(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER + "=" + path));
 
         verify(request, response, navigationItemService);
+    }
+
+    @Test
+    public void urls_with_custom_whitelisted_path_dont_redirect() throws IOException, ServletException {
+        MockFilterConfig filterConfig = new MockFilterConfig();
+        final String custom2 = "custom2";
+        filterConfig.addInitParameter(CUSTOM_WHITELISTED_PATH_PREFIXES_PARAMETER,
+                String.format("custom1, %s,    custom3", custom2));
+        filter.init(filterConfig);
+        expect(request.getMethod()).andReturn("GET");
+        expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn(null);
+        expect(request.getRequestURI()).andReturn("/foo/" + custom2);
+        expect(request.getContextPath()).andReturn("/foo");
+        replay(request);
+
+        chain.doFilter(request, response);
+        expectLastCall();
+        replay(chain);
+
+        filter.doFilter(request, response, chain);
+
+        verify(request, chain);
     }
 
     private void mockNavigationService(final String... appPaths) {

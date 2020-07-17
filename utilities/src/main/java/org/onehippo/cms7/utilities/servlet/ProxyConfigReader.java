@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,101 +15,79 @@
  */
 package org.onehippo.cms7.utilities.servlet;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collector;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class ProxyConfigReader {
 
-    private static final Logger log = LoggerFactory.getLogger(ProxyConfigReader.class);
     private static final String PROXY_FROM_TO_SEPARATOR = "@";
     private static final String PROXY_SEPARATOR = ",";
-    private static final String PROXY_ENABLED_MESSAGE = "Resource proxy enabled with the following mapping(s)";
-    private final String jarPathPrefix;
-    private final String proxiesAsString;
-    private final Map<String, String> proxies = new HashMap<>();
 
-    public ProxyConfigReader(final String jarPathPrefix, final String proxiesAsString) {
-        this.jarPathPrefix = jarPathPrefix;
-        this.proxiesAsString = proxiesAsString;
-        initProxies();
-        if (!proxies.isEmpty()) {
-            final List<String> messages = new ArrayList<>(proxies.size() + 1);
-            messages.add(PROXY_ENABLED_MESSAGE);
-            proxies.forEach((from, to) -> messages.add(String.format("from %s to %s", from, to)));
-            logBorderedMessage(messages);
-        }
-
-    }
-
-    private static String prependIfMissing(final String str) {
-        if (str == null || StringUtils.isEmpty("/") || StringUtils.startsWith(str, "/")) {
-            return str;
-        }
-        return "/" + str;
-    }
-
-    private static String appendIfMissing(final String str) {
-        if (str == null || StringUtils.isEmpty("/") || StringUtils.endsWith(str, "/")) {
-            return str;
-        }
-        return str + "/";
-    }
-
-    private static void logBorderedMessage(final List<String> messages) {
-        final String prefix = "** ";
-        final String suffix = " **";
-        final int fixLength = prefix.length() + suffix.length();
-
-        // find longest message
-        messages.stream().max(Comparator.comparingInt(String::length)).ifPresent(longest -> {
-            final int width = longest.length() + fixLength;
-            final String border = StringUtils.repeat("*", width);
-            log.info(border);
-            messages.forEach(msg -> {
-                final String rightPadding = StringUtils.repeat(" ", width - fixLength - msg.length());
-                log.info(prefix + msg + rightPadding + suffix);
-            });
-            log.info(border);
-        });
-    }
-
-    public Map<String, String> getProxies() {
-        return new HashMap<>(proxies);
+    private ProxyConfigReader() {
     }
 
     /**
-     * Examples configurations and mapping - jarPath=/angular - from=angular/hippo-cm - to=http://localhost:9090 Results
-     * in mapping "/hippo-cm/" -> "http://localhost:9090/"
+     * Example configurations
+     * <p></p>
+     * jarPath = /angular<br/>
+     * from = angular/hippo-cm<br/>
+     * to = http://localhost:9090<br/>
+     * Results in mapping "/hippo-cm/" -> "http://localhost:9090/"
+     * <p></p>
+     * jarPath = /angular<br/>
+     * from = angular/hippo-cm<br/>
+     * to = http://localhost:9090/cms/angular/hippo-cm
      * <p>
-     * - jarPath=/angular - from=angular/hippo-cm - to=http://localhost:9090/cms/angular/hippo-cm Results in mapping
-     * "/hippo-cm/" -> "http://localhost:9090/cms/angular/hippo-cm/"
+     * Results in mapping "/hippo-cm/" -> "http://localhost:9090/cms/angular/hippo-cm/"
      */
-    private void initProxies() {
-        if (StringUtils.isNotBlank(proxiesAsString)) {
-            Arrays.stream(StringUtils.split(proxiesAsString, PROXY_SEPARATOR))
-                    .filter(StringUtils::isNotBlank)
-                    .map(proxyLine -> StringUtils.split(proxyLine, PROXY_FROM_TO_SEPARATOR))
-                    .forEach(fromTo -> {
-                        if (fromTo.length > 1) {
-                            String from = StringUtils.trim(fromTo[0]);
-                            from = prependIfMissing(from);
-                            from = appendIfMissing(from);
-                            String to = StringUtils.trim(fromTo[1]);
-                            to = appendIfMissing(to);
-                            if (from.startsWith(jarPathPrefix + "/")) {
-                                from = StringUtils.removeStart(from, jarPathPrefix);
-                                proxies.put(from, to);
-                            }
-                        }
-                    });
+    static Set<ProxyConfig> getProxies(final String jarPathPrefix, final String proxiesAsString) {
+        if (StringUtils.isBlank(proxiesAsString)) {
+            return Collections.emptySet();
         }
+
+        return Arrays.stream(StringUtils.split(proxiesAsString, PROXY_SEPARATOR))
+                .filter(StringUtils::isNotBlank)
+                .map(proxyLine -> {
+                    final String[] fromTo = StringUtils.split(proxyLine, PROXY_FROM_TO_SEPARATOR);
+                    if (fromTo.length <= 1 || StringUtils.isBlank(fromTo[0]) || StringUtils.isBlank(fromTo[1])) {
+                        return null;
+                    }
+
+                    String from = fromTo[0].trim();
+                    from = prependSlashIfMissing(from);
+                    from = appendSlashIfMissing(from);
+                    if (!from.startsWith(jarPathPrefix + "/")) {
+                        return null;
+                    }
+                    from = StringUtils.removeStart(from, jarPathPrefix);
+
+                    String to = fromTo[1].trim();
+                    to = appendSlashIfMissing(to);
+
+                    return new ProxyConfig(from, to);
+                })
+                .filter(Objects::nonNull)
+                .collect(ProxyConfigReader.toImmutableSet());
+    }
+
+    private static String prependSlashIfMissing(final String str) {
+        return StringUtils.startsWith(str, "/") ? str : "/" + str;
+    }
+
+    private static String appendSlashIfMissing(final String str) {
+        return StringUtils.endsWith(str, "/") ? str : str + "/";
+    }
+
+    private static <T> Collector<T, Set<T>, Set<T>> toImmutableSet() {
+        return Collector.of(HashSet::new, Set::add, (l, r) -> {
+            l.addAll(r);
+            return l;
+        }, Collections::unmodifiableSet);
     }
 }

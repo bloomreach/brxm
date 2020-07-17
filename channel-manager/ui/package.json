@@ -1,0 +1,50 @@
+{
+  "name": "ui",
+  "private": true,
+  "author": "Bloomreach",
+  "license": "Apache-2.0",
+  "description": "Manage channels for Bloomreach Experience",
+  "repository": {
+    "type": "git",
+    "url": "https://code.onehippo.org/cms-community/hippo-addon-channel-manager"
+  },
+  "engines": {
+    "node": ">=12",
+    "npm": ">=6"
+  },
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "build:prod": "ng build --prod",
+    "test": "ng test --watch",
+    "test:once": "ng test",
+    "lint": "ng lint"
+  },
+  "dependencies": {
+    "@angular/animations": "10.0.2",
+    "@angular/common": "10.0.2",
+    "@angular/compiler": "10.0.2",
+    "@angular/core": "10.0.2",
+    "@angular/forms": "10.0.2",
+    "@angular/platform-browser": "10.0.2",
+    "@angular/platform-browser-dynamic": "10.0.2",
+    "@angular/router": "10.0.2",
+    "rxjs": "6.5.5",
+    "tslib": "2.0.0",
+    "zone.js": "0.10.3"
+  },
+  "devDependencies": {
+    "@angular-builders/jest": "9.0.1",
+    "@angular-devkit/build-angular": "0.1000.1",
+    "@angular/cli": "10.0.1",
+    "@angular/compiler-cli": "10.0.2",
+    "@types/jest": "26.0.3",
+    "@types/node": "12.11.1",
+    "codelyzer": "6.0.0-next.1",
+    "jest": "26.1.0",
+    "ts-node": "8.3.0",
+    "tslint": "6.1.0",
+    "typescript": "3.9.5"
+  }
+}

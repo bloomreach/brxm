@@ -16,6 +16,7 @@
 
 import {
   AfterContentChecked,
+  AfterViewInit,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
   Component,
@@ -36,7 +37,7 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { makeStateKey, StateKey, TransferState } from '@angular/platform-browser';
-import { from, BehaviorSubject, Subject } from 'rxjs';
+import { from, of, BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
 import { filter, map, mapTo, pairwise, pluck, switchMap, take } from 'rxjs/operators';
 import { destroy, initialize, isPage, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
 import { BrComponentContext } from '../br-component.directive';
@@ -54,7 +55,7 @@ interface BrNodeContext extends BrComponentContext {
   selector: 'br-page',
   templateUrl: './br-page.component.html',
 })
-export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestroy, OnInit {
+export class BrPageComponent implements AfterContentChecked, AfterViewInit, OnChanges, OnDestroy {
   /**
    * The configuration of the SPA SDK.
    * @see https://www.npmjs.com/package/@bloomreach/spa-sdk#configuration
@@ -90,6 +91,8 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
 
   private afterContentChecked$ = new Subject();
 
+  private afterViewInit$ = new ReplaySubject();
+
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private httpClient: HttpClient,
@@ -97,6 +100,25 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
     @Optional() private transferState?: TransferState,
   ) {
     this.request = this.request.bind(this);
+
+    this.state.pipe(
+      pairwise(),
+      pluck(0),
+      filter(isPage),
+    )
+    .subscribe(destroy);
+
+    this.state.pipe(
+      filter(isPage),
+      switchMap((page) => this.afterContentChecked$.pipe(take(1), mapTo(page))),
+    )
+    .subscribe((page) => page.sync());
+
+    this.state.pipe(
+      filter(() => isPlatformServer(this.platform)),
+      filter(isPage),
+    )
+    .subscribe((page) => this.stateKey && this.transferState?.set(this.stateKey, page.toJSON()));
   }
 
   get context(): BrNodeContext | undefined {
@@ -132,53 +154,39 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
     }
   }
 
-  ngOnInit(): void {
-    this.state.pipe(
-      pairwise(),
-      pluck(0),
-      filter(isPage),
-    )
-    .subscribe(destroy);
-
-    this.state.pipe(
-      filter(isPage),
-      switchMap((page) => this.afterContentChecked$.pipe(take(1), mapTo(page))),
-    )
-    .subscribe((page) => page.sync());
-
-    if (isPlatformServer(this.platform)) {
-      this.state.pipe(filter(isPage))
-        .subscribe((page) => this.stateKey && this.transferState?.set(this.stateKey, page.toJSON()));
-    }
-  }
-
   ngAfterContentChecked(): void {
     this.afterContentChecked$.next();
+  }
+
+  ngAfterViewInit(): void {
+    this.afterViewInit$.next();
   }
 
   ngOnDestroy(): void {
     this.state.next(undefined);
     this.state.complete();
     this.afterContentChecked$.complete();
+    this.afterViewInit$.complete();
   }
 
   private initialize(page: Page | PageModel | undefined): void {
-    if (isPage(page)) {
-      this.state.next(page);
-
-      return;
-    }
-
     if (this.stateKey && isPlatformBrowser(this.platform) && this.transferState?.hasKey(this.stateKey)) {
       page = page ?? this.transferState?.get(this.stateKey, undefined);
       this.transferState?.remove(this.stateKey);
     }
 
-    from(initialize({ httpClient: this.request, ...this.configuration } as Configuration, page))
-      .subscribe(state => {
-        this.state.next(state);
-        this.changeDetectorRef.detectChanges();
-      });
+    const configuration = { httpClient: this.request, ...this.configuration } as Configuration;
+    const observable = page
+      ? of(initialize(configuration, page))
+      : from(initialize(configuration));
+
+    observable.pipe(
+      switchMap(state => this.afterViewInit$.pipe(take(1), mapTo(state))),
+    )
+    .subscribe(state => {
+      this.state.next(state);
+      this.changeDetectorRef.detectChanges();
+    });
   }
 
   private request(...[{ data: body, headers, method, url }]: Parameters<Configuration['httpClient']>) {

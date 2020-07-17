@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,10 +20,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.util.PropertyParser;
@@ -120,12 +122,26 @@ public class ComponentConfigurationImpl implements ComponentConfiguration {
         return componentConfiguration.getXType();
     }
 
+    public String getCType() {
+        return componentConfiguration.getCType();
+    }
+
     public Type getComponentType() {
         return componentConfiguration.getComponentType();
     }
 
     public String getParametersInfoClassName() {
         return componentConfiguration.getParametersInfoClassName();
+    }
+
+    @Override
+    public List<DynamicParameter> getDynamicComponentParameters() {
+        return componentConfiguration.getDynamicComponentParameters();
+    }
+
+    @Override
+    public Optional<DynamicParameter> getDynamicComponentParameter(String name) {
+        return componentConfiguration.getDynamicComponentParameter(name);
     }
 
     @Override

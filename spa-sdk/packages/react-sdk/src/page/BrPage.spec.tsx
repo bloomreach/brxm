@@ -17,7 +17,7 @@
 import React from 'react';
 import { mocked } from 'ts-jest/utils';
 import { mount, shallow, ShallowWrapper } from 'enzyme';
-import { PageModel, Page, destroy, initialize, isPage } from '@bloomreach/spa-sdk';
+import { PageModel, Page, destroy, initialize } from '@bloomreach/spa-sdk';
 import { BrNode, BrProps } from '../component';
 import { BrPage } from './BrPage';
 
@@ -51,26 +51,14 @@ describe('BrPage', () => {
 
   describe('componentDidMount', () => {
     it('should initialize the SPA SDK and sync the CMS', () => {
-      expect(initialize).toHaveBeenCalledWith(config, undefined);
+      expect(initialize).toHaveBeenCalledWith(config);
 
       const page = wrapper.state('page');
       expect(page).toBeDefined();
       expect(page!.sync).toHaveBeenCalled();
     });
 
-    it('should use a page instance from props', () => {
-      mocked(isPage).mockReturnValueOnce(true);
-      mocked(initialize).mockClear();
-
-      const page = wrapper.state('page');
-      wrapper = shallow(<BrPage configuration={config} mapping={mapping} page={page} />);
-
-      expect(wrapper.state('page')).toBe(page);
-      expect(initialize).not.toBeCalled();
-    });
-
     it('should use a page model from props', () => {
-      mocked(isPage).mockReturnValueOnce(false);
       mocked(initialize).mockClear();
 
       const page = {} as PageModel;
@@ -84,8 +72,6 @@ describe('BrPage', () => {
     let page: Page;
 
     beforeEach(() => {
-      mocked(isPage).mockReturnValueOnce(true);
-
       page = wrapper.state('page')!;
       wrapper = shallow(<BrPage configuration={config} mapping={mapping} page={page} />);
 
@@ -93,23 +79,22 @@ describe('BrPage', () => {
     });
 
     it('should use a page instance from props when it is updated', () => {
-      mocked(isPage).mockReturnValueOnce(true);
-
       const newPage = { ...page } as Page;
       const configuration = { ...config };
+
+      mocked(initialize as unknown as () => Page).mockReturnValueOnce(newPage);
       wrapper.setProps({ configuration, page: newPage });
 
       expect(wrapper.state('page')).toBe(newPage);
-      expect(initialize).not.toBeCalled();
+      expect(initialize).toBeCalledWith(configuration, newPage);
     });
 
     it('should initialize page on props update when page from props is not updated', () => {
       const configuration = { ...config };
       wrapper.setProps({ configuration });
 
-      expect(isPage).toBeCalledWith(undefined);
       expect(destroy).toHaveBeenCalledWith(page);
-      expect(initialize).toBeCalledWith(configuration, undefined);
+      expect(initialize).toBeCalledWith(configuration);
       expect(page.sync).toHaveBeenCalled();
     });
   });

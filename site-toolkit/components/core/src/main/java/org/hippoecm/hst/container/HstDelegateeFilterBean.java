@@ -70,6 +70,7 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
+import org.hippoecm.hst.util.PathUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
@@ -610,7 +611,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             String redirect = StringUtils.substringBefore(previewURL, "?");
 
             if (isNotBlank(pathInfo)) {
-                redirect = redirect + pathInfo;
+                redirect = redirect.endsWith("/")
+                    ? redirect + pathInfo.substring(1)
+                    : redirect + pathInfo;
             }
 
             final JwtTokenService jwtTokenService = HippoServiceRegistry.getService(JwtTokenService.class);

@@ -21,7 +21,7 @@ import { BrSdkModule } from '@bloomreach/ng-sdk';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { IndexComponent, CMS_BASE_URL, SPA_BASE_URL } from './index/index.component';
+import { IndexComponent, API_BASE_URL, CMS_BASE_URL, SPA_BASE_URL } from './index/index.component';
 import { IsExternalLinkPipe } from './is-external-link.pipe';
 import { IsInternalLinkPipe } from './is-internal-link.pipe';
 import { BannerComponent } from './banner/banner.component';
@@ -58,6 +58,7 @@ import { NewsItemComponent } from './news-item/news-item.component';
     AppRoutingModule,
   ],
   providers: [
+    { provide: API_BASE_URL, useValue: environment.apiBaseUrl },
     { provide: CMS_BASE_URL, useValue: environment.cmsBaseUrl },
     { provide: SPA_BASE_URL, useValue: environment.spaBaseUrl },
   ],

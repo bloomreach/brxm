@@ -16,8 +16,10 @@
 package org.hippoecm.hst.configuration.components;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -195,6 +197,34 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     Map<String, String> getParameters();
 
     /**
+     * Returns the list of all named and residual component parameters
+     * @return the list of all named and residual component parameters, and an empty list if no parameters present
+     */
+    default List<DynamicParameter> getDynamicComponentParameters() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns the list of a component's field groups
+     * @return
+     */
+    List<DynamicFieldGroup> getFieldGroups();
+
+    /**
+     * Returns a reference to a catalog item
+     * @return a reference to a catalog item
+     */
+    String getComponentDefinition();
+
+    /**
+     * Returns an optional of the component parameter(named or residual) that has the specified name
+     * @return an optional of the component parameter(named or residual) that has the specified name, and an empty optional if nothing found
+     */
+    default Optional<DynamicParameter> getDynamicComponentParameter(String name) {
+        return Optional.empty();
+    }
+    
+    /**
      * Parameters can have prefixes (variant). If there are prefixes in used, this method returns the (possibly
      * unmodifiable) {@link Set} of prefixes / variants in use. Only the prefixes/variants on the current component are
      * returned, thus not for descendant components like {@link #getVariants()} does.
@@ -271,6 +301,11 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     String getXType();
 
     /**
+     * Allows to 'map' a specific component (catalog item type) to their implementation logic.
+     */
+    String getCType();
+
+    /**
      * The filter tag (see {@link org.hippoecm.hst.core.request.HstRequestContext#getComponentFilterTags}) for this
      * component.
      *
@@ -309,6 +344,11 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * available
      */
     Calendar getLastModified();
+
+    /**
+     * @return the hst template property if available
+     */
+    String getHstTemplate();
 
     /**
      * <code>true</code> when this {@link HstComponentConfiguration} is marked as deleted. An {@link HstComponentConfiguration} that

@@ -42,9 +42,11 @@ export default class Index extends React.Component<IndexProps> {
   static async getInitialProps(context: NextPageContext) {
     const cookies = parseCookies(context);
     const configuration = {
+      apiBaseUrl: publicRuntimeConfig.apiBaseUrl,
       cmsBaseUrl: publicRuntimeConfig.cmsBaseUrl,
       spaBaseUrl: publicRuntimeConfig.spaBaseUrl,
-      request: { path: context.asPath || '' },
+      endpointQueryParameter: 'brxm',
+      request: { path: context.asPath ?? '' },
       visitor:  cookies[VISITOR_COOKIE]
         ? JSON.parse(cookies[VISITOR_COOKIE])
         : Index.visitor,
@@ -71,9 +73,14 @@ export default class Index extends React.Component<IndexProps> {
       );
     }
 
-    // Limit the number of hosts that are allowed to embed your application.
-    // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
-    context?.res?.setHeader('Content-Security-Policy', `frame-ancestors 'self' ${new URL(configuration.cmsBaseUrl).host}`);
+    if (configuration.cmsBaseUrl) {
+      // Limit the number of hosts that are allowed to embed your application.
+      // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
+      context?.res?.setHeader(
+        'Content-Security-Policy',
+        `frame-ancestors 'self' ${new URL(configuration.cmsBaseUrl, `http://${context.req?.headers.host}`).host}`,
+      );
+    }
 
     return { configuration, page };
   }

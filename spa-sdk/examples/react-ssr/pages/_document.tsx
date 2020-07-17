@@ -27,12 +27,12 @@ export default class DefaultDocument extends Document {
 
           <title>brXM + Next.js = ♥️</title>
 
-          <link rel="shortcut icon" type="image/png" href={`${process.env.PUBLIC_URL}/static/favicon.png`} sizes="64x64" />
+          <link rel="shortcut icon" type="image/png" href={`${process.env.PUBLIC_URL ?? ''}/static/favicon.png`} sizes="64x64" />
           <link rel="stylesheet" media="screen"
             href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
             integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
             crossOrigin="anonymous" />
-          <link rel="stylesheet" href={`${process.env.PUBLIC_URL}/static/brx-theme.css`} media="screen" />
+          <link rel="stylesheet" href={`${process.env.PUBLIC_URL ?? ''}/static/brx-theme.css`} media="screen" />
 
           <Head />
         </head>
