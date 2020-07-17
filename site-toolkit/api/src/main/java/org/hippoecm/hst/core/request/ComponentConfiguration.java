@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,11 +15,14 @@
  */
 package org.hippoecm.hst.core.request;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 
 /**
  * A <code>ComponentConfiguration</code> provides some configuration information to a component.
@@ -40,6 +43,9 @@ public interface ComponentConfiguration extends ParameterConfiguration {
      */
     Map<String, String> getLocalParameters(ResolvedSiteMapItem hstResolvedSiteMapItem);
 
+    List<DynamicParameter> getDynamicComponentParameters();
+
+    Optional<DynamicParameter> getDynamicComponentParameter(String name);
 
     /**
      * Also see {@link #getParameters(ResolvedSiteMapItem)}. Normally, you use {@link #getParameters(ResolvedSiteMapItem)}, unless you want to access
@@ -90,7 +96,12 @@ public interface ComponentConfiguration extends ParameterConfiguration {
      * @return the xtype of this ComponentConfiguration and <code>null</code> if the component does not have one
      */
     String getXType();
-    
+
+    /**
+     * @return the ctype of this ComponentConfiguration and <code>null</code> if the component does not have one
+     */
+    String getCType();
+
     /**
      * 
      * @return the {@link Type} of this {@link ComponentConfiguration}

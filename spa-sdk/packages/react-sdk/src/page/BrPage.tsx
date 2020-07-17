@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { Configuration, PageModel, Page, destroy, initialize, isPage } from '@bloomreach/spa-sdk';
+import { Configuration, PageModel, Page, destroy, initialize } from '@bloomreach/spa-sdk';
 import { BrMappingContext, BrNode } from '../component';
 import { BrPageContext } from './BrPageContext';
 
@@ -60,17 +60,21 @@ export class BrPage extends React.Component<BrPageProps, BrPageState> {
   constructor(props: BrPageProps) {
     super(props);
 
-    this.state = {};
+    this.state = { page: props.page && initialize(props.configuration, props.page) };
   }
 
   componentDidMount() {
-    this.initializePage();
+    if (!this.props.page) {
+      this.initialize();
+    }
+
+    this.state.page?.sync();
   }
 
   componentDidUpdate(prevProps: BrPageProps, prevState: BrPageState) {
     if (this.props.configuration !== prevProps.configuration || this.props.page !== prevProps.page) {
-      this.destroyPage();
-      this.initializePage(this.props.page === prevProps.page);
+      this.destroy();
+      this.initialize(this.props.page === prevProps.page);
     }
 
     if (this.state.page !== prevState.page) {
@@ -79,24 +83,24 @@ export class BrPage extends React.Component<BrPageProps, BrPageState> {
   }
 
   componentWillUnmount() {
-    this.destroyPage();
+    this.destroy();
   }
 
-  private async initializePage(force = false) {
-    const page = force ? undefined : this.props.page;
-
-    if (isPage(page)) {
-      return this.setState({ page });
-    }
+  private async initialize(force = false) {
+    const model = force ? undefined : this.props.page;
 
     try {
-      this.setState({ page: await initialize(this.props.configuration, page) });
+      this.setState({
+        page: model
+          ? initialize(this.props.configuration, model)
+          : await initialize(this.props.configuration),
+      });
     } catch (error) {
       this.setState(() => { throw error; });
     }
   }
 
-  private destroyPage() {
+  private destroy() {
     if (!this.state.page) {
       return;
     }

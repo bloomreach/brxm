@@ -1,0 +1,27 @@
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/component/support/bean/info/dynamic/MenuDynamicComponentInfo
+    : /es:
+        jcr:primaryType: hipposys:resourcebundle
+        menu: Nombre de menú
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/component/support/bean/info/dynamic/DocumentQueryDynamicComponentInfo
+    : /es:
+        jcr:primaryType: hipposys:resourcebundle
+        scope.hint: La ruta del repositorio
+        sorting.group: Clasificación
+        sortOrder#desc: Descendente
+        hideFutureItems: Ocultar documentos futuros
+        list.group: Selección de contenido
+        pageSize: Tamaño de página
+        dateField: Campo de fecha del documento (ocultable)
+        includeSubtypes: Incluir subtipos de documentos
+        sortField.hint: Utilizar el nombre técnico
+        dateField.hint: Utilizar el nombre técnico
+        documentTypes: Tipos de documentos
+        scope: Ruta de documentos
+        sortOrder: Orden de clasificación
+        sortField: Campo de clasificación
+        sortOrder#asc: Ascendente
+        hidePastItems: Ocultar documentos pasados
+        filter.group: Paginación
+        documentTypes.hint: Utilizar los nombres técnicos separados por comas

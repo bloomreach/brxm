@@ -1352,4 +1352,142 @@ describe('ContentEditorService', () => {
       });
     });
   });
+
+  describe('getDocumentFieldValue', () => {
+    beforeEach(() => {
+      spyOn(ContentEditor, 'getDocument').and.returnValue({
+        fields: {
+          string: [{ value: 'string value' }],
+          multiple: [{ value: 'value 1' }, { value: 'value 2' }],
+          compound: [{
+            fields: {
+              field1: [{ value: 'value 1' }],
+              field2: [{ value: 'value 2' }],
+            },
+          }],
+          multipleCompound: [
+            {
+              fields: {
+                field1: [{ value: 'value 1' }],
+                field2: [{ value: 'value 2' }],
+              },
+            },
+            {
+              fields: {
+                field1: [{ value: 'value 3' }],
+                field2: [{ value: 'value 4' }],
+              },
+            },
+          ],
+          choice: [
+            { chosenId: 'string', chosenValue: { value: 'value' } },
+            {
+              chosenId: 'compound',
+              chosenValue: {
+                fields: { string: [{ value: 'value' }] },
+              },
+            },
+          ],
+        },
+      });
+
+      spyOn(ContentEditor, 'getDocumentType').and.returnValue({
+        fields: [
+          { id: 'string', type: 'STRING', multiple: false },
+          { id: 'multiple', type: 'STRING', multiple: true },
+          {
+            id: 'compound',
+            type: 'COMPOUND',
+            multiple: false,
+            fields: [
+              { id: 'field1', type: 'STRING', multiple: false },
+              { id: 'field2', type: 'STRING', multiple: false },
+            ],
+          },
+          {
+            id: 'multipleCompound',
+            type: 'COMPOUND',
+            multiple: true,
+            fields: [
+              { id: 'field1', type: 'STRING', multiple: false },
+              { id: 'field2', type: 'STRING', multiple: false },
+            ],
+          },
+          {
+            id: 'choice',
+            type: 'CHOICE',
+            multiple: true,
+            choices: {
+              string: { id: 'field1', type: 'STRING', multiple: false },
+              compound: {
+                id: 'field2',
+                type: 'COMPOUND',
+                multiple: false,
+                fields: [{ id: 'string', type: 'STRING', multiple: false }],
+              },
+            },
+          },
+        ],
+      });
+    });
+
+    it('should return a single string value', () => {
+      expect(ContentEditor.getDocumentFieldValue('string')).toBe('string value');
+    });
+
+    it('should return multiple string values', () => {
+      expect(ContentEditor.getDocumentFieldValue('multiple')).toEqual(['value 1', 'value 2']);
+    });
+
+    it('should return a single value from the multiple values field', () => {
+      expect(ContentEditor.getDocumentFieldValue('multiple', 0)).toBe('value 1');
+      expect(ContentEditor.getDocumentFieldValue('multiple', 1)).toBe('value 2');
+    });
+
+    it('should return a compound value', () => {
+      expect(ContentEditor.getDocumentFieldValue('compound')).toEqual({
+        field1: 'value 1',
+        field2: 'value 2',
+      });
+    });
+
+    it('should return a property of a compound value', () => {
+      expect(ContentEditor.getDocumentFieldValue('compound', 'field1')).toBe('value 1');
+      expect(ContentEditor.getDocumentFieldValue('compound', 'field2')).toBe('value 2');
+    });
+
+    it('should return multiple compound values', () => {
+      expect(ContentEditor.getDocumentFieldValue('multipleCompound')).toEqual([
+        { field1: 'value 1', field2: 'value 2' },
+        { field1: 'value 3', field2: 'value 4' },
+      ]);
+    });
+
+    it('should return a property of multiple compound values field', () => {
+      expect(ContentEditor.getDocumentFieldValue('multipleCompound', 0)).toEqual({
+        field1: 'value 1',
+        field2: 'value 2',
+      });
+      expect(ContentEditor.getDocumentFieldValue('multipleCompound', 1)).toEqual({
+        field1: 'value 3',
+        field2: 'value 4',
+      });
+
+      expect(ContentEditor.getDocumentFieldValue('multipleCompound', 0, 'field1')).toBe('value 1');
+      expect(ContentEditor.getDocumentFieldValue('multipleCompound', 1, 'field1')).toBe('value 3');
+    });
+
+    it('should return a choice field value', () => {
+      expect(ContentEditor.getDocumentFieldValue('choice')).toEqual([
+        'value',
+        { string: 'value' },
+      ]);
+    });
+
+    it('should return a property of a choice field value', () => {
+      expect(ContentEditor.getDocumentFieldValue('choice', 0)).toBe('value');
+      expect(ContentEditor.getDocumentFieldValue('choice', 1)).toEqual({ string: 'value' });
+      expect(ContentEditor.getDocumentFieldValue('choice', 1, 'string')).toBe('value');
+    });
+  });
 });

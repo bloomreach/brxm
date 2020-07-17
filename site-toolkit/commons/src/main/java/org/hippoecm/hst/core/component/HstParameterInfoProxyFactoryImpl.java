@@ -21,17 +21,20 @@ import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.parameters.EmptyPropertyEditor;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ParameterConfiguration;
 import org.slf4j.Logger;
@@ -41,8 +44,10 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
 
     private static final Logger log = LoggerFactory.getLogger(HstParameterInfoProxyFactoryImpl.class);
 
-    public final static String TEMPLATE_PARAM_NAME = "org.hippoecm.hst.core.component.template";
-    public final static TemplateParameterInfoHolder TEMPLATE_PARAMETER_INFO_HOLDER = new TemplateParameterInfoHolder();
+    public static final String TEMPLATE_PARAM_NAME = "org.hippoecm.hst.core.component.template";
+    public static final TemplateParameterInfoHolder TEMPLATE_PARAMETER_INFO_HOLDER = new TemplateParameterInfoHolder();
+    public static final String GET_RESIDUAL_PARAMETER_VALUES_METHOD = "getResidualParameterValues";
+    public static final String GET_COMPONENT_PARAMETERS_METHOD = "getDynamicComponentParameters";
 
     @ParametersInfo(type = TemplateParameterInfo.class)
     public static class TemplateParameterInfoHolder {
@@ -137,6 +142,36 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
                 return null;
             }
 
+            if (GET_RESIDUAL_PARAMETER_VALUES_METHOD.equals(methodName)) {
+                final HashMap<String, Object> componentParameters = new HashMap<>();
+                if (parameterConfiguration instanceof ComponentConfiguration) {
+                    final ComponentConfiguration componentConfiguration = (ComponentConfiguration) parameterConfiguration;
+                    final List<DynamicParameter> dynamicComponentParameters = componentConfiguration
+                            .getDynamicComponentParameters();
+                    for (final DynamicParameter hstComponentParameter : dynamicComponentParameters) {
+                        if (!hstComponentParameter.isResidual()) {
+                            continue;
+                        }
+                        String parameterValue = getParameterValue(hstComponentParameter.getName(),
+                                parameterConfiguration, request);
+                        if (StringUtils.isEmpty(parameterValue)) {
+                            parameterValue = hstComponentParameter.getDefaultValue();
+                        }
+
+                        componentParameters.put(hstComponentParameter.getName(), converter.convert(parameterValue,
+                                hstComponentParameter.getValueType().getDefaultReturnType()));
+                    }
+                }
+                return Collections.unmodifiableMap(componentParameters);
+
+            } else if (GET_COMPONENT_PARAMETERS_METHOD.equals(methodName)) {
+                if (parameterConfiguration instanceof ComponentConfiguration) {
+                    final ComponentConfiguration componentConfiguration = (ComponentConfiguration) parameterConfiguration;
+                    return Collections.unmodifiableList(componentConfiguration.getDynamicComponentParameters());
+                }
+                return Collections.emptyList();
+            }
+
             Parameter parameterAnnotation = method.getAnnotation(Parameter.class);
             if (parameterAnnotation == null) {
                 throw new IllegalArgumentException("Component " + parameterConfiguration.toString() + " uses ParametersInfo annotation, but "
@@ -148,6 +183,8 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
                 throw new IllegalArgumentException("The parameter name is empty.");
             }
 
+            //TODO: While merging component parameters and interface parameter, overriding/removing should be handled. 
+            
             String parameterValue = getParameterValue(parameterName, parameterConfiguration, request);
             String defaultValue = null;
             if (parameterValue == null || "".equals(parameterValue)) {

@@ -11,3 +11,8 @@ definitions:
         jcr:primaryType: hst:component
         hst:componentclassname: org.hippoecm.hst.pagemodelapi.common.components.HttpSessionComponent
         hst:referencecomponent: hst:abstractpages/basepage
+      /residualparamstestpage:
+        jcr:primaryType: hst:component
+        /container:
+          jcr:primaryType: hst:containercomponentreference
+          hst:referencecomponent: residualparamstestcontainer

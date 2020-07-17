@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,28 +15,75 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.mock.configuration.components.MockHstComponentConfiguration;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
+import org.hippoecm.hst.pagecomposer.jaxrs.property.SwitchTemplatePropertyRepresentationFactory;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
+import org.hippoecm.hst.platform.configuration.components.DynamicComponentParameter;
+import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
+import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.mock.MockNode;
 
+import javax.jcr.RepositoryException;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_PARAMETER_PREFIX;
+import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getProperties;
 import static org.junit.Assert.fail;
 
 public class ParametersInfoProcessorTest {
+
+    public static class TestHstComponentConfigurationService extends HstComponentConfigurationService {
+
+        public TestHstComponentConfigurationService(String id) {
+            this.id = id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public void populateFieldGroups(ClassLoader websiteClassLoader) {
+            super.populateFieldGroups(websiteClassLoader);
+        }
+
+        public void setComponentClassName(String componentClassName) {
+            this.componentClassName = componentClassName;
+        }
+
+        public void setCanonicalStoredLocation(String location) {
+            this.canonicalStoredLocation = location;
+        }
+
+        public void setDynamicComponentParameters(List<DynamicParameter> dynamicParameters) {
+            this.hstDynamicComponentParameters = dynamicParameters;
+        }
+    }
+
 
     @ParametersInfo(type=NewstyleInterface.class)
     static class NewstyleContainer {
@@ -46,12 +93,63 @@ public class ParametersInfoProcessorTest {
     static class NewstyleSubContainer {
     }
 
+    protected MockNode containerItemNode;
+    protected MockHstComponentConfiguration mockHstComponentConfiguration;
+    protected ContainerItemHelper helper;
+
+    protected List<PropertyRepresentationFactory> propertyPresentationFactories= new ArrayList<>();
+    {
+        propertyPresentationFactories.add(new SwitchTemplatePropertyRepresentationFactory());
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        mockHstComponentConfiguration = new MockHstComponentConfiguration("pages/newsList");
+        containerItemNode = MockNode.root().addNode("item", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+
+        final Map<String, HstComponentConfiguration> compConfigMocks = new HashMap<>();
+        compConfigMocks.put(containerItemNode.getIdentifier(), mockHstComponentConfiguration);
+        helper = new ContainerItemHelper() {
+            @Override
+            public HstComponentConfiguration getConfigObject(final String itemId) {
+                return compConfigMocks.get(itemId);
+            }
+        };
+
+    }
+
+    protected HstComponentConfiguration createComponentReference(Class<?> componentClass) {
+
+        final TestHstComponentConfigurationService componentReference = new TestHstComponentConfigurationService("id");
+        componentReference.setComponentClassName(componentClass.getName());
+        componentReference.setCanonicalStoredLocation("/");
+        final ParametersInfo parameterInfo = componentClass.getAnnotation(ParametersInfo.class);
+        componentReference.populateFieldGroups(this.getClass().getClassLoader());
+
+        final Stream<Method> stream = Arrays.stream(parameterInfo.type().getMethods());
+        final Map<Parameter, Method> paramMap = stream.collect(Collectors.toMap(x -> x.getAnnotation(Parameter.class), a -> a));
+        final List<DynamicParameter> dynamicParameters = getDynamicParameters(paramMap);
+        componentReference.setDynamicComponentParameters(dynamicParameters);
+
+        return componentReference;
+    }
+
+    private List<DynamicParameter> getDynamicParameters(final Map<Parameter, Method> parameters) {
+        return parameters.entrySet().stream()
+                .map(e -> new DynamicComponentParameter(e.getKey(), e.getValue())).collect(Collectors.toList());
+    }
+
     @Test
-    public void additionalAnnotationBasedProcessing() {
+    public void additionalAnnotationBasedProcessing() throws RepositoryException {
         final String currentMountCanonicalContentPath = "/content/documents/testchannel";
 
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, currentMountCanonicalContentPath);
+        final HstComponentConfiguration componentReference = createComponentReference(NewstyleContainer.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parameterInfo.type(),
+                null,
+                currentMountCanonicalContentPath,
+                DEFAULT_PARAMETER_PREFIX, containerItemNode, helper, propertyPresentationFactories, componentReference);
+
         assertEquals(14, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
@@ -117,12 +215,26 @@ public class ParametersInfoProcessorTest {
 
     }
 
+    List<ContainerItemComponentPropertyRepresentation> getProperties(final Class<?> componentClass, final Locale locale,
+                                                                     final String contentPath) {
+        try {
+            final HstComponentConfiguration componentReference = createComponentReference(componentClass);
+            final ParametersInfo parametersInfo = componentClass.getAnnotation(ParametersInfo.class);
+            return getPopulatedProperties(parametersInfo.type(),
+                    locale,
+                    contentPath,
+                    DEFAULT_PARAMETER_PREFIX, containerItemNode, helper, propertyPresentationFactories, componentReference);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Test
-    public void dropDownResourceBundleProcessing() {
+    public void dropDownResourceBundleProcessing() throws RepositoryException {
         final String currentMountCanonicalContentPath = "/content/documents/testchannel";
 
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, currentMountCanonicalContentPath);
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(NewstyleContainer.class, null, currentMountCanonicalContentPath);
         assertEquals(14, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
@@ -145,8 +257,7 @@ public class ParametersInfoProcessorTest {
     public void dropDownValueListProviderProcessing() {
         final String currentMountCanonicalContentPath = "/content/documents/testchannel";
 
-        ParametersInfo parameterInfo = DropDownComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, 
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(DropDownComponent.class, null,
                 currentMountCanonicalContentPath);
 
         assertEquals(1, properties.size());
@@ -162,8 +273,7 @@ public class ParametersInfoProcessorTest {
     public void dropDownValueListProviderLocalizedProcessing() {
         final String currentMountCanonicalContentPath = "/content/documents/testchannel";
 
-        ParametersInfo parameterInfo = DropDownComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, Locale.FRENCH, 
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(DropDownComponent.class, Locale.FRENCH,
                 currentMountCanonicalContentPath);
 
         assertEquals(1, properties.size());
@@ -189,9 +299,7 @@ public class ParametersInfoProcessorTest {
     public void valuesAreLocalized() {
         final String currentMountCanonicalContentPath = "/content/documents/testchannel";
 
-        ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
-
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(NewstyleContainer.class, new Locale("nl"), currentMountCanonicalContentPath);
         assertEquals(14, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
@@ -244,8 +352,7 @@ public class ParametersInfoProcessorTest {
      */
     @Test
     public void assertBreadthFirstInterfaceHierarchy() {
-        final ParametersInfoProcessor parametersInfoProcessor = new ParametersInfoProcessor();
-        final List<Class<?>> hierarchy = parametersInfoProcessor.getBreadthFirstInterfaceHierarchy(a.class);
+        final List<Class<?>> hierarchy = ParametersInfoProcessor.getBreadthFirstInterfaceHierarchy(a.class);
         assertEquals(hierarchy.get(0), a.class);
         assertEquals(hierarchy.get(1), b.class);
         assertEquals(hierarchy.get(2), c.class);
@@ -260,9 +367,7 @@ public class ParametersInfoProcessorTest {
     public void valuesAreInheritedFromSuperTypesAndLocalized() {
         final String currentMountCanonicalContentPath = "/content/documents/testchannel";
 
-        ParametersInfo parameterInfo = NewstyleSubContainer.class.getAnnotation(ParametersInfo.class);
-
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(NewstyleSubContainer.class, new Locale("nl"), currentMountCanonicalContentPath);
 
         // NewstyleSubContainer has 2 properties and NewstyleContainer which it extends has 14 properties, BUT
         // NewstyleSubContainer overrides one property of NewstyleContainer, hence total should be 14 + 1
@@ -313,12 +418,10 @@ public class ParametersInfoProcessorTest {
 
     @Test
     public void testInvalidReturnTypeAnnotation() {
-        ParametersInfo parameterInfo = InvalidReturnTypeAnnotation.class.getAnnotation(ParametersInfo.class);
         // the getProperties below are expected to log some warnings
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(InvalidReturnTypeAnnotation.class, null, "");
         assertEquals(1, properties.size());
-
-        // Since the @DropDownList is not compatible with returnType int  
+        // Since the @DropDownList is not compatible with returnType int
         // we expect that ParameterType#getType(...) defaults back to getType 'numberfield' for dropdown
         ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(0);
         assertEquals("numberfield", dropDownProperty.getType());
@@ -330,8 +433,7 @@ public class ParametersInfoProcessorTest {
 
     @Test
     public void fieldGroupListGroupsParameters() {
-        ParametersInfo parameterInfo = FieldGroupComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(FieldGroupComponent.class, null, "");
         assertEquals("number of properties", 3, properties.size());
         assertNameAndGroupLabel(properties.get(0), "three", "Group1");
         assertNameAndGroupLabel(properties.get(1), "one", "Group1");
@@ -350,8 +452,7 @@ public class ParametersInfoProcessorTest {
 
     @Test
     public void emptyFieldGroupListIncludesAllParameters() {
-        ParametersInfo parameterInfo = EmptyFieldGroupListComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(EmptyFieldGroupListComponent.class, null, "");
         assertEquals("number of properties", 1, properties.size());
         assertNameAndGroupLabel(properties.get(0), "one", null);
     }
@@ -373,8 +474,7 @@ public class ParametersInfoProcessorTest {
 
     @Test
     public void fieldGroupWithoutTitleUsesEmptyTitle() {
-        ParametersInfo parameterInfo = FieldGroupWithoutTitleComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(FieldGroupWithoutTitleComponent.class, null, "");
         assertEquals("number of properties", 2, properties.size());
         assertNameAndGroupLabel(properties.get(0), "two", "");
         assertNameAndGroupLabel(properties.get(1), "one", "");
@@ -397,8 +497,7 @@ public class ParametersInfoProcessorTest {
 
     @Test
     public void fieldGroupWithUntranslatedTitleUsesKeyAsTitle() {
-        ParametersInfo parameterInfo = FieldGroupWithUntranslatedTitleComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(FieldGroupWithUntranslatedTitleComponent.class, null, "");
         assertEquals("number of properties", 1, properties.size());
         assertNameAndGroupLabel(properties.get(0), "parameter", "group");
     }
@@ -417,8 +516,7 @@ public class ParametersInfoProcessorTest {
 
     @Test
     public void unknownFieldGroupParameterIsIgnored() {
-        ParametersInfo parameterInfo = FieldGroupWithUnknownParameterComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(FieldGroupWithUnknownParameterComponent.class, null, "");
         assertEquals("number of properties", 1, properties.size());
         assertNameAndGroupLabel(properties.get(0), "parameter", null);
     }
@@ -442,8 +540,7 @@ public class ParametersInfoProcessorTest {
 
     @Test
     public void duplicateFieldGroupParameterBelongsToFirstGroup() {
-        ParametersInfo parameterInfo = FieldGroupWithDuplicateParameterComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(FieldGroupWithDuplicateParameterComponent.class, null, "");
         assertEquals("number of properties", 1, properties.size());
         assertNameAndGroupLabel(properties.get(0), "parameter", "group1");
     }
@@ -471,8 +568,7 @@ public class ParametersInfoProcessorTest {
 
     @Test
     public void fieldGroupWithSubsetOfParametersIncludesAllOtherParametersInSeparateLastGroup() {
-        ParametersInfo parameterInfo = FieldGroupWithSubsetOfParametersComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(FieldGroupWithSubsetOfParametersComponent.class, null, "");
         assertEquals("number of properties", 3, properties.size());
         assertNameAndGroupLabel(properties.get(0), "one", "group");
         assertNameAndGroupLabel(properties.get(1), "two", "group");
@@ -560,8 +656,7 @@ public class ParametersInfoProcessorTest {
 
     @Test
     public void fieldGroupsAreInherited() {
-        ParametersInfo parameterInfo = FieldGroupInheritedComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(FieldGroupInheritedComponent.class, null, "");
         assertEquals("number of properties", 12, properties.size());
         assertNameAndGroupLabel(properties.get(0), "a1", "group-a1-c2-b3-d1");
         assertNameAndGroupLabel(properties.get(1), "c2", "group-a1-c2-b3-d1");
@@ -604,8 +699,7 @@ public class ParametersInfoProcessorTest {
 
     @Test
     public void inheritedFieldGroupsAreMerged() {
-        ParametersInfo parameterInfo = InheritedFieldGroupsAreMergedComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(InheritedFieldGroupsAreMergedComponent.class, null, "");
         assertEquals("number of properties", 12, properties.size());
         assertNameAndGroupLabel(properties.get(0), "a1", "group-b1-d2");
         assertNameAndGroupLabel(properties.get(1), "b1", "group-b1-d2");
@@ -646,8 +740,7 @@ public class ParametersInfoProcessorTest {
 
     @Test
     public void inheritedEmptyFieldGroupsAreMerged() {
-        ParametersInfo parameterInfo = InheritedEmptyFieldGroupsAreMergedComponent.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(InheritedEmptyFieldGroupsAreMergedComponent.class, null, "");
         assertEquals("number of properties", 12, properties.size());
         assertNameAndGroupLabel(properties.get(0), "b1", "group-b1-d2");
         assertNameAndGroupLabel(properties.get(1), "d2", "group-b1-d2");

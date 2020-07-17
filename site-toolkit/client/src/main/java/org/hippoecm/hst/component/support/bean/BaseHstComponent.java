@@ -16,6 +16,7 @@
 package org.hippoecm.hst.component.support.bean;
 
 import java.util.Map;
+import java.util.Optional;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
@@ -24,6 +25,7 @@ import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -103,6 +105,10 @@ public class BaseHstComponent extends GenericHstComponent {
         return this.getComponentConfiguration().getParameters(RequestContextProvider.get().getResolvedSiteMapItem());
     }
 
+    public Optional<DynamicParameter> getDynamicComponentParameter(String name) {
+        return this.getComponentConfiguration().getDynamicComponentParameter(name);
+    }
+    
     /**
      * See {@link #getComponentParameter(String)}, but now, only resolved parameters directly on the HstComponent are taken into
      * account: in other words, no inheritance of parameters is applied
