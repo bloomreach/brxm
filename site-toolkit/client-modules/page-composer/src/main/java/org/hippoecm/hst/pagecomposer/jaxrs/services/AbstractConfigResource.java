@@ -277,15 +277,16 @@ public class AbstractConfigResource {
     }
 
     public Response respondContainerItem(final ContainerItem containerItem,
-                                                final boolean requiresReload,
-                                                final Response.StatusType statusType,
-                                                final String msg) throws RepositoryException {
+                                         final boolean requiresReload,
+                                         final Response.StatusType statusType,
+                                         final String msg) throws RepositoryException {
         final Node containerItemNode = containerItem.getContainerItem();
 
         log.info("Returning success response for container item '{}':  StatusType : {},  ReloadRequired : {}," +
                 "Message = {}", containerItemNode.getPath(), statusType, requiresReload, msg);
 
-        final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation().represent(containerItemNode, containerItem.getTimeStamp());
+        final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation()
+                .represent(containerItemNode, containerItem.getComponentDefinition(), containerItem.getTimeStamp());
 
         final ExtResponseRepresentation entity = new ExtResponseRepresentation(containerItemRepresentation);
         entity.setReloadRequired(requiresReload);

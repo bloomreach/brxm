@@ -36,6 +36,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemImpl;
@@ -49,18 +50,20 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.checkoutCorrectBranch;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getDocumentWorkflow;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getInternalWorkflowSession;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getWorkspaceNode;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.findNewName;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.getCatalogItem;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
 
@@ -120,8 +123,13 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
             // containerNode. Find a correct newName and create a new node.
-            final String newItemNodeName = ContainerUtils.findNewName(catalogItem.getName(), containerNode);
-            final Node newItem = JcrUtils.copy(workflowSession, catalogItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
+            final String newItemNodeName = findNewName(catalogItem.getName(), containerNode);
+
+            final Node newItem = containerNode.addNode(newItemNodeName, NODETYPE_HST_CONTAINERITEMCOMPONENT);
+
+            final HstComponentConfiguration componentDefinition = getCatalogItem(pageComposerContextService, catalogItem);
+
+            newItem.setProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION, componentDefinition.getId());
 
             if (siblingItemUUID != null) {
                 try {
@@ -146,7 +154,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             documentWorkflow.saveUnpublished();
 
-            return respondContainerItem(new ContainerItemImpl(newItem, updatedTimestamp.getTimeInMillis()), isCheckedOut,
+            return respondContainerItem(new ContainerItemImpl(newItem, componentDefinition, updatedTimestamp.getTimeInMillis()), isCheckedOut,
                     Response.Status.CREATED, "Successfully created item");
 
         };

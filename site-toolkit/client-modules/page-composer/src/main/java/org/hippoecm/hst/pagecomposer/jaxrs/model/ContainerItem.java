@@ -17,8 +17,12 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+
 public interface ContainerItem {
     Node getContainerItem();
+
+    HstComponentConfiguration getComponentDefinition();
 
     long getTimeStamp();
 }
