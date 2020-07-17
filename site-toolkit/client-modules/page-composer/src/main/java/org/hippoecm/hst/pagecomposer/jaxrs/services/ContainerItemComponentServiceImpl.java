@@ -241,6 +241,13 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
 
         final HstComponentsConfiguration componentsConfiguration = hstSite.getComponentsConfiguration();
         final Map<String, HstComponentConfiguration> componentConfigurations = componentsConfiguration.getComponentConfigurations();
+
+        // TODO Below is EXTREMELY tricky and actuall brittle: from a componentItemNode you do not have enough information
+        // TODO to backtrack the HstComponentConfiguration instance that was clicked on in the Channel Mgr: Namely, a
+        // TODO component item can of course be inherited by a news page as well as an agenda page, for example if the
+        // TODO component item is in the inherited 'header' container in abstractpages. So, below you just happen to get
+        // TODO a component reference instance, not perse the one clicked. Then again, if you do not call #getParent
+        // TODO in general it most likely will go fine
         final HstComponentConfiguration componentReference = componentConfigurations.values().stream() //TODO SS: Optimize loop
                 .filter(x -> x.getCanonicalStoredLocation().equals(componentCanonicalPath)).findFirst()
                 .orElseThrow(() -> new RuntimeException(String.format("Component representation is not found: '%s'", componentCanonicalPath)));
@@ -279,8 +286,8 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
      * @throws RepositoryException when something went wrong in the repository
      */
     private void doCreateVariant(final Node containerItem,
-                         final HstComponentParameters componentParameters,
-                         final String variantId) throws RepositoryException, IllegalStateException {
+                                 final HstComponentParameters componentParameters,
+                                 final String variantId) throws RepositoryException, IllegalStateException {
 
         Map<String, String> annotatedParameters = PageComposerUtil.getAnnotatedDefaultValues(containerItem);
 

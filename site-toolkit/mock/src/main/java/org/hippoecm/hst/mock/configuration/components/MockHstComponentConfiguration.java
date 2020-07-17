@@ -61,6 +61,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     private String label;
     private String iconPath;
     private boolean inherited;
+    private boolean shared;
     private boolean prototype;
     private boolean standalone;
     private boolean async;
@@ -75,8 +76,6 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     private String componentDefinition;
     private List<DynamicFieldGroup> fieldGroups = new ArrayList<>();
 
-    private String hstTemplate;
-
     private List<DynamicParameter> dynamicComponentParameters;
 
     public MockHstComponentConfiguration(String id) {
@@ -90,12 +89,12 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public SortedMap<String, HstComponentConfiguration> getChildren() {
         return componentConfigs;
     }
-    
+
     public HstComponentConfiguration addChild(HstComponentConfiguration config){
         componentConfigs.put(config.getId(), config);
         return config;
     }
-    
+
     public void addChildren(MockHstComponentConfiguration ... config){
         for (MockHstComponentConfiguration mockHstComponentConfiguration : config) {
             addChild(mockHstComponentConfiguration);
@@ -105,7 +104,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public String getCanonicalStoredLocation() {
         return canonicalStoredLocation;
     }
-    
+
     public void setCanonicalStoredLocation(String canonicalStoredLocation) {
         this.canonicalStoredLocation = canonicalStoredLocation;
     }
@@ -113,7 +112,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public String getLocalParameter(String name) {
         return localParameters.get(name);
     }
-    
+
     public void setLocalParameter(String name, String value) {
         localParameters.put(name, value);
     }
@@ -125,7 +124,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public String getParameter(String name) {
         return parameters.get(name);
     }
-    
+
     @Override
     public Set<String> getParameterPrefixes() {
         return Collections.emptySet();
@@ -142,7 +141,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public HstComponentConfiguration getParent() {
         return parent;
     }
-    
+
     public void setParent(HstComponentConfiguration parent) {
         this.parent = parent;
     }
@@ -150,7 +149,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public String getReferenceName() {
         return referenceName;
     }
-    
+
     public void setReferenceName(String referenceName) {
         this.referenceName = referenceName;
     }
@@ -158,7 +157,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public String getRenderPath() {
         return renderPath;
     }
-    
+
     public void setRenderPath(String renderPath) {
         this.renderPath = renderPath;
     }
@@ -166,7 +165,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public String getServeResourcePath() {
         return serveResourcePath;
     }
-    
+
     public void setServeResourcePath(String serveResourcePath) {
         this.serveResourcePath = serveResourcePath;
     }
@@ -174,7 +173,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public String getComponentClassName() {
         return componentClassName;
     }
-    
+
     public void setComponentClassName(String componentClassName) {
         this.componentClassName = componentClassName;
     }
@@ -190,11 +189,11 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public String getId() {
         return id;
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
@@ -223,7 +222,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public String getNamedRenderer() {
         return namedRenderer;
     }
-    
+
     public void setNamedRenderer(String namedRenderer) {
         this.namedRenderer = namedRenderer;
     }
@@ -267,12 +266,21 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     }
 
     @Override
+    public boolean isShared() {
+        return shared;
+    }
+
+    @Override
     public boolean isPrototype() {
         return prototype;
     }
-    
+
     public void setInherited(boolean inherited) {
         this.inherited = inherited;
+    }
+
+    public void setShared(final boolean shared) {
+        this.shared = shared;
     }
 
     @Override
@@ -391,15 +399,6 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
         return lastModified;
     }
 
-    @Override
-    public String getHstTemplate() {
-        return hstTemplate;
-    }
-
-    public void setHstTemplate(String hstTemplate) {
-        this.hstTemplate = hstTemplate;
-    }
-
     public void setLastModified(final Calendar lastModified) {
         this.lastModified = lastModified;
     }
@@ -412,6 +411,15 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
         this.markedDeleted = markedDeleted;
     }
 
+    @Override
+    public String getHippoIdentifier() {
+        return null;
+    }
+
+    @Override
+    public boolean isExperiencePageComponent() {
+        return false;
+    }
     @Override
     public List<DynamicParameter> getDynamicComponentParameters() {
         return dynamicComponentParameters;
