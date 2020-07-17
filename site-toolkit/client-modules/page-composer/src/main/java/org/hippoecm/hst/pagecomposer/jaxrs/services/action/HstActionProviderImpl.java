@@ -64,8 +64,7 @@ public class HstActionProviderImpl implements ActionProvider {
 
         if (actionProviderContext.isMasterBranchSelected()) {
             channelAction.add(CHANNEL_PUBLISH.toAction(
-                    context.isChannelAdmin()
-                            && context.getChangedBySet().contains(actionProviderContext.getUserId())));
+                    context.getChangedBySet().contains(actionProviderContext.getUserId())));
         }
 
         channelAction.add(CHANNEL_SETTINGS.toAction(
