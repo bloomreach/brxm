@@ -142,7 +142,7 @@
       },
       "name" : "header",
       "type" : "component",
-      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent",
+      "componentClass" : "org.hippoecm.hst.test.HeaderComponent",
       "children" : [ {
         "$ref" : "/page/uid5"
       } ]
