@@ -14,6 +14,14 @@
       "type" : "internal"
     }
   },
+  "channel" : {
+    "info" : {
+      "props" : {
+        "headerName" : "Test HST Website",
+        "nonParameterProp" : "Foo"
+      }
+    }
+  },
   "root" : {
     "$ref" : "/page/uid0"
   },
