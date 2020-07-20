@@ -20,6 +20,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.AjaxDisableComponentListener;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
@@ -27,6 +28,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.buttons.ButtonStyle;
+import org.hippoecm.frontend.buttons.ButtonType;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 
 import wicket.contrib.input.events.EventType;
@@ -44,6 +46,7 @@ public class ButtonWrapper implements IClusterable {
     private KeyType keyType;
     private boolean hasChanges = false;
     private ButtonStyle style = ButtonStyle.DEFAULT;
+    private ButtonType buttonType = ButtonType.BUTTON;
 
     public ButtonWrapper(final Button button) {
         this.button = button;
@@ -74,6 +77,13 @@ public class ButtonWrapper implements IClusterable {
             button = new AjaxButton(DialogConstants.BUTTON) {
 
                 @Override
+                protected void onComponentTag(final ComponentTag tag) {
+                    super.onComponentTag(tag);
+
+                    tag.put("type", buttonType.getType());
+                }
+
+                @Override
                 protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                     ButtonWrapper.this.onSubmit();
                 }
@@ -86,10 +96,19 @@ public class ButtonWrapper implements IClusterable {
 
                     ButtonWrapper.this.onUpdateAjaxAttributes(attributes);
                 }
+
             };
             button.setOutputMarkupId(true);
         } else {
             button = new Button(DialogConstants.BUTTON) {
+
+                @Override
+                protected void onComponentTag(final ComponentTag tag) {
+                    super.onComponentTag(tag);
+
+                    tag.put("type", buttonType.getType());
+                }
+
                 @Override
                 public void onSubmit() {
                     ButtonWrapper.this.onSubmit();
@@ -220,4 +239,7 @@ public class ButtonWrapper implements IClusterable {
         return keyType;
     }
 
+    protected void setType(final ButtonType buttonType) {
+        this.buttonType = buttonType;
+    }
 }
