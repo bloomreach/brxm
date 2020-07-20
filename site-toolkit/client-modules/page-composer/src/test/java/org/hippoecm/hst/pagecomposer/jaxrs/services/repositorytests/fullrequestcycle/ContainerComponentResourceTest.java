@@ -30,14 +30,17 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -98,7 +101,24 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
 
             // newly created item
             assertTrue(session.nodeExists(PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/testitem"));
-            assertTrue(session.getNodeByIdentifier(createdUUID) != null);
+
+            final Node newContainerItem = session.getNodeByIdentifier(createdUUID);
+
+            // assert newly created container item does not have the catalog item copied (old style) but keeps a
+            // hst:componentdefinition reference
+            assertThat(session.getNode("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem")
+                    .hasProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME))
+                    .as("Catalog item expected to have classname")
+                    .isTrue();
+            assertThat(newContainerItem.hasProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME))
+                    .as("Component item referencing catalog item expected not to have classname")
+                    .isFalse();
+
+            assertThat(JcrUtils.getStringProperty(newContainerItem, COMPONENT_PROPERTY_COMPONENTDEFINITION, null))
+                    .as("Expected newly created container item to have hst:componentdefinition property pointing " +
+                            "to catalog item")
+                    .isEqualTo("hst:components/testpackage/testitem");
+
 
             final RequestResponseMock deleteRequestResponse = mockGetRequestResponse(
                     "http", "localhost", "/_rp/" + containerId + "./" + createdUUID, null,
@@ -129,17 +149,12 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
         final Session session = createSession(ADMIN_CREDENTIALS);
         try {
 
-            // add a second container item
-            JcrUtils.copy(session, PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/banner",
-                    PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/banner2");
-
-            session.save();
 
             final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
             final String containerId = getNodeId(session, PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container");
-            final String itemId1 = getNodeId(session, PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/banner");
-            final String itemId2 = getNodeId(session, PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/banner2");
+            final String itemId1 = getNodeId(session, PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/banner-new-style");
+            final String itemId2 = getNodeId(session, PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/banner-old-style");
 
             final RequestResponseMock updateContainerReqRes = mockGetRequestResponse(
                     "http", "localhost", "/_rp/" + containerId, null, "PUT");
@@ -162,8 +177,8 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
             final Node container = session.getNodeByIdentifier(containerId);
 
             final NodeIterator nodes = container.getNodes();
-            assertEquals("banner2", nodes.nextNode().getName());
-            assertEquals("banner", nodes.nextNode().getName());
+            assertEquals("banner-old-style", nodes.nextNode().getName());
+            assertEquals("banner-new-style", nodes.nextNode().getName());
 
             assertEquals("Container expected locked by",
                     "admin", container.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
@@ -184,7 +199,7 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
             final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
             final String targetContainerId = getNodeId(session, PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container2");
-            final String itemId1 = getNodeId(session, PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/banner");
+            final String itemId1 = getNodeId(session, PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/banner-new-style");
 
             final RequestResponseMock updateContainerReqRes = mockGetRequestResponse(
                     "http", "localhost", "/_rp/" + targetContainerId, null, "PUT");
@@ -193,7 +208,7 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
 
             containerRepresentation.setId(targetContainerId);
             // move itemId1 to other container
-            containerRepresentation.setChildren(Stream.of(itemId1, itemId1).collect(Collectors.toList()));
+            containerRepresentation.setChildren(Stream.of(itemId1).collect(Collectors.toList()));
 
 
             updateContainerReqRes.getRequest().setContent(objectMapper.writeValueAsBytes(containerRepresentation));
@@ -209,11 +224,12 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
             final Node targetContainer = session.getNodeByIdentifier(targetContainerId);
 
             final NodeIterator sourceChildren = sourceContainer.getNodes();
-            assertEquals(0, sourceChildren.getSize());
+            // banner-old-style still present
+            assertEquals(1, sourceChildren.getSize());
 
             final NodeIterator targetChildren = targetContainer.getNodes();
             assertEquals(1, targetChildren.getSize());
-            assertEquals("banner", targetChildren.nextNode().getName());
+            assertEquals("banner-new-style", targetChildren.nextNode().getName());
 
             assertEquals("Container expected locked by",
                     "admin", sourceContainer.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());

@@ -36,13 +36,17 @@ public class ContainerItemComponentResourceTest extends AbstractComponentResourc
         startEdit(ADMIN_CREDENTIALS);
 
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
-        final String componentItemId = getNodeId("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/containertestpage/main/container/banner");
+        final String componentItemId = getNodeId("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/containertestpage/main/container/banner-new-style");
 
 
         getComponentItemAs(ADMIN_CREDENTIALS, mountId, componentItemId, true);
         getComponentItemAs(EDITOR_CREDENTIALS, mountId, componentItemId, true);
         // author is not allowed to do a GET on ContainerItemComponentResource.getVariant()
         getComponentItemAs(AUTHOR_CREDENTIALS, mountId, componentItemId, false);
+
+        final String componentItemIdNewStyle = getNodeId("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/containertestpage/main/container/banner-new-style");
+
+        getComponentItemAs(ADMIN_CREDENTIALS, mountId, componentItemIdNewStyle, true);
     }
 
     private void getComponentItemAs(final SimpleCredentials creds, final String mountId, final String componentItemId,
