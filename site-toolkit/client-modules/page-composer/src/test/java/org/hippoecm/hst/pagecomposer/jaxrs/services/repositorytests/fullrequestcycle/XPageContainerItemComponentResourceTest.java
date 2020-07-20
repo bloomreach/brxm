@@ -74,6 +74,11 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         getComponentItemAs(EDITOR_CREDENTIALS, mountId, componentItemId);
         // author is also allowed to do a GET on XPageContainerItemComponentResource.getVariant()
         getComponentItemAs(AUTHOR_CREDENTIALS, mountId, componentItemId);
+
+
+        final String componentItemIdNewStyle = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner-new-style");
+
+        getComponentItemAs(ADMIN_CREDENTIALS, mountId, componentItemIdNewStyle);
     }
 
 
