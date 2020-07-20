@@ -2,7 +2,7 @@
   "id":"r25",
   "_meta":{
     "version":"0.9",
-    "branch" : "master"
+    "branch":"master"
   },
   "_links":{
     "self":{
@@ -169,7 +169,10 @@
               }
             }
           }
-        ]
+        ],
+        "_meta":{
+
+        }
       },
       "sameChannelNewsLink":{
         "href":"/site/spa/news/News1.html",
@@ -485,12 +488,19 @@
               }
             }
           }
-        ]
+        ],
+        "_meta":{
+
+        }
       },
-      "testLinkAndMetaNull" : {
-        "id" : "some-id",
-        "_meta" : { },
-        "_links" : { }
+      "testLinkAndMetaNull":{
+        "id":"some-id",
+        "_meta":{
+
+        },
+        "_links":{
+
+        }
       }
     },
     "components":[
@@ -519,9 +529,121 @@
                 "type":"external"
               }
             }
+          },
+          {
+            "id":"r25_r1_r2",
+            "name":"container",
+            "componentClass":"org.hippoecm.hst.builtin.components.StandardContainerComponent",
+            "type":"CONTAINER_COMPONENT",
+            "components":[
+              {
+                "id":"r25_r1_r2_r1",
+                "name":"banner-old-style",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "paramsInfo":{
+                    "path":"banners/banner100"
+                  },
+                  "params":{
+                    "path":"banners/banner100"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r1"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r1",
+                    "type":"external"
+                  }
+                }
+              },
+              {
+                "id":"r25_r1_r2_r2",
+                "name":"banner-old-style-2",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "paramsInfo":{
+                    "path":"banners/banner101"
+                  },
+                  "params":{
+                    "path":"banners/banner101"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r2"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r2",
+                    "type":"external"
+                  }
+                }
+              },
+              {
+                "id":"r25_r1_r2_r3",
+                "name":"banner-new-style",
+                "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "params":{
+                    "path":"banners/banner102"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r3"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r3",
+                    "type":"external"
+                  }
+                }
+              },
+              {
+                "id":"r25_r1_r2_r4",
+                "name":"banner-new-style-2",
+                "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "params":{
+                    "document":"banners/banner103"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r4"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r4",
+                    "type":"external"
+                  }
+                }
+              }
+            ],
+            "xtype":"hst.vbox",
+            "_meta":{
+              "params":{
+
+              }
+            },
+            "_links":{
+              "componentRendering":{
+                "href":"/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2"
+              },
+              "self":{
+                "href":"http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2",
+                "type":"external"
+              }
+            }
           }
         ],
         "_meta":{
+          "paramsInfo":{
+            "header":"Yes My Header"
+          },
           "params":{
 
           }
@@ -581,6 +703,9 @@
   "content":{
     "ud993b0a1585944febf4b017cda163364":{
       "id":"d993b0a1-5859-44fe-bf4b-017cda163364",
+      "_meta":{
+
+      },
       "_links":{
         "site":{
           "href":"/site/spa/genericdetail/dynamiccontent",
@@ -589,14 +714,14 @@
       },
       "name":"dynamiccontent",
       "displayName":"DynamicContent",
-      "multipleBooleanTypeField":[
-        false,
-        true
-      ],
       "singleValueMultipleBooleanTypeField":[
         false
       ],
       "multipleValueSingleBooleanTypeField":false,
+      "richTextEditorCompoundType":{
+        "value":"richtexteditorcontent"
+      },
+      "longTypeField":50,
       "doubleTypeField":100.0,
       "multipleDoubleTypeField":[
         100.0,
@@ -614,6 +739,7 @@
         50
       ],
       "multipleValueSingleLongTypeField":50,
+      "dateTypeField":1553472000000,
       "multipleDateTypeField":[
         1553472000000,
         1553558400000
@@ -623,6 +749,7 @@
       ],
       "multipleValueSingleDateTypeField":1553472000000,
       "longTypeField2":100,
+      "mirrorCompoundType":null,
       "resourceCompoundType":{
         "name":"pagemodelapitest:resourceCompoundType",
         "displayName":"pagemodelapitest:resourceCompoundType",
@@ -640,22 +767,21 @@
       "standardCompoundType":{
         "name":"pagemodelapitest:standardCompoundType",
         "displayName":"pagemodelapitest:standardCompoundType",
+        "richTextEditorCompoundType":{
+          "value":"contentOfHtmlFiledInCompoundTypeClass"
+        },
+        "stringTypeField":"alexanderkade",
         "dynamicinnercompound":{
           "name":"pagemodelapitest:dynamicinnercompound",
           "displayName":"pagemodelapitest:dynamicinnercompound",
           "stringTypeField":"http://test.com"
-        },
-        "stringTypeField":"alexanderkade",
-        "richTextEditorCompoundType":{
-          "value":"contentOfHtmlFiledInCompoundTypeClass"
         }
       },
-      "richTextEditorCompoundType":{
-        "value":"richtexteditorcontent"
-      },
-      "dateTypeField":1553472000000,
       "booleanTypeField":false,
-      "longTypeField":50,
+      "multipleBooleanTypeField":[
+        false,
+        true
+      ],
       "localeString":"en"
     }
   }

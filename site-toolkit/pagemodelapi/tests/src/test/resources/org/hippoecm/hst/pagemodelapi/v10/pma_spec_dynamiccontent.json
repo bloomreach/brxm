@@ -96,25 +96,22 @@
           "type" : "internal"
         }
       },
+      "meta" : { },
       "data" : {
         "name" : "dynamiccontent",
         "displayName" : "DynamicContent",
-        "dateTypeField" : 1553472000000,
-        "booleanTypeField" : false,
+        "multipleDoubleTypeField" : [ 100.0, 120.0 ],
+        "singleValueMultipleDoubleTypeField" : [ 100.0 ],
         "multipleValueSingleDoubleTypeField" : 100.0,
         "multipleLongTypeField" : [ 50, 60 ],
         "singleValueMultipleLongTypeField" : [ 50 ],
-        "singleValueMultipleBooleanTypeField" : [ false ],
-        "multipleValueSingleBooleanTypeField" : false,
-        "multipleDoubleTypeField" : [ 100.0, 120.0 ],
-        "singleValueMultipleDoubleTypeField" : [ 100.0 ],
-        "doubleTypeField" : 100.0,
-        "multipleBooleanTypeField" : [ false, true ],
         "multipleValueSingleLongTypeField" : 50,
         "multipleDateTypeField" : [ 1553472000000, 1553558400000 ],
         "singleValueMultipleDateTypeField" : [ 1553472000000 ],
-        "multipleValueSingleDateTypeField" : 1553472000000,
         "longTypeField2" : 100,
+        "longTypeField" : 50,
+        "multipleBooleanTypeField" : [ false, true ],
+        "multipleValueSingleDateTypeField" : 1553472000000,
         "mirrorCompoundType" : null,
         "resourceCompoundType" : {
           "name" : "pagemodelapitest:resourceCompoundType",
@@ -133,6 +130,7 @@
         "standardCompoundType" : {
           "name" : "pagemodelapitest:standardCompoundType",
           "displayName" : "pagemodelapitest:standardCompoundType",
+          "stringTypeField" : "alexanderkade",
           "dynamicinnercompound" : {
             "name" : "pagemodelapitest:dynamicinnercompound",
             "displayName" : "pagemodelapitest:dynamicinnercompound",
@@ -140,40 +138,16 @@
           },
           "richTextEditorCompoundType" : {
             "value" : "contentOfHtmlFiledInCompoundTypeClass"
-          },
-          "stringTypeField" : "alexanderkade"
+          }
         },
-        "contentblocksWithValidator" : [ {
-          "name" : "pagemodelapitest:contentblocksWithValidator",
-          "displayName" : "pagemodelapitest:contentblocksWithValidator",
-          "text" : {
-            "value" : "Welcome Home with validator!"
-          }
-        } ],
-        "essentialsGeneratedContentblocks" : [ {
-          "name" : "pagemodelapitest:essentialsGeneratedContentblocks",
-          "displayName" : "pagemodelapitest:essentialsGeneratedContentblocks",
-          "text" : {
-            "value" : "Welcome Home with Essentials!"
-          }
-        }, {
-          "name" : "pagemodelapitest:essentialsGeneratedContentblocks",
-          "displayName" : "pagemodelapitest:essentialsGeneratedContentblocks",
-          "text" : {
-            "value" : "Welcome Home with Essentials and lazy loaded types!"
-          }
-        } ],
-        "longTypeField" : 50,
+        "booleanTypeField" : false,
+        "singleValueMultipleBooleanTypeField" : [ false ],
+        "multipleValueSingleBooleanTypeField" : false,
+        "doubleTypeField" : 100.0,
         "richTextEditorCompoundType" : {
           "value" : "richtexteditorcontent"
         },
-        "contentblocks" : [ {
-          "name" : "pagemodelapitest:contentblocks",
-          "displayName" : "pagemodelapitest:contentblocks",
-          "text" : {
-            "value" : "Welcome Home!"
-          }
-        } ],
+        "dateTypeField" : 1553472000000,
         "localeString" : "en",
         "id" : "d993b0a1-5859-44fe-bf4b-017cda163364"
       }
@@ -187,6 +161,9 @@
         }
       },
       "meta" : {
+        "paramsInfo" : {
+          "header" : "Yes My Header"
+        },
         "params" : { }
       },
       "name" : "header",
@@ -194,6 +171,8 @@
       "componentClass" : "org.hippoecm.hst.test.HeaderComponent",
       "children" : [ {
         "$ref" : "/page/uid4"
+      }, {
+        "$ref" : "/page/uid5"
       } ]
     },
     "uid2" : {
@@ -213,6 +192,8 @@
     },
     "uid3" : {
       "type" : "menu",
+      "links" : { },
+      "meta" : { },
       "data" : {
         "name" : "main",
         "siteMenuItems" : [ {
@@ -325,69 +306,6 @@
         } ]
       }
     },
-    "ud993b0a1585944febf4b017cda163364" : {
-      "type" : "document",
-      "links" : {
-        "site" : {
-          "href" : "/genericdetail/dynamiccontent",
-          "type" : "internal"
-        }
-      },
-      "data" : {
-        "name" : "dynamiccontent",
-        "displayName" : "DynamicContent",
-        "mirrorCompoundType" : null,
-        "resourceCompoundType" : {
-          "name" : "pagemodelapitest:resourceCompoundType",
-          "displayName" : "pagemodelapitest:resourceCompoundType",
-          "lastModified" : 1206529380000,
-          "mimeType" : "application/vnd.hippo.blank",
-          "filename" : "picture_thumbnail.jpeg",
-          "size" : 1490,
-          "links" : {
-            "site" : {
-              "href" : "http://localhost/site/binaries/unittestcontent/documents/unittestproject/dynamiccontent/dynamiccontent/pagemodelapitest%3AresourceCompoundType",
-              "type" : "resource"
-            }
-          }
-        },
-        "standardCompoundType" : {
-          "name" : "pagemodelapitest:standardCompoundType",
-          "displayName" : "pagemodelapitest:standardCompoundType",
-          "richTextEditorCompoundType" : {
-            "value" : "contentOfHtmlFiledInCompoundTypeClass"
-          },
-          "stringTypeField" : "alexanderkade",
-          "dynamicinnercompound" : {
-            "name" : "pagemodelapitest:dynamicinnercompound",
-            "displayName" : "pagemodelapitest:dynamicinnercompound",
-            "stringTypeField" : "http://test.com"
-          }
-        },
-        "booleanTypeField" : false,
-        "richTextEditorCompoundType" : {
-          "value" : "richtexteditorcontent"
-        },
-        "singleValueMultipleLongTypeField" : [ 50 ],
-        "multipleValueSingleLongTypeField" : 50,
-        "multipleDateTypeField" : [ 1553472000000, 1553558400000 ],
-        "singleValueMultipleDateTypeField" : [ 1553472000000 ],
-        "multipleValueSingleDateTypeField" : 1553472000000,
-        "longTypeField2" : 100,
-        "multipleBooleanTypeField" : [ false, true ],
-        "singleValueMultipleBooleanTypeField" : [ false ],
-        "multipleValueSingleBooleanTypeField" : false,
-        "doubleTypeField" : 100.0,
-        "multipleDoubleTypeField" : [ 100.0, 120.0 ],
-        "singleValueMultipleDoubleTypeField" : [ 100.0 ],
-        "multipleValueSingleDoubleTypeField" : 100.0,
-        "multipleLongTypeField" : [ 50, 60 ],
-        "longTypeField" : 50,
-        "dateTypeField" : 1553472000000,
-        "localeString" : "en",
-        "id" : "d993b0a1-5859-44fe-bf4b-017cda163364"
-      }
-    },
     "uid4" : {
       "id" : "r25_r1_r1",
       "links" : {
@@ -401,6 +319,105 @@
       },
       "name" : "title",
       "type" : "component",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+    },
+    "uid5" : {
+      "id" : "r25_r1_r2",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "container",
+      "type" : "container",
+      "xtype" : "hst.vbox",
+      "componentClass" : "org.hippoecm.hst.builtin.components.StandardContainerComponent",
+      "children" : [ {
+        "$ref" : "/page/uid6"
+      }, {
+        "$ref" : "/page/uid7"
+      }, {
+        "$ref" : "/page/uid8"
+      }, {
+        "$ref" : "/page/uid9"
+      } ]
+    },
+    "uid6" : {
+      "id" : "r25_r1_r2_r1",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r1",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner100"
+        },
+        "params" : {
+          "path" : "banners/banner100"
+        }
+      },
+      "name" : "banner-old-style",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
+    },
+    "uid7" : {
+      "id" : "r25_r1_r2_r2",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r2",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner101"
+        },
+        "params" : {
+          "path" : "banners/banner101"
+        }
+      },
+      "name" : "banner-old-style-2",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
+    },
+    "uid8" : {
+      "id" : "r25_r1_r2_r3",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r3",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : {
+          "path" : "banners/banner102"
+        }
+      },
+      "name" : "banner-new-style",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+    },
+    "uid9" : {
+      "id" : "r25_r1_r2_r4",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r4",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : {
+          "document" : "banners/banner103"
+        }
+      },
+      "name" : "banner-new-style-2",
+      "type" : "container-item",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     }
   }

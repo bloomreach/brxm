@@ -9,6 +9,30 @@ definitions:
         /title:
           jcr:primaryType: hst:component
           hst:template: title
+        /container:
+          jcr:primaryType: hst:containercomponent
+          /banner-old-style:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentclassname: org.hippoecm.hst.test.BannerComponent
+            hst:template: header
+            hst:parameternames: [path]
+            hst:parametervalues: [banners/banner100]
+          /banner-old-style-2:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentclassname: org.hippoecm.hst.test.BannerComponent
+            hst:template: header
+            hst:parameternames: [path]
+            hst:parametervalues: [banners/banner101]
+          /banner-new-style:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentdefinition: hst:components/unittestpackage/banner-new-style
+            hst:parameternames: [path]
+            hst:parametervalues: [banners/banner102]
+          /banner-new-style-2:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentdefinition: hst:components/unittestpackage/banner-new-style
+            hst:parameternames: [document]
+            hst:parametervalues: [banners/banner103]
       /overview:
         jcr:primaryType: hst:component
         hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
