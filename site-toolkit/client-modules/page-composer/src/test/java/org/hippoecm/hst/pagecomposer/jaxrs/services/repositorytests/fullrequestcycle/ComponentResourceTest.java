@@ -66,8 +66,7 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 
-public class
-ComponentResourceTest extends AbstractComponentResourceTest {
+public class ComponentResourceTest extends AbstractComponentResourceTest {
 
     @Test
     public void test_actions_for_unlocked_page_component() throws RepositoryException, IOException, ServletException {
@@ -85,7 +84,7 @@ ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(channel(), CHANNEL_DISCARD_CHANGES), false)
                 .put(key(channel(), CHANNEL_MANAGE_CHANGES), false)
                 .put(key(channel(), CHANNEL_PUBLISH), false)
-                .put(key(channel(), CHANNEL_SETTINGS), false)
+                .put(key(channel(), CHANNEL_SETTINGS), true)
                 .put(key(page(), PAGE_COPY), true)
                 .put(key(page(), PAGE_DELETE), false)
                 .put(key(page(), PAGE_MOVE), false)
@@ -117,7 +116,7 @@ ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(channel(), CHANNEL_DISCARD_CHANGES), false)
                 .put(key(channel(), CHANNEL_MANAGE_CHANGES), false)
                 .put(key(channel(), CHANNEL_PUBLISH), false)
-                .put(key(channel(), CHANNEL_SETTINGS), false)
+                .put(key(channel(), CHANNEL_SETTINGS), true)
                 .build();
         Assertions.assertThat(actions)
                 .describedAs("A page component request contains all channel and page components")
@@ -149,7 +148,7 @@ ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(channel(), CHANNEL_DISCARD_CHANGES), false)
                 .put(key(channel(), CHANNEL_MANAGE_CHANGES), false)
                 .put(key(channel(), CHANNEL_PUBLISH), false)
-                .put(key(channel(), CHANNEL_SETTINGS), false)
+                .put(key(channel(), CHANNEL_SETTINGS), true)
                 .put(key(xpage(), XPAGE_DELETE), false)
                 .put(key(xpage(), XPAGE_MOVE), false)
                 .put(key(xpage(), XPAGE_NEW), false)
