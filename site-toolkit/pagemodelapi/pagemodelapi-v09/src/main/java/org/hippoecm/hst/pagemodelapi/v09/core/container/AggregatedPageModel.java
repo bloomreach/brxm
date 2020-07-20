@@ -21,16 +21,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.hippoecm.hst.pagemodelapi.v09.core.model.ChannelModel;
-import org.hippoecm.hst.pagemodelapi.v09.core.model.ComponentWindowModel;
-import org.hippoecm.hst.pagemodelapi.v09.core.model.IdentifiableLinkableMetadataBaseModel;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.JsonNode;
+
+import org.hippoecm.hst.pagemodelapi.v09.core.model.ChannelModel;
+import org.hippoecm.hst.pagemodelapi.v09.core.model.ComponentWindowModel;
+import org.hippoecm.hst.pagemodelapi.v09.core.model.IdentifiableLinkableMetadataBaseModel;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
