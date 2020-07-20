@@ -61,6 +61,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.buttons.ButtonStyle;
+import org.hippoecm.frontend.buttons.ButtonType;
 import org.hippoecm.frontend.i18n.TranslatorUtils;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
@@ -285,6 +286,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         };
         ok.setKeyType(KeyType.Enter);
         ok.setStyle(ButtonStyle.PRIMARY);
+        ok.setType(ButtonType.SUBMIT);
 
         cancel = new ButtonWrapper(new ResourceModel("cancel")) {
 
