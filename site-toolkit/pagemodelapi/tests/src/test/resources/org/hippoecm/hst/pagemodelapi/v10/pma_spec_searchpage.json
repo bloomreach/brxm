@@ -48,6 +48,14 @@
         "menu-again" : {
           "$ref" : "/page/uid4"
         },
+        "sameChannelNewsLink" : {
+          "href" : "/news/News1.html",
+          "type" : "internal"
+        },
+        "otherChannelNewsLink" : {
+          "href" : "http://localhost/site/subsite/news/2008/SubNews1.html",
+          "type" : "external"
+        },
         "document" : null,
         "document-again" : null,
         "menus" : {
@@ -57,8 +65,17 @@
             }
           }
         },
+        "notFoundLink" : {
+          "href" : "/pagenotfound",
+          "type" : "internal"
+        },
         "menu" : {
           "$ref" : "/page/uid4"
+        },
+        "testLinkAndMetaNull" : {
+          "id" : "some-id",
+          "meta" : { },
+          "links" : { }
         }
       }
     },
@@ -86,6 +103,9 @@
         }
       },
       "meta" : {
+        "paramsInfo" : {
+          "header" : "Yes My Header"
+        },
         "params" : { }
       },
       "name" : "header",
@@ -93,6 +113,8 @@
       "componentClass" : "org.hippoecm.hst.test.HeaderComponent",
       "children" : [ {
         "$ref" : "/page/uid5"
+      }, {
+        "$ref" : "/page/uid6"
       } ]
     },
     "uid3" : {
@@ -112,6 +134,8 @@
     },
     "uid4" : {
       "type" : "menu",
+      "links" : { },
+      "meta" : { },
       "data" : {
         "name" : "main",
         "siteMenuItems" : [ {
@@ -237,6 +261,105 @@
       },
       "name" : "title",
       "type" : "component",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+    },
+    "uid6" : {
+      "id" : "r13_r2_r2",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/search?_hn:type=component-rendering&_hn:ref=r13_r2_r2",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "container",
+      "type" : "container",
+      "xtype" : "hst.vbox",
+      "componentClass" : "org.hippoecm.hst.builtin.components.StandardContainerComponent",
+      "children" : [ {
+        "$ref" : "/page/uid7"
+      }, {
+        "$ref" : "/page/uid8"
+      }, {
+        "$ref" : "/page/uid9"
+      }, {
+        "$ref" : "/page/uid10"
+      } ]
+    },
+    "uid7" : {
+      "id" : "r13_r2_r2_r1",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/search?_hn:type=component-rendering&_hn:ref=r13_r2_r2_r1",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner100"
+        },
+        "params" : {
+          "path" : "banners/banner100"
+        }
+      },
+      "name" : "banner-old-style",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
+    },
+    "uid8" : {
+      "id" : "r13_r2_r2_r2",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/search?_hn:type=component-rendering&_hn:ref=r13_r2_r2_r2",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner101"
+        },
+        "params" : {
+          "path" : "banners/banner101"
+        }
+      },
+      "name" : "banner-old-style-2",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
+    },
+    "uid9" : {
+      "id" : "r13_r2_r2_r3",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/search?_hn:type=component-rendering&_hn:ref=r13_r2_r2_r3",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : {
+          "path" : "banners/banner102"
+        }
+      },
+      "name" : "banner-new-style",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+    },
+    "uid10" : {
+      "id" : "r13_r2_r2_r4",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/search?_hn:type=component-rendering&_hn:ref=r13_r2_r2_r4",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : {
+          "document" : "banners/banner103"
+        }
+      },
+      "name" : "banner-new-style-2",
+      "type" : "container-item",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     }
   }
