@@ -42,6 +42,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -55,6 +57,8 @@ import static org.junit.Assert.assertTrue;
 
 public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
 
+
+    private final static Logger log = LoggerFactory.getLogger(AbstractFullRequestCycleTest.class);
 
     public static final String TEST_BRANCH_ID_PAYLOAD_NAME = "testBranchId";
 
@@ -126,7 +130,12 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
     }
 
     public String getNodeId(final Session session, final String jcrPath) throws RepositoryException {
-        return session.getNode(jcrPath).getIdentifier();
+        try {
+            return session.getNode(jcrPath).getIdentifier();
+        } catch (RepositoryException e) {
+            log.error("Cannot find jcr node '{}' with session '{}'", jcrPath, session.getUserID());
+            throw e;
+        }
     }
 
     public MockHttpServletResponse render(final String mountId, final RequestResponseMock requestResponse, final Credentials authenticatedCmsUser) throws IOException, ServletException {
