@@ -115,6 +115,7 @@ public class HstActionProviderImpl implements ActionProvider {
                 !pageActionContext.isHomePage()
                         && pageActionContext.isWorkspaceConfigured()
                         && !pageActionContext.isInherited()
+                        && !pageActionContext.isLocked()
         ));
 
         actions.add(HstAction.PAGE_NEW.toAction(
