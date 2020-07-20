@@ -13,6 +13,14 @@
       "type" : "internal"
     }
   },
+  "channel" : {
+    "info" : {
+      "props" : {
+        "headerName" : "Test HST Website",
+        "nonParameterProp" : "Foo"
+      }
+    }
+  },
   "root" : {
     "$ref" : "/page/uid0"
   },
@@ -106,6 +114,15 @@
         "body" : {
           "value" : "This is the content of the homepage with a link to <a href=\"/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
         },
+        "selfInstance" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "childObject" : {
+          "name" : "just-some-name",
+          "parent" : {
+            "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+          }
+        },
         "newsDocument" : {
           "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
         },
@@ -120,15 +137,6 @@
         },
         "selfBean" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
-        },
-        "selfInstance" : {
-          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
-        },
-        "childObject" : {
-          "name" : "just-some-name",
-          "parent" : {
-            "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
-          }
         },
         "listContainingSelf" : [ {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
@@ -337,8 +345,8 @@
       "data" : {
         "name" : "common",
         "displayName" : "common",
-        "documentSize" : 1,
         "localeString" : "en_US",
+        "documentSize" : 1,
         "id" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
       }
     },
@@ -350,22 +358,6 @@
         "name" : "picture.jpeg",
         "displayName" : "picture.jpeg",
         "description" : null,
-        "thumbnail" : {
-          "name" : "hippogallery:thumbnail",
-          "displayName" : "hippogallery:thumbnail",
-          "width" : -1,
-          "height" : -1,
-          "lastModified" : 1236880917884,
-          "mimeType" : "image/jpeg",
-          "filename" : "picture_thumbnail.jpeg",
-          "size" : 1490,
-          "links" : {
-            "site" : {
-              "href" : "http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg",
-              "type" : "resource"
-            }
-          }
-        },
         "original" : {
           "name" : "hippogallery:original",
           "displayName" : "hippogallery:original",
@@ -378,6 +370,22 @@
           "links" : {
             "site" : {
               "href" : "http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg",
+              "type" : "resource"
+            }
+          }
+        },
+        "thumbnail" : {
+          "name" : "hippogallery:thumbnail",
+          "displayName" : "hippogallery:thumbnail",
+          "width" : -1,
+          "height" : -1,
+          "lastModified" : 1236880917884,
+          "mimeType" : "image/jpeg",
+          "filename" : "picture_thumbnail.jpeg",
+          "size" : 1490,
+          "links" : {
+            "site" : {
+              "href" : "http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg",
               "type" : "resource"
             }
           }
