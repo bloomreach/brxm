@@ -529,9 +529,121 @@
                 "type":"external"
               }
             }
+          },
+          {
+            "id":"r27_r1_r2",
+            "name":"container",
+            "componentClass":"org.hippoecm.hst.builtin.components.StandardContainerComponent",
+            "type":"CONTAINER_COMPONENT",
+            "components":[
+              {
+                "id":"r27_r1_r2_r1",
+                "name":"banner-old-style",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "paramsInfo":{
+                    "path":"banners/banner100"
+                  },
+                  "params":{
+                    "path":"banners/banner100"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r1"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r1",
+                    "type":"external"
+                  }
+                }
+              },
+              {
+                "id":"r27_r1_r2_r2",
+                "name":"banner-old-style-2",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "paramsInfo":{
+                    "path":"banners/banner101"
+                  },
+                  "params":{
+                    "path":"banners/banner101"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r2"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r2",
+                    "type":"external"
+                  }
+                }
+              },
+              {
+                "id":"r27_r1_r2_r3",
+                "name":"banner-new-style",
+                "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "params":{
+                    "path":"banners/banner102"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r3"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r3",
+                    "type":"external"
+                  }
+                }
+              },
+              {
+                "id":"r27_r1_r2_r4",
+                "name":"banner-new-style-2",
+                "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "params":{
+                    "document":"banners/banner103"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r4"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r4",
+                    "type":"external"
+                  }
+                }
+              }
+            ],
+            "xtype":"hst.vbox",
+            "_meta":{
+              "params":{
+
+              }
+            },
+            "_links":{
+              "componentRendering":{
+                "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2"
+              },
+              "self":{
+                "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2",
+                "type":"external"
+              }
+            }
           }
         ],
         "_meta":{
+          "paramsInfo":{
+            "header":"Yes My Header"
+          },
           "params":{
 
           }
@@ -704,22 +816,6 @@
       "name":"picture.jpeg",
       "displayName":"picture.jpeg",
       "description":null,
-      "original":{
-        "name":"hippogallery:original",
-        "displayName":"hippogallery:original",
-        "width":-1,
-        "height":-1,
-        "lastModified":1236880917884,
-        "mimeType":"image/jpeg",
-        "filename":"picture_original.jpeg",
-        "size":168981,
-        "_links":{
-          "site":{
-            "href":"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg",
-            "type":"resource"
-          }
-        }
-      },
       "thumbnail":{
         "name":"hippogallery:thumbnail",
         "displayName":"hippogallery:thumbnail",
@@ -732,6 +828,22 @@
         "_links":{
           "site":{
             "href":"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg",
+            "type":"resource"
+          }
+        }
+      },
+      "original":{
+        "name":"hippogallery:original",
+        "displayName":"hippogallery:original",
+        "width":-1,
+        "height":-1,
+        "lastModified":1236880917884,
+        "mimeType":"image/jpeg",
+        "filename":"picture_original.jpeg",
+        "size":168981,
+        "_links":{
+          "site":{
+            "href":"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg",
             "type":"resource"
           }
         }

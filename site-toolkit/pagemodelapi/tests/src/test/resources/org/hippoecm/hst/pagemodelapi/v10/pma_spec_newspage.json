@@ -98,6 +98,7 @@
           "type" : "internal"
         }
       },
+      "meta" : { },
       "data" : {
         "name" : "News1",
         "displayName" : "News1",
@@ -138,6 +139,9 @@
         }
       },
       "meta" : {
+        "paramsInfo" : {
+          "header" : "Yes My Header"
+        },
         "params" : { }
       },
       "name" : "header",
@@ -145,6 +149,8 @@
       "componentClass" : "org.hippoecm.hst.test.HeaderComponent",
       "children" : [ {
         "$ref" : "/page/uid5"
+      }, {
+        "$ref" : "/page/uid6"
       } ]
     },
     "uid3" : {
@@ -164,6 +170,8 @@
     },
     "uid4" : {
       "type" : "menu",
+      "links" : { },
+      "meta" : { },
       "data" : {
         "name" : "main",
         "siteMenuItems" : [ {
@@ -284,6 +292,7 @@
           "type" : "internal"
         }
       },
+      "meta" : { },
       "data" : {
         "name" : "homepage",
         "displayName" : "Home Page",
@@ -325,7 +334,7 @@
         "localeString" : "en_US",
         "id" : "1ca07af9-cdf5-4bdd-9908-f991245bb062",
         "bar" : {
-          "$ref" : "/page/uid6"
+          "$ref" : "/page/uid7"
         },
         "foo" : {
           "name" : "foo",
@@ -349,8 +358,107 @@
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     },
     "uid6" : {
+      "id" : "r14_r2_r2",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "container",
+      "type" : "container",
+      "xtype" : "hst.vbox",
+      "componentClass" : "org.hippoecm.hst.builtin.components.StandardContainerComponent",
+      "children" : [ {
+        "$ref" : "/page/uid8"
+      }, {
+        "$ref" : "/page/uid9"
+      }, {
+        "$ref" : "/page/uid10"
+      }, {
+        "$ref" : "/page/uid11"
+      } ]
+    },
+    "uid7" : {
       "name" : "bar",
       "text" : "Bar Text"
+    },
+    "uid8" : {
+      "id" : "r14_r2_r2_r1",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r1",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner100"
+        },
+        "params" : {
+          "path" : "banners/banner100"
+        }
+      },
+      "name" : "banner-old-style",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
+    },
+    "uid9" : {
+      "id" : "r14_r2_r2_r2",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r2",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner101"
+        },
+        "params" : {
+          "path" : "banners/banner101"
+        }
+      },
+      "name" : "banner-old-style-2",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
+    },
+    "uid10" : {
+      "id" : "r14_r2_r2_r3",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r3",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : {
+          "path" : "banners/banner102"
+        }
+      },
+      "name" : "banner-new-style",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+    },
+    "uid11" : {
+      "id" : "r14_r2_r2_r4",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r4",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : {
+          "document" : "banners/banner103"
+        }
+      },
+      "name" : "banner-new-style-2",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     }
   }
 }
