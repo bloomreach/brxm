@@ -139,11 +139,11 @@ public class ParametersInfoAnnotationUtils {
         if (componentConfig != null) {
             Class<?> componentClazz = null;
 
+            String componentClassName = componentConfig.getComponentClassName();
             try {
-                String componentClassName = componentConfig.getComponentClassName();
                 componentClazz = classLoader.loadClass(componentClassName);
             } catch (Exception e) {
-                log.warn("Component class not loadable: {}", componentClazz);
+                log.warn("Component class not loadable: {}", componentClassName);
             }
 
             return getParametersInfoAnnotation(componentClazz, componentConfig.getParametersInfoClassName(), classLoader);
