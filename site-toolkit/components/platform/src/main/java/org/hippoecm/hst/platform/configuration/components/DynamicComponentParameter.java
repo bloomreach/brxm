@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020 Bloomreach
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,13 +24,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.components.DropdownListParameterConfig;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.DynamicParameterConfig;
-import org.hippoecm.hst.configuration.components.ImageSetPathParameterConfig;
 import org.hippoecm.hst.configuration.components.JcrPathParameterConfig;
 import org.hippoecm.hst.configuration.components.ParameterValueType;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.EmptyValueListProvider;
-import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ValueListProvider;
@@ -50,7 +48,6 @@ public class DynamicComponentParameter implements DynamicParameter{
     public static final String HST_HIDE_IN_CHANNEL_MANAGER = "hst:hideinchannelmanager";
     public static final String HST_VALUE_TYPE = "hst:valuetype";
     public static final String HST_JCRPATH_TYPE = "hst:jcrpath";
-    public static final String HST_IMAGESETPATH_TYPE = "hst:imagesetpath";
     public static final String HST_DROPDOWNLIST_TYPE = "hst:dropdown";
     public static final String DEFAULT_STRING_TYPE = "STRING";
 
@@ -137,77 +134,6 @@ public class DynamicComponentParameter implements DynamicParameter{
         }
     }
 
-    public static class ImageSetPathParameterConfigImpl implements ImageSetPathParameterConfig {
-
-        public static final String PREVIEW_VARIANT = "hst:previewvariant";
-
-        private final String previewVariant;
-        private final String pickerConfiguration;
-        private final String pickerInitialPath;
-        private final boolean pickerRemembersLastVisited;
-        private final String[] pickerSelectableNodeTypes;
-
-        public ImageSetPathParameterConfigImpl(final ImageSetPath annotation) {
-            previewVariant = annotation.previewVariant();
-            pickerConfiguration = annotation.pickerConfiguration();
-            pickerInitialPath = annotation.pickerInitialPath();
-            pickerRemembersLastVisited = annotation.pickerRemembersLastVisited();
-            pickerSelectableNodeTypes = annotation.pickerSelectableNodeTypes();
-        }
-
-        public ImageSetPathParameterConfigImpl(final HstNode jcrPathNode) {
-            final ValueProvider valueProvider = jcrPathNode.getValueProvider();
-            previewVariant = ofNullable(valueProvider.getString(PREVIEW_VARIANT))
-                    .orElse("");
-            pickerConfiguration = ofNullable(valueProvider.getString(PICKER_CONFIGURATION))
-                    .orElse(DEFAULT_CMS_PICKERS_IMAGES);
-            pickerInitialPath = ofNullable(valueProvider.getString(PICKER_INITIAL_PATH))
-                    .orElse(EMPTY);
-            pickerRemembersLastVisited = ofNullable(valueProvider.getBoolean(PICKER_REMEMBERS_LAST_VISITED))
-                    .orElse(true);
-            pickerSelectableNodeTypes = ofNullable(valueProvider.getStrings(PICKER_SELECTABLE_NODE_TYPES))
-                    .orElse(new String[]{});
-
-        }
-
-        public String getPreviewVariant() {
-            return previewVariant;
-        }
-
-        public String getPickerConfiguration() {
-            return pickerConfiguration;
-        }
-
-        public String getPickerInitialPath() {
-            return pickerInitialPath;
-        }
-
-        public boolean isPickerRemembersLastVisited() {
-            return pickerRemembersLastVisited;
-        }
-
-        public String[] getPickerSelectableNodeTypes() {
-            return pickerSelectableNodeTypes;
-        }
-
-        @Override
-        public Type getType() {
-            return Type.IMAGESET_PATH;
-        }
-
-        @Override
-        public String toString() {
-            return "ImageSetPath{" +     
-                    "previewVariant='" + previewVariant + '\'' +
-                    "pickerConfiguration='" + pickerConfiguration + '\'' +
-                    ", pickerInitialPath='" + pickerInitialPath + '\'' +
-                    ", pickerRemembersLastVisited=" + pickerRemembersLastVisited +
-                    ", pickerSelectableNodeTypes=" + Arrays.toString(pickerSelectableNodeTypes) +
-                    '}';
-        }
-    }
-    
-    
     public static class DropdownListParameterConfigImpl implements DropdownListParameterConfig {
         public static final String VALUE = "hst:value";
         public static final String VALUE_LIST_PROVIDER = "hst:valuelistprovider";
@@ -285,8 +211,6 @@ public class DynamicComponentParameter implements DynamicParameter{
         for (final HstNode childNode : parameterNode.getNodes()) {
             if (childNode.getNodeTypeName().equals(HST_JCRPATH_TYPE)) {
                 hstComponentParameterConfig = new JcrPathParameterConfigImpl(childNode);
-            } else if (childNode.getNodeTypeName().equals(HST_IMAGESETPATH_TYPE)) {
-                hstComponentParameterConfig = new ImageSetPathParameterConfigImpl(childNode);
             } else if (childNode.getNodeTypeName().equals(HST_DROPDOWNLIST_TYPE)) {
                 hstComponentParameterConfig = new DropdownListParameterConfigImpl(childNode);
             }
@@ -321,8 +245,6 @@ public class DynamicComponentParameter implements DynamicParameter{
         for (final Annotation annotation : method.getAnnotations()) {
             if (annotation.annotationType() == JcrPath.class) {
                 hstComponentParameterConfig = new JcrPathParameterConfigImpl((JcrPath) annotation);
-            } else if (annotation.annotationType() == ImageSetPath.class) {
-                hstComponentParameterConfig = new ImageSetPathParameterConfigImpl((ImageSetPath) annotation);
             } else if (annotation.annotationType() == DropDownList.class) {
                 hstComponentParameterConfig = new DropdownListParameterConfigImpl((DropDownList) annotation);
             }
