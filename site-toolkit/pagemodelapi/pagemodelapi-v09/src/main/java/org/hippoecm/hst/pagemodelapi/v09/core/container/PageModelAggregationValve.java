@@ -26,6 +26,14 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -62,19 +70,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.ReaderConfigUtils;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
-
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_COMPONENT_RENDERING;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SELF;
 import static org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel.LinkType.EXTERNAL;
