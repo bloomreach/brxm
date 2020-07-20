@@ -62,6 +62,7 @@ import static java.util.Arrays.stream;
 import static org.apache.commons.lang3.ArrayUtils.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_FIELD_GROUPS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
@@ -353,7 +354,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             throw new ModelLoadingException("Unknown componentType '" + nodeTypeName + "' for '" + canonicalStoredLocation + "'. Cannot build configuration.");
         }
 
-        this.componentDefinition = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION));
+        this.componentDefinition = StringPool.get(node.getValueProvider().getString(COMPONENT_PROPERTY_COMPONENTDEFINITION));
 
         this.parametersInfoClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME));
 
@@ -1145,7 +1146,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     protected void populateCatalogItemReference(final List<HstComponentConfiguration> availableContainerItems) {
         final Optional<HstComponentConfiguration> catalogItem = availableContainerItems.stream()
                 .filter(c -> c.getId().equals(this.getComponentDefinition())).findFirst();
-        catalogItem.ifPresent(catalogItemRef -> {
+
+        final HstComponentConfiguration catalogItemRef = catalogItem.orElse(null);
+
+        if (catalogItemRef == null) {
+            log.warn("Invalid component '{}' since no catalog item found for '{} = {}'", getCanonicalStoredLocation(),
+                    COMPONENT_PROPERTY_COMPONENTDEFINITION, this.getComponentDefinition());
+        } else {
             if (this.componentClassName == null) {
                 this.componentClassName = catalogItemRef.getComponentClassName();
             }
@@ -1173,7 +1180,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
 
             this.hstDynamicComponentParameters = catalogItemRef.getDynamicComponentParameters();
-        });
+        }
     }
 
     // marker if this instance already has been populated
