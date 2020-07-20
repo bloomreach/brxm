@@ -33,7 +33,6 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -43,6 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
 public abstract class AbstractXPageComponentResourceTest extends AbstractFullRequestCycleTest {
@@ -119,6 +119,8 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
             }
             if (admin.nodeExists("/expPage1")) {
                 admin.move("/expPage1", EXPERIENCE_PAGE_HANDLE_PATH);
+            } else {
+                fail("'/expPage1' should have been backed up");
             }
 
             admin.save();
@@ -145,7 +147,7 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
     }
 
     @NotNull
-    protected Node getFrozenContainer() throws Exception {
+    protected Node doVersionAndgetFrozenContainer() throws Exception {
         final Node masterVersion = versionMasterByBranching();
 
         final Node frozenContainer = masterVersion.getNode("hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
