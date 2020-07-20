@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2020 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -104,13 +104,6 @@
 - hst:value (string) multiple
 - hst:valuelistprovider (string)
 - hst:sourceid (string)
-
-[hst:imagesetpath] > hst:fieldconfig
- - hst:previewvariant (string)
- - hst:pickerconfiguration (string)
- - hst:pickerinitialpath (string)
- - hst:pickerrememberslastvisited (boolean)
- - hst:pickerselectablenodetypes (String) multiple < 'hippogallery:imageset'
 
 [hst:dynamicparameter]
  - hst:required (boolean)
