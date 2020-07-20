@@ -96,6 +96,7 @@
           "type" : "internal"
         }
       },
+      "meta" : { },
       "data" : {
         "name" : "homepage",
         "displayName" : "Home Page",
@@ -154,6 +155,9 @@
         }
       },
       "meta" : {
+        "paramsInfo" : {
+          "header" : "Yes My Header"
+        },
         "params" : { }
       },
       "name" : "header",
@@ -161,6 +165,8 @@
       "componentClass" : "org.hippoecm.hst.test.HeaderComponent",
       "children" : [ {
         "$ref" : "/page/uid5"
+      }, {
+        "$ref" : "/page/uid6"
       } ]
     },
     "uid2" : {
@@ -180,6 +186,8 @@
     },
     "uid3" : {
       "type" : "menu",
+      "links" : { },
+      "meta" : { },
       "data" : {
         "name" : "main",
         "siteMenuItems" : [ {
@@ -300,6 +308,7 @@
           "type" : "internal"
         }
       },
+      "meta" : { },
       "data" : {
         "name" : "News1",
         "displayName" : "News1",
@@ -324,16 +333,19 @@
           "type" : "internal"
         }
       },
+      "meta" : { },
       "data" : {
         "name" : "common",
         "displayName" : "common",
-        "localeString" : "en_US",
         "documentSize" : 1,
+        "localeString" : "en_US",
         "id" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
       }
     },
     "udb02dde500984488a72c2a4fc6d51beb" : {
       "type" : "imageset",
+      "links" : { },
+      "meta" : { },
       "data" : {
         "name" : "picture.jpeg",
         "displayName" : "picture.jpeg",
@@ -377,6 +389,8 @@
     },
     "u5e56d406b302445e9f80e624ba053bc4" : {
       "type" : "asset",
+      "links" : { },
+      "meta" : { },
       "data" : {
         "name" : "testdata.pdf",
         "displayName" : "Test Data PDF",
@@ -415,6 +429,105 @@
       },
       "name" : "title",
       "type" : "component",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+    },
+    "uid6" : {
+      "id" : "r27_r1_r2",
+      "links" : {
+        "self" : {
+          "href" : "http://www.example.com/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "container",
+      "type" : "container",
+      "xtype" : "hst.vbox",
+      "componentClass" : "org.hippoecm.hst.builtin.components.StandardContainerComponent",
+      "children" : [ {
+        "$ref" : "/page/uid7"
+      }, {
+        "$ref" : "/page/uid8"
+      }, {
+        "$ref" : "/page/uid9"
+      }, {
+        "$ref" : "/page/uid10"
+      } ]
+    },
+    "uid7" : {
+      "id" : "r27_r1_r2_r1",
+      "links" : {
+        "self" : {
+          "href" : "http://www.example.com/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r1",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner100"
+        },
+        "params" : {
+          "path" : "banners/banner100"
+        }
+      },
+      "name" : "banner-old-style",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
+    },
+    "uid8" : {
+      "id" : "r27_r1_r2_r2",
+      "links" : {
+        "self" : {
+          "href" : "http://www.example.com/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r2",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner101"
+        },
+        "params" : {
+          "path" : "banners/banner101"
+        }
+      },
+      "name" : "banner-old-style-2",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
+    },
+    "uid9" : {
+      "id" : "r27_r1_r2_r3",
+      "links" : {
+        "self" : {
+          "href" : "http://www.example.com/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r3",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : {
+          "path" : "banners/banner102"
+        }
+      },
+      "name" : "banner-new-style",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+    },
+    "uid10" : {
+      "id" : "r27_r1_r2_r4",
+      "links" : {
+        "self" : {
+          "href" : "http://www.example.com/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r4",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : {
+          "document" : "banners/banner103"
+        }
+      },
+      "name" : "banner-new-style-2",
+      "type" : "container-item",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     }
   }
