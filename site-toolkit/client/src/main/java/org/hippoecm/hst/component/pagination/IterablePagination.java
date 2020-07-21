@@ -25,7 +25,7 @@ import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class IterablePagination extends Pagination<HippoBean> {
+public class IterablePagination extends AbstractPagination<HippoBean> {
 
     private static Logger log = LoggerFactory.getLogger(IterablePagination.class);
 
