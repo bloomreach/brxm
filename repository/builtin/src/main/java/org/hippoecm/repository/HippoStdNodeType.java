@@ -254,4 +254,14 @@ public interface HippoStdNodeType {
      * <p>The property should only be present on a draft variant.</p>
      */
     String HIPPOSTD_RETAINABLE = "hippostd:retainable";
+
+    /**
+     * mixin to mark a folder to be an XPage folder (containing XPage documents)
+     */
+    String NT_XPAGE_FOLDER = "hippostd:xpagefolder";
+
+    /**
+     * A property for an {@link #NT_XPAGE_FOLDER} to indicate for which channel the xpage folder is
+     */
+    String HIPPOSTD_CHANNEL_ID = "hippostd:channelid";
 }
