@@ -228,6 +228,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .terminateable(false)
+                .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noRequest().versionable().noTerminate().noBranchable()
@@ -244,6 +245,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .terminateable(false)
+                .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noRequest().versionable().noTerminate().noBranchable()
@@ -279,6 +281,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .terminateable(false)
+                .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
@@ -294,6 +297,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .terminateable(false)
+                .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
@@ -310,6 +314,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .depublish(false).depublishBranch(false).reintegrateBranch(false)
                 .versionable()
+                .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
@@ -367,6 +372,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .terminateable(false)
+                .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().editable().logEvent().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
@@ -403,6 +409,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .terminateable(false).editDraft()
+                .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
@@ -417,6 +424,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .terminateable(false)
+                .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().noCopy()
