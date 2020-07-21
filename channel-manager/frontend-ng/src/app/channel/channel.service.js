@@ -237,6 +237,8 @@ class ChannelService {
   }
 
   async checkChanges() {
+    this.$rootScope.$emit('page:check-changes');
+
     try {
       const { data: changedSet } = await this.HstService.doGet(this.getMountId(), 'mychanges');
       if (changedSet.length > 0) {

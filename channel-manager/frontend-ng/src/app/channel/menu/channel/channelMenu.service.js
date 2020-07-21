@@ -55,13 +55,6 @@ class ChannelMenuService extends MenuService {
     this.SiteMapService = SiteMapService;
     this.ProjectService = ProjectService;
 
-    const menu = this.defineMenu('channel', {
-      iconName: 'mdi-alert',
-      isIconVisible: () => this._hasAnyChanges(),
-      isVisible: () => PageService.hasActions('channel'),
-      translationKey: 'TOOLBAR_BUTTON_CHANNEL',
-    });
-
     function isEnabled(action) {
       return PageService.isActionEnabled('channel', action);
     }
@@ -70,7 +63,12 @@ class ChannelMenuService extends MenuService {
       return PageService.hasAction('channel', action);
     }
 
-    menu
+    this.defineMenu('channel', {
+      iconName: 'mdi-alert',
+      isIconVisible: () => this._hasAnyChanges(),
+      isVisible: () => PageService.hasActions('channel'),
+      translationKey: 'TOOLBAR_BUTTON_CHANNEL',
+    })
       .addAction('settings', {
         iconName: 'mdi-settings',
         isEnabled: () => isEnabled('settings'),

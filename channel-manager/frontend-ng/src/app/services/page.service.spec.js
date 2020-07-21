@@ -45,7 +45,29 @@ describe('PageService', () => {
     spyOn(PageStructureService, 'getPage').and.returnValue(mockPage);
   });
 
-  describe('on page change', () => {
+  describe('on page:change', () => {
+    it('should load', () => {
+      spyOn(PageService, 'load');
+
+      $rootScope.$emit('page:change');
+      $rootScope.$digest();
+
+      expect(PageService.load).toHaveBeenCalled();
+    });
+  });
+
+  describe('on page:check-changes', () => {
+    it('should load', () => {
+      spyOn(PageService, 'load');
+
+      $rootScope.$emit('page:check-changes');
+      $rootScope.$digest();
+
+      expect(PageService.load).toHaveBeenCalled();
+    });
+  });
+
+  describe('load', () => {
     it('should load the page actions and states', () => {
       const actions = {};
       const states = {};
@@ -56,7 +78,7 @@ describe('PageService', () => {
         },
       }));
 
-      $rootScope.$emit('page:change');
+      PageService.load();
       $rootScope.$digest();
 
       expect(HstService.doGet).toHaveBeenCalledWith('pageId', 'item', 'siteMapItemId');
@@ -69,7 +91,7 @@ describe('PageService', () => {
       PageService.actions = {};
       PageService.states = {};
 
-      $rootScope.$emit('page:change');
+      PageService.load();
       $rootScope.$digest();
 
       expect(PageService.actions).toBeNull();
@@ -81,7 +103,7 @@ describe('PageService', () => {
       PageService.actions = {};
       PageService.states = {};
 
-      $rootScope.$emit('page:change');
+      PageService.load();
       $rootScope.$digest();
 
       expect(PageService.actions).toBeNull();
