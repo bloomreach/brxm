@@ -68,10 +68,12 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_CHANNEL_ID;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_EXCLUDE_PRIMARY_TYPES;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_MODIFY;
 import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
 import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
+import static org.hippoecm.repository.HippoStdNodeType.NT_XPAGE_FOLDER;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROTOTYPE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
@@ -194,8 +196,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 info.put("reorder", isEnabled);
             }
         }
-        if (subject.isNodeType("hippostd:xpagefolder")){
-            info.put("channelId", subject.getProperty("hippostd:channelid").getString());
+        if (subject.isNodeType(NT_XPAGE_FOLDER)){
+            info.put("channelId",  JcrUtils.getStringProperty(subject, HIPPOSTD_CHANNEL_ID, null));
         }
         return info;
     }
