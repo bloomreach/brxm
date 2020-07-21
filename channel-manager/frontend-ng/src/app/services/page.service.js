@@ -23,10 +23,11 @@ class PageService {
     this.HstService = HstService;
     this.PageStructureService = PageStructureService;
 
-    this.$rootScope.$on('page:change', this._onPageChange.bind(this));
+    this.$rootScope.$on('page:change', () => this.load());
+    this.$rootScope.$on('page:check-changes', () => this.load());
   }
 
-  _onPageChange() {
+  load() {
     const page = this.PageStructureService.getPage();
     if (!page) {
       this.actions = null;
