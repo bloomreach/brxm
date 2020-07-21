@@ -60,11 +60,7 @@ import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
 import org.hippoecm.frontend.plugins.standardworkflow.editdisplayorder.FolderSortingMechanism;
 import org.hippoecm.frontend.plugins.standardworkflow.editdisplayorder.FolderSortingMechanismDialog;
-import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.ChannelIdProvider;
-import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.HintsChannelIdProvider;
 import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.PlainJcrHstChannelInfoXPageLayoutProvider;
-import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.XPageLayoutConstants;
-import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.XPageLayoutProvider;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
@@ -313,7 +309,6 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                     final StdWorkflow<FolderWorkflow> stdWorkflow = new StdWorkflow<FolderWorkflow>("id", categoryLabel, getPluginContext(), model) {
 
                         AddDocumentArguments addDocumentModel = new AddDocumentArguments();
-                        ChannelIdProvider channelIdProvider = new HintsChannelIdProvider(hints);
 
                         @Override
                         protected Dialog createRequestDialog() {
@@ -323,7 +318,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                     prototypes.get(category),
                                     translated.contains(category),
                                     this,
-                                    channelIdProvider.getChannelId()
+                                    (String) hints.get("channelId")
                             );
                         }
 
@@ -470,21 +465,27 @@ public class FolderWorkflowPlugin extends RenderPlugin {
         return false;
     }
 
+    /**
+     * @param channelId in case this is an XPage folder, the channel Id for which the folder is. It can be null
+     */
     protected AddDocumentDialog createAddDocumentDialog(AddDocumentArguments addDocumentModel,
                                                         String category, Set<String> prototypes, boolean translated,
                                                         IWorkflowInvoker invoker, String channelId) {
         String locale = getCodecLocale();
         IModel<StringCodec> codecModel = CodecUtils.getNodeNameCodecModel(getPluginContext(), locale);
-        XPageLayoutProvider xPageLayoutProvider = new PlainJcrHstChannelInfoXPageLayoutProvider(channelId);
+        final List<IXPageLayout> xPageLayouts;
+        if (channelId == null) {
+            xPageLayouts = Collections.emptyList();
+        } else {
+            xPageLayouts = new PlainJcrHstChannelInfoXPageLayoutProvider(channelId).getXPageLayouts();
+        }
 
         AddDocumentDialog dialog = new AddDocumentDialog(
                 addDocumentModel,
                 ResourceBundleModel.of(HIPPO_TEMPLATES_BUNDLE_NAME, category),
                 category,
                 prototypes,
-                new ListModel(XPageLayoutConstants.UNDEFINED_CHANNEL_ID.equals(channelId)?
-                        Collections.emptyList():
-                        xPageLayoutProvider.getXPageLayouts()),
+                new ListModel(xPageLayouts),
                 translated && !isLanguageKnown(),
                 invoker,
                 codecModel,
