@@ -467,6 +467,14 @@ describe('ChannelService', () => {
       loadChannel();
     });
 
+    it('should emit "page:check-changes"', () => {
+      const listener = jasmine.createSpy();
+      $rootScope.$on('page:check-changes', listener);
+
+      ChannelService.checkChanges();
+      expect(listener).toHaveBeenCalled();
+    });
+
     it('should not throw an error if the backend call fails', (done) => {
       HstService.doGet.and.returnValue($q.reject());
 
