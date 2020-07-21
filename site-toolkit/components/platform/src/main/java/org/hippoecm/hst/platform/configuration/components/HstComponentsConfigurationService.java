@@ -37,6 +37,7 @@ import org.hippoecm.hst.provider.ValueProvider;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.unmodifiableMap;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEM_PACKAGE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED;
@@ -175,9 +176,15 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         for (HstComponentConfiguration child : populate) {
             if (isNotEmpty(child.getComponentDefinition())) {
                 ((HstComponentConfigurationService) child).populateCatalogItemReference(availableContainerItems);
-            } else {
-                //Legacy component instances support. If component instance does not have a component definition reference,
-                //explicitly populate component parameters.
+            }
+        }
+
+        for (HstComponentConfiguration child : populate) {
+            if (isEmpty(child.getComponentDefinition())) {
+
+                // In case the component is a container item, this is legacy component instances support. For components
+                // that are not hst:components, this is not legacy!
+                // If component instance does not have a component definition reference, explicitly populate component parameters.
                 //TODO SS: In case of legacy component instances, there is an extra memory overhead because
                 // field group information & parameter definitions are stored on a component instance level,
                 // instead of storing that on a catalog item level.
