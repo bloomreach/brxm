@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultPagination<T> extends Pagination<T> {
+public class DefaultPagination<T> extends AbstractPagination<T> {
      
     private List<T> items;
 
