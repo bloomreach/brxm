@@ -274,6 +274,13 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         add(buttonsView);
 
         ok = new ButtonWrapper(new ResourceModel("ok")) {
+
+            @Override
+            protected Button decorate(final Button button) {
+                button.add(ClassAttribute.append("qa-dialog-btn-ok"));
+                return super.decorate(button);
+            }
+
             @Override
             protected void onSubmit() {
                 handleSubmit();
@@ -291,16 +298,17 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         cancel = new ButtonWrapper(new ResourceModel("cancel")) {
 
             @Override
+            protected Button decorate(final Button button) {
+                button.setDefaultFormProcessing(false);
+                button.add(ClassAttribute.append("qa-dialog-btn-cancel"));
+                return super.decorate(button);
+            }
+
+            @Override
             protected void onSubmit() {
                 cancelled = true;
                 onCancel();
                 closeDialog();
-            }
-
-            @Override
-            protected Button decorate(final Button button) {
-                button.setDefaultFormProcessing(false);
-                return super.decorate(button);
             }
         };
         cancel.setKeyType(KeyType.Escape);
