@@ -79,7 +79,7 @@ class OpenUiStringPlugin {
         dt: 'json',
         wr: false,
         u: this.parameters.documentFieldsUrl,
-        ep: path.map(value => ({ value, name: 'path' })),
+        ep: path.map(value => ({ value, name: 'fieldpath' })),
         coh: [(settings, { responseJSON: { data } }) => resolve(data)],
         fh: [(settings, xhr, { message }) => reject(new Error(message))],
       });
