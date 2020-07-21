@@ -23,7 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.hippoecm.hst.component.pagination.Page;
+import org.hippoecm.hst.component.pagination.Pagination;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.PageModelEntity;
 import org.hippoecm.hst.content.beans.standard.HippoAssetBean;
@@ -36,12 +39,15 @@ import org.hippoecm.hst.core.pagemodel.container.MetadataDecorator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.sitemenu.CommonMenu;
 import org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel;
+import org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel.LinkType;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -50,6 +56,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SELF;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
 
 public class PageModelSerializer extends JsonSerializer<Object> implements ResolvableSerializer {
@@ -57,6 +64,10 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
     private static ThreadLocal<SerializerContext> tlSerializerContext = new ThreadLocal<>();
 
     private static Logger log = LoggerFactory.getLogger(PageModelSerializer.class);
+
+    private static final String PAGINATION_QUERY_PAGE_PARAM = "%s:page";
+    private static final String PAGINATION_QUERY_SIZE_PARAM = "%s:size";
+    private static final String PAGINATION_QUERY_LIMIT_PARAM = "%s:limit";
 
     private static class SerializerContext {
         private boolean firstEntity = true;
@@ -242,6 +253,10 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
             final DecoratedPageModelEntityWrapper<HippoBean> decoratedPageModelEntityWrapper = wrapHippoBean(nextDepth, (HippoBean) object);
             return new JsonPointerWrapper(decoratedPageModelEntityWrapper, jsonPointerId);
         }
+        if (object instanceof Pagination) {
+            final DecoratedPaginationEntityWrapper paginationEntityWrapper = wrapPagination((Pagination<HippoBean>) object);
+            return new JsonPointerWrapper(paginationEntityWrapper, jsonPointerId);
+        }
         // no extra wrapping needed other than json pointer inclusion
         return new JsonPointerWrapper(object, jsonPointerId);
     }
@@ -276,6 +291,132 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
                     wrapper.getData(), wrapper);
         }
         return wrapper;
+    }
+
+    private PageModelSerializer.DecoratedPaginationEntityWrapper wrapPagination(final Pagination<HippoBean> pagination) {
+        return new DecoratedPaginationEntityWrapper(pagination);
+    }
+
+    @JsonPropertyOrder({ "offset", "items", "total", "first", "previous", "current", "next", "last", "pages", "size", "enabled"})
+    private static class DecoratedPaginationEntityWrapper {
+
+        private final Pagination<HippoBean> pagination;
+        private final String referenceId;
+        private final String siteLink;
+        private final String selfLink;
+
+        public DecoratedPaginationEntityWrapper(final Pagination<HippoBean> pagination) {
+            this.pagination = pagination;
+
+            final AggregatedPageModel aggregatedPageModel = PageModelAggregationValve.getCurrentAggregatedPageModel();
+            this.referenceId = aggregatedPageModel.getPage().getId();
+            this.siteLink = aggregatedPageModel.getLink(LINK_NAME_SITE).getHref();
+            this.selfLink = aggregatedPageModel.getLink(LINK_NAME_SELF).getHref();
+        }
+
+        private DecoratedPageEntityWrapper decoratePage(final Page page) {
+            if (page == null) {
+                return null;
+            }
+
+            final DecoratedPageEntityWrapper pageEntityWrapper = new DecoratedPageEntityWrapper(page);
+            pageEntityWrapper.putLink(LINK_NAME_SITE,new LinkModel(addOrReplaceQueryParams(siteLink, page.getNumber()), LinkType.INTERNAL));
+            pageEntityWrapper.putLink(LINK_NAME_SELF,new LinkModel(addOrReplaceQueryParams(selfLink, page.getNumber()), LinkType.EXTERNAL));
+
+            return pageEntityWrapper;
+        }
+
+        /**
+         * Adds or replaces the query parameters
+         * 
+         * @param link external or internal uri path
+         * @param pageNumber number of the pagination page
+         * @return
+         */
+        private String addOrReplaceQueryParams(final String uri, final int pageNumber) {
+            final UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(uri);
+            uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_PAGE_PARAM, referenceId), pageNumber);
+            uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_SIZE_PARAM, referenceId), pagination.getSize());
+            uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_LIMIT_PARAM, referenceId), pagination.getLimit());
+            return uriBuilder.build().toUriString();
+        }
+
+        @JsonProperty
+        public List<HippoBean> getItems() {
+            return pagination.getItems();
+        }
+
+        @JsonProperty
+        public DecoratedPageEntityWrapper getFirst() {
+            return decoratePage(pagination.getFirst());
+        }
+
+        @JsonProperty
+        public DecoratedPageEntityWrapper getPrevious() {
+            return decoratePage(pagination.getPrevious());
+        }
+
+        @JsonProperty
+        public DecoratedPageEntityWrapper getCurrent() {
+            return decoratePage(pagination.getCurrent());
+        }
+
+        @JsonProperty
+        public DecoratedPageEntityWrapper getNext() {
+            return decoratePage(pagination.getNext());
+        }
+
+        @JsonProperty
+        public DecoratedPageEntityWrapper getLast() {
+            return decoratePage(pagination.getLast());
+        }
+
+        @JsonProperty
+        public int getSize() {
+            return pagination.getSize();
+        }
+
+        @JsonProperty
+        public long getTotal() {
+            return pagination.getTotal();
+        }
+
+        @JsonProperty
+        public boolean isEnabled() {
+            return pagination.isEnabled();
+        }
+
+        @JsonProperty
+        public int getOffset() {
+            return pagination.getOffset();
+        }
+
+        @JsonProperty
+        public List<DecoratedPageEntityWrapper> getPages() {
+            return pagination.getPages().stream().map(this::decoratePage).collect(Collectors.toList());
+        }
+    }
+
+    @JsonPropertyOrder({ "number", "links" })
+    private static class DecoratedPageEntityWrapper extends IdentifiableLinkableMetadataBaseModel {
+
+        private final Page page;
+
+        public DecoratedPageEntityWrapper(final Page page) {
+            super(null);
+            this.page = page;
+        }
+
+        @JsonProperty("number")
+        public int getNumber() {
+            return page.getNumber();
+        }
+
+        @JsonIgnore
+        @Override
+        public Map<String, Object> getMetadataMap() {
+            return null;
+        }
     }
 
 
