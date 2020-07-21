@@ -193,7 +193,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
     );
 
     private class DocumentFieldsBehavior extends AbstractDefaultAjaxBehavior {
-        private static final String QUERY_PARAM_PATH = "path";
+        private static final String QUERY_PARAM_PATH = "fieldpath";
 
         @Override
         protected void respond(final AjaxRequestTarget target) {
