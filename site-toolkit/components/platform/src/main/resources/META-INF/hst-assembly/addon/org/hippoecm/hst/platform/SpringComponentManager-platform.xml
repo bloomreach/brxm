@@ -68,6 +68,7 @@
           </property>
           <property name="sourceMap">
             <map>
+              <entry key="menu-list-provider" value="org.hippoecm.hst.platform.provider.MenuListProvider" />
             </map>
           </property>
         </bean>
