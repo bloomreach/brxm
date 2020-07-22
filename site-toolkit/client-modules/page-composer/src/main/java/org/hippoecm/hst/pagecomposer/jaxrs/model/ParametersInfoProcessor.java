@@ -52,9 +52,11 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
+import org.hippoecm.hst.platform.api.ValueListProviderService;
 import org.hippoecm.hst.platform.configuration.components.DynamicComponentParameter;
 import org.hippoecm.hst.platform.configuration.components.ResourceBundleListProvider;
 import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
+import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
@@ -286,34 +288,8 @@ public abstract class ParametersInfoProcessor {
         
         String values[] = dropdownList.getValues();
 
-        ValueListProvider valueListProvider = null;
-        final Class<?> valueListProviderClass = dropdownList.getValueListProvider();
-        final String sourceId = dropdownList.getSourceId();
-
-        if (StringUtils.isNotEmpty(sourceId)
-                && (valueListProviderClass == null || EmptyValueListProvider.class.equals(valueListProviderClass))) {
-            valueListProvider = new ResourceBundleListProvider(dropdownList.getSourceId());
-        }
-
-        if (valueListProviderClass != null && !EmptyValueListProvider.class.equals(valueListProviderClass)) {
-            try {
-                if (!StringUtils.isEmpty(sourceId)) {
-                    try {
-                        valueListProvider = (ValueListProvider) valueListProviderClass.getConstructor(String.class)
-                                .newInstance(sourceId);
-                    } catch (NoSuchMethodException e) {
-                        log.warn(
-                                "ValueListProvider class constructor with String parameter does not exist. SourceId: {} ValueListProvider: {}",
-                                sourceId, valueListProviderClass);
-                    }
-                }
-                if (valueListProvider == null) {
-                    valueListProvider = (ValueListProvider) valueListProviderClass.newInstance();
-                }
-            } catch (final Exception e) {
-                log.error("Failed to create or invoke the custom valueListProvider: '{}'.", valueListProviderClass, e);
-            }
-        }
+        ValueListProvider valueListProvider = getValueListProvider(
+            dropdownList.getValueListProviderKey(), dropdownList.getValueListProvider(), dropdownList.getSourceId());
 
         final String[] displayValues;
 
@@ -337,8 +313,57 @@ public abstract class ParametersInfoProcessor {
 
         prop.setDropDownListValues(values);
         prop.setDropDownListDisplayValues(displayValues);
+        
     }
- 
+
+    public static ValueListProvider getValueListProvider(final String valueListProviderKey,
+         final Class<? extends ValueListProvider> valueListProviderClass, final String sourceId) {
+
+        ValueListProvider valueListProvider = null;
+
+        if (StringUtils.isNotBlank(valueListProviderKey)) {
+            ValueListProviderService valueListProviderService =
+                HstServices.getComponentManager().getComponent(
+                    "ValueListProviderService", "org.hippoecm.hst.platform");
+
+            if (valueListProviderService != null) {
+                valueListProvider = sourceId == null?
+                    valueListProviderService.getProvider(valueListProviderKey) :
+                    valueListProviderService.getProvider(valueListProviderKey, sourceId);
+            } else {
+                log.warn("valueListProviderService wasn't found");
+            }
+        }
+        else {
+            if (StringUtils.isNotEmpty(sourceId)
+                    && (valueListProviderClass == null || EmptyValueListProvider.class.equals(valueListProviderClass))) {
+                valueListProvider = new ResourceBundleListProvider(sourceId);
+            }
+            else if (valueListProviderClass != null && !EmptyValueListProvider.class.equals(valueListProviderClass)) {
+                try {
+                    if (!StringUtils.isEmpty(sourceId)) {
+                        try {
+                            valueListProvider =
+                                valueListProviderClass.getDeclaredConstructor(String.class).newInstance(sourceId);
+                        } catch (NoSuchMethodException e) {
+                            log.warn(
+                                "ValueListProvider class constructor with String parameter does not exist. " +
+                                "SourceId: {} ValueListProvider: {}",
+                                    sourceId, valueListProviderClass);
+                        }
+                    }
+                    if (valueListProvider == null) {
+                        valueListProvider = valueListProviderClass.getDeclaredConstructor().newInstance();
+                    }
+                } catch (final Exception e) {
+                    log.error("Failed to create or invoke the custom valueListProvider: '{}'.",
+                        valueListProviderClass, e);
+                }
+            }
+        }
+        return valueListProvider;
+    }
+
     private static void populateJcrPathProperties(final ContainerItemComponentPropertyRepresentation prop,
                                                   final JcrPathParameterConfig jcrPath, final String contentPath) {
         prop.setPickerConfiguration(jcrPath.getPickerConfiguration());
