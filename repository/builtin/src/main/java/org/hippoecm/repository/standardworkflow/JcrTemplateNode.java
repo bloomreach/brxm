@@ -16,6 +16,7 @@
 package org.hippoecm.repository.standardworkflow;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,10 +30,27 @@ public class JcrTemplateNode {
     private String nodeName;
     private String primaryNodeType;
 
-    private final Set<String> mixinNames = new HashSet<>();
-    private final Map<String, Value> singleValuedProperties = new HashMap<>();
-    private final Map<String, Value[]> multiValuedProperties = new HashMap<>();
-    private final List<JcrTemplateNode> children = new ArrayList<>();
+    private Set<String> mixinNames = new HashSet<>();
+    private Map<String, Value> singleValuedProperties = new HashMap<>();
+    private Map<String, Value[]> multiValuedProperties = new HashMap<>();
+    private List<JcrTemplateNode> children = new ArrayList<>();
+
+
+    /**
+     * Seals the jcrTemplateNode, aka make it immutable including all children
+     * @param jcrTemplateNode
+     */
+    public static void seal(JcrTemplateNode jcrTemplateNode) {
+        jcrTemplateNode.mixinNames = Collections.unmodifiableSet(jcrTemplateNode.mixinNames);
+        jcrTemplateNode.singleValuedProperties = Collections.unmodifiableMap(jcrTemplateNode.singleValuedProperties);
+        // ideally the 'Value[]' arrays would also be immutable
+        jcrTemplateNode.multiValuedProperties = Collections.unmodifiableMap(jcrTemplateNode.multiValuedProperties);
+        jcrTemplateNode.children = Collections.unmodifiableList(jcrTemplateNode.children);
+
+        for (JcrTemplateNode child : jcrTemplateNode.children) {
+            seal(child);
+        }
+    }
 
     public JcrTemplateNode() {}
 
