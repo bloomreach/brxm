@@ -16,8 +16,8 @@
   "channel" : {
     "info" : {
       "props" : {
-        "headerName" : "Test HST Website",
-        "nonParameterProp" : "Foo"
+        "nonParameterProp" : "Foo",
+        "headerName" : "Test HST Website"
       }
     }
   },
@@ -108,18 +108,13 @@
       "data" : {
         "name" : "dynamiccontent",
         "displayName" : "DynamicContent",
-        "multipleDoubleTypeField" : [ 100.0, 120.0 ],
-        "singleValueMultipleDoubleTypeField" : [ 100.0 ],
-        "multipleValueSingleDoubleTypeField" : 100.0,
         "multipleLongTypeField" : [ 50, 60 ],
         "singleValueMultipleLongTypeField" : [ 50 ],
         "multipleValueSingleLongTypeField" : 50,
         "multipleDateTypeField" : [ 1553472000000, 1553558400000 ],
         "singleValueMultipleDateTypeField" : [ 1553472000000 ],
-        "longTypeField2" : 100,
-        "longTypeField" : 50,
-        "multipleBooleanTypeField" : [ false, true ],
         "multipleValueSingleDateTypeField" : 1553472000000,
+        "longTypeField2" : 100,
         "mirrorCompoundType" : null,
         "resourceCompoundType" : {
           "name" : "pagemodelapitest:resourceCompoundType",
@@ -138,7 +133,6 @@
         "standardCompoundType" : {
           "name" : "pagemodelapitest:standardCompoundType",
           "displayName" : "pagemodelapitest:standardCompoundType",
-          "stringTypeField" : "alexanderkade",
           "dynamicinnercompound" : {
             "name" : "pagemodelapitest:dynamicinnercompound",
             "displayName" : "pagemodelapitest:dynamicinnercompound",
@@ -146,16 +140,22 @@
           },
           "richTextEditorCompoundType" : {
             "value" : "contentOfHtmlFiledInCompoundTypeClass"
-          }
+          },
+          "stringTypeField" : "alexanderkade"
         },
+        "longTypeField" : 50,
+        "dateTypeField" : 1553472000000,
         "booleanTypeField" : false,
+        "multipleBooleanTypeField" : [ false, true ],
         "singleValueMultipleBooleanTypeField" : [ false ],
         "multipleValueSingleBooleanTypeField" : false,
         "doubleTypeField" : 100.0,
+        "multipleDoubleTypeField" : [ 100.0, 120.0 ],
+        "singleValueMultipleDoubleTypeField" : [ 100.0 ],
+        "multipleValueSingleDoubleTypeField" : 100.0,
         "richTextEditorCompoundType" : {
           "value" : "richtexteditorcontent"
         },
-        "dateTypeField" : 1553472000000,
         "localeString" : "en",
         "id" : "d993b0a1-5859-44fe-bf4b-017cda163364"
       }
@@ -403,13 +403,16 @@
         }
       },
       "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner102"
+        },
         "params" : {
           "path" : "banners/banner102"
         }
       },
       "name" : "banner-new-style",
       "type" : "container-item",
-      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     },
     "uid9" : {
       "id" : "r25_r1_r2_r4",
@@ -420,13 +423,16 @@
         }
       },
       "meta" : {
+        "paramsInfo" : {
+          "path" : "/some/default"
+        },
         "params" : {
           "document" : "banners/banner103"
         }
       },
       "name" : "banner-new-style-2",
       "type" : "container-item",
-      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     }
   }
 }
