@@ -89,7 +89,9 @@ public interface FolderWorkflow extends Workflow {
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
-     * @param jcrTemplateNode the JcrTemplateNode that will instruct which mixins, properties and children to add to the newly created document
+     * @param jcrTemplateNode the JcrTemplateNode that will instruct which mixins, properties and children to add to
+     *                        the newly created document. If {@code JcrTemplateNode} is {@code null}, the same behavior
+     *                        as {@link #add(String, String, String)}
      * @see #add(String, String, String) only including an JcrTemplateNode object to add extra mixins, properties and children to
      * the newly created node
      */
@@ -117,7 +119,10 @@ public interface FolderWorkflow extends Workflow {
 
 
     /**
-     * @param jcrTemplateNode the JcrTemplateNode that will instruct which mixins, properties and children to add to the newly created document
+     * @param jcrTemplateNode the JcrTemplateNode that will instruct which mixins, properties and children to add to
+     *                        the newly created document. If {@code JcrTemplateNode} is {@code null}, the same behavior
+     *                        as {@link #add(String, String, Map)}
+     *                        results
      * @see #add(String, String, Map) only including an JcrTemplateNode object to add extra mixins, properties and children to
      * the newly created node
      */
