@@ -16,8 +16,8 @@
   "channel" : {
     "info" : {
       "props" : {
-        "headerName" : "Test HST Website",
-        "nonParameterProp" : "Foo"
+        "nonParameterProp" : "Foo",
+        "headerName" : "Test HST Website"
       }
     }
   },
@@ -114,6 +114,12 @@
         "body" : {
           "value" : "This is the content of the homepage with a link to <a href=\"/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://www.example.com/withpathinfo/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://www.example.com/withpathinfo/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
         },
+        "selfBean" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "selfInstance" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
         "newsDocument" : {
           "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
         },
@@ -125,12 +131,6 @@
         },
         "assetBean" : {
           "$ref" : "/page/u5e56d406b302445e9f80e624ba053bc4"
-        },
-        "selfBean" : {
-          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
-        },
-        "selfInstance" : {
-          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         },
         "childObject" : {
           "name" : "just-some-name",
@@ -513,13 +513,16 @@
         }
       },
       "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner102"
+        },
         "params" : {
           "path" : "banners/banner102"
         }
       },
       "name" : "banner-new-style",
       "type" : "container-item",
-      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     },
     "uid10" : {
       "id" : "r27_r1_r2_r4",
@@ -530,13 +533,16 @@
         }
       },
       "meta" : {
+        "paramsInfo" : {
+          "path" : "/some/default"
+        },
         "params" : {
           "document" : "banners/banner103"
         }
       },
       "name" : "banner-new-style-2",
       "type" : "container-item",
-      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     }
   }
 }

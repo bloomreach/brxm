@@ -14,11 +14,11 @@
       "type":"internal"
     }
   },
-  "channel" : {
-    "info" : {
-      "props" : {
-        "headerName" : "Test HST Website",
-        "nonParameterProp" : "Foo"
+  "channel":{
+    "info":{
+      "props":{
+        "nonParameterProp":"Foo",
+        "headerName":"Test HST Website"
       }
     }
   },
@@ -593,9 +593,12 @@
               {
                 "id":"r27_r1_r2_r3",
                 "name":"banner-new-style",
-                "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
                 "type":"CONTAINER_ITEM_COMPONENT",
                 "_meta":{
+                  "paramsInfo":{
+                    "path":"banners/banner102"
+                  },
                   "params":{
                     "path":"banners/banner102"
                   }
@@ -613,9 +616,12 @@
               {
                 "id":"r27_r1_r2_r4",
                 "name":"banner-new-style-2",
-                "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
                 "type":"CONTAINER_ITEM_COMPONENT",
                 "_meta":{
+                  "paramsInfo":{
+                    "path":"/some/default"
+                  },
                   "params":{
                     "document":"banners/banner103"
                   }
@@ -728,21 +734,6 @@
       "body":{
         "value":"This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
       },
-      "newsDocument":{
-        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-      },
-      "folderBean":{
-        "$ref":"/content/ucbcbcbcb5fa848a8b03b4524373d992a"
-      },
-      "imageSetBean":{
-        "$ref":"/content/udb02dde500984488a72c2a4fc6d51beb"
-      },
-      "assetBean":{
-        "$ref":"/content/u5e56d406b302445e9f80e624ba053bc4"
-      },
-      "selfBean":{
-        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
-      },
       "selfInstance":{
         "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
       },
@@ -760,6 +751,21 @@
           "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
         }
       ],
+      "newsDocument":{
+        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+      },
+      "folderBean":{
+        "$ref":"/content/ucbcbcbcb5fa848a8b03b4524373d992a"
+      },
+      "imageSetBean":{
+        "$ref":"/content/udb02dde500984488a72c2a4fc6d51beb"
+      },
+      "assetBean":{
+        "$ref":"/content/u5e56d406b302445e9f80e624ba053bc4"
+      },
+      "selfBean":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
       "localeString":"en_US",
       "bar":{
         "name":"bar",
