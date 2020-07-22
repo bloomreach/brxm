@@ -50,7 +50,7 @@ import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.hippoecm.hst.experiencepage.ExperiencePageLoadingException;
+import org.hippoecm.hst.configuration.experiencepage.ExperiencePageLoadingException;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
