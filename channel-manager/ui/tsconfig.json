@@ -6,6 +6,11 @@
 */
 {
   "files": [],
+  "compilerOptions": {
+    "types": [
+      "jest"
+    ]
+  },
   "references": [
     {
       "path": "./tsconfig.app.json"
