@@ -57,6 +57,7 @@ export function EntityMixin(BaseClass) {
       if (!boxElement || !boxElement.length) {
         boxElement = this._insertGeneratedBoxElement();
         this.setBoxElement(boxElement);
+        this._hasGeneratedBoxElement = true;
       }
       return boxElement;
     }
@@ -69,6 +70,10 @@ export function EntityMixin(BaseClass) {
       generatedBox.insertAfter(startComment);
 
       return generatedBox;
+    }
+
+    hasGeneratedBoxElement() {
+      return !!this._hasGeneratedBoxElement;
     }
   };
 }
