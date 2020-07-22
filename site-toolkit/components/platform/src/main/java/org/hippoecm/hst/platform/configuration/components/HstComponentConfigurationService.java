@@ -54,6 +54,7 @@ import org.hippoecm.hst.configuration.experiencepage.ExperiencePageLoadingExcept
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
+import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
@@ -164,7 +165,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      */
     private boolean prototype;
 
+    /**
+     * true if this hst component configuration is the root hst:xpage node below hst:xpages
+     */
     private boolean xpage;
+
+    /**
+     * if xpage == true, the xPageLayoutAsJcrTemplate contains the HstNode as JcrTemplateNode, where the JcrTemplateNode
+     * is a structure that can be used in folder workflow to add subnodes / mixins to newly created document variant
+     */
+    private JcrTemplateNode xPageLayoutAsJcrTemplate;
 
     // true if this is an explicit xpage layout component (aka not inherited component but directly below the hst:xpage
     private boolean xpageLayoutComponent;
@@ -319,6 +329,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         final String nodeTypeName = node.getNodeTypeName();
 
         xpage = NODETYPE_HST_XPAGE.equals(nodeTypeName);
+
+        if (xpage) {
+            // load JcrTemplatePage, the xPageLayoutAsJcrTemplate should not get any referenced components included, just
+            // only follow the HstNode tree
+            xPageLayoutAsJcrTemplate = JcrTemplateNodeConverter.getXPageLaoutAsJcrTemplate(node);
+        }
 
         if (isAncestorXPage(this)) {
             xpageLayoutComponent = true;
@@ -861,6 +877,15 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      */
     public boolean isXPage() {
         return xpage;
+    }
+
+    /**
+     * in case {@link #isXPage()} returns {@code true}, then {@link #getJcrTemplateNode()} returns the HstNode hierarchy
+     * for an XPage Layout as a JcrTemplateNode, otherwise it is null
+     * @return the JcrTemplateNode in case {@link #isXPage()} is {@code true}, otherwise {@code null}
+      */
+    public JcrTemplateNode getJcrTemplateNode() {
+        return xPageLayoutAsJcrTemplate;
     }
 
     /**

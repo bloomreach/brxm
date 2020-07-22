@@ -35,12 +35,11 @@ import org.easymock.EasyMock;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.model.ReadOnlyModel;
-import org.hippoecm.frontend.model.SerializableSupplier;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.junit.Test;
-import org.onehippo.cms7.services.hst.IXPageLayout;
-import org.onehippo.cms7.services.hst.XPageLayout;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 import org.onehippo.repository.mock.MockNode;
 
 import static org.easymock.EasyMock.eq;
@@ -51,13 +50,13 @@ import static org.junit.Assert.assertNotNull;
 public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
 
     private StringCodec stringCodec;
-    private static List<IXPageLayout> xPageLayoutList =   Stream.of(
-            new XPageLayout("layout1", "Layout 1","uuid"),
-            new XPageLayout("layout2", "Layout 2", "uuid"),
-            new XPageLayout("layout3", "Layout 3", "uuid"))
+    private static List<XPageLayout> xPageLayoutList =   Stream.of(
+            new XPageLayout("layout1", "Layout 1",new JcrTemplateNode()),
+            new XPageLayout("layout2", "Layout 2", new JcrTemplateNode()),
+            new XPageLayout("layout3", "Layout 3", new JcrTemplateNode()))
             .collect(Collectors.toList());
 
-    private void createDialog(final boolean workflowError, List<IXPageLayout> xPageLayoutList) throws Exception {
+    private void createDialog(final boolean workflowError, List<XPageLayout> xPageLayoutList) throws Exception {
         final WorkflowDescriptorModel workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
 
         final IWorkflowInvoker invoker = mockWorkflowInvoker();

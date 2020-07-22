@@ -17,9 +17,9 @@ package org.hippoecm.frontend.plugins.standardworkflow.xpagelayout;
 
 import java.util.List;
 
-import org.onehippo.cms7.services.hst.IXPageLayout;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 
 public interface XPageLayoutProvider {
 
-    List<IXPageLayout> getXPageLayouts();
+    List<XPageLayout> getXPageLayouts();
 }
