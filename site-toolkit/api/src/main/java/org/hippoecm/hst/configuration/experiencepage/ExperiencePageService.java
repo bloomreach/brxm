@@ -13,13 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.experiencepage;
+package org.hippoecm.hst.configuration.experiencepage;
 
 import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 public interface ExperiencePageService {
 
