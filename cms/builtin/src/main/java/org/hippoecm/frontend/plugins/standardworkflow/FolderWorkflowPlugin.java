@@ -60,7 +60,7 @@ import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
 import org.hippoecm.frontend.plugins.standardworkflow.editdisplayorder.FolderSortingMechanism;
 import org.hippoecm.frontend.plugins.standardworkflow.editdisplayorder.FolderSortingMechanismDialog;
-import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.PlainJcrHstChannelInfoXPageLayoutProvider;
+import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.HstXPageLayoutProvider;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
@@ -87,7 +87,7 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
-import org.onehippo.cms7.services.hst.IXPageLayout;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -382,16 +382,14 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                 }
 
                                 TreeMap<String, String> arguments = new TreeMap<>();
-                                final IXPageLayout xPageLayout = addDocumentModel.getXPageLayout();
-                                if (xPageLayout != null) {
-                                    arguments.put("subProtoTypeUUID", xPageLayout.getSubPrototypeUUID());
-                                }
+                                final XPageLayout xPageLayout = addDocumentModel.getXPageLayout();
                                 arguments.put("name", nodeName);
                                 arguments.put("localName", localName);
                                 if (StringUtils.isNotBlank(addDocumentModel.getLanguage())) {
                                     arguments.put(HippoTranslationNodeType.LOCALE, addDocumentModel.getLanguage());
                                 }
-                                String path = workflow.add(category, addDocumentModel.getPrototype(), arguments);
+                                String path = workflow.add(category, addDocumentModel.getPrototype(), arguments,
+                                        xPageLayout == null ? null : xPageLayout.getJcrTemplateNode());
                                 onWorkflowAdded(path);
                                 JcrNodeModel nodeModel = new JcrNodeModel(path);
                                 if (!nodeName.equals(localName)) {
@@ -473,11 +471,11 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                                         IWorkflowInvoker invoker, String channelId) {
         String locale = getCodecLocale();
         IModel<StringCodec> codecModel = CodecUtils.getNodeNameCodecModel(getPluginContext(), locale);
-        final List<IXPageLayout> xPageLayouts;
+        final List<XPageLayout> xPageLayouts;
         if (channelId == null) {
             xPageLayouts = Collections.emptyList();
         } else {
-            xPageLayouts = new PlainJcrHstChannelInfoXPageLayoutProvider(channelId).getXPageLayouts();
+            xPageLayouts = new HstXPageLayoutProvider(channelId).getXPageLayouts();
         }
 
         AddDocumentDialog dialog = new AddDocumentDialog(
@@ -495,6 +493,12 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
         if (locale != null) {
             dialog.getLanguageField().setVisible(false);
+        }
+
+        if (channelId != null && xPageLayouts.isEmpty()) {
+            log.info("There are no xPageLayouts for channel with id '{}'. Skip 'add document' menu item since folder " +
+                    "is an experience page folder", channelId);
+            dialog.setVisible(false);
         }
 
         return dialog;

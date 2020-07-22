@@ -42,7 +42,7 @@ import org.hippoecm.frontend.plugins.standardworkflow.validators.AddDocumentVali
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.widgets.NameUriField;
 import org.hippoecm.repository.api.StringCodec;
-import org.onehippo.cms7.services.hst.IXPageLayout;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 
 public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
 
@@ -53,7 +53,7 @@ public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
     private final IModel<StringCodec> nodeNameCodecModel;
 
     public AddDocumentDialog(AddDocumentArguments addDocumentModel, IModel<String> title, String category,
-                             Set<String> prototypes, IModel<List<IXPageLayout>> xPageLayoutListModel, boolean translated, final IWorkflowInvoker invoker,
+                             Set<String> prototypes, IModel<List<XPageLayout>> xPageLayoutListModel, boolean translated, final IWorkflowInvoker invoker,
                              IModel<StringCodec> nodeNameCodec, ILocaleProvider localeProvider, final WorkflowDescriptorModel workflowDescriptorModel) {
         super(invoker, Model.of(addDocumentModel));
 
