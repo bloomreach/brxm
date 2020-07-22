@@ -39,7 +39,7 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.experiencepage.ExperiencePageService;
+import org.hippoecm.hst.configuration.experiencepage.ExperiencePageService;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
