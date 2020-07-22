@@ -17,26 +17,25 @@ package org.hippoecm.frontend.plugins.standardworkflow.xpagelayout;
 
 import java.util.List;
 
-
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
-import org.onehippo.cms7.services.hst.IXPageLayout;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 
 public class XPageLayoutContainer extends WebMarkupContainer {
 
     public static final String HIPPO_CMS_XPAGES = "hippo:cms.xpage";
 
-    public XPageLayoutContainer(final String id, final IModel<IXPageLayout> xPageLayoutModel
-            , final IModel<List<IXPageLayout>> xPageLayoutListModel) {
+    public XPageLayoutContainer(final String id, final IModel<XPageLayout> xPageLayoutModel
+            , final IModel<List<XPageLayout>> xPageLayoutListModel) {
         super(id, xPageLayoutModel);
         final IModel<String> xPageLayoutLabelModel = ResourceBundleModel.of(HIPPO_CMS_XPAGES, "x-page-layout");
         final Label xPageLayoutLabel = new Label("xpage-layout-label", xPageLayoutLabelModel);
         add(xPageLayoutLabel);
-        final DropDownChoice<IXPageLayout> pageLayoutDropDownChoice = new DropDownChoice<IXPageLayout>(
+        final DropDownChoice<XPageLayout> pageLayoutDropDownChoice = new DropDownChoice<>(
                 "xpage-layout-drop-down-choice",
                 xPageLayoutModel,
                 xPageLayoutListModel,
@@ -48,23 +47,23 @@ public class XPageLayoutContainer extends WebMarkupContainer {
         setVisible(!xPageLayoutListModel.getObject().isEmpty());
     }
 
-    IChoiceRenderer<IXPageLayout> choiceRenderer =
-            new IChoiceRenderer<IXPageLayout>() {
+    IChoiceRenderer<XPageLayout> choiceRenderer =
+            new IChoiceRenderer<XPageLayout>() {
                 @Override
-                public String getDisplayValue(final IXPageLayout object) {
+                public String getDisplayValue(final XPageLayout object) {
                     return object.getLabel();
                 }
 
                 @Override
-                public String getIdValue(final IXPageLayout object, final int index) {
+                public String getIdValue(final XPageLayout object, final int index) {
                     return object.getKey();
                 }
 
                 @Override
-                public IXPageLayout getObject(final String id, final IModel<? extends List<? extends IXPageLayout>> choices) {
+                public XPageLayout getObject(final String id, final IModel<? extends List<? extends XPageLayout>> choices) {
                     return choices.getObject().
                             stream().
-                            filter(ixPageLayout -> ixPageLayout.getKey().equals(id)).findFirst().
+                            filter(xPageLayout -> xPageLayout.getKey().equals(id)).findFirst().
                             orElse(null);
                 }
             };

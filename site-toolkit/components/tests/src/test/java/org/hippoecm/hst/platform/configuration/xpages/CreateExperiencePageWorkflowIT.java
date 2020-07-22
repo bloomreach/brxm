@@ -15,28 +15,33 @@
  */
 package org.hippoecm.hst.platform.configuration.xpages;
 
-import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
+import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.platform.api.ChannelService;
+import org.hippoecm.hst.platform.api.PlatformServices;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.util.XPagesUtils;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_LABEL;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_XPAGE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_TEMPLATE;
 
@@ -45,7 +50,7 @@ public class CreateExperiencePageWorkflowIT extends AbstractBeanTestCase {
 
     private Repository repository;
     private HippoSession adminSession;
-    private HippoSession author;
+    private HstManager hstManager;
 
     @Override
     @Before
@@ -53,42 +58,80 @@ public class CreateExperiencePageWorkflowIT extends AbstractBeanTestCase {
         super.setUp();
         repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
         adminSession = (HippoSession) repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-        author = (HippoSession) repository.login(new SimpleCredentials("author", "author".toCharArray()));
+        hstManager = getComponent(HstManager.class.getName());
     }
 
     @After
     public void tearDown() throws Exception {
         adminSession.logout();
-        author.logout();
         super.tearDown();
     }
 
     @Test
-    public void folder_workflow_create_new_XPage_document_as_admin() throws Exception {
-        createNewDocumentAs(adminSession);
+    public void assert_XPageLayout_for_channel_is_available_via_Channel_Service() throws Exception {
+        final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
+
+        final String channelId = mount.getMount().getChannel().getId();
+
+        final ChannelService channelService = HippoServiceRegistry.getService(PlatformServices.class).getChannelService();
+
+        final Map<String, XPageLayout> xPageLayouts = channelService.getXPageLayouts(channelId);
+        assertThat(xPageLayouts.size())
+                .as("Expected xpage1 to be found")
+                .isEqualTo(1);
+
+        assertThat(xPageLayouts.containsKey("hst:xpages/xpage1"))
+                .isTrue();
+
+        final XPageLayout xPageLayout = xPageLayouts.get("hst:xpages/xpage1");
+
+        assertThat(xPageLayout.getLabel())
+                .isEqualTo("XPage 1");
+
+        final JcrTemplateNode jcrTemplateNode = xPageLayout.getJcrTemplateNode();
+
+        assertThat(jcrTemplateNode)
+                .isNotNull();
+
+        assertThat(jcrTemplateNode.getMixinNames())
+                .containsExactly(MIXINTYPE_HST_XPAGE_MIXIN);
+
+        assertThatThrownBy(() -> jcrTemplateNode.addChild("foo", "foo"))
+                .as("JcrTemplateNode in HstModel should be immutable")
+                .isInstanceOf(UnsupportedOperationException.class);
+
+        assertThatThrownBy(() -> jcrTemplateNode.getMixinNames().add("test"))
+                .as("JcrTemplateNode in HstModel should be immutable")
+                .isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test
-    public void folder_workflow_create_new_XPage_document_as_author() throws Exception {
-        createNewDocumentAs(author);
+    public void folder_workflow_create_new_XPage_document_as_admin() throws Exception {
+        // unfortunately cannot test as 'author' since access for group author to
+        // '/hippo:configuration/hippo:queries/hippo:templates' is bootstrapped by cms and read access is required by document
+        // workflow
+        createNewDocumentAs(adminSession);
     }
 
-    private void createNewDocumentAs(final HippoSession userSession) throws RepositoryException, WorkflowException, RemoteException {
 
-        final Node xpageNode = userSession.getNode("/hst:hst/hst:configurations/unittestproject/hst:xpages/xpage1");
+    private void createNewDocumentAs(final HippoSession userSession) throws Exception {
+
         final String folder = "/unittestcontent/documents/unittestproject/News";
 
         try {
 
-            userSession.save();
+            final Map<String, XPageLayout> xPageLayouts = HippoServiceRegistry.getService(PlatformServices.class).getChannelService()
+                    .getXPageLayouts("unittestproject");
+
+            final XPageLayout xPageLayout = xPageLayouts.get("hst:xpages/xpage1");
 
             final Node folderNode = userSession.getNode(folder);
 
             final FolderWorkflow workflow = (FolderWorkflow) userSession.getWorkspace().getWorkflowManager().getWorkflow("internal", folderNode);
 
-            JcrTemplateNode jcrTemplateNode = XPagesUtils.xpageAsJcrTemplate(xpageNode);
 
-            final String add = workflow.add("simple", "new-document", "newDoc", jcrTemplateNode);
+
+            final String add = workflow.add("simple", "new-document", "newDoc", xPageLayout.getJcrTemplateNode());
 
             final Node node = userSession.getNode(add);
 
@@ -117,8 +160,10 @@ public class CreateExperiencePageWorkflowIT extends AbstractBeanTestCase {
                     .isTrue();
 
         } finally {
-            userSession.getNode("/unittestcontent/documents/unittestproject/News/newDoc").remove();
-            userSession.save();
+            if (userSession.nodeExists("/unittestcontent/documents/unittestproject/News/newDoc")) {
+                userSession.getNode("/unittestcontent/documents/unittestproject/News/newDoc").remove();
+                userSession.save();
+            }
         }
     }
 }
