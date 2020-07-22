@@ -102,8 +102,9 @@
 
 [hst:dropdown] > hst:fieldconfig
 - hst:value (string) multiple
-- hst:valuelistprovider (string)
 - hst:sourceid (string)
+// This property represents a value list provider key
+- hst:valuelistprovider (string)
 
 [hst:dynamicparameter]
  - hst:required (boolean)
