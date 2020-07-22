@@ -16,11 +16,11 @@
 package org.hippoecm.hst.platform.configuration.cache;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -68,6 +68,8 @@ public class HstNodeImpl implements HstNode {
      * The primary node type name
      */
     private String nodeTypeName;
+
+    private List<String> mixinNames;
     
     /**
      * When true, this JCRValueProvider is out of date and needs to be reloaded
@@ -83,6 +85,14 @@ public class HstNodeImpl implements HstNode {
         this.parent = parent;
         provider = new JCRValueProviderImpl(jcrNode, false, true, includeProtectedProperties);
         nodeTypeName = StringPool.get(jcrNode.getPrimaryNodeType().getName());
+        mixinNames = new ArrayList<>();
+        Arrays.stream(jcrNode.getMixinNodeTypes()).forEach(mixin -> mixinNames.add(mixin.getName()));
+        if (mixinNames.isEmpty()) {
+            mixinNames = Collections.emptyList();
+        } else {
+            mixinNames = Collections.unmodifiableList(mixinNames);
+        }
+
         loadChildren(jcrNode, includeProtectedProperties);
         // detach the backing jcr node now we are done.
         stale = false;
@@ -266,9 +276,14 @@ public class HstNodeImpl implements HstNode {
         return nodeTypeName;
     }
 
+    @Override
+    public List<String> getMixinNames() {
+        return mixinNames;
+    }
+
     /* (non-Javadoc)
-     * @see org.hippoecm.hst.configuration.model.HstNode#getParent()
-     */
+         * @see org.hippoecm.hst.configuration.model.HstNode#getParent()
+         */
     @Override
     public HstNode getParent()  {
         return parent;
