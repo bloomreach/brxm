@@ -29,7 +29,9 @@ describe('AppComponent', () => {
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement).toMatchSnapshot();
   });
 });
