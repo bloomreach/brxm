@@ -16,8 +16,8 @@
   "channel" : {
     "info" : {
       "props" : {
-        "headerName" : "Test HST Website",
-        "nonParameterProp" : "Foo"
+        "nonParameterProp" : "Foo",
+        "headerName" : "Test HST Website"
       }
     }
   },
@@ -187,8 +187,8 @@
       "data" : {
         "name" : "common",
         "displayName" : "common",
-        "documentSize" : 1,
         "localeString" : "en_US",
+        "documentSize" : 1,
         "id" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
       }
     },
@@ -315,13 +315,16 @@
         }
       },
       "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner102"
+        },
         "params" : {
           "path" : "banners/banner102"
         }
       },
       "name" : "banner-new-style",
       "type" : "container-item",
-      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     },
     "uid7" : {
       "id" : "r27_r1_r2_r4",
@@ -332,13 +335,16 @@
         }
       },
       "meta" : {
+        "paramsInfo" : {
+          "path" : "/some/default"
+        },
         "params" : {
           "document" : "banners/banner103"
         }
       },
       "name" : "banner-new-style-2",
       "type" : "container-item",
-      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     }
   }
 }

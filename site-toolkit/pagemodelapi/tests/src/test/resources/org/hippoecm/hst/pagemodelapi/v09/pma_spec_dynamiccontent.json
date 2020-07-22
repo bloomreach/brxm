@@ -14,11 +14,11 @@
       "type":"internal"
     }
   },
-  "channel" : {
-    "info" : {
-      "props" : {
-        "headerName" : "Test HST Website",
-        "nonParameterProp" : "Foo"
+  "channel":{
+    "info":{
+      "props":{
+        "nonParameterProp":"Foo",
+        "headerName":"Test HST Website"
       }
     }
   },
@@ -593,9 +593,12 @@
               {
                 "id":"r25_r1_r2_r3",
                 "name":"banner-new-style",
-                "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
                 "type":"CONTAINER_ITEM_COMPONENT",
                 "_meta":{
+                  "paramsInfo":{
+                    "path":"banners/banner102"
+                  },
                   "params":{
                     "path":"banners/banner102"
                   }
@@ -613,9 +616,12 @@
               {
                 "id":"r25_r1_r2_r4",
                 "name":"banner-new-style-2",
-                "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
                 "type":"CONTAINER_ITEM_COMPONENT",
                 "_meta":{
+                  "paramsInfo":{
+                    "path":"/some/default"
+                  },
                   "params":{
                     "document":"banners/banner103"
                   }
@@ -722,15 +728,13 @@
       },
       "name":"dynamiccontent",
       "displayName":"DynamicContent",
-      "singleValueMultipleBooleanTypeField":[
-        false
+      "multipleBooleanTypeField":[
+        false,
+        true
       ],
-      "multipleValueSingleBooleanTypeField":false,
       "richTextEditorCompoundType":{
         "value":"richtexteditorcontent"
       },
-      "longTypeField":50,
-      "doubleTypeField":100.0,
       "multipleDoubleTypeField":[
         100.0,
         120.0
@@ -747,7 +751,6 @@
         50
       ],
       "multipleValueSingleLongTypeField":50,
-      "dateTypeField":1553472000000,
       "multipleDateTypeField":[
         1553472000000,
         1553558400000
@@ -778,18 +781,21 @@
         "richTextEditorCompoundType":{
           "value":"contentOfHtmlFiledInCompoundTypeClass"
         },
-        "stringTypeField":"alexanderkade",
         "dynamicinnercompound":{
           "name":"pagemodelapitest:dynamicinnercompound",
           "displayName":"pagemodelapitest:dynamicinnercompound",
           "stringTypeField":"http://test.com"
-        }
+        },
+        "stringTypeField":"alexanderkade"
       },
-      "booleanTypeField":false,
-      "multipleBooleanTypeField":[
-        false,
-        true
+      "multipleValueSingleBooleanTypeField":false,
+      "doubleTypeField":100.0,
+      "dateTypeField":1553472000000,
+      "singleValueMultipleBooleanTypeField":[
+        false
       ],
+      "longTypeField":50,
+      "booleanTypeField":false,
       "localeString":"en"
     }
   }
