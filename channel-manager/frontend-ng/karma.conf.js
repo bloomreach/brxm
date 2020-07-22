@@ -34,6 +34,7 @@ module.exports = (config) => {
     reporters: [...config.reporters, 'junit'],
     junitReporter: {
       outputDir: 'target/surefire-reports',
+      outputFile: 'cm-angularjs-unit-tests.xml',
     },
   });
 };
