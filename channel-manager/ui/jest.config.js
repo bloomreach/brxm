@@ -18,6 +18,9 @@ module.exports = {
   collectCoverage: true,
   reporters: [
     "default",
-    ["jest-junit", { outputDirectory: 'junit' }],
+    ["jest-junit", {
+      outputDirectory: './target/surefire-reports',
+      outputName: 'cm-angular-unit-tests.xml'
+    }],
   ]
 };
