@@ -28,14 +28,18 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
+import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -71,19 +75,42 @@ public class XPageIT extends AbstractTestConfigurations {
 
         assertThat(xPages.size()).isEqualTo(1);
 
-        final HstComponentConfiguration xpage1 = xPages.get("xpage1");
+        final HstComponentConfiguration xPageLayout = xPages.get("xpage1");
 
-        assertThat(xpage1).as("XPage should be available by node name").isNotNull();
-        assertThat(xpage1.getLabel()).isEqualTo("XPage 1");
+        assertThat(xPageLayout).as("XPage should be available by node name").isNotNull();
+        assertThat(xPageLayout.getLabel()).isEqualTo("XPage 1");
 
-        assertThat(xpage1.getHippoIdentifier()).as("XPage is not expected to have an auto created 'hippo:identifier'").isNull();
+        assertThat(((HstComponentConfigurationService)xPageLayout).getJcrTemplateNode())
+                .as("Expected non-null jcr template node for root 'xpage Layout'")
+                .isNotNull();
+
+        final JcrTemplateNode jcrTemplateNode = ((HstComponentConfigurationService) xPageLayout).getJcrTemplateNode();
+
+        assertThat(jcrTemplateNode.getMixinNames())
+                .containsExactly(MIXINTYPE_HST_XPAGE_MIXIN);
+
+
+        assertThatThrownBy(() -> jcrTemplateNode.addChild("foo", "foo"))
+                .as("JcrTemplateNode in HstModel should be immutable")
+                .isInstanceOf(UnsupportedOperationException.class);
+
+        assertThat(xPageLayout.getHippoIdentifier()).as("XPage is not expected to have an auto created 'hippo:identifier'").isNull();
 
         // TODO org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils and use it to common util but not now to
         // TODO avoid too many GIT changes (and possibly conflicts, will do later)
 
-        final HstComponentConfiguration main = xpage1.getChildByName("main");
+        final HstComponentConfiguration main = xPageLayout.getChildByName("main");
+
+        assertThat(((HstComponentConfigurationService)main).getJcrTemplateNode())
+                .as("Expected null jcr template node for NON-root 'xpage Layout'")
+                .isNull();
 
         final HstComponentConfiguration container1 = main.getChildByName("container1");
+
+        assertThat(((HstComponentConfigurationService)container1).getJcrTemplateNode())
+                .as("Expected null jcr template node for NON-root 'xpage Layout'")
+                .isNull();
+
         final HstComponentConfiguration container2 = main.getChildByName("container2");
 
         try {

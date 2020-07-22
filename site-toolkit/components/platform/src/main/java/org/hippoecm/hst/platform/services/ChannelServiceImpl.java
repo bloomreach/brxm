@@ -18,6 +18,7 @@ package org.hippoecm.hst.platform.services;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +27,8 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.jcr.RepositoryException;
@@ -33,6 +36,8 @@ import javax.jcr.Session;
 import javax.jcr.security.Privilege;
 
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -41,9 +46,11 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
+import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.platform.configuration.hosting.PageModelApiMount;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
+import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,4 +239,35 @@ public class ChannelServiceImpl implements ChannelService {
 
     }
 
+    @Override
+    public Map<String, XPageLayout> getXPageLayouts(final String channelId) {
+
+        for (HstModel hstModel : hstModelRegistry.getModels().values()) {
+            final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
+
+            // just find the first Mount which have a matching channel id, and create the XPageLayout from that
+            // channel (it doesn't matter through which hostgroup the channel is found
+
+            final Optional<Map<String, HstComponentConfiguration>> xPageLayoutComponents = virtualHosts.getHostGroupNames().stream()
+                    .flatMap(hostgroupName -> virtualHosts.getMountsByHostGroup(hostgroupName).stream()).collect(Collectors.toList())
+                    .stream()
+                    .filter(mount -> mount.getChannel() != null && channelId.equals(mount.getChannel().getId()))
+                    .map(mount -> mount.getHstSite().getComponentsConfiguration().getXPages())
+                    .findFirst();
+
+            if (!xPageLayoutComponents.isPresent()) {
+                log.info("Cannot find any XPageLayouts for channel '{}'", channelId);
+                continue;
+            } else {
+                return xPageLayoutComponents.get().values().stream()
+                        .map(componentConfiguration -> new XPageLayout(componentConfiguration.getId(),
+                                componentConfiguration.getLabel(),
+                                ((HstComponentConfigurationService)componentConfiguration).getJcrTemplateNode()))
+                        .filter(xPageLayout -> xPageLayout.getJcrTemplateNode() != null)
+                        .collect(Collectors.toMap(xpageLayout -> xpageLayout.getKey(), xpageLayout -> xpageLayout));
+            }
+        }
+
+        return Collections.emptyMap();
+    }
 }
