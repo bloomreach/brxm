@@ -89,10 +89,9 @@ public class JcrTemplateNodeConverter {
 
     private static void copyDescendants(final HstNode hstNode, final JcrTemplateNode node) {
 
-        // TODO support mixins!
-//        for (NodeType nodeType : jcrNode.getMixinNodeTypes()) {
-//            node.addMixinName(nodeType.getName());
-//        }
+        for (String mixinName : hstNode.getMixinNames()) {
+            node.addMixinName(mixinName);
+        }
 
         // hst config nodes for components only String and Booleans are used so only need those
         final Map<String, Boolean[]> booleanArrays = hstNode.getValueProvider().getPropertyMap().getBooleanArrays();

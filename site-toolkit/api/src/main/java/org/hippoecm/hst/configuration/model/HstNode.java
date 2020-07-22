@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -68,6 +68,11 @@ public interface HstNode {
      * @return the node type of the backing provider
      */
     String getNodeTypeName();
+
+    /**
+     * @return immutable list of mixin names and empty list in case no mixins present
+     */
+    List<String> getMixinNames();
 
     /**
      * @return the parent of this <code>{@link HstNode}</code> or <code>null</code> when there is no parent.
