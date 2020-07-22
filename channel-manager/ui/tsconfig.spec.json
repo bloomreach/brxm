@@ -6,11 +6,10 @@
     "esModuleInterop": true,
     "outDir": "./out-tsc/spec",
     "types": [
-      "jest",
+      "jest"
     ]
   },
   "files": [
-    "src/test.ts",
     "src/polyfills.ts"
   ],
   "include": [
