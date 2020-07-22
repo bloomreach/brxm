@@ -41,7 +41,7 @@ export class BrMeta extends React.Component<BrMetaProps> {
   }
 
   private renderMeta() {
-    const head = this.headRef?.current;
+    const head = this.headRef?.current?.nextSibling;
     const tail = this.tailRef?.current;
 
     if (!head || !tail) {
