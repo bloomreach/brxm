@@ -26,10 +26,12 @@
     "@angular/common": "10.0.4",
     "@angular/compiler": "10.0.4",
     "@angular/core": "10.0.4",
+    "@angular/elements": "10.0.4",
     "@angular/forms": "10.0.4",
     "@angular/platform-browser": "10.0.4",
     "@angular/platform-browser-dynamic": "10.0.4",
     "@angular/router": "10.0.4",
+    "document-register-element": "1.7.2",
     "rxjs": "6.6.0",
     "tslib": "2.0.0",
     "zone.js": "0.10.3"
