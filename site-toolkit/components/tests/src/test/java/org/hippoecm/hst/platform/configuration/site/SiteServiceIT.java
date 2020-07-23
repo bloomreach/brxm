@@ -21,20 +21,19 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.base.Optional;
+
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.container.site.CompositeHstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
+import org.hippoecm.hst.container.site.CompositeHstSite;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
-import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.configuration.hosting.MountService;
 import org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider;
 import org.hippoecm.hst.site.HstServices;
@@ -47,8 +46,6 @@ import org.junit.Test;
 import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import com.google.common.base.Optional;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
@@ -68,13 +65,10 @@ import static org.junit.Assert.assertTrue;
 public class SiteServiceIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
-    private EventPathsInvalidator invalidator;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         hstManager = getComponent(HstManager.class.getName());
     }
 
@@ -162,8 +156,6 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             }
             String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             saveSession(session);
-            final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-            invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
             invalidator.eventPaths(pathsToBeChanged);
 
             {
