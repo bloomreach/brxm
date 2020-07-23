@@ -50,6 +50,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionManager;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Folder;
 import org.hippoecm.repository.api.HierarchyResolver;
@@ -419,6 +420,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 } else if (prototypeNode.getName().equals(type)) {
                     final ExpandingCopyHandler handler = new ExpandingCopyHandler(target, renames, rootSession.getValueFactory());
                     result = JcrUtils.copyTo(prototypeNode, handler);
+                    copyXPageFolderMixinAndChannelIdToChild(result);
                     if (result.isNodeType(NT_HANDLE)) {
                         handleNode = result;
                         if (!handleNode.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
@@ -454,6 +456,16 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             }
         } finally {
             rootSession.refresh(false);
+        }
+    }
+
+    private void copyXPageFolderMixinAndChannelIdToChild(final Node result) throws RepositoryException {
+        if (subject.isNodeType(HippoStdNodeType.MIXIN_XPAGE_FOLDER)) {
+            result.addMixin(HippoStdNodeType.MIXIN_XPAGE_FOLDER);
+            if (subject.hasProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID)) {
+                String channelId = subject.getProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID).getString();
+                result.setProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID, channelId);
+            }
         }
     }
 
@@ -523,7 +535,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         } catch (RepositoryException ex) {
             log.error("error while deleting document variants from attic", ex);
         }
-
+        rootSession.save();
     }
 
     private void clear(final Node node) throws RepositoryException {
