@@ -29,6 +29,7 @@ import java.util.function.Function;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -707,6 +708,48 @@ public class FolderWorkflowTest extends RepositoryTestCase {
 
         }
 
+    }
+
+    @Test
+    public void create_child_of_xpage_folder() throws Exception {
+        // parent has no hippostd:xpagefolder mixin nor hippostd:channelid property
+        {
+            Node child = addChildFolder();
+            assertFalse(child.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER));
+            assertFalse(child.hasProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID));
+            assertFalse(child.hasProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID));
+        }
+
+        // parent has hippostd:xpagefolder mixin but no hippostd:channelid property
+        {
+            node.addMixin(HippoStdNodeType.NT_XPAGE_FOLDER);
+            session.save();
+            Node child = addChildFolder();
+            assertTrue(child.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER));
+            assertFalse(child.hasProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID));
+        }
+
+        // parent has hippostd:xpagefolder mixin and hippostd:channelid property
+        final String channelId = "channelId";
+        final Property channelIdProperty = node.setProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID, channelId);
+        {
+            node.addMixin(HippoStdNodeType.NT_XPAGE_FOLDER);
+            session.save();
+            Node child = addChildFolder();
+            assertTrue(child.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER));
+            assertTrue(child.hasProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID));
+            assertEquals(channelId, child.getProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID).getString());
+        }
+
+        channelIdProperty.remove();
+        node.removeMixin(HippoStdNodeType.NT_XPAGE_FOLDER);
+        session.save();
+    }
+
+    private Node addChildFolder() throws RepositoryException, WorkflowException, RemoteException {
+        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
+        String path = workflow.add("new-folder", "hippostd:folder", "d");
+        return session.getRootNode().getNode(path.substring(1));
     }
 
     @Ignore
