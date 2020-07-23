@@ -28,7 +28,7 @@ public class LatestBundledJQueryResourceReference extends JQueryResourceReferenc
     private static final String RESOURCE_PATH = "org/apache/wicket/resource/";
     private static final String JQUERY_FOLDER = "jquery/";
 
-    private static final String VERSION_3 = "jquery/jquery-3.3.1.js";
+    private static final String VERSION_3 = "jquery/jquery-3.5.1.js";
 
     private String latestJQueryVersion;
 

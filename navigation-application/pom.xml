@@ -81,15 +81,6 @@
             </configuration>
           </execution>
           <execution>
-            <id>npm run build</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <configuration>
-              <arguments>run build:prod</arguments>
-            </configuration>
-          </execution>
-          <execution>
             <id>npm run test:single-run</id>
             <phase>test</phase>
             <goals>
@@ -97,7 +88,7 @@
             </goals>
             <configuration>
               <arguments>run test:single-run</arguments>
-              <testFailureIgnore>false</testFailureIgnore>
+              <testFailureIgnore>${maven.test.failure.ignore}</testFailureIgnore>
             </configuration>
           </execution>
           <execution>
@@ -177,6 +168,56 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>fast-frontends</id>
+      <activation>
+        <property><name>fast-frontends</name></property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>npm run build</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>run build</arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>slow-frontends</id>
+      <activation>
+        <property><name>!fast-frontends</name></property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>npm run build</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>run build:prod</arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>pedantic</id>
       <build>

@@ -68,8 +68,9 @@ public interface FolderWorkflow extends Workflow {
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      * @deprecated use FolderWorkflow.hints().get("prototypes") instead which can be cast into the same return type.
      */
+    @Deprecated
     @WorkflowAction(loggable = false)
-    public Map<String, Set<String>> list()
+    Map<String, Set<String>> list()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -85,7 +86,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public String add(String category, String type, String relPath)
+    String add(String category, String type, String relPath)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -114,7 +115,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public String add(String category, String type, Map<String, String> arguments)
+    String add(String category, String type, Map<String, String> arguments)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
 
@@ -141,7 +142,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public void archive(String relPath)
+    void archive(String relPath)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -156,7 +157,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public void archive(Document offspring)
+    void archive(Document offspring)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -170,7 +171,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public void delete(String relPath)
+    void delete(String relPath)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -184,7 +185,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public void delete(Document offspring)
+    void delete(Document offspring)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -199,7 +200,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public void rename(String relPath, String newName)
+    void rename(String relPath, String newName)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -214,7 +215,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public void rename(Document offspring, String newName)
+    void rename(Document offspring, String newName)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -229,7 +230,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public void reorder(List<String> newOrder)
+    void reorder(List<String> newOrder)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -244,7 +245,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public Document duplicate(String relPath)
+    Document duplicate(String relPath)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -259,7 +260,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public Document duplicate(Document offspring)
+    Document duplicate(Document offspring)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -275,7 +276,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public Document duplicate(String relPath, Map<String, String> arguments)
+    Document duplicate(String relPath, Map<String, String> arguments)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -291,7 +292,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public Document duplicate(Document offspring, Map<String, String> arguments)
+    Document duplicate(Document offspring, Map<String, String> arguments)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -317,14 +318,13 @@ public interface FolderWorkflow extends Workflow {
      *
      * @param offspring the document reference which should be located directly beneath this container document
      * @param target    the destination folder reference
-     * @param arguments any rewrite options that may be performed on the moved node (see class description #FolderWorkflow)
      * @return the document reference of the moved document
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws MappingException    indicates that the work-flow call failed because of configuration problems
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    public Document copy(Document offspring, Document target, String name)
+    Document copy(Document offspring, Document target, String name)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -440,7 +440,7 @@ public interface FolderWorkflow extends Workflow {
     Folder get() throws WorkflowException, RepositoryException;
 
     /**
-     * @param The {@link Folder} that should update the backing folder node
+     * @param {@link Folder} that should update the backing folder node
      * @return The {@link Folder} that was updated
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
