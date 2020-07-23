@@ -1,0 +1,36 @@
+definitions:
+  config:
+    /hippo:namespaces/pagemodelapitest/contentforquery:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          hipposysedit:node: true
+          hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document', 'hippostd:publishableSummary', 'hippostd:relaxed']
+          hipposysedit:uri: http://www.onehippo.org/pagemodelapitest/nt/1.0
+          /booleanField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:booleanField
+            hipposysedit:primary: false
+            hipposysedit:type: Boolean
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: pagemodelapitest:contentforquery
+          hippostd:holder: holder
+          hippostd:state: draft
+          hippostdpubwf:createdBy: ''
+          hippostdpubwf:lastModifiedBy: ''
+          hippotranslation:id: document-type-locale-id
+          hippotranslation:locale: document-type-locale
+          jcr:mixinTypes: ['mix:referenceable']
+          pagemodelapitest:booleanField: false
+          hippostdpubwf:lastModificationDate: 2019-03-25T13:53:32.511+01:00
+          hippostdpubwf:creationDate: 2019-03-25T13:53:32.511+01:00

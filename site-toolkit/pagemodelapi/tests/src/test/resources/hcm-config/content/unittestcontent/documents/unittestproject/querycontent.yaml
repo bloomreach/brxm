@@ -1,0 +1,129 @@
+definitions:
+  config:
+    /unittestcontent/documents/unittestproject/contentforquery:
+      jcr:primaryType: hippostd:folder
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+#      jcr:uuid: d5b0bbed-5d16-47ed-9b9e-8d5cba960423
+      #hippostd:foldertype: [new-content-document, new-content-folder]
+      hippotranslation:id: 7d5ba4f2-805f-4cbe-88c0-54c2278c2de3
+      hippotranslation:locale: en
+      /content-document-sample:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        #jcr:uuid: 64ab4648-0c20-40d2-9f18-d7a394f0334b
+        hippo:name: Sample document 1 for Query
+        /content-document-sample:
+          jcr:primaryType: pagemodelapitest:contentforquery
+          jcr:mixinTypes: ['mix:referenceable']
+          #jcr:uuid: 2a404f54-c3e8-4b44-805c-1488da756960
+          pagemodelapitest:booleanField: true
+          hippo:availability: [live]
+          #hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2014-03-25T16:52:00+01:00
+          hippostdpubwf:lastModificationDate: 2014-03-25T16:52:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2014-03-25T16:52:00+01:00
+          hippotranslation:id: b902ca9b-c92c-4b69-ba29-86e6db46bf11
+          hippotranslation:locale: en
+      /content-document-sample2:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        #jcr:uuid: 64ab4648-0c20-40d2-9f18-d7a394f0334b
+        hippo:name: Sample document 2 for Query
+        /content-document-sample2:
+          jcr:primaryType: pagemodelapitest:contentforquery
+          jcr:mixinTypes: ['mix:referenceable']
+          #jcr:uuid: 2a404f54-c3e8-4b44-805c-1488da756960
+          pagemodelapitest:booleanField: false
+          hippo:availability: [live]
+          #hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2014-03-25T16:52:00+01:00
+          hippostdpubwf:lastModificationDate: 2014-03-25T16:52:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2014-03-25T16:52:00+01:00
+          hippotranslation:id: b902ca9b-c92c-4b69-ba29-86e6db46bf11
+          hippotranslation:locale: en
+      /content-document-sample3:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        #jcr:uuid: 64ab4648-0c20-40d2-9f18-d7a394f0334b
+        hippo:name: Sample document 3 for Query
+        /content-document-sample3:
+          jcr:primaryType: pagemodelapitest:contentforquery
+          jcr:mixinTypes: ['mix:referenceable']
+          #jcr:uuid: 2a404f54-c3e8-4b44-805c-1488da756960
+          pagemodelapitest:booleanField: false
+          hippo:availability: [live]
+          #hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2014-03-25T16:52:00+01:00
+          hippostdpubwf:lastModificationDate: 2014-03-25T16:52:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2014-03-25T16:52:00+01:00
+          hippotranslation:id: b902ca9b-c92c-4b69-ba29-86e6db46bf11
+          hippotranslation:locale: en
+      /content-document-sample4:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        #jcr:uuid: 64ab4648-0c20-40d2-9f18-d7a394f0334b
+        hippo:name: Sample document 4 for Query
+        /content-document-sample4:
+          jcr:primaryType: pagemodelapitest:contentforquery
+          jcr:mixinTypes: ['mix:referenceable']
+          #jcr:uuid: 2a404f54-c3e8-4b44-805c-1488da756960
+          pagemodelapitest:booleanField: false
+          hippo:availability: [live]
+          #hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2014-03-25T16:52:00+01:00
+          hippostdpubwf:lastModificationDate: 2014-03-25T16:52:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2014-03-25T16:52:00+01:00
+          hippotranslation:id: b902ca9b-c92c-4b69-ba29-86e6db46bf11
+          hippotranslation:locale: en
+      /content-document-sample5:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        #jcr:uuid: 64ab4648-0c20-40d2-9f18-d7a394f0334b
+        hippo:name: Sample document 5 for Query
+        /content-document-sample5:
+          jcr:primaryType: pagemodelapitest:contentforquery
+          jcr:mixinTypes: ['mix:referenceable']
+          #jcr:uuid: 2a404f54-c3e8-4b44-805c-1488da756960
+          pagemodelapitest:booleanField: false
+          hippo:availability: [live]
+          #hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2014-03-25T16:52:00+01:00
+          hippostdpubwf:lastModificationDate: 2014-03-25T16:52:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2014-03-25T16:52:00+01:00
+          hippotranslation:id: b902ca9b-c92c-4b69-ba29-86e6db46bf11
+          hippotranslation:locale: en
+      /content-document-sample6:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        #jcr:uuid: 64ab4648-0c20-40d2-9f18-d7a394f0334b
+        hippo:name: Sample document 6 for Query
+        /content-document-sample6:
+          jcr:primaryType: pagemodelapitest:contentforquery
+          jcr:mixinTypes: ['mix:referenceable']
+          #jcr:uuid: 2a404f54-c3e8-4b44-805c-1488da756960
+          pagemodelapitest:booleanField: false
+          hippo:availability: [live]
+          #hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2014-03-25T16:52:00+01:00
+          hippostdpubwf:lastModificationDate: 2014-03-25T16:52:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2014-03-25T16:52:00+01:00
+          hippotranslation:id: b902ca9b-c92c-4b69-ba29-86e6db46bf11
+          hippotranslation:locale: en
