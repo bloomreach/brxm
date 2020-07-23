@@ -30,8 +30,8 @@ public class IterablePaginationUtils {
     }
 
     public static Pagination<HippoBean> createPagination(final HippoBeanIterator beans, final int totalSize, final int pageSize,
-            final int currentPage) {
-        return new IterablePagination(beans, totalSize, pageSize, currentPage);
+            final int currentPage, final int limit) {
+        return new IterablePagination(beans, totalSize, pageSize, currentPage, limit);
     }
 
     public static Pagination<HippoBean> createPagination(final List<HippoBean> items, final int currentPage, final int pageSize) {
