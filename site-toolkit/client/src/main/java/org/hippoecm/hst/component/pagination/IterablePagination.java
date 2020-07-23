@@ -41,7 +41,7 @@ public class IterablePagination extends AbstractPagination<HippoBean> {
      * <p/>
      * eg: when HstQuery is used to get the beans, both HstQuery#setLimit and HstQuery#setOffset has been used.
      */
-    public IterablePagination(final HippoBeanIterator beans, final int totalSize, final int pageSize, final int currentPage) {
+    public IterablePagination(final HippoBeanIterator beans, final int totalSize, final int pageSize, final int currentPage, final int limit) {
         super(totalSize, currentPage, pageSize);
 
         // add all from iterator; assuming that paging is done beforehand
