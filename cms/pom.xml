@@ -487,9 +487,9 @@
                 <exclude>console/frontend/.npmrc</exclude>
                 <exclude>engine/.npmrc</exclude>
                 <!-- front-end build external dependencies -->
-                <exclude>api/node_modules/**</exclude>
-                <exclude>console/frontend/node_modules/**</exclude>
-                <exclude>engine/node_modules/**</exclude>
+                <exclude>**/node_modules/**</exclude>
+                <exclude>**/node/**</exclude>
+                <exclude>**/target/**</exclude>
                 <!-- files without license header  -->
                 <exclude>upgrade_notes.txt</exclude>
                 <exclude>engine/src/main/resources/org/hippoecm/frontend/plugins/login/jstz.min.js</exclude>
