@@ -138,6 +138,12 @@ public interface HippoStdNodeType {
 
     String MIXIN_SKIPDRAFT = "hippostd:skipdraft";
 
+    String MIXIN_SUB_PROTOTYPE = "hippostd:subprototype";
+
+    String MIXIN_XPAGE_FOLDER = "hippostd:xpagefolder";
+
+    String HIPPOSTD_CHANNEL_ID = "hippostd:channelid";
+
     /**
      * The property in a hippostd:html node instance that hold the HTML fragment.
      */
