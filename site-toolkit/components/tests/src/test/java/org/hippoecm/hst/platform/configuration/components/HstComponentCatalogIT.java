@@ -68,7 +68,7 @@ public class HstComponentCatalogIT extends AbstractTestConfigurations {
             assertThat(catalogItems.size())
                     .as("Expected two catalog items bootstrapped below " +
                             "'/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage'")
-                    .isEqualTo(2);
+                    .isEqualTo(5);
 
 
             final HstComponentConfiguration bannerOldStyle = catalogItems.stream().filter(c -> c.getName().equals("unittestpackage/banner-old-style")).findFirst().get();
@@ -124,8 +124,6 @@ public class HstComponentCatalogIT extends AbstractTestConfigurations {
 
                 final List<HstComponentConfiguration> catalogItems = hstSite.getComponentsConfiguration().getAvailableContainerItems();
 
-                catalogItems.stream().forEach(c -> assertThat(c.getDynamicComponentParameters()).isEmpty());
-
                 interceptor.messages().forEach(s -> assertThat(s).isEqualTo("Component class not loadable: Foo"));
             }
         }
@@ -152,8 +150,19 @@ public class HstComponentCatalogIT extends AbstractTestConfigurations {
 
             final List<HstComponentConfiguration> catalogItems = hstSite.getComponentsConfiguration().getAvailableContainerItems();
 
-            catalogItems.stream().forEach(c ->
-                    assertThat(c.getDynamicComponentParameter("path").get().getDefaultValue()).isEqualTo("/some/default"));
+            final HstComponentConfiguration bannerOldStyle = catalogItems.stream().filter(c -> c.getName().equals("unittestpackage/banner-old-style")).findFirst().get();
+
+            assertThat(bannerOldStyle.getDynamicComponentParameter("path").get().getDefaultValue())
+                    .as("Expected 'banner old style' component to have dynamic parameter banner with default " +
+                            "value '/some/default', see org.hippoecm.hst.test.BannerComponentInfo")
+                    .isEqualTo("/some/default");
+
+            final HstComponentConfiguration bannerNewStyle = catalogItems.stream().filter(c -> c.getName().equals("unittestpackage/banner-new-style")).findFirst().get();
+
+            assertThat(bannerNewStyle.getDynamicComponentParameter("path").get().getDefaultValue())
+                    .as("Expected 'header new style' component to have dynamic parameter header with default " +
+                            "value 'some/default', see org.hippoecm.hst.test.BannerComponentInfo")
+                    .isEqualTo("/some/default");
         }
     }
 
