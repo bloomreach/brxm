@@ -15,3 +15,5 @@
 [pagemodelapitest:htmlblock2] > hippo:compound, hippostd:relaxed
 
 [pagemodelapitest:dynamiccontent] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document, hippostd:relaxed
+
+[pagemodelapitest:contentforquery] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document, hippostd:relaxed
