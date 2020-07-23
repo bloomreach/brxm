@@ -327,6 +327,7 @@
                 <exclude>frontend-ng/coverage/**/*</exclude>
                 <exclude>frontend-ng/.cache/**</exclude>
                 <exclude>**/target/**/*</exclude>
+                <exclude>ui/dist/**</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
               </excludes>
             </configuration>
