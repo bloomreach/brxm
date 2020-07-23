@@ -27,11 +27,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.api.model.InternalHstModel;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.After;
 import org.junit.Before;
@@ -293,8 +289,6 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         addComponentReference(testComponent, "containerReferencePreserveMyName", "foo/bar/myReferenceableContainer");
 
         // trigger events as during tests the jcr event listeners are not enabled
-        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         invalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/" + HstNodeTypes.NODENAME_HST_WORKSPACE, testComponent.getPath());
 
         {
@@ -358,8 +352,6 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         addComponentReference(testComponent, "localcontainer", "myReferenceableContainer");
 
         // trigger events as during tests the jcr event listeners are not enabled
-        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         invalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/" + HstNodeTypes.NODENAME_HST_WORKSPACE, testComponent.getPath());
 
         {
@@ -509,8 +501,6 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         // in 'unittestsubproject' to be from 'unittestproject' instead of from 'unittestcommon'
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestsubproject",
                 new String[]{"../unittestproject/hst:workspace", "../unittestproject"});
-        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         invalidator.eventPaths("/hst:hst/hst:configurations/unittestsubproject");
         final VirtualHosts vhostsNew = hstSitesManager.getVirtualHosts();
         {
@@ -561,8 +551,6 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         componentItem.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"valueNew"});
         saveSession();
         // trigger events as during tests the jcr event listeners are not enabled
-        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         invalidator.eventPaths(componentItem.getPath());
         {
             final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
