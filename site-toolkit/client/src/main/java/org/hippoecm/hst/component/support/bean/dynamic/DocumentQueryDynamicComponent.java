@@ -116,6 +116,7 @@ public class DocumentQueryDynamicComponent extends BaseHstDynamicComponent {
     protected Pagination<HippoBean> doSearch(final HstRequest request, final DocumentQueryDynamicComponentInfo info) {
         final int pageSize = getPageSize(request, info);
         final int page = getCurrentPage(request);
+        final int pageLimit = getPageLimit(request);
 
         final HstQuery query = getBuilder(request, info)
                 .where(getConstraint(request, info))
@@ -135,7 +136,8 @@ public class DocumentQueryDynamicComponent extends BaseHstDynamicComponent {
                     result.getHippoBeans(),
                     result.getTotalSize(),
                     pageSize,
-                    page);
+                    page,
+                    pageLimit);
         } catch (QueryException e) {
             log.error("Error running query", e.getMessage());
             log.warn("Query exception: ", e);
@@ -240,6 +242,24 @@ public class DocumentQueryDynamicComponent extends BaseHstDynamicComponent {
             }
         }
         return 1;
+    }
+
+    /**
+     * Determine the limit of the number of pages shown in the pagination.
+     *
+     * @param request the current request
+     * @return the page limit of the query
+     */
+    protected int getPageLimit(final HstRequest request) {
+        String value = request.getParameter(REQUEST_PARAM_PAGE);
+        if (!Strings.isNullOrEmpty(value)) {
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException ignore) {
+                // ignore exception
+            }
+        }
+        return 10;
     }
 
     /**
