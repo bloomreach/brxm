@@ -702,6 +702,7 @@
             <inherited>false</inherited>
             <configuration>
               <excludes combine.children="append">
+                <exclude>**/target/**</exclude>
                 <!-- files in which no comments are possible -->
                 <exclude>sandbox/WARNINGS</exclude>
                 <!-- repository content XML -->
