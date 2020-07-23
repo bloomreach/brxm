@@ -14,5 +14,25 @@ definitions:
       /residualparamstestpage:
         jcr:primaryType: hst:component
         /container:
-          jcr:primaryType: hst:containercomponentreference
-          hst:referencecomponent: residualparamstestcontainer
+          jcr:primaryType: hst:containercomponent
+          /testcatalogiteminstance:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentdefinition: hst:components/unittestpackage/testcatalogitem
+            hst:parameternameprefixes: ['', '', '', '', '', '', '', '', '', '', '', targeting]
+            hst:parameternames: [document, param1, param2, paramWithDefaultValue, integerParam, decimalParam, booleanParam, dateParam, dropdownParam, truly-residual, com.onehippo.cms7.targeting.TargetingParameterUtil.hide, targeting]
+            hst:parametervalues: [News/News1, value 1 in container item, value 2 in container item, "", "15", "20.5", "true", "2020-03-19T11:09:27", value1, residual-value, 'on', targeting-value]
+          /testcatalogitemenucomponentinstance:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentdefinition: hst:components/unittestpackage/testcatalogitemenucomponent
+            hst:parameternames: [menu]
+            hst:parametervalues: [main]
+          /testcatalogitemenucomponentinstanceinvalid:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentdefinition: hst:components/unittestpackage/testcatalogitemenucomponent
+            hst:parameternames: [menu]
+            hst:parametervalues: [invalid ref]
+          /testcatalogitequerycomponentinstance:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentdefinition: hst:components/unittestpackage/testcatalogitequerycomponent
+            hst:parameternames: [scope, includeSubtypes, documentTypes, sortField, sortOrder, hidePastItems, hideFutureItems, pageSize]
+            hst:parametervalues: [contentforquery, "false", pagemodelapitest:contentforquery, "", ASC, "false", "false", "10"]

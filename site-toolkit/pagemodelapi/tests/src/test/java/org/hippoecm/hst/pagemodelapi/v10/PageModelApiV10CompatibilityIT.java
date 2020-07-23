@@ -20,16 +20,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.core.LogEvent;
 import org.assertj.core.api.Assertions;
+import org.hippoecm.hst.component.support.bean.dynamic.MenuDynamicComponent;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
 import org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider;
@@ -37,11 +37,15 @@ import org.hippoecm.hst.platform.configuration.hosting.MountService;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.json.JSONException;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_LINK_URL_PREFIX;
 import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST;
@@ -102,40 +106,32 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         final String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0");
 
         final JsonNode root = mapper.readTree(actual);
-        final String dynamicParam1 = root.path("page").path("uid2").path("meta").path("paramsInfo").path("param1")
-                .asText();
-        assertEquals("Field 'dynamicParameter1' does not contain expected value", "value 1 in container item",
-                dynamicParam1);
+        final String dynamicParam1 = root.path("page").path("uid2").path("meta").path("paramsInfo").path("param1").asText();
+        assertEquals("Field 'dynamicParameter1' does not contain expected value", "value 1 in container item", dynamicParam1);
 
-        final String dynamicParam2 = root.path("page").path("uid2").path("meta").path("paramsInfo").path("param2")
-                .asText();
+        final String dynamicParam2 = root.path("page").path("uid2").path("meta").path("paramsInfo").path("param2").asText();
         assertEquals("Field 'param2' does not contain expected value", "value 2 in container item", dynamicParam2);
 
-        final int integerParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("integerParam")
-                .asInt();
+        final int integerParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("integerParam").asInt();
         assertEquals("Field 'integerParam' does not contain expected value", 15, integerParam);
 
-        final double decimalParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("decimalParam")
-                .asDouble();
+        final double decimalParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("decimalParam").asDouble();
         assertEquals("Field 'decimalParam' does not contain expected value", 20.5, decimalParam, 0);
 
-        final boolean booleanParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("booleanParam")
-                .asBoolean();
+        final boolean booleanParam = root.path("page").path("uid2").path("meta").path("paramsInfo").path("booleanParam").asBoolean();
         assertEquals("Field 'booleanParam' does not contain expected value", true, booleanParam);
 
         final JsonNode paramsNode = root.path("page").path("uid2").path("meta").get("params");
         assertEquals("Params is supposed to have only one item", 1, paramsNode.size());
         assertTrue("Params child is supposed to be 'truly-residual'", paramsNode.has("truly-residual"));
-        final Date dateParam = new Date(
-                root.path("page").path("uid2").path("meta").path("paramsInfo").path("dateParam").asLong());
+        final Date dateParam = new Date(root.path("page").path("uid2").path("meta").path("paramsInfo").path("dateParam").asLong());
 
-        assertEquals("Field 'dateParam' does not contain expected value",
-                DateUtils.parseDate("2020-03-19T11:09:27", "yyyy-MM-dd'T'HH:mm:ss"), dateParam);
+        assertEquals("Field 'dateParam' does not contain expected value",DateUtils.parseDate("2020-03-19T11:09:27", "yyyy-MM-dd'T'HH:mm:ss"), dateParam);
 
         assertTrue("Field 'document' is missing", root.path("page").path("uid2").path("models").has("document"));
         final String news1Reference = root.path("page").path("uid2").path("models").path("document").path("$ref").asText();
         assertEquals("Output does not contain reference to news document", news1Reference, "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3");
-        assertTrue("News document is missing from the pma output", root.path("page").has("u303d40ebf98c4d6184c7a1ba14b5ceb3"));                
+        assertTrue("News document is missing from the pma output", root.path("page").has("u303d40ebf98c4d6184c7a1ba14b5ceb3"));
     }
 
     @Test
@@ -147,6 +143,137 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         final int paramCount = root.path("page").path("uid2").path("meta").path("paramsInfo").size();
         assertEquals("Number of parameters inside paramsinfo", 9, paramCount);
         assertEquals("Field 'paramWithDefaultValue' does not contain expected value", "a default value", dynamicParamDefaultValue);
+    }
+
+    @Test
+    public void test_api_residual_parameters_menu_component_invalid_site_menu_param_v10_assertion() throws Exception {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MenuDynamicComponent.class).build()) {
+
+            String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0", "_maxreflevel=0");
+
+            final JsonNode root = mapper.readTree(actual);
+            final String dynamicParamOverriddenValue = root.path("page").path("uid4").path("meta").path("paramsInfo").path("menu").asText();
+            assertEquals("Field 'siteMenu' does not contain expected value", "invalid ref", dynamicParamOverriddenValue);
+
+            List<LogEvent> messages = interceptor.getEvents();
+            Assert.assertTrue(interceptor.messages().anyMatch(m -> m.equals("Invalid site menu is selected within MenuDynamicComponent: " + dynamicParamOverriddenValue)));
+        }
+    }
+
+    @Test
+    public void test_api_residual_parameters_menu_component_valid_site_menu_param_v10_assertion() throws Exception {
+        String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0");
+
+        final JsonNode root = mapper.readTree(actual);
+        final String validSiteMenu = root.path("page").path("uid3").path("meta").path("paramsInfo").path("menu").asText();
+        assertEquals("Field 'siteMenu' does not contain expected value", "main", validSiteMenu);
+
+        final String menuReference = root.path("page").path("uid3").path("models").path("menu").path("$ref").asText();
+        assertEquals("Output does not contain reference to menu document", menuReference, "/page/uid6");
+    }
+
+    @Test
+    public void test_api_residual_parameters_query_component_v10_assertion() throws Exception {
+        String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0","r22_r1_r5:page=1");
+
+        final JsonNode root = mapper.readTree(actual);
+
+        final int paramCount = root.path("page").path("uid5").path("meta").path("paramsInfo").size();
+        assertEquals("Number of parameters inside paramsinfo", 9, paramCount);
+
+        final String scope = root.path("page").path("uid5").path("meta").path("paramsInfo").path("scope").asText();
+        assertEquals("Field 'scope' does not contain expected value", "contentforquery", scope);
+
+        final int pageSize = root.path("page").path("uid5").path("meta").path("paramsInfo").path("pageSize")
+                .asInt();
+        assertEquals("Field 'pageSize' does not contain expected value", 10, pageSize);
+
+        final String sortField = root.path("page").path("uid5").path("meta").path("paramsInfo").path("sortField").asText();
+        assertEquals("Field 'sortField' does not contain expected value", "", sortField);
+
+        final String documentTypes = root.path("page").path("uid5").path("meta").path("paramsInfo").path("documentTypes").asText();
+        assertEquals("Field 'documentTypes' does not contain expected value", "pagemodelapitest:contentforquery", documentTypes);
+
+        final boolean booleanSubType = root.path("page").path("uid5").path("meta").path("paramsInfo").path("includeSubtypes")
+                .asBoolean();
+        assertEquals("Field 'includeSubtypes' does not contain expected value", false, booleanSubType);
+
+        final String sortOrder = root.path("page").path("uid5").path("meta").path("paramsInfo").path("sortOrder").asText();
+        assertEquals("Field 'sortOrder' does not contain expected value", "ASC", sortOrder);
+
+        final String dateField = root.path("page").path("uid5").path("meta").path("paramsInfo").path("dateField").asText();
+        assertEquals("Field 'dateField' does not contain expected value", "", dateField);
+
+        final boolean booleanHidePastItems = root.path("page").path("uid5").path("meta").path("paramsInfo").path("hidePastItems")
+                .asBoolean();
+        assertEquals("Field 'hidePastItems' does not contain expected value", false, booleanHidePastItems);
+
+        final boolean booleanFuturePastItems = root.path("page").path("uid5").path("meta").path("paramsInfo").path("hideFutureItems")
+                .asBoolean();
+        assertEquals("Field 'hideFutureItems' does not contain expected value", false, booleanFuturePastItems);
+
+        assertTrue("Field 'pagination' is missing", root.path("page").path("uid5").path("models").has("pagination"));
+        final String contentReference = root.path("page").path("uid5").path("models").path("pagination").path("$ref").asText();
+        assertEquals("Output does not contain reference to content document", contentReference, "/page/uid7");
+        assertTrue("Field 'scope' is missing", root.path("page").path("uid5").path("models").has("scope"));
+        final String contentQueryReference = root.path("page").path("uid5").path("models").path("scope").path("$ref").asText();
+        assertNotNull("Content query scope reference ", contentQueryReference);
+        assertTrue("Content document is missing from the pma output", root.path("page").has(contentQueryReference.split("/page/")[1]));
+    }
+
+    @Test
+    public void test_api_residual_parameters_query_component_pagination_v10_assertion() throws Exception {
+        String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0","r22_r1_r5:page=1");
+
+        final JsonNode root = mapper.readTree(actual);
+
+        final int pageSize = root.path("page").path("uid7").path("size")
+                .asInt();
+        assertEquals("Field 'size' does not contain expected value", 10, pageSize);
+
+        final int currentPage = root.path("page").path("uid7").path("current").path("number")
+                .asInt();
+        assertEquals("Field 'current' does not contain expected value", 1, currentPage);
+
+        final int totalRecords = root.path("page").path("uid7").path("total")
+                .asInt();
+        assertEquals("Field 'total' does not contain expected value", 6, totalRecords);
+
+        final boolean paginationFlag = root.path("page").path("uid7").path("enabled")
+                .asBoolean();
+        assertEquals("Field 'enabled' does not contain expected value", true, paginationFlag);
+
+        final int firstPage = root.path("page").path("uid7").path("first").path("number")
+                .asInt();
+        assertEquals("Field 'first' does not contain expected value", 1, firstPage);
+
+        final int offset = root.path("page").path("uid7").path("offset")
+                .asInt();
+        assertEquals("Field 'offset' does not contain expected value", 0, offset);
+
+        final int lastPage = root.path("page").path("uid7").path("last").path("number")
+                .asInt();
+        assertEquals("Field 'last' does not contain expected value", 1, lastPage);
+
+        final int nextPage = root.path("page").path("uid7").path("next")
+                .asInt();
+        assertEquals("Field 'next' does not contain expected value", 0, nextPage);
+
+        final int previousPage = root.path("page").path("uid7").path("previous")
+                .asInt();
+        assertEquals("Field 'previous' does not contain expected value", 0, previousPage);
+
+        final int pageCount = root.path("page").path("uid7").path("size").asInt();
+        assertEquals("Number of elements inside pages", 10, pageCount);
+
+        final int contentItemLength = root.path("page").path("uid7").path("items").size();
+        assertEquals("Number of elements inside items", 6, contentItemLength);
+
+        JsonNode itemsArray = root.path("page").path("uid7").path("items");
+        for(int counter = 0; counter<contentItemLength; counter++)
+        {
+            assertNotNull("Content items", itemsArray.get(counter).path("$ref"));
+        }
     }
 
     /**
