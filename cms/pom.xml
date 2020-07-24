@@ -20,12 +20,12 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.3.0-SNAPSHOT</version>
+    <version>14.3.0-experience-pages-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
-  <version>14.3.0-SNAPSHOT</version>
+  <version>14.3.0-experience-pages-SNAPSHOT</version>
 
   <inceptionYear>2007</inceptionYear>
 
@@ -83,7 +83,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.jackrabbit.version>2.18.5-h1</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.18.5-h2</hippo.jackrabbit.version>
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.utilities.version>${hippo.release.version}</hippo.utilities.version>
     <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
@@ -186,6 +186,12 @@
       <dependency>
         <groupId>org.onehippo.cms7.hst</groupId>
         <artifactId>hst-api</artifactId>
+        <version>${hippo.hst.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-platform-api</artifactId>
         <version>${hippo.hst.version}</version>
         <scope>provided</scope>
       </dependency>

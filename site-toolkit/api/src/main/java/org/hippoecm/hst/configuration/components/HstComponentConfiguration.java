@@ -315,9 +315,17 @@ public interface HstComponentConfiguration extends HstComponentInfo {
 
     /**
      * @return <code>true</code> when the backing provider ({@link HstNode}) of this {@link HstComponentConfiguration}
-     * is inherited
+     * is inherited, aka an {@link HstNode} belonging to a different hst:configuration tree than this
+     * {@link HstComponentConfiguration}
      */
     boolean isInherited();
+
+
+    /**
+     * @return {@code true} when the backing provider ({@link HstNode}) of this {@link HstComponentConfiguration} is
+     * most likely / can be shared with other {@link HstComponentConfiguration} instances
+     */
+    boolean isShared();
 
     /**
      * @return <code>true</code> when this {@link HstComponentConfiguration} can be used as a prototype to create other
@@ -350,6 +358,22 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * @return <code>true</code> when this {@link HstComponentConfiguration} is marked as deleted.
      */
     boolean isMarkedDeleted();
+
+    /**
+     * <p>
+     *     In case the component has a hippo:identifier, it is returned. Typically, an hst:containercomponent will have
+     *     an autocreated hippo:identifier with as value a uuid: This can be used a stable identifier across different (versions) of
+     *     the same node, for example for an HST Config branch it can have the same value (opposed to the uuid of the node)
+     *     and across unpublished/published versions below a document variant the xpage containers can have a stable uuid
+     * </p>
+     * @return the hippo identifier if available for this {@link HstComponentConfiguration}, otherwise {@code null}
+     */
+    String getHippoIdentifier();
+
+    /**
+     * @return {@code true} if this component is part of a component STORED below an experience page document variant
+     */
+    boolean isExperiencePageComponent();
 
     /**
      * @return a depth-first stream of this {@link HstComponentConfiguration} plus its descendants

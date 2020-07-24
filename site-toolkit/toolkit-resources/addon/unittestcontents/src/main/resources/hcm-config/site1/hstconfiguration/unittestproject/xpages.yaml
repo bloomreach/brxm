@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestproject/hst:xpages:
+      jcr:primaryType: hst:xpages
+      /xpage1:
+        jcr:primaryType: hst:xpage
+        hst:referencecomponent: hst:abstractpages/basepage
+        hst:label: XPage 1
+        /main:
+          jcr:primaryType: hst:component
+          /container1:
+            jcr:primaryType: hst:containercomponent
+            hippo:identifier: 430df2da-3dc8-40b5-bed5-bdc44b8445c6
+            hst:xtype: HST.vBox
+            /banner:
+              jcr:primaryType: hst:containeritemcomponent
+              hst:label: Banner
+              hst:parameternames: [document]
+              hst:parametervalues: [banners/banner1]
+              hst:template: banner
+          /container2:
+            jcr:primaryType: hst:containercomponent
+            hippo:identifier: 430df2da-3dc8-40b5-bed5-bdc44b8445c7
+            hst:xtype: HST.vBox

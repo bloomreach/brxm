@@ -76,7 +76,7 @@ describe('PageNewComponent', () => {
 
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
-    spyOn(ChannelService, 'recordOwnChange');
+    spyOn(ChannelService, 'checkChanges').and.returnValue($q.resolve());
     spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HippoIframeService, 'load');
     spyOn(SiteMapService, 'create').and.returnValue($q.when({ renderPathInfo: 'renderPathInfo' }));
@@ -178,7 +178,7 @@ describe('PageNewComponent', () => {
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('renderPathInfo');
     expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
-    expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });
 

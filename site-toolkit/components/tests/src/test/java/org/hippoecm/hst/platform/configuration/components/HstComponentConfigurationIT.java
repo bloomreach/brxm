@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.hst.platform.configuration.components;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -30,7 +31,10 @@ import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -94,5 +98,75 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         try {
             Thread.sleep(100);
         } catch (InterruptedException ex) {}
+    }
+
+    @Test
+    public void assertions_new_and_old_style_container_items() throws Exception {
+        {
+            final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
+            final HstSite hstSite = mount.getMount().getHstSite();
+            final HstComponentConfiguration container = hstSite.getComponentsConfiguration().getComponentConfiguration("hst:components/header/container");
+
+            assertThat(container.getChildren().size()).isEqualTo(4);
+            final HstComponentConfiguration oldStyleBanner = container.getChildByName("banner-old-style");
+            assertThat(oldStyleBanner.getDynamicComponentParameter("path").get().getDefaultValue())
+                    .as("Expected dynamic parameter to work for old style component items")
+                    .isEqualTo("/some/default");
+
+            final HstComponentConfiguration oldStyleBanner2 = container.getChildByName("banner-old-style-2");
+            assertThat(oldStyleBanner2.getDynamicComponentParameter("path").get().getDefaultValue())
+                    .as("Expected dynamic parameter to work for old style component items")
+                    .isEqualTo("/some/default");
+
+            final HstComponentConfiguration newStyleBanner = container.getChildByName("banner-new-style");
+            assertThat(newStyleBanner.getDynamicComponentParameter("path").get().getDefaultValue())
+                    .as("Expected dynamic parameter to work for new style component items")
+                    .isEqualTo("/some/default");
+            final HstComponentConfiguration newStyleBanner2 = container.getChildByName("banner-new-style-2");
+            assertThat(newStyleBanner2.getDynamicComponentParameter("path").get().getDefaultValue())
+                    .as("Expected dynamic parameter to work for old style component items")
+                    .isEqualTo("/some/default");
+
+            assertThat(newStyleBanner2 == newStyleBanner).isFalse();
+            assertThat(newStyleBanner2.getDynamicComponentParameters() == newStyleBanner.getDynamicComponentParameters())
+                    .as("Expected that dynamic component parameters instance is SHARED!")
+                    .isTrue();
+
+            // TODO CMS-13618 the dynamic component parameters should be shared even for old style components
+            assertThat(oldStyleBanner.getDynamicComponentParameters() == oldStyleBanner2.getDynamicComponentParameters())
+                    .as("Old style components dynamic component parameters are not yet shared")
+                    .isFalse();
+            assertThat(oldStyleBanner.getDynamicComponentParameters() == newStyleBanner.getDynamicComponentParameters())
+                    .as("Old style components dynamic component parameters are not yet shared")
+                    .isFalse();
+
+        }
+
+        // assertions what happens for broken hst:componentdefinition (aka not pointing to existing catalog item)
+        session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:components/header/container/banner-new-style")
+                .setProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION, "not/found");
+        session.save();
+
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:components/header/container/banner-new-style"});
+
+        {
+            try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(HstComponentConfigurationService.class).build()) {
+                final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
+                final HstSite hstSite = mount.getMount().getHstSite();
+                final HstComponentConfiguration container = hstSite.getComponentsConfiguration().getComponentConfiguration("hst:components/header/container");
+
+
+                final HstComponentConfiguration newStyleBanner = container.getChildByName("banner-new-style");
+                assertThat(newStyleBanner.getDynamicComponentParameters().size())
+                        .as("Since 'hst:componentdefinition' points to non-existing catalog item, expect no " +
+                                "dynamic parameters")
+                        .isEqualTo(0);
+                assertThat(interceptor.messages().collect(Collectors.toList()))
+                        .as("Expected warning about unresolvable hst:componentdefinition")
+                        .containsExactly("Invalid component '/hst:hst/hst:configurations/unittestcommon/hst:components/header/container/banner-new-style' since no catalog item found for 'hst:componentdefinition = not/found'");
+
+            }
+        }
+
     }
 }

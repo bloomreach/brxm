@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.security.Privilege;
@@ -93,6 +95,27 @@ public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProc
                             "the right privileges on path '%s'", method.getName(), absPath));
                 }
                 return Optional.empty();
+            } else if (getPageComposerContextService().isExperiencePageRequest()) {
+                // check the privileges on the handle node for the experience page to check whether the user has the
+                // right privilege
+
+                final Session cmsUser = getPageComposerContextService().getRequestContext().getSession();
+                final String uuid = getPageComposerContextService().getExperiencePageHandleUUID();
+                try {
+                    final Node handle = cmsUser.getNodeByIdentifier(uuid);
+
+                    final Privilege[] privileges = session.getAccessControlManager().getPrivileges(handle.getPath());
+                    final Set<String> intersection = getIntersection(privilegesAllowedSet, privileges);
+                    if (intersection.isEmpty()) {
+                        return Optional.of(String.format("Method '%s' is not allowed to be invoked since current user does not have " +
+                                "the right privileges on path '%s'", method.getName(), absPath));
+                    }
+                    return Optional.empty();
+                } catch (ItemNotFoundException e) {
+                    return Optional.of(String.format("Method '%s' is not allowed to be invoked since current user does " +
+                                    "not have read access on the document",
+                            method.getName(), privilegesAllowed));
+                }
             } else {
                 return isForbiddenOperationContext(exchange, method, privilegesAllowedSet);
             }

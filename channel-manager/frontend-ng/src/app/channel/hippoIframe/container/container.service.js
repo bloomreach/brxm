@@ -22,7 +22,6 @@ class ContainerService {
     $translate,
     CmsService,
     DialogService,
-    FeedbackService,
     HippoIframeService,
     PageStructureService,
     SpaService,
@@ -35,7 +34,6 @@ class ContainerService {
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DialogService = DialogService;
-    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageStructureService = PageStructureService;
     this.SpaService = SpaService;
@@ -43,18 +41,20 @@ class ContainerService {
 
   async addComponent(catalogComponent, container, nextComponentId) {
     try {
-      const newComponentId = await this.PageStructureService
+      const { reloadRequired, newComponentId } = await this.PageStructureService
         .addComponentToContainer(catalogComponent, container, nextComponentId);
+
       if (!this._reloadSpa()) {
-        await this.PageStructureService.renderContainer(container);
+        if (reloadRequired) {
+          await this.HippoIframeService.reload();
+        } else {
+          await this.PageStructureService.renderContainer(container);
+        }
       }
 
       return newComponentId;
     } catch (error) {
       this.HippoIframeService.reload();
-      this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
-        component: catalogComponent.label,
-      });
 
       throw error;
     }
@@ -72,14 +72,22 @@ class ContainerService {
   }
 
   async moveComponent(component, container, nextComponent) {
-    const changedContainers = await this.PageStructureService.moveComponent(component, container, nextComponent);
+    const {
+      reloadRequired,
+      changedContainers,
+    } = await this.PageStructureService.moveComponent(component, container, nextComponent);
+
     if (this._reloadSpa()) {
       return;
     }
 
-    await this.$q.all(changedContainers.map(
-      changedContainer => this.PageStructureService.renderContainer(changedContainer),
-    ));
+    if (reloadRequired) {
+      await this.HippoIframeService.reload();
+    } else {
+      await this.$q.all(changedContainers.map(
+        changedContainer => this.PageStructureService.renderContainer(changedContainer),
+      ));
+    }
 
     this.$rootScope.$emit('component:moved');
   }

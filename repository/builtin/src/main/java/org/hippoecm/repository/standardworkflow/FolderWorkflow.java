@@ -90,6 +90,16 @@ public interface FolderWorkflow extends Workflow {
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
+     * @param jcrTemplateNode the JcrTemplateNode that will instruct which mixins, properties and children to add to
+     *                        the newly created document. If {@code JcrTemplateNode} is {@code null}, the same behavior
+     *                        as {@link #add(String, String, String)}
+     * @see #add(String, String, String) only including an JcrTemplateNode object to add extra mixins, properties and children to
+     * the newly created node
+     */
+    String add(String category, String type, String relPath, JcrTemplateNode jcrTemplateNode)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
      * Adds a new document to this container document from the specified category of the indicated type.  This call is similar
      * to #add(String,String,relPath) but instead of specifying a new name, a list or rewrite rules to be applied (which include
      * the new name of the document) is provided.  This allows you to set the new name (use <code>./_name</code> and
@@ -106,6 +116,18 @@ public interface FolderWorkflow extends Workflow {
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
     String add(String category, String type, Map<String, String> arguments)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+
+    /**
+     * @param jcrTemplateNode the JcrTemplateNode that will instruct which mixins, properties and children to add to
+     *                        the newly created document. If {@code JcrTemplateNode} is {@code null}, the same behavior
+     *                        as {@link #add(String, String, Map)}
+     *                        results
+     * @see #add(String, String, Map) only including an JcrTemplateNode object to add extra mixins, properties and children to
+     * the newly created node
+     */
+    String add(String category, String type, Map<String, String> arguments, JcrTemplateNode jcrTemplateNode)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**

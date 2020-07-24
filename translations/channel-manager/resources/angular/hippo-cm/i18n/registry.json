@@ -1182,6 +1182,86 @@
     "DOCUMENT_HAS_DRAFT_CHANGES" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "SHARED_SUFFIX" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "TOOLBAR_MENU_XPAGE_DELETE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "TOOLBAR_MENU_XPAGE_NEW" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "PLACEHOLDER_EXPERIENCE_PAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "TOOLBAR_MENU_XPAGE_MOVE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "TOOLBAR_BUTTON_XPAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "TOGGLE_PAGE_CONTAINERS" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "TOGGLE_SHARED_CONTAINERS" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }

@@ -304,4 +304,26 @@ describe('HippoIframeService', () => {
       $rootScope.$digest();
     });
   });
+
+  describe('isEditSharedContainers', () => {
+    it('returns "edit-shared-containers" state as emitted by the iframe', () => {
+      $rootScope.$emit('iframe:page:edit-shared-containers', true);
+      expect(HippoIframeService.isEditSharedContainers()).toBe(true);
+
+      $rootScope.$emit('iframe:page:edit-shared-containers', false);
+      expect(HippoIframeService.isEditSharedContainers()).toBe(false);
+    });
+
+    it('resets the state to "false" on page change', () => {
+      $rootScope.$emit('iframe:page:edit-shared-containers', true);
+      expect(HippoIframeService.isEditSharedContainers()).toBe(true);
+
+      ChannelService.extractRenderPathInfo.and.returnValue('dummy');
+      CommunicationService.getPath.and.returnValue('dummy');
+      $rootScope.$emit('page:change', { initial: true });
+      $rootScope.$digest();
+
+      expect(HippoIframeService.isEditSharedContainers()).toBe(false);
+    });
+  });
 });

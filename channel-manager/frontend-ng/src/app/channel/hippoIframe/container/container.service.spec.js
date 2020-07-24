@@ -21,7 +21,6 @@ describe('ContainerService', () => {
   let CmsService;
   let ContainerService;
   let DialogService;
-  let FeedbackService;
   let HippoIframeService;
   let PageStructureService;
   let SpaService;
@@ -58,7 +57,6 @@ describe('ContainerService', () => {
       CmsService = _CmsService_;
       ContainerService = _ContainerService_;
       DialogService = _DialogService_;
-      FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       PageStructureService = _PageStructureService_;
       SpaService = _SpaService_;
@@ -69,17 +67,12 @@ describe('ContainerService', () => {
     beforeEach(() => {
       spyOn($log, 'info');
       spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
-      spyOn(PageStructureService, 'addComponentToContainer').and.returnValue($q.resolve({
-        getContainer() {},
-        getLabel() {},
-      }));
+      spyOn(PageStructureService, 'addComponentToContainer').and.returnValue($q.resolve({}));
       spyOn(PageStructureService, 'renderContainer');
-      spyOn(SpaService, 'isSpa');
+      spyOn(SpaService, 'isSpa').and.returnValue(false);
     });
 
     it('adds a component to a container in the page structure', () => {
-      SpaService.isSpa.and.returnValue(false);
-
       const component = {};
       const container = {};
       ContainerService.addComponent(component, container);
@@ -88,6 +81,16 @@ describe('ContainerService', () => {
       expect(PageStructureService.addComponentToContainer).toHaveBeenCalledWith(component, container, undefined);
       expect(HippoIframeService.reload).not.toHaveBeenCalled();
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(container);
+    });
+
+    it('reloads the iframe if the server returns "reloadRequired=true"', () => {
+      PageStructureService.addComponentToContainer.and.returnValue($q.resolve({ reloadRequired: true }));
+
+      ContainerService.addComponent();
+      $rootScope.$digest();
+
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+      expect(PageStructureService.renderContainer).not.toHaveBeenCalled();
     });
 
     it('reloads the iframe if there is an SPA', () => {
@@ -101,16 +104,12 @@ describe('ContainerService', () => {
       expect(PageStructureService.renderContainer).not.toHaveBeenCalled();
     });
 
-    it('handles errors and reloads the iframe, upon adding a component to container', () => {
+    it('reloads the iframe in case of an error', () => {
       PageStructureService.addComponentToContainer.and.returnValue($q.reject());
-      spyOn(FeedbackService, 'showError');
 
       ContainerService.addComponent({ label: 'Banner' });
       $rootScope.$digest();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', {
-        component: 'Banner',
-      });
       expect(HippoIframeService.reload).toHaveBeenCalled();
     });
   });
@@ -124,7 +123,10 @@ describe('ContainerService', () => {
     const rerenderedTargetContainer = {};
 
     beforeEach(() => {
-      spyOn(PageStructureService, 'moveComponent').and.returnValue($q.resolve([sourceContainer, targetContainer]));
+      spyOn(PageStructureService, 'moveComponent').and.returnValue($q.resolve({
+        changedContainers: [sourceContainer, targetContainer],
+        reloadRequired: false,
+      }));
       spyOn(PageStructureService, 'renderContainer')
         .and.returnValues($q.resolve(rerenderedSourceContainer), $q.resolve(rerenderedTargetContainer));
     });
@@ -138,6 +140,19 @@ describe('ContainerService', () => {
       );
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(sourceContainer);
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(targetContainer);
+    });
+
+    it('reloads the iframe if the server requires it', () => {
+      spyOn(HippoIframeService, 'reload');
+      PageStructureService.moveComponent.and.returnValue($q.resolve({
+        changedContainers: [],
+        reloadRequired: true,
+      }));
+
+      ContainerService.moveComponent();
+      $rootScope.$digest();
+
+      expect(HippoIframeService.reload).toHaveBeenCalled();
     });
 
     it('should emit component:moved event in the end', () => {

@@ -99,4 +99,9 @@ export class Container extends ComponentEntity {
       children: this._items.map(item => item.getId()),
     };
   }
+
+  getDropGroups() {
+    const groupName = this.isXPageComponent() ? 'xpages' : 'default';
+    return this.isShared() ? [`${groupName}-shared`] : [groupName];
+  }
 }

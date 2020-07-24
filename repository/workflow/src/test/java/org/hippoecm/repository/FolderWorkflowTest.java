@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.jackrabbit.value.BooleanValue;
+import org.apache.jackrabbit.value.StringValue;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -40,6 +42,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -581,6 +584,129 @@ public class FolderWorkflowTest extends RepositoryTestCase {
                 concurrentError = ex;
             }
         }
+    }
+
+    @Test
+    public void folder_workflow_create_document_with_jcr_template_node_structure() throws Exception {
+
+        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
+
+        JcrTemplateNode jcrTemplateNode = null;
+
+        final HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("name", "myDoc");
+
+        {
+            String path = workflow.add("simple", "new-document", parameters, jcrTemplateNode);
+            Node myDoc = session.getRootNode().getNode(path.substring(1));
+            assertTrue(myDoc.isNodeType("hippostd:document"));
+            assertTrue(myDoc.isNodeType("mix:versionable"));
+            myDoc.remove();
+            session.save();
+        }
+
+        jcrTemplateNode = new JcrTemplateNode();
+        {
+            String path = workflow.add("simple", "new-document", parameters, jcrTemplateNode);
+            Node myDoc = session.getRootNode().getNode(path.substring(1));
+            assertTrue(myDoc.isNodeType("hippostd:document"));
+            assertTrue(myDoc.isNodeType("mix:versionable"));
+            myDoc.remove();
+            session.save();
+        }
+
+        jcrTemplateNode.addMixinName("hippo:testhtmlmixin");
+
+        {
+            String path = workflow.add("simple", "new-document", parameters, jcrTemplateNode);
+            Node myDoc = session.getRootNode().getNode(path.substring(1));
+            assertTrue(myDoc.isNodeType("hippo:testhtmlmixin"));
+            myDoc.remove();
+            session.save();
+        }
+
+        // multiple mixins
+        jcrTemplateNode.addMixinName("hippo:testhtmlmixin2");
+        {
+            String path = workflow.add("simple", "new-document", parameters, jcrTemplateNode);
+            Node myDoc = session.getRootNode().getNode(path.substring(1));
+            assertTrue(myDoc.isNodeType("hippo:testhtmlmixin"));
+            assertTrue(myDoc.isNodeType("hippo:testhtmlmixin2"));
+            myDoc.remove();
+            session.save();
+        }
+
+        // invalid mixin addition
+        jcrTemplateNode.addMixinName("hippo:unknown");
+
+        {
+            try {
+                workflow.add("simple", "new-document", parameters, jcrTemplateNode);
+                fail("Expected exception for invalid mixin");
+            } catch (Exception e) {
+                // expected
+            }
+
+        }
+
+        jcrTemplateNode.getMixinNames().clear();
+
+        // already present mixin addition are ignored
+        jcrTemplateNode.addMixinName("mix:versionable");
+        {
+            String path = workflow.add("simple", "new-document", parameters);
+            Node myDoc = session.getRootNode().getNode(path.substring(1));
+            assertTrue(myDoc.isNodeType("hippostd:document"));
+            assertTrue(myDoc.isNodeType("mix:versionable"));
+            myDoc.remove();
+            session.save();
+        }
+
+        jcrTemplateNode.getMixinNames().clear();
+        jcrTemplateNode.addMixinName("hippo:testhtmlmixin")
+                .addSingleValuedProperty("hippo:testsinglevaluedstring", new StringValue("test"))
+                .addSingleValuedProperty("hippo:testsinglevaluedboolean", new BooleanValue(true))
+                .addMultiValuedProperty("hippo:testmultivaluedstring", new Value[]{new StringValue("test")})
+                .addMultiValuedProperty("hippo:testmultivaluedboolean", new Value[]{new BooleanValue(true)});
+
+        final JcrTemplateNode child = jcrTemplateNode.addChild("child", "hippo:testhtml")
+                .addSingleValuedProperty("hippo:testcontent", new StringValue("test"))
+                .addMixinName("hippo:testhtmlmixin")
+                .addSingleValuedProperty("hippo:testsinglevaluedstring", new StringValue("test"))
+                .addSingleValuedProperty("hippo:testsinglevaluedboolean", new BooleanValue(true));
+
+
+        {
+            String path = workflow.add("simple", "new-document", parameters, jcrTemplateNode);
+            Node myDoc = session.getRootNode().getNode(path.substring(1));
+            assertTrue(myDoc.isNodeType("hippostd:document"));
+            assertTrue(myDoc.isNodeType("hippo:testhtmlmixin"));
+            assertTrue(myDoc.hasProperty("hippo:testsinglevaluedstring"));
+            assertTrue(myDoc.hasProperty("hippo:testsinglevaluedboolean"));
+            assertTrue(myDoc.hasProperty("hippo:testmultivaluedstring"));
+            assertTrue(myDoc.hasProperty("hippo:testmultivaluedboolean"));
+            assertTrue(myDoc.hasNode("child"));
+            final Node childNode = myDoc.getNode("child");
+            assertTrue(childNode.isNodeType("hippo:testhtmlmixin"));
+            assertTrue(childNode.hasProperty("hippo:testcontent"));
+            assertTrue(childNode.hasProperty("hippo:testsinglevaluedstring"));
+            assertTrue(childNode.hasProperty("hippo:testsinglevaluedboolean"));
+            myDoc.remove();
+            session.save();
+        }
+
+        // invalid child
+        child.getMixinNames().clear();
+        {
+            try {
+                workflow.add("simple", "new-document", parameters, jcrTemplateNode);
+                fail("Expected exception for invalid child");
+            } catch (Exception e) {
+                // expected
+            }
+
+        }
+
     }
 
     @Ignore

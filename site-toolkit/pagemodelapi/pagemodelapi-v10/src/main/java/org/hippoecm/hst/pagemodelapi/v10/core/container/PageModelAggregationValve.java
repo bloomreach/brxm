@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.HstContainerRequest;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -53,6 +54,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.pagemodelapi.common.content.beans.PageModelObjectMapperFactory;
 import org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel;
+import org.hippoecm.hst.pagemodelapi.v10.core.model.ChannelInfoModel;
+import org.hippoecm.hst.pagemodelapi.v10.core.model.ChannelModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel;
 import org.hippoecm.hst.util.ParametersInfoUtils;
@@ -231,6 +234,7 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         addLinksToPageModel(aggregatedPageModel);
+        setChannelModelToPageModel(aggregatedPageModel);
 
         final int sortedComponentWindowsLen = sortedComponentWindows.length;
 
@@ -435,6 +439,23 @@ public class PageModelAggregationValve extends AggregationValve {
 
     }
 
+    /**
+     * Set channel model to the page model.
+     * @param pageModel the aggregated page model instance
+     */
+    private void setChannelModelToPageModel(final AggregatedPageModel pageModel) {
+        final ChannelModel channelModel = new ChannelModel();
+
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final Mount mount = requestContext.getResolvedMount().getMount();
+        final ChannelInfo channelInfo = mount.getChannelInfo();
+
+        if (channelInfo != null) {
+            channelModel.setChannelInfoModel(new ChannelInfoModel(channelInfo));
+        }
+
+        pageModel.setChannelModel(channelModel);
+    }
 
     /**
      * Invoke custom metadata decorators to give a chance to add more metadata for the aggregated page model.

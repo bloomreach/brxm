@@ -39,28 +39,38 @@ import org.hippoecm.hst.builtin.components.StandardContainerComponent;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.DynamicFieldGroup;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.configuration.experiencepage.ExperiencePageLoadingException;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
-import org.hippoecm.hst.core.component.HstURL;
-import org.hippoecm.hst.core.internal.StringPool;
-import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static org.apache.commons.lang3.ArrayUtils.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_FIELD_GROUPS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_XPAGE;
+import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_IDENTIFIER;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
 
@@ -140,9 +150,40 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private boolean inherited;
 
     /**
+     * {@code true} if this {@link HstComponentConfiguration} is shared. Note that if
+     * {@link HstComponentConfiguration#isInherited()} is true, then {@code shared} will also be always true. Note that
+     * containers referenced via a 'hst:containercomponentreference' can in general be shared, but this is not the
+     * purpose of 'hst:containercomponentreference' : it it used to enable a container to 'live' below the hst:workspace
+     * and in general is never meant to support 'sharing', hence a container referenced via
+     * hst:containercomponentreference will only have 'shared = true' *IF* the 'hst:containercomponentreference' node
+     * is already shared
+     */
+    private boolean shared;
+
+    /**
      * whether this {@link HstComponentConfigurationService} can serve as prototype.
      */
     private boolean prototype;
+
+    /**
+     * true if this hst component configuration is the root hst:xpage node below hst:xpages
+     */
+    private boolean xpage;
+
+    /**
+     * if xpage == true, the xPageLayoutAsJcrTemplate contains the HstNode as JcrTemplateNode, where the JcrTemplateNode
+     * is a structure that can be used in folder workflow to add subnodes / mixins to newly created document variant
+     */
+    private JcrTemplateNode xPageLayoutAsJcrTemplate;
+
+    // true if this is an explicit xpage layout component (aka not inherited component but directly below the hst:xpage
+    private boolean xpageLayoutComponent;
+
+    /**
+     * hst:component of type 'xpage' or 'containercomponent' are expected to have a hippo:identifier
+     * (auto created property). Can be null
+     */
+    private String hippoIdentifier;
 
     /**
      * <code>true</code> when this {@link HstComponentConfiguration} is configured to render standalone in case of {@link HstURL#COMPONENT_RENDERING_TYPE}
@@ -211,6 +252,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private Calendar lockedOn;
     private Calendar lastModified;
     private Boolean markedDeleted;
+    private boolean experiencePageComponent;
+
+    /**
+     * detached is true for components returned from {@link #copy(String, String, boolean)} implying that the
+     * specific {@link HstComponentConfigurationService} is detached from the HST in memory model
+     */
+    private boolean detached;
 
     protected List<DynamicFieldGroup> fieldGroups = new ArrayList<>();
 
@@ -254,6 +302,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.canonicalIdentifier = StringPool.get(node.getValueProvider().getIdentifier());
 
         inherited = !canonicalStoredLocation.startsWith(rootConfigurationPathPrefix);
+
+        if (inherited) {
+            shared = true;
+        }
+
         this.parent = parent;
         this.prototype = HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES.equals(rootNodeName);
 
@@ -273,37 +326,51 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         this.componentClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
 
-        if (HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())) {
+        final String nodeTypeName = node.getNodeTypeName();
+
+        xpage = NODETYPE_HST_XPAGE.equals(nodeTypeName);
+
+        if (xpage) {
+            // load JcrTemplatePage, the xPageLayoutAsJcrTemplate should not get any referenced components included, just
+            // only follow the HstNode tree
+            xPageLayoutAsJcrTemplate = JcrTemplateNodeConverter.getXPageLaoutAsJcrTemplate(node);
+        }
+
+        if (isAncestorXPage(this)) {
+            xpageLayoutComponent = true;
+        }
+
+        if (HstNodeTypes.NODETYPE_HST_COMPONENT.equals(nodeTypeName) || NODETYPE_HST_XPAGE.equals(nodeTypeName)) {
             type = Type.COMPONENT;
-        } else if (HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())) {
+        } else if (NODETYPE_HST_CONTAINERCOMPONENT.equals(nodeTypeName)) {
             type = Type.CONTAINER_COMPONENT;
             if (componentClassName == null) {
                 log.debug("Setting componentClassName to '{}' for a component of type '{}' because there is no explicit componentClassName configured on component '{}'",
-                        new String[]{StandardContainerComponent.class.getName(), HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, id});
+                        new String[]{StandardContainerComponent.class.getName(), NODETYPE_HST_CONTAINERCOMPONENT, id});
                 componentClassName = StandardContainerComponent.class.getName();
             } else if (OLD_MOVED_BUILT_IN_STANDARD_CONTAINER_COMPONENT_CLASS.equals(componentClassName)) {
                 log.warn("For Component '{}' the configured property '{}' points to old location '{}'. Remove the " +
-                        "property completely because it is the default container component class anyway. Moved class '{}' " +
-                                "will be used instead", id, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,
+                                "property completely because it is the default container component class anyway. Moved class '{}' " +
+                                "will be used instead", id, NODETYPE_HST_CONTAINERCOMPONENT,
                         "org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent", StandardContainerComponent.class.getName());
                 componentClassName = StandardContainerComponent.class.getName();
             }
-        } else if (HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())
-                || HstNodeTypes.NODETYPE_HST_COMPONENTDEFINITION.equals(node.getNodeTypeName())) {
+        } else if (HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(nodeTypeName)
+                || HstNodeTypes.NODETYPE_HST_COMPONENTDEFINITION.equals(nodeTypeName)) {
             type = Type.CONTAINER_ITEM_COMPONENT;
             componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
             if (!isCatalogItem && (parent == null || !(Type.CONTAINER_COMPONENT.equals(parent.getComponentType())))) {
                 log.warn("Component of type '{}' at '{}' is not configured below a '{}' node. This is not allowed. " +
                                 "Either change the primary nodetype to '{}' or '{}' or move the node below a node of type '{}'.",
-                        new String[]{HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT, canonicalStoredLocation,
-                                HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,
-                                HstNodeTypes.NODETYPE_HST_COMPONENT, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT});
+                        new String[]{NODETYPE_HST_CONTAINERITEMCOMPONENT, canonicalStoredLocation,
+                                NODETYPE_HST_CONTAINERCOMPONENT, NODETYPE_HST_CONTAINERCOMPONENT,
+                                HstNodeTypes.NODETYPE_HST_COMPONENT, NODETYPE_HST_CONTAINERCOMPONENT});
             }
         } else {
-            throw new ModelLoadingException("Unknown componentType '" + node.getNodeTypeName() + "' for '" + canonicalStoredLocation + "'. Cannot build configuration.");
+            throw new ModelLoadingException("Unknown componentType '" + nodeTypeName + "' for '" + canonicalStoredLocation + "'. Cannot build configuration.");
         }
 
-        this.componentDefinition = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION));
+        this.componentDefinition = StringPool.get(node.getValueProvider().getString(COMPONENT_PROPERTY_COMPONENTDEFINITION));
 
         this.parametersInfoClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME));
 
@@ -318,7 +385,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             } else if (type == Type.CONTAINER_ITEM_COMPONENT) {
                 log.warn("Component '{}' is not allowed to have a '{}' property as this is not supported for " +
                         "components of type '{}'. Setting reference to null.", new String[]{canonicalStoredLocation, HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT,
-                        HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT});
+                        NODETYPE_HST_CONTAINERITEMCOMPONENT});
                 this.referenceComponent = null;
             }
         }
@@ -328,10 +395,15 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.pageErrorHandlerClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME));
 
         this.label = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_LABEL));
+        this.hippoIdentifier = StringPool.get(node.getValueProvider().getString(HIPPO_IDENTIFIER));
         this.iconPath = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_ICON_PATH));
 
         if (type == Type.CONTAINER_COMPONENT || type == Type.CONTAINER_ITEM_COMPONENT) {
             this.xtype = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_XTYPE));
+            if (xtype == null && type == Type.CONTAINER_COMPONENT) {
+                // set default ot HST.bBox for container
+                xtype = "HST.vBox";
+            }
         }
         String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
@@ -345,7 +417,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     log.warn("Skipping parameters for component '{}' because there are hst:parameternameprefixes configured, but if " +
                             "it is configured it MUST be of equal length as the hst:parameternames", id);
                 } else {
-                    // if there is a non empty parameterNamePrefix, we prefix the parameter name with this value + the 
+                    // if there is a non empty parameterNamePrefix, we prefix the parameter name with this value + the
                     // HstComponentConfiguration#PARAMETER_PREFIX_NAME_DELIMITER
                     for (int i = 0; i < parameterNames.length; i++) {
                         if (StringUtils.isEmpty(parameterNamePrefixes[i])) {
@@ -438,6 +510,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
     }
 
+    private boolean isAncestorXPage(final HstComponentConfigurationService comp) {
+        if (comp == null){
+            return false;
+        }
+        if (comp.isXPage()) {
+            return true;
+        }
+
+        return isAncestorXPage((HstComponentConfigurationService) comp.getParent());
+    }
+
     private HstComponentConfigurationService loadChildComponent(final HstNode child,
                                                                 final String rootNodeName,
                                                                 final String rootConfigurationPathPrefix,
@@ -481,10 +564,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     private boolean isHstComponentOrReferenceType(final HstNode node) {
-        return HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
-                || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
-                || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())
-                || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(node.getNodeTypeName());
+        final String nodeTypeName = node.getNodeTypeName();
+        return HstNodeTypes.NODETYPE_HST_COMPONENT.equals(nodeTypeName)
+                || NODETYPE_HST_CONTAINERCOMPONENT.equals(nodeTypeName)
+                || NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(nodeTypeName)
+                || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(nodeTypeName);
     }
 
     private boolean isNotAllowedInPrototype(final HstNode node) {
@@ -526,7 +610,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                                 HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS, child.getValueProvider().getPath()});
                 return null;
             }
-            if (!HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(refNode.getNodeTypeName())) {
+            if (!NODETYPE_HST_CONTAINERCOMPONENT.equals(refNode.getNodeTypeName())) {
                 log.warn("Component '{}' contains an reference '{}' that does not point to a node of type '{}'. That is not allowed. " +
                                 "Component '{}' will be ignored.",
                         new String[]{child.getValueProvider().getPath(), reference,
@@ -718,6 +802,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     @Override
+    public boolean isShared() {
+        return shared;
+    }
+
+    @Override
     public boolean isPrototype() {
         return prototype;
     }
@@ -779,12 +868,82 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return markedDeleted == null ? false : markedDeleted;
     }
 
-    private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
-                                                      HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
-                                                      Map<String, HstComponentConfiguration> rootComponentConfigurations) {
-        if (child.getReferenceComponent() != null) {
-            // populate child component if not yet happened
-            child.populateComponentReferences(rootComponentConfigurations, populated);
+    /**
+     * @return {@core true} if this {@link HstComponentConfiguration} is an XPage: Note *ONLY* root hst components can
+     * be an 'xpage HstComponentConfiguration' and that this is different than {@link #isExperiencePageComponent} : the
+     * {@link #isExperiencePageComponent} indicates whether the component is stored below an experience page document
+     * variant, while this {@link #isXPage()} indicates whether the hst component stored in HST CONFIG (!!) is an XPage
+     * (layout)
+     */
+    public boolean isXPage() {
+        return xpage;
+    }
+
+    /**
+     * in case {@link #isXPage()} returns {@code true}, then {@link #getJcrTemplateNode()} returns the HstNode hierarchy
+     * for an XPage Layout as a JcrTemplateNode, otherwise it is null
+     * @return the JcrTemplateNode in case {@link #isXPage()} is {@code true}, otherwise {@code null}
+      */
+    public JcrTemplateNode getJcrTemplateNode() {
+        return xPageLayoutAsJcrTemplate;
+    }
+
+    /**
+     * @return {@code true} if this component configuration is stored canonically below an XPage Layout (config)
+     */
+    public boolean isXpageLayoutComponent() {
+        return xpageLayoutComponent;
+    }
+
+    @Override
+    public String getHippoIdentifier() {
+        return hippoIdentifier;
+    }
+
+    @Override
+    public boolean isExperiencePageComponent() {
+        return experiencePageComponent;
+    }
+
+    public void setExperiencePageComponent(final boolean experiencePageComponent) {
+        this.experiencePageComponent = experiencePageComponent;
+    }
+
+    /**
+     * <p>
+     *     The returned copy is *DETACHED* from the HST Model and a complete independent
+     *     HstComponentConfigurationService (tree). Therefor all the components in this returned deep copy will have
+     *     {@link HstComponentConfigurationService#detached equal to true}.
+     *
+     * </p>
+     * @return A deep copy of {@code source} with parent = null and root component having {@link #getId()}
+     * equal to {@code canonicalIdentifier}, {@link #getCanonicalIdentifier()} equal to {@code canonicalIdentifier}
+     * and {@link #getCanonicalStoredLocation()} equal to {@code canonicalStoredLocation}
+     */
+    public HstComponentConfigurationService copy(final String canonicalIdentifier, final String canonicalStoredLocation,
+                                                 final boolean includeContainerItems) {
+        final HstComponentConfigurationService hstComponentConfigurationService =
+                deepCopy(null, canonicalIdentifier, this, null, includeContainerItems);
+        hstComponentConfigurationService.canonicalIdentifier = canonicalIdentifier;
+        hstComponentConfigurationService.canonicalStoredLocation = canonicalStoredLocation;
+        hstComponentConfigurationService.flattened().forEach(config -> ((HstComponentConfigurationService)config).detached = true);
+        return hstComponentConfigurationService;
+    }
+
+    private HstComponentConfigurationService deepCopy(final HstComponentConfigurationService parent, String newId,
+                                                      final HstComponentConfigurationService child,
+                                                      final Map<String, HstComponentConfiguration> rootComponentConfigurations,
+                                                      final boolean includeContainerItems) {
+        if (rootComponentConfigurations == null) {
+            if (isNotBlank(child.getReferenceComponent()) && !child.referencesPopulated) {
+                throw new IllegalStateException("If 'rootComponentConfigurations' is null, all components references " +
+                        "are expected to be resolved already");
+            }
+        } else {
+            if (child.getReferenceComponent() != null) {
+                // populate child component if not yet happened
+                child.populateComponentReferences(rootComponentConfigurations);
+            }
         }
         HstComponentConfigurationService copy = new HstComponentConfigurationService(newId);
         copy.parent = parent;
@@ -794,6 +953,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.referenceName = child.referenceName;
         copy.hstTemplate = child.hstTemplate;
         copy.label = child.label;
+        copy.hippoIdentifier = child.hippoIdentifier;
+        copy.xpage = child.xpage;
+        copy.xpageLayoutComponent = child.xpageLayoutComponent;
         copy.iconPath = child.iconPath;
         copy.renderPath = child.renderPath;
         copy.isNamedRenderer = child.isNamedRenderer;
@@ -808,6 +970,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.canonicalIdentifier = child.canonicalIdentifier;
         copy.componentFilterTag = child.componentFilterTag;
         copy.inherited = child.inherited;
+        // a copy is always shared
+        copy.shared = true;
         copy.standalone = child.standalone;
         copy.async = child.async;
         copy.asyncMode = child.asyncMode;
@@ -815,24 +979,31 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.suppressWasteMessage = child.suppressWasteMessage;
         copy.parameters = new LinkedHashMap<String, String>(child.parameters);
         copy.parameterNamePrefixSet = new HashSet<String>(child.parameterNamePrefixSet);
-        // localParameters have no merging, but for copy, the localParameters are copied 
+        // localParameters have no merging, but for copy, the localParameters are copied
         copy.localParameters = new LinkedHashMap<String, String>(child.localParameters);
         copy.usedChildReferenceNames = new ArrayList<String>(child.usedChildReferenceNames);
         copy.lockedBy = child.lockedBy;
         copy.lockedOn = child.lockedOn;
         copy.lastModified = child.lastModified;
         copy.markedDeleted = child.markedDeleted;
-        for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
-            String descId = StringPool.get(copy.id + descendant.id);
-            HstComponentConfigurationService copyDescendant = deepCopy(copy, descId, descendant, populated,
-                    rootComponentConfigurations);
-            copy.componentConfigurations.put(copyDescendant.id, copyDescendant);
-            copy.orderedListConfigs.add(copyDescendant);
-            copy.childConfByName.put(StringPool.get(copyDescendant.getName()), copyDescendant);
-            // do not need them by name for copies
+        copy.fieldGroups = child.fieldGroups;
+        copy.hstDynamicComponentParameters = child.hstDynamicComponentParameters;
+
+        if (type != Type.CONTAINER_COMPONENT || includeContainerItems) {
+            for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
+                String descId = StringPool.get(copy.id + descendant.id);
+                HstComponentConfigurationService copyDescendant = deepCopy(copy, descId, descendant,
+                        rootComponentConfigurations, includeContainerItems);
+                copy.componentConfigurations.put(copyDescendant.id, copyDescendant);
+                copy.orderedListConfigs.add(copyDescendant);
+                copy.childConfByName.put(StringPool.get(copyDescendant.getName()), copyDescendant);
+                // do not need them by name for copies
+            }
         }
+
         // the copy is populated
-        populated.add(copy);
+        //populated.add(copy);
+        copy.referencesPopulated = true;
         return copy;
     }
 
@@ -969,7 +1140,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      */
     @NotNull
     private Collection<DynamicFieldGroup> mergeFieldGroups(final Collection<DynamicFieldGroup> annotatedFieldGroups,
-                                                            final Collection<DynamicFieldGroup> jcrFieldGroups) {
+                                                           final Collection<DynamicFieldGroup> jcrFieldGroups) {
         return Stream.concat(annotatedFieldGroups.stream(), jcrFieldGroups.stream())
                 .collect(Collectors.toMap(DynamicFieldGroup::getTitleKey, Function.identity(), (left, right) -> right, LinkedHashMap::new)).values();
     }
@@ -1000,7 +1171,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     protected void populateCatalogItemReference(final List<HstComponentConfiguration> availableContainerItems) {
         final Optional<HstComponentConfiguration> catalogItem = availableContainerItems.stream()
                 .filter(c -> c.getId().equals(this.getComponentDefinition())).findFirst();
-        catalogItem.ifPresent(catalogItemRef -> {
+
+        final HstComponentConfiguration catalogItemRef = catalogItem.orElse(null);
+
+        if (catalogItemRef == null) {
+            log.warn("Invalid component '{}' since no catalog item found for '{} = {}'", getCanonicalStoredLocation(),
+                    COMPONENT_PROPERTY_COMPONENTDEFINITION, this.getComponentDefinition());
+        } else {
             if (this.componentClassName == null) {
                 this.componentClassName = catalogItemRef.getComponentClassName();
             }
@@ -1028,16 +1205,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
 
             this.hstDynamicComponentParameters = catalogItemRef.getDynamicComponentParameters();
-        });
+        }
     }
 
-    protected void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations,
-                                               List<HstComponentConfiguration> populated) {
-        if (populated.contains(this)) {
+    // marker if this instance already has been populated
+    private boolean referencesPopulated = false;
+
+    protected void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations) {
+        if (referencesPopulated) {
             return;
         }
-
-        populated.add(this);
+        referencesPopulated = true;
 
         if (this.getReferenceComponent() != null) {
             HstComponentConfigurationService referencedComp = (HstComponentConfigurationService) rootComponentConfigurations
@@ -1048,7 +1226,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 if (referencedComp.getReferenceComponent() != null) {
                     // populate referenced comp first:
-                    referencedComp.populateComponentReferences(rootComponentConfigurations, populated);
+                    referencedComp.populateComponentReferences(rootComponentConfigurations);
                 }
                 // get all properties that are null from the referenced component:
                 if (this.componentClassName == null) {
@@ -1071,6 +1249,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 if (this.label == null) {
                     this.label = referencedComp.label;
+                }
+                if (this.hippoIdentifier == null) {
+                    this.hippoIdentifier = referencedComp.hippoIdentifier;
                 }
                 if (this.iconPath == null) {
                     this.iconPath = referencedComp.iconPath;
@@ -1156,20 +1337,20 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
                     if (childToMerge.getReferenceComponent() != null) {
                         // populate child component if not yet happened
-                        childToMerge.populateComponentReferences(rootComponentConfigurations, populated);
+                        childToMerge.populateComponentReferences(rootComponentConfigurations);
                     }
 
                     if (this.childConfByName.get(childToMerge.name) != null) {
                         // we have an overlay again because we have a component with the same name
                         // first populate it
                         HstComponentConfigurationService existingChild = this.childConfByName.get(childToMerge.name);
-                        existingChild.populateComponentReferences(rootComponentConfigurations, populated);
-                        childToMerge.populateComponentReferences(rootComponentConfigurations, populated);
+                        existingChild.populateComponentReferences(rootComponentConfigurations);
+                        childToMerge.populateComponentReferences(rootComponentConfigurations);
                         // merge the childToMerge with existingChild
-                        existingChild.combine(childToMerge, rootComponentConfigurations, populated);
+                        existingChild.combine(childToMerge, rootComponentConfigurations);
                     } else {
                         // make a copy of the child
-                        addDeepCopy(childToMerge, populated, rootComponentConfigurations);
+                        addDeepCopy(childToMerge, rootComponentConfigurations);
                     }
                 }
 
@@ -1181,8 +1362,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     private void combine(HstComponentConfigurationService childToMerge,
-                         Map<String, HstComponentConfiguration> rootComponentConfigurations,
-                         List<HstComponentConfiguration> populated) {
+                         Map<String, HstComponentConfiguration> rootComponentConfigurations) {
 
         if (this.type == Type.CONTAINER_COMPONENT || childToMerge.type == Type.CONTAINER_COMPONENT) {
             log.warn("Incorrect component configuration: *Container* Components are not allowed to be merged with other " +
@@ -1206,6 +1386,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.label == null) {
             this.label = childToMerge.label;
+        }
+        if (this.hippoIdentifier == null) {
+            this.hippoIdentifier = childToMerge.hippoIdentifier;
         }
         if (this.iconPath == null) {
             this.iconPath = childToMerge.iconPath;
@@ -1263,6 +1446,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (this.lastModified == null) {
             this.lastModified = childToMerge.lastModified;
         }
+        if (this.fieldGroups.isEmpty()) {
+            this.fieldGroups = childToMerge.fieldGroups;
+        }
+        if (this.hstDynamicComponentParameters.isEmpty()) {
+            this.hstDynamicComponentParameters = childToMerge.hstDynamicComponentParameters;
+        }
+
+        // debatable however not really relevant whether when fine grained merged the component is shared or not, since
+        // merging is not allowed for container and container items any way and for this the marker 'shared' is the most
+        // relevant
+        this.shared = childToMerge.shared;
 
         // inherited flag not needed to merge
 
@@ -1289,26 +1483,27 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             if (existingChild != null) {
                 // check whether the child of its own has a referencecomponent: This referencecomponent then needs
                 // to be first populated before merging
-                existingChild.populateComponentReferences(rootComponentConfigurations, populated);
-                toMerge.populateComponentReferences(rootComponentConfigurations, populated);
-                this.childConfByName.get(toMerge.name).combine(toMerge, rootComponentConfigurations, populated);
+                existingChild.populateComponentReferences(rootComponentConfigurations);
+                toMerge.populateComponentReferences(rootComponentConfigurations);
+                this.childConfByName.get(toMerge.name).combine(toMerge, rootComponentConfigurations);
             } else {
                 //  String newId = this.id + "-" + toMerge.id;
                 //  this.deepCopy(this, newId, toMerge, populated, rootComponentConfigurations);
                 // deepCopy also does the populateComponentReferences for child 'toMerge'
-                this.addDeepCopy(toMerge, populated, rootComponentConfigurations);
+                this.addDeepCopy(toMerge, rootComponentConfigurations);
             }
         }
 
     }
 
-    private void addDeepCopy(HstComponentConfigurationService childToMerge, List<HstComponentConfiguration> populated,
+    private void addDeepCopy(HstComponentConfigurationService childToMerge,
                              Map<String, HstComponentConfiguration> rootComponentConfigurations) {
 
         String newId = StringPool.get(this.id + "-" + childToMerge.id);
 
-        HstComponentConfigurationService copy = deepCopy(this, newId, childToMerge, populated,
-                rootComponentConfigurations);
+        HstComponentConfigurationService copy = deepCopy(this, newId, childToMerge,
+                rootComponentConfigurations, true);
+
         this.componentConfigurations.put(copy.getId(), copy);
         this.childConfByName.put(copy.getName(), copy);
         this.orderedListConfigs.add(copy);
@@ -1351,7 +1546,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             for (Entry<String, String> entry : parent.getParameters().entrySet()) {
                 if (parameters.containsKey(entry.getKey())) {
                     log.debug("Skip adding parameter '{}' = '{}' to component {} from ancestor {} because parameter '{}' is" +
-                                    " already present ", entry.getKey(), entry.getValue(), this, parent, entry.getKey());
+                            " already present ", entry.getKey(), entry.getValue(), this, parent, entry.getKey());
                     continue;
                 }
                 String parameterName = entry.getKey();
@@ -1490,7 +1685,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
     }
 
-    protected void autocreateReferenceNames() {
+    void autocreateReferenceNames() {
 
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.autocreateReferenceNames();
@@ -1504,6 +1699,80 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
     }
 
+    public void removeChild(HstComponentConfiguration child) {
+        componentConfigurations.remove(child.getId());
+        orderedListConfigs.remove(child);
+        childConfByName.remove(child.getName());
+    }
+
+
+    public void transformXpageLayoutContainer(final HstComponentConfigurationService xPageDocumentContainer) {
+        if (!detached) {
+            throw new ExperiencePageLoadingException("Not allowed to transform a 'non-hst-model-detached' " +
+                    "HstComponentConfigurationService into an XPage for a Document");
+        }
+
+        if (getComponentType() != CONTAINER_COMPONENT || xPageDocumentContainer.getComponentType() !=  CONTAINER_COMPONENT) {
+            throw new ExperiencePageLoadingException(format("Not allowed to merge XpageDocument container '%s' with " +
+                    "non-container component '%s'", xPageDocumentContainer.getCanonicalStoredLocation(), getCanonicalStoredLocation()));
+        }
+
+        // assert the root component of the container to merge with is an 'xpage' component
+        HstComponentConfigurationService root = this;
+        while (root.getParent() != null) {
+            root = (HstComponentConfigurationService)root.getParent();
+        }
+        if (!root.isXPage()) {
+            throw new ExperiencePageLoadingException(format("Not allowed to merge XpageDocument container '%s' with " +
+                            "container component '%s' which is not part of an XPage Layout",
+                    xPageDocumentContainer.getCanonicalStoredLocation(), getCanonicalStoredLocation()));
+        }
+
+        // for the Channel Mgr interactions, make sure to *ONLY* replace the identifier and canonical stored location of
+        // the MERGED HST config contariner
+        canonicalIdentifier = xPageDocumentContainer.getCanonicalIdentifier();
+        canonicalStoredLocation = xPageDocumentContainer.getCanonicalStoredLocation();
+
+        // mark the component to be an exp page container
+        experiencePageComponent = true;
+        // since the XPage document contains the container, we mark it shared
+        shared = false;
+
+        // even when the container comes from inherited common configuration, an XPage Document can hijack it via the
+        // hippo:identifier making it effectively a non-inherited and non-shared container!
+        inherited = false;
+
+        // replace all the existing children with those from 'xPageDocumentContainer'
+        orderedListConfigs = xPageDocumentContainer.orderedListConfigs;
+        componentConfigurations = xPageDocumentContainer.componentConfigurations;
+        childConfByName = xPageDocumentContainer.childConfByName;
+
+    }
+
+
+    /**
+     * This is a very specific transformation: Although the container really is still from the XPage layout config, it
+     * is a container that is not present in the current request based XPage document variant, hence we have to 'fake' it
+     * in such that it becomes visible in the Channel Manager: Only we fake it in without potential component items from
+     * XPage Layout : When in the CM someone adds a container item to it, we make sure the correct container gets added
+     * to the Xpage in the Document!
+     */
+    public void transformXpageLayoutContainer() {
+
+        // mark the component to be an exp page container (even though this is a copy config from Xpage Config!
+        experiencePageComponent = true;
+
+        // shared FALSE because the CM needs to be able to interact with the component as PART OF an Xpage Document!
+        shared = false;
+        // even when the container comes from inherited common configuration, an XPage Document can hijack it via the
+        // hippo:identifier making it effectively a non-inherited and non-shared container!
+        inherited = false;
+        // remove any child items present in Xpage Layout
+        orderedListConfigs = Collections.emptyList();
+        componentConfigurations = Collections.emptyMap();
+        childConfByName = Collections.emptyMap();
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("HstComponentConfiguration [id=");
@@ -1513,4 +1782,5 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 .append(", template=").append(this.hstTemplate).append("]");
         return builder.toString();
     }
+
 }

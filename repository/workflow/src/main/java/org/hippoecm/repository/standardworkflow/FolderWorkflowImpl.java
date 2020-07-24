@@ -33,6 +33,7 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -67,10 +68,12 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_CHANNEL_ID;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_EXCLUDE_PRIMARY_TYPES;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_MODIFY;
 import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
 import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
+import static org.hippoecm.repository.HippoStdNodeType.NT_XPAGE_FOLDER;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROTOTYPE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
@@ -125,6 +128,12 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     private static final Logger log = LoggerFactory.getLogger(FolderWorkflowImpl.class);
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATES_PATH = "/hippo:configuration/hippo:queries/hippo:templates";
+    /* Key of argument that contains the uuid of the selected sub prototype for the xpage. */
+    public static final String SUB_PROTO_TYPE_UUID = "subProtoTypeUUID";
+    /* Mixin to indicate that the draft variant is an xpage ( and allows an hst:page as subnode ). */
+    public static final String MIXIN_HST_XPAGE = "hst:xpage";
+    /* Name of the sub prototype sub node of the draft variant */
+    public static final String HST_PAGE = "hst:page";
     private final Session userSession;
     private final Session rootSession;
     private final WorkflowContext workflowContext;
@@ -186,6 +195,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             if (hasSubjectAuthorPermission) {
                 info.put("reorder", isEnabled);
             }
+        }
+        if (subject.isNodeType(NT_XPAGE_FOLDER)){
+            info.put("channelId",  JcrUtils.getStringProperty(subject, HIPPOSTD_CHANNEL_ID, null));
         }
         return info;
     }
@@ -339,15 +351,23 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
     }
 
-    public String add(String category, String template, String name) throws WorkflowException, RepositoryException, RemoteException {
-        Map<String, String> arguments = new TreeMap<>();
-        arguments.put("name", name);
-        return add(category, template, arguments);
+    public String add(final String category, final String type, final String relPath) throws WorkflowException, RepositoryException, RemoteException {
+        return add(category, type, relPath, null);
     }
 
-    public String add(String category, String template, Map<String, String> arguments) throws WorkflowException, RepositoryException {
+    @Override
+    public String add(final String category, final String type, final String relPath, final JcrTemplateNode jcrTemplateNode) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Map<String, String> arguments = new TreeMap<>();
+        arguments.put("name", relPath);
+        return add(category, type, arguments, jcrTemplateNode);
+    }
+
+    public String add(final String category, final String type, final Map<String, String> arguments) throws WorkflowException, RepositoryException {
+        return add(category, type, arguments, null);
+    }
+
+    public String add(final String category, final String type, final Map<String, String> arguments, final JcrTemplateNode jcrTemplateNode) throws WorkflowException, RepositoryException {
         String name = arguments.get("name");
-        rootSession.save();
 
         final QueryManager qmgr = userSession.getWorkspace().getQueryManager();
         final Node queryFolder = userSession.getNode(TEMPLATES_PATH);
@@ -377,7 +397,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 prototypeNode = rootSession.getNodeByIdentifier(prototypeNode.getIdentifier());
                 if (prototypeNode.getName().equals(HIPPO_PROTOTYPE)) {
                     String documentType = prototypeNode.getPrimaryNodeType().getName();
-                    if (documentType.equals(template)) {
+                    if (documentType.equals(type)) {
                         // create handle ourselves, if not already exists
                         if (!target.hasNode(name) || !target.getNode(name).isNodeType(NT_HANDLE)
                                 || target.getNode(name).hasNode(name)) {
@@ -393,9 +413,10 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         if (!result.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
                             result.addMixin(JcrConstants.MIX_REFERENCEABLE);
                         }
+                        copySubProtoTypeToDraftVariant(arguments, result);
                         break;
                     }
-                } else if (prototypeNode.getName().equals(template)) {
+                } else if (prototypeNode.getName().equals(type)) {
                     final ExpandingCopyHandler handler = new ExpandingCopyHandler(target, renames, rootSession.getValueFactory());
                     result = JcrUtils.copyTo(prototypeNode, handler);
                     if (result.isNodeType(NT_HANDLE)) {
@@ -420,23 +441,73 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         && !result.hasProperty(HippoNodeType.HIPPO_AVAILABILITY)) {
                     result.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
                 }
+                append(result, jcrTemplateNode, true);
                 rootSession.save();
                 return result.getPath();
             } else if (handleNode != null) {
+                append(result, jcrTemplateNode, true);
                 rootSession.save();
                 return handleNode.getPath();
             } else {
                 throw new WorkflowException("No document or folder was added: the query at " + TEMPLATES_PATH + "/" + category
-                        + " did not return a matching prototype for '" + template + "'");
+                        + " did not return a matching prototype for '" + type + "'");
             }
         } finally {
             rootSession.refresh(false);
         }
     }
 
+    private void copySubProtoTypeToDraftVariant(final Map<String, String> arguments, final Node result)
+            throws RepositoryException {
+        if (arguments.containsKey(SUB_PROTO_TYPE_UUID)) {
+            final String subProtoTypeUUID = arguments.get(SUB_PROTO_TYPE_UUID);
+            try{
+                final Node hstPage = rootSession.getNodeByIdentifier(subProtoTypeUUID);
+                log.debug("Adding mixin : {} to draft variant: { path : {} }",
+                        MIXIN_HST_XPAGE, JcrUtils.getNodePathQuietly(result));
+                result.addMixin(MIXIN_HST_XPAGE);
+                log.debug("Copying subPrototype : { uuid: {} } to draft variant : { path: {} }",
+                        subProtoTypeUUID, JcrUtils.getNodePathQuietly(result));
+                JcrUtils.copy(hstPage, HST_PAGE, result);
+            }
+            catch (ItemNotFoundException e){
+                String message = String.format("Cannot find sub prototype with uuid: %s. Please make " +
+                        "sure that the subPrototypes property of the hst:channelinfo node contains a " +
+                        "valid sub prototype uuid.", subProtoTypeUUID);
+                throw new RepositoryException(message, e);
+            }
+        }
+    }
+
+    private void append(Node current, final JcrTemplateNode jcrTemplateNode, final boolean documentVariantRoot) throws RepositoryException {
+        if (jcrTemplateNode == null) {
+            return;
+        }
+        if (!documentVariantRoot) {
+            // since not root, first create a new current
+            current = current.addNode(jcrTemplateNode.getNodeName(), jcrTemplateNode.getPrimaryNodeType());
+        }
+        addMixinsAndProperties(current, jcrTemplateNode);
+        for (JcrTemplateNode child : jcrTemplateNode.getChildren()) {
+            append(current, child, false);
+        }
+    }
+
+    private void addMixinsAndProperties(final Node jcrNode, final JcrTemplateNode jcrTemplateNode) throws RepositoryException {
+        for (String mixin : jcrTemplateNode.getMixinNames()) {
+            jcrNode.addMixin(mixin);
+        }
+        for (Map.Entry<String, Value[]> entry : jcrTemplateNode.getMultiValuedProperties().entrySet()) {
+            jcrNode.setProperty(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<String, Value> entry : jcrTemplateNode.getSingleValuedProperties().entrySet()) {
+            jcrNode.setProperty(entry.getKey(), entry.getValue());
+        }
+    }
+
+
     private void doArchive(final Node handle, final String atticPath) throws RepositoryException {
         rootSession.move(handle.getPath(), atticPath + "/" + atticName(atticPath, handle));
-        rootSession.save();
         try {
             if (handle.isNodeType(NT_HANDLE)) {
                 for (final Node child : new NodeIterable(handle.getNodes(handle.getName()))) {

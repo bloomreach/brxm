@@ -15,9 +15,15 @@
  */
 package org.onehippo.repository.documentworkflow.integration;
 
-import javax.jcr.Node;
+import java.rmi.RemoteException;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.assertj.core.api.Assertions;
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -122,4 +128,24 @@ public class DocumentWorkflowIsModifiedTest  extends AbstractDocumentWorkflowInt
     }
 
 
+    @Test
+    public void isModified_skips_nodes_with_skipdraft_mixin() throws RepositoryException, WorkflowException, RemoteException {
+
+        final Node unpublished = getVariant(HippoStdNodeType.UNPUBLISHED);
+        final Node skipThisOne = unpublished.addNode("skipthisone", HippoStdNodeType.NT_HTML);
+        skipThisOne.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, "some content");
+        skipThisOne.addMixin(HippoStdNodeType.MIXIN_SKIPDRAFT);
+        session.save();
+
+        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+        workflow.obtainEditableInstance();
+        workflow.commitEditableInstance();
+        workflow.obtainEditableInstance();
+        Assertions.assertThat(workflow.isModified()).isFalse();
+
+        skipThisOne.removeMixin(HippoStdNodeType.MIXIN_SKIPDRAFT);
+        skipThisOne.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, "some other content");
+        session.save();
+        Assertions.assertThat(workflow.isModified()).isTrue();
+    }
 }

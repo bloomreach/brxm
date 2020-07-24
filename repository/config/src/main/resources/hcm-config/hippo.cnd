@@ -141,3 +141,6 @@
 
 [hippo:named] mixin
 - hippo:name (string) mandatory
+
+[hippo:identifiable] mixin
+- hippo:identifier (string) autocreated
