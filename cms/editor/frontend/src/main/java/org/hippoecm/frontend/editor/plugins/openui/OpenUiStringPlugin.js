@@ -93,8 +93,24 @@ class OpenUiStringPlugin {
     this.element.setValue(value);
   }
 
-  getFieldCompareValue() {
-    return this.parameters.compareValue;
+  getFieldCompareValue(...path) {
+    if (!path.length) {
+      return this.parameters.compareValue;
+    }
+
+    return new Promise((resolve, reject) => {
+      Wicket.Ajax.get({
+        dt: 'json',
+        wr: false,
+        u: this.parameters.documentFieldsUrl,
+        ep: [
+          { name: 'compare', value: 'true' },
+          ...path.map(value => ({value, name: 'fieldpath'}))
+        ],
+        coh: [(settings, { responseJSON: { data } }) => resolve(data)],
+        fh: [(settings, xhr, { message }) => reject(new Error(message))],
+      });
+    });
   }
 
   setFieldHeight(value) {
