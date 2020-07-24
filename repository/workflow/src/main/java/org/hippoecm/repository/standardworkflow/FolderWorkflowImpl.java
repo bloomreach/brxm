@@ -460,8 +460,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     private void copyXPageFolderMixinAndChannelIdToChild(final Node result) throws RepositoryException {
-        if (subject.isNodeType(HippoStdNodeType.MIXIN_XPAGE_FOLDER)) {
-            result.addMixin(HippoStdNodeType.MIXIN_XPAGE_FOLDER);
+        if (subject.isNodeType(NT_XPAGE_FOLDER)) {
+            result.addMixin(NT_XPAGE_FOLDER);
             if (subject.hasProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID)) {
                 String channelId = subject.getProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID).getString();
                 result.setProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID, channelId);
