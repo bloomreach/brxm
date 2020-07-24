@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -107,6 +107,11 @@
     <constructor-arg ref="pageComposerPropertyPresentationFactories"/>
   </bean>
 
+  <bean id="xPageContainerItemComponentService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerItemComponentServiceImpl">
+    <constructor-arg ref="pageComposerContextService"/>
+    <constructor-arg ref="containerItemHelper"/>
+    <constructor-arg ref="pageComposerPropertyPresentationFactories"/>
+  </bean>
   <bean id="hstConfigurationService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl">
     <constructor-arg ref="pageComposerContextService"/>
   </bean>
@@ -152,8 +157,8 @@
   <bean id="uriValidator" class="org.hippoecm.hst.pagecomposer.jaxrs.services.validators.UriValidator"/>
 
   <!--
-    The internal server factory. 
-    Each JAX-RS service component is registered by "resourceProvider" property. 
+    The internal server factory.
+    Each JAX-RS service component is registered by "resourceProvider" property.
   -->
 
   <bean id="validatorFactory" class="org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory"/>
@@ -209,6 +214,23 @@
             <ref bean="containerItemComponentResource"/>
           </constructor-arg>
         </bean>
+        <!-- below the container and container item resources for experience pages -->
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerComponentResource"
+                  parent="abstractConfigResource">
+            </bean>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerItemComponentResource"
+                  parent="abstractConfigResource">
+              <property name="XpageContainerItemComponentService" ref="xPageContainerItemComponentService"/>
+            </bean>
+          </constructor-arg>
+        </bean>
+        <!-- end experience pages -->
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource" parent="abstractConfigResource">
@@ -258,9 +280,50 @@
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ExceptionResource" parent="abstractConfigResource"/>
           </constructor-arg>
         </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ComponentResource" parent="abstractConfigResource">
+              <property name="actionService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService" />
+            </bean>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageResource" parent="abstractConfigResource">
+              <property name="actionService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService" />
+            </bean>
+          </constructor-arg>
+        </bean>
       </list>
     </property>
     <property name="invoker" ref="jaxrsHstConfigServiceInvoker" />
+  </bean>
+  <bean id="actionProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstActionProviderImpl" />
+      </list>
+    </property>
+  </bean>
+  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionServiceImpl">
+    <constructor-arg>
+      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionProviderContextFactory">
+        <constructor-arg>
+          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ChannelActionContextFactory">
+            <constructor-arg ref="channelService" />
+          </bean>
+        </constructor-arg>
+        <constructor-arg>
+          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.PageActionContextFactory">
+            <constructor-arg ref="siteMapHelper" />
+          </bean>
+        </constructor-arg>
+        <constructor-arg>
+          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.XPageActionContextFactory" />
+        </constructor-arg>
+      </bean>
+    </constructor-arg>
+    <property name="actionProviders" ref="actionProviders" />
   </bean>
 
   <!-- Pipelining -->

@@ -52,6 +52,7 @@ export default class CommunicationService {
         getScroll: this._getScroll.bind(this),
         getTranslations: this._getTranslations.bind(this),
         isEditable: this._isEditable.bind(this),
+        isEditSharedContainers: this._isEditSharedContainers.bind(this),
         ready: this._ready.bind(this),
       },
     });
@@ -114,6 +115,10 @@ export default class CommunicationService {
 
   _isEditable(...args) {
     return this.$injector.get('ChannelService').isEditable(...args);
+  }
+
+  _isEditSharedContainers(...args) {
+    return this.$injector.get('HippoIframeService').isEditSharedContainers(...args);
   }
 
   _ready() {

@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -34,11 +36,15 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
+import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
 
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
 
@@ -58,18 +64,29 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             return;
         }
 
-        final CmsSessionContext cmsSessionContext = HstRequestUtils.getCmsSessionContext(request);
+        final HstComponentConfiguration compConfig = (HstComponentConfiguration)window.getComponentInfo();
 
-        if (cmsSessionContext == null) {
-            throw new IllegalStateException("cmsSessionContext should never be null here.");
-        }
 
         // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
-        HstComponentConfiguration compConfig = ((HstComponentConfiguration) window.getComponentInfo());
-
         if (isContainerOrContainerItem(compConfig)) {
-            populateComponentMetaData(request, response, window);
+            if (compConfig.isInherited()) {
+                // for inherited components we do not add any html comments since component is never editable for user any way
+                log.debug("Component '{}' not editable because inherited", compConfig.toString());
+                return;
+            }
+            if (userInRole(request, compConfig)) {
+                populateComponentMetaData(request, response, window);
+            } else {
+                log.debug("Component '{}' not editable because user is not in right role", compConfig.toString());
+            }
         } else if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
+
+            final CmsSessionContext cmsSessionContext = HstRequestUtils.getCmsSessionContext(request);
+
+            if (cmsSessionContext == null) {
+                throw new IllegalStateException("cmsSessionContext should never be null here.");
+            }
+
             populatePageMetaData(request, response, cmsSessionContext, compConfig);
         }
     }
@@ -82,8 +99,12 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         pageMetaData.put(ChannelManagerConstants.HST_MOUNT_ID, mount.getIdentifier());
         pageMetaData.put(ChannelManagerConstants.HST_SITE_ID, mount.getHstSite().getCanonicalIdentifier());
         pageMetaData.put(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
-
+        // provide info for CM that the page is an experience page: The top hst component for experience pages
+        // always has compConfig.isExperiencePageComponent() = true
         final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+
+        pageMetaData.put(ChannelManagerConstants.HST_EXPERIENCE_PAGE,  String.valueOf(resolvedSiteMapItem.isExperiencePage()));
+
         if (resolvedSiteMapItem != null) {
             final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
             pageMetaData.put(ChannelManagerConstants.HST_SITEMAPITEM_ID, ((CanonicalInfo) hstSiteMapItem).getCanonicalIdentifier());
@@ -91,13 +112,6 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             if (siteMap instanceof CanonicalInfo) {
                 final CanonicalInfo canonicalInfo = (CanonicalInfo) siteMap;
                 pageMetaData.put(ChannelManagerConstants.HST_SITEMAP_ID, canonicalInfo.getCanonicalIdentifier());
-                if (canonicalInfo.getCanonicalPath().contains(WORKSPACE_PATH_ELEMENT) &&
-                        canonicalInfo.getCanonicalPath().startsWith(mount.getHstSite().getConfigurationPath())) {
-                    // sitemap item is part of workspace && of current site configuration (thus not inherited)
-                    pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "true");
-                } else {
-                    pageMetaData.put(ChannelManagerConstants.HST_PAGE_EDITABLE, "false");
-                }
             } else {
                 log.warn("Expected sitemap of subtype {}. Cannot set sitemap id.", CanonicalInfo.class.getName());
             }
@@ -132,19 +146,21 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
     private void populateComponentMetaData(final HstRequest request, final HstResponse response,
                                            final HstComponentWindow window) {
+
         final HstComponentConfiguration config = (HstComponentConfiguration)window.getComponentInfo();
 
-        if (!config.getCanonicalStoredLocation().contains(WORKSPACE_PATH_ELEMENT)) {
-            log.debug("Component '{}' not editable as not part of hst:workspace configuration", config.toString());
-            return;
+        if (config.getCanonicalStoredLocation().contains(WORKSPACE_PATH_ELEMENT) || config.isExperiencePageComponent()) {
+            final Map<String, String> preambleAttributes = new HashMap<>();
+            final Map<String, String> epilogueAttributes = new HashMap<>();
+            populateAttributes(window, request, preambleAttributes, epilogueAttributes);
+            response.addPreamble(createCommentWithAttr(preambleAttributes, response));
+            response.addEpilogue(createCommentWithAttr(epilogueAttributes, response));
+        } else {
+            log.debug("Component '{}' not editable as not part of hst:workspace configuration and not part of " +
+                    "an experience page", config.toString());
         }
-
-        final Map<String, String> preambleAttributes = new HashMap<>();
-        final Map<String, String> epilogueAttributes = new HashMap<>();
-        populateAttributes(window, request, preambleAttributes, epilogueAttributes);
-        response.addPreamble(createCommentWithAttr(preambleAttributes, response));
-        response.addEpilogue(createCommentWithAttr(epilogueAttributes, response));
     }
+
 
     final void populateAttributes(HstComponentWindow window, HstRequest request,
                                   Map<String, String> preambleAttributes, Map<String, String> epilogueAttributes) {
@@ -152,5 +168,38 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             attributeContributor.contributePreamble(window, request, preambleAttributes);
             attributeContributor.contributeEpilogue(window, request, epilogueAttributes);
         }
+    }
+
+    private boolean userInRole(final HstRequest request, final HstComponentConfiguration compConfig) {
+
+        final HippoSession cmsUser = (HippoSession) request.getRequestContext().getAttribute(ContainerConstants.CMS_USER_SESSION_ATTR_NAME);
+        if (cmsUser == null) {
+            throw new IllegalStateException("For Channel Manager preview requests there is expected to be a CMS user " +
+                    "Session available");
+        }
+
+        // note that EVEN if the backing JCR node for compConfig is from version history, because we decorate
+        // the JCR Node to HippoBeanFrozenNode in ObjectConverterImpl.getActualNode(), the #getPath is decorated
+        // to always return a workspace path! Hence #getCanonicalStoredLocation gives right location
+        if (compConfig.isExperiencePageComponent()) {
+            // check whether cmsUser has the right role on the xpage component document (aka handle)
+            // note that even if the backing JCR Node from 'getContentBean' is a frozen jcr node, #getParent on
+            // that frozen node will return the workspace handle, see HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode()
+            final String handlePath;
+            try {
+                handlePath = request.getRequestContext().getContentBean().getNode().getParent().getPath();
+                if (!compConfig.getCanonicalStoredLocation().startsWith(handlePath)) {
+                    log.error("Component '{}' for XPage '{}' expected to be a descendant of handle but was not the case, return " +
+                            "false for user in role", compConfig.getCanonicalStoredLocation(), handlePath);
+                }
+                return isInRole(cmsUser, handlePath, XPAGE_REQUIRED_PRIVILEGE_NAME);
+            } catch (RepositoryException e) {
+                log.error("Exception while checking user in role, return false" , e);
+                return false;
+            }
+        } else {
+            return isInRole(cmsUser, compConfig.getCanonicalStoredLocation(), CHANNEL_WEBMASTER_PRIVILEGE_NAME);
+        }
+
     }
 }

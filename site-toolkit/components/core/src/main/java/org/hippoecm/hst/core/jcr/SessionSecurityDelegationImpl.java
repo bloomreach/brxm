@@ -26,6 +26,8 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -101,39 +103,56 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
     private Session doCreateLiveSecurityDelegate(final Credentials delegate, final boolean autoLogout) throws RepositoryException, IllegalStateException {
         final FacetRule facetRule = new FacetRule(HippoNodeType.HIPPO_AVAILABILITY, "live", true, true, PropertyType.STRING);
         final DomainRuleExtension dre = new DomainRuleExtension("*", "*", Arrays.asList(facetRule));
-        return doCreateSecurityDelegate(liveCredentials, delegate, autoLogout, dre);
+        return doCreateSecurityDelegate(liveCredentials, delegate, autoLogout,  false, dre).getLeft();
     }
 
     @Deprecated
     @Override
     public Session getOrCreatePreviewSecurityDelegate(final Credentials delegate, final String key) throws RepositoryException, IllegalStateException {
-        return doCreatePreviewSecurityDelegate(delegate, true);
+        return doCreatePreviewSecurityDelegate(delegate, true,  false).getLeft();
     }
 
     @Override
     public Session createPreviewSecurityDelegate(final Credentials delegate, final boolean autoLogout) throws RepositoryException, IllegalStateException {
-        return doCreatePreviewSecurityDelegate(delegate, autoLogout);
+        return doCreatePreviewSecurityDelegate(delegate, autoLogout, false).getLeft();
     }
 
-    private Session doCreatePreviewSecurityDelegate(final Credentials delegate, final boolean autoLogout) throws RepositoryException, IllegalStateException {
+    /**
+     * @param cmsUserCreds the credentials of the user with which to combine the HST preview user
+     * @return Returns a {@link Pair} object where left contains the Session security delegate being a combination of p
+     * review user and cmsUser authorization and right containe the Session for the cmsUserCreds
+     */
+    public Pair<Session, Session> createCmsUserAndChannelMgrPreviewUser(final Credentials cmsUserCreds) throws RepositoryException, IllegalStateException {
+        return doCreatePreviewSecurityDelegate(cmsUserCreds, false, true);
+    }
+
+    private Pair<Session, Session> doCreatePreviewSecurityDelegate(final Credentials delegate, final boolean autoLogout,
+                                                                   final boolean keepDelegateSession) throws RepositoryException, IllegalStateException {
         final FacetRule facetRule = new FacetRule(HippoNodeType.HIPPO_AVAILABILITY, "preview", true, true, PropertyType.STRING);
         final DomainRuleExtension dre = new DomainRuleExtension("*", "*", Arrays.asList(facetRule));
-        return doCreateSecurityDelegate(previewCredentials, delegate, autoLogout, dre);
+        return doCreateSecurityDelegate(previewCredentials, delegate, autoLogout, keepDelegateSession, dre);
     }
 
     @Override
     public Session createSecurityDelegate(final Credentials cred1,
-                                          final Credentials cred2,
+                                          final Credentials delegatee,
                                           final boolean autoLogout,
                                           final DomainRuleExtension... domainExtensions) throws RepositoryException, IllegalStateException {
-        return doCreateSecurityDelegate(cred1, cred2, autoLogout, domainExtensions);
+        return doCreateSecurityDelegate(cred1, delegatee, autoLogout, false, domainExtensions).getRight();
     }
 
 
-    private Session doCreateSecurityDelegate(final Credentials cred1,
-                                           final Credentials cred2,
-                                           final boolean autoLogout,
-                                           final DomainRuleExtension... domainExtensions) throws RepositoryException, IllegalStateException {
+    /**
+     * returns a Pair for which the left contains the 'combined session authorization for cred1 and delegatee' and
+     * right is null if {@code keepDelegateSession = false} or right contains the session for {@code delegatee} is
+     * {@code keepDelegateSession = true}. Note the session for {@code delegatee} will never be logged out automatically
+     * so 'autoLogout' only concerns the combined session
+     */
+    private Pair<Session, Session> doCreateSecurityDelegate(final Credentials cred1,
+                                                final Credentials delegatee,
+                                                final boolean autoLogout,
+                                                final boolean keepDelegateSession,
+                                                final DomainRuleExtension... domainExtensions) throws RepositoryException, IllegalStateException {
         if (!securityDelegationEnabled) {
             throw new IllegalStateException("Security delegation is not enabled");
         }
@@ -141,7 +160,7 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
         final HstRequestContext requestContext = RequestContextProvider.get();
 
         long start = System.currentTimeMillis();
-        Session jcrSession;
+        Session combinedSession;
 
         Session session1 = null;
         try {
@@ -155,21 +174,19 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
             throw new IllegalStateException("Repository returned Session is not a HippoSession.");
         }
 
-        Session session2 = null;
+        Session delegateeSession = null;
         try {
             try {
-                session2 = session1.impersonate(cred2);
+                delegateeSession = session1.impersonate(delegatee);
             } catch (javax.jcr.LoginException e) {
-                logWarningAndRethrow(cred2, e);
+                logWarningAndRethrow(delegatee, e);
 
             }
-            jcrSession = ((HippoSession) session1).createSecurityDelegate(session2, domainExtensions);
+            combinedSession = ((HippoSession) session1).createSecurityDelegate(delegateeSession, domainExtensions);
         } finally {
-            if (session1 != null) {
-                session1.logout();
-            }
-            if (session2 != null) {
-                session2.logout();
+            session1.logout();
+            if (delegateeSession != null && !keepDelegateSession) {
+                delegateeSession.logout();
             }
         }
         log.debug("Acquiring security delegate session took '{}' ms.", (System.currentTimeMillis() - start));
@@ -178,11 +195,15 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
             if (requestContext == null) {
                 throw new IllegalStateException("Cannot automatically logout jcr session since there is no HstRequestContext");
             }
-            storeInAutoLogoutList(jcrSession, requestContext);
+            storeInAutoLogoutList(combinedSession, requestContext);
 
         }
 
-        return jcrSession;
+        if (keepDelegateSession) {
+            return new ImmutablePair<>(combinedSession, delegateeSession);
+        } else {
+            return new ImmutablePair<>(combinedSession, null);
+        }
     }
 
     private void logWarningAndRethrow(final Credentials cred, final javax.jcr.LoginException e) throws javax.jcr.LoginException {

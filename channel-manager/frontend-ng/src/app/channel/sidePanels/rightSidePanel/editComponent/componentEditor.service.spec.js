@@ -17,7 +17,6 @@
 describe('ComponentEditorService', () => {
   let $q;
   let $rootScope;
-  let $timeout;
   let $translate;
   let ChannelService;
   let CmsService;
@@ -30,14 +29,43 @@ describe('ComponentEditorService', () => {
   let HstComponentService;
   let PageStructureService;
 
-  let testData;
   const emptyValues = [undefined, null, ''];
   const testValues = emptyValues.concat('test');
 
-  function openComponentEditor(properties) {
-    HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
-    ComponentEditor.open(testData);
-    $rootScope.$digest();
+  let mockChannel;
+  let mockComponent;
+  let mockContainer;
+  let mockPage;
+  let mockPageMeta;
+
+  function createMockComponent(id, container) {
+    return jasmine.createSpyObj('mockComponent', {
+      getContainer: container,
+      getId: `${id}Id`,
+      getLabel: `${id}Label`,
+      getRenderVariant: `${id}Variant`,
+    });
+  }
+
+  function createMockContainer(id, disabled = false, inherited = false) {
+    return jasmine.createSpyObj('mockContainer', {
+      getId: `${id}Id`,
+      isDisabled: disabled,
+      isInherited: inherited,
+    });
+  }
+
+  function createMockPage(pageMeta) {
+    const page = jasmine.createSpyObj('mockPage', ['getComponentById', 'getMeta']);
+    page.getMeta.and.returnValue(pageMeta);
+    return page;
+  }
+
+  function createMockPageMeta(id) {
+    return jasmine.createSpyObj('mockPageMeta', {
+      getPageId: `${id}Id`,
+      getPathInfo: `${id}PathInfo`,
+    });
   }
 
   beforeEach(() => {
@@ -66,7 +94,6 @@ describe('ComponentEditorService', () => {
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
-      $timeout = _$timeout_;
       $translate = _$translate_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
@@ -83,27 +110,39 @@ describe('ComponentEditorService', () => {
     spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.resolve({}));
     spyOn(CmsService, 'reportUsageStatistic');
 
-    testData = {
-      channel: 'channel',
-      component: {
-        id: 'componentId',
-        label: 'componentLabel',
-        variant: 'componentVariant',
-      },
-      container: {
-        id: 'containerId',
-        isDisabled: false,
-      },
-      page: 'page',
+    mockContainer = createMockContainer('container');
+    mockComponent = createMockComponent('component', mockContainer);
+    mockPageMeta = createMockPageMeta('page');
+    mockPage = createMockPage(mockPageMeta);
+    mockPage.getComponentById.and.returnValue(mockComponent);
+
+    spyOn(PageStructureService, 'getPage').and.returnValue(mockPage);
+
+    mockChannel = {
+      id: 'channelId',
+      contextPath: 'channelContextPath',
+      hostGroup: 'channelHostGroup',
     };
+    spyOn(ChannelService, 'getChannel').and.returnValue(mockChannel);
   });
+
+  function openComponentEditor(properties, componentId = 'componentId') {
+    HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
+    ComponentEditor.open(componentId);
+    $rootScope.$digest();
+
+    expect(PageStructureService.getPage).toHaveBeenCalled();
+    expect(mockPage.getComponentById).toHaveBeenCalledWith('componentId');
+
+    PageStructureService.getPage.calls.reset();
+    mockPage.getComponentById.calls.reset();
+  }
 
   describe('responding to page structure changes', () => {
     beforeEach(() => {
       spyOn(ComponentEditor, 'reopen');
-      spyOn(PageStructureService, 'getPage');
 
-      openComponentEditor(testData);
+      openComponentEditor();
     });
 
     it('should do nothing without a component', () => {
@@ -118,67 +157,45 @@ describe('ComponentEditorService', () => {
       $rootScope.$emit('page:change');
 
       expect(PageStructureService.getPage).toHaveBeenCalled();
-      expect(ComponentEditor.container.id).toBe('containerId');
+      expect(ComponentEditor.component).toBe(mockComponent);
     });
 
     it('should not update when the component is not on the page', () => {
-      const page = {
-        getComponentById: jasmine.createSpy('getComponentById').and.returnValue(null),
-      };
-      PageStructureService.getPage.and.returnValue(page);
+      mockPage.getComponentById.and.returnValue(null);
       $rootScope.$emit('page:change');
 
-      expect(page.getComponentById).toHaveBeenCalledWith('componentId');
-      expect(ComponentEditor.container.id).toBe('containerId');
+      expect(mockPage.getComponentById).toHaveBeenCalledWith('componentId');
+      expect(ComponentEditor.component).toBe(mockComponent);
     });
 
     it('should update the container information if it has changed', () => {
-      const page = jasmine.createSpyObj('page', ['getComponentById']);
-      page.getComponentById.and.returnValue({
-        container: {
-          isDisabled: () => false,
-          isInherited: () => true,
-          getId: () => 'new-containerId',
-        },
-      });
-      PageStructureService.getPage.and.returnValue(page);
+      const newContainer = createMockContainer('newContainer');
+      const newComponent = createMockComponent('newComponent', newContainer);
+      mockPage.getComponentById.and.returnValue(newComponent);
 
       $rootScope.$emit('page:change');
 
-      expect(ComponentEditor.container.isDisabled).toBe(false);
-      expect(ComponentEditor.container.isInherited).toBe(true);
-      expect(ComponentEditor.container.id).toBe('new-containerId');
+      expect(ComponentEditor.component).toBe(newComponent);
       expect(ComponentEditor.reopen).not.toHaveBeenCalled();
     });
 
     it('should update the page information if it has changed', () => {
-      const page = jasmine.createSpyObj('page', ['getComponentById', 'getId']);
-      page.getId.and.returnValue('new-page-id');
-      page.getComponentById.and.returnValue({
-        container: {
-          isDisabled: () => false,
-          isInherited: () => true,
-          getId: () => 2,
-        },
-      });
-      PageStructureService.getPage.and.returnValue(page);
+      const newContainer = createMockContainer('newContainer');
+      const newComponent = createMockComponent('newComponent', newContainer);
+      const newMockPage = createMockPage();
+      newMockPage.getComponentById.and.returnValue(newComponent);
+      PageStructureService.getPage.and.returnValue(newMockPage);
 
       $rootScope.$emit('page:change');
 
       expect(PageStructureService.getPage).toHaveBeenCalled();
-      expect(ComponentEditor.page.getId()).toBe('new-page-id');
+      expect(ComponentEditor.page).toBe(newMockPage);
     });
 
     it('should reopen editor', () => {
-      const page = jasmine.createSpyObj('page', ['getComponentById']);
-      page.getComponentById.and.returnValue({
-        container: {
-          isDisabled: () => true,
-          isInherited: () => true,
-          getId: () => 2,
-        },
-      });
-      PageStructureService.getPage.and.returnValue(page);
+      const newContainer = createMockContainer('newContainer', true);
+      const newComponent = createMockComponent('newComponent', newContainer);
+      mockPage.getComponentById.and.returnValue(newComponent);
 
       $rootScope.$emit('page:change');
 
@@ -187,17 +204,6 @@ describe('ComponentEditorService', () => {
 
     describe('restoring selected component', () => {
       beforeEach(() => {
-        const page = {
-          getComponentById: jasmine.createSpy('getComponentById').and.returnValue({
-            getId: () => 'componentId',
-            container: {
-              isDisabled: () => true,
-              isInherited: () => true,
-              getId: () => 'containerId',
-            },
-          }),
-        };
-        PageStructureService.getPage.and.returnValue(page);
         CommunicationService.selectComponent.calls.reset();
       });
 
@@ -219,21 +225,21 @@ describe('ComponentEditorService', () => {
   describe('opening a component editor', () => {
     it('closes the previous editor', () => {
       spyOn(ComponentEditor, 'close');
-      ComponentEditor.open(testData);
+      ComponentEditor.open('componentId');
       $rootScope.$digest();
 
       expect(ComponentEditor.close).toHaveBeenCalled();
     });
 
     it('loads the component properties', () => {
-      ComponentEditor.open(testData);
+      ComponentEditor.open('componentId');
       $rootScope.$digest();
 
       expect(HstComponentService.getProperties).toHaveBeenCalledWith('componentId', 'componentVariant');
     });
 
     it('reports user statistics', () => {
-      ComponentEditor.open(testData);
+      ComponentEditor.open('componentId');
       $rootScope.$digest();
 
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CompConfigSidePanelOpened');
@@ -243,10 +249,9 @@ describe('ComponentEditorService', () => {
       const properties = [{ name: 'test-property' }];
       openComponentEditor(properties);
 
-      expect(ComponentEditor.channel).toBe(testData.channel);
-      expect(ComponentEditor.component).toBe(testData.component);
-      expect(ComponentEditor.container).toBe(testData.container);
-      expect(ComponentEditor.page).toBe(testData.page);
+      expect(ComponentEditor.channel).toBe(mockChannel);
+      expect(ComponentEditor.component).toBe(mockComponent);
+      expect(ComponentEditor.page).toBe(mockPage);
       expect(ComponentEditor.properties).toBe(properties);
       expect(CommunicationService.selectComponent).toHaveBeenCalledWith('componentId');
     });
@@ -257,7 +262,7 @@ describe('ComponentEditorService', () => {
 
       HstComponentService.getProperties.and.returnValue($q.reject());
 
-      ComponentEditor.open(testData);
+      ComponentEditor.open('componentId');
       $rootScope.$digest();
 
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT');
@@ -266,12 +271,13 @@ describe('ComponentEditorService', () => {
   });
 
   describe('reopening the editor', () => {
-    it('opens the editor for the component is was opened for originally', () => {
+    it('opens the editor for the component it was opened for originally', () => {
       openComponentEditor();
-
       spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
+
       ComponentEditor.reopen();
-      expect(ComponentEditor.open).toHaveBeenCalledWith(testData);
+
+      expect(ComponentEditor.open).toHaveBeenCalledWith('componentId');
     });
   });
 
@@ -535,99 +541,85 @@ describe('ComponentEditorService', () => {
     });
 
     it('is true when the container is disabled', () => {
-      testData.container.isDisabled = true;
+      mockContainer.isDisabled.and.returnValue(true);
       openComponentEditor([]);
       expect(ComponentEditor.isReadOnly()).toBe(true);
     });
   });
 
   describe('open a component page', () => {
-    let page;
-    let pageMeta;
-
     beforeEach(() => {
       spyOn(HippoIframeService, 'load');
       spyOn(HippoIframeService, 'initializePath');
       spyOn(ChannelService, 'matchesChannel');
       spyOn(ChannelService, 'initializeChannel').and.returnValue($q.resolve());
 
-      page = jasmine.createSpyObj('page', ['getMeta']);
-      pageMeta = jasmine.createSpyObj('pageMeta', ['getPathInfo']);
-      page.getMeta.and.returnValue(pageMeta);
+      openComponentEditor();
     });
 
     it('opens a component page in the same channel', () => {
-      pageMeta.getPathInfo.and.returnValue('/path');
-      ComponentEditor.page = page;
-      ComponentEditor.channel = { id: 'test-id-1' };
       ChannelService.matchesChannel.and.returnValue(true);
+
       ComponentEditor.openComponentPage();
 
-      expect(ChannelService.matchesChannel).toHaveBeenCalledWith('test-id-1');
-      expect(HippoIframeService.load).toHaveBeenCalledWith('/path');
+      expect(ChannelService.matchesChannel).toHaveBeenCalledWith('channelId');
+      expect(HippoIframeService.load).toHaveBeenCalledWith('pagePathInfo');
     });
 
     it('opens a component page in a different channel', () => {
-      pageMeta.getPathInfo.and.returnValue('/path');
-      ComponentEditor.page = page;
-      ComponentEditor.channel = {
-        id: 'test-id-1',
-        contextPath: 'context-path',
-        hostGroup: 'host-group',
-      };
       ChannelService.matchesChannel.and.returnValue(false);
-      ComponentEditor.openComponentPage();
-      $timeout.flush();
 
-      expect(ChannelService.matchesChannel).toHaveBeenCalledWith('test-id-1');
-      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('test-id-1', 'context-path', 'host-group');
-      expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/path');
+      ComponentEditor.openComponentPage();
+      $rootScope.$digest();
+
+      expect(ChannelService.matchesChannel).toHaveBeenCalledWith('channelId');
+      expect(ChannelService.initializeChannel)
+        .toHaveBeenCalledWith('channelId', 'channelContextPath', 'channelHostGroup');
+      expect(HippoIframeService.initializePath).toHaveBeenCalledWith('pagePathInfo');
     });
 
-    it('does not open a component page', () => {
+    it('does not open a component page if there is nog page', () => {
+      delete ComponentEditor.page;
+
       ComponentEditor.openComponentPage();
 
       expect(HippoIframeService.load).not.toHaveBeenCalled();
     });
   });
 
-  describe('foreign page state', () => {
-    let localPageMeta;
-    let page;
-    let pageMeta;
-
+  describe('isForeignPage', () => {
     beforeEach(() => {
-      ComponentEditor.component = { id: 'id1' };
-
-      const localPage = jasmine.createSpyObj('localPage', ['getMeta']);
-      localPageMeta = jasmine.createSpyObj('localPageMeta', ['getPageId']);
-      localPage.getMeta.and.returnValue(localPageMeta);
-      ComponentEditor.page = localPage;
-
-      page = jasmine.createSpyObj('page', ['getMeta', 'getComponentById']);
-      pageMeta = jasmine.createSpyObj('pageMeta', ['getPageId']);
-      page.getMeta.and.returnValue(pageMeta);
-      spyOn(PageStructureService, 'getPage').and.returnValue(page);
+      openComponentEditor();
     });
 
-    it('should not be on a foreign page', () => {
-      page.getComponentById.and.returnValue(false);
-      localPageMeta.getPageId.and.returnValue('id1');
-      pageMeta.getPageId.and.returnValue('id1');
+    it('should return false is current page is undefined', () => {
+      PageStructureService.getPage.and.returnValue(undefined);
+
+      expect(ComponentEditor.isForeignPage()).toBe(false);
+    });
+
+    it('should return false if page is undefined', () => {
+      delete ComponentEditor.page;
+
+      expect(ComponentEditor.isForeignPage()).toBe(false);
+    });
+
+    it('should return false if component is undefined', () => {
+      delete ComponentEditor.component;
 
       expect(ComponentEditor.isForeignPage()).toBe(false);
     });
 
     it('should not be on a foreign page for a shared container', () => {
-      page.getComponentById.and.returnValue({});
-      localPageMeta.getPageId.and.returnValue('id2');
-
       expect(ComponentEditor.isForeignPage()).toBe(false);
     });
 
     it('should be on a foreign page', () => {
-      page.getComponentById.and.returnValue(false);
-      localPageMeta.getPageId.and.returnValue('id2');
+      const currentPageMeta = createMockPageMeta('currentPage');
+      const currentPage = createMockPage(currentPageMeta);
+
+      PageStructureService.getPage.and.returnValue(currentPage);
+      currentPage.getComponentById.and.returnValue(null);
 
       expect(ComponentEditor.isForeignPage()).toBe(true);
     });
@@ -679,15 +671,8 @@ describe('ComponentEditorService', () => {
   });
 
   describe('updatePreview', () => {
-    const mockComponent = {};
-    let mockPage;
-
     beforeEach(() => {
-      mockPage = jasmine.createSpyObj('Page', ['getComponentById']);
-      mockPage.getComponentById.and.returnValue(mockComponent);
-
       spyOn(ContainerService, 'renderComponent').and.returnValue($q.resolve());
-      spyOn(PageStructureService, 'getPage').and.returnValue(mockPage);
     });
 
     it('transforms the "properties" data and passes it to the PageStructureService to render the component', (done) => {
@@ -701,7 +686,7 @@ describe('ComponentEditorService', () => {
       properties[1].value = 'value-b';
 
       ComponentEditor.updatePreview().then(() => {
-        expect(mockPage.getComponentById).toHaveBeenCalledWith(testData.component.id);
+        expect(mockPage.getComponentById).toHaveBeenCalledWith('componentId');
         expect(ContainerService.renderComponent).toHaveBeenCalledWith(mockComponent, {
           a: 'value-a',
           b: 'value-b',
@@ -729,12 +714,12 @@ describe('ComponentEditorService', () => {
     });
 
     it('should not render a component if it is not present on the page', () => {
-      mockPage.getComponentById.and.returnValue(null);
-
       const properties = [
         { name: 'a', value: '2017-09-21T00:00:00.000+02:00', type: 'datefield' },
       ];
       openComponentEditor(properties);
+
+      mockPage.getComponentById.and.returnValue(null);
       ComponentEditor.updatePreview();
       $rootScope.$digest();
 
@@ -763,8 +748,26 @@ describe('ComponentEditorService', () => {
       });
     });
 
+    it('reloads the page if the server requires it', () => {
+      spyOn(HippoIframeService, 'reload');
+      spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve({
+        reloadRequired: true,
+        data: { id: 'newComponentId' },
+      }));
+
+      openComponentEditor();
+      spyOn(ComponentEditor, 'open');
+
+      ComponentEditor.save();
+      $rootScope.$digest();
+
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+      expect(ComponentEditor.open).toHaveBeenCalledWith('newComponentId');
+    });
+
     it('reports user statistics', (done) => {
-      spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve());
+      spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve({ data: {} }));
+
       openComponentEditor();
       ComponentEditor.save().then(() => {
         expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CompConfigSidePanelSave');
@@ -824,12 +827,11 @@ describe('ComponentEditorService', () => {
     });
   });
 
-  describe('the close function', () => {
+  describe('close', () => {
     it('clears all properties so a next call starts with a clean slate', () => {
       ComponentEditor.request = jasmine.createSpyObj('request', ['cancel']);
       ComponentEditor.channel = {};
       ComponentEditor.component = {};
-      ComponentEditor.container = {};
       ComponentEditor.killed = false;
       ComponentEditor.page = {};
       ComponentEditor.properties = {};
@@ -841,7 +843,6 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.request.cancel).toHaveBeenCalled();
       expect(ComponentEditor.channel).toBeUndefined();
       expect(ComponentEditor.component).toBeUndefined();
-      expect(ComponentEditor.container).toBeUndefined();
       expect(ComponentEditor.killed).toBeUndefined();
       expect(ComponentEditor.page).toBeUndefined();
       expect(ComponentEditor.properties).toBeUndefined();
@@ -873,6 +874,7 @@ describe('ComponentEditorService', () => {
     it('reopens the component editor to discard changes', () => {
       spyOn(ComponentEditor, 'reopen').and.returnValue($q.resolve());
       ComponentEditor.discardChanges();
+
       expect(ComponentEditor.reopen).toHaveBeenCalled();
     });
 
@@ -899,10 +901,7 @@ describe('ComponentEditorService', () => {
 
   describe('confirm save or discard changes', () => {
     beforeEach(() => {
-      ComponentEditor.component = {
-        id: 'component-id',
-        label: 'component-label',
-      };
+      openComponentEditor();
 
       spyOn($translate, 'instant');
       spyOn(DialogService, 'alert');
@@ -923,7 +922,7 @@ describe('ComponentEditorService', () => {
         .then(() => {
           expect($translate.instant).toHaveBeenCalledWith('SAVE_COMPONENT_CHANGES_TITLE');
           expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TO_COMPONENT', {
-            componentLabel: 'component-label',
+            componentLabel: 'componentLabel',
           });
           done();
         });
@@ -1001,10 +1000,15 @@ describe('ComponentEditorService', () => {
     });
   });
 
-  it('manages kill state', () => {
-    expect(ComponentEditor.isKilled()).toBe(false);
+  describe('isKilled', () => {
+    it('should return false', () => {
+      expect(ComponentEditor.isKilled()).toBe(false);
+    });
 
-    ComponentEditor.kill();
-    expect(ComponentEditor.isKilled()).toBe(true);
+    it('should return true', () => {
+      ComponentEditor.kill();
+
+      expect(ComponentEditor.isKilled()).toBe(true);
+    });
   });
 });

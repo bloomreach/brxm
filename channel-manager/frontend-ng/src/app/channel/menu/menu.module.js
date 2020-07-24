@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@
 import channelMenuModule from './channel/channelMenu.module';
 import menuComponent from './menu.component';
 import pageMenuModule from './page/pageMenu.module';
+import xpageMenuModule from './xpage/xpageMenu.module';
 
 const menuModule = angular
   .module('hippo-cm.channel.menu', [
     channelMenuModule.name,
     pageMenuModule.name,
+    xpageMenuModule.name,
   ])
   .component('dropdownMenu', menuComponent);
 

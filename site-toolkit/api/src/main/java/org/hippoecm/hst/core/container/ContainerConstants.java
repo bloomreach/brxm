@@ -142,6 +142,12 @@ public interface ContainerConstants {
      */
     String CMS_REQUEST_USER_ID_ATTR = "org.hippoecm.hst.container.cms_user_id";
 
+
+    /**
+     * Name of the {@link HstRequestContext} attribute with the CMS user Session if set
+     */
+    String CMS_USER_SESSION_ATTR_NAME = "org.hippoecm.hst.container.cms_user_session";
+
     /**
      * The attribute used on the request or http session to indicate that the page should be rendered as some specific
      * variant

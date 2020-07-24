@@ -28,6 +28,7 @@ public class ExtResponseRepresentation {
     private String message;
     private String errorCode;
     private Object data;
+    private boolean reloadRequired;
 
     public ExtResponseRepresentation() {
         this(ArrayUtils.EMPTY_STRING_ARRAY);
@@ -69,4 +70,11 @@ public class ExtResponseRepresentation {
         this.success = success;
     }
 
+    public boolean isReloadRequired() {
+        return reloadRequired;
+    }
+
+    public void setReloadRequired(final boolean reloadRequired) {
+        this.reloadRequired = reloadRequired;
+    }
 }

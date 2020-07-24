@@ -68,6 +68,14 @@ export class ComponentEntity extends Entity {
     return this._meta[HstConstants.LOCKED_BY_CURRENT_USER] === 'true';
   }
 
+  isShared() {
+    return this._meta[HstConstants.SHARED] === 'true';
+  }
+
+  isXPageComponent() {
+    return this._meta[HstConstants.EXPERIENCE_PAGE_COMPONENT] === 'true';
+  }
+
   addHeadContributions(contributions) {
     this._contributions.push(contributions);
   }

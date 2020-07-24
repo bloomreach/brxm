@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
-import org.onehippo.cms.channelmanager.content.document.util.BranchSelectionService;
+import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.onehippo.cms.channelmanager.content.document.util.BranchSelectionServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.BranchingService;
 import org.onehippo.cms.channelmanager.content.document.util.BranchingServiceImpl;
@@ -37,11 +37,14 @@ import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspectorImpl;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.workflows.WorkflowServiceImpl;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.repository.jaxrs.api.JsonResourceServiceModule;
 import org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 import org.onehippo.repository.jaxrs.event.JcrEventListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
 
@@ -68,6 +71,8 @@ import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
  */
 public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
+    private final static Logger log = LoggerFactory.getLogger(ChannelContentServiceModule.class);
+
     private final DocumentsServiceImpl documentsService;
     private final WorkflowServiceImpl workflowsService;
     private Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
@@ -88,6 +93,15 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
         this.branchSelectionService = createBranchSelectionService(session);
+
+        final BranchSelectionService prev = HippoServiceRegistry.getService(BranchSelectionService.class);
+        if (prev != null) {
+            log.debug("Remove earlier registered BranchSelectionService");
+            HippoServiceRegistry.unregister(prev, BranchSelectionService.class);
+        }
+
+        HippoServiceRegistry.register(branchSelectionService, BranchSelectionService.class);
+
         // First create the branchSelectionService because doInitialize needs it to be non-null
         super.doInitialize(session);
         this.documentsService.setHintsInspector(createHintsInspector(session));
@@ -114,6 +128,7 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RepositoryException(e);
         }
+
     }
 
     private BranchSelectionService createBranchSelectionService(final Session session) throws RepositoryException {
@@ -121,10 +136,12 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         final String defaultValue = BranchSelectionServiceImpl.class.getName();
         final String className = JcrUtils.getStringProperty(session, propertyPath, defaultValue);
         try {
-            return (BranchSelectionService) Class.forName(className).newInstance();
+            final BranchSelectionService branchSelectionService = (BranchSelectionService) Class.forName(className).newInstance();
+            return branchSelectionService;
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RepositoryException(e);
         }
+
     }
 
     @Override

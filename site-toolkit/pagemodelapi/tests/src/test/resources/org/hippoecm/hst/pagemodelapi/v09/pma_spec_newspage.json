@@ -2,7 +2,7 @@
   "id":"r14",
   "_meta":{
     "version":"0.9",
-    "branch" : "master"
+    "branch":"master"
   },
   "_links":{
     "self":{
@@ -12,6 +12,14 @@
     "site":{
       "href":"http://localhost/site/spa/news/News1",
       "type":"internal"
+    }
+  },
+  "channel":{
+    "info":{
+      "props":{
+        "nonParameterProp":"Foo",
+        "headerName":"Test HST Website"
+      }
     }
   },
   "page":{
@@ -169,7 +177,10 @@
               }
             }
           }
-        ]
+        ],
+        "_meta":{
+
+        }
       },
       "sameChannelNewsLink":{
         "href":"/site/spa/news/News1.html",
@@ -485,12 +496,19 @@
               }
             }
           }
-        ]
+        ],
+        "_meta":{
+
+        }
       },
-      "testLinkAndMetaNull" : {
-        "id" : "some-id",
-        "_meta" : { },
-        "_links" : { }
+      "testLinkAndMetaNull":{
+        "id":"some-id",
+        "_meta":{
+
+        },
+        "_links":{
+
+        }
       }
     },
     "components":[
@@ -517,7 +535,7 @@
       {
         "id":"r14_r2",
         "name":"header",
-        "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+        "componentClass":"org.hippoecm.hst.test.HeaderComponent",
         "type":"COMPONENT",
         "components":[
           {
@@ -539,9 +557,127 @@
                 "type":"external"
               }
             }
+          },
+          {
+            "id":"r14_r2_r2",
+            "name":"container",
+            "componentClass":"org.hippoecm.hst.builtin.components.StandardContainerComponent",
+            "type":"CONTAINER_COMPONENT",
+            "components":[
+              {
+                "id":"r14_r2_r2_r1",
+                "name":"banner-old-style",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "paramsInfo":{
+                    "path":"banners/banner100"
+                  },
+                  "params":{
+                    "path":"banners/banner100"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r1"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r1",
+                    "type":"external"
+                  }
+                }
+              },
+              {
+                "id":"r14_r2_r2_r2",
+                "name":"banner-old-style-2",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "paramsInfo":{
+                    "path":"banners/banner101"
+                  },
+                  "params":{
+                    "path":"banners/banner101"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r2"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r2",
+                    "type":"external"
+                  }
+                }
+              },
+              {
+                "id":"r14_r2_r2_r3",
+                "name":"banner-new-style",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "paramsInfo":{
+                    "path":"banners/banner102"
+                  },
+                  "params":{
+                    "path":"banners/banner102"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r3"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r3",
+                    "type":"external"
+                  }
+                }
+              },
+              {
+                "id":"r14_r2_r2_r4",
+                "name":"banner-new-style-2",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "paramsInfo":{
+                    "path":"/some/default"
+                  },
+                  "params":{
+                    "document":"banners/banner103"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r4"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r4",
+                    "type":"external"
+                  }
+                }
+              }
+            ],
+            "xtype":"hst.vbox",
+            "_meta":{
+              "params":{
+
+              }
+            },
+            "_links":{
+              "componentRendering":{
+                "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2"
+              },
+              "self":{
+                "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2",
+                "type":"external"
+              }
+            }
           }
         ],
         "_meta":{
+          "paramsInfo":{
+            "header":"Yes My Header"
+          },
           "params":{
 
           }
@@ -601,6 +737,9 @@
   "content":{
     "u303d40ebf98c4d6184c7a1ba14b5ceb3":{
       "id":"303d40eb-f98c-4d61-84c7-a1ba14b5ceb3",
+      "_meta":{
+
+      },
       "_links":{
         "site":{
           "href":"/site/spa/news/News1.html",
@@ -617,10 +756,14 @@
       },
       "textDocument":{
         "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
-      }
+      },
+      "localeString":null
     },
     "u1ca07af9cdf54bdd9908f991245bb062":{
       "id":"1ca07af9-cdf5-4bdd-9908-f991245bb062",
+      "_meta":{
+
+      },
       "_links":{
         "site":{
           "href":"/site/spa",
@@ -634,21 +777,6 @@
       "title":"This is the homepage",
       "body":{
         "value":"This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
-      },
-      "imageSetBean":{
-        "$ref":"/content/udb02dde500984488a72c2a4fc6d51beb"
-      },
-      "assetBean":{
-        "$ref":"/content/u5e56d406b302445e9f80e624ba053bc4"
-      },
-      "newsDocument":{
-        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-      },
-      "folderBean":{
-        "$ref":"/content/ucbcbcbcb5fa848a8b03b4524373d992a"
-      },
-      "selfBean":{
-        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
       },
       "selfInstance":{
         "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
@@ -667,6 +795,21 @@
           "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
         }
       ],
+      "newsDocument":{
+        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+      },
+      "folderBean":{
+        "$ref":"/content/ucbcbcbcb5fa848a8b03b4524373d992a"
+      },
+      "imageSetBean":{
+        "$ref":"/content/udb02dde500984488a72c2a4fc6d51beb"
+      },
+      "assetBean":{
+        "$ref":"/content/u5e56d406b302445e9f80e624ba053bc4"
+      },
+      "selfBean":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
       "localeString":"en_US",
       "bar":{
         "name":"bar",

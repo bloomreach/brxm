@@ -47,4 +47,8 @@ export class PageMeta extends Entity {
   getSiteMapItemId() {
     return this._meta[HstConstants.SITEMAPITEM_ID];
   }
+
+  isXPage() {
+    return this._meta[HstConstants.EXPERIENCE_PAGE] === 'true';
+  }
 }

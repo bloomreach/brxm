@@ -40,6 +40,10 @@ export function EntityMixin(BaseClass) {
       this.overlay = jQueryOverlayElement;
     }
 
+    hasOverlayElement() {
+      return !!this.overlay;
+    }
+
     getBoxElement() {
       return this.iframeBoxElement;
     }

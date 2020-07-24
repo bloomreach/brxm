@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,4 +27,14 @@ public interface CopyHandler {
     void setProperty(PropInfo property) throws RepositoryException;
 
     Node getCurrent();
+
+    /**
+     *
+     * @param srcChild the node to check
+     * @return {@code true} if the child from the source needs to be skippoed
+     * @throws RepositoryException
+     */
+    default boolean skipNode(Node srcChild) throws RepositoryException {
+        return false;
+    }
 }

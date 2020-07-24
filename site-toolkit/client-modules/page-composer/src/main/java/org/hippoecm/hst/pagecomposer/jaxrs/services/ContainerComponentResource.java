@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.Consumes;
@@ -30,10 +29,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService.ContainerItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +41,7 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 @Path("/hst:containercomponent/")
-public class ContainerComponentResource extends AbstractConfigResource {
+public class ContainerComponentResource extends AbstractConfigResource implements ContainerComponentResourceInterface {
     private static Logger log = LoggerFactory.getLogger(ContainerComponentResource.class);
 
     private ContainerComponentService containerComponentService;
@@ -61,16 +60,16 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @Override
     public Response createContainerItem(final @PathParam("itemUUID") String itemUUID,
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         if (!isValidUUID(itemUUID)) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(String.format("Value of path parameter itemUUID: '%s' is not a valid UUID", itemUUID))
-                    .build();
+            final String message = String.format("Value of path parameter itemUUID: '%s' is not a valid UUID", itemUUID);
+            return clientError(message, new ErrorStatus(ClientError.INVALID_UUID));
         }
         final ContainerAction<Response> createContainerItem = () -> {
             final ContainerItem newContainerItem = containerComponentService.createContainerItem(getSession(), itemUUID, versionStamp);
-            return respondNewContainerItemCreated(newContainerItem);
+            return respondContainerItem(newContainerItem, false, Response.Status.CREATED, "Successfully created item");
         };
         return handleAction(createContainerItem);
     }
@@ -80,22 +79,21 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @Override
     public Response createContainerItemAndAddBefore(final @PathParam("itemUUID") String itemUUID,
                                                     final @PathParam("siblingItemUUID") String siblingItemUUID,
                                                     final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         if (!isValidUUID(itemUUID)) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(String.format("Value of path parameter itemUUID: '%s' is not a valid UUID", itemUUID))
-                    .build();
+            final String message = String.format("Value of path parameter itemUUID: '%s' is not a valid UUID", itemUUID);
+            return clientError(message, new ErrorStatus(ClientError.INVALID_UUID));
         }
-        if (!isValidUUID(siblingItemUUID)) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(String.format("Value of path parameter siblingItemUUID: '%s' is not a valid UUID", siblingItemUUID))
-                    .build();
+        if (siblingItemUUID != null && !isValidUUID(siblingItemUUID)) {
+            final String message = String.format("Value of path parameter siblingItemUUID: '%s' is not a valid UUID", siblingItemUUID);
+            return clientError(message, new ErrorStatus(ClientError.INVALID_UUID));
         }
         return handleAction(() -> {
             final ContainerItem newContainerItem = containerComponentService.createContainerItem(getSession(), itemUUID, siblingItemUUID, versionStamp);
-            return respondNewContainerItemCreated(newContainerItem);
+            return respondContainerItem(newContainerItem, false, Response.Status.CREATED, "Successfully created item");
         });
     }
 
@@ -105,10 +103,11 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @Override
     public Response updateContainer(final ContainerRepresentation container) {
         final ContainerAction<Response> updateContainer = () -> {
             containerComponentService.updateContainer(getSession(), container);
-            return Response.status(Response.Status.OK).entity(container).build();
+            return ok(container.getId() + " updated", container);
         };
 
         return handleAction(updateContainer);
@@ -122,7 +121,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         final ContainerAction<Response> deleteContainerItem = () -> {
             containerComponentService.deleteContainerItem(getSession(), itemUUID, versionStamp);
-            return Response.status(Response.Status.OK).build();
+            return ok(itemUUID + " deleted");
         };
 
         return handleAction(deleteContainerItem);
@@ -133,33 +132,13 @@ public class ContainerComponentResource extends AbstractConfigResource {
     }
 
     private Response handleAction(final ContainerAction<Response> action) {
-        final Response.Status httpStatusCode;
-        final ErrorStatus errorStatus;
-
         try {
             return action.apply();
         } catch (ClientException e) {
-            errorStatus = e.getErrorStatus();
-            httpStatusCode = Response.Status.BAD_REQUEST;
-        } catch (RepositoryException | IllegalArgumentException e) {
-            errorStatus = ErrorStatus.unknown(e.getMessage());
-            httpStatusCode = Response.Status.INTERNAL_SERVER_ERROR;
+            return clientError(e.getMessage(), e.getErrorStatus());
+        } catch (Exception e) {
+            return error(e.getMessage(), ErrorStatus.unknown(e.getMessage()));
         }
-        return createErrorResponse(httpStatusCode, errorStatus);
     }
 
-    private Response createErrorResponse(final Response.Status httpStatusCode, final ErrorStatus errorStatus) {
-        return Response.status(httpStatusCode).entity(errorStatus).build();
-    }
-
-    private Response respondNewContainerItemCreated(ContainerItem newContainerItem) throws RepositoryException {
-        final Node newNode = newContainerItem.getContainerItem();
-        final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation()
-                .represent(newNode, newContainerItem.getComponentDefinition(), newContainerItem.getTimeStamp());
-
-        log.info("Successfully created containerItemRepresentation '{}' with path '{}'", newNode.getName(), newNode.getPath());
-        return Response.status(Response.Status.CREATED)
-                .entity(containerItemRepresentation)
-                .build();
-    }
 }

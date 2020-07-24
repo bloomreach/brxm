@@ -1,0 +1,18 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestcommon/hst:catalog:
+      jcr:primaryType: hst:catalog
+      /unittestpackage:
+        jcr:primaryType: hst:containeritempackage
+        /banner-old-style:
+          jcr:primaryType: hst:containeritemcomponent
+          hst:componentclassname: org.hippoecm.hst.test.BannerComponent
+          hst:template: header
+          hst:parameternames: [path]
+          hst:parametervalues: [banners/banner1]
+        /banner-new-style:
+          jcr:primaryType: hst:componentdefinition
+          hst:componentclassname: org.hippoecm.hst.test.BannerComponent
+          hst:parameternames: [path]
+          hst:parametervalues: [banners/banner2]
+          # TODO include hst:dynamicparameter children and do unit tests against those!

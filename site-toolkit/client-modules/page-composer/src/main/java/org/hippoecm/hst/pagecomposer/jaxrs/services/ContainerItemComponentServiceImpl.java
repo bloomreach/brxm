@@ -29,6 +29,8 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
@@ -42,7 +44,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyR
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ItemNotFoundException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.UnknownClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
@@ -87,15 +88,15 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
     }
 
     @Override
-    public Set<String> retainVariants(final Set<String> variants, final long versionStamp) throws RepositoryException {
+    public Pair<Set<String>, Boolean> retainVariants(final Set<String> variants, final long versionStamp) throws RepositoryException {
         Node containerItem = getCurrentContainerItem();
         Set<String> removedVariants = doRetainVariants(containerItem, variants, versionStamp);
         log.info("Removed variants: {}", removedVariants);
-        return removedVariants;
+        return new ImmutablePair<>(removedVariants, false);
     }
 
     @Override
-    public void createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException {
+    public Pair<Node, Boolean> createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException {
         try {
             Node containerItem = getCurrentContainerItem();
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
@@ -106,6 +107,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
 
             componentParameters.save(versionStamp);
             log.info("Variant '{}' created successfully", variantId);
+            return new ImmutablePair<>(containerItem, false);
         } catch (IllegalStateException | IllegalArgumentException e) {
             log.warn("Could not create variant '{}'", variantId, e);
             throw new UnknownClientException("Could not create variant '" + variantId + "'");
@@ -125,16 +127,17 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
     }
 
     @Override
-    public void deleteVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException {
+    public Pair<Node, Boolean> deleteVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException {
         try {
             final HstComponentParameters componentParameters = getCurrentHstComponentParameters();
             if (!componentParameters.hasPrefix(variantId)) {
-                throw new ItemNotFoundException("Cannot delete variantId with id='" + variantId + "'");
+                throw new ClientException(String.format("Cannot delete variantId with id='%s'", variantId) , ClientError.ITEM_NOT_FOUND);
             }
             deleteVariant(componentParameters, variantId);
 
             componentParameters.save(versionStamp);
             log.info("Variant '{}' deleted successfully", variantId);
+            return new ImmutablePair<>(getCurrentContainerItem(), false);
         } catch (IllegalStateException | IllegalArgumentException e) {
             log.warn("Could not delete variantId '{}'", variantId, e);
             throw new UnknownClientException("Could not delete the variantId");
@@ -145,13 +148,14 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
     }
 
     @Override
-    public void updateVariant(final String variantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
+    public Pair<Node, Boolean> updateVariant(final String variantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
         try {
             final HstComponentParameters componentParameters = getCurrentHstComponentParameters();
             setParameters(componentParameters, variantId, params);
 
             componentParameters.save(versionStamp);
             log.info("Parameters for '{}' saved successfully.", variantId);
+            return new ImmutablePair<>(getCurrentContainerItem(), false);
         } catch (IllegalStateException | IllegalArgumentException e) {
             log.warn("Could not save parameters for variant '{}'", variantId, e);
             throw new UnknownClientException(e.getMessage());
@@ -162,7 +166,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
     }
 
     @Override
-    public void moveAndUpdateVariant(final String oldVariantId, final String newVariantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
+    public Pair<Node, Boolean> moveAndUpdateVariant(final String oldVariantId, final String newVariantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException {
         try {
             final Node containerItem = getCurrentContainerItem();
             final HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
@@ -172,6 +176,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
 
             componentParameters.save(versionStamp);
             log.info("Parameters renamed from '{}' to '{}' and saved successfully.", oldVariantId, newVariantId);
+            return new ImmutablePair<>(containerItem, false);
         } catch (IllegalStateException | IllegalArgumentException e) {
             logParameterSettingFailed(e);
             throw new UnknownClientException(e.getMessage());
@@ -236,6 +241,13 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
 
         final HstComponentsConfiguration componentsConfiguration = hstSite.getComponentsConfiguration();
         final Map<String, HstComponentConfiguration> componentConfigurations = componentsConfiguration.getComponentConfigurations();
+
+        // TODO Below is EXTREMELY tricky and actuall brittle: from a componentItemNode you do not have enough information
+        // TODO to backtrack the HstComponentConfiguration instance that was clicked on in the Channel Mgr: Namely, a
+        // TODO component item can of course be inherited by a news page as well as an agenda page, for example if the
+        // TODO component item is in the inherited 'header' container in abstractpages. So, below you just happen to get
+        // TODO a component reference instance, not perse the one clicked. Then again, if you do not call #getParent
+        // TODO in general it most likely will go fine
         final HstComponentConfiguration componentReference = componentConfigurations.values().stream() //TODO SS: Optimize loop
                 .filter(x -> x.getCanonicalStoredLocation().equals(componentCanonicalPath)).findFirst()
                 .orElseThrow(() -> new RuntimeException(String.format("Component representation is not found: '%s'", componentCanonicalPath)));
@@ -274,8 +286,8 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
      * @throws RepositoryException when something went wrong in the repository
      */
     private void doCreateVariant(final Node containerItem,
-                         final HstComponentParameters componentParameters,
-                         final String variantId) throws RepositoryException, IllegalStateException {
+                                 final HstComponentParameters componentParameters,
+                                 final String variantId) throws RepositoryException, IllegalStateException {
 
         Map<String, String> annotatedParameters = PageComposerUtil.getAnnotatedDefaultValues(containerItem);
 

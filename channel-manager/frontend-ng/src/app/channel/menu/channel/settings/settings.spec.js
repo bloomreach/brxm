@@ -183,7 +183,7 @@ describe('ChannelSettings', () => {
   it('notifies the event "on-success" when saving is successful', () => {
     channelInfoDescription.editable = true;
     spyOn(ChannelService, 'saveChannel').and.returnValue($q.when());
-    spyOn(ChannelService, 'recordOwnChange');
+    spyOn(ChannelService, 'checkChanges').and.returnValue($q.resolve());
     spyOn(HippoIframeService, 'reload');
     compileDirectiveAndGetController();
 
@@ -191,7 +191,7 @@ describe('ChannelSettings', () => {
 
     expect(ChannelService.saveChannel).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
-    expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($scope.onSuccess).toHaveBeenCalledWith('CHANNEL_PROPERTIES_SAVE_SUCCESS', undefined);
   });
 

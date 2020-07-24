@@ -101,7 +101,7 @@ describe('PagePropertiesComponent', () => {
     spyOn($mdDialog, 'show');
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
-    spyOn(ChannelService, 'recordOwnChange');
+    spyOn(ChannelService, 'checkChanges').and.returnValue($q.resolve());
     spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HippoIframeService, 'reload');
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
@@ -233,7 +233,7 @@ describe('PagePropertiesComponent', () => {
 
     expect(HippoIframeService.reload).toHaveBeenCalled();
     expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
-    expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });
 

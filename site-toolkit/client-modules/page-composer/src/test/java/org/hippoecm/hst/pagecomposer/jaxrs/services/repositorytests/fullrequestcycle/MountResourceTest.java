@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,25 +49,27 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        final Session session = createSession("admin", "admin");
-        AbstractPageComposerTest.createHstConfigBackup(session);
-        // move the hst:sitemap and hst:pages below the 'workspace' because since HSTTWO-3959 only the workspace
-        // gets copied to preview configuration
-        if (!session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace")) {
-            session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace", "hst:workspace");
-        }
+        Session session = backupHstAndCreateWorkspace();
+
+        session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap").remove();
+
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap");
+
         session.save();
         session.logout();
+
     }
 
     @After
     public void tearDown() throws Exception {
-        final Session session = createSession("admin", "admin");
-        AbstractPageComposerTest.restoreHstConfigBackup(session);
-        session.logout();
-        super.tearDown();
+        try {
+            final Session session = createSession("admin", "admin");
+            AbstractPageComposerTest.restoreHstConfigBackup(session);
+            session.logout();
+        } finally {
+            super.tearDown();
+        }
     }
 
     @Test
@@ -84,16 +86,6 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
     public void liveuser_cannot_invoke_start_edit() throws Exception {
         Credentials liveUserCreds = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".default.delegating");
         startEditAssertions(liveUserCreds, ClientError.FORBIDDEN);
-    }
-
-    protected Map<String, Object> startEdit(final Credentials creds) throws RepositoryException, IOException, ServletException {
-        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
-        final RequestResponseMock requestResponse = mockGetRequestResponse(
-                "http", "localhost", "/_rp/" + mountId + "./edit", null, "POST");
-
-        final MockHttpServletResponse response = render(mountId, requestResponse, creds);
-        final String restResponse = response.getContentAsString();
-        return mapper.readerFor(Map.class).readValue(restResponse);
     }
 
     protected void startEditAssertions(final Credentials creds, final boolean shouldSucceed) throws RepositoryException, IOException, ServletException {

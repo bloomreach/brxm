@@ -77,12 +77,12 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 @Path("/hst:mount/")
 public class MountResource extends AbstractConfigResource {
-    private static Logger log = LoggerFactory.getLogger(MountResource.class);
+    private static final Logger log = LoggerFactory.getLogger(MountResource.class);
 
     private static final String PUBLISH_ACTION = "publishMount";
 
@@ -214,7 +214,33 @@ public class MountResource extends AbstractConfigResource {
             usersWithChanges.add(new UserRepresentation(userId));
         }
         return ok(msg, usersWithChanges);
+    }
 
+    @GET
+    @Path("/mychanges/")
+    @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
+    public Response getMyChanges() {
+        final PageComposerContextService pageComposerContextService = getPageComposerContextService();
+
+        final Session session;
+        try {
+            final HstRequestContext requestContext = pageComposerContextService.getRequestContext();
+            session = requestContext.getSession();
+        } catch (RepositoryException e) {
+            log.warn("Failed to retrieve JCR session", e);
+            return error("Failed to retrieve JCR session: " + e);
+        }
+
+        final String currentUserId = session.getUserID();
+        final Set<String> changedBySet = pageComposerContextService.getEditingPreviewChannel().getChangedBySet();
+        if (changedBySet.stream().noneMatch(userId -> userId.equals(currentUserId))) {
+            log.info("Current user has no changes");
+            return ok("Current user has no changes", Collections.emptyList());
+        }
+
+        log.info("Current user has changes");
+        return ok("Current user has changes", Collections.singletonList(new UserRepresentation(currentUserId)));
     }
 
     /**
@@ -535,7 +561,7 @@ public class MountResource extends AbstractConfigResource {
             String previewConfigurationPath = editingPreviewSite.getConfigurationPath();
 
             Session session = requestContext.getSession();
- 
+
             channelHelper.discardChanges(userIds);
             siteMapHelper.discardChanges(userIds);
             pagesHelper.discardChanges(userIds);

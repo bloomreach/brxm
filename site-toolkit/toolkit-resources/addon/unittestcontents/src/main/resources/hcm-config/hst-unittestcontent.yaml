@@ -205,6 +205,89 @@ definitions:
                       jcr:primaryType: hippostd:html
                       hippostd:content: This is the content of the aboutsubfolder
                         page
+          /experiences:
+            jcr:primaryType: hippostd:folder
+            jcr:mixinTypes: ['mix:referenceable']
+            hippostd:foldertype: [new-folder, new-document]
+            /expPage1:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /expPage1:
+                jcr:primaryType: unittestproject:newspage
+                jcr:mixinTypes: ['mix:versionable', 'hst:xpagemixin']
+                hippo:availability: [live, preview]
+                hippostd:holder: admin
+                hippostd:state: published
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                unittestproject:summary: Summary about Experience Page
+                unittestproject:title: My Experience Page 1
+                /unittestproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: My Experience Page 1
+                /hst:xpage:
+                  jcr:primaryType: hst:xpage
+                  hst:pageref: xpage1
+                  /430df2da-3dc8-40b5-bed5-bdc44b8445c6:
+                    jcr:primaryType: hst:containercomponent
+                    /banner:
+                      jcr:primaryType: hst:containeritemcomponent
+                      hst:componentclassname: org.hippoecm.hst.test.BannerComponent
+                      hst:parameternameprefixes: ['', variant1]
+                      hst:parameternames: [path, path]
+                      hst:parametervalues: [/content/document, /content/variant1]
+                      hst:template: banner
+                    /banner-new-style:
+                      jcr:primaryType: hst:containeritemcomponent
+                      hst:componentdefinition: hst:components/testpackage/testitem
+                      hst:parameternameprefixes: ['', variant1]
+                      hst:parameternames: [path, path]
+                      hst:parametervalues: [/content/document, /content/variant1]
+                  /430df2da-3dc8-40b5-bed5-bdc44b8445c7:
+                    jcr:primaryType: hst:containercomponent
+                    /banner:
+                      jcr:primaryType: hst:containeritemcomponent
+                      hst:componentdefinition: hst:components/testpackage/testitem
+                      hst:parameternameprefixes: ['']
+                      hst:parameternames: [path]
+                      hst:parametervalues: [/content/document]
+                      hst:template: banner
+            /expPage2:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /expPage2:
+                jcr:primaryType: unittestproject:newspage
+                jcr:mixinTypes: ['mix:versionable', 'hst:xpagemixin']
+                hippo:availability: [preview]
+                hippostd:holder: admin
+                hippostd:state: unpublished
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                unittestproject:summary: Summary about Experience Page 2
+                unittestproject:title: My Experience Page 2
+                /unittestproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: My Experience Page 2
+                /hst:xpage:
+                  jcr:primaryType: hst:xpage
+                  hst:pageref: xpage1
+                  /430df2da-3dc8-40b5-bed5-bdc44b8445c6:
+                    jcr:primaryType: hst:containercomponent
+                    /banner:
+                      jcr:primaryType: hst:containeritemcomponent
+                      hst:componentdefinition: hst:components/testpackage/testitem
+                      hst:parameternameprefixes: ['', variant1]
+                      hst:parameternames: [path]
+                      hst:parametervalues: [/content/document]
+                      hst:template: banner
+                  /430df2da-3dc8-40b5-bed5-bdc44b8445c7:
+                    jcr:primaryType: hst:containercomponent
           /News:
             jcr:primaryType: hippostd:folder
             jcr:mixinTypes: ['mix:referenceable']
@@ -283,6 +366,32 @@ definitions:
                 jcr:primaryType: hippostd:folder
                 jcr:mixinTypes: ['mix:referenceable']
                 hippostd:foldertype: [new-folder, new-document]
+                /articleAsExpPage:
+                  jcr:primaryType: hippo:handle
+                  jcr:mixinTypes: ['mix:referenceable']
+                  /articleAsExpPage:
+                    jcr:primaryType: unittestproject:newspage
+                    jcr:mixinTypes: ['mix:versionable', 'hst:xpagemixin']
+                    hippo:availability: [live, preview]
+                    hippostd:holder: admin
+                    hippostd:state: published
+                    hippostdpubwf:createdBy: admin
+                    hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                    hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                    hippostdpubwf:lastModifiedBy: admin
+                    unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                    unittestproject:summary: Summary about articleAsExpPage
+                    unittestproject:title: My articleAsExpPage 1
+                    /unittestproject:body:
+                      jcr:primaryType: hippostd:html
+                      hippostd:content: My articleAsExpPage Page 1
+                    /hst:xpage:
+                      jcr:primaryType: hst:xpage
+                      hst:pageref: xpage1
+                      /430df2da-3dc8-40b5-bed5-bdc44b8445c6:
+                        jcr:primaryType: hst:containercomponent
+                      /430df2da-3dc8-40b5-bed5-bdc44b8445c7:
+                        jcr:primaryType: hst:containercomponent
             /2008:
               jcr:primaryType: hippostd:folder
               jcr:mixinTypes: ['mix:referenceable']

@@ -721,6 +721,9 @@ public class JcrUtils {
             if ("rep:root".equals(getPrimaryNodeType(child).getName())) {
                 continue;
             }
+            if (chain.skipNode(child)) {
+                continue;
+            }
             NodeInfo info = new NodeInfo(child);
             chain.startNode(info);
             copyToChain(child, chain);

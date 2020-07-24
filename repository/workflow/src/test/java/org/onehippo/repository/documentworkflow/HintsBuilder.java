@@ -62,6 +62,7 @@ public class HintsBuilder {
     public static String ACTION_MOVE = "move";
     public static String ACTION_RENAME = "rename";
     public static String ACTION_COPY = "copy";
+    public static String ACTION_SAVE_UNPUBLISHED = "saveUnpublished";
 
 
     private TreeMap<String, Serializable> info = new TreeMap<>();
@@ -272,6 +273,11 @@ public class HintsBuilder {
 
     public HintsBuilder copy() {
         actions.put(ACTION_COPY, true);
+        return this;
+    }
+
+    public HintsBuilder saveUnpublished(boolean enabled) {
+        actions.put(ACTION_SAVE_UNPUBLISHED, enabled);
         return this;
     }
 

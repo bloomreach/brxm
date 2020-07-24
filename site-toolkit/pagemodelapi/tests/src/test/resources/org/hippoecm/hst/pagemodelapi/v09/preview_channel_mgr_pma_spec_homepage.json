@@ -14,6 +14,14 @@
       "type":"internal"
     }
   },
+  "channel":{
+    "info":{
+      "props":{
+        "nonParameterProp":"Foo",
+        "headerName":"Test HST Website"
+      }
+    }
+  },
   "page":{
     "id":"r27",
     "name":"homepage",
@@ -507,7 +515,7 @@
       {
         "id":"r27_r1",
         "name":"header",
-        "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+        "componentClass":"org.hippoecm.hst.test.HeaderComponent",
         "type":"COMPONENT",
         "components":[
           {
@@ -529,9 +537,127 @@
                 "type":"external"
               }
             }
+          },
+          {
+            "id":"r27_r1_r2",
+            "name":"container",
+            "componentClass":"org.hippoecm.hst.builtin.components.StandardContainerComponent",
+            "type":"CONTAINER_COMPONENT",
+            "components":[
+              {
+                "id":"r27_r1_r2_r1",
+                "name":"banner-old-style",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "paramsInfo":{
+                    "path":"banners/banner100"
+                  },
+                  "params":{
+                    "path":"banners/banner100"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r1"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r1",
+                    "type":"external"
+                  }
+                }
+              },
+              {
+                "id":"r27_r1_r2_r2",
+                "name":"banner-old-style-2",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "paramsInfo":{
+                    "path":"banners/banner101"
+                  },
+                  "params":{
+                    "path":"banners/banner101"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r2"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r2",
+                    "type":"external"
+                  }
+                }
+              },
+              {
+                "id":"r27_r1_r2_r3",
+                "name":"banner-new-style",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "paramsInfo":{
+                    "path":"banners/banner102"
+                  },
+                  "params":{
+                    "path":"banners/banner102"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r3"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r3",
+                    "type":"external"
+                  }
+                }
+              },
+              {
+                "id":"r27_r1_r2_r4",
+                "name":"banner-new-style-2",
+                "componentClass":"org.hippoecm.hst.test.BannerComponent",
+                "type":"CONTAINER_ITEM_COMPONENT",
+                "_meta":{
+                  "paramsInfo":{
+                    "path":"/some/default"
+                  },
+                  "params":{
+                    "document":"banners/banner103"
+                  }
+                },
+                "_links":{
+                  "componentRendering":{
+                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r4"
+                  },
+                  "self":{
+                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r4",
+                    "type":"external"
+                  }
+                }
+              }
+            ],
+            "xtype":"hst.vbox",
+            "_meta":{
+              "params":{
+
+              }
+            },
+            "_links":{
+              "componentRendering":{
+                "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2"
+              },
+              "self":{
+                "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2",
+                "type":"external"
+              }
+            }
           }
         ],
         "_meta":{
+          "paramsInfo":{
+            "header":"Yes My Header"
+          },
           "params":{
 
           }
@@ -608,21 +734,6 @@
       "body":{
         "value":"This is the content of the homepage with a link to <a href=\"/site/_cmsinternal/spa/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
       },
-      "newsDocument":{
-        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-      },
-      "folderBean":{
-        "$ref":"/content/ucbcbcbcb5fa848a8b03b4524373d992a"
-      },
-      "imageSetBean":{
-        "$ref":"/content/udb02dde500984488a72c2a4fc6d51beb"
-      },
-      "assetBean":{
-        "$ref":"/content/u5e56d406b302445e9f80e624ba053bc4"
-      },
-      "selfBean":{
-        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
-      },
       "selfInstance":{
         "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
       },
@@ -640,6 +751,21 @@
           "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
         }
       ],
+      "newsDocument":{
+        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+      },
+      "folderBean":{
+        "$ref":"/content/ucbcbcbcb5fa848a8b03b4524373d992a"
+      },
+      "imageSetBean":{
+        "$ref":"/content/udb02dde500984488a72c2a4fc6d51beb"
+      },
+      "assetBean":{
+        "$ref":"/content/u5e56d406b302445e9f80e624ba053bc4"
+      },
+      "selfBean":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
       "localeString":"en_US",
       "bar":{
         "name":"bar",
@@ -704,22 +830,6 @@
       "name":"picture.jpeg",
       "displayName":"picture.jpeg",
       "description":null,
-      "original":{
-        "name":"hippogallery:original",
-        "displayName":"hippogallery:original",
-        "width":-1,
-        "height":-1,
-        "lastModified":1236880917884,
-        "mimeType":"image/jpeg",
-        "filename":"picture_original.jpeg",
-        "size":168981,
-        "_links":{
-          "site":{
-            "href":"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg",
-            "type":"resource"
-          }
-        }
-      },
       "thumbnail":{
         "name":"hippogallery:thumbnail",
         "displayName":"hippogallery:thumbnail",
@@ -732,6 +842,22 @@
         "_links":{
           "site":{
             "href":"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg",
+            "type":"resource"
+          }
+        }
+      },
+      "original":{
+        "name":"hippogallery:original",
+        "displayName":"hippogallery:original",
+        "width":-1,
+        "height":-1,
+        "lastModified":1236880917884,
+        "mimeType":"image/jpeg",
+        "filename":"picture_original.jpeg",
+        "size":168981,
+        "_links":{
+          "site":{
+            "href":"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg",
             "type":"resource"
           }
         }
