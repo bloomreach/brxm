@@ -19,7 +19,7 @@
   <parent>
     <artifactId>hippo-plugin-seo-support-root</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>14.3.0-experience-pages-SNAPSHOT</version>
+    <version>14.3.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-plugin-seo-support-repository</artifactId>
