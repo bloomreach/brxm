@@ -128,6 +128,24 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
         return Optional.empty();
     }
 
+    private Optional<Node> getCompareNode() {
+        if (documentEditorMode != IEditor.Mode.COMPARE) {
+            return Optional.empty();
+        }
+
+        final ComparePlugin comparePlugin = findParent(ComparePlugin.class);
+        if (comparePlugin == null) {
+            return Optional.empty();
+        }
+
+        final IModel<Node> model = comparePlugin.getCompareNodeModel();
+        if (model == null || model.getObject() == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(model.getObject());
+    }
+
     /**
      * Get the plugin containing the document information.
      */
@@ -194,6 +212,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
 
     private class DocumentFieldsBehavior extends AbstractDefaultAjaxBehavior {
         private static final String QUERY_PARAM_PATH = "fieldpath";
+        private static final String QUERY_PARAM_COMPARE = "compare";
 
         @Override
         protected void respond(final AjaxRequestTarget target) {
@@ -201,18 +220,28 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
             final Request request = requestCycle.getRequest();
             final IRequestParameters queryParameters = request.getQueryParameters();
             final List<StringValue> path = queryParameters.getParameterValues(QUERY_PARAM_PATH);
+            final StringValue compare = queryParameters.getParameterValue(QUERY_PARAM_COMPARE);
             final JSONObject result = new JSONObject();
 
             result.put("data", JSONObject.NULL);
 
             if (!Objects.isNull(path) && !path.isEmpty()) {
-                getVariantNode().ifPresent(node -> result.put(
-                    "data",
-                    fieldLookupService.lookup(node, path.stream().map(item -> item.toString()).toArray(String[]::new))
-                ));
+                getNode(compare).ifPresent(node -> result.put("data", getValue(path, node)));
             }
 
             requestCycle.replaceAllRequestHandlers(new TextRequestHandler("application/json", "UTF-8", result.toString()));
+        }
+
+        private Optional<Node> getNode(final StringValue compare) {
+            return compare.toString("false").equalsIgnoreCase("true")
+                    ? getCompareNode()
+                    : getVariantNode();
+        }
+
+        private Object getValue(final List<StringValue> path, final Node node) {
+            return fieldLookupService.lookup(node, path.stream()
+                    .map(StringValue::toString)
+                    .toArray(String[]::new));
         }
     }
 
