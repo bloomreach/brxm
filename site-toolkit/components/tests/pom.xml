@@ -186,6 +186,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <forkCount>1</forkCount>
           <workingDirectory>${project.build.directory}</workingDirectory>
           <systemPropertyVariables>
             <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
@@ -198,6 +199,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <forkCount>1</forkCount>
+        </configuration>
         <executions>
           <execution>
             <id>integration-test</id>

@@ -201,6 +201,7 @@
                 </goals>
                 <configuration>
                   <reuseForks>false</reuseForks>
+                  <forkCount>1</forkCount>
                   <includes>
                     <include>**/MirrorTest.java</include>
                     <include>**/FacetedNavigationConcurrencyTest.java</include>
