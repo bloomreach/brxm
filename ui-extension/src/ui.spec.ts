@@ -212,6 +212,15 @@ describe('Ui.init()', () => {
       expect(parentConnection.call).toHaveBeenCalledWith('getFieldCompareValue');
       expect(compareValue).toEqual('test');
     });
+
+    it('returns the previous document field value', async () => {
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve('test'));
+
+      const compareValue = await ui.document.field.getCompareValue('a', 'b', 'c');
+
+      expect(parentConnection.call).toHaveBeenCalledWith('getFieldCompareValue', 'a', 'b', 'c');
+      expect(compareValue).toEqual('test');
+    });
   });
 
   describe('ui.document.field.setValue()', () => {

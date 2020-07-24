@@ -411,7 +411,7 @@ export interface FieldScope {
    * Gets the current document field value.
    * @since 14.3
    * @param path The path is a string array pointing to the field or a nested subfield within the current document.
-   *  For the multiple values fields, use zero-based indicies to access specific values.
+   *  For the multiple values fields, use zero-based indices to access specific values.
    * @return A promise that resolves with the field value.
    */
   getValue(...path: string[]): Promise<any>;
@@ -425,6 +425,18 @@ export interface FieldScope {
    * document editor mode is not [[DocumentEditorMode.Compare]].
    */
   getCompareValue(): Promise<string>;
+
+  /**
+   * Gets field values to compare the current values to.
+   * Only valid when the document editor mode is [[DocumentEditorMode.Compare]].
+   *
+   * @since 14.3
+   * @param path The path is a string array pointing to the field or a nested subfield within the current document.
+   *  For the multiple values fields, use zero-based indices to access specific values.
+   * @return A promise that resolves with the field compare value, or null when the
+   * document editor mode is not [[DocumentEditorMode.Compare]].
+   */
+  getCompareValue(...path: string[]): Promise<any>;
 
   /**
    * Updates current field value.
