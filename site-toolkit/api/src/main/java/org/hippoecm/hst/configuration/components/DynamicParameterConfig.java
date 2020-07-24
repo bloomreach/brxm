@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020 Bloomreach
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ public interface DynamicParameterConfig {
 
     enum Type {
         JCR_PATH(new ParameterValueType[] {STRING}),
-        IMAGESET_PATH(new ParameterValueType[] {STRING}),
         DROPDOWN_LIST(new ParameterValueType[] {STRING});
 
         private HashSet<ParameterValueType> supportedReturnTypes = null;
