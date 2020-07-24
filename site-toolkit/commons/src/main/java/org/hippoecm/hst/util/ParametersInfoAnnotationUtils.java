@@ -31,8 +31,10 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_FROZENPRIMARYTYPE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
+import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 
 /**
  * Utility to find or create a <code>ParametersInfo</code> annotation by reading the annotation of a component
@@ -110,7 +112,7 @@ public class ParametersInfoAnnotationUtils {
      * @return the type of <code>ParametersInfo</code>
      */
     public static ParametersInfo getParametersInfoAnnotation(final Class<?> componentClazz,
-            HstComponentConfiguration componentConfig) {
+                                                             HstComponentConfiguration componentConfig) {
         return getParametersInfoAnnotation(componentClazz,
                 (componentConfig != null) ? componentConfig.getParametersInfoClassName() : null,
                 (componentClazz == null) ? Thread.currentThread().getContextClassLoader() : componentClazz.getClassLoader());
@@ -137,11 +139,11 @@ public class ParametersInfoAnnotationUtils {
         if (componentConfig != null) {
             Class<?> componentClazz = null;
 
+            String componentClassName = componentConfig.getComponentClassName();
             try {
-                String componentClassName = componentConfig.getComponentClassName();
                 componentClazz = classLoader.loadClass(componentClassName);
             } catch (Exception e) {
-                log.warn("Component class not loadable: {}", componentClazz);
+                log.warn("Component class not loadable: {}", componentClassName);
             }
 
             return getParametersInfoAnnotation(componentClazz, componentConfig.getParametersInfoClassName(), classLoader);
@@ -162,7 +164,8 @@ public class ParametersInfoAnnotationUtils {
      */
     public static ParametersInfo getParametersInfoAnnotation(final Node componentItemNode) throws RepositoryException {
         if (componentItemNode != null) {
-            if (!componentItemNode.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+            if (!componentItemNode.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT) &&
+                    !NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(getStringProperty(componentItemNode, JCR_FROZENPRIMARYTYPE, null))) {
                 final String msg =  String.format("#getParametersInfoAnnotation for a jcr Node is only allowed for node " +
                         "of type '%s' since these do not allow complex component inheritance and merging.", NODETYPE_HST_CONTAINERITEMCOMPONENT);
                 log.error(msg);

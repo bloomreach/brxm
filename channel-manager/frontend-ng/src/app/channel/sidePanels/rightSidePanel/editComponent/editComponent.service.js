@@ -47,7 +47,7 @@ class EditComponentService {
 
     $transitions.onEnter(
       { entering: '**.edit-component' },
-      transition => this._loadComponent(transition.params().properties),
+      transition => this._loadComponent(transition.params().componentId),
     );
 
     CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
@@ -67,31 +67,31 @@ class EditComponentService {
       return;
     }
 
-    const channel = this.ChannelService.getChannel();
-    const properties = {
-      channel,
-      // TODO: move this logic to ComponentEditorService upon `relevancePresent` flag removal
-      component: {
-        id: componentElement.getId(),
-        label: componentElement.getLabel(),
-        lastModified: componentElement.getLastModified(),
-        variant: componentElement.getRenderVariant(),
-      },
-      container: {
-        isDisabled: componentElement.container.isDisabled(),
-        isInherited: componentElement.container.isInherited(),
-        id: componentElement.container.getId(),
-      },
-    };
-
     if (this.ConfigService.relevancePresent) {
+      const channel = this.ChannelService.getChannel();
+      const properties = {
+        channel,
+        // TODO: move this logic to ComponentEditorService upon `relevancePresent` flag removal
+        component: {
+          id: componentElement.getId(),
+          label: componentElement.getLabel(),
+          lastModified: componentElement.getLastModified(),
+          variant: componentElement.getRenderVariant(),
+        },
+        container: {
+          isDisabled: componentElement.container.isDisabled(),
+          isInherited: componentElement.container.isInherited(),
+          id: componentElement.container.getId(),
+        },
+      };
+
       this.MaskService.mask();
       this.CmsService.publish('show-component-properties', {
         ...properties,
         page: this.PageStructureService.getPage().getMeta().toJSON(),
       });
     } else {
-      this.$state.go('hippo-cm.channel.edit-component', { properties });
+      this.$state.go('hippo-cm.channel.edit-component', { componentId: componentElement.getId() });
     }
   }
 
@@ -111,10 +111,10 @@ class EditComponentService {
     return this.readyForUser;
   }
 
-  _loadComponent(properties) {
+  _loadComponent(componentId) {
     this._showDefaultTitle();
     this.RightSidePanelService.startLoading();
-    this.ComponentEditor.open(properties)
+    this.ComponentEditor.open(componentId)
       .then(() => {
         this._showComponentTitle();
         this.RightSidePanelService.stopLoading();

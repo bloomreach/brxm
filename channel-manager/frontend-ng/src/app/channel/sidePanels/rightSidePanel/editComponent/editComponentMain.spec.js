@@ -44,7 +44,7 @@ describe('EditComponentMainCtrl', () => {
       $q = _$q_;
       EditComponentService = _EditComponentService_;
 
-      ChannelService = jasmine.createSpyObj('ChannelService', ['recordOwnChange']);
+      ChannelService = jasmine.createSpyObj('ChannelService', ['checkChanges']);
       CmsService = jasmine.createSpyObj('CmsService', [
         'publish',
         'reportUsageStatistic',
@@ -504,7 +504,7 @@ describe('EditComponentMainCtrl', () => {
       });
 
       it('records a change by the current user', () => {
-        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+        expect(ChannelService.checkChanges).toHaveBeenCalled();
       });
 
       it('reloads the page', () => {

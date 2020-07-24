@@ -120,7 +120,7 @@ describe('PageCopyComponent', () => {
     spyOn(ChannelService, 'initializeChannel').and.returnValue();
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
-    spyOn(ChannelService, 'recordOwnChange');
+    spyOn(ChannelService, 'checkChanges').and.returnValue($q.resolve());
     spyOn(ChannelService, 'getId').and.returnValue('channelB');
     spyOn(FeedbackService, 'showError');
     spyOn(FeedbackService, 'showErrorResponse');
@@ -313,7 +313,7 @@ describe('PageCopyComponent', () => {
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('/render/path');
     expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
-    expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });
 
@@ -337,7 +337,7 @@ describe('PageCopyComponent', () => {
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('/render/path');
     expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
-    expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });
 

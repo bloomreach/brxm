@@ -201,6 +201,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
         final CompositeConfigurationNodes ccn = getCompositeConfigurationNodes(configurationPath,
                 HstNodeTypes.NODENAME_HST_ABSTRACTPAGES,
                 HstNodeTypes.NODENAME_HST_PAGES,
+                HstNodeTypes.NODENAME_HST_XPAGES,
                 HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES,
                 HstNodeTypes.NODENAME_HST_COMPONENTS,
                 HstNodeTypes.NODENAME_HST_TEMPLATES,

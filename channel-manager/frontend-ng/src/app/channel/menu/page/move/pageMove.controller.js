@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,9 +87,9 @@ class PageMoveCtrl {
       .then((data) => {
         this.HippoIframeService.load(data.renderPathInfo);
         this.SiteMapService.load(this.siteMapId);
-        this.ChannelService.recordOwnChange();
-        this.onDone();
       })
+      .then(() => this.ChannelService.checkChanges())
+      .then(() => this.onDone())
       .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_PAGE_MOVE_FAILED', this.errorMap));
   }
 }

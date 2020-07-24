@@ -48,6 +48,8 @@ class HippoIframeService {
     this.ScrollService = ScrollService;
 
     this._onPageChange = this._onPageChange.bind(this);
+    this._onEditSharedContainers = this._onEditSharedContainers.bind(this);
+    this._editSharedContainers = false;
   }
 
   initialize(hippoIframeJQueryElement, iframeJQueryElement) {
@@ -67,6 +69,12 @@ class HippoIframeService {
       this._offPageChange();
     }
     this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
+
+    if (this._offEditSharedContainers) {
+      this._offEditSharedContainers();
+    }
+    this._offEditSharedContainers = this.$rootScope.$on('iframe:page:edit-shared-containers',
+      this._onEditSharedContainers);
   }
 
   initializePath(channelRelativePath) {
@@ -161,10 +169,19 @@ class HippoIframeService {
 
     this.CmsService.publish('user-activity');
 
-    this.renderPathInfo = await this._determineRenderPathInfo();
+    const renderPathInfo = await this._determineRenderPathInfo();
+    if (renderPathInfo !== this.renderPathInfo) {
+      this.renderPathInfo = renderPathInfo;
+      this._editSharedContainers = false;
+    }
+
     if (this.ConfigService.isDevMode()) {
       sessionStorage.channelPath = this.renderPathInfo;
     }
+  }
+
+  async _onEditSharedContainers(event, data) {
+    this._editSharedContainers = data;
   }
 
   async _determineRenderPathInfo() {
@@ -200,6 +217,10 @@ class HippoIframeService {
 
   getAssetUrl(href) {
     return this.DomService.getAssetUrl(`${href}?antiCache=${this.ConfigService.antiCache}`);
+  }
+
+  isEditSharedContainers() {
+    return this._editSharedContainers;
   }
 }
 

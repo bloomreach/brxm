@@ -89,23 +89,31 @@ public class PageComposerUtil {
     public static <T, R> R executeWithWebsiteClassLoader(final Function<T,R> function, final T input) {
         final ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            final HstRequestContext requestContext = RequestContextProvider.get();
-            if (requestContext == null) {
+            final ClassLoader editingSiteClassLoader = getEditingSiteClassLoader();
+            if (editingSiteClassLoader == null) {
                 return function.apply(input);
             }
-            final HstModel websiteHstModel = (HstModel) requestContext.getAttribute(PREVIEW_EDITING_HST_MODEL_ATTR);
-
-            final String contextPath = websiteHstModel.getVirtualHosts().getContextPath();
-            final HippoWebappContext webappContext = HippoWebappContextRegistry.get().getContext(contextPath);
-            if (webappContext == null) {
-                log.warn("No webapp registered for '{}'. Use current thread class loader.", contextPath);
-            } else {
-                Thread.currentThread().setContextClassLoader(webappContext.getServletContext().getClassLoader());
-            }
+            Thread.currentThread().setContextClassLoader(editingSiteClassLoader);
             return function.apply(input);
         } finally {
             Thread.currentThread().setContextClassLoader(currentClassLoader);
         }
+    }
+
+    public static ClassLoader getEditingSiteClassLoader() {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        if (requestContext == null) {
+            return null;
+        }
+        final HstModel websiteHstModel = (HstModel) requestContext.getAttribute(PREVIEW_EDITING_HST_MODEL_ATTR);
+
+        final String contextPath = websiteHstModel.getVirtualHosts().getContextPath();
+        final HippoWebappContext webappContext = HippoWebappContextRegistry.get().getContext(contextPath);
+        if (webappContext == null) {
+            log.warn("No webapp registered for '{}'.", contextPath);
+            return null;
+        }
+        return webappContext.getServletContext().getClassLoader();
     }
 
 }

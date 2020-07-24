@@ -30,6 +30,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
@@ -37,7 +38,6 @@ import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.hippoecm.repository.util.WorkflowUtils.Variant;
-import org.jetbrains.annotations.NotNull;
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
@@ -410,6 +410,10 @@ public class DocumentsServiceImpl implements DocumentsService {
 
             if (!encodedSlug.equals(encodedName)) {
                 DocumentNameUtils.setDisplayName(handle, encodedName);
+            }
+
+            if (newDocumentInfo.isExperiencePage()) {
+                document.addMixin(HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN);
             }
 
             session.save();

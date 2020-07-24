@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@
 - *
 - * multiple
 
-[hippo:testcardocument] > hippo:document
+[hippo:testcardocument] > hippo:document, hippo:identifiable
 + * (nt:base) = hippo:ntunstructured multiple
 - hippo:product (string)
 - hippo:brand (string)
@@ -38,7 +38,6 @@
 - hippo:date (date)
 - hippo:travelled (long)
 - hippo:price (double)
-
 
 [hippo:testtagdocument] > hippo:document
 - * (String) multiple

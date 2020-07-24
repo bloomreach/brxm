@@ -24,6 +24,7 @@ describe('PageMeta', () => {
       'HST-Path-Info': 'path-info',
       'HST-Channel-Id': 'channel-id',
       'HST-Context-Path': 'context-path',
+      'HST-Experience-Page': 'true',
       'HST-Page-Id': 'page-id',
       'HST-Render-Variant': 'render-variant',
       'HST-SitemapItem-Id': 'sitemap-item-id',
@@ -75,6 +76,12 @@ describe('PageMeta', () => {
   describe('getSiteMapItemId', () => {
     it('should return the sitemap item id', () => {
       expect(meta.getSiteMapItemId()).toBe('sitemap-item-id');
+    });
+  });
+
+  describe('isXPage', () => {
+    it('should return true if page is an experience page', () => {
+      expect(meta.isXPage()).toBe(true);
     });
   });
 });

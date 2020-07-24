@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ public abstract class AbstractDocumentDialogTest extends AbstractWicketDialogTes
     private static final String NAME_INPUT = "name-url:name";
     private static final String URL_ACTION_LABEL = "name-url:uriAction:uriActionLabel";
     private static final String WICKET_PATH_ENABLE_URIINPUT_LINK = "dialog:content:form:name-url:uriAction";
+    public static final String XPAGE_LAYOUT_XPAGE_LAYOUT_DROP_DOWN_CHOICE = "xpage-layout:xpage-layout-drop-down-choice";
 
     @SuppressWarnings("unchecked")
     protected FormComponent<String> getNameField() {
@@ -49,5 +50,9 @@ public abstract class AbstractDocumentDialogTest extends AbstractWicketDialogTes
 
     protected void setName(final String name) {
         formTester.setValue(NAME_INPUT, name);
+    }
+
+    protected void setXPageLayout(final String xPageLayout){
+        formTester.setValue(XPAGE_LAYOUT_XPAGE_LAYOUT_DROP_DOWN_CHOICE, xPageLayout);
     }
 }
