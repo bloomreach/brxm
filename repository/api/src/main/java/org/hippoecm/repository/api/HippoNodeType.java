@@ -459,4 +459,11 @@ public interface HippoNodeType {
 
     String HIPPOSYS_MULTIVALUE = "hipposys:multivalue";
     String HIPPOSYS_REL_PATH = "hipposys:relPath";
+
+    /**
+     * Mixin nodetype which causes to have the property {@link #HIPPO_IDENTIFIER} to be created automatically with a
+     * newly created UUID as value
+     */
+    String NT_HIPPO_IDENTIFIABLE = "hippo:identifiable";
+    String HIPPO_IDENTIFIER = "hippo:identifier";
 }

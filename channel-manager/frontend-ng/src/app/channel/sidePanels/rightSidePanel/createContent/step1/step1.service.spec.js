@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ describe('Step1Service', () => {
     expect(Step1Service.locale).toBeUndefined();
     expect(Step1Service.rootPath).toBeUndefined();
     expect(Step1Service.documentTemplateQuery).toBeUndefined();
+    expect(Step1Service.experiencePage).toBeUndefined();
   }
 
   beforeEach(() => {
@@ -99,6 +100,7 @@ describe('Step1Service', () => {
     Step1Service.rootPath = 'rootPath';
     Step1Service.defaultPath = 'defaultPath';
     Step1Service.documentTemplateQuery = 'documentTemplateQuery';
+    Step1Service.experiencePage = true;
     Step1Service.stop();
     expectReset();
   });
@@ -110,11 +112,13 @@ describe('Step1Service', () => {
       expect(Step1Service.rootPath).toBe('/root/path');
       expect(Step1Service.documentTemplateQuery).toBe('dcmt-tpl-query');
       expect(Step1Service.folderTemplateQuery).toBe('fldr-tpl-query');
+      expect(Step1Service.experiencePage).toBe(false);
     });
 
     it('resets the values before storing new values', () => {
       Step1Service.open('dcmt-tpl-query', 'fldr-tpl-query', '/root/path', 'default/path');
       Step1Service.name = 'name';
+      Step1Service.experiencePage = true;
 
       Step1Service.open('dcmt-tpl-query2', undefined, '/root/path2');
       expect(Step1Service.documentTemplateQuery).toBe('dcmt-tpl-query2');
@@ -122,6 +126,7 @@ describe('Step1Service', () => {
       expect(Step1Service.rootPath).toBe('/root/path2');
       expect(Step1Service.defaultPath).toBeUndefined();
       expect(Step1Service.name).toBeUndefined();
+      expect(Step1Service.experiencePage).toBe(false);
     });
 
     describe('loading document types by document-template-query', () => {
@@ -193,6 +198,7 @@ describe('Step1Service', () => {
       Step1Service.documentType = 'test-doctype';
       Step1Service.rootPath = 'test-rootpath';
       Step1Service.defaultPath = 'test-defaultpath';
+      Step1Service.experiencePage = false;
 
       Step1Service.createDocument().then(done);
       expect(ContentService.createDocument).toHaveBeenCalledWith({
@@ -203,6 +209,7 @@ describe('Step1Service', () => {
         documentTypeId: 'test-doctype',
         rootPath: 'test-rootpath',
         defaultPath: 'test-defaultpath',
+        experiencePage: false,
       });
     });
 

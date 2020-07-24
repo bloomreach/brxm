@@ -418,25 +418,27 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
                     continue;
                 }
                 for (HstComponentConfiguration hstComponentConfiguration : mount.getHstSite().getComponentsConfiguration().getComponentConfigurations().values()) {
-                    assertAllComponentsAreInheriterd(hstComponentConfiguration, explicitNonInheritedComponent, mount.getHstSite().getConfigurationPath());
+                    assertAllComponentsAreInheritedExceptXPages(hstComponentConfiguration, explicitNonInheritedComponent, mount.getHstSite().getConfigurationPath());
                 }
             }
         }
 
     }
 
-    private void assertAllComponentsAreInheriterd(final HstComponentConfiguration compConfig,
-                                                  final String explicitNonInheritedComponent,
-                                                  final String siteConfigurationPath) {
+    private void assertAllComponentsAreInheritedExceptXPages(final HstComponentConfiguration compConfig,
+                                                             final String explicitNonInheritedComponent,
+                                                             final String siteConfigurationPath) {
 
         if (explicitNonInheritedComponent.equals(compConfig.getCanonicalStoredLocation()) && siteConfigurationPath.equals("/hst:hst/hst:configurations/unittestsubproject")) {
             assertFalse(compConfig.isInherited());
+        } else if (compConfig.getCanonicalStoredLocation().contains("/hst:xpages/")) {
+            assertFalse("hst:xpages should never be inherited", compConfig.isInherited());
         } else {
             assertTrue(compConfig.isInherited());
         }
 
         for (HstComponentConfiguration child : compConfig.getChildren().values()) {
-            assertAllComponentsAreInheriterd(child, explicitNonInheritedComponent, siteConfigurationPath);
+            assertAllComponentsAreInheritedExceptXPages(child, explicitNonInheritedComponent, siteConfigurationPath);
         }
     }
 

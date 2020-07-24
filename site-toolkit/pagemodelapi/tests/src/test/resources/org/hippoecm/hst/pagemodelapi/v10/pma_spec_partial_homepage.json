@@ -13,6 +13,14 @@
       "type" : "internal"
     }
   },
+  "channel" : {
+    "info" : {
+      "props" : {
+        "nonParameterProp" : "Foo",
+        "headerName" : "Test HST Website"
+      }
+    }
+  },
   "root" : {
     "$ref" : "/page/uid0"
   },
@@ -30,13 +38,18 @@
       },
       "meta" : {
         "definitionId" : "hst:pages/homepage-hst:abstractpages/basepage/header",
+        "paramsInfo" : {
+          "header" : "Yes My Header"
+        },
         "params" : { }
       },
       "name" : "header",
       "type" : "component",
-      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent",
+      "componentClass" : "org.hippoecm.hst.test.HeaderComponent",
       "children" : [ {
         "$ref" : "/page/uid1"
+      }, {
+        "$ref" : "/page/uid2"
       } ]
     },
     "u1ca07af9cdf54bdd9908f991245bb062" : {
@@ -47,6 +60,7 @@
           "type" : "internal"
         }
       },
+      "meta" : { },
       "data" : {
         "name" : "homepage",
         "displayName" : "Home Page",
@@ -88,7 +102,7 @@
         "localeString" : "en_US",
         "id" : "1ca07af9-cdf5-4bdd-9908-f991245bb062",
         "bar" : {
-          "$ref" : "/page/uid2"
+          "$ref" : "/page/uid3"
         },
         "foo" : {
           "name" : "foo",
@@ -111,6 +125,31 @@
       "type" : "component",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     },
+    "uid2" : {
+      "id" : "r27_r1_r2",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2&dummy=bar",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "container",
+      "type" : "container",
+      "xtype" : "hst.vbox",
+      "componentClass" : "org.hippoecm.hst.builtin.components.StandardContainerComponent",
+      "children" : [ {
+        "$ref" : "/page/uid4"
+      }, {
+        "$ref" : "/page/uid5"
+      }, {
+        "$ref" : "/page/uid6"
+      }, {
+        "$ref" : "/page/uid7"
+      } ]
+    },
     "u303d40ebf98c4d6184c7a1ba14b5ceb3" : {
       "type" : "document",
       "links" : {
@@ -119,6 +158,7 @@
           "type" : "internal"
         }
       },
+      "meta" : { },
       "data" : {
         "name" : "News1",
         "displayName" : "News1",
@@ -143,6 +183,7 @@
           "type" : "internal"
         }
       },
+      "meta" : { },
       "data" : {
         "name" : "common",
         "displayName" : "common",
@@ -153,6 +194,8 @@
     },
     "udb02dde500984488a72c2a4fc6d51beb" : {
       "type" : "imageset",
+      "links" : { },
+      "meta" : { },
       "data" : {
         "name" : "picture.jpeg",
         "displayName" : "picture.jpeg",
@@ -196,6 +239,8 @@
     },
     "u5e56d406b302445e9f80e624ba053bc4" : {
       "type" : "asset",
+      "links" : { },
+      "meta" : { },
       "data" : {
         "name" : "testdata.pdf",
         "displayName" : "Test Data PDF",
@@ -217,9 +262,89 @@
         "id" : "5e56d406-b302-445e-9f80-e624ba053bc4"
       }
     },
-    "uid2" : {
+    "uid3" : {
       "name" : "bar",
       "text" : "Bar Text"
+    },
+    "uid4" : {
+      "id" : "r27_r1_r2_r1",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r1&dummy=bar",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner100"
+        },
+        "params" : {
+          "path" : "banners/banner100"
+        }
+      },
+      "name" : "banner-old-style",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
+    },
+    "uid5" : {
+      "id" : "r27_r1_r2_r2",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r2&dummy=bar",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner101"
+        },
+        "params" : {
+          "path" : "banners/banner101"
+        }
+      },
+      "name" : "banner-old-style-2",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
+    },
+    "uid6" : {
+      "id" : "r27_r1_r2_r3",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r3&dummy=bar",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "paramsInfo" : {
+          "path" : "banners/banner102"
+        },
+        "params" : {
+          "path" : "banners/banner102"
+        }
+      },
+      "name" : "banner-new-style",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
+    },
+    "uid7" : {
+      "id" : "r27_r1_r2_r4",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r4&dummy=bar",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "paramsInfo" : {
+          "path" : "/some/default"
+        },
+        "params" : {
+          "document" : "banners/banner103"
+        }
+      },
+      "name" : "banner-new-style-2",
+      "type" : "container-item",
+      "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     }
   }
 }

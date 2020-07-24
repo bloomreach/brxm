@@ -153,6 +153,10 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
         return new DocumentWorkflowAction("None", false);
     }
 
+    public static DocumentWorkflowAction saveUnpublished() {
+        return new DocumentWorkflowAction("saveUnpublished");
+    }
+
     private final String action;
     private boolean mutates;
     private String requestIdentifier;

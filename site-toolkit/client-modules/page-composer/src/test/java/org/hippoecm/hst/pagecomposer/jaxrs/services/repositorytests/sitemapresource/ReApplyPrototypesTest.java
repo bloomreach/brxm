@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
@@ -114,7 +115,8 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
             final Response addedItemResponse = containerResource.createContainerItem(testContext.catalogItem.getIdentifier(),
                     versionStamp);
             assertEquals(Response.Status.CREATED.getStatusCode(), addedItemResponse.getStatus());
-            ContainerItemRepresentation cir = (ContainerItemRepresentation) addedItemResponse.getEntity();
+            final Object data = ((ExtResponseRepresentation) addedItemResponse.getEntity()).getData();
+            ContainerItemRepresentation cir = (ContainerItemRepresentation)data;
             assertTrue(
                     cir.getPath().startsWith("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/foo-prototype-page/" + relContainerPath));
             testContext.addedPageContainerItems.add(cir);

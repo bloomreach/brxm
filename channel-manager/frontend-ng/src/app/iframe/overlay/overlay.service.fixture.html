@@ -18,8 +18,8 @@
     <title>Iframe title</title>
     <style type="text/css">
       * {
-        padding: 0;
         margin: 0;
+        padding: 0;
       }
 
       main {
@@ -27,9 +27,9 @@
       }
 
       #container-vbox {
-        padding-top: 4px;
-        padding-left: 2px;
         height: 400px;
+        padding-left: 2px;
+        padding-top: 4px;
       }
 
       #componentA {
@@ -299,7 +299,7 @@
         "HST-XType": "HST.vBox",
         "uuid": "container-vbox-locked-self",
         "HST-LockedBy": "user",
-        "HST-LockedBy-Current-User": "true"
+        "HST-LockedBy-Current-User": "true",
       } -->
       <div id="container-vbox-locked-self" class="hst-container">
         <p id="manage-content-scenario-14">
@@ -326,6 +326,33 @@
           } -->
         </p>
       </div>
+
+      <!-- {
+        "HST-Type": "CONTAINER_COMPONENT",
+        "HST-Label": "vBox shared container",
+        "HST-XType": "HST.vBox",
+        "HST-Shared": "true",
+        "uuid": "container-shared"
+      } -->
+      <div id="container-shared" class="hst-container">
+        <div id="component-in-shared-container" class="hst-container-item">
+        <!-- {
+          "HST-Type": "CONTAINER_ITEM_COMPONENT",
+          "HST-Label": "component A",
+          "uuid": "component-in-shared-container"
+        } -->
+        <p>Shared text</p>
+        <!-- {
+          "HST-End": "true",
+          "uuid": "component-in-shared-container"
+        } -->
+      </div>
+    </div>
+    <!-- {
+      "HST-End": "true",
+      "uuid": "container-shared"
+    } -->
+
     </main>
   </body>
 </html>

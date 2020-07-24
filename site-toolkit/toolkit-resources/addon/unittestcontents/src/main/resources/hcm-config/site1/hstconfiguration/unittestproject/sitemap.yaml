@@ -71,6 +71,12 @@ definitions:
       /pagenotfound:
         jcr:primaryType: hst:sitemapitem
         hst:componentconfigurationid: hst:pages/pagenotfound
+      /experiences:
+        jcr:primaryType: hst:sitemapitem
+        hst:relativecontentpath: experiences
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:relativecontentpath: ${parent}/${1}
       /news:
         jcr:primaryType: hst:sitemapitem
         hst:componentconfigurationid: hst:pages/newsoverview

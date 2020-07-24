@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions;
+import javax.jcr.Node;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 
-public class InvalidNodeTypeException extends ClientException {
-    public InvalidNodeTypeException(final String message, final String itemUUID) {
-        super(message, ErrorStatus.from(ClientError.INVALID_NODE_TYPE, "UUID", itemUUID));
-    }
+public interface ContainerItem {
+    Node getContainerItem();
+
+    HstComponentConfiguration getComponentDefinition();
+
+    long getTimeStamp();
 }

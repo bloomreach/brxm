@@ -268,8 +268,11 @@ describe('DragDropService', () => {
     mockCommentData.container1 = {
       'HST-LockedBy': 'anotherUser',
     };
+    mockCommentData.container2 = {
+      'HST-Inherited': 'true',
+    };
     enableDragDrop(() => {
-      expect(angular.element(DragDropService.drake.containers)).toEqual(container2.getBoxElement());
+      expect(angular.element(DragDropService.drake.containers)).toHaveLength(0);
       done();
     });
   });

@@ -46,3 +46,6 @@ definitions:
       /prototype:
         jcr:primaryType: hst:template
         hst:renderpath: jsp/components/prototype.jsp
+      /banner:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/banner.jsp

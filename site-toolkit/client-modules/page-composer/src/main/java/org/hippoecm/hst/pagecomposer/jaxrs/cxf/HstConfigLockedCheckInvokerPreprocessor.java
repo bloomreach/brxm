@@ -60,6 +60,11 @@ public class HstConfigLockedCheckInvokerPreprocessor extends AbstractInvokerPreP
             return Optional.empty();
         }
 
+        if (getPageComposerContextService().isExperiencePageRequest()) {
+            getLogger().debug("Experience Page never locked via hst configuration");
+            return Optional.empty();
+        }
+
         final Channel previewChannel = getPageComposerContextService().getEditingPreviewChannel();
 
         if (!previewChannel.isConfigurationLocked()) {

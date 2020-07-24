@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,8 @@ class SessionService {
     this.HstService = HstService;
     this.PathService = PathService;
 
-    this._canWrite = false;
+    this._canWrite = false; // TODO: remove completely as part of CMS-13416
     this._canManageChanges = false;
-    this._canDeleteChannel = false;
     this._isCrossChannelPageCopySupported = false;
     this._initCallbacks = {};
   }
@@ -38,9 +37,8 @@ class SessionService {
     return this.HstService.initializeSession(channel)
       .then((privileges) => {
         if (privileges) {
-          this._canWrite = privileges.canWrite;
+          this._canWrite = true; // TODO: remove completely as part of CMS-13416
           this._canManageChanges = privileges.canManageChanges;
-          this._canDeleteChannel = privileges.canDeleteChannel;
           this._isCrossChannelPageCopySupported = privileges.crossChannelPageCopySupported;
         }
         this._serveInitCallbacks();
@@ -53,10 +51,6 @@ class SessionService {
 
   canManageChanges() {
     return this._canManageChanges;
-  }
-
-  canDeleteChannel() {
-    return this._canDeleteChannel;
   }
 
   isCrossChannelPageCopySupported() {

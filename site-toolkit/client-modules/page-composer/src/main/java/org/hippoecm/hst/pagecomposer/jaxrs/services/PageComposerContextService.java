@@ -17,6 +17,9 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
+import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_EXPERIENCE_PAGE_HANDLE_UUID_ATRRIBUTE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -29,12 +32,15 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
+import org.onehippo.repository.branch.BranchConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +54,35 @@ public class PageComposerContextService {
 
     public HstRequestContext getRequestContext() {
         return RequestContextProvider.get();
+    }
+
+
+    /**
+     * @return {@code true} in case this request is an Experience Page request
+     */
+    public boolean isExperiencePageRequest() {
+       return Boolean.TRUE == getRequestContext().getAttribute(REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE);
+    }
+
+    /**
+     * @return the  UUID of the handle for this experience page and {@code null} if this is not an Experience Page request
+     */
+    public String getExperiencePageHandleUUID() {
+        if (!isExperiencePageRequest()) {
+            return null;
+        }
+        return (String) getRequestContext().getAttribute(REQUEST_EXPERIENCE_PAGE_HANDLE_UUID_ATRRIBUTE);
+    }
+
+    /**
+     * @return the UUID of the unpublished variant for this experience page and {@code null} if this is not an
+     * Experience Page request or the unpublished variant is missing (only published, not yet supported, see CMS-13262
+     */
+    public String getExperiencePageUnpublishedVariantUUID() {
+        if (!isExperiencePageRequest()) {
+            return null;
+        }
+        return (String) getRequestContext().getAttribute(REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE);
     }
 
     public String getRequestConfigIdentifier() {
@@ -189,4 +224,22 @@ public class PageComposerContextService {
             return null;
         }
     }
+
+    public String getSelectedBranchId() {
+        final HttpSession httpSession = getRequestContext().getServletRequest().getSession();
+        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+        if (cmsSessionContext == null) {
+            return null;
+        }
+        final BranchSelectionService branchSelectionService = HippoServiceRegistry.getService(BranchSelectionService.class);
+        if (branchSelectionService == null) {
+            return null;
+        }
+        final String branchId = branchSelectionService.getSelectedBranchId(cmsSessionContext.getContextPayload());
+        if (branchId == null) {
+            return BranchConstants.MASTER_BRANCH_ID;
+        }
+        return branchId;
+    }
+
 }

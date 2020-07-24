@@ -29,6 +29,7 @@ import org.apache.commons.proxy.Interceptor;
 import org.apache.commons.proxy.ProxyFactory;
 import org.apache.jackrabbit.commons.iterator.NodeIteratorAdapter;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.util.JcrConstants;
 
 import static java.lang.Boolean.FALSE;
@@ -36,6 +37,7 @@ import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
 import static org.apache.commons.lang.StringUtils.substringBefore;
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
+import static org.apache.jackrabbit.JcrConstants.JCR_FROZENMIXINTYPES;
 import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 
 /**
@@ -193,11 +195,11 @@ public class HippoBeanFrozenNodeUtils {
             return TRUE;
         }
 
-        for (NodeType mixinType : frozenNode.getMixinNodeTypes()) {
-            final String originalMixinTypeString = mixinType.getName();
-            final NodeType originalMixinType = nodeTypeManager.getNodeType(originalMixinTypeString);
+        final String[] frozenMixins = JcrUtils.getMultipleStringProperty(frozenNode, JCR_FROZENMIXINTYPES, new String[0]);
 
-            if (originalMixinType.isNodeType(sourceNodeType)) {
+        for (String frozenMixin : frozenMixins) {
+            final NodeType nodeType = nodeTypeManager.getNodeType(frozenMixin);
+            if (nodeType.isNodeType(sourceNodeType)) {
                 return TRUE;
             }
         }
@@ -207,7 +209,7 @@ public class HippoBeanFrozenNodeUtils {
 
     private static Node proxyGetNode(final Node frozenNode, final String absWorkspacePath, final String relPath) throws RepositoryException {
         Node childFrozenNode = frozenNode.getNode(relPath);
-        Node pretendingChild = getWorkspaceFrozenNode(childFrozenNode, absWorkspacePath + "/" + relPath, getNodeNameFromPath(relPath));
+        Node pretendingChild = getWorkspaceFrozenNode(childFrozenNode, absWorkspacePath + "/" + relPath, childFrozenNode.getName());
         return pretendingChild;
     }
 

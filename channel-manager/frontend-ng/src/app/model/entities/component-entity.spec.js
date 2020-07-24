@@ -122,6 +122,34 @@ describe('ComponentEntity', () => {
     });
   });
 
+  describe('isShared', () => {
+    it('should return true', () => {
+      const component = new ComponentEntity({ 'HST-Shared': 'true' });
+
+      expect(component.isShared()).toBe(true);
+    });
+
+    it('should return false', () => {
+      const component = new ComponentEntity({});
+
+      expect(component.isShared()).toBe(false);
+    });
+  });
+
+  describe('isXPageComponent', () => {
+    it('should return true', () => {
+      const component = new ComponentEntity({ 'HST-Experience-Page-Component': 'true' });
+
+      expect(component.isXPageComponent()).toBe(true);
+    });
+
+    it('should return false', () => {
+      const component = new ComponentEntity({});
+
+      expect(component.isXPageComponent()).toBe(false);
+    });
+  });
+
   describe('addHeadContributions', () => {
     it('should add head contributions', () => {
       const component = new ComponentEntity({});

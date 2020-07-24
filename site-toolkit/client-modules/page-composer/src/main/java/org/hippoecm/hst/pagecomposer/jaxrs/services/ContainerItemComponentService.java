@@ -19,9 +19,11 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.Set;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
@@ -32,13 +34,33 @@ public interface ContainerItemComponentService {
 
     ContainerItemComponentRepresentation getVariant(final String variantId, final String locale) throws ClientException, RepositoryException, ServerErrorException;
 
-    Set<String> retainVariants(final Set<String> variants, final long versionStamp) throws RepositoryException;
+    /**
+     * Returns a {@link Pair} where left contains the retained variants and right a boolean that is true if the page
+     * requires a reload because the changes had to be done against a container item in version history (which can only
+     * happen for XPage container
+     */
+    Pair<Set<String>, Boolean> retainVariants(final Set<String> variants, final long versionStamp) throws RepositoryException;
 
-    void createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException;
+    /**
+     * returns in Pair#getLeft() the {@link Node} to which the changes were written and in the Pair#getRight it returns
+     * true if the page requires a reload because the  changes had to be done against a container item in version history
+     * (which can only happen for XPage container)
+     */
+    Pair<Node, Boolean> createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException;
 
-    void deleteVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException;
+    /**
+     * returns in Pair#getLeft() the {@link Node} to which the changes were written and in the Pair#getRight it returns
+     * true if the page requires a reload because the  changes had to be done against a container item in version history
+     * (which can only happen for XPage container)
+     */
+    Pair<Node, Boolean> deleteVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException;
 
-    void updateVariant(final String variantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException;
+    /**
+     * returns in Pair#getLeft() the {@link Node} to which the changes were written and in the Pair#getRight it returns
+     * true if the page requires a reload because the  changes had to be done against a container item in version history
+     * (which can only happen for XPage container)
+     */
+    Pair<Node, Boolean> updateVariant(final String variantId, final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException;
 
     /**
      * Saves parameters for the given new variant, and also removes the old variant. This effectively renames the old
@@ -47,8 +69,10 @@ public interface ContainerItemComponentService {
      * @param oldVariantId the old variant to remove
      * @param newVariantId the new variant to store parameters for
      * @param params     the parameters to store
-     * @return whether saving the parameters went successfully or not.
+     * @return in Pair#getLeft() the {@link Node} to which the changes were written and in the Pair#getRight it returns
+     * true if the page requires a reload because the  changes had to be done against a container item in version history
+     * (which can only happen for XPage container)
      */
-    void moveAndUpdateVariant(final String oldVariantId, final String newVariantId,
+    Pair<Node, Boolean> moveAndUpdateVariant(final String oldVariantId, final String newVariantId,
                               final long versionStamp, final MultivaluedMap<String, String> params) throws ClientException, RepositoryException;
 }

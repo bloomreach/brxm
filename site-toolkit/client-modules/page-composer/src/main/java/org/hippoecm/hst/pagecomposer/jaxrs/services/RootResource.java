@@ -65,12 +65,11 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl.PREVIEW_SUFFIX;
-import static org.onehippo.repository.security.StandardPermissionNames.JCR_READ;
-import static org.onehippo.repository.security.StandardPermissionNames.JCR_WRITE;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource implements ComponentManagerAware {
@@ -287,32 +286,22 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
 
             final Session jcrSession = requestContext.getSession();
 
-            final boolean isWebmaster;
             final boolean isChannelAdmin;
-
-            // JCR_WRITE does not automatically imply JCR_READ but both are needed for webmasters or channel admins
-            // CHANNEL_ADMIN_PRIVILEGE_NAME does automatically inherit jcr:read and jcr:write, see roles-hst.yaml
-            final String webmasterPermissions = JCR_READ + "," + JCR_WRITE;
 
             final String liveConfigPath = getPageComposerContextService().getEditingLiveConfigurationPath();
             if (getPageComposerContextService().hasPreviewConfiguration()) {
-                final String previewConfigPath = getPageComposerContextService().getEditingPreviewConfigurationPath();
-                isWebmaster = jcrSession.hasPermission(liveConfigPath, webmasterPermissions)
-                        && jcrSession.hasPermission(previewConfigPath, webmasterPermissions);
 
-                isChannelAdmin = isWebmaster && jcrSession.hasPermission(liveConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME)
-                        && jcrSession.hasPermission(previewConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME);
+                isChannelAdmin = isInRole(jcrSession, liveConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME) &&
+                        isInRole(jcrSession, getPreviewConfigurationPath(), CHANNEL_ADMIN_PRIVILEGE_NAME);
+
             } else {
-                isWebmaster = jcrSession.hasPermission(liveConfigPath, webmasterPermissions);
-                isChannelAdmin = isWebmaster && jcrSession.hasPermission(liveConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME);
+                isChannelAdmin = isInRole(jcrSession, liveConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME);
             }
-
 
             final boolean canDeleteChannel = isChannelDeletionSupported && isChannelAdmin && !isConfigurationLocked;
             final boolean canManageChanges = isChannelAdmin && !isConfigurationLocked;
 
             HandshakeResponse response = new HandshakeResponse();
-            response.setCanWrite(isWebmaster);
             response.setCanManageChanges(canManageChanges);
             response.setCanDeleteChannel(canDeleteChannel);
             response.setCrossChannelPageCopySupported(isCrossChannelPageCopySupported);

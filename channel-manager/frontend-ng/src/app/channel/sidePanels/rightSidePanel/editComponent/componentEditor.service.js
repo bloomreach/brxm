@@ -56,14 +56,17 @@ class ComponentEditorService {
     this._onPageChange = this._onPageChange.bind(this);
   }
 
-  open({
-    channel, component, container, page = this.PageStructureService.getPage(),
-  }) {
+  open(componentId) {
     this.close();
     this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
-    this.request = this.HstComponentService.getProperties(component.id, component.variant);
 
-    this.request.then(response => this._onLoadSuccess(channel, component, container, page, response.properties))
+    const channel = this.ChannelService.getChannel();
+    const page = this.PageStructureService.getPage();
+    const component = page.getComponentById(componentId);
+
+    this.request = this.HstComponentService
+      .getProperties(component.getId(), component.getRenderVariant())
+      .then(response => this._onLoadSuccess(channel, component, page, response.properties))
       .catch(() => this._onLoadFailure())
       .finally(() => { delete this.request; });
 
@@ -75,7 +78,7 @@ class ComponentEditorService {
   }
 
   isReadOnly() {
-    return this.container && this.container.isDisabled;
+    return this.component && this.component.getContainer().isDisabled();
   }
 
   openComponentPage() {
@@ -95,21 +98,22 @@ class ComponentEditorService {
 
   isForeignPage() {
     const currentPage = this.PageStructureService.getPage();
+    if (!currentPage || !this.page || !this.component) {
+      return false;
+    }
 
-    return currentPage && this.page && this.component
-      && currentPage.getMeta().getPageId() !== this.page.getMeta().getPageId()
+    return currentPage.getMeta().getPageId() !== this.page.getMeta().getPageId()
       && !currentPage.getComponentById(this.component.id);
   }
 
-  _onLoadSuccess(channel, component, container, page, properties) {
+  _onLoadSuccess(channel, component, page, properties) {
     this.channel = channel;
     this.component = component;
-    this.container = container;
     this.page = page;
     this.properties = this._normalizeProperties(properties);
     this.propertyGroups = this._groupProperties(this.properties);
 
-    this.CommunicationService.selectComponent(component.id);
+    this.CommunicationService.selectComponent(component.getId());
     this.CmsService.reportUsageStatistic('CompConfigSidePanelOpened');
   }
 
@@ -125,7 +129,7 @@ class ComponentEditorService {
     }
 
     const page = this.PageStructureService.getPage();
-    const component = page && page.getComponentById(this.component.id);
+    const component = page && page.getComponentById(this.component.getId());
     if (!component) {
       return;
     }
@@ -134,15 +138,12 @@ class ComponentEditorService {
       this.CommunicationService.selectComponent(component.getId());
     }
 
-    this.page = page;
+    const currentContainer = this.component.getContainer();
+    const changedContainer = component.getContainer();
+    const isLockApplied = currentContainer.isDisabled() !== changedContainer.isDisabled();
 
-    const changedContainer = {
-      isDisabled: component.container.isDisabled(),
-      isInherited: component.container.isInherited(),
-      id: component.container.getId(),
-    };
-    const isLockApplied = this.container.isDisabled !== changedContainer.isDisabled;
-    Object.assign(this.container, changedContainer);
+    this.page = page;
+    this.component = component;
 
     if (isLockApplied) {
       this.reopen();
@@ -159,19 +160,27 @@ class ComponentEditorService {
     }
 
     properties.forEach((property) => {
-      if (property.type === 'linkpicker') {
+      const {
+        defaultValue,
+        displayValue,
+        type,
+        value,
+      } = property;
+
+      if (type === 'linkpicker') {
         property.pickerConfig = this._getPickerConfig(property);
-        if (!isEmpty(property.defaultValue)) {
-          property.defaultDisplayValue = property.value === property.defaultValue
-            ? property.displayValue
-            : property.defaultValue.substring(property.defaultValue.lastIndexOf('/') + 1);
+        if (!isEmpty(defaultValue)) {
+          property.defaultDisplayValue = value === defaultValue
+            ? displayValue
+            : defaultValue.substring(defaultValue.lastIndexOf('/') + 1);
         }
       }
-      if (property.type === 'checkbox') {
-        if (!isEmpty(property.value)) {
-          property.value = this._booleanAsOnOff(property.value);
+
+      if (type === 'checkbox') {
+        if (!isEmpty(value)) {
+          property.value = this._booleanAsOnOff(value);
         }
-        property.defaultValue = this._booleanAsOnOff(property.defaultValue);
+        property.defaultValue = this._booleanAsOnOff(defaultValue);
       }
     });
 
@@ -242,18 +251,26 @@ class ComponentEditorService {
       return;
     }
 
-    if (isEmpty(property.value) && !isEmpty(property.defaultValue)) {
-      property.value = property.defaultValue;
+    const {
+      defaultValue,
+      defaultDisplayValue,
+      displayValue,
+      type,
+      value,
+    } = property;
+
+    if (isEmpty(value) && !isEmpty(defaultValue)) {
+      property.value = defaultValue;
     }
 
-    if (property.type === 'linkpicker' && isEmpty(property.displayValue) && !isEmpty(property.defaultDisplayValue)) {
-      property.displayValue = property.defaultDisplayValue;
+    if (type === 'linkpicker' && isEmpty(displayValue) && !isEmpty(defaultDisplayValue)) {
+      property.displayValue = defaultDisplayValue;
     }
   }
 
   confirmDeleteComponent() {
     const translateParams = {
-      component: this.component.label,
+      component: this.component.getLabel(),
     };
 
     const confirm = this.DialogService.confirm()
@@ -265,18 +282,19 @@ class ComponentEditorService {
   }
 
   deleteComponent() {
-    return this.HstComponentService.deleteComponent(this.container.id, this.component.id)
+    const container = this.component.getContainer();
+    return this.HstComponentService.deleteComponent(container.getId(), this.component.getId())
       .then(() => this.close())
       .then(() => this.CmsService.reportUsageStatistic('CompConfigSidePanelDeleteComp'));
   }
 
   getComponentId() {
-    return this.component && this.component.id;
+    return this.component && this.component.getId();
   }
 
   getComponentName() {
     if (this.component) {
-      return this.component.label;
+      return this.component.getLabel();
     }
     if (this.error && this.error.messageParams) {
       return this.error.messageParams.displayName;
@@ -286,7 +304,7 @@ class ComponentEditorService {
 
   async updatePreview() {
     const page = this.PageStructureService.getPage();
-    const component = page && page.getComponentById(this.component.id);
+    const component = page && page.getComponentById(this.component.getId());
 
     if (!component) {
       return;
@@ -296,21 +314,27 @@ class ComponentEditorService {
   }
 
   async save() {
-    await this.HstComponentService.setParameters(
-      this.component.id,
-      this.component.variant,
+    const { data: { id }, reloadRequired } = await this.HstComponentService.setParameters(
+      this.component.getId(),
+      this.component.getRenderVariant(),
       this._propertiesAsFormData(),
     );
+
+    if (reloadRequired) {
+      await this.HippoIframeService.reload();
+      await this.open(id);
+    }
+
     return this.CmsService.reportUsageStatistic('CompConfigSidePanelSave');
   }
 
   _propertiesAsFormData() {
-    return this.properties.reduce((formData, property) => {
-      if (property.type === 'datefield') {
+    return this.properties.reduce((formData, { name, type, value }) => {
+      if (type === 'datefield') {
         // cut off the time and time zone information from the value that the datefield returns
-        formData[property.name] = property.value.substring(0, 10);
+        formData[name] = value.substring(0, 10);
       } else {
-        formData[property.name] = property.value;
+        formData[name] = value;
       }
       return formData;
     }, {});
@@ -318,7 +342,7 @@ class ComponentEditorService {
 
   confirmDiscardChanges() {
     const translateParams = {
-      component: this.component.label,
+      component: this.component.getLabel(),
     };
 
     const confirm = this.DialogService.confirm()
@@ -334,12 +358,7 @@ class ComponentEditorService {
   }
 
   reopen() {
-    return this.open({
-      channel: this.channel,
-      component: this.component,
-      container: this.container,
-      page: this.page,
-    });
+    return this.open(this.component.getId());
   }
 
   close() {
@@ -347,6 +366,7 @@ class ComponentEditorService {
       this._offPageChange();
       delete this._offPageChange;
     }
+
     if (this.request) {
       this.request.cancel();
     }
@@ -392,7 +412,7 @@ class ComponentEditorService {
   }
 
   _askSaveOrDiscardChanges() {
-    const message = this.$translate.instant('SAVE_CHANGES_TO_COMPONENT', { componentLabel: this.component.label });
+    const message = this.$translate.instant('SAVE_CHANGES_TO_COMPONENT', { componentLabel: this.component.getLabel() });
     const title = this.$translate.instant('SAVE_COMPONENT_CHANGES_TITLE');
 
     return this.DialogService.show({
@@ -409,7 +429,7 @@ class ComponentEditorService {
   }
 
   _alertFieldErrors() {
-    const params = { componentLabel: this.component.label };
+    const params = { componentLabel: this.component.getLabel() };
     const message = this.$translate.instant('FEEDBACK_CANNOT_SAVE_COMPONENT_WITH_INVALID_FIELD_VALUES', params);
     const ok = this.$translate.instant('OK');
     const alert = this.DialogService.alert()
@@ -422,7 +442,6 @@ class ComponentEditorService {
   _clearData() {
     delete this.channel;
     delete this.component;
-    delete this.container;
     delete this.killed;
     delete this.page;
     delete this.properties;

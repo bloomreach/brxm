@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ describe('HstComponentService', () => {
   describe('setParameter', () => {
     beforeEach(() => {
       spyOn(HstService, 'doPutForm');
-      spyOn(ChannelService, 'recordOwnChange');
+      spyOn(ChannelService, 'checkChanges').and.returnValue($q.resolve());
     });
 
     it('uses the HstService to store the parameter data of a component', (done) => {
@@ -84,7 +84,7 @@ describe('HstComponentService', () => {
       HstComponentService.setParameter('id', 'variant', 'name', 'value')
         .then(() => {
           expect(HstService.doPutForm).toHaveBeenCalledWith({ name: 'value' }, 'id', 'variant');
-          expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+          expect(ChannelService.checkChanges).toHaveBeenCalled();
           done();
         });
       $rootScope.$digest();
@@ -95,7 +95,7 @@ describe('HstComponentService', () => {
 
       HstComponentService.setParameter('id', 'variant', 'name', 'value')
         .catch(() => {
-          expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+          expect(ChannelService.checkChanges).not.toHaveBeenCalled();
           done();
         });
       $rootScope.$digest();
@@ -112,7 +112,7 @@ describe('HstComponentService', () => {
   describe('setParameters', () => {
     beforeEach(() => {
       spyOn(HstService, 'doPutForm');
-      spyOn(ChannelService, 'recordOwnChange');
+      spyOn(ChannelService, 'checkChanges');
     });
 
     it('uses the HstService to store the parameter data of a component', () => {
@@ -122,7 +122,7 @@ describe('HstComponentService', () => {
       $rootScope.$digest();
 
       expect(HstService.doPutForm).toHaveBeenCalledWith({ param1: 1, param2: 2 }, 'id', 'variant');
-      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+      expect(ChannelService.checkChanges).toHaveBeenCalled();
     });
 
     it('does not record own change if parameter change fails', () => {
@@ -131,7 +131,7 @@ describe('HstComponentService', () => {
       HstComponentService.setParameters('id', 'variant', { param1: 1, param2: 2 });
       $rootScope.$digest();
 
-      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+      expect(ChannelService.checkChanges).not.toHaveBeenCalled();
     });
 
     it('URI-encodes the variant name', () => {
@@ -139,6 +139,18 @@ describe('HstComponentService', () => {
 
       HstComponentService.setParameters('id', '@variant', { param1: 1, param2: 2 });
       expect(HstService.doPutForm).toHaveBeenCalledWith({ param1: 1, param2: 2 }, 'id', '%40variant');
+    });
+
+    it('returns the response data', (done) => {
+      const mockData = {};
+      HstService.doPutForm.and.returnValue($q.resolve(mockData));
+
+      HstComponentService.setParameters().then((data) => {
+        expect(data).toBe(mockData);
+        done();
+      });
+
+      $rootScope.$digest();
     });
   });
 
