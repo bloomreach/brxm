@@ -111,13 +111,15 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
     @After
     public void tearDown() throws Exception {
 
-        // to avoid jr problems with current session with shared depth kind of issues, use a refresh
-        session.refresh(false);
-        restoreHstConfigBackup(session);
+        try {
+            // to avoid jr problems with current session with shared depth kind of issues, use a refresh
+            session.refresh(false);
+            restoreHstConfigBackup(session);
 
-        session.logout();
-
-        super.tearDown();
+            session.logout();
+        } finally {
+            super.tearDown();
+        }
 
     }
 

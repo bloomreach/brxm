@@ -56,6 +56,7 @@ export default class OverlayService {
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = false;
+    this._isEditSharedContainers = false;
 
     this._onOverlayMouseDown = this._onOverlayMouseDown.bind(this);
     this._onOverlayClick = this._onOverlayClick.bind(this);
@@ -83,6 +84,8 @@ export default class OverlayService {
     }
 
     this._isEditable = await this.CommunicationService.isEditable();
+    this._isEditSharedContainers = await this.CommunicationService.isEditSharedContainers();
+
     await this._cssPromise;
 
     if (!this._overlay || !this.$document.find('body > .hippo-overlay').length) {
@@ -102,7 +105,6 @@ export default class OverlayService {
     }
 
     const component = this.PageStructureService.getComponentByOverlayElement(event.target);
-
     if (component) {
       // eslint-disable-next-line consistent-return
       return this._onComponentClick(event, component);
@@ -141,6 +143,10 @@ export default class OverlayService {
 
   _onContainerClick(event, container) {
     if (container.isDisabled()) {
+      return;
+    }
+
+    if (container.isShared() !== this._isEditSharedContainers) {
       return;
     }
 
@@ -234,12 +240,13 @@ export default class OverlayService {
 
     const overlays = new Set();
 
-    this._getAllStructureElements().forEach((element) => {
-      this._syncElement(element);
+    this._getAllStructureElements()
+      .forEach((element) => {
+        this._syncElement(element);
 
-      overlays.add(element.getOverlayElement()[0]);
-      overlays.add(element.getBoxElement()[0]);
-    });
+        overlays.add(element.getOverlayElement()[0]);
+        overlays.add(element.getBoxElement()[0]);
+      });
 
     if (this._overlays) {
       this._overlays.forEach(element => element && !overlays.has(element) && element.remove());
@@ -298,8 +305,10 @@ export default class OverlayService {
       `);
 
       const label = structureElement.getLabel();
-      const escapedLabel = this._setLabelText(labelElement, label);
-      labelElement.attr('data-qa-name', escapedLabel);
+      this._setLabelText(labelElement, structureElement.isShared()
+        ? `${label} ${this._translate('SHARED_SUFFIX')}`
+        : label);
+      labelElement.attr('data-qa-name', structureElement.isShared() ? `${label}-shared` : label);
 
       overlayElement.append(labelElement);
     }
@@ -310,15 +319,12 @@ export default class OverlayService {
     if (textElement.text() !== text) {
       textElement.text(text);
     }
-
-    return text;
   }
 
   _addMarkupAndBehavior(structureElement, overlayElement) {
     switch (structureElement.getType()) {
       case 'container':
-        this._addDropIcon(structureElement, overlayElement);
-        this._addLockIcon(structureElement, overlayElement);
+        this._addContainerMarkup(structureElement, overlayElement);
         break;
       case 'content-link':
         this._addLinkMarkup(overlayElement, contentLinkSvg, 'EDIT_CONTENT', 'qa-content-link');
@@ -337,6 +343,12 @@ export default class OverlayService {
       default:
         break;
     }
+  }
+
+  _addContainerMarkup(structureElement, overlayElement) {
+    this._addDropIcon(structureElement, overlayElement);
+    this._addLockIcon(structureElement, overlayElement);
+    this._addEditSharedContainersButtons(structureElement, overlayElement);
   }
 
   _addComponentMarkup(structureElement, overlayElement) {
@@ -393,6 +405,39 @@ export default class OverlayService {
     }
 
     return this._translate('CONTAINER_LOCKED_BY', { user: container.getLockedBy() });
+  }
+
+  _addEditSharedContainersButtons(container, overlayElement) {
+    const editSharedContainer = angular.element('<div>')
+      .addClass('hippo-overlay-shared')
+      .appendTo(overlayElement);
+
+    if (container.isEmpty()) {
+      editSharedContainer.append(this._createEditSharedContainersButton(container));
+    } else {
+      const top = angular.element('<div>')
+        .addClass('hippo-overlay-shared-top')
+        .append(this._createEditSharedContainersButton(container));
+
+      const bottom = angular.element('<div>')
+        .addClass('hippo-overlay-shared-bottom')
+        .append(this._createEditSharedContainersButton(container));
+
+      editSharedContainer
+        .append(top)
+        .append(bottom);
+    }
+  }
+
+  _createEditSharedContainersButton(container) {
+    const title = this._translate(container.isShared() ? 'TOGGLE_SHARED_CONTAINERS' : 'TOGGLE_PAGE_CONTAINERS');
+    return angular.element(`<button class="hippo-overlay-shared-button" title="${title}">${title}</button>`)
+      .addClass(container.isShared() ? 'qa-toggle-shared-containers-button' : 'qa-toggle-page-containers-button')
+      .on('click', () => {
+        this._isEditSharedContainers = !this._isEditSharedContainers;
+        this.CommunicationService.emit('page:edit-shared-containers', this._isEditSharedContainers);
+        this.sync();
+      });
   }
 
   _addLinkMarkup(overlayElement, svg, titleKey, qaClass = '') {
@@ -675,6 +720,9 @@ export default class OverlayService {
         boxElement.toggleClass('hippo-overlay-box-container-filled', !isEmptyInDom);
         overlayElement.toggleClass('hippo-overlay-element-container-empty', isEmptyInDom);
         overlayElement.toggleClass('hippo-overlay-element-container-disabled', structureElement.isDisabled());
+        overlayElement.toggleClass('hippo-overlay-element-container-readonly', structureElement.isShared()
+          ? !this._isEditSharedContainers
+          : this._isEditSharedContainers);
         break;
       }
       default:
@@ -687,6 +735,12 @@ export default class OverlayService {
   _isElementVisible(structureElement, boxElement) {
     switch (structureElement.getType()) {
       case 'component':
+        if (!this.isComponentsOverlayDisplayed) {
+          return false;
+        }
+        return structureElement.isShared()
+          ? this._isEditSharedContainers
+          : !this._isEditSharedContainers;
       case 'container':
         return this.isComponentsOverlayDisplayed;
       case 'content-link':

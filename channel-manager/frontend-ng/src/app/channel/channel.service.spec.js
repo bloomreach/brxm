@@ -276,9 +276,6 @@ describe('ChannelService', () => {
 
     expect(ChannelService.getChannel()).toEqual(channelMock);
     expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
-    expect(HstService.doGetWithParams).toHaveBeenCalledWith(channelMock.mountId, undefined, 'newpagemodel');
-    expect(ChannelService.hasPrototypes()).toBe(true);
-    expect(ChannelService.hasWorkspace()).toBe(true);
   });
 
   describe('matchesChannel', () => {
@@ -462,6 +459,53 @@ describe('ChannelService', () => {
       $rootScope.$digest();
       expect(ChannelService.reload).toHaveBeenCalled();
       expect($rootScope.$broadcast).toHaveBeenCalledWith('channel:changes:discard');
+    });
+  });
+
+  describe('checkChanges', () => {
+    beforeEach(() => {
+      loadChannel();
+    });
+
+    it('should emit "page:check-changes"', () => {
+      const listener = jasmine.createSpy();
+      $rootScope.$on('page:check-changes', listener);
+
+      ChannelService.checkChanges();
+      expect(listener).toHaveBeenCalled();
+    });
+
+    it('should not throw an error if the backend call fails', (done) => {
+      HstService.doGet.and.returnValue($q.reject());
+
+      ChannelService.checkChanges().then(done);
+      $rootScope.$digest();
+    });
+
+    it('should get change-set from the backend', () => {
+      ChannelService.checkChanges();
+
+      expect(HstService.doGet).toHaveBeenCalledWith('mountId', 'mychanges');
+    });
+
+    it('should record changes if backend returns changes', () => {
+      spyOn(ChannelService, 'recordOwnChange');
+      HstService.doGet.and.returnValue($q.when({ data: [{ id: 'testUser' }] }));
+
+      ChannelService.checkChanges();
+      $rootScope.$digest();
+
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    });
+
+    it('should not record changes if backend does not return changes', () => {
+      spyOn(ChannelService, 'recordOwnChange');
+      HstService.doGet.and.returnValue($q.when({ data: [] }));
+
+      ChannelService.checkChanges();
+      $rootScope.$digest();
+
+      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
     });
   });
 

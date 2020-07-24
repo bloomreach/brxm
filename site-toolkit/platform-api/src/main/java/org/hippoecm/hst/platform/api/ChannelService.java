@@ -18,6 +18,7 @@ package org.hippoecm.hst.platform.api;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -26,6 +27,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.onehippo.cms7.services.hst.Channel;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 
 public interface ChannelService {
 
@@ -114,5 +116,13 @@ public interface ChannelService {
      */
     Properties getChannelResourceValues(String hostGroup, String channelId, String language) throws ChannelException;
 
+	/**
+	 *
+	 * @param channelId
+	 * @return Map of the available {@link XPageLayout}s for {@code Channel} with id {@code channelId} where the keys are
+	 * the id of the XPageLayout (which is equal to the XPageLayout HstComponentConfiguration id).
+	 * If none found an empty collection is returned
+	 */
+	Map<String, XPageLayout> getXPageLayouts(String channelId);
 
 }

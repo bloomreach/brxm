@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ public class NewDocumentInfo {
     private String folderTemplateQuery;
     private String rootPath;
     private String defaultPath;
+    private boolean experiencePage;
 
     public String getName() {
         return name;
@@ -79,5 +80,13 @@ public class NewDocumentInfo {
 
     public void setDefaultPath(final String defaultPath) {
         this.defaultPath = defaultPath;
+    }
+
+    public boolean isExperiencePage() {
+        return experiencePage;
+    }
+
+    public void setExperiencePage(final boolean experiencePage) {
+        this.experiencePage = experiencePage;
     }
 }

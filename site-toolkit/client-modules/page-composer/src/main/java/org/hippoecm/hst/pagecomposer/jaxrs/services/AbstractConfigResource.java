@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
@@ -29,6 +30,8 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BaseChannelEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
@@ -49,22 +52,32 @@ public class AbstractConfigResource {
     public void setPageComposerContextService(PageComposerContextService pageComposerContextService) {
         this.pageComposerContextService = pageComposerContextService;
     }
-    public PlatformServices getPlatformServices() {
-        return HippoServiceRegistry.getService(PlatformServices.class);
-    }
 
     public PageComposerContextService getPageComposerContextService() {
         return pageComposerContextService;
     }
 
+    public PlatformServices getPlatformServices() {
+        return HippoServiceRegistry.getService(PlatformServices.class);
+    }
+
     protected Response ok(String msg) {
-        return ok(msg, ArrayUtils.EMPTY_STRING_ARRAY);
+        return ok(msg, ArrayUtils.EMPTY_STRING_ARRAY, false);
+    }
+
+    protected Response ok(String msg, boolean reloadRequired) {
+        return ok(msg, ArrayUtils.EMPTY_STRING_ARRAY, reloadRequired);
     }
 
     protected Response ok(String msg, Object data) {
+        return ok(msg, data, false);
+    }
+
+    protected Response ok(String msg, Object data, boolean reloadRequired) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation(data);
         entity.setMessage(msg);
         entity.setSuccess(true);
+        entity.setReloadRequired(reloadRequired);
         return Response.ok().entity(entity).build();
     }
 
@@ -72,31 +85,56 @@ public class AbstractConfigResource {
         return error(msg, ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
+    protected Response error(String msg, boolean reloadRequired) {
+        return error(msg, ArrayUtils.EMPTY_STRING_ARRAY, reloadRequired);
+    }
+
     protected Response error(String msg, Object data) {
+        return error(msg, data, false);
+    }
+
+    protected Response error(String msg, Object data, boolean reloadRequired) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation(data);
         entity.setMessage(msg);
         entity.setSuccess(false);
+        entity.setReloadRequired(reloadRequired);
         return Response.serverError().entity(entity).build();
     }
 
     protected Response clientError(String msg, Object data) {
+        return clientError(msg, data, false);
+    }
+
+
+    protected Response clientError(String msg, Object data, boolean reloadRequired) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation(data);
         entity.setMessage(msg);
         entity.setSuccess(false);
+        entity.setReloadRequired(reloadRequired);
         return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
     }
 
     protected Response created(String msg) {
+        return created(msg, false);
+    }
+
+    protected Response created(String msg, boolean reloadRequired) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation();
         entity.setMessage(msg);
         entity.setSuccess(true);
+        entity.setReloadRequired(reloadRequired);
         return Response.status(Response.Status.CREATED).entity(entity).build();
     }
 
     protected Response conflict(String msg) {
+        return conflict(msg, false);
+    }
+
+    protected Response conflict(String msg, boolean reloadRequired) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation();
         entity.setMessage(msg);
         entity.setSuccess(false);
+        entity.setReloadRequired(reloadRequired);
         return Response.status(Response.Status.CONFLICT).entity(entity).build();
     }
 
@@ -236,5 +274,26 @@ public class AbstractConfigResource {
         }
         final String configurationPath = mount.getHstSite().getConfigurationPath();
         return configurationPath + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+    }
+
+    public Response respondContainerItem(final ContainerItem containerItem,
+                                         final boolean requiresReload,
+                                         final Response.StatusType statusType,
+                                         final String msg) throws RepositoryException {
+        final Node containerItemNode = containerItem.getContainerItem();
+
+        log.info("Returning success response for container item '{}':  StatusType : {},  ReloadRequired : {}," +
+                "Message = {}", containerItemNode.getPath(), statusType, requiresReload, msg);
+
+        final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation()
+                .represent(containerItemNode, containerItem.getComponentDefinition(), containerItem.getTimeStamp());
+
+        final ExtResponseRepresentation entity = new ExtResponseRepresentation(containerItemRepresentation);
+        entity.setReloadRequired(requiresReload);
+        entity.setSuccess(true);
+        entity.setMessage(msg);
+        return Response.status(statusType)
+                .entity(entity)
+                .build();
     }
 }

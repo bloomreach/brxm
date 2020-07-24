@@ -16,6 +16,7 @@
 package org.hippoecm.hst.platform.configuration.components;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,17 +27,18 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.platform.configuration.cache.CompositeConfigurationNodes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.internal.StringPool;
+import org.hippoecm.hst.platform.configuration.cache.CompositeConfigurationNodes;
+import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.unmodifiableMap;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEM_PACKAGE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH;
@@ -62,6 +64,9 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
      * configured below 'hst:prototypepages'
      */
     private Map<String, HstComponentConfiguration> prototypePages = new HashMap<>();
+
+
+    private Map<String, HstComponentConfiguration> xPages = new HashMap<>();
 
     /*
      * The Map of all containter items. These are the hst:containeritemcomponent's that are configured as child of hst:containeritemcomponent's
@@ -95,7 +100,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         String[] mainComponentNodeNames = {HstNodeTypes.NODENAME_HST_COMPONENTS,
                 HstNodeTypes.NODENAME_HST_ABSTRACTPAGES,
                 HstNodeTypes.NODENAME_HST_PAGES,
-                HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES};
+                HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES,
+                HstNodeTypes.NODENAME_HST_XPAGES};
 
         final String rootConfigurationPathPrefix = ccn.getConfigurationRootNode().getValueProvider().getPath() + "/";
 
@@ -110,7 +116,14 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             init(componentNodes, mainComponentNodeName, rootConfigurationPathPrefix, referableContainers, nonPrototypeRootComponents);
         }
 
-        prototypePages = Collections.unmodifiableMap(prototypePages);
+        prototypePages = unmodifiableMap(prototypePages);
+
+        // from the nonPrototypeRootComponents, take the root components which are an XPage component and put them in a
+        // map where the key is the (unique within 1 hst:configuration) xpage name
+        xPages = unmodifiableMap(
+                nonPrototypeRootComponents.stream()
+                        .filter(hcc -> ((HstComponentConfigurationService)hcc).isXPage())
+                        .collect(Collectors.toMap(hcc -> hcc.getName(), hcc -> hcc)));
 
         // populate all the available containeritems that are part of hst:catalog. These container items do *not* need to be enhanced as they
         // are *never* used directly. They are only to be used by the page composer that can drop these containeritems into containers
@@ -134,7 +147,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         if (nonPrototypeRootComponents.isEmpty()) {
             canonicalComponentConfigurations = Collections.emptyMap();
         } else {
-            canonicalComponentConfigurations = Collections.unmodifiableMap(
+            canonicalComponentConfigurations = unmodifiableMap(
                     flattened(nonPrototypeRootComponents)
                             .collect(Collectors
                                     .toMap(hstComponentConfiguration -> hstComponentConfiguration.getId(),
@@ -143,45 +156,58 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
 
         /*
-         * The component tree needs to be enhanced, for 
+         * The component tree needs to be enhanced, for
          * 1: merging referenced components,
          * 2: autocreating missing referenceNames
          * 3: setting renderpaths for each component
          * 4: Adding parameters from parent components to child components and override them when they already are present
          */
-        
-        templateResourceMap = Collections.unmodifiableMap(getTemplateResourceMap(ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_TEMPLATES)));
 
-        enhanceComponentTree(templateResourceMap, nonPrototypeRootComponents, websiteClassLoader);
+        templateResourceMap = unmodifiableMap(getTemplateResourceMap(ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_TEMPLATES)));
+
+        populateComponentReferences(canonicalComponentConfigurations.values(), websiteClassLoader);
+
+        enhanceComponentTree(nonPrototypeRootComponents, true);
+
     }
 
-    private void enhanceComponentTree(Map<String, Template> templateResourceMap, final List<HstComponentConfiguration> childComponents, ClassLoader websiteClassLoader) {
-        // merging referenced components:  to avoid circular population, hold a list of already populated configs
-        List<HstComponentConfiguration> populated = new ArrayList<HstComponentConfiguration>();
-        for (HstComponentConfiguration child : canonicalComponentConfigurations.values()) {
-            if (!populated.contains(child)) {
-                if (isNotEmpty(child.getComponentDefinition())) {
-                    ((HstComponentConfigurationService) child).populateCatalogItemReference(availableContainerItems);
-                } else {
-                    //Legacy component instances support. If component instance does not have a component definition reference,
-                    //explicitly populate component parameters.
-                    //TODO SS: In case of legacy component instances, there is an extra memory overhead because
-                    // field group information & parameter definitions are stored on a component instance level,
-                    // instead of storing that on a catalog item level.
-                    // More over, field group info has no use during delivery and really belongs to a catalog item level
-                    //
-                    ((HstComponentConfigurationService) child).populateAnnotationComponentParameters(websiteClassLoader);
-                    ((HstComponentConfigurationService) child).populateFieldGroups(websiteClassLoader);
-                    ((HstComponentConfigurationService) child).populateComponentReferences(canonicalComponentConfigurations,
-                            populated);
-                }
+    public void populateComponentReferences(final Collection<HstComponentConfiguration> populate,
+                                            final ClassLoader websiteClassLoader) {
+        for (HstComponentConfiguration child : populate) {
+            if (isNotEmpty(child.getComponentDefinition())) {
+                ((HstComponentConfigurationService) child).populateCatalogItemReference(availableContainerItems);
             }
         }
 
-        //  autocreating missing referenceNames
-        for (HstComponentConfiguration child : childComponents) {
-            autocreateReferenceNames(child);
+        for (HstComponentConfiguration child : populate) {
+            if (isEmpty(child.getComponentDefinition())) {
+
+                // In case the component is a container item, this is legacy component instances support. For components
+                // that are not hst:components, this is not legacy!
+                // If component instance does not have a component definition reference, explicitly populate component parameters.
+                //TODO SS: In case of legacy component instances, there is an extra memory overhead because
+                // field group information & parameter definitions are stored on a component instance level,
+                // instead of storing that on a catalog item level.
+                // More over, field group info has no use during delivery and really belongs to a catalog item level
+                //
+                ((HstComponentConfigurationService) child).populateAnnotationComponentParameters(websiteClassLoader);
+                ((HstComponentConfigurationService) child).populateFieldGroups(websiteClassLoader);
+                ((HstComponentConfigurationService) child).populateComponentReferences(canonicalComponentConfigurations);
+            }
         }
+    }
+
+    public void enhanceComponentTree(final Collection<HstComponentConfiguration> childComponents, final boolean hstConfigModel) {
+
+
+        if (hstConfigModel) {
+            //  autocreating missing referenceNames : never needed for request based XPage config since for XPage we
+            // reset the entire namespaces since cloned (detached) from HST Model altogether
+            for (HstComponentConfiguration child : childComponents) {
+                autocreateReferenceNames(child);
+            }
+        }
+
 
         // setting renderpaths for each component
         for (HstComponentConfiguration child : childComponents) {
@@ -213,8 +239,12 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             ((HstComponentConfigurationService) child).populateIsCompositeCacheable();
         }
 
-        for (HstComponentConfiguration child : childComponents) {
-            ((HstComponentConfigurationService) child).makeCollectionsImmutableAndOptimize();
+        if (hstConfigModel) {
+            // for request based XPages, do not bother to optimize memory usage since xpage config GC-ed at the end
+            // of request
+            for (HstComponentConfiguration child : childComponents) {
+                ((HstComponentConfigurationService) child).makeCollectionsImmutableAndOptimize();
+            }
         }
 
     }
@@ -237,22 +267,30 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         return prototypePages;
     }
 
+    @Override
+    public Map<String, HstComponentConfiguration> getXPages() {
+        return xPages;
+    }
+
 
     public Map<String, Template> getTemplates() {
         return templateResourceMap;
     }
 
-    private void autocreateReferenceNames(HstComponentConfiguration componentConfiguration) {
+    private void autocreateReferenceNames(final HstComponentConfiguration componentConfiguration) {
+
         if (componentConfiguration.getReferenceName() == null || "".equals(componentConfiguration.getReferenceName())) {
+
             String autoRefName = "r" + (++autoCreatedCounter);
             while (usedReferenceNames.contains(autoRefName)) {
                 autoRefName = "r" + (++autoCreatedCounter);
             }
             ((HstComponentConfigurationService) componentConfiguration).setReferenceName(StringPool.get(autoRefName));
         }
+
         ((HstComponentConfigurationService) componentConfiguration).autocreateReferenceNames();
     }
-    
+
     /*
      * rootNodeName is either hst:components, hst:pages, hst:abstractpages or hst:prototypepages.
      */
@@ -295,12 +333,13 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private boolean isHstComponentType(final HstNode node) {
         return HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
                 || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
-                || NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName());
+                || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())
+                || HstNodeTypes.NODETYPE_HST_XPAGE.equals(node.getNodeTypeName());
     }
-    
+
     private void initCatalog(final CompositeConfigurationNodes.CompositeConfigurationNode catalog,
                              final String rootConfigurationPathPrefix, ClassLoader websiteClassLoader) {
-        
+
         for(HstNode itemPackage :catalog.getCompositeChildren().values()){
             if(NODETYPE_HST_CONTAINERITEM_PACKAGE.equals(itemPackage.getNodeTypeName())) {
                 for(HstNode containerItem : itemPackage.getNodes()) {
@@ -353,6 +392,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     public String toString() {
         return "HstComponentsConfigurationService [id='"+id+"', hashcode = '"+hashCode()+"']";
     }
+
 
     public static class Template {
 

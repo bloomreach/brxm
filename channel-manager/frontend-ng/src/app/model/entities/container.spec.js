@@ -87,7 +87,7 @@ describe('Container', () => {
       expect(container.isDisabled()).toBe(false);
     });
 
-    it('should return true when the container is locked by the current user', () => {
+    it('should return false when the container is locked by the current user', () => {
       container.isInherited.and.returnValue(false);
       container.isLocked.and.returnValue(true);
       container.isLockedByCurrentUser.and.returnValue(true);
@@ -301,6 +301,30 @@ describe('Container', () => {
 
     it('should contain components ids', () => {
       expect(container.getHstRepresentation()).toEqual(jasmine.objectContaining({ children: ['component-id'] }));
+    });
+  });
+
+  describe('getDropGroups', () => {
+    it('should return "xpages" if the component is an Experience Page component', () => {
+      const container = new Container({ 'HST-Experience-Page-Component': 'true' });
+
+      expect(container.getDropGroups()).toContain('xpages');
+      expect(container.getDropGroups()).not.toContain('default');
+    });
+
+    it('should return "default" if the component is not an Experience Page component', () => {
+      const container = new Container({});
+
+      expect(container.getDropGroups()).toContain('default');
+      expect(container.getDropGroups()).not.toContain('xpages');
+    });
+
+    it('should append the suffix "-shared" to group names from a shared container', () => {
+      const container1 = new Container({ 'HST-Shared': 'true' });
+      const container2 = new Container({ 'HST-Experience-Page-Component': 'true', 'HST-Shared': 'true' });
+
+      expect(container1.getDropGroups()).toEqual(['default-shared']);
+      expect(container2.getDropGroups()).toEqual(['xpages-shared']);
     });
   });
 });

@@ -77,8 +77,12 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
-            assertTrue(hstComponentConfiguration.isInherited());
-            assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon"));
+            if (hstComponentConfiguration.getCanonicalStoredLocation().contains("/hst:xpages/")) {
+                assertFalse("xpages never inherited", hstComponentConfiguration.isInherited());
+            } else {
+                assertTrue(hstComponentConfiguration.isInherited());
+                assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon"));
+            }
         }
     }
 
@@ -131,24 +135,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         final HstSite hstSite = mount.getMount().getHstSite();
-        for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
-            if (hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/")) {
-                // components are still from /unittestcommon
-                assertTrue(hstComponentConfiguration.isInherited());
-            } else {
-                HstComponentConfiguration root = hstComponentConfiguration;
-                while (root.getParent() != null) {
-                    root = root.getParent();
-                }
-                if (root.getName().equals("standarddetail")) {
-                    assertFalse(hstComponentConfiguration.isInherited());
-                    assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject/hst:pages/standarddetail"));
-                } else {
-                    assertFalse(hstComponentConfiguration.isInherited());
-                    assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject/hst:workspace"));
-                }
-            }
-        }
+        componentAssertions(hstSite);
     }
 
     @Test
@@ -166,10 +153,16 @@ public class PagesModelsIT extends AbstractTestConfigurations {
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
+        componentAssertions(hstSite);
+    }
+
+    private void componentAssertions(final HstSite hstSite) {
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
             if (hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/")) {
                 // components are still from /unittestcommon
                 assertTrue(hstComponentConfiguration.isInherited());
+            } else if (hstComponentConfiguration.getCanonicalStoredLocation().contains("/hst:xpages/")) {
+                assertFalse("hst:xpages are never inherited", hstComponentConfiguration.isInherited());
             } else {
                 HstComponentConfiguration root = hstComponentConfiguration;
                 while (root.getParent() != null) {
@@ -194,10 +187,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         saveSession();
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         final HstSite hstSite = mount.getMount().getHstSite();
-        for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
-            assertTrue(hstComponentConfiguration.isInherited());
-            assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/"));
-        }
+        componentAssertions(hstSite);
         assertNull(hstSite.getComponentsConfiguration().getComponentConfigurations().get("standarddetail"));
     }
 

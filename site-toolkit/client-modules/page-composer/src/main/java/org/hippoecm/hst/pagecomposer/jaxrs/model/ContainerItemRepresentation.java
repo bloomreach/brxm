@@ -25,11 +25,19 @@ import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurat
 /**
  * This class can probably be removed once new items are added through the in-memory model instead of created
  * through jcr.
- * 
+ *
  */
 
 public class ContainerItemRepresentation extends ComponentRepresentation {
 
+    /**
+     * For the legacy container items (not backreferencing to the catalog item) the {@code templateConfig} is {@code null},
+     * then properties like classname are fetched from {@code node} directly, otherwise from the {@code templateConfig}
+     *
+     * @param templateConfig The template config for this {@code node} component item which CAN BE {@code null}, typically
+     *                       in the old-style legacy component items which do not maintain a link back to the catalog
+     *                       item
+     */
     public ContainerItemRepresentation represent(final Node node, final HstComponentConfiguration templateConfig,
                                                  final long newLastModifiedTimestamp) throws RepositoryException {
         setId(node.getIdentifier());
@@ -37,13 +45,32 @@ public class ContainerItemRepresentation extends ComponentRepresentation {
         setPath(node.getPath());
         setParentId(node.getParent().getIdentifier());
 
-        if (templateConfig instanceof HstComponentConfigurationService) {
-            setTemplate(((HstComponentConfigurationService)templateConfig).getHstTemplate());
+        if (templateConfig == null) {
+            // legacy style component item which is not linked back to the catalog item
+            if (node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE)) {
+                setTemplate(node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE).getString());
+            }
+            if (node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_LABEL)) {
+                setLabel(node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_LABEL).getString());
+            }
+            setType(HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT.toString());
+            if (node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE)) {
+                setXtype(node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE).getString());
+            }
+
+            setComponentClassName(node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME) ?
+                    node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString() : "");
+
+        } else {
+            if (templateConfig instanceof HstComponentConfigurationService) {
+                setTemplate(((HstComponentConfigurationService) templateConfig).getHstTemplate());
+            }
+
+            setLabel(templateConfig.getLabel());
+            setXtype(templateConfig.getXType());
+            setComponentClassName(templateConfig.getComponentClassName());
         }
 
-        setLabel(templateConfig.getLabel());
-        setXtype(templateConfig.getXType());
-        setComponentClassName(templateConfig.getComponentClassName());
         setLastModifiedTimestamp(newLastModifiedTimestamp);
         setType(HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT.toString());
         return this;

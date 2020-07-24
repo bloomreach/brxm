@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,12 +26,20 @@ public interface ChannelManagerConstants {
     String HST_MOUNT_ID = "HST-Mount-Id";
     String HST_SITE_ID = "HST-Site-Id";
     String HST_PAGE_ID = "HST-Page-Id";
+    String HST_EXPERIENCE_PAGE = "HST-Experience-Page";
+    String HST_EXPERIENCE_PAGE_COMPONENT = "HST-Experience-Page-Component";
     String HST_SITEMAP_ID = "HST-Sitemap-Id";
     String HST_SITEMAPITEM_ID = "HST-SitemapItem-Id";
+
+    /**
+     * @deprecated since 14.x Experience Pages, do not use any more
+     */
+    @Deprecated
     String HST_PAGE_EDITABLE = "HST-Page-Editable";
     String HST_RENDER_VARIANT = "HST-Render-Variant";
     String HST_SITE_HAS_PREVIEW_CONFIG = "HST-Site-HasPreviewConfig";
     String HST_END_MARKER = "HST-End";
+    String HST_COMPONENT_EDITABLE = "HST-Component-Editable";
 
     // below used outside HST
     String HST_PAGE_REQUEST_VARIANTS = "HST-Page-Request-Variants";
@@ -39,7 +47,9 @@ public interface ChannelManagerConstants {
     String HST_LOCKED_BY_CURRENT_USER = "HST-LockedBy-Current-User";
     String HST_LOCKED_ON = "HST-LockedOn";
     String HST_LAST_MODIFIED = "HST-LastModified";
-    String HST_INHERITED = "HST-Inherited";
+
+    // use for marking hst components which are / can be shared
+    String HST_SHARED = "HST-Shared";
     String HST_TYPE_MANAGE_CONTENT_LINK = "MANAGE_CONTENT_LINK";
     String HST_TYPE_PAGE_META_DATA = "PAGE-META-DATA";
     String MANAGE_CONTENT_DEFAULT_PATH = "defaultPath";

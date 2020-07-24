@@ -74,9 +74,6 @@ public class PageComposerSecurityValve extends AbstractBaseOrderableValve {
 
                 context.invokeNext();
 
-                if (jcrSession != null && jcrSession.hasPendingChanges()) {
-                    log.warn("Request to {} triggered changes in JCR session that were not saved - they will be lost", servletRequest.getPathInfo());
-                }
             } catch (RepositoryException e) {
                 log.warn("RepositoryException : {}", e.toString());
                 throw new ContainerException(e);

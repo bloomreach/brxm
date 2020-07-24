@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /autocreate-test:
+      jcr:primaryType: nt:unstructured
+      /autocreate-uuid-node:
+        jcr:primaryType: hippo:testcardocument
+        jcr:mixinTypes: ['hippo:identifiable']
+      /bootstrapped-autocreate-node:
+        jcr:primaryType: hippo:testcardocument
+        jcr:mixinTypes: ['hippo:identifiable']
+        hippo:identifier: bootstrapped-fixed
