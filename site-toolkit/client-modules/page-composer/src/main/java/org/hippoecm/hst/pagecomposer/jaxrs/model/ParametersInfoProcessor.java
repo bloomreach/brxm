@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2020 Bloomreach
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.DropdownListParameterConfig;
@@ -41,12 +40,10 @@ import org.hippoecm.hst.configuration.components.DynamicFieldGroup;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.DynamicParameterConfig;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.components.ImageSetPathParameterConfig;
 import org.hippoecm.hst.configuration.components.JcrPathParameterConfig;
 import org.hippoecm.hst.configuration.components.ParameterValueType;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.EmptyValueListProvider;
-import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -62,6 +59,8 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -90,10 +89,6 @@ public abstract class ParametersInfoProcessor {
         } else if (componentParameterConfig != null && componentParameterConfig.getType() == DynamicParameterConfig.Type.DROPDOWN_LIST
                 && DynamicParameterConfig.Type.DROPDOWN_LIST.supportsReturnType(valueType)) {
             property.setType(ParameterType.VALUE_FROM_LIST);
-        } else if (componentParameterConfig != null && componentParameterConfig.getType() == DynamicParameterConfig.Type.IMAGESET_PATH
-                && DynamicParameterConfig.Type.IMAGESET_PATH.supportsReturnType(valueType)) {
-            //TODO Handle image set value type
-            property.setType(ParameterType.STRING);
         } else if (jcrComponentParameter.getValueType() == ParameterValueType.INTEGER
                 || jcrComponentParameter.getValueType() == ParameterValueType.DECIMAL) {
             property.setType(ParameterType.NUMBER);
@@ -137,8 +132,6 @@ public abstract class ParametersInfoProcessor {
                 } else if (componentParameterConfig.getType() == DynamicParameterConfig.Type.DROPDOWN_LIST) {
                     populateDropdownListProperties(property, (DropdownListParameterConfig) componentParameterConfig,
                             resourceBundles, locale);
-                } else if (componentParameterConfig.getType() == DynamicParameterConfig.Type.IMAGESET_PATH) {
-                    populateImageSetPathProperties(property, (ImageSetPathParameterConfig) componentParameterConfig);
                 }
             }
 
@@ -276,10 +269,6 @@ public abstract class ParametersInfoProcessor {
                     final DropdownListParameterConfig dropdownList = new DynamicComponentParameter.DropdownListParameterConfigImpl(
                             (DropDownList) annotation);
                     populateDropdownListProperties(prop, dropdownList, resourceBundles, locale);
-                } else if (annotation instanceof ImageSetPath) {
-                    final ImageSetPathParameterConfig imageSetPath = new DynamicComponentParameter.ImageSetPathParameterConfigImpl(
-                            (ImageSetPath) annotation);
-                    populateImageSetPathProperties(prop, imageSetPath);
                 }
 
                 final ParameterType type = ParameterType.getType(method, annotation);
@@ -348,15 +337,6 @@ public abstract class ParametersInfoProcessor {
 
         prop.setDropDownListValues(values);
         prop.setDropDownListDisplayValues(displayValues);
-        
-    }
- 
-    private static void populateImageSetPathProperties(final ContainerItemComponentPropertyRepresentation prop,
-            final ImageSetPathParameterConfig imageSet) {
-        prop.setPickerConfiguration(imageSet.getPickerConfiguration());
-        prop.setPickerInitialPath(imageSet.getPickerInitialPath());
-        prop.setPickerRemembersLastVisited(imageSet.isPickerRemembersLastVisited());
-        prop.setPickerSelectableNodeTypes(imageSet.getPickerSelectableNodeTypes());
     }
  
     private static void populateJcrPathProperties(final ContainerItemComponentPropertyRepresentation prop,

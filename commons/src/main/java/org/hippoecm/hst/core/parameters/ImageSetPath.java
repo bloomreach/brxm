@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2020 Bloomreach
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,8 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates that the annotated method returns the absolute path to the handle of an image set.
- * This annotation should only be used on public getter methods.
+ * This annotation should only be used on public getter methods. This annotation should only be used on ChannelInfo
+ * parameters, it shouldn't be used on Component parameters (ParamInfo).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
