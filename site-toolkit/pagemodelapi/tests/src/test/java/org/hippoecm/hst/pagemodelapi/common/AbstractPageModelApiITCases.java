@@ -196,13 +196,16 @@ public abstract class AbstractPageModelApiITCases {
 
         final MockHttpServletResponse response = requestResponse.getResponse();
 
-        filter.doFilter(request, response, new MockFilterChain(new HttpServlet() {
-            @Override
-            protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-                super.doGet(req, resp);
-            }
-        }, filter));
-
+        try {
+            filter.doFilter(request, response, new MockFilterChain(new HttpServlet() {
+                @Override
+                protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+                    super.doGet(req, resp);
+                }
+            }, filter));
+        } finally {
+            mockHttpSession.invalidate();
+        }
 
         return response;
     }
