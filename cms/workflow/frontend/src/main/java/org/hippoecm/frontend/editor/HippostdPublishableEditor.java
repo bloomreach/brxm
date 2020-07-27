@@ -111,8 +111,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     protected IModel<Node> getEditorModel() throws EditorException {
         final Node node = super.getEditorModel().getObject();
         final HippoStdPublishableEditorModel editorStateModel = getEditorStateModel(branchIdModel.getBranchId(), node);
-        editorModel = new JcrNodeModel(editorStateModel.getEditor());
-        return editorModel;
+        return new JcrNodeModel(editorStateModel.getEditor());
     }
 
     @Override
