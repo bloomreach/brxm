@@ -19,6 +19,7 @@ package org.hippoecm.hst.pagemodelapi.v09;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.apache.commons.io.IOUtils;
@@ -32,6 +33,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_LINK_URL_PREFIX;
 import static org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider.ApiVersion.V09;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOCBASE;
 
 /**
  * <p>
@@ -143,6 +145,45 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiITCases 
                 session.logout();
             }
         }
+    }
+
+    /**
+     * In v0.9, the default in the the HtmlContentRewriter is to remove anchor tags of broken links completely, see
+     * org.hippoecm.hst.pagemodelapi.v09.content.rewriter.HtmlContentRewriter#setRemoveAnchorTagOfBrokenLink(boolean)
+     *
+     *
+     * In v1.0, we flip the behavior to by default output <a data-type="unknow">foo</a> for broken links such that the
+     * SPA can handle it as desired
+     */
+    @Test
+    public void broken_link_in_content_for_homepage_document() throws Exception {
+
+        final Session session = createSession("admin", "admin");
+        final Node linkNode = session.getNode("/unittestcontent/documents/unittestproject/common/homepage/homepage/unittestproject:body/news1");
+        final String docbaseBefore = linkNode.getProperty(HIPPO_DOCBASE).getString();
+
+        try {
+
+
+            // break the internal link in the content of homepage to do expectation on how it gets serialized in json
+            // we expecte broken links to be <a data-type="unknown"/>
+
+            linkNode.setProperty(HIPPO_DOCBASE, "broken");
+            session.save();
+
+            String actual = getActualJson("/spa/resourceapi");
+
+            InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_broken_content_link.json");
+
+            String expected = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+
+            JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
+        } finally {
+            linkNode.setProperty(HIPPO_DOCBASE, docbaseBefore);
+            session.save();
+            session.logout();
+        }
+
     }
 
 }

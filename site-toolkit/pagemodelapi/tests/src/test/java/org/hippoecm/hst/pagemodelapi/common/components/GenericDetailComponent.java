@@ -75,10 +75,9 @@ public class GenericDetailComponent extends GenericHstComponent {
         HstLink notFoundLink = new HstLinkImpl(DefaultHstLinkCreator.DEFAULT_PAGE_NOT_FOUND_PATH, requestContext.getResolvedMount().getMount());
         notFoundLink.setNotFound(true);
 
-        // assert that notFoundLink results in something like in PMA (with type = internal) !!
+        // assert that notFoundLink results in something like in PMA (with type = unknown and no href) !!
         //       "notFoundLink":{
-        //        "href":"/site/spa/pagenotfound",
-        //        "type":"internal"
+        //        "type":"unknown"
         //    },
         request.setModel("notFoundLink", notFoundLink);
 
