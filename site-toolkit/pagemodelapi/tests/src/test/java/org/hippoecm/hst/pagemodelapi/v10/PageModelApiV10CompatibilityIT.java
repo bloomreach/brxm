@@ -415,7 +415,8 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             // trigger direct invalidation of model without waiting for jcr event
             eventPathsInvalidator.eventPaths(LOCALHOST_JCR_PATH);
 
-            String actual = getActualJson("/_cmsinternal/spa/resourceapi", "1.0", null, EDITOR_CREDS);
+            String actual = getActualJson("/_cmsinternal/spa/resourceapi", "1.0",
+                    ContainerConstants.RENDERING_HOST  +"=localhost", EDITOR_CREDS);
 
             InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("preview_channel_mgr_pma_spec_cdn_and_hst_url_prefix.json");
 
