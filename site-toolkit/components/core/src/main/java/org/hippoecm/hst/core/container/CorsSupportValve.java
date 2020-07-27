@@ -41,6 +41,8 @@ import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_MAX_AGE;
+import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
+import static org.springframework.http.HttpHeaders.PRAGMA;
 import static org.springframework.http.HttpHeaders.VARY;
 
 
@@ -182,13 +184,7 @@ public class CorsSupportValve implements Valve {
                 servletResponse.setHeader(ACCESS_CONTROL_MAX_AGE, "86400");
             }
 
-            if (servletResponse.containsHeader(VARY)) {
-                log.info("Header '{}' already set to value '{}', keeping that value", VARY, servletResponse.getHeader(VARY));
-            } else {
-                log.info("Setting header {} to 'Origin' to make sure caching proxies do not return cached results for " +
-                        "different origins", VARY);
-                servletResponse.setHeader(VARY, "Origin");
-            }
+            setVaryHeaderConditionally(servletResponse, HttpHeaders.ORIGIN);
             // request (pipeline) handling completed here!
         } else {
 
@@ -200,7 +196,28 @@ public class CorsSupportValve implements Valve {
                 servletResponse.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
             }
 
+            setVaryHeaderConditionally(servletResponse, HttpHeaders.ORIGIN);
+
+            if (context.getRequestContext().isChannelManagerPreviewRequest() ||
+                    context.getRequestContext().getResolvedMount().getMount().isPreview()) {
+                // regardless whether cache-control headers are set, we override them to now allow caching for
+                // preview responses of Channel Manager preview
+                servletResponse.setHeader(CACHE_CONTROL, "private, max-age=0, no-store");
+                servletResponse.setHeader(PRAGMA, "no-cache");
+            }
+
             context.invokeNext();
+        }
+    }
+
+    private void setVaryHeaderConditionally(final HttpServletResponse servletResponse,
+                               final String value) {
+        if (servletResponse.containsHeader(VARY)) {
+            log.info("Header '{}' already set to value '{}', keeping that value", VARY, servletResponse.getHeader(VARY));
+        } else {
+            log.info("Setting header {} to 'Origin' to make sure caching proxies do not return cached results for " +
+                    "different origins", VARY);
+            servletResponse.setHeader(VARY, value);
         }
     }
 
