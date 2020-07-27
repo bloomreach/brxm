@@ -348,8 +348,7 @@
         }
       },
       "notFoundLink":{
-        "href":"/site/_cmsinternal/spa/pagenotfound",
-        "type":"internal"
+        "type" : "unknown"
       },
       "menu":{
         "name":"main",
@@ -823,8 +822,7 @@
       },
       "_links":{
         "site":{
-          "href":"/site/_cmsinternal/spa/pagenotfound",
-          "type":"internal"
+          "type":"unknown"
         }
       },
       "name":"picture.jpeg",
@@ -872,8 +870,7 @@
       },
       "_links":{
         "site":{
-          "href":"/site/_cmsinternal/spa/pagenotfound",
-          "type":"internal"
+          "type":"unknown"
         }
       },
       "name":"testdata.pdf",

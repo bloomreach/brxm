@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+import javax.jcr.Node;
 import javax.jcr.Session;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,6 +34,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
 import org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider;
 import org.hippoecm.hst.platform.configuration.hosting.MountService;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
@@ -44,6 +46,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_LINK_URL_PREFIX;
 import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST;
 import static org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider.ApiVersion.V10;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOCBASE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -452,7 +455,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
      * The /news sitemap item does have a relative content path that points to a folder
      */
     @Test
-    public void no_request_content_bean_is_folder() throws Exception {
+    public void no_request_content_bean_if_folder() throws Exception {
 
         String actual = getActualJson("/spa/resourceapi/news", "1.0");
 
@@ -468,6 +471,43 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         // See org.hippoecm.hst.pagemodelapi.v10.core.container.AggregatedPageModel.getDocument() the
         // @JsonInclude(JsonInclude.Include.NON_NULL)
         assertNull(jsonNodeRoot.get("document"));
+    }
+
+    /**
+     * In v0.9, the default in the the HtmlContentRewriter is to remove anchor tags of broken links completely, see
+     * org.hippoecm.hst.pagemodelapi.v09.content.rewriter.HtmlContentRewriter#setRemoveAnchorTagOfBrokenLink(boolean)
+     *
+     * In v1.0, we have flipped the behavior to by default output <a data-type="unknow">foo</a> for broken links such that the
+     * SPA can handle it as desired
+     */
+    @Test
+    public void broken_link_in_content_for_homepage_document() throws Exception {
+
+        final Session session = createSession("admin", "admin");
+        final Node linkNode = session.getNode("/unittestcontent/documents/unittestproject/common/homepage/homepage/unittestproject:body/news1");
+        final String docbaseBefore = linkNode.getProperty(HIPPO_DOCBASE).getString();
+
+        try {
+
+
+            // break the internal link in the content of homepage to do expectation on how it gets serialized in json
+            // we expecte broken links to be <a data-type="unknown"/>
+
+            linkNode.setProperty(HIPPO_DOCBASE, "broken");
+            session.save();
+
+            String actual = getActualJson("/spa/resourceapi", "1.0");
+
+            InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_broken_content_link.json");
+
+            assertions(actual, expected);
+
+        } finally {
+            linkNode.setProperty(HIPPO_DOCBASE, docbaseBefore);
+            session.save();
+            session.logout();
+        }
+
     }
 
 
