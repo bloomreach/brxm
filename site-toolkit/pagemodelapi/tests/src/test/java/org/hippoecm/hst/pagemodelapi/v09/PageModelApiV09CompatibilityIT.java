@@ -23,6 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.apache.commons.io.IOUtils;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
 import org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider;
 import org.junit.After;
@@ -82,7 +83,8 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiITCases 
     @Test
     public void channel_manager_preview_homepage_api_compatibility_v09_assertion() throws Exception {
 
-        String actual = getActualJson("/_cmsinternal/spa/resourceapi", "0.9", null, EDITOR_CREDS);
+        String actual = getActualJson("/_cmsinternal/spa/resourceapi", "0.9",
+                ContainerConstants.RENDERING_HOST  +"=localhost", EDITOR_CREDS);
 
         InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("preview_channel_mgr_pma_spec_homepage.json");
 
