@@ -1,16 +1,16 @@
 {
-  "id":"r14",
+  "id":"r27",
   "_meta":{
     "version":"0.9",
     "branch":"master"
   },
   "_links":{
     "self":{
-      "href":"http://localhost/site/spa/resourceapi/news/News1",
+      "href":"http://localhost/site/spa/resourceapi",
       "type":"external"
     },
     "site":{
-      "href":"http://localhost/site/spa/news/News1",
+      "href":"http://localhost/site/spa",
       "type":"internal"
     }
   },
@@ -23,13 +23,13 @@
     }
   },
   "page":{
-    "id":"r14",
-    "name":"newsoverview",
+    "id":"r27",
+    "name":"homepage",
     "componentClass":"org.hippoecm.hst.pagemodelapi.common.components.GenericDetailComponent",
     "type":"COMPONENT",
     "models":{
       "currentLink":{
-        "href":"/site/spa/news/News1.html",
+        "href":"/site/spa",
         "type":"internal"
       },
       "menu-again":{
@@ -191,10 +191,10 @@
         "type":"external"
       },
       "document":{
-        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
       },
       "document-again":{
-        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
       },
       "menus":{
         "siteMenus":{
@@ -512,33 +512,13 @@
     },
     "components":[
       {
-        "id":"r14_r1",
-        "name":"body",
-        "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
-        "type":"COMPONENT",
-        "_meta":{
-          "params":{
-
-          }
-        },
-        "_links":{
-          "componentRendering":{
-            "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r1"
-          },
-          "self":{
-            "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r1",
-            "type":"external"
-          }
-        }
-      },
-      {
-        "id":"r14_r2",
+        "id":"r27_r1",
         "name":"header",
         "componentClass":"org.hippoecm.hst.test.HeaderComponent",
         "type":"COMPONENT",
         "components":[
           {
-            "id":"r14_r2_r1",
+            "id":"r27_r1_r1",
             "name":"title",
             "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
             "type":"COMPONENT",
@@ -549,22 +529,22 @@
             },
             "_links":{
               "componentRendering":{
-                "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r1"
+                "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r1"
               },
               "self":{
-                "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r1",
+                "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r1",
                 "type":"external"
               }
             }
           },
           {
-            "id":"r14_r2_r2",
+            "id":"r27_r1_r2",
             "name":"container",
             "componentClass":"org.hippoecm.hst.builtin.components.StandardContainerComponent",
             "type":"CONTAINER_COMPONENT",
             "components":[
               {
-                "id":"r14_r2_r2_r1",
+                "id":"r27_r1_r2_r1",
                 "name":"banner-old-style",
                 "componentClass":"org.hippoecm.hst.test.BannerComponent",
                 "type":"CONTAINER_ITEM_COMPONENT",
@@ -578,16 +558,16 @@
                 },
                 "_links":{
                   "componentRendering":{
-                    "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r1"
+                    "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r1"
                   },
                   "self":{
-                    "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r1",
+                    "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r1",
                     "type":"external"
                   }
                 }
               },
               {
-                "id":"r14_r2_r2_r2",
+                "id":"r27_r1_r2_r2",
                 "name":"banner-old-style-2",
                 "componentClass":"org.hippoecm.hst.test.BannerComponent",
                 "type":"CONTAINER_ITEM_COMPONENT",
@@ -601,16 +581,16 @@
                 },
                 "_links":{
                   "componentRendering":{
-                    "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r2"
+                    "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r2"
                   },
                   "self":{
-                    "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r2",
+                    "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r2",
                     "type":"external"
                   }
                 }
               },
               {
-                "id":"r14_r2_r2_r3",
+                "id":"r27_r1_r2_r3",
                 "name":"banner-new-style",
                 "componentClass":"org.hippoecm.hst.test.BannerComponent",
                 "type":"CONTAINER_ITEM_COMPONENT",
@@ -624,16 +604,16 @@
                 },
                 "_links":{
                   "componentRendering":{
-                    "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r3"
+                    "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r3"
                   },
                   "self":{
-                    "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r3",
+                    "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r3",
                     "type":"external"
                   }
                 }
               },
               {
-                "id":"r14_r2_r2_r4",
+                "id":"r27_r1_r2_r4",
                 "name":"banner-new-style-2",
                 "componentClass":"org.hippoecm.hst.test.BannerComponent",
                 "type":"CONTAINER_ITEM_COMPONENT",
@@ -647,10 +627,10 @@
                 },
                 "_links":{
                   "componentRendering":{
-                    "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r4"
+                    "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r4"
                   },
                   "self":{
-                    "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2_r4",
+                    "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r4",
                     "type":"external"
                   }
                 }
@@ -664,10 +644,10 @@
             },
             "_links":{
               "componentRendering":{
-                "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2"
+                "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2"
               },
               "self":{
-                "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r2",
+                "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2",
                 "type":"external"
               }
             }
@@ -683,16 +663,16 @@
         },
         "_links":{
           "componentRendering":{
-            "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2"
+            "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1"
           },
           "self":{
-            "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2",
+            "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1",
             "type":"external"
           }
         }
       },
       {
-        "id":"r14_r3",
+        "id":"r27_r2",
         "name":"leftmenu",
         "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
         "type":"COMPONENT",
@@ -703,17 +683,17 @@
         },
         "_links":{
           "componentRendering":{
-            "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r3"
+            "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r2"
           },
           "self":{
-            "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r3",
+            "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r2",
             "type":"external"
           }
         }
       }
     ],
     "_meta":{
-      "definitionId":"hst:pages/newsoverview",
+      "definitionId":"hst:pages/homepage",
       "paramsInfo":{
         "parameterOne":"valueTwo",
         "parameterTwo":"valueTwo",
@@ -725,39 +705,15 @@
     },
     "_links":{
       "componentRendering":{
-        "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14"
+        "href":"/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27"
       },
       "self":{
-        "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14",
+        "href":"http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27",
         "type":"external"
       }
     }
   },
   "content":{
-    "u303d40ebf98c4d6184c7a1ba14b5ceb3":{
-      "id":"303d40eb-f98c-4d61-84c7-a1ba14b5ceb3",
-      "_meta":{
-
-      },
-      "_links":{
-        "site":{
-          "href":"/site/spa/news/News1.html",
-          "type":"internal"
-        }
-      },
-      "name":"News1",
-      "displayName":"News1",
-      "summary":"Summary about news item 1",
-      "date":1239782707580,
-      "title":"News Item 1",
-      "body":{
-        "value":"My news item 1 content"
-      },
-      "textDocument":{
-        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
-      },
-      "localeString":null
-    },
     "u1ca07af9cdf54bdd9908f991245bb062":{
       "id":"1ca07af9-cdf5-4bdd-9908-f991245bb062",
       "_meta":{
@@ -775,7 +731,7 @@
       "date":1249891507580,
       "title":"This is the homepage",
       "body":{
-        "value":"This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
+        "value":"This is the content of the homepage with a link to News1 document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
       },
       "selfInstance":{
         "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
@@ -818,6 +774,122 @@
         "name":"foo",
         "text":"Foo Text"
       }
+    },
+    "u303d40ebf98c4d6184c7a1ba14b5ceb3":{
+      "id":"303d40eb-f98c-4d61-84c7-a1ba14b5ceb3",
+      "_meta":{
+
+      },
+      "_links":{
+        "site":{
+          "href":"/site/spa/news/News1.html",
+          "type":"internal"
+        }
+      },
+      "name":"News1",
+      "displayName":"News1",
+      "summary":"Summary about news item 1",
+      "date":1239782707580,
+      "title":"News Item 1",
+      "body":{
+        "value":"My news item 1 content"
+      },
+      "textDocument":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
+      "localeString":null
+    },
+    "ucbcbcbcb5fa848a8b03b4524373d992a":{
+      "id":"cbcbcbcb-5fa8-48a8-b03b-4524373d992a",
+      "_meta":{
+
+      },
+      "_links":{
+        "site":{
+          "href":"/site/spa/genericdetail/common",
+          "type":"internal"
+        }
+      },
+      "name":"common",
+      "displayName":"common",
+      "documentSize":1,
+      "localeString":"en_US"
+    },
+    "udb02dde500984488a72c2a4fc6d51beb":{
+      "id":"db02dde5-0098-4488-a72c-2a4fc6d51beb",
+      "_meta":{
+
+      },
+      "_links":{
+        "site":{
+          "type":"unknown"
+        }
+      },
+      "name":"picture.jpeg",
+      "displayName":"picture.jpeg",
+      "description":null,
+      "thumbnail":{
+        "name":"hippogallery:thumbnail",
+        "displayName":"hippogallery:thumbnail",
+        "width":-1,
+        "height":-1,
+        "lastModified":1236880917884,
+        "mimeType":"image/jpeg",
+        "filename":"picture_thumbnail.jpeg",
+        "size":1490,
+        "_links":{
+          "site":{
+            "href":"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg",
+            "type":"resource"
+          }
+        }
+      },
+      "original":{
+        "name":"hippogallery:original",
+        "displayName":"hippogallery:original",
+        "width":-1,
+        "height":-1,
+        "lastModified":1236880917884,
+        "mimeType":"image/jpeg",
+        "filename":"picture_original.jpeg",
+        "size":168981,
+        "_links":{
+          "site":{
+            "href":"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg",
+            "type":"resource"
+          }
+        }
+      },
+      "fileName":null,
+      "localeString":null
+    },
+    "u5e56d406b302445e9f80e624ba053bc4":{
+      "id":"5e56d406-b302-445e-9f80-e624ba053bc4",
+      "_meta":{
+
+      },
+      "_links":{
+        "site":{
+          "type":"unknown"
+        }
+      },
+      "name":"testdata.pdf",
+      "displayName":"Test Data PDF",
+      "asset":{
+        "name":"hippogallery:asset",
+        "displayName":"hippogallery:asset",
+        "lastModified":1581065746713,
+        "mimeType":"application/pdf",
+        "filename":null,
+        "size":17381,
+        "_links":{
+          "site":{
+            "href":"http://localhost/site/binaries/unittestcontent/assets/folder/testdata.pdf",
+            "type":"resource"
+          }
+        }
+      },
+      "localeString":null
     }
   }
 }
