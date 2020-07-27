@@ -58,6 +58,8 @@ import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static org.apache.commons.lang3.ArrayUtils.nullToEmpty;
@@ -1007,6 +1009,36 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return copy;
     }
 
+
+    /**
+     * Populates Legacy component parameters
+     * @param websiteClassLoader Classloader of website application components belong to
+     * @param paramsCache Parameters cache per component class
+     */
+    public void populateLegacyComponentParameters(final ClassLoader websiteClassLoader, @Nonnull Map<String, List<DynamicParameter>> paramsCache) {
+        if (isEmpty(this.getComponentClassName())) {
+            return;
+        }
+
+        if (paramsCache.containsKey(this.getComponentClassName())) {
+            hstDynamicComponentParameters = paramsCache.get(this.getComponentClassName());
+        } else {
+            final ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(this, websiteClassLoader);
+            List<DynamicParameter> dynamicParameters = new ArrayList<>();
+            if (parametersInfo != null) {
+                for (final Method method : parametersInfo.type().getMethods()) {
+                    if (method.isAnnotationPresent(Parameter.class)) {
+                        final Parameter parameter = method.getAnnotation(Parameter.class);
+                        dynamicParameters.add(new DynamicComponentParameter(parameter, method));
+                    }
+                }
+            }
+
+            paramsCache.put(this.getComponentClassName(), dynamicParameters);
+            hstDynamicComponentParameters = dynamicParameters;
+        }
+    }
+
     /**
      * Adds annotation based component parameter definitions
      * @param websiteClassLoader Classloader of website application components belong to
@@ -1052,11 +1084,33 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 });
     }
 
+
+    /**
+     * Populate Field Groups from Annotation model for legacy components
+     * @param websiteClassLoader Website classloader
+     * @param fieldGroupsCache Field Groups cache per component class
+     */
+    protected void populateLegacyFieldGroups(ClassLoader websiteClassLoader, @Nonnull Map<String, List<DynamicFieldGroup>> fieldGroupsCache) {
+        if (isEmpty(this.getComponentClassName())) {
+            return;
+        }
+
+        if (fieldGroupsCache.containsKey(this.getComponentClassName())) {
+            this.fieldGroups = fieldGroupsCache.get(this.getComponentClassName());
+        } else {
+            final ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(this, websiteClassLoader);
+            final Collection<DynamicFieldGroup> annotatedFieldGroups = populateAnnotatedFieldGroups(parametersInfo, new HashMap<>());
+            final ArrayList<DynamicFieldGroup> fieldGroups = new ArrayList<>(annotatedFieldGroups);
+            fieldGroupsCache.put(this.getComponentClassName(), fieldGroups);
+            this.fieldGroups = fieldGroups;
+        }
+    }
+
     /**
      * Populate Field Groups from JCR & Annotation models
      * @param websiteClassLoader Website classloader
      */
-    protected void populateFieldGroups(ClassLoader websiteClassLoader) {
+    public void populateFieldGroups(ClassLoader websiteClassLoader) {
         if (isEmpty(this.getComponentClassName())) {
             return;
         }
