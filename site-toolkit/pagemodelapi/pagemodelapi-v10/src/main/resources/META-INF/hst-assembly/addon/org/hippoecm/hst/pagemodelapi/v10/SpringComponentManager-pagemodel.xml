@@ -35,7 +35,7 @@
     <constructor-arg>
       <bean class="org.hippoecm.hst.content.rewriter.HtmlCleanerFactoryBean"/>
     </constructor-arg>
-    <property name="removeAnchorTagOfBrokenLink" value="${pagemodelapi.v10.removeAnchorTagOfBrokenLink:true}"/>
+    <property name="removeAnchorTagOfBrokenLink" value="${pagemodelapi.v10.removeAnchorTagOfBrokenLink:false}"/>
   </bean>
 
   <bean id="jsonPointerFactory"
