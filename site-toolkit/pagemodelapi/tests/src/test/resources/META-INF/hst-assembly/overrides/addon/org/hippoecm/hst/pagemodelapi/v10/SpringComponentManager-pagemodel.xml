@@ -22,9 +22,5 @@
   <bean id="jsonPointerFactory"
         class="org.hippoecm.hst.pagemodelapi.v10.DeterministicJsonPointerFactory"/>
 
-  <bean id="conditionalSupportedValve" class="org.hippoecm.hst.pagemodelapi.v10.core.container.ConditionalSupportedValve">
-    <property name="supported" value="true"/>
-  </bean>
-
 </beans>
 
