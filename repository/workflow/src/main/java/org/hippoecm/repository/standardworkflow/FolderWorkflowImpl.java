@@ -441,11 +441,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         && !result.hasProperty(HippoNodeType.HIPPO_AVAILABILITY)) {
                     result.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
                 }
-                append(result, jcrTemplateNode, true);
+                append(result, jcrTemplateNode);
                 rootSession.save();
                 return result.getPath();
             } else if (handleNode != null) {
-                append(result, jcrTemplateNode, true);
+                append(result, jcrTemplateNode);
                 rootSession.save();
                 return handleNode.getPath();
             } else {
@@ -479,17 +479,13 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
     }
 
-    private void append(Node current, final JcrTemplateNode jcrTemplateNode, final boolean documentVariantRoot) throws RepositoryException {
+    private void append(Node current, final JcrTemplateNode jcrTemplateNode) throws RepositoryException {
         if (jcrTemplateNode == null) {
             return;
         }
-        if (!documentVariantRoot) {
-            // since not root, first create a new current
-            current = current.addNode(jcrTemplateNode.getNodeName(), jcrTemplateNode.getPrimaryNodeType());
-        }
         addMixinsAndProperties(current, jcrTemplateNode);
         for (JcrTemplateNode child : jcrTemplateNode.getChildren()) {
-            append(current, child, false);
+            append(current.addNode(child.getNodeName(), child.getPrimaryNodeType()), child);
         }
     }
 
