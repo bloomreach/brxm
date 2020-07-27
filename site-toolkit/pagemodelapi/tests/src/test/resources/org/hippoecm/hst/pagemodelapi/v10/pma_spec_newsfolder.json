@@ -85,8 +85,7 @@
           }
         },
         "notFoundLink" : {
-          "href" : "/pagenotfound",
-          "type" : "internal"
+          "type" : "unknown"
         },
         "menu" : {
           "$ref" : "/page/uid4"
