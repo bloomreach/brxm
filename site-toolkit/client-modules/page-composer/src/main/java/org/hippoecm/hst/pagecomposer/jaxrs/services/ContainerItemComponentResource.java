@@ -42,7 +42,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresent
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +112,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
     @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     @Override
     public ContainerItemComponentRepresentation getVariant(final @PathParam("variant") String variant,
-                                                           final @PathParam("locale") String localeString) {
+                               final @PathParam("locale") String localeString) {
         try {
             return this.containerItemComponentService.getVariant(variant, localeString);
         } catch (Exception e) {
@@ -149,28 +148,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
             return clientError("Unable to set the parameters of component", e.getErrorStatus());
         } catch (RepositoryException e) {
             return error("Unable to set the parameters of component", ErrorStatus.unknown(e.getMessage()));
-        }
-    }
-
-    @POST
-    @Path("/{variantId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
-    @Override
-    public Response createVariant(final @PathParam("variantId") String variantId,
-                                  final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
-
-        try {
-            final Pair<Node, Boolean> result = this.containerItemComponentService.createVariant(variantId, versionStamp);
-            final Node containerItemNode = result.getLeft();
-            return respondContainerItem(new ContainerItemImpl(containerItemNode,
-                            getComponentDefinitionByComponentItem(getPageComposerContextService(), containerItemNode), 0L), result.getRight(),
-                    Response.Status.CREATED, format("Variant '%s' created successfully", variantId));
-        } catch (ClientException e) {
-            return clientError("Could not create variant '" + variantId + "'", e.getErrorStatus());
-        } catch (RepositoryException | ServerErrorException e) {
-            log.error("Could not create variant '{}'", variantId, e);
-            return error("Could not create variant '" + variantId + "'", ErrorStatus.unknown(e.getMessage()));
         }
     }
 
