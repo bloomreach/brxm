@@ -298,6 +298,20 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                                             final Map<String, HstNode> referableContainers,
                                             String rootConfigurationPathPrefix,
                                             final String explicitName) {
+        this(node, parent, rootNodeName, isCatalogItem, referableContainers, rootConfigurationPathPrefix, explicitName, false);
+    }
+
+    /**
+     * if loadInIsolation = true, it means that for example a container item is loaded out of its parent context
+     */
+    public HstComponentConfigurationService(final HstNode node,
+                                            final HstComponentConfiguration parent,
+                                            final String rootNodeName,
+                                            final boolean isCatalogItem,
+                                            final Map<String, HstNode> referableContainers,
+                                            String rootConfigurationPathPrefix,
+                                            final String explicitName,
+                                            final boolean loadInIsolation) {
 
 
         this.canonicalStoredLocation = StringPool.get(node.getValueProvider().getCanonicalPath());
@@ -361,7 +375,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 || HstNodeTypes.NODETYPE_HST_COMPONENTDEFINITION.equals(nodeTypeName)) {
             type = Type.CONTAINER_ITEM_COMPONENT;
             componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
-            if (!isCatalogItem && (parent == null || !(Type.CONTAINER_COMPONENT.equals(parent.getComponentType())))) {
+            if (!isCatalogItem && !loadInIsolation && (parent == null || !(Type.CONTAINER_COMPONENT.equals(parent.getComponentType())))) {
                 log.warn("Component of type '{}' at '{}' is not configured below a '{}' node. This is not allowed. " +
                                 "Either change the primary nodetype to '{}' or '{}' or move the node below a node of type '{}'.",
                         new String[]{NODETYPE_HST_CONTAINERITEMCOMPONENT, canonicalStoredLocation,
