@@ -248,12 +248,16 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
     }
 
+    @Ignore("Frontend code creates a variant differently, mimick that, the backend code this test relies on has been" +
+            "removed")
     @Test
     public void create_extra_variant_while_already_one_exists() throws Exception {
         final Set<String> set = Stream.of(new String[]{"", "variant1", "newvariant"}).collect(Collectors.toSet());
         createVariantExpectations("newvariant", set, false);
     }
 
+    @Ignore("Frontend code creates a variant differently, mimick that, the backend code this test relies on has been" +
+            "removed")
     @Test
     public void create_extra_variant_while_already_one_exists_for_VERSIONED_XPage() throws Exception {
         final Set<String> set = Stream.of(new String[]{"", "variant1", "newvariant"}).collect(Collectors.toSet());
@@ -301,6 +305,8 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         assertRequiresReload(response, frozenXPageTest);
     }
 
+    @Ignore("Frontend code creates a variant differently, mimick that, the backend code this test relies on has been" +
+            "removed")
     @Test
     public void create_extra_variant_while_none_exists() throws Exception {
         // first remove all of them which is done in 'retain_empty_variant_removes_all_except_default'
@@ -310,6 +316,8 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         createVariantExpectations("newvariant", set, false);
     }
 
+    @Ignore("Frontend code creates a variant differently, mimick that, the backend code this test relies on has been" +
+            "removed")
     @Test
     public void create_extra_variant_while_none_exists_for_VERSIONED_XPage() throws Exception {
         // first remove all of them which is done in 'retain_empty_variant_removes_all_except_default'
@@ -350,6 +358,8 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
     }
 
+    @Ignore("Frontend code creates a variant differently, mimick that, the backend code this test relies on has been" +
+            "removed")
     @Test
     public void delete_not_last_variant() throws Exception {
         // first create new variant

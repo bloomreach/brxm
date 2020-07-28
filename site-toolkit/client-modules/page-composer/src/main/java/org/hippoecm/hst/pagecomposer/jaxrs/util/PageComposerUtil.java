@@ -17,21 +17,11 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.util;
 
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.model.HstModel;
-import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
@@ -44,40 +34,6 @@ public class PageComposerUtil {
     private static Logger log = LoggerFactory.getLogger(PageComposerUtil.class);
 
     private PageComposerUtil() {}
-
-    /**
-     * Returns the {@link Map} of annotated parameter name as key and annotated default value as value. Parameters with
-     * empty default value are also represented in the returned map.
-     *
-     * @param componentItemNode the current container item componentItemNode
-     * @return the Map of all {@link Parameter} names and their default value
-     */
-    public static Map<String, String> getAnnotatedDefaultValues(final Node componentItemNode) throws RepositoryException, IllegalArgumentException {
-        final ParametersInfo parametersInfo = executeWithWebsiteClassLoader(node -> {
-            try {
-                return ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentItemNode);
-            } catch (RepositoryException e) {
-                throw new RuntimeException(e);
-            }
-        }, componentItemNode);
-
-        // Parameter is part of shared class loader so below doesn't need to be done with the 'website classloader'
-        if (parametersInfo != null) {
-            Class<?> classType = parametersInfo.type();
-            if (classType == null) {
-                return Collections.emptyMap();
-            }
-            Map<String, String> result = new HashMap<String, String>();
-            for (Method method : classType.getMethods()) {
-                if (method.isAnnotationPresent(Parameter.class)) {
-                    Parameter annotation = method.getAnnotation(Parameter.class);
-                    result.put(annotation.name(), annotation.defaultValue());
-                }
-            }
-            return result;
-        }
-        return Collections.emptyMap();
-    }
 
     /**
      * @param function the function to be executed with the website classloader
