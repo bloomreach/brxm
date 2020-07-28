@@ -41,12 +41,14 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+@Ignore
 public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
 
     private final Calendar globalCal = Calendar.getInstance();
