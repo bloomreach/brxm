@@ -1185,7 +1185,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         // author, no request, editing, modified (unpublished): requestPublication=false
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(false).previewAvailable(true).checkModified(true).editing().saveDraft()
+                .status(true).isLive(false).previewAvailable(true).checkModified(true).editing()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .terminateable(false).copy()
@@ -1202,7 +1202,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         // editor, no request, editing, modified (unpublished): requestPublication=false,publish=false
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(false).previewAvailable(true).checkModified(true).editing().saveDraft()
+                .status(true).isLive(false).previewAvailable(true).checkModified(true).editing()
                 .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
                 .listVersions().retrieveVersion().versionable().terminateable(false).copy()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
@@ -1393,7 +1393,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         // author, no request, editing, live: requestDepublication=false
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(true).editing().saveDraft()
+                .status(true).isLive(true).previewAvailable(true).checkModified(true).editing()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .terminateable(false).copy()
@@ -1411,7 +1411,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         // editor, no request, editing, live: requestDepublication=false,depublish=false
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(true).editing().saveDraft()
+                .status(true).isLive(true).previewAvailable(true).checkModified(true).editing()
                 .requestPublication(false).requestDepublication(false).depublish(false).publish(false)
                 .listVersions().retrieveVersion().copy().versionable().terminateable(false)
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
@@ -1598,7 +1598,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         // author, editing, live: requestDelete=false
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(false).editing().saveDraft()
+                .status(true).isLive(true).previewAvailable(true).checkModified(false).editing()
                 .requestPublication(false).requestDepublication(false)
                 .listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
@@ -1616,7 +1616,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         // editor, editing, live: requestDelete=false
         final Map<String, Serializable> hintsNoJcrWriteOnFolder = wf.hints();
         assertMatchingKeyValues(hintsNoJcrWriteOnFolder, HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(false).editing().saveDraft()
+                .status(true).isLive(true).previewAvailable(true).checkModified(false).editing()
                 .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
                 .listVersions().terminateable(false).copy()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
@@ -1642,7 +1642,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         // author + writable containing folder, editing, live: requestDelete=false
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(false).editing().saveDraft()
+                .status(true).isLive(true).previewAvailable(true).checkModified(false).editing()
                 .requestPublication(false).requestDepublication(false)
                 .listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
