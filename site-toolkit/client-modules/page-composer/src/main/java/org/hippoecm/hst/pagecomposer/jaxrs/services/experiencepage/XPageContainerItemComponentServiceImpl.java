@@ -20,7 +20,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -34,12 +33,12 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.experiencepage.ExperiencePageService;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.configuration.experiencepage.ExperiencePageService;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
@@ -127,43 +126,6 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             return new ImmutablePair<>(removedVariants, isCheckedOut);
         } catch (WorkflowException e) {
             throw new UnknownClientException(e.getMessage());
-        }
-    }
-
-
-    @Override
-    public Pair<Node, Boolean> createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException {
-        try {
-            // use workflow session to write to preview
-            final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
-            DocumentWorkflow documentWorkflow = getDocumentWorkflow(userSession, pageComposerContextService);
-
-            final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
-
-            final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
-
-            Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession);
-
-            final XPageComponentParameters componentParameters = new XPageComponentParameters(containerItem, containerItemHelper);
-            if (componentParameters.hasPrefix(variantId)) {
-                throw new ClientException("Cannot create variant '" + variantId + "' because it already exists", ClientError.ITEM_EXISTS);
-            }
-            doCreateVariant(containerItem, componentParameters, variantId);
-
-            // trigger the changes on unpublished node to be set
-            componentParameters.setNodeChanges();
-            updateVersionStamp(containerItem);
-
-            documentWorkflow.saveUnpublished();
-
-            log.info("Variant '{}' created successfully", variantId);
-            return new ImmutablePair<>(containerItem, isCheckedOut);
-        } catch (IllegalStateException | IllegalArgumentException | WorkflowException e) {
-            log.warn("Could not create variant '{}'", variantId, e);
-            throw new UnknownClientException("Could not create variant '" + variantId + "'");
-        } catch (RepositoryException e) {
-            log.error("Unable to create new variant '{}'", variantId, e);
-            throw e;
         }
     }
 
@@ -374,29 +336,6 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             return this.pageComposerContextService.getEditingMount().getContentPath();
         }
         return StringUtils.EMPTY;
-    }
-
-    /**
-     * Creates a new variant. The new variant will consists of all the explicitly configured 'default' parameters and
-     * values <b>MERGED</b> with all default annotated parameters (and their values) that are not explicitly configured
-     * as 'default' parameter.
-     *
-     * @param containerItem       the node of the current container item
-     * @param componentParameters the component parameters of the current container item
-     * @param variantId           the id of the variant to create
-     * @throws RepositoryException when something went wrong in the repository
-     */
-    private void doCreateVariant(final Node containerItem,
-                                 final XPageComponentParameters componentParameters,
-                                 final String variantId) throws RepositoryException, IllegalStateException {
-
-        Map<String, String> annotatedParameters = PageComposerUtil.getAnnotatedDefaultValues(containerItem);
-
-        for (String parameterName : annotatedParameters.keySet()) {
-            String value = componentParameters.hasDefaultParameter(parameterName) ? componentParameters.getDefaultValue(parameterName) : annotatedParameters.get(parameterName);
-            componentParameters.setValue(variantId, parameterName, value);
-        }
-
     }
 
     /**
