@@ -215,7 +215,7 @@
             <!-- if current user is holder, (s)he is allowed to obtain editable instance -->
             <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
             <hippo:action action="commitEditableInstance" enabledExpr="true"/>
-            <if cond="!!draft">
+            <if cond="!!draft and !unpublished and !published">
               <hippo:action action="saveDraft" enabledExpr="true"/>
             </if>
           <else/>
