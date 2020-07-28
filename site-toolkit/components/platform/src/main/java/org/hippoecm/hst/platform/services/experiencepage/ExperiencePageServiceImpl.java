@@ -231,7 +231,8 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
             final HstNodeImpl hstNode = getHstNode(componentItem);
 
             final HstComponentConfigurationService containerItem =
-                    new HstComponentConfigurationService(hstNode, null, ROOT_EXPERIENCE_PAGES_NAME, Collections.emptyMap(), hstNode.getValueProvider().getPath());
+                    new HstComponentConfigurationService(hstNode, null, ROOT_EXPERIENCE_PAGES_NAME, false,
+                            Collections.emptyMap(), hstNode.getValueProvider().getPath(), null, true);
 
 
             containerItem.setExperiencePageComponent(true);
