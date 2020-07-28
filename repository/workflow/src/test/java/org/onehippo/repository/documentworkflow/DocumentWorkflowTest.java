@@ -22,8 +22,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.jcr.PropertyType;
@@ -35,18 +33,20 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockValue;
 import org.onehippo.repository.scxml.MockAccessManagedSession;
 import org.onehippo.repository.scxml.MockWorkflowContext;
+import org.onehippo.repository.scxml.SCXMLWorkflowContext;
+import org.onehippo.repository.scxml.SCXMLWorkflowData;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.junit.Assert.assertEquals;
 
 public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
@@ -60,25 +60,11 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         destroyDocumentWorkflowSCXMLRegistry();
     }
 
-    @SuppressWarnings("unchecked")
-    protected static Map<?, ?> sortMap(Map<?, ?> map) {
-        if (!(map instanceof SortedMap)) {
-            SortedMap<Object, Object> sorted = new TreeMap<>(map);
-            for (Map.Entry<Object, Object> entry : sorted.entrySet()) {
-                if (entry.getValue() instanceof Map) {
-                    entry.setValue(sortMap((Map<Object, Object>) entry.getValue()));
-                }
-            }
-            return sorted;
-        }
-        return map;
-    }
-
     public DocumentWorkflowImpl getDocumentWorkflowImpl() throws RemoteException {
         return new DocumentWorkflowImpl();
     }
 
-    protected static Set<String> getSCXMLStatusStateIds(SCXMLWorkflowExecutor executor) {
+    protected static Set<String> getSCXMLStatusStateIds(SCXMLWorkflowExecutor<SCXMLWorkflowContext, SCXMLWorkflowData> executor) {
         Set<EnterableState> targets = executor.getSCXMLExecutor().getCurrentStatus().getStates();
 
         if (targets.isEmpty()) {
@@ -112,6 +98,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         addVariant(handleNode, HippoStdNodeType.DRAFT);
         wf.setNode(handleNode);
         wf.getWorkflowExecutor().start(null);
+        Assert.assertEquals("testuser", wf.getWorkflowContext().getUserIdentity());
     }
 
     @Test
@@ -119,7 +106,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        MockNode handleNode = (MockNode) session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
@@ -567,7 +554,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        MockNode handleNode = (MockNode) session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
@@ -696,7 +683,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        MockNode handleNode = (MockNode) session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
@@ -812,7 +799,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
     public void testRequestState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        MockNode handleNode = (MockNode) session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
@@ -1595,9 +1582,9 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
     @Test
     public void testTerminateState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
-        MockNode folderNode = (MockNode) session.getRootNode().addNode("folder", HippoNodeType.NT_DOCUMENT);
+        MockNode folderNode = session.getRootNode().addNode("folder", HippoNodeType.NT_DOCUMENT);
         session.setPermissions(folderNode.getPath(), "jcr:write", false);
-        MockNode handleNode = (MockNode) folderNode.addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = folderNode.addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
@@ -1646,10 +1633,10 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         session.setPermissions(folderNode.getPath(), "jcr:write", true);
 
         Assertions.assertThat(wf.hints())
-                .isEqualTo(hintsNoJcrWriteOnFolder)
                 .as("Having jcr:write permissions on a folder should not in any way impact what an " +
                         "editor/author are allowed to do on that folder: The role hippo:editor or hippo:author defines " +
-                        "that");
+                        "that")
+                .isEqualTo(hintsNoJcrWriteOnFolder);
 
         session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
 
@@ -1728,7 +1715,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
     @Test
     public void testCopyState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
-        MockNode handleNode = (MockNode) session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
