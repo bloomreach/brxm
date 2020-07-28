@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,7 +55,7 @@ import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hippoecm.frontend.filter.NavAppRedirectFilter.CUSTOM_WHITELISTED_PATH_PREFIXES_PARAMETER;
+import static org.hippoecm.frontend.filter.NavAppRedirectFilter.CUSTOM_ACCEPTED_PATH_PREFIXES_PARAMETER;
 import static org.junit.Assert.assertThat;
 
 @RunWith(EasyMockRunner.class)
@@ -121,7 +120,7 @@ public class NavAppRedirectFilterTest {
 
         expect(request.getMethod()).andReturn("GET");
         expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn(null);
-        expect(request.getRequestURI()).andReturn("/foo/" + NavAppRedirectFilter.WHITE_LISTED_PATH_PREFIXES.get(0));
+        expect(request.getRequestURI()).andReturn("/foo/" + NavAppRedirectFilter.ACCEPTED_PATH_PREFIXES.get(0));
         expect(request.getContextPath()).andReturn("/foo");
         replay(request);
 
@@ -315,7 +314,7 @@ public class NavAppRedirectFilterTest {
     public void urls_with_custom_whitelisted_path_dont_redirect() throws IOException, ServletException {
         MockFilterConfig filterConfig = new MockFilterConfig();
         final String custom2 = "custom2";
-        filterConfig.addInitParameter(CUSTOM_WHITELISTED_PATH_PREFIXES_PARAMETER,
+        filterConfig.addInitParameter(CUSTOM_ACCEPTED_PATH_PREFIXES_PARAMETER,
                 String.format("custom1, %s,    custom3", custom2));
         filter.init(filterConfig);
         expect(request.getMethod()).andReturn("GET");
