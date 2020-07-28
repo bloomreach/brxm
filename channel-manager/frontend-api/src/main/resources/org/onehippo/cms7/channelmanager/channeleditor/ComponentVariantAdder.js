@@ -48,17 +48,6 @@
       this.addEvents('beforeactive', 'save');
     },
 
-    saveVariant: function (variant) {
-      Ext.Ajax.request({
-        method: 'POST',
-        url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(variant),
-        success: function () {
-          this.fireEvent('save', variant);
-        },
-        scope: this
-      });
-    },
-
     copyVariant: function (existingVariantId, newVariant) {
       this.fireEvent('copy', existingVariantId, newVariant);
     },
