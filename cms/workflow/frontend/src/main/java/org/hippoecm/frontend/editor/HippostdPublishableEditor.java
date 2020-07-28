@@ -495,8 +495,9 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             if (newMode != super.getMode()) {
                 super.setMode(newMode);
             } else {
+                final IModel<Node> oldModel = editorModel;
                 final IModel<Node> newModel = getEditorModel();
-                if (!newModel.equals(editorModel)) {
+                if (!newModel.equals(oldModel)) {
                     stop();
                     start();
                 }
