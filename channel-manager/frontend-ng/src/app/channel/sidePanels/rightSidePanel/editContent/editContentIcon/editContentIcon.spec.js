@@ -22,10 +22,10 @@ describe('EditContentIconCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($controller) => {
+    inject(($componentController) => {
       ContentEditor = jasmine.createSpyObj('ContentEditor', ['getPublicationState']);
 
-      $ctrl = $controller('editContentIconCtrl', {
+      $ctrl = $componentController('editContentIcon', {
         ContentEditor,
       });
     });
