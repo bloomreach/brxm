@@ -22,7 +22,7 @@ import java.util.stream.IntStream;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.component.pagination.IterablePaginationUtils;
+import org.hippoecm.hst.component.pagination.HippoBeanPaginationUtils;
 import org.hippoecm.hst.component.pagination.Pagination;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.GenericHstComponent;
@@ -99,7 +99,7 @@ public class GenericDetailComponent extends GenericHstComponent {
                 final int itemCount = 105;
                 List<HippoBean> beans = new ArrayList<>(itemCount);
                 IntStream.rangeClosed(1, itemCount).forEach(r -> beans.add(requestContext.getContentBean()));
-                Pagination<HippoBean> pagination = IterablePaginationUtils.createPagination(beans, 6, 10);
+                Pagination<HippoBean> pagination = HippoBeanPaginationUtils.createPagination(beans, 6, 10);
                 request.setModel("pageable", pagination);
 
                 break;
