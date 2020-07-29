@@ -1,12 +1,12 @@
-/**
- * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+/*
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *         http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,7 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -24,13 +25,13 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EmbedWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
@@ -38,6 +39,8 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
@@ -90,35 +93,27 @@ public class CopyDocumentTask extends AbstractDocumentTask {
             folderWorkflowCategory = (String) config.get("folder-workflow-category");
         }
 
-        DocumentVariant unpublished = dm.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
-
         final Optional<Pair<String, String>> branchIdNamePairSource;
         final Document copy;
-        if (unpublished == null) {
-            DocumentVariant published = dm.getDocuments().get(HippoStdNodeType.PUBLISHED);
-            branchIdNamePairSource = getBranchIdNamePair(published);
+        String sourceVariantIdentifier = getSourceVariantIdentifier(dm.getDocuments());
+        DocumentVariant sourceVariant = dm.getDocuments().get(sourceVariantIdentifier);
+        branchIdNamePairSource = getBranchIdNamePair(sourceVariant);
 
-            Document folder = WorkflowUtils.getContainingFolder(published, getWorkflowContext().getInternalWorkflowSession());
-            Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
+        Document folder = WorkflowUtils.getContainingFolder(sourceVariant, getWorkflowContext().getInternalWorkflowSession());
+        Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
 
-            if (workflow instanceof EmbedWorkflow) {
-                copy = ((EmbedWorkflow) workflow).copyTo(folder, published, newName, null);
+        if (workflow instanceof EmbedWorkflow) {
+            log.debug("Copy node : { path : {}, state: {} } to {}",
+                    JcrUtils.getNodePathQuietly(sourceVariant.getNode())
+                    , sourceVariantIdentifier, destination.getIdentity());
+            copy = ((EmbedWorkflow) workflow).copyTo(folder, sourceVariant, newName, null);
+            if (PUBLISHED.equals(sourceVariantIdentifier)){
                 Node copyHandle = copy.getNode(getWorkflowContext().getInternalWorkflowSession()).getParent();
                 DocumentWorkflow copiedDocumentWorkflow = (DocumentWorkflow) getWorkflowContext().getWorkflow("default", new Document(copyHandle));
                 copiedDocumentWorkflow.depublish();
-            } else {
-                throw new WorkflowException("cannot copy document which is not contained in a folder");
             }
         } else {
-            branchIdNamePairSource = getBranchIdNamePair(unpublished);
-            Document folder = WorkflowUtils.getContainingFolder(unpublished, getWorkflowContext().getInternalWorkflowSession());
-            Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
-
-            if (workflow instanceof EmbedWorkflow) {
-                copy = ((EmbedWorkflow) workflow).copyTo(folder, unpublished, newName, null);
-            } else {
-                throw new WorkflowException("cannot copy document which is not contained in a folder");
-            }
+            throw new WorkflowException("cannot copy document which is not contained in a folder");
         }
 
         if (branchIdNamePairSource.isPresent()) {
@@ -135,6 +130,13 @@ public class CopyDocumentTask extends AbstractDocumentTask {
         }
 
         return null;
+    }
+
+    private String getSourceVariantIdentifier(Map<String, DocumentVariant> documents) {
+        if (documents.containsKey(UNPUBLISHED)) {
+            return UNPUBLISHED;
+        }
+        return PUBLISHED;
     }
 
     private Optional<Pair<String, String>> getBranchIdNamePair(final DocumentVariant variant) throws RepositoryException {
