@@ -39,6 +39,7 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
@@ -53,7 +54,7 @@ public class CopyDocumentTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(CopyDocumentTask.class);
+    private static final Logger log = LoggerFactory.getLogger(CopyDocumentTask.class);
 
     private Document destination;
     private String newName;
@@ -136,7 +137,10 @@ public class CopyDocumentTask extends AbstractDocumentTask {
         if (documents.containsKey(UNPUBLISHED)) {
             return UNPUBLISHED;
         }
-        return PUBLISHED;
+        if (documents.containsKey(PUBLISHED)){
+            return PUBLISHED;
+        }
+        return DRAFT;
     }
 
     private Optional<Pair<String, String>> getBranchIdNamePair(final DocumentVariant variant) throws RepositoryException {
