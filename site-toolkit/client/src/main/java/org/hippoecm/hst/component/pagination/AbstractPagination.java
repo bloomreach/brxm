@@ -19,9 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import org.hippoecm.hst.content.PageModelEntity;
-
-public abstract class AbstractPagination<T> implements PageModelEntity, Pagination<T> {
+/**
+ * Abstract pagination implementation provides the core capabilites of a Pagination object.   
+ *
+ * @param <T>
+ */
+public abstract class AbstractPagination<T> implements Pagination<T> {
 
     private static final int DEFAULT_SIZE = 10;
     private static final int DEFAULT_NUMBER = 1;
