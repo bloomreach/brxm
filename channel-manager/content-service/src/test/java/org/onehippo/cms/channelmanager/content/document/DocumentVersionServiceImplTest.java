@@ -18,29 +18,19 @@ package org.onehippo.cms.channelmanager.content.document;
 
 import java.rmi.RemoteException;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.version.VersionHistory;
-import javax.jcr.version.VersionIterator;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.easymock.EasyMockRunner;
-import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.UserContext;
-import org.onehippo.cms.channelmanager.content.document.model.DocumentVersionInfo;
 import org.onehippo.cms.channelmanager.content.document.model.Version;
-import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockSession;
 import org.onehippo.repository.mock.MockVersion;
@@ -113,9 +103,11 @@ public class DocumentVersionServiceImplTest {
     }
 
     @Test
-    public void master_with_version_in_history() throws RepositoryException {
+    public void master_with_version_in_history() throws Exception {
 
 
+        // make sure version node has a different creation time
+        Thread.sleep(1);
         versionManager.checkin(mockNode.getPath());
         versionManager.checkout(mockNode.getPath());
 
@@ -141,8 +133,11 @@ public class DocumentVersionServiceImplTest {
     }
 
     @Test
-    public void fetch_MASTER_versions_via_frozen_nodeid() throws RepositoryException {
+    public void fetch_MASTER_versions_via_frozen_nodeid() throws Exception {
 
+
+        // make sure version node has a different creation time
+        Thread.sleep(1);
         final MockVersion versioned = versionManager.checkin(mockNode.getPath());
         versionManager.checkout(mockNode.getPath());
 
@@ -166,10 +161,12 @@ public class DocumentVersionServiceImplTest {
     }
 
     @Test
-    public void branch_with_version_in_history_and_workspace() throws RepositoryException {
+    public void branch_with_version_in_history_and_workspace() throws Exception {
 
         mockNode.setProperty(HIPPO_PROPERTY_BRANCH_ID, "mybranch");
 
+        // make sure version node has a different creation time
+        Thread.sleep(1);
         versionManager.checkin(mockNode.getPath());
         versionManager.checkout(mockNode.getPath());
 
