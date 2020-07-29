@@ -120,6 +120,9 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
                 .asBoolean();
         assertEquals("Field 'booleanParam' does not contain expected value", true, booleanParam);
 
+        final JsonNode paramsNode = root.path("page").path("uid2").path("meta").get("params");
+        assertEquals("Params is supposed to have only one item", 1, paramsNode.size());
+        assertTrue("Params child is supposed to be 'truly-residual'", paramsNode.has("truly-residual"));
         final Date dateParam = new Date(
                 root.path("page").path("uid2").path("meta").path("paramsInfo").path("dateParam").asLong());
 
