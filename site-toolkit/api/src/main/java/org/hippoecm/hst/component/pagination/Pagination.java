@@ -17,10 +17,12 @@ package org.hippoecm.hst.component.pagination;
 
 import java.util.List;
 
+import org.hippoecm.hst.content.PageModelEntity;
+
 /**
  * Base class for Pagination implementations. 
  */
-public interface Pagination<T> {
+public interface Pagination<T> extends PageModelEntity {
 
     /**
      * Gets the items listed on the page

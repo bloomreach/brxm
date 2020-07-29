@@ -27,7 +27,7 @@ import com.google.common.collect.Iterables;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hippoecm.hst.component.pagination.IterablePaginationUtils;
+import org.hippoecm.hst.component.pagination.HippoBeanPaginationUtils;
 import org.hippoecm.hst.component.pagination.Pagination;
 import org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -132,7 +132,7 @@ public class DocumentQueryDynamicComponent extends BaseHstDynamicComponent {
 
         try {
             final HstQueryResult result = query.execute();
-            return IterablePaginationUtils.createPagination(
+            return HippoBeanPaginationUtils.createPagination(
                     result.getHippoBeans(),
                     result.getTotalSize(),
                     pageSize,
