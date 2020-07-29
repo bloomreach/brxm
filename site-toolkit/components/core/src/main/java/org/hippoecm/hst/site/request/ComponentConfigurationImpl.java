@@ -134,6 +134,10 @@ public class ComponentConfigurationImpl implements ComponentConfiguration {
         return componentConfiguration.getParametersInfoClassName();
     }
 
+    public HstComponentConfiguration getComponentConfiguration() {
+        return componentConfiguration;
+    }
+
     @Override
     public List<DynamicParameter> getDynamicComponentParameters() {
         return componentConfiguration.getDynamicComponentParameters();
