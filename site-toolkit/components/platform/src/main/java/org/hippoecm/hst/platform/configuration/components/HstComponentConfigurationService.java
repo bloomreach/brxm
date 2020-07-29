@@ -65,6 +65,8 @@ import static java.util.Arrays.stream;
 import static org.apache.commons.lang3.ArrayUtils.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.jackrabbit.JcrConstants.JCR_FROZENPRIMARYTYPE;
+import static org.apache.jackrabbit.JcrConstants.NT_FROZENNODE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_FIELD_GROUPS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE;
@@ -342,7 +344,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         this.componentClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
 
-        final String nodeTypeName = node.getNodeTypeName();
+        String nodeTypeName = node.getNodeTypeName();
+        if (NT_FROZENNODE.equals(nodeTypeName)) {
+            // loading an experience page component from version history, take the frozen nodetype
+            nodeTypeName = node.getValueProvider().getString(JCR_FROZENPRIMARYTYPE);
+        }
 
         xpage = NODETYPE_HST_XPAGE.equals(nodeTypeName);
 
