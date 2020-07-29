@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-import editContentIconTemplate from './editContentIcon.html';
-import editContentMainTemplate from './editContentMain.html';
-import editContentToolsTemplate from './editContentTools.html';
-
 function config($stateProvider) {
   'ngInject';
 
@@ -46,19 +42,13 @@ function config($stateProvider) {
     },
     views: {
       main: {
-        controller: 'editContentMainCtrl',
-        controllerAs: '$ctrl',
-        template: editContentMainTemplate,
+        component: 'editContentMain',
       },
       tools: {
-        controller: 'editContentToolsCtrl',
-        controllerAs: '$ctrl',
-        template: editContentToolsTemplate,
+        component: 'editContentTools',
       },
       icon: {
-        controller: 'editContentIconCtrl',
-        controllerAs: '$ctrl',
-        template: editContentIconTemplate,
+        component: 'editContentIcon',
       },
     },
   });

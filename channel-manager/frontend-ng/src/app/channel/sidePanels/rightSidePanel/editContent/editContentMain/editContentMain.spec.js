@@ -31,7 +31,7 @@ describe('EditContentMainCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($controller, _$q_, $rootScope, _$translate_, _DialogService_) => {
+    inject(($componentController, _$q_, $rootScope, _$translate_, _DialogService_) => {
       $q = _$q_;
       $translate = _$translate_;
 
@@ -67,7 +67,7 @@ describe('EditContentMainCtrl', () => {
 
       $scope = $rootScope.$new();
       form = jasmine.createSpyObj('form', ['$setPristine']);
-      $ctrl = $controller('editContentMainCtrl as $ctrl', {
+      $ctrl = $componentController('editContentMain', {
         $scope,
         CmsService,
         ContentEditor,
