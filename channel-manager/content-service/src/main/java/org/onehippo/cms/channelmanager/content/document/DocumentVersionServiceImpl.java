@@ -51,37 +51,43 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
         this.workflowGetter = workflowGetter;
     }
 
+    // TODO support the 'uuid' to be a version history document frozenNode!
     @Override
     public DocumentVersionInfo getVersionInfo(
             String uuid,
             String branchId,
             UserContext userContext
     ) {
+        // TODO replace 'uuid' with the handle UUID
         final DocumentWorkflow documentWorkflow = workflowGetter.apply(userContext, uuid);
         try {
+            // TODO perhaps better to retrieve the versions 'just' directly from jcr version history
+            // TODO if below gets too slow since per version a separate workflow call is done and for XPage documents
+            // TODO it is expected there can be *many* versions
             final SortedMap<Calendar, Set<String>> versions = documentWorkflow.listVersions();
             final List<Version> versionInfos = new ArrayList<>();
             for (Calendar historic : versions.keySet()) {
                 final Node frozenNode = documentWorkflow.retrieveVersion(historic).getNode(userContext.getSession());
                 final String frozenBranchId = JcrUtils.getStringProperty(frozenNode, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
                 if (frozenBranchId.equals(branchId)) {
-                    versionInfos.add(create(historic, frozenNode));
+                    versionInfos.add(create(historic, frozenNode, branchId));
                 }
             }
-            final String currentVersion = versionInfos.stream()
-                    .map(Version::getVersionId)
+            final String currentVersionUUID = versionInfos.stream()
+                    .map(Version::getJcrUUID)
                     .filter(Predicate.isEqual(uuid))
                     .findFirst()
                     .orElse(null);
-            return new DocumentVersionInfo(versionInfos, currentVersion);
+            // TODO if the current workspace is for the current branch, include it otherwise it is missing
+            return new DocumentVersionInfo(versionInfos, currentVersionUUID);
         } catch (WorkflowException | RemoteException | RepositoryException e) {
             throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
         }
     }
 
-    private Version create(Calendar historic, Node frozenNode) throws RepositoryException {
+    private Version create(Calendar historic, Node frozenNode, String branchId) throws RepositoryException {
         final String userName = JcrUtils.getStringProperty(frozenNode, HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY, null);
-        return new Version(historic, userName, frozenNode.getIdentifier());
+        return new Version(historic, userName, frozenNode.getIdentifier(), branchId);
     }
 
 }
