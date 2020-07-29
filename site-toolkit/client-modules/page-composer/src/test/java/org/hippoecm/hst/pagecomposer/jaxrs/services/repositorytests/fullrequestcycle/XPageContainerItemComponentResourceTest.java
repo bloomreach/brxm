@@ -104,7 +104,6 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
     }
 
-    @Ignore("TODO FIX ME!!!!!")
     @Test
     public void get_container_item_of_branched_xpage_for_VERSIONED_XPage() throws Exception {
 
@@ -116,6 +115,20 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // author is also allowed to do a GET on XPageContainerItemComponentResource.getVariant()
         getComponentItemAs(AUTHOR_CREDENTIALS, mountId, frozenBannerComponent.getIdentifier());
     }
+
+
+    @Test
+    public void get_container_item_new_style_of_branched_xpage_for_VERSIONED_XPage() throws Exception {
+
+        final Node frozenBannerNewStyleComponent = getFrozenBannerNewStyleComponent();
+
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        getComponentItemAs(ADMIN_CREDENTIALS, mountId, frozenBannerNewStyleComponent.getIdentifier());
+        getComponentItemAs(EDITOR_CREDENTIALS, mountId, frozenBannerNewStyleComponent.getIdentifier());
+        // author is also allowed to do a GET on XPageContainerItemComponentResource.getVariant()
+        getComponentItemAs(AUTHOR_CREDENTIALS, mountId, frozenBannerNewStyleComponent.getIdentifier());
+    }
+
 
     @Test
     public void get_container_item_published_variant_not_allowed() throws Exception {
