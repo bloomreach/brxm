@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,7 +136,7 @@ public class DocumentWorkflowCopyTest extends AbstractDocumentWorkflowIntegratio
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(oldDocUnpublished.getPath());
 
         final Version version = versionHistory.getVersionByLabel("foo-" + UNPUBLISHED);
-        assertThat(version.getFrozenNode().hasProperty("title"));
+        assertThat(version.getFrozenNode().hasProperty("title")).isTrue();
         assertThat(version.getFrozenNode().getProperty("title").getString()).isEqualTo("foo title");
     }
 
@@ -178,9 +178,9 @@ public class DocumentWorkflowCopyTest extends AbstractDocumentWorkflowIntegratio
                 .containsExactly("foo");
 
         final VersionHistory newDocVersionHistory = session.getWorkspace().getVersionManager().getVersionHistory(newDocUnpublished.getPath());
-        assertThat(newDocVersionHistory.getVersionLabels().length)
+        assertThat(newDocVersionHistory.getVersionLabels())
                 .as("There should not be any version history for the new document")
-                .isEqualTo(0);
+                .isEmpty();
 
         assertThat(newDocVersionHistory.getAllVersions().getSize())
                 .as("Only root version expected")
@@ -198,7 +198,7 @@ public class DocumentWorkflowCopyTest extends AbstractDocumentWorkflowIntegratio
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(oldDocUnpublished.getPath());
 
         final Version version = versionHistory.getVersionByLabel("foo-" + UNPUBLISHED);
-        assertThat(version.getFrozenNode().hasProperty("title"));
+        assertThat(version.getFrozenNode().hasProperty("title")).isTrue();
         assertThat(version.getFrozenNode().getProperty("title").getString()).isEqualTo("foo title");
 
     }
