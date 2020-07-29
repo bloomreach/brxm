@@ -20,6 +20,7 @@ import javax.jcr.Node;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
@@ -202,4 +203,28 @@ public class DocumentWorkflowCopyTest extends AbstractDocumentWorkflowIntegratio
         assertThat(version.getFrozenNode().getProperty("title").getString()).isEqualTo("foo title");
 
     }
+
+    @Test
+    public void copy_document_only_transferable_draft_variant() throws Exception{
+        document.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, true);
+        document.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.DRAFT);
+        session.save();
+
+        final Node folder = handle.getParent();
+        getDocumentWorkflow(handle).copy(new Document(folder), "newDoc");
+        assertThat(folder.hasNode("newDoc")).isTrue();
+        assertThat(folder.getNode("newDoc").getNode("newDoc").getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString())
+                .as("Expected document to be a draft")
+                .isEqualTo(HippoStdNodeType.DRAFT);
+    }
+
+    @Test( expected=WorkflowException.class)
+    public void copy_document_only_not_transferable_draft_variant() throws Exception{
+        document.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.DRAFT);
+        session.save();
+
+        final Node folder = handle.getParent();
+        getDocumentWorkflow(handle).copy(new Document(folder), "newDoc");
+    }
+
 }
