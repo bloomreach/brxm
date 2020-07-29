@@ -123,7 +123,7 @@ public class DocumentVersionServiceImplTest {
         final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockFrozenNode.getIdentifier(), branchId, userContext);
         final List<Version> versions = versionInfo.getVersions();
 
-        assertThat(versionInfo.getCurrentVersion(), is(mockFrozenNode.getIdentifier()));
+        assertThat(versionInfo.getCurrentVersionUUID(), is(mockFrozenNode.getIdentifier()));
         assertThat(versions.size(), is(1));
         assertThat(versions.get(0).getTimestamp(), is(timestamp));
         assertThat(versions.get(0).getUserName(), is(userName));

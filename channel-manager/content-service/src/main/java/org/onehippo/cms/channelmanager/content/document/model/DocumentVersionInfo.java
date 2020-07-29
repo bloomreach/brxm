@@ -25,22 +25,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class DocumentVersionInfo {
 
     private final List<Version> versions;
-    private final String currentVersion;
+    private final String currentVersionUUID;
 
     @JsonCreator
     public DocumentVersionInfo(
             @JsonProperty("versions") List<Version> versions,
-            @JsonProperty("currentVersion") String currentVersion) {
+            @JsonProperty("currentVersionUUID") String currentVersionUUID) {
         Objects.requireNonNull(versions);
         this.versions = versions;
-        this.currentVersion = currentVersion;
+        this.currentVersionUUID = currentVersionUUID;
     }
 
     public List<Version> getVersions() {
         return versions;
     }
 
-    public String getCurrentVersion() {
-        return currentVersion;
+    public String getCurrentVersionUUID() {
+        return currentVersionUUID;
     }
 }
