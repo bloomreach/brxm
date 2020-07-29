@@ -40,6 +40,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.sitemenu.CommonMenu;
 import org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel;
 import org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel.LinkType;
+import org.hippoecm.hst.pagemodelapi.v10.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -206,7 +207,7 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
 
             if (!serializerContext.handledPmaEntities.contains(object)) {
                 serializerContext.handledPmaEntities.add(object);
-                final JsonPointerWrapper jsonPointerWrapper = getJsonPointerWrapper(object, nextDepth, jsonPointerId);
+                final JsonPointerWrapper jsonPointerWrapper = getJsonPointerWrapper(object, nextDepth, jsonPointerId, serializerContext);
                 serializerContext.serializeQueue.add(jsonPointerWrapper);
             }
         }
@@ -244,7 +245,8 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
         return nextDepth;
     }
 
-    private PageModelSerializer.JsonPointerWrapper getJsonPointerWrapper(final Object object, final int nextDepth, final String jsonPointerId) {
+    private PageModelSerializer.JsonPointerWrapper getJsonPointerWrapper(final Object object, final int nextDepth,
+            final String jsonPointerId, final SerializerContext serializerContext) {
         if (object instanceof CommonMenu) {
             final DecoratedPageModelEntityWrapper<CommonMenu> decoratedPageModelEntityWrapper = wrapCommonMenu(nextDepth, (CommonMenu) object);
             return new JsonPointerWrapper(decoratedPageModelEntityWrapper, jsonPointerId);
@@ -254,7 +256,7 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
             return new JsonPointerWrapper(decoratedPageModelEntityWrapper, jsonPointerId);
         }
         if (object instanceof Pagination) {
-            final DecoratedPaginationEntityWrapper paginationEntityWrapper = wrapPagination((Pagination<HippoBean>) object);
+            final DecoratedPaginationEntityWrapper paginationEntityWrapper = new DecoratedPaginationEntityWrapper((Pagination<HippoBean>) object, serializerContext);
             return new JsonPointerWrapper(paginationEntityWrapper, jsonPointerId);
         }
         // no extra wrapping needed other than json pointer inclusion
@@ -293,23 +295,19 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
         return wrapper;
     }
 
-    private PageModelSerializer.DecoratedPaginationEntityWrapper wrapPagination(final Pagination<HippoBean> pagination) {
-        return new DecoratedPaginationEntityWrapper(pagination);
-    }
-
     @JsonPropertyOrder({ "offset", "items", "total", "first", "previous", "current", "next", "last", "pages", "size", "enabled"})
     private static class DecoratedPaginationEntityWrapper {
 
         private final Pagination<HippoBean> pagination;
-        private final String referenceId;
+        private final String componentNamespace;
         private final String siteLink;
         private final String selfLink;
 
-        public DecoratedPaginationEntityWrapper(final Pagination<HippoBean> pagination) {
+        public DecoratedPaginationEntityWrapper(final Pagination<HippoBean> pagination, final SerializerContext serializerContext) {
             this.pagination = pagination;
+            this.componentNamespace = ((ComponentWindowModel) serializerContext.serializingPageModelEntity).getId();
 
             final AggregatedPageModel aggregatedPageModel = PageModelAggregationValve.getCurrentAggregatedPageModel();
-            this.referenceId = aggregatedPageModel.getPage().getId();
             this.siteLink = aggregatedPageModel.getLink(LINK_NAME_SITE).getHref();
             this.selfLink = aggregatedPageModel.getLink(LINK_NAME_SELF).getHref();
         }
@@ -335,9 +333,9 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
          */
         private String addOrReplaceQueryParams(final String uri, final int pageNumber) {
             final UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(uri);
-            uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_PAGE_PARAM, referenceId), pageNumber);
-            uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_SIZE_PARAM, referenceId), pagination.getSize());
-            uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_LIMIT_PARAM, referenceId), pagination.getLimit());
+            uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_PAGE_PARAM, componentNamespace), pageNumber);
+            uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_SIZE_PARAM, componentNamespace), pagination.getSize());
+            uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_LIMIT_PARAM, componentNamespace), pagination.getLimit());
             return uriBuilder.build().toUriString();
         }
 
