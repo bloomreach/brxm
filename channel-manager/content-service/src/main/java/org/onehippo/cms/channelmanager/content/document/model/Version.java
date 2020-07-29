@@ -27,17 +27,20 @@ public class Version {
     @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "UTC", pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private final Calendar timestamp;
     private final String userName;
-    private final String versionId;
+    private final String jcrUUID;
+    private final String branchId;
 
     @JsonCreator
     public Version(
             @JsonProperty("timestamp") Calendar timestamp,
             @JsonProperty("userName") String userName,
-            @JsonProperty("versionId") String versionId
+            @JsonProperty("jcrUUID") String jcrUUID,
+            @JsonProperty("branchId") String branchId
     ) {
         this.timestamp = timestamp;
         this.userName = userName;
-        this.versionId = versionId;
+        this.jcrUUID = jcrUUID;
+        this.branchId = branchId;
     }
 
     public Calendar getTimestamp() {
@@ -48,11 +51,11 @@ public class Version {
         return userName;
     }
 
-    public String getComment() {
-        return "";
+    public String getJcrUUID() {
+        return jcrUUID;
     }
 
-    public String getVersionId() {
-        return versionId;
+    public String getBranchId() {
+        return branchId;
     }
 }
