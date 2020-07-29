@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2020 Bloomreach
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,21 +17,19 @@ package org.hippoecm.hst.pagemodelapi.v10.core.container;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.HstContainerRequest;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -58,11 +56,17 @@ import org.hippoecm.hst.pagemodelapi.v10.core.model.ChannelInfoModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.ChannelModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel;
+import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 import org.hippoecm.hst.util.ParametersInfoUtils;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SELF;
@@ -118,6 +122,7 @@ public class PageModelAggregationValve extends AggregationValve {
      * Custom metadata decorators.
      */
     private final List<MetadataDecorator> metadataDecorators = new ArrayList<>();
+    private final static String HIDE_PARAMETER_NAME = "com.onehippo.cms7.targeting.TargetingParameterUtil.hide";
 
     private int defaultMaxContentReferenceLevel;
 
@@ -386,8 +391,39 @@ public class PageModelAggregationValve extends AggregationValve {
             }
         }
 
+        model.putMetadata(PARAMETERS_METADATA, getResidualParameters(compConfig));
+    }
+
+    private Map<String, String> getResidualParameters(final ComponentConfiguration compConfig) {
+
         final ResolvedSiteMapItem resolvedSiteMapItem = RequestContextProvider.get().getResolvedSiteMapItem();
-        model.putMetadata(PARAMETERS_METADATA, compConfig.getParameters(resolvedSiteMapItem));
+
+        Map<String, String> parameters = compConfig.getParameters(resolvedSiteMapItem);
+
+        String[] variants = getVariants(compConfig);
+        List<String> paramsInfoNames = getParamsInfoNames(compConfig);
+
+        return parameters.entrySet().stream()
+            .filter(entry -> !StringUtils.startsWithAny(entry.getKey(), variants))
+            .filter(entry -> !paramsInfoNames.contains(entry.getKey()))
+            .filter(entry -> !HIDE_PARAMETER_NAME.equals(entry.getKey()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private List<String> getParamsInfoNames(final ComponentConfiguration compConfig) {
+        if (compConfig instanceof ComponentConfigurationImpl) {
+            return ((ComponentConfigurationImpl) compConfig).getComponentConfiguration().getDynamicComponentParameters()
+                .stream().map(DynamicParameter::getName).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
+
+    private String[] getVariants(final ComponentConfiguration compConfig) {
+        if (compConfig instanceof ComponentConfigurationImpl) {
+            return ((ComponentConfigurationImpl) compConfig).getComponentConfiguration().getVariants()
+                .toArray(new String[0]);
+        }
+        return new String[0];
     }
 
     private void addPreviewFlagToPageModel(final AggregatedPageModel aggregatedPageModel, final HstRequestContext requestContext) {
