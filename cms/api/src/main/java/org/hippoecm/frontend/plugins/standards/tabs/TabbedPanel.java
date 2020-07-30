@@ -26,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -50,6 +49,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.visit.IVisitor;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.ajax.NoDoubleClickBehavior;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.attributes.StyleAttribute;
 import org.hippoecm.frontend.attributes.TitleAttribute;
@@ -86,7 +86,7 @@ public class TabbedPanel extends WebMarkupContainer {
                     }
                 });
             } else {
-                add(new AjaxEventBehavior("click") {
+                add(new NoDoubleClickBehavior() {
                     @Override
                     protected void onEvent(final AjaxRequestTarget target) {
                         collapseMenu(target);
@@ -337,7 +337,7 @@ public class TabbedPanel extends WebMarkupContainer {
     }
 
     protected Behavior newBehavior(final int tabIndex) {
-        return new AjaxEventBehavior("click") {
+        return new NoDoubleClickBehavior() {
             @Override
             protected void onEvent(final AjaxRequestTarget target) {
                 plugin.onSelect(tabs.get(tabIndex), target);
