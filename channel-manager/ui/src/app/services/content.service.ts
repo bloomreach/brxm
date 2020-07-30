@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
-import { CONTENT_SERVICE } from './services/ng1/content.ng1service';
-import { SharedModule } from './shared/shared.module';
-import { VersionsModule } from './versions/versions.module';
+import { VersionHistory } from '../versions/models/version-history.model';
 
-@NgModule({
-  imports: [
-    SharedModule,
-    VersionsModule,
-  ],
-  providers: [
-    { provide: CONTENT_SERVICE, useValue: window.angular?.element(document.body).injector()?.get('ContentService') },
-  ],
+import { CONTENT_SERVICE, Ng1ContentService } from './ng1/content.ng1service';
+
+@Injectable({
+  providedIn: 'root',
 })
-export class AppModule {
-  ngDoBootstrap(): void {}
+export class ContentService {
+  constructor(
+    @Inject(CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
+  ) { }
+
+  getDocumentVersions(id: string, branchId: string): Promise<VersionHistory> {
+    return this.ng1ContentService.getDocumentVersions(id, branchId);
+  }
 }
