@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+
+import { ContentService } from '../../../services/content.service';
 
 @Component({
   selector: 'em-versions-tab',
@@ -22,10 +24,19 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./versions-tab.component.scss'],
 })
 export class VersionsTabComponent implements OnInit {
+  @Input() documentId!: string;
+  @Input() branchId!: string;
 
-  constructor() { }
+  constructor(
+    private readonly contentService: ContentService,
+  ) { }
 
   ngOnInit(): void {
+    this.contentService
+      .getDocumentVersions(this.documentId, this.branchId)
+      .then(versionHistory => {
+        console.log('versionhistory', versionHistory);
+      });
   }
 
 }

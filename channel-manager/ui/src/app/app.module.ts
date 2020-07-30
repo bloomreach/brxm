@@ -26,9 +26,9 @@ import { VersionsModule } from './versions/versions.module';
     VersionsModule,
   ],
   providers: [
-    { provide: CONTENT_SERVICE, useValue: window.angular?.element(document.body).injector()?.get('ContentService') },
+    { provide: CONTENT_SERVICE, useValue: window.angular.element(document.body).injector().get('ContentService') },
   ],
 })
 export class AppModule {
-  ngDoBootstrap(): void {}
+  ngDoBootstrap(): void { }
 }
