@@ -16,8 +16,7 @@
     "build": "react-scripts build",
     "dev": "react-scripts start",
     "lint": "eslint --ext js,ts,tsx src",
-    "start": "node server.js",
-    "test": "echo no tests"
+    "start": "node server.js"
   },
   "eslintConfig": {
     "extends": "react-app"
