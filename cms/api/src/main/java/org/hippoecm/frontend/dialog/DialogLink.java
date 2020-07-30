@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
+import org.hippoecm.frontend.ajax.NoDoubleClickAjaxLink;
 
 import wicket.contrib.input.events.EventType;
 import wicket.contrib.input.events.InputBehavior;
@@ -29,9 +29,8 @@ import wicket.contrib.input.events.key.KeyType;
 import static org.apache.wicket.ajax.attributes.AjaxRequestAttributes.EventPropagation.BUBBLE;
 
 public class DialogLink extends Panel {
-    private static final long serialVersionUID = 1L;
 
-    protected AjaxLink link;
+    protected AjaxLink<Void> link;
 
     public DialogLink(final String id, final IModel<String> linkText, final IDialogFactory dialogFactory, final IDialogService dialogService) {
         this(id, linkText, new DialogAction(dialogFactory, dialogService));
@@ -41,11 +40,10 @@ public class DialogLink extends Panel {
         super(id, linkText);
 
         setOutputMarkupId(true);
-        link = new AjaxLink("dialog-link") {
-            private static final long serialVersionUID = 1L;
+        link = new NoDoubleClickAjaxLink<Void>("dialog-link") {
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 action.execute();
             }
 

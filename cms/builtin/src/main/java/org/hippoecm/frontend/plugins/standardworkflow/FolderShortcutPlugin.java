@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.ajax.BrLink;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -83,7 +84,8 @@ import static org.onehippo.repository.security.StandardPermissionNames.HIPPO_AUT
 
 public class FolderShortcutPlugin extends RenderPlugin {
 
-    private static Logger log = LoggerFactory.getLogger(FolderShortcutPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(FolderShortcutPlugin.class);
+
     private static final String SLASH = "/";
 
     private String defaultDropLocation = "/content";
@@ -91,7 +93,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
     public FolderShortcutPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        AjaxLink link = new AjaxLink("link") {
+        final AjaxLink<Void> link = new BrLink<Void>("link") {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 final IDialogService dialogService = getDialogService();
