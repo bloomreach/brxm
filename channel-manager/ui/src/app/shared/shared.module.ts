@@ -15,12 +15,13 @@
  */
 
 import { NgModule } from '@angular/core';
-
-import { SharedModule } from './shared/shared.module';
+import { BrowserModule } from '@angular/platform-browser';
 
 @NgModule({
+  declarations: [
+  ],
   imports: [
-    SharedModule,
+    BrowserModule,
   ],
 })
-export class AppModule { }
+export class SharedModule { }
