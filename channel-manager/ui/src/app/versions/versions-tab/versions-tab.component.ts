@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-/* You can add global styles to this file, and also import other style files */
+import { Component, OnInit } from '@angular/core';
 
-html,
-body {
-  height: 100vh;
-  margin: 0;
+@Component({
+  selector: 'em-versions-tab',
+  templateUrl: './versions-tab.component.html',
+  styleUrls: ['./versions-tab.component.scss'],
+})
+export class VersionsTabComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
 }
