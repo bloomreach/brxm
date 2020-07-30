@@ -39,6 +39,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.addon.workflow.WorkflowDialog;
+import org.hippoecm.frontend.ajax.BrLink;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeNameModel;
@@ -277,15 +278,13 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             updateListDataTable();
             add(dataTable);
 
-            top = new AjaxLink<Void>("top") {
+            top = new BrLink<Void>("top") {
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
-                    IModel<ListItem> selection = dataTable.getModel();
+                    final IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftTop(selection.getObject());
 
-                    ReorderPanel thisPanel = ReorderPanel.this;
                     updateListDataTable();
-                    thisPanel.replace(dataTable);
                     selectionChanged(selection);
                 }
             };
@@ -294,11 +293,12 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             topIcon.addCssClass("hi-rotate-90");
             top.add(topIcon);
 
-            up = new AjaxLink<Void>("up") {
+            up = new BrLink<Void>("up") {
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
-                    IModel<ListItem> selection = dataTable.getModel();
+                    final IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftUp(selection.getObject());
+
                     updateListDataTable();
                     selectionChanged(selection);
                 }
@@ -306,10 +306,10 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             add(up);
             up.add(HippoIcon.fromSprite("icon", Icon.CHEVRON_UP));
 
-            down = new AjaxLink<Void>("down") {
+            down = new BrLink<Void>("down") {
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
-                    IModel<ListItem> selection = dataTable.getModel();
+                    final IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftDown(selection.getObject());
 
                     updateListDataTable();
@@ -319,10 +319,10 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             add(down);
             down.add(HippoIcon.fromSprite("icon", Icon.CHEVRON_DOWN));
 
-            bottom = new AjaxLink<Void>("bottom") {
+            bottom = new BrLink<Void>("bottom") {
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
-                    IModel<ListItem> selection = dataTable.getModel();
+                    final IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftBottom(selection.getObject());
 
                     updateListDataTable();
@@ -363,30 +363,20 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
         }
 
         public void selectionChanged(final IModel<ListItem> model) {
-            ListItem item = model.getObject();
-            long position = -1;
-            long size = dataProvider.size();
-            Iterator<ListItem> siblings = dataProvider.iterator(0, size);
-            int i = 0;
-            while (siblings.hasNext()) {
-                i++;
-                ListItem sibling = siblings.next();
-                if (sibling.equals(item)) {
-                    position = i;
-                    break;
-                }
-            }
-            if (position != -1) {
-                top.setEnabled(position > 1);
-                up.setEnabled(position > 1);
-                down.setEnabled(position < size);
-                bottom.setEnabled(position < size);
-            }
+            final ListItem item = model.getObject();
+            final long size = dataProvider.size();
+            final int position = dataProvider.listItems.indexOf(item);
+
+            top.setEnabled(position > 0);
+            up.setEnabled(position > 0);
+            down.setEnabled(position < (size - 1));
+            bottom.setEnabled(position < (size - 1));
 
             dataTable.setModel(model);
-            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+
+            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
-                target.add(this);
+                target.add(top, up, down, bottom, dataTable);
             }
         }
 

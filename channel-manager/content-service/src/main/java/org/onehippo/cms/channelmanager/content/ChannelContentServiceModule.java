@@ -34,8 +34,6 @@ import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.BranchSelectionServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.BranchingService;
 import org.onehippo.cms.channelmanager.content.document.util.BranchingServiceImpl;
-import org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils;
-import org.onehippo.cms.channelmanager.content.document.util.DocumentHandleUtils;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspectorImpl;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
@@ -87,10 +85,7 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         this.workflowsService = new WorkflowServiceImpl();
         this.contextPayloadService = request -> Optional.ofNullable(CmsSessionContext.getContext(request.getSession()).getContextPayload()).orElse(Collections.emptyMap());
 
-        this.documentVersionService = new DocumentVersionServiceImpl(
-                (userContext, uuid) ->
-                        ContentWorkflowUtils.getDocumentWorkflow(DocumentHandleUtils.getHandle(uuid, userContext.getSession()))
-        );
+        this.documentVersionService = new DocumentVersionServiceImpl();
         addEventListener(new HippoNamespacesEventListener() {
             @Override
             public void onEvent(final EventIterator events) {
