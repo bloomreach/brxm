@@ -54,11 +54,11 @@ public class NavAppRedirectFilter implements Filter {
 
     public static final String INITIAL_PATH_QUERY_PARAMETER = "initialPath";
 
-    public static final String CUSTOM_WHITELISTED_PATH_PREFIXES_PARAMETER = "customWhiteListedPathPrefixes";
+    public static final String CUSTOM_ACCEPTED_PATH_PREFIXES_PARAMETER = "customAcceptedPathPrefixes";
 
     private static final String HTTP_METHOD_GET = "GET";
 
-    static final List<String> WHITE_LISTED_PATH_PREFIXES = Arrays.asList(
+    static final List<String> ACCEPTED_PATH_PREFIXES = Arrays.asList(
             "angular",
             "auth",
             "ckeditor",
@@ -75,21 +75,21 @@ public class NavAppRedirectFilter implements Filter {
             "oidc"
     );
 
-    private static List<String> whiteListedPathPrefixes;
+    private static List<String> acceptedPathPrefixes;
 
     @Override
     public void init(FilterConfig filterConfig) {
-        final String value = filterConfig.getInitParameter(CUSTOM_WHITELISTED_PATH_PREFIXES_PARAMETER);
+        final String value = filterConfig.getInitParameter(CUSTOM_ACCEPTED_PATH_PREFIXES_PARAMETER);
         if (value == null) {
             log.debug("Init parameter {} is not present, using hard coded path prefixes."
-                    , CUSTOM_WHITELISTED_PATH_PREFIXES_PARAMETER);
-            whiteListedPathPrefixes = WHITE_LISTED_PATH_PREFIXES;
+                    , CUSTOM_ACCEPTED_PATH_PREFIXES_PARAMETER);
+            acceptedPathPrefixes = ACCEPTED_PATH_PREFIXES;
         } else {
-            whiteListedPathPrefixes = new ArrayList<>(WHITE_LISTED_PATH_PREFIXES);
+            acceptedPathPrefixes = new ArrayList<>(ACCEPTED_PATH_PREFIXES);
             final List<String> customWhiteListedPathPrefixes =
                     Stream.of(value.split(",")).map(String::trim).collect(Collectors.toList());
             log.debug("Adding custom path prefixes: {}", customWhiteListedPathPrefixes);
-            whiteListedPathPrefixes.addAll(customWhiteListedPathPrefixes);
+            acceptedPathPrefixes.addAll(customWhiteListedPathPrefixes);
         }
     }
 
@@ -135,7 +135,7 @@ public class NavAppRedirectFilter implements Filter {
         }
 
         final String segment = getSegmentAfterContextPath(request);
-        if (whiteListedPathPrefixes.stream().anyMatch(segment::equals)) {
+        if (acceptedPathPrefixes.stream().anyMatch(segment::equals)) {
             return false;
         }
 
