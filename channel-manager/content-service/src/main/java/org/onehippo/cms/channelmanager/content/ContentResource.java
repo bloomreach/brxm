@@ -141,13 +141,13 @@ public class ContentResource {
     }
 
     @GET
-    @Path("documents/{documentId}/{branchId}/versions")
+    @Path("documents/{unpublishedDocumentVariantId}/{branchId}/versions")
     public Response getDocumentVersionInfos(
-            @PathParam("documentId") final String id,
+            @PathParam("unpublishedDocumentVariantId") final String unpublishedDocumentVariantId,
             @PathParam("branchId") final String branchId,
             @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                userContext -> documentVersionService.getVersionInfo(id, branchId, userContext)
+                userContext -> documentVersionService.getVersionInfo(unpublishedDocumentVariantId, branchId, userContext)
         );
     }
 
