@@ -46,13 +46,6 @@ public interface ContainerItemComponentService {
      * true if the page requires a reload because the  changes had to be done against a container item in version history
      * (which can only happen for XPage container)
      */
-    Pair<Node, Boolean> createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException;
-
-    /**
-     * returns in Pair#getLeft() the {@link Node} to which the changes were written and in the Pair#getRight it returns
-     * true if the page requires a reload because the  changes had to be done against a container item in version history
-     * (which can only happen for XPage container)
-     */
     Pair<Node, Boolean> deleteVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException;
 
     /**

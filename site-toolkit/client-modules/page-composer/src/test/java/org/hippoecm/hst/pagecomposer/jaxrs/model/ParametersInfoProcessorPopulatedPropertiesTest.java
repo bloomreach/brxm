@@ -127,9 +127,8 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
         expect(dynamicParameter.getDisplayName()).andReturn(null);
 
         ValueProvider valueProvider = EasyMock.mock(ValueProvider.class);
-        expect(valueProvider.getString(DropdownListParameterConfigImpl.VALUE_LIST_PROVIDER)).andReturn(null);
+        expect(valueProvider.getString(DropdownListParameterConfigImpl.VALUE_LIST_PROVIDER_KEY)).andReturn(null);
         expect(valueProvider.getStrings(DropdownListParameterConfigImpl.VALUE)).andReturn(null);
-        expect(valueProvider.getString(DropdownListParameterConfigImpl.VALUE_LIST_PROVIDER)).andReturn(null);
         expect(valueProvider.getString(DropdownListParameterConfigImpl.VALUE_SOURCE_ID)).andReturn("dropdown-resource");
 
         HstNode dropdownNode = EasyMock.mock(HstNode.class);

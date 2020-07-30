@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -53,6 +54,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -61,6 +63,9 @@ import org.springframework.mock.web.MockServletContext;
 
 import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
+import static org.springframework.http.HttpHeaders.PRAGMA;
 
 /**
  * This class exposes common functionality for testing against the Page Model API. It is built after
@@ -300,6 +305,14 @@ public abstract class AbstractPageModelApiITCases {
         final MockHttpServletResponse response;
         if (authenticatedUser != null) {
             response = renderChannelMgrPreview(requestResponse, authenticatedUser);
+            assertThat(response.containsHeader(CACHE_CONTROL));
+            assertThat(response.getHeader(CACHE_CONTROL))
+                    .as("Channel Manager preview requests should be always private")
+                    .isEqualTo("private, max-age=0, no-store");
+            assertThat(response.containsHeader(PRAGMA));
+            assertThat(response.getHeader(PRAGMA))
+                    .as("Channel Manager preview requests should be always private")
+                    .isEqualTo("no-cache");
         } else {
             response = render(requestResponse);
         }
