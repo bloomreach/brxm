@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-import './editContentMain.scss';
-import controller from './editContentMain.controller';
-import template from './editContentMain.html';
+import './contentTabs.scss';
+import controller from './contentTabs.controller';
+import template from './contentTabs.html';
 
-const editContentMainComponent = {
+const contentTabsComponent = {
   controller,
   template,
+  bindings: {
+    // trick to render 'flex' and 'layout' attributes on the edit-component-main
+    // element so Angular Material applies the right layout
+    flex: '@',
+    layout: '@',
+  },
 };
 
-export default editContentMainComponent;
+export default contentTabsComponent;
