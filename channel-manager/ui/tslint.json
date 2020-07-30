@@ -25,13 +25,13 @@
     "directive-selector": [
       true,
       "attribute",
-      "cm",
+      "em",
       "camelCase"
     ],
     "component-selector": [
       true,
       "element",
-      "cm",
+      "em",
       "kebab-case"
     ],
     "eofline": true,
