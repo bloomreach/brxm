@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 
-@Component({
-  selector: 'cm-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+@NgModule({
+  declarations: [
+  ],
+  imports: [
+    BrowserModule,
+  ],
 })
-export class AppComponent {
-  title = 'ui';
-}
+export class SharedModule { }

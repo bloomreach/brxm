@@ -1,5 +1,5 @@
-/*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-/* You can add global styles to this file, and also import other style files */
+import controller from './editContentIcon.controller';
+import template from './editContentIcon.html';
 
-html,
-body {
-  height: 100vh;
-  margin: 0;
-}
+const editContentIconComponent = {
+  controller,
+  template,
+};
+
+export default editContentIconComponent;

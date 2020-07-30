@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+  ~ Copyright 2020 Hippo B.V. (http://www.onehippo.com)
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,10 +13,19 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<md-button class="md-icon-button qa-edit-in-content-perspective"
-           aria-label="{{ ::'SWITCH_TO_CONTENT_EDITOR' | translate }}"
-           ng-disabled="$ctrl.isDisabled()"
-           ng-click="$ctrl.openContentEditor()"
-           title="{{ ::'SWITCH_TO_CONTENT_EDITOR' | translate }}">
-  <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
-</md-button>
+
+<md-tabs md-border-bottom
+         md-no-pagination
+         flex
+         layout="column">
+  <md-tab label="{{ ::'CONTENT' | translate }}">
+    <edit-content-main flex
+                       layout="column"
+                       layout-fill>
+    </edit-content-main>
+  </md-tab>
+
+  <md-tab label="{{ ::'VERSIONS' | translate }}">
+    <em-versions-tab></em-versions-tab>
+  </md-tab>
+</md-tabs>
