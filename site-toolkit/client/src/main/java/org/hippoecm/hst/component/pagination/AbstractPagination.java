@@ -17,122 +17,95 @@ package org.hippoecm.hst.component.pagination;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.LongStream;
-
-import org.hippoecm.hst.content.PageModelEntity;
+import java.util.stream.IntStream;
 
 /**
+ * Abstract pagination implementation provides the core capabilites of a Pagination object.   
  *
+ * @param <T>
  */
-public abstract class Pagination<T> implements PageModelEntity {
+public abstract class AbstractPagination<T> implements Pagination<T> {
 
     private static final int DEFAULT_SIZE = 10;
     private static final int DEFAULT_NUMBER = 1;
+    private static final int DEFAULT_LIMIT = 10;
 
     private int size;
     private int current;
+    private int limit;
     private long total;
     private boolean enabled;
 
-    public Pagination() {
+    public AbstractPagination() {
         this(0);
     }
 
-    public Pagination(long total) {
+    public AbstractPagination(long total) {
         this(total, DEFAULT_NUMBER);
     }
 
-    public Pagination(long total, int current) {
+    public AbstractPagination(long total, int current) {
         this(total, current, DEFAULT_SIZE);
     }
 
-    public Pagination(long total, int current, int size) {
+    public AbstractPagination(long total, int current, int size) {
+        this(total, current, size, DEFAULT_LIMIT);
+    }
+
+    public AbstractPagination(long total, int current, int size, int limit) {
         this.total = total;
         this.size = (size <= 0) ? DEFAULT_SIZE : size;
-        this.current = (current > getLast() || current <= 0) ? 1 : current;
+        this.limit = (limit <= 0) ? DEFAULT_LIMIT : limit;
+        this.current = (current > getCount() || current <= 0) ? 1 : current;
         this.enabled = true;
     }
 
-    public abstract List<T> getItems();
-
-    /**
-     * Gets the first page
-     *
-     * @return
-     */
-    public int getFirst() {
-        return 1;
+    @Override
+    public Page getFirst() {
+        return new Page(1);
     }
 
-    /**
-     * Gets the previous page
-     *
-     * @return the previous page if there is any. Otherwise returns null.
-     */
-    public int getPrevious() {
-        return hasPrevious() ? current - 1 : null;
+    @Override
+    public Page getPrevious() {
+        return hasPrevious() ? new Page(current - 1) : null;
     }
 
-    /**
-     * Gets the current page
-     *
-     * @return
-     */
-    public int getCurrent() {
-        return current;
+    @Override
+    public Page getCurrent() {
+        return new Page(current);
     }
 
-    /**
-     * Gets the next page
-     *
-     * @return the next page if there is any. Otherwise returns null.
-     */
-    public int getNext() {
-        return hasNext() ? current + 1 : null;
+    @Override
+    public Page getNext() {
+        return hasNext() ? new Page(current + 1) : null;
     }
 
-    /**
-     * Gets the last page
-     *
-     * @return
-     */
-    public int getLast() {
-        return (int) ((total - (total % size)) / size) + 1;
+    @Override
+    public Page getLast() {
+        return new Page(getCount());
     }
 
-    /**
-     * Gets the size of items which are listed on the page
-     * 
-     * @return
-     */
+    @Override
     public int getSize() {
         return size;
     }
 
-    /**
-     * Total number of results
-     *
-     * @return
-     */
+    @Override
+    public int getLimit() {
+        return limit;
+    }
+
+    @Override
     public long getTotal() {
         return total;
     }
 
-    /**
-     * Whether pagination is enabled
-     * 
-     * @return true if the pagination is enabled
-     */
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
-    /**
-     * Gets the offset with respect to the current page number.
-     *
-     * @return calculates and returns the start offset. If the calculated value is
-     *         greater or equal to total number of results, returns 0. 
-     */
+    @Override
     public int getOffset() {
         int start = (current - 1) * size;
         if (start >= total) {
@@ -141,14 +114,12 @@ public abstract class Pagination<T> implements PageModelEntity {
         return start;
     }
 
-    /**
-     * Returns all pages numbers
-     *
-     * @return List containing page numbers
-     */
-    public List<Long> getPages() {
-        final List<Long> pages = new ArrayList<>();
-        LongStream.range(getFirst(), getLast() + 1).forEach(pageNumber -> pages.add(pageNumber));
+    @Override
+    public List<Page> getPages() {
+        final List<Page> pages = new ArrayList<>();
+        final int startPage = current - (current % limit) + 1;
+        final int endPage = startPage + limit - 1; 
+        IntStream.rangeClosed(startPage, endPage).forEach(pageNumber -> pages.add(new Page(pageNumber)));
         return pages;
     }
 
@@ -158,7 +129,7 @@ public abstract class Pagination<T> implements PageModelEntity {
      * @return true if current page is followed by other pages
      */
     private boolean hasNext() {
-        return getLast() > current;
+        return getCount() > current;
     }
 
     /**
@@ -171,12 +142,30 @@ public abstract class Pagination<T> implements PageModelEntity {
     }
 
     /**
+     * Calculates and returns total number of pages regarding of total number of items ande page size
+     * 
+     * @return total number of pages
+     */
+    private int getCount() {
+        return (int) ((total - (total % size)) / size) + 1;
+    }
+
+    /**
      * Sets the page size. If the size is lower or equal to zero, default page size will be set.
      * 
      * @param size
      */
     public void setSize(int size) {
         this.size = (size <= 0) ? DEFAULT_SIZE : size;
+    }
+
+    /**
+     * Sets the pagination page limit. If the limit is lower or equal to zero, default page limit will be set.
+     * 
+     * @param limit
+     */
+    public void setLimit(int limit) {
+        this.limit = (limit <= 0) ? DEFAULT_LIMIT : limit;
     }
 
     /**

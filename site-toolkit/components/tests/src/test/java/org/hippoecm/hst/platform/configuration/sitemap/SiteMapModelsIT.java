@@ -26,7 +26,6 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
@@ -34,7 +33,6 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -46,7 +44,6 @@ import org.junit.Test;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
-import static org.joor.Reflect.on;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -57,8 +54,6 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
     private Session session;
-    private InternalHstModel hstModel;
-    private EventPathsInvalidator invalidator;
 
     @Override
     @Before
@@ -68,8 +63,6 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         createHstConfigBackup(session);
         hstManager = getComponent(HstManager.class.getName());
         final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        hstModel = (InternalHstModel) provider.getHstModel();
-        invalidator = hstModel.getEventPathsInvalidator();
     }
 
     @Override
@@ -284,8 +277,6 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap");
 
-        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         saveSession();
         invalidator.eventPaths(pathsToBeChanged);
@@ -393,8 +384,6 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
 
-        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         saveSession();
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestproject"});
 
@@ -436,8 +425,6 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         newsDefault.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         newsDefault.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
 
-        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         saveSession();
         invalidator.eventPaths(pathsToBeChanged);

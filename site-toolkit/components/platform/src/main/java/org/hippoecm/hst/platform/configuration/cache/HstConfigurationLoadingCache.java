@@ -300,6 +300,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
                             HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(containerItem,
                                     null, HstNodeTypes.NODENAME_HST_COMPONENTS , true, null, commonCatalogPath, componentId);
                             componentConfiguration.populateAnnotationComponentParameters(websiteClassLoader);
+                            componentConfiguration.populateFieldGroups(websiteClassLoader);
                             commonCatalogItemsList.add(componentConfiguration);
                             log.debug("Added catalog component to availableContainerItems with key '{}'", componentConfiguration.getId());
                         } catch (ModelLoadingException e) {

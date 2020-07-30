@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>dependencies</artifactId>
-    <version>14.3.0-experience-pages-SNAPSHOT</version>
+    <version>14.3.0-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Site Dependencies</name>
@@ -80,12 +80,11 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- for 14.2 we do not yet support the v1.0 page model api -->
-    <!--<dependency>-->
-      <!--<groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>-->
-      <!--<artifactId>hst-pagemodelapi-v10</artifactId>-->
-      <!--<version>${project.version}</version>-->
-    <!--</dependency>-->
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>
+      <artifactId>hst-pagemodelapi-v10</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
