@@ -13,16 +13,16 @@
   },
   "dependencies": {
     "@bloomreach/hippo-theme": "5.0.0",
-    "angular": "1.7.8",
-    "angular-animate": "1.7.8",
-    "angular-aria": "1.7.8",
+    "angular": "1.8.0",
+    "angular-animate": "1.8.0",
+    "angular-aria": "1.8.0",
     "angular-chosen-localytics": "1.9.3",
-    "angular-sanitize": "1.7.8",
+    "angular-sanitize": "1.8.0",
     "angular-ui-bootstrap": "2.5.6",
     "angular-ui-router": "1.0.22",
     "angular-ui-tree": "2.22.6",
     "chosen-js": "1.8.7",
-    "jquery": "^3.4.1"
+    "jquery": "3.5.1"
   },
   "devDependencies": {
     "angular-mocks": "1.7.8",
