@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-import { Injector, NgModule } from '@angular/core';
-import { createCustomElement } from '@angular/elements';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
-import { AppComponent } from './app.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
   ],
   imports: [
     BrowserModule,
   ],
-  entryComponents: [
-    AppComponent,
-  ],
 })
-export class AppModule {
-  constructor(private readonly injector: Injector) {}
-
-  ngDoBootstrap(): void {
-    const RootElement = createCustomElement(AppComponent, { injector: this.injector });
-    customElements.define('cm-root', RootElement);
-   }
-}
+export class AppModule { }
