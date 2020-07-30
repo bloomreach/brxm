@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { SharedModule } from './shared/shared.module';
-import { VersionsModule } from './versions/versions.module';
-
-@NgModule({
-  imports: [
-    SharedModule,
-    VersionsModule,
-  ],
+@Component({
+  selector: 'em-versions-tab',
+  templateUrl: './versions-tab.component.html',
+  styleUrls: ['./versions-tab.component.scss'],
 })
-export class AppModule {
-  ngDoBootstrap(): void {}
+export class VersionsTabComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
 }
