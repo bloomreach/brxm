@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ public class TabsTest extends PluginTest {
         private static final long serialVersionUID = 1L;
 
         ITitleDecorator decorator;
-        
+
         public ContentPanel(IPluginContext context, IPluginConfig config) {
             super(context, config);
 
@@ -80,7 +80,7 @@ public class TabsTest extends PluginTest {
 
         private Object object = null;
         private IObservationContext obContext;
-        
+
         public Object getObject() {
             return object;
         }
@@ -104,7 +104,7 @@ public class TabsTest extends PluginTest {
 
         public void stopObservation() {
         }
-        
+
         void notifyObservers() {
             EventCollection<IEvent<IObservable>> events = new EventCollection<IEvent<IObservable>>();
             events.add(new IEvent<IObservable>() {
@@ -112,12 +112,12 @@ public class TabsTest extends PluginTest {
                 public IObservable getSource() {
                     return ObservableModel.this;
                 }
-                
+
             });
             obContext.notifyObservers(events);
         }
     }
-    
+
     final static String[] content = {
             "/test", "nt:unstructured",
                 "/test/plugin", "frontend:pluginconfig",
@@ -208,10 +208,10 @@ public class TabsTest extends PluginTest {
         // re-render
         refreshPage();
 
-        tester.clickLink("root:tabs:tabs-container:tabs:0:container:link");
+        tester.executeAjaxEvent("root:tabs:tabs-container:tabs:0", "click");
         assertEquals(0, selected.tabbie);
 
-        tester.clickLink("root:tabs:tabs-container:tabs:1:container:link");
+        tester.executeAjaxEvent("root:tabs:tabs-container:tabs:1", "click");
         assertEquals(1, selected.tabbie);
     }
 
