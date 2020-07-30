@@ -15,9 +15,15 @@
  */
 package org.hippoecm.hst.pagemodelapi.common.components;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.component.pagination.HippoBeanPaginationUtils;
+import org.hippoecm.hst.component.pagination.Pagination;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -69,10 +75,9 @@ public class GenericDetailComponent extends GenericHstComponent {
         HstLink notFoundLink = new HstLinkImpl(DefaultHstLinkCreator.DEFAULT_PAGE_NOT_FOUND_PATH, requestContext.getResolvedMount().getMount());
         notFoundLink.setNotFound(true);
 
-        // assert that notFoundLink results in something like in PMA (with type = internal) !!
+        // assert that notFoundLink results in something like in PMA (with type = unknown and no href) !!
         //       "notFoundLink":{
-        //        "href":"/site/spa/pagenotfound",
-        //        "type":"internal"
+        //        "type":"unknown"
         //    },
         request.setModel("notFoundLink", notFoundLink);
 
@@ -88,6 +93,14 @@ public class GenericDetailComponent extends GenericHstComponent {
                     break;
             case V10:
                 request.setModel("testLinkAndMetaNull", new org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel("some-id"));
+
+                // verify that the pageable object includes pages with internal and external links
+                final int itemCount = 105;
+                List<HippoBean> beans = new ArrayList<>(itemCount);
+                IntStream.rangeClosed(1, itemCount).forEach(r -> beans.add(requestContext.getContentBean()));
+                Pagination<HippoBean> pagination = HippoBeanPaginationUtils.createPagination(beans, 6, 10);
+                request.setModel("pageable", pagination);
+
                 break;
         }
 

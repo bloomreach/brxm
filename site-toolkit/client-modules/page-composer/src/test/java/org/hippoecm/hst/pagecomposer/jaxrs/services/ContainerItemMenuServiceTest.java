@@ -21,15 +21,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.JAXBException;
 
-import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
@@ -45,7 +42,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyR
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.hippoecm.hst.platform.configuration.components.DynamicComponentParameter;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
@@ -55,8 +51,6 @@ import org.onehippo.repository.mock.MockNodeFactory;
 
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ContainerItemMenuServiceTest extends AbstractPageComposerTest{
@@ -162,59 +156,6 @@ public class ContainerItemMenuServiceTest extends AbstractPageComposerTest{
         assertEquals("Wrong name", name, property.getName());
         assertEquals("Wrong value", value, property.getValue());
         assertEquals("Wrong default value", defaultValue, property.getDefaultValue());
-    }
-
-    @Test
-    public void testVariantCreation() throws RepositoryException, JAXBException, IOException, ServerErrorException {
-        Node node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-empty-component.xml");
-        configureMockContainerItemComponent(node);
-
-        MultivaluedMap<String, String> params;
-
-        // 1. add a non annotated parameter for 'default someNonAnnotatedParameter = lux
-        params = new MetadataMap<String, String>();
-        params.add("parameterOne", "bar");
-        params.add("someNonAnnotatedParameter", "lux");
-
-        containerItemComponentService.updateVariant("", 0, params);
-
-        assertTrue(node.hasProperty(HST_PARAMETERNAMES));
-        assertTrue(node.hasProperty(HST_PARAMETERVALUES));
-        // do not contain HST_PARAMETERNAMEPREFIXES
-        assertTrue(!node.hasProperty(HST_PARAMETERNAMEPREFIXES));
-
-        Set<String> variants =  this.containerItemComponentService.getVariants();
-        assertTrue(variants.size() == 1);
-        assertTrue(variants.contains("hippo-default"));
-
-        // 2. create a new variant 'lux' : The creation of the variant should
-        // pick up the explicitly defined parameters from 'default' that are ALSO annotated (thus parameterOne, and NOT someNonAnnotatedParameter) PLUS
-        // the implicit parameters from the DummyInfo (parameterTwo but not parameterOne because already from 'default')
-
-        containerItemComponentService.createVariant("newvar", 0);
-        assertTrue(node.hasProperty(HST_PARAMETERNAMES));
-        assertTrue(node.hasProperty(HST_PARAMETERVALUES));
-        // now it must contain HST_PARAMETERNAMEPREFIXES
-        assertTrue(node.hasProperty(HST_PARAMETERNAMEPREFIXES));
-
-        variants = this.containerItemComponentService.getVariants();
-        assertTrue(variants.size() == 2);
-        assertTrue(variants.contains("hippo-default"));
-        assertTrue(variants.contains("newvar"));
-
-        final HstComponentParameters componentParameters = new HstComponentParameters(node, helper);
-        assertTrue(componentParameters.hasParameter("newvar", "parameterOne"));
-        assertEquals("bar", componentParameters.getValue("newvar", "parameterOne"));
-        assertTrue(componentParameters.hasParameter("newvar", "parameterTwo"));
-        // from  @Parameter(name = "parameterTwo", required = true, defaultValue = "test")
-        assertEquals("test", componentParameters.getValue("newvar", "parameterTwo"));
-        assertFalse(componentParameters.hasParameter("newvar", "someNonAnnotatedParameter"));
-
-        // 3. try to remove the new variant
-        containerItemComponentService.deleteVariant("newvar", 0);
-        variants = this.containerItemComponentService.getVariants();
-        assertTrue(variants.size() == 1);
-        assertTrue(variants.contains("hippo-default"));
     }
 
     @Test(expected = ClientException.class)

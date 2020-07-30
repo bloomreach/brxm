@@ -255,7 +255,7 @@ plugins/skeleton-package/src/main/resources/instructions/js/bootstrap.min.js
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-plugins/skeleton-package/src/main/resources/instructions/js/jquery-3.4.1.min.js
+plugins/skeleton-package/src/main/resources/instructions/js/jquery-3.5.1.min.js
 
     jQuery is released under the MIT License.
 

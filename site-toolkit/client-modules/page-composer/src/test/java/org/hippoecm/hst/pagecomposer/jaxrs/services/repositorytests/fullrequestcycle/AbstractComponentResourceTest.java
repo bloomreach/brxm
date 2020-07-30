@@ -42,6 +42,8 @@ public abstract class AbstractComponentResourceTest extends AbstractFullRequestC
                 "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage", "hst:containeritempackage",
                 "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem", "hst:containeritemcomponent",
                   "hst:componentclassname", "org.hippoecm.hst.test.BannerComponent",
+                "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testdefinition", "hst:componentdefinition",
+                  "hst:componentclassname", "org.hippoecm.hst.test.BannerComponent",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage", "hst:component",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main", "hst:component",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage/main/container", "hst:containercomponent",

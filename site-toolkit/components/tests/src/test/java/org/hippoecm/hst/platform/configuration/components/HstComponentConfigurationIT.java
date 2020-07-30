@@ -135,11 +135,7 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
             // TODO CMS-13618 the dynamic component parameters should be shared even for old style components
             assertThat(oldStyleBanner.getDynamicComponentParameters() == oldStyleBanner2.getDynamicComponentParameters())
                     .as("Old style components dynamic component parameters are not yet shared")
-                    .isFalse();
-            assertThat(oldStyleBanner.getDynamicComponentParameters() == newStyleBanner.getDynamicComponentParameters())
-                    .as("Old style components dynamic component parameters are not yet shared")
-                    .isFalse();
-
+                    .isTrue();
         }
 
         // assertions what happens for broken hst:componentdefinition (aka not pointing to existing catalog item)
