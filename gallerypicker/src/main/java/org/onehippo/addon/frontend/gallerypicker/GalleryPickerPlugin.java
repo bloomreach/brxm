@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.string.Strings;
+import org.hippoecm.frontend.ajax.BrLink;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.model.IModelReference;
@@ -130,8 +131,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
 
             case EDIT:
                 fragment = new Fragment("fragment", "edit", this);
-                fragment.add(new AjaxLink<Void>("select") {
-
+                fragment.add(new BrLink<Void>("select") {
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
                         getDialogService().show(createDialog());
@@ -139,7 +139,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 });
                 addOpenButton(fragment);
 
-                remove = new AjaxLink<Void>("remove") {
+                remove = new BrLink<Void>("remove") {
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
                         valueModel.setObject(JcrConstants.ROOT_NODE_ID);
@@ -198,7 +198,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
     }
 
     private void addOpenButton(final Fragment fragment) {
-        final AjaxLink openButton = new AjaxLink("open") {
+        fragment.add(new BrLink<Void>("open") {
             @Override
             public boolean isVisible() {
                 return isValidDisplaySelection();
@@ -208,9 +208,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
             public void onClick(final AjaxRequestTarget target) {
                 open();
             }
-        };
-        openButton.setOutputMarkupId(true);
-        fragment.add(openButton);
+        });
     }
 
     private void open() {

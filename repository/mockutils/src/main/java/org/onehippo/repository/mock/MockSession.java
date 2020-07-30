@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,6 +57,8 @@ public class MockSession implements HippoSession {
     private final MockWorkspace workspace;
     private AccessControlManager accessControlManager;
     private MockRepository mockRepository;
+
+    private String userId = "";
 
     public MockSession(MockNode root) {
         this(root, null);
@@ -183,7 +185,11 @@ public class MockSession implements HippoSession {
 
     @Override
     public String getUserID() {
-        return "";
+        return userId;
+    }
+
+    public void setUserId(final String userId) {
+        this.userId = userId;
     }
 
     @Override

@@ -84,7 +84,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     private Boolean isValid;
     private boolean modified;
     private IModel<Node> editorModel;
-    private IModel<Node> baseModel;
     private boolean transferable;
 
     public HippostdPublishableEditor(final IEditorContext manager, final IPluginContext context, final IPluginConfig config, final IModel<Node> model)
@@ -111,8 +110,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     protected IModel<Node> getEditorModel() throws EditorException {
         final Node node = super.getEditorModel().getObject();
         final HippoStdPublishableEditorModel editorStateModel = getEditorStateModel(branchIdModel.getBranchId(), node);
-        editorModel = new JcrNodeModel(editorStateModel.getEditor());
-        return editorModel;
+        return new JcrNodeModel(editorStateModel.getEditor());
     }
 
     @Override
@@ -123,8 +121,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             return super.getBaseModel();
         }
 
-        baseModel = new JcrNodeModel(editorStateModel.getBase());
-        return baseModel;
+        return new JcrNodeModel(editorStateModel.getBase());
     }
 
     private static HippoStdPublishableEditorModel getEditorStateModel(final String branchId, final Node handleOrVersion)
@@ -498,8 +495,9 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             if (newMode != super.getMode()) {
                 super.setMode(newMode);
             } else {
+                final IModel<Node> oldModel = editorModel;
                 final IModel<Node> newModel = getEditorModel();
-                if (!newModel.equals(editorModel)) {
+                if (!newModel.equals(oldModel)) {
                     stop();
                     start();
                 }
@@ -532,9 +530,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         isValid = null;
         if (editorModel != null) {
             editorModel.detach();
-        }
-        if (baseModel != null) {
-            baseModel.detach();
         }
         if (branchIdModel != null) {
             branchIdModel.detach();

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,12 +15,14 @@
  */
 package org.hippoecm.addon.workflow;
 
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.Link;
+import org.hippoecm.frontend.ajax.NoDoubleClickBehavior;
+import org.hippoecm.frontend.ajax.PreventDoubleClickListener;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
@@ -47,10 +49,15 @@ abstract class MenuLink extends Link {
                         onClick();
                     }
 
+                    @Override
+                    protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                        super.updateAjaxAttributes(attributes);
+
+                        attributes.getAjaxCallListeners().add(new PreventDoubleClickListener());
+                    }
                 });
             } else {
-                add(new AjaxEventBehavior("click") {
-
+                add(new NoDoubleClickBehavior() {
                     @Override
                     protected void onEvent(final AjaxRequestTarget target) {
                         collapseContextMenu(target);

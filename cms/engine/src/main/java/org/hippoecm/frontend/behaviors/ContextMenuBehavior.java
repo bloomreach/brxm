@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
 
         response.render(JavaScriptHeaderItem.forReference(CONTEXTMENU_JS));
         final String loadScript = ((getComponent() instanceof Page) ? "document.body" : "Wicket.$('" + markupId + "')")
-                + ".onclick = function() { " + getCallbackScript() + " };";
+                + ".onclick = function() { if (Hippo.ContextMenu && Hippo.ContextMenu.isVisible()) { " + getCallbackScript() + " } };";
         response.render(OnDomReadyHeaderItem.forScript(loadScript));
         response.render(OnDomReadyHeaderItem.forScript("Hippo.ContextMenu.init();"));
     }

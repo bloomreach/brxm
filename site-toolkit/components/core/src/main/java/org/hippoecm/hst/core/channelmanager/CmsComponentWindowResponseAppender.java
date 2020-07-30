@@ -29,6 +29,8 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -99,6 +101,16 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         pageMetaData.put(ChannelManagerConstants.HST_MOUNT_ID, mount.getIdentifier());
         pageMetaData.put(ChannelManagerConstants.HST_SITE_ID, mount.getHstSite().getCanonicalIdentifier());
         pageMetaData.put(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
+
+        final HippoBean primaryRequestBean = requestContext.getContentBean();
+
+        if (primaryRequestBean instanceof HippoDocumentBean) {
+            // in the channel mgr, in case of a document bean, it will be the unpublished document variant
+            pageMetaData.put(ChannelManagerConstants.HST_UNPUBLISHED_VARIANT_ID, primaryRequestBean.getValueProvider().getIdentifier());
+        }
+
+        pageMetaData.put(ChannelManagerConstants.HST_BRANCH_ID, HstRequestUtils.getBranchIdFromContext(requestContext));
+
         // provide info for CM that the page is an experience page: The top hst component for experience pages
         // always has compConfig.isExperiencePageComponent() = true
         final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
