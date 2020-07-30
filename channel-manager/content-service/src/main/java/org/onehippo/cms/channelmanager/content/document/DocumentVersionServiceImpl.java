@@ -52,14 +52,14 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
 
     @Override
     public DocumentVersionInfo getVersionInfo(
-            String uuid,
+            String unpublishedDocumentVariantId,
             String branchId,
             UserContext userContext
     ) {
         final Session userSession = userContext.getSession();
         try {
 
-            final Node requestNode = userSession.getNodeByIdentifier(uuid);
+            final Node requestNode = userSession.getNodeByIdentifier(unpublishedDocumentVariantId);
             final Node workspaceUnpublished;
 
             final String workspaceUUID;
@@ -78,37 +78,40 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
             final List<Version> versionInfos = new ArrayList<>();
 
 
+            if (workspaceUnpublished.isNodeType(org.apache.jackrabbit.JcrConstants.MIX_VERSIONABLE)) {
+                final VersionHistory versionHistory = userSession.getWorkspace()
+                        .getVersionManager().getVersionHistory(workspaceUnpublished.getPath());
+
+                // returns the oldest version first
+                final VersionIterator allVersions = versionHistory.getAllVersions();
+                while (allVersions.hasNext()) {
+                    final javax.jcr.version.Version version = allVersions.nextVersion();
+                    final Node frozenNode = version.getFrozenNode();
+                    final String versionBranchId = getStringProperty(frozenNode, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+                    if (versionBranchId.equals(branchId)) {
+                        versionInfos.add(create(version.getCreated(), frozenNode, branchId));
+                    }
+                }
+
+                // sort versions to have the newest one on top
+                versionInfos.sort((o1, o2) -> new Long(o2.getTimestamp().getTimeInMillis()).compareTo(new Long(o1.getTimestamp().getTimeInMillis())));
+            } else {
+                log.debug("Document variant '{}' is not versionable, return only workspace version", workspaceUnpublished.getPath());
+            }
+
             // add workspace as the first version
             final Calendar lastModified = getDateProperty(workspaceUnpublished, HIPPOSTDPUBWF_LAST_MODIFIED_DATE, Calendar.getInstance());
             final String workspaceBranchId = getStringProperty(workspaceUnpublished, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
-
-
-            final VersionHistory versionHistory = userSession.getWorkspace()
-                    .getVersionManager().getVersionHistory(workspaceUnpublished.getPath());
-
-            // returns the oldest version first
-            final VersionIterator allVersions = versionHistory.getAllVersions();
-            while (allVersions.hasNext()) {
-                final javax.jcr.version.Version version = allVersions.nextVersion();
-                final Node frozenNode = version.getFrozenNode();
-                final String versionBranchId = getStringProperty(frozenNode, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
-                if (versionBranchId.equals(branchId)) {
-                    versionInfos.add(create(version.getCreated(), frozenNode, branchId));
-                }
-            }
-
-            // sort versions to have the newest one on top
-            versionInfos.sort((o1, o2) -> new Long(o2.getTimestamp().getTimeInMillis()).compareTo(new Long(o1.getTimestamp().getTimeInMillis())));
 
             if (workspaceBranchId.equals(branchId)) {
                 // current workspace is for branchId, insert as the first version
                 versionInfos.add(0, create(lastModified, workspaceUnpublished, branchId));
             }
 
-            return new DocumentVersionInfo(versionInfos, uuid);
+            return new DocumentVersionInfo(versionInfos, unpublishedDocumentVariantId);
         } catch (ItemNotFoundException e) {
             log.info("Document for id '{}' does not exist or user '{}' is not allowed to read it",
-                    uuid, userSession.getUserID());
+                    unpublishedDocumentVariantId, userSession.getUserID());
             throw new NotFoundException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST));
 
         } catch (RepositoryException e) {
