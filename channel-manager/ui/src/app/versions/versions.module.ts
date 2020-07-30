@@ -19,7 +19,7 @@ import { createCustomElement } from '@angular/elements';
 
 import { SharedModule } from '../shared/shared.module';
 
-import { VersionsTabComponent } from './versions-tab/versions-tab.component';
+import { VersionsTabComponent } from './components/versions-tab/versions-tab.component';
 
 @NgModule({
   declarations: [
