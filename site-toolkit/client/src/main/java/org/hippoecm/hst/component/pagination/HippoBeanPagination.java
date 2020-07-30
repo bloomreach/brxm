@@ -25,13 +25,18 @@ import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class IterablePagination extends Pagination<HippoBean> {
+/**
+ * {@link Pagination} implementation for {@link HippoBean} collections which implements
+ * {@link HippoBeanIterator}, {@link HippoDocumentIterator} and {@link List}.
+ *
+ */
+public class HippoBeanPagination<T extends HippoBean> extends AbstractPagination<T> {
 
-    private static Logger log = LoggerFactory.getLogger(IterablePagination.class);
+    private static Logger log = LoggerFactory.getLogger(HippoBeanPagination.class);
 
-    private List<HippoBean> items;
+    private List<T> items;
 
-    public IterablePagination() {
+    public HippoBeanPagination() {
         items = new ArrayList<>();
     }
 
@@ -41,7 +46,7 @@ public class IterablePagination extends Pagination<HippoBean> {
      * <p/>
      * eg: when HstQuery is used to get the beans, both HstQuery#setLimit and HstQuery#setOffset has been used.
      */
-    public IterablePagination(final HippoBeanIterator beans, final int totalSize, final int pageSize, final int currentPage) {
+    public HippoBeanPagination(final HippoBeanIterator beans, final int totalSize, final int pageSize, final int currentPage, final int limit) {
         super(totalSize, currentPage, pageSize);
 
         // add all from iterator; assuming that paging is done beforehand
@@ -52,7 +57,7 @@ public class IterablePagination extends Pagination<HippoBean> {
      * Constructor to be used when the paging is not done beforehand (for example in HST query), but has to be done by
      * this class, for instance paging on facet navigation results.
      */
-    public IterablePagination(final HippoDocumentIterator<HippoBean> beans, final int totalSize, final int pageSize,
+    public HippoBeanPagination(final HippoDocumentIterator<T> beans, final int totalSize, final int pageSize,
             final int currentPage) {
         super(totalSize, currentPage, pageSize);
         processDocumentsOffset(beans);
@@ -61,7 +66,7 @@ public class IterablePagination extends Pagination<HippoBean> {
     /**
      * Constructor to be used when the paging has been done beforehand (for example in HST query).
      */
-    public IterablePagination(int totalSize, List<HippoBean> items) {
+    public HippoBeanPagination(int totalSize, List<T> items) {
         super(totalSize);
         this.items = new ArrayList<>(items);
     }
@@ -70,7 +75,7 @@ public class IterablePagination extends Pagination<HippoBean> {
      * Constructor to be used when the paging is not done beforehand (for example in HST query), but has to be done by
      * this class, for instance paging on facet navigation results.
      */
-    public IterablePagination(final HippoBeanIterator beans, final int currentPage) {
+    public HippoBeanPagination(final HippoBeanIterator beans, final int currentPage) {
         super(beans.getSize(), currentPage);
         processOffset(beans);
     }
@@ -79,7 +84,7 @@ public class IterablePagination extends Pagination<HippoBean> {
      * Constructor to be used when the paging is not done beforehand (for example in HST query), but has to be done by
      * this class, for instance paging on facet navigation results.
      */
-    public IterablePagination(final HippoBeanIterator beans, final int pageSize, final int currentPage) {
+    public HippoBeanPagination(final HippoBeanIterator beans, final int pageSize, final int currentPage) {
         super(beans.getSize(), currentPage, pageSize);
         items = new ArrayList<>();
         processOffset(beans);
@@ -89,7 +94,7 @@ public class IterablePagination extends Pagination<HippoBean> {
      * Constructor to be used when the paging is not done beforehand (for example in HST query), but has to be done by
      * this class, for instance paging on facet navigation results.
      */
-    public IterablePagination(List<HippoBean> items, final int currentPage, final int pageSize) {
+    public HippoBeanPagination(List<T> items, final int currentPage, final int pageSize) {
         super(items.size(), currentPage, pageSize);
         this.items = new ArrayList<>();
         int startOffset = (currentPage - 1) * pageSize;
@@ -112,7 +117,7 @@ public class IterablePagination extends Pagination<HippoBean> {
      *
      * @param item the item
      */
-    public void addItem(HippoBean item) {
+    public void addItem(T item) {
         items.add(item);
     }
 
@@ -122,15 +127,15 @@ public class IterablePagination extends Pagination<HippoBean> {
      * @return all paged items
      */
     @Override
-    public List<HippoBean> getItems() {
+    public List<T> getItems() {
         return items;
     }
 
-    public void setItems(List<HippoBean> items) {
+    public void setItems(List<T> items) {
         this.items = items;
     }
 
-    protected void processDocumentsOffset(HippoDocumentIterator<HippoBean> documentsIterator) {
+    protected void processDocumentsOffset(HippoDocumentIterator<T> documentsIterator) {
         items = new ArrayList<>();
         final int offset = getOffset();
         if (offset < getTotal()) {
@@ -141,7 +146,7 @@ public class IterablePagination extends Pagination<HippoBean> {
             if (count == getSize()) {
                 break;
             }
-            final HippoBean bean = documentsIterator.next();
+            final T bean = documentsIterator.next();
             if (bean != null) {
                 items.add(bean);
                 count++;
@@ -160,7 +165,7 @@ public class IterablePagination extends Pagination<HippoBean> {
             if (count == getSize()) {
                 break;
             }
-            final HippoBean bean = beans.next();
+            final T bean = (T) beans.next();
             if (bean != null) {
                 items.add(bean);
                 count++;
@@ -174,7 +179,7 @@ public class IterablePagination extends Pagination<HippoBean> {
     protected void processItems(HippoBeanIterator beans) {
         items = new ArrayList<>();
         while (beans.hasNext()) {
-            final HippoBean bean = beans.nextHippoBean();
+            final T bean = (T) beans.nextHippoBean();
             if (bean != null) {
                 items.add(bean);
             }

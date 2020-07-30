@@ -34,6 +34,7 @@ import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPE
 import static org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel.LinkType.EXTERNAL;
 import static org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel.LinkType.INTERNAL;
 import static org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel.LinkType.RESOURCE;
+import static org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel.LinkType.UNKNOWN;
 
 @ApiModel(description = "Link model.")
 public class LinkModel {
@@ -42,7 +43,8 @@ public class LinkModel {
 
         RESOURCE("resource"),
         EXTERNAL("external"),
-        INTERNAL("internal");
+        INTERNAL("internal"),
+        UNKNOWN("unknown");
 
         private final String type;
 
@@ -132,7 +134,9 @@ public class LinkModel {
 
         final LinkType linkType = getLinkType(requestContext, siteLink);
         final String href;
-        if (linkType == INTERNAL) {
+        if (linkType == UNKNOWN) {
+            href = null;
+        } else if (linkType == INTERNAL) {
             href = siteLink.toUrlForm(requestContext, false);
         } else {
             // 'resource' URLs (eg binaries) and 'external' types for Page Model API always must be fully qualified
@@ -144,6 +148,10 @@ public class LinkModel {
 
 
     public static LinkType getLinkType(final HstRequestContext requestContext, final HstLink siteLink) {
+        if (siteLink.isNotFound()) {
+            return UNKNOWN;
+        }
+
         if (siteLink.isContainerResource()) {
             return RESOURCE;
         }
@@ -179,6 +187,9 @@ public class LinkModel {
         // since the selfLink could be resolved, the site link also must be possible to resolve
         final HstLink siteLink = requestContext.getHstLinkCreator().create(hstLink.getPath(), siteMount);
         if (siteLink != null) {
+            if (hstLink.isNotFound()) {
+                siteLink.setNotFound(true);
+            }
             return siteLink;
         }
 

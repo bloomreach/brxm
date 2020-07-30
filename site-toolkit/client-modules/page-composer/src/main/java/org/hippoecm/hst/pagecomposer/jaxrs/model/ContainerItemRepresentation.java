@@ -62,10 +62,7 @@ public class ContainerItemRepresentation extends ComponentRepresentation {
                     node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString() : "");
 
         } else {
-            if (templateConfig instanceof HstComponentConfigurationService) {
-                setTemplate(((HstComponentConfigurationService) templateConfig).getHstTemplate());
-            }
-
+            setTemplate(templateConfig.getHstTemplate());
             setLabel(templateConfig.getLabel());
             setXtype(templateConfig.getXType());
             setComponentClassName(templateConfig.getComponentClassName());

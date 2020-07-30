@@ -28,7 +28,7 @@
     </div>
   </div>
     <@hst.headContribution category="htmlBodyEnd">
-    <script type="text/javascript" src="<@hst.webfile path="/js/jquery-3.4.1.min.js"/>"></script>
+    <script type="text/javascript" src="<@hst.webfile path="/js/jquery-3.5.1.min.js"/>"></script>
     </@hst.headContribution>
     <@hst.headContribution category="htmlBodyEnd">
     <script type="text/javascript" src="<@hst.webfile path="/js/bootstrap.min.js"/>"></script>
