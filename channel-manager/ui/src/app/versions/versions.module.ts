@@ -14,17 +14,27 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
+import { createCustomElement } from '@angular/elements';
 
-import { SharedModule } from './shared/shared.module';
-import { VersionsModule } from './versions/versions.module';
+import { SharedModule } from '../shared/shared.module';
+
+import { VersionsTabComponent } from './versions-tab/versions-tab.component';
 
 @NgModule({
+  declarations: [
+    VersionsTabComponent,
+  ],
   imports: [
     SharedModule,
-    VersionsModule,
+  ],
+  entryComponents: [
+    VersionsTabComponent,
   ],
 })
-export class AppModule {
-  ngDoBootstrap(): void {}
+export class VersionsModule {
+  constructor(readonly injector: Injector) {
+    const versionsTabElement = createCustomElement(VersionsTabComponent, { injector });
+    customElements.define('em-versions-tab', versionsTabElement);
+  }
 }
