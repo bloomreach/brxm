@@ -14,21 +14,8 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+import { IAngularStatic } from 'angular';
 
-import { CONTENT_SERVICE } from './services/ng1/content.ng1service';
-import { SharedModule } from './shared/shared.module';
-import { VersionsModule } from './versions/versions.module';
-
-@NgModule({
-  imports: [
-    SharedModule,
-    VersionsModule,
-  ],
-  providers: [
-    { provide: CONTENT_SERVICE, useValue: window.angular?.element(document.body).injector()?.get('ContentService') },
-  ],
-})
-export class AppModule {
-  ngDoBootstrap(): void {}
+interface Window {
+  angular: IAngularStatic;
 }
