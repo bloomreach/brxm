@@ -96,19 +96,19 @@ public class CopyDocumentTask extends AbstractDocumentTask {
 
         final Optional<Pair<String, String>> branchIdNamePairSource;
         final Document copy;
-        String sourceVariantIdentifier = getSourceVariantIdentifier(dm.getDocuments());
-        DocumentVariant sourceVariant = dm.getDocuments().get(sourceVariantIdentifier);
+        String sourceState = getSourceState(dm.getDocuments());
+        DocumentVariant sourceVariant = dm.getDocuments().get(sourceState);
         branchIdNamePairSource = getBranchIdNamePair(sourceVariant);
 
         Document folder = WorkflowUtils.getContainingFolder(sourceVariant, getWorkflowContext().getInternalWorkflowSession());
         Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
 
         if (workflow instanceof EmbedWorkflow) {
-            log.debug("Copy node : { path : {}, state: {} } to {}",
+            log.debug("Copy node : { path : {}, sourceState: {} } to {}",
                     JcrUtils.getNodePathQuietly(sourceVariant.getNode())
-                    , sourceVariantIdentifier, destination.getIdentity());
+                    , sourceState, destination.getIdentity());
             copy = ((EmbedWorkflow) workflow).copyTo(folder, sourceVariant, newName, null);
-            if (PUBLISHED.equals(sourceVariantIdentifier)){
+            if (PUBLISHED.equals(sourceState)){
                 Node copyHandle = copy.getNode(getWorkflowContext().getInternalWorkflowSession()).getParent();
                 DocumentWorkflow copiedDocumentWorkflow = (DocumentWorkflow) getWorkflowContext().getWorkflow("default", new Document(copyHandle));
                 copiedDocumentWorkflow.depublish();
@@ -133,7 +133,7 @@ public class CopyDocumentTask extends AbstractDocumentTask {
         return null;
     }
 
-    private String getSourceVariantIdentifier(Map<String, DocumentVariant> documents) {
+    private String getSourceState(Map<String, DocumentVariant> documents) {
         if (documents.containsKey(UNPUBLISHED)) {
             return UNPUBLISHED;
         }
