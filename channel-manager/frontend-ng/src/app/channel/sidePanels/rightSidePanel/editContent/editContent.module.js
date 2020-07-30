@@ -20,6 +20,7 @@ import editContentService from './editContent.service';
 import editContentMainComponent from './editContentMain/editContentMain.component';
 import editContentIconComponent from './editContentIcon/editContentIcon.component';
 import editContentToolsComponent from './editContentTools/editContentMain.component';
+import contentTabsComponent from './contentTabs/contentTabs.component';
 
 const editContentModule = angular
   .module('hippo-cm.channel.rightSidePanel.editContentModule', [])
@@ -28,6 +29,7 @@ const editContentModule = angular
   .component('addToProject', addToProjectComponent)
   .component('editContentMain', editContentMainComponent)
   .component('editContentIcon', editContentIconComponent)
-  .component('editContentTools', editContentToolsComponent);
+  .component('editContentTools', editContentToolsComponent)
+  .component('contentTabs', contentTabsComponent);
 
 export default editContentModule.name;
