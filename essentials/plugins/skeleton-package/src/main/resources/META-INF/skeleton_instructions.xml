@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@
 -->
   <instructionSet>
     <file binary="true" action="copy" source="instructions/js/bootstrap.min.js" target="{{webfilesJsRoot}}/bootstrap.min.js"/>
-    <file binary="true" action="copy" source="instructions/js/jquery-3.4.1.min.js" target="{{webfilesJsRoot}}/jquery-3.4.1.min.js"/>
+    <file binary="true" action="copy" source="instructions/js/jquery-3.5.1.min.js" target="{{webfilesJsRoot}}/jquery-3.5.1.min.js"/>
     <file action="copy" binary="true" source="instructions/bootstrap/css/bootstrap.css" target="{{webfilesRoot}}/css/bootstrap.css"/>
     <file action="copy" binary="true" source="instructions/bootstrap/css/bootstrap.min.css" target="{{webfilesRoot}}/css/bootstrap.min.css"/>
     <file action="copy" binary="true" source="instructions/css/cms-request.css" target="{{webfilesRoot}}/css/cms-request.css"/>

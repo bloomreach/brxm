@@ -83,6 +83,10 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
                     final String inUseBy = (String) hints.get("inUseBy");
                     if (StringUtils.isNotBlank(inUseBy)) {
                         populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, inUseBy);
+                    } else if (hints.get("requests") != null) {
+                        populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, "workflow request");
+                    } else {
+                        populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, "unknown");
                     }
                 }
 

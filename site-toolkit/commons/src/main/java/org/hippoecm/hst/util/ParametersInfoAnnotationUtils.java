@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_FROZENPRIMARYTYPE;
-import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 
@@ -161,7 +160,10 @@ public class ParametersInfoAnnotationUtils {
      * @param componentItemNode component configuration node
      * @return the type of <code>ParametersInfo</code>
      * @throws IllegalArgumentException if {@code componentItemNode} is not of type  {@code hst:containeritemcomponent}
+     * @deprecated since 14.3, do not use any more. The method does not work correctly for new-style component items
+     * which do not have a classname but a reference to the component catalog item
      */
+    @Deprecated
     public static ParametersInfo getParametersInfoAnnotation(final Node componentItemNode) throws RepositoryException {
         if (componentItemNode != null) {
             if (!componentItemNode.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT) &&
@@ -175,12 +177,9 @@ public class ParametersInfoAnnotationUtils {
             Class<?> componentClazz = null;
             String componentClassName = null;
 
-            final Node componentNode = componentItemNode.hasProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION) ? componentItemNode.getSession()
-                    .getNode(componentItemNode.getProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION).getValue().getString()) : componentItemNode;
-
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            if (componentNode.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME)) {
-                componentClassName = componentNode.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString();
+            if (componentItemNode.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME)) {
+                componentClassName = componentItemNode.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString();
                 final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
                 final ComponentManager componentManager = hstModelRegistry.getHstModel(classLoader).getComponentManager();
                 final Object component = componentManager.getComponent(componentClassName);
