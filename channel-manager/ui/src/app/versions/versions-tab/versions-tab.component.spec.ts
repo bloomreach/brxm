@@ -14,10 +14,27 @@
  * limitations under the License.
  */
 
-/* You can add global styles to this file, and also import other style files */
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-html,
-body {
-  height: 100vh;
-  margin: 0;
-}
+import { VersionsTabComponent } from './versions-tab.component';
+
+describe('VersionsTabComponent', () => {
+  let component: VersionsTabComponent;
+  let fixture: ComponentFixture<VersionsTabComponent>;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [ VersionsTabComponent ],
+    });
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(VersionsTabComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

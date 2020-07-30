@@ -1,5 +1,5 @@
 /*
-* Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+* Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ describe('EditContentIconCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($controller) => {
+    inject(($componentController) => {
       ContentEditor = jasmine.createSpyObj('ContentEditor', ['getPublicationState']);
 
-      $ctrl = $controller('editContentIconCtrl', {
+      $ctrl = $componentController('editContentIcon', {
         ContentEditor,
       });
     });

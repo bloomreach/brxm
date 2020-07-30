@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import editContentIconTemplate from './editContentIcon.html';
-import editContentMainTemplate from './editContentMain.html';
-import editContentToolsTemplate from './editContentTools.html';
 
 function config($stateProvider) {
   'ngInject';
@@ -46,19 +42,13 @@ function config($stateProvider) {
     },
     views: {
       main: {
-        controller: 'editContentMainCtrl',
-        controllerAs: '$ctrl',
-        template: editContentMainTemplate,
+        component: 'contentTabs',
       },
       tools: {
-        controller: 'editContentToolsCtrl',
-        controllerAs: '$ctrl',
-        template: editContentToolsTemplate,
+        component: 'editContentTools',
       },
       icon: {
-        controller: 'editContentIconCtrl',
-        controllerAs: '$ctrl',
-        template: editContentIconTemplate,
+        component: 'editContentIcon',
       },
     },
   });
