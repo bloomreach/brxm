@@ -13,18 +13,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { NgModule } from '@angular/core';
-
-import { SharedModule } from './shared/shared.module';
-import { VersionsModule } from './versions/versions.module';
-
-@NgModule({
-  imports: [
-    SharedModule,
-    VersionsModule,
-  ],
-})
-export class AppModule {
-  ngDoBootstrap(): void {}
-}
