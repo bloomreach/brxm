@@ -8,8 +8,7 @@
     "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue .",
-    "start": "cross-env NODE_ENV=production node server/index.js",
-    "test": "echo no tests"
+    "start": "cross-env NODE_ENV=production node server/index.js"
   },
   "dependencies": {
     "@bloomreach/spa-sdk": "^14.3",

@@ -1,7 +1,6 @@
 {
   "private": true,
   "workspaces": [
-    "packages/spa-sdk",
     "packages/*",
     "examples/*"
   ],
@@ -22,10 +21,10 @@
   },
   "homepage": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
   "scripts": {
-    "build": "SKIP_PREFLIGHT_CHECK=true yarn workspaces run build",
-    "docs": "yarn workspaces run docs",
-    "lint": "yarn workspaces run lint",
-    "test": "yarn workspaces run test"
+    "build": "SKIP_PREFLIGHT_CHECK=true yarn workspaces foreach --parallel --topological run build",
+    "docs": "yarn workspaces foreach --parallel run docs",
+    "lint": "yarn workspaces foreach --parallel run lint",
+    "test": "yarn workspaces foreach --parallel run test"
   },
   "resolutions": {
     "typescript": "~3.8"
