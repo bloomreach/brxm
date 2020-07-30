@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.ajax.BrSubmit;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -108,7 +109,7 @@ public class UpdaterEditor extends Panel {
         feedback.setOutputMarkupId(true);
         form.add(feedback);
 
-        final AjaxButton executeButton = new AjaxButton("execute-button") {
+        final AjaxButton executeButton = new BrSubmit("execute-button") {
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
                 executeUpdater(false);
@@ -128,7 +129,7 @@ public class UpdaterEditor extends Panel {
         executeButton.setOutputMarkupId(true);
         form.add(executeButton);
 
-        final AjaxButton undoButton = new AjaxButton("undo-button") {
+        final AjaxButton undoButton = new BrSubmit("undo-button") {
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
                 executeUndo();
@@ -148,7 +149,7 @@ public class UpdaterEditor extends Panel {
         undoButton.setOutputMarkupId(true);
         form.add(undoButton);
 
-        final AjaxButton dryRunButton = new AjaxButton("dryrun-button") {
+        final AjaxButton dryRunButton = new BrSubmit("dryrun-button") {
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
                 executeUpdater(true);
@@ -168,7 +169,7 @@ public class UpdaterEditor extends Panel {
         dryRunButton.setOutputMarkupId(true);
         form.add(dryRunButton);
 
-        final AjaxButton saveButton = new AjaxButton("save-button") {
+        final AjaxButton saveButton = new BrSubmit("save-button") {
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 saveUpdater();
@@ -189,7 +190,7 @@ public class UpdaterEditor extends Panel {
         };
         form.add(saveButton);
 
-        final AjaxButton stopButton = new AjaxButton("stop-button") {
+        final AjaxButton stopButton = new BrSubmit("stop-button") {
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
                 stopUpdater();
@@ -208,7 +209,7 @@ public class UpdaterEditor extends Panel {
         };
         form.add(stopButton);
 
-        final AjaxButton deleteButton = new AjaxButton("delete-button") {
+        final AjaxButton deleteButton = new BrSubmit("delete-button") {
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 deleteUpdater();
