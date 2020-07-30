@@ -23,8 +23,6 @@
   "scripts": {
     "dev": "node server.js",
     "build": "next build",
-    "lint": "echo linting",
-    "start": "NODE_ENV=production node server.js",
-    "test": "echo tests"
+    "start": "NODE_ENV=production node server.js"
   }
 }
