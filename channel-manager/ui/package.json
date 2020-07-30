@@ -1,5 +1,5 @@
 {
-  "name": "ui",
+  "name": "channel-manager-ui",
   "private": true,
   "author": "Bloomreach",
   "license": "Apache-2.0",
@@ -14,7 +14,7 @@
   },
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng build --watch",
     "build": "ng build",
     "build:prod": "ng build --prod",
     "test": "ng test --watch",
@@ -22,29 +22,32 @@
     "lint": "ng lint"
   },
   "dependencies": {
-    "@angular/animations": "10.0.2",
-    "@angular/common": "10.0.2",
-    "@angular/compiler": "10.0.2",
-    "@angular/core": "10.0.2",
-    "@angular/forms": "10.0.2",
-    "@angular/platform-browser": "10.0.2",
-    "@angular/platform-browser-dynamic": "10.0.2",
-    "@angular/router": "10.0.2",
-    "rxjs": "6.5.5",
+    "@angular/animations": "10.0.4",
+    "@angular/common": "10.0.4",
+    "@angular/compiler": "10.0.4",
+    "@angular/core": "10.0.4",
+    "@angular/elements": "10.0.4",
+    "@angular/forms": "10.0.4",
+    "@angular/platform-browser": "10.0.4",
+    "@angular/platform-browser-dynamic": "10.0.4",
+    "@angular/router": "10.0.4",
+    "document-register-element": "1.7.2",
+    "rxjs": "6.6.0",
     "tslib": "2.0.0",
     "zone.js": "0.10.3"
   },
   "devDependencies": {
-    "@angular-builders/jest": "9.0.1",
-    "@angular-devkit/build-angular": "0.1000.1",
-    "@angular/cli": "10.0.1",
-    "@angular/compiler-cli": "10.0.2",
-    "@types/jest": "26.0.3",
+    "@angular-builders/jest": "10.0.0",
+    "@angular-devkit/build-angular": "0.1000.3",
+    "@angular/cli": "10.0.3",
+    "@angular/compiler-cli": "10.0.4",
+    "@types/jest": "26.0.5",
     "@types/node": "12.11.1",
-    "codelyzer": "6.0.0-next.1",
+    "codelyzer": "6.0.0",
     "jest": "26.1.0",
-    "ts-node": "8.3.0",
-    "tslint": "6.1.0",
-    "typescript": "3.9.5"
+    "jest-junit": "11.0.1",
+    "ts-node": "8.10.2",
+    "tslint": "6.1.2",
+    "typescript": "3.9.7"
   }
 }

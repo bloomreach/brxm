@@ -1,5 +1,5 @@
-/*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-/* You can add global styles to this file, and also import other style files */
+import './contentTabs.scss';
+import controller from './contentTabs.controller';
+import template from './contentTabs.html';
 
-html,
-body {
-  height: 100vh;
-  margin: 0;
-}
+const contentTabsComponent = {
+  controller,
+  template,
+  bindings: {
+    // trick to render 'flex' and 'layout' attributes on the edit-component-main
+    // element so Angular Material applies the right layout
+    flex: '@',
+    layout: '@',
+  },
+};
+
+export default contentTabsComponent;

@@ -14,10 +14,27 @@
  * limitations under the License.
  */
 
-/* You can add global styles to this file, and also import other style files */
+import { Injector, NgModule } from '@angular/core';
+import { createCustomElement } from '@angular/elements';
 
-html,
-body {
-  height: 100vh;
-  margin: 0;
+import { SharedModule } from '../shared/shared.module';
+
+import { VersionsTabComponent } from './versions-tab/versions-tab.component';
+
+@NgModule({
+  declarations: [
+    VersionsTabComponent,
+  ],
+  imports: [
+    SharedModule,
+  ],
+  entryComponents: [
+    VersionsTabComponent,
+  ],
+})
+export class VersionsModule {
+  constructor(readonly injector: Injector) {
+    const versionsTabElement = createCustomElement(VersionsTabComponent, { injector });
+    customElements.define('em-versions-tab', versionsTabElement);
+  }
 }
