@@ -14,17 +14,27 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SharedModule } from './shared/shared.module';
-import { VersionsModule } from './versions/versions.module';
+import { VersionsTabComponent } from './versions-tab.component';
 
-@NgModule({
-  imports: [
-    SharedModule,
-    VersionsModule,
-  ],
-})
-export class AppModule {
-  ngDoBootstrap(): void {}
-}
+describe('VersionsTabComponent', () => {
+  let component: VersionsTabComponent;
+  let fixture: ComponentFixture<VersionsTabComponent>;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [ VersionsTabComponent ],
+    });
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(VersionsTabComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
