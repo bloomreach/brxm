@@ -26,6 +26,8 @@
   </md-tab>
 
   <md-tab label="{{ ::'VERSIONS' | translate }}">
-    <em-versions-tab></em-versions-tab>
+    <em-versions-tab documentId="{{ $ctrl.documentId }}"
+                     branchId="{{ $ctrl.branchId }}">
+    </em-versions-tab>
   </md-tab>
 </md-tabs>

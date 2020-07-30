@@ -14,6 +14,19 @@
  * limitations under the License.
  */
 
-class ContentTabsCtrl {}
+class ContentTabsCtrl {
+  constructor(
+    $uiRouterGlobals,
+  ) {
+    'ngInject';
+
+    this.$uiRouterGlobals = $uiRouterGlobals;
+  }
+
+  $ngInit() {
+    this.documentId = this.$uiRouterGlobals.params.documentId;
+    this.branchId = 'master';
+  }
+}
 
 export default ContentTabsCtrl;
