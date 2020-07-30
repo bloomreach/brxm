@@ -42,7 +42,7 @@ function config($stateProvider) {
     },
     views: {
       main: {
-        component: 'editContentMain',
+        component: 'contentTabs',
       },
       tools: {
         component: 'editContentTools',
