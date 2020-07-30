@@ -58,7 +58,7 @@ public class MockSession implements HippoSession {
     private AccessControlManager accessControlManager;
     private MockRepository mockRepository;
 
-    private String userId;
+    private String userId = "";
 
     public MockSession(MockNode root) {
         this(root, null);
