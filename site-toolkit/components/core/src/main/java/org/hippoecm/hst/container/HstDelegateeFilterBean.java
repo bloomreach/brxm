@@ -46,6 +46,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.hst.container.security.JwtTokenService;
 import org.hippoecm.hst.container.security.TokenException;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -70,6 +71,7 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
@@ -475,6 +477,16 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     log.debug("{} matched to sitemapitem  '{}'", containerRequest, resolvedSiteMapItem.getHstSiteMapItem());
                     requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
                     finishMatchingPhase(requestContext, renderingHost);
+
+                    final HippoBean primaryContentBean = requestContext.getContentBean();
+                    if (primaryContentBean != null) {
+                        final String renderFrozenNodeId = HstRequestUtils.getRenderFrozenNodeId(requestContext, primaryContentBean.getNode(),
+                                HstRequestUtils.getBranchIdFromContext(requestContext));
+                        if (renderFrozenNodeId != null) {
+                            // the request is for rendering a specific history version of the primary document
+                            requestContext.setRenderingHistory(true);
+                        }
+                    }
                 }
 
                 if (!isSupportedScheme(requestContext, resolvedSiteMapItem, farthestRequestScheme)) {

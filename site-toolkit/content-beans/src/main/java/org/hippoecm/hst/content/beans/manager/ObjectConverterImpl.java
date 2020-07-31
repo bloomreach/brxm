@@ -297,17 +297,25 @@ public class ObjectConverterImpl implements ObjectConverter {
             return node;
         }
 
-        if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
-            // no version history information on handle, return
-            return node;
-        }
-
         final HstRequestContext requestContext = RequestContextProvider.get();
         if (requestContext == null) {
             return node;
         }
 
         final String branchId = HstRequestUtils.getBranchIdFromContext(requestContext);
+
+        final String renderVersionId = HstRequestUtils.getRenderFrozenNodeId(requestContext, canonicalNode, branchId);
+        if (renderVersionId != null) {
+
+            return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(node.getSession().getNodeByIdentifier(renderVersionId),
+                    canonicalNode.getPath(), canonicalNode.getName());
+        }
+
+        if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
+            // no version history information on handle, return
+            return node;
+        }
+
         final String branchIdOfNode = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, BranchConstants.MASTER_BRANCH_ID);
         if (branchIdOfNode.equals(branchId)) {
             return node;
