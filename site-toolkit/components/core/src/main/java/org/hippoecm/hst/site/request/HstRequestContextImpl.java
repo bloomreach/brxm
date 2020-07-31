@@ -125,6 +125,11 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     private boolean pageModelApiRequest;
 
+    // when the current request is rendering a history version, this boolean is true (note a node from version history
+    // does not perse mean that the request is rendering history since it might be the most recent version of a branch
+    // still. This is true only when really a specific historic version is being rendered.
+    private boolean renderingHistory;
+
     private Map<Session, ObjectBeanManager> objectBeanManagers;
     private Map<Session, HstQueryManager> hstQueryManagers;
 
@@ -805,6 +810,17 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public boolean isPageModelApiRequest() {
         checkStateValidity();
         return pageModelApiRequest;
+    }
+
+    @Override
+    public boolean isRenderingHistory() {
+        checkStateValidity();
+        return renderingHistory;
+    }
+
+    @Override
+    public void setRenderingHistory(final boolean renderingHistory) {
+        this.renderingHistory = renderingHistory;
     }
 
     @Deprecated
