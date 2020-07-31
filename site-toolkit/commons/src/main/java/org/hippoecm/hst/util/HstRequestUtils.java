@@ -27,11 +27,16 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -45,18 +50,23 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
-import org.onehippo.repository.branch.BranchConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
+import static org.hippoecm.hst.core.container.ContainerConstants.BR_VERSION_UUID_REQUEST_PARAMETER;
 import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
 import static org.hippoecm.hst.site.HstServices.getComponentManager;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 /**
  * HST Request Utils
@@ -64,6 +74,8 @@ import static org.hippoecm.hst.site.HstServices.getComponentManager;
  * @version $Id$
  */
 public class HstRequestUtils {
+
+    private final static Logger log = LoggerFactory.getLogger(HstRequestUtils.class);
 
     public static final Pattern MATRIX_PARAMS_PATTERN = Pattern.compile(";[^\\/]*");
 
@@ -772,15 +784,91 @@ public class HstRequestUtils {
 
         final Map<HstSite, HstSite> renderMap = (Map<HstSite, HstSite>)requestContext.getAttribute(RENDER_BRANCH_ID);
         if (renderMap == null) {
-            return BranchConstants.MASTER_BRANCH_ID;
+            return MASTER_BRANCH_ID;
         }
 
         final HstSite hstSite = requestContext.getResolvedMount().getMount().getHstSite();
         final HstSite renderSite = renderMap.get(hstSite);
         if (renderSite == null || renderSite.getChannel() == null || renderSite.getChannel().getBranchId() == null) {
-            return BranchConstants.MASTER_BRANCH_ID;
+            return MASTER_BRANCH_ID;
         }
         return renderSite.getChannel().getBranchId();
+    }
+
+    /**
+     * <p>
+     *     This method will almost always return {@code null} except when all below conditions are met: in that case, it
+     *     will return the uuid of the frozen node to render instead of the {@code workspaceNode}. Conditions:
+     *     <ol>
+     *         <li>The request is a channel manager preview (possibly PMA) request</li>
+     *         <li>The servlet request contains request parameter {@link ContainerConstants#BR_VERSION_UUID_REQUEST_PARAMETER}</li>
+     *         <li>The request parameter value is a UUID pointing to a frozen JCR Node</li>
+     *         <li>The JCR Session belonging to {@code workspaceNode} is allowed to read the frozen JCR Node</li>
+     *         <li>The branchId of the frozen Node is equal to the branchId of the current {@code requestContext}</li>
+     *         <li>The workspace Node identifier for the frozen Node is equal to the identifier of {@code workspaceNode}</li>
+     *     </ol>
+     * </p>
+     * <p>
+     *     This method can be used to trigger rendering a versioned document instead of {@code workspaceNode}
+     * </p>
+     * @param requestContext the request context for the current request
+     * @param node the workspaceNode for which instead we might want to render a frozen node from version history
+     *                      in case the request parameter {@link ContainerConstants#BR_VERSION_UUID_REQUEST_PARAMETER}
+     *                      contains a UUID from a versioned node for which the workspace node is equal to
+     *                      {@code workspaceNode}
+     * @param contextBranchId The branchId for the {@code requestContext} to render
+     * @return the uuid of the frozen node to render instead of {@code workspaceNode} or null if just the workspaceNode
+     *         should be used
+     */
+    public static String getRenderFrozenNodeId(final HstRequestContext requestContext, final Node node,
+                                               final String contextBranchId) {
+
+        if (!requestContext.isChannelManagerPreviewRequest()) {
+            return null;
+        }
+
+        final String br_version_uuid = requestContext.getServletRequest().getParameter(BR_VERSION_UUID_REQUEST_PARAMETER);
+        if (br_version_uuid == null) {
+            return null;
+        }
+
+        try {
+
+            if (node.getIdentifier().equals(br_version_uuid)) {
+                return br_version_uuid;
+            }
+
+            final Node frozenNode = node.getSession().getNodeByIdentifier(br_version_uuid);
+            if (!frozenNode.isNodeType(JcrConstants.NT_FROZENNODE)) {
+                return null;
+            }
+
+            final String branchIdOfNode = JcrUtils.getStringProperty(frozenNode, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+            if (!branchIdOfNode.equals(contextBranchId)) {
+                return null;
+            }
+
+            final Node version = frozenNode.getParent();
+
+            if (!(version instanceof Version)) {
+                return null;
+            }
+
+            final String workspaceIdentifier = ((Version) version).getContainingHistory().getVersionableIdentifier();
+
+            if (node.getIdentifier().equals(workspaceIdentifier)) {
+                return br_version_uuid;
+            }
+
+            return null;
+        } catch (ItemNotFoundException e) {
+            log.debug("Node '{}' for request param is not found '{}'", br_version_uuid, BR_VERSION_UUID_REQUEST_PARAMETER);
+            return null;
+        } catch (RepositoryException e) {
+            log.debug("Repository Exception while checking which version history to render", e);
+            return null;
+        }
+
     }
 
     /**

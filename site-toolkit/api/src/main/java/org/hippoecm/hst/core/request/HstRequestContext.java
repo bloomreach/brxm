@@ -237,6 +237,20 @@ public interface HstRequestContext extends ModelContributable {
     boolean isPageModelApiRequest();
 
     /**
+     * <p>
+     *      when the current request is rendering a history version, this boolean is true (note a node from version history
+     *      does not per se mean that the request is rendering history since it might be the most recent version of a branch
+     *      still. This is true only when really a specific older historic version is being rendered.
+     *  </p>
+     *  <p>
+     *      Only when {@link #isChannelManagerPreviewRequest()} is {@code true}, this method {@link #isRenderingHistory()}
+     *      can be true
+     *  </p>
+     * @return {@code true} in case the current request is rendering a history version
+     */
+    boolean isRenderingHistory();
+
+    /**
      * @return {@link #isChannelManagerPreviewRequest()}
      * @deprecated since 13.2.0 do not use any more, use {@link #isChannelManagerPreviewRequest()} instead. Do NOT
      * remove this method before 15.0.0 since even customers their FTL's sometimes invoke #isCmsRequest
