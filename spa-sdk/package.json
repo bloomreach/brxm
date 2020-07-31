@@ -24,6 +24,7 @@
     "build": "SKIP_PREFLIGHT_CHECK=true yarn workspaces foreach --parallel --topological run build",
     "docs": "yarn workspaces foreach --parallel run docs",
     "lint": "yarn workspaces foreach --parallel run lint",
+    "release": "yarn workspaces foreach --include @bloomreach/*-sdk npm publish",
     "test": "yarn workspaces foreach --parallel run test"
   },
   "resolutions": {
