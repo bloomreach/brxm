@@ -23,7 +23,7 @@
     "@angular/platform-browser-dynamic": "^9.1",
     "@angular/platform-server": "^9.1",
     "@angular/router": "^9.1",
-    "@bloomreach/ng-sdk": "^14.3",
+    "@bloomreach/ng-sdk": "^14.3.0",
     "@nguniversal/express-engine": "^9.1",
     "cookie": "^0.4",
     "cookie-parser": "^1.4",
