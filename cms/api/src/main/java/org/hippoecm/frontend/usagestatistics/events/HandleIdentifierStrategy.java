@@ -58,7 +58,7 @@ public class HandleIdentifierStrategy implements IdentifierStrategy {
             identifier = isRevision(node) ? getHandleIdentifierAssociatedWithRevision(node) :
                     getHandleIndentifierAssociatedWithDescendant(node);
             if (identifier == null){
-                log.warn("Node { path: {} } is not a handle, descendant of a handle or revision , " +
+                log.warn("Node { path: {} } is not a handle, descendant of a handle or revision, " +
                         "please provide a path to a handle, document or revision", node.getPath());
             }
         }
@@ -69,14 +69,20 @@ public class HandleIdentifierStrategy implements IdentifierStrategy {
         return node.isNodeType(JcrConstants.NT_VERSION) || node.isNodeType(JcrConstants.NT_FROZEN_NODE);
     }
 
-    private String getHandleIndentifierAssociatedWithDescendant(Node descendant) throws RepositoryException {
-        while (isLeaf(descendant)) {
-            if (isHandle(descendant)) {
+    private Node ascentToHandleOrNode(final Node node) throws RepositoryException{
+        return (isHandle(node) || isRoot(node)) ? node : ascentToHandleOrNode(node.getParent());
+    }
+
+    private boolean isRoot(final Node node) throws RepositoryException {
+        return node.getDepth() == 0;
+    }
+
+    private String getHandleIndentifierAssociatedWithDescendant(final Node node) throws RepositoryException {
+        Node ascendant = ascentToHandleOrNode(node);
+        if (ascendant != null && !isRoot(ascendant)){
                 log.debug("Return handle { path: {} } as ascendant of descendant { path: {} }",
-                        descendant.getPath(), descendant.getPath());
-                return descendant.getIdentifier();
-            }
-            descendant = descendant.getParent();
+                        ascendant.getPath(), node.getPath());
+            return ascendant.getIdentifier();
         }
         return null;
     }
@@ -101,10 +107,6 @@ public class HandleIdentifierStrategy implements IdentifierStrategy {
             }
         }
         return null;
-    }
-
-    private boolean isLeaf(final Node handle) throws RepositoryException {
-        return !handle.getSession().getRootNode().isSame(handle);
     }
 
     private boolean isHandle(final Node handle) throws RepositoryException {
