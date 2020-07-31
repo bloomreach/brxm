@@ -68,6 +68,8 @@
   },
   "dependencies": {
     "emittery": "^0.7",
+    "inversify": "^5.0",
+    "reflect-metadata": "^0.1",
     "xmldom": "^0.3"
   }
 }
