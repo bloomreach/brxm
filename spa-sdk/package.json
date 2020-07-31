@@ -22,6 +22,7 @@
   "homepage": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
   "scripts": {
     "build": "SKIP_PREFLIGHT_CHECK=true yarn workspaces foreach --parallel --topological run build",
+    "bump": "yarn workspaces foreach version $0",
     "docs": "yarn workspaces foreach --parallel run docs",
     "lint": "yarn workspaces foreach --parallel run lint",
     "release": "yarn workspaces foreach --include @bloomreach/*-sdk npm publish",
