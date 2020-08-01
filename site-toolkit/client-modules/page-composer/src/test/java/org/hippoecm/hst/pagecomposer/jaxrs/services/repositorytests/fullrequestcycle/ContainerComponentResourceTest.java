@@ -219,8 +219,14 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
             final Node container = session.getNodeByIdentifier(containerId);
 
             final NodeIterator nodes = container.getNodes();
-            assertEquals("banner-old-style", nodes.nextNode().getName());
-            assertEquals("banner-new-style", nodes.nextNode().getName());
+            while (nodes.hasNext()) {
+
+                assertEquals("testcatalogmenuitem", nodes.nextNode().getName());
+                assertEquals("testcatalogqueryitem", nodes.nextNode().getName());
+                assertEquals("testcatalogitem", nodes.nextNode().getName());
+                assertEquals("banner-old-style", nodes.nextNode().getName());
+                assertEquals("banner-new-style", nodes.nextNode().getName());
+            }
 
             assertEquals("Container expected locked by",
                     "admin", container.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
@@ -267,7 +273,7 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
 
             final NodeIterator sourceChildren = sourceContainer.getNodes();
             // banner-old-style still present
-            assertEquals(1, sourceChildren.getSize());
+            assertEquals(4, sourceChildren.getSize());
 
             final NodeIterator targetChildren = targetContainer.getNodes();
             assertEquals(1, targetChildren.getSize());
