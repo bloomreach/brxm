@@ -130,7 +130,7 @@ public class RepositoryParametersInfoProcessorTest extends AbstractPageComposerT
 
     @After
     public void removeTranslations() throws Exception {
-        session.getNode("/hippo:configuration/hippo:translations/hippo:hst").remove();
+        session.getNode("/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests").remove();
         session.save();
     }
 
