@@ -21,10 +21,9 @@
 
 import 'reflect-metadata';
 import xmldom from 'xmldom';
-import emittery from 'emittery';
 import { Container } from 'inversify';
 import { Api, ApiImpl, Spa } from './spa';
-import { Cms14Impl, CmsImpl, PostMessage } from './cms';
+import { CmsService, Cms, CmsModule, PostMessageService, PostMessage } from './cms';
 import {
   ComponentFactory,
   ComponentImpl,
@@ -52,20 +51,18 @@ import {
   isPage,
 } from './page';
 import { Configuration, ConfigurationWithProxy, ConfigurationWithJwt, isConfigurationWithProxy } from './configuration';
-import { Events } from './events';
+import { EventBus, EventBusService, EventsModule } from './events';
 import { UrlBuilder, UrlBuilderImpl, appendSearchParams, extractSearchParams, isMatched, parseUrl } from './url';
 
 const DEFAULT_AUTHORIZATION_PARAMETER = 'token';
 const DEFAULT_SERVER_ID_PARAMETER = 'server-id';
 
 const container = new Container({ skipBaseClassChecks: true });
-const eventBus = new emittery.Typed<Events>();
-const postMessage = new PostMessage();
-const cms14 = new Cms14Impl(eventBus);
-const cms = new CmsImpl(eventBus, postMessage, postMessage);
 const domParser = new xmldom.DOMParser();
 const pages = new WeakMap<Page, Spa>();
 const xmlSerializer = new xmldom.XMLSerializer();
+
+container.load(EventsModule(), CmsModule());
 
 function onReady<T, U>(value: T | Promise<T>, callback: (value: T) => U): U | Promise<U> {
   return value instanceof Promise
@@ -74,6 +71,7 @@ function onReady<T, U>(value: T | Promise<T>, callback: (value: T) => U): U | Pr
 }
 
 function initializeSpa(api: Api, url: UrlBuilder) {
+  const eventBus = container.get<EventBus>(EventBusService);
   const linkFactory = new LinkFactory()
     .register(TYPE_LINK_INTERNAL, url.getSpaUrl.bind(url));
   const linkRewriter = new LinkRewriterImpl(linkFactory, domParser, xmlSerializer);
@@ -123,7 +121,7 @@ function initializeWithProxy(configuration: ConfigurationWithProxy, model?: Page
   const api = new ApiImpl(url, configuration);
   const spa = initializeSpa(api, url);
 
-  cms14.initialize(configuration);
+  container.getNamed<Cms>(CmsService, 'cms14').initialize(configuration);
 
   return spa.initialize(model ?? configuration.request.path);
 }
@@ -157,8 +155,8 @@ function initializeWithJwt(configuration: ConfigurationWithJwt, model?: PageMode
     (spa) => {
       if (spa.getPage()?.isPreview() && config.cmsBaseUrl) {
         const { origin } = parseUrl(config.cmsBaseUrl);
-        postMessage.initialize({ ...config, origin });
-        cms.initialize(config);
+        container.get<PostMessage>(PostMessageService).initialize({ ...config, origin });
+        container.get<Cms>(CmsService).initialize(config);
       }
 
       return spa;
