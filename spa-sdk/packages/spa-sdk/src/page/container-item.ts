@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Typed } from 'emittery';
 import {
   ComponentImpl,
   ComponentMeta,
@@ -24,7 +23,7 @@ import {
   TYPE_COMPONENT_CONTAINER_ITEM,
 } from './component';
 import { EmitterMixin, Emitter } from '../emitter';
-import { Events, PageUpdateEvent } from '../events';
+import { EventBus, PageUpdateEvent } from '../events';
 import { Factory } from './factory';
 import { Link } from './link';
 import { MetaCollectionModel, MetaCollection } from './meta-collection';
@@ -94,7 +93,7 @@ export class ContainerItemImpl
 {
   constructor(
     protected model: ContainerItemModel,
-    eventBus: Typed<Events>,
+    eventBus: EventBus,
     linkFactory: Factory<[Link], string>,
     private metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
   ) {

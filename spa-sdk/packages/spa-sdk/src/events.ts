@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
+import { Typed } from 'emittery';
+import { ContainerModule } from 'inversify';
 import { ComponentModel, PageModel } from './page';
+
+export const EventBusService = Symbol.for('EventBusService');
+
+export type EventBus = Typed<Events>;
 
 export interface Events {
   'cms.update': CmsUpdateEvent;
@@ -51,3 +57,9 @@ export interface PageUpdateEvent {
  * SPA page rendered event.
  */
 export interface PageReadyEvent {}
+
+export function EventsModule() {
+  return new ContainerModule((bind) => {
+    bind(EventBusService).toConstantValue(new Typed<Events>());
+  });
+}
