@@ -19,8 +19,10 @@
  * @module index
  */
 
+import 'reflect-metadata';
 import xmldom from 'xmldom';
 import emittery from 'emittery';
+import { Container } from 'inversify';
 import { Api, ApiImpl, Spa } from './spa';
 import { Cms14Impl, CmsImpl, PostMessage } from './cms';
 import {
@@ -56,6 +58,7 @@ import { UrlBuilder, UrlBuilderImpl, appendSearchParams, extractSearchParams, is
 const DEFAULT_AUTHORIZATION_PARAMETER = 'token';
 const DEFAULT_SERVER_ID_PARAMETER = 'server-id';
 
+const container = new Container({ skipBaseClassChecks: true });
 const eventBus = new emittery.Typed<Events>();
 const postMessage = new PostMessage();
 const cms14 = new Cms14Impl(eventBus);
