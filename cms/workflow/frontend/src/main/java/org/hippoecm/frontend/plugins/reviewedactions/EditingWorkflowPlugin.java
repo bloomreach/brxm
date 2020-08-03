@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import java.rmi.RemoteException;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -39,7 +37,6 @@ import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowException;
 
 public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
@@ -189,28 +186,20 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
 
                     if (editor.isModified() || !editor.isValid()) {
-                        final boolean showAdditionalMessageForTransferableDraft =
-                                isActionAllowed(getWorkflow().hints(), "saveDraft");
-                        final StringResourceModel additionalMessage =
-                                getResourceModel("additional-cancel-dialog-message-for-draft")
-                                        .setParameters(getDocumentDisplayName());
-                        final StringResourceModel title = getResourceModel("cancel-dialog-title");
-                        final StringResourceModel message = getResourceModel("cancel-dialog-message")
-                                .setParameters(getDocumentDisplayName());
-                        final StringResourceModel okLabel = getResourceModel("cancel-dialog-ok-button");
-                        final CancelDialog cancelComponent = showAdditionalMessageForTransferableDraft ?
-                                new CancelDialog(title, message, additionalMessage, okLabel, cancelAction) :
-                                new CancelDialog(title, message, okLabel, cancelAction);
-                        return cancelComponent;
+                        return new CancelDialog(
+                                new StringResourceModel("cancel-dialog-title", EditingWorkflowPlugin.this),
+                                new StringResourceModel("cancel-dialog-message", EditingWorkflowPlugin.this)
+                                        .setParameters(getDocumentDisplayName()),
+                                new StringResourceModel("cancel-dialog-ok-button", EditingWorkflowPlugin.this),
+                                cancelAction);
                     }
-                } catch (RepositoryException | EditorException | RemoteException | WorkflowException e) {
-                    log.error("Could not create cancel dialog for document: { displayName: {} }", getDocumentDisplayName(), e);
+
+                } catch (RepositoryException e) {
+                    log.error("Could not retrieve workflow document", e);
+                } catch (EditorException e) {
+                    log.error("Could not retrieve document editor", e);
                 }
                 return null;
-            }
-
-            private StringResourceModel getResourceModel(final String resourceKey) {
-                return new StringResourceModel(resourceKey, EditingWorkflowPlugin.this);
             }
 
             private String getDocumentDisplayName() {
