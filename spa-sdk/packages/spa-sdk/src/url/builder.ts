@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
+import { inject, injectable } from 'inversify';
 import { buildUrl, mergeSearchParams, parseUrl } from './utils';
+
+export const UrlBuilderOptionsToken = Symbol.for('UrlBuilderOptionsToken');
+export const UrlBuilderService = Symbol.for('UrlBuilderService');
 
 const DEFAULT_API_BASE_URL = '/resourceapi';
 const DEFAULT_SPA_BASE_URL = '';
@@ -55,12 +59,13 @@ export interface UrlBuilder {
   getSpaUrl(path: string): string;
 }
 
+@injectable()
 export class UrlBuilderImpl {
   private apiBaseUrl: ReturnType<typeof parseUrl>;
   private cmsBaseUrl: ReturnType<typeof parseUrl>;
   private spaBaseUrl: ReturnType<typeof parseUrl>;
 
-  constructor(options: UrlBuilderOptions) {
+  constructor(@inject(UrlBuilderOptionsToken) options: UrlBuilderOptions) {
     this.apiBaseUrl = parseUrl(options.apiBaseUrl ?? `${options.cmsBaseUrl ?? ''}${DEFAULT_API_BASE_URL}`);
     this.cmsBaseUrl = parseUrl(options.cmsBaseUrl ?? '');
     this.spaBaseUrl = parseUrl(options.spaBaseUrl ?? DEFAULT_SPA_BASE_URL);
