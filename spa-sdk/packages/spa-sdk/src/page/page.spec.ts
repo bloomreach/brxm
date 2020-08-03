@@ -16,20 +16,23 @@
 
 import { Typed } from 'emittery';
 import { Component, TYPE_COMPONENT } from './component';
+import { ComponentFactory } from './component-factory';
+import { ContentFactory } from './content-factory';
 import { ContentModel, Content } from './content';
-import { Events } from '../events';
-import { Factory } from './factory';
+import { EventBus, Events } from '../events';
+import { LinkFactory } from './link-factory';
 import { LinkRewriter } from './link-rewriter';
-import { Link, TYPE_LINK_INTERNAL } from './link';
-import { MetaCollectionModel, MetaCollection } from './meta-collection';
+import { TYPE_LINK_INTERNAL } from './link';
+import { MetaCollectionFactory } from './meta-collection-factory';
 import { PageImpl, PageModel, Page, isPage } from './page';
 
+let componentFactory: jest.Mocked<ComponentFactory>;
 let content: Content;
-let contentFactory: jest.Mocked<Factory<[ContentModel], Content>>;
-let eventBus: Typed<Events>;
-let linkFactory: jest.Mocked<Factory<[Link], string>>;
+let contentFactory: jest.MockedFunction<ContentFactory>;
+let eventBus: EventBus;
+let linkFactory: jest.Mocked<LinkFactory>;
 let linkRewriter: jest.Mocked<LinkRewriter>;
-let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], MetaCollection>>;
+let metaFactory: jest.MockedFunction<MetaCollectionFactory>;
 let root: Component;
 
 const model = {
@@ -42,19 +45,18 @@ const model = {
 } as PageModel;
 
 function createPage(pageModel = model) {
-  return new PageImpl(pageModel, root, contentFactory, eventBus, linkFactory, linkRewriter, metaFactory);
+  return new PageImpl(pageModel, componentFactory, contentFactory, eventBus, linkFactory, linkRewriter, metaFactory);
 }
 
 beforeEach(() => {
+  componentFactory = { create: jest.fn(() => root) } as unknown as typeof componentFactory;
   content = {} as jest.Mocked<Content>;
-  contentFactory = { create: jest.fn() };
+  contentFactory = jest.fn(() => content) as unknown as typeof contentFactory;
   eventBus = new Typed<Events>();
-  linkFactory = { create: jest.fn() };
+  linkFactory = { create: jest.fn() } as unknown as typeof linkFactory;
   linkRewriter = { rewrite: jest.fn() } as unknown as jest.Mocked<LinkRewriter>;
-  metaFactory = { create: jest.fn() };
+  metaFactory = jest.fn();
   root = { getComponent: jest.fn() } as unknown as jest.Mocked<Component>;
-
-  contentFactory.create.mockReturnValue(content);
 });
 
 describe('PageImpl', () => {
@@ -81,9 +83,9 @@ describe('PageImpl', () => {
     });
 
     it('should create content instances', () => {
-      expect(contentFactory.create).toBeCalledTimes(2);
-      expect(contentFactory.create).nthCalledWith(1, { id: 'id1', name: 'content1' });
-      expect(contentFactory.create).nthCalledWith(2, { id: 'id2', name: 'content2' });
+      expect(contentFactory).toBeCalledTimes(2);
+      expect(contentFactory).nthCalledWith(1, { id: 'id1', name: 'content1' });
+      expect(contentFactory).nthCalledWith(2, { id: 'id2', name: 'content2' });
     });
 
     it('should return a content item', () => {
@@ -93,13 +95,12 @@ describe('PageImpl', () => {
 
   describe('getMeta', () => {
     it('should delegate to the MetaFactory to create new meta', () => {
-      const metaFactoryCreateSpy = jest.spyOn(metaFactory, 'create');
       const page = createPage();
       const model = {};
 
       page.getMeta(model);
 
-      expect(metaFactoryCreateSpy).toHaveBeenCalledWith(model);
+      expect(metaFactory).toHaveBeenCalledWith(model);
     });
   });
 
@@ -223,7 +224,7 @@ describe('PageImpl', () => {
         },
       } });
 
-      expect(contentFactory.create).toBeCalledWith({ id: 'id', name: 'content' });
+      expect(contentFactory).toBeCalledWith({ id: 'id', name: 'content' });
       expect(page.getContent('content')).toBe(content);
     });
   });

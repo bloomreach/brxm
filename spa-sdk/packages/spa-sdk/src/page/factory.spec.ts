@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,35 +14,10 @@
  * limitations under the License.
  */
 
-import { SingleTypeFactory, MultipleTypeFactory } from './factory';
+import { SimpleFactory } from './factory';
 
-describe('SingleTypeFactory', () => {
-  const builder = jest.fn();
-  const factory = new SingleTypeFactory(builder);
-
-  beforeEach(() => {
-    builder.mockClear();
-  });
-
-  describe('create', () => {
-    it('should pass parameters to a builder function', () => {
-      const input = {};
-      factory.create(input);
-
-      expect(builder).toBeCalledWith(input);
-    });
-
-    it('should return a builder function output', () => {
-      const output = {};
-      builder.mockReturnValueOnce(output);
-
-      expect(factory.create()).toBe(output);
-    });
-  });
-});
-
-describe('MultipleTypeFactory', () => {
-  const factory = new class extends MultipleTypeFactory<string, (param: string) => string> {
+describe('SimpleFactory', () => {
+  const factory = new class extends SimpleFactory<string, (param: string) => string> {
     create(param: string) {
       this.mapping.forEach(builder => builder(param));
     }

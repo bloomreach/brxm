@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
+import { injectable } from 'inversify';
 import { ComponentImpl, ComponentModel, Component, TYPE_COMPONENT_CONTAINER } from './component';
 import { ContainerItem } from './container-item';
-import { Factory } from './factory';
-import { Link } from './link';
-import { MetaCollectionModel, MetaCollection } from './meta-collection';
 
 /**
  * A blocked container with blocked items.
@@ -82,15 +80,11 @@ export interface Container extends Component {
   getChildren(): ContainerItem[];
 }
 
+@injectable()
 export class ContainerImpl extends ComponentImpl implements Container {
-  constructor(
-    protected model: ContainerModel,
-    protected children: ContainerItem[],
-    linkFactory: Factory<[Link], string>,
-    metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
-  ) {
-    super(model, children, linkFactory, metaFactory);
-  }
+  protected model!: ContainerModel;
+
+  protected children!: ContainerItem[];
 
   getChildren() {
     return this.children;

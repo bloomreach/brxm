@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { MetaFactory } from './meta-factory';
 import { MetaCollectionImpl } from './meta-collection';
+import { MetaFactory } from './meta-factory';
 import { MetaType, Meta, META_POSITION_BEGIN, META_POSITION_END, TYPE_META_COMMENT } from './meta';
 import { MetaCommentImpl } from './meta-comment';
 

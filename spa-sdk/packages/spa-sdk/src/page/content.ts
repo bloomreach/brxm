@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-import { Factory } from './factory';
+import { inject, injectable } from 'inversify';
+import { LinkFactory } from './link-factory';
 import { Link } from './link';
+import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionModel, MetaCollection } from './meta-collection';
+
+export const ContentModelToken = Symbol.for('ContentModelToken');
 
 /**
  * @hidden
@@ -72,15 +76,16 @@ export interface Content {
   getUrl(): string | undefined;
 }
 
+@injectable()
 export class ContentImpl implements Content {
   protected meta: MetaCollection;
 
   constructor(
-    protected model: ContentModel,
-    private linkFactory: Factory<[Link], string>,
-    metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
+    @inject(ContentModelToken) protected model: ContentModel,
+    @inject(LinkFactory) private linkFactory: LinkFactory,
+    @inject(MetaCollectionFactory) metaFactory: MetaCollectionFactory,
   ) {
-    this.meta = metaFactory.create(this.model._meta || {});
+    this.meta = metaFactory(this.model._meta ?? {});
   }
 
   getId() {
