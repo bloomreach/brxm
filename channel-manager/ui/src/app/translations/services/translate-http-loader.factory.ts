@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-module.exports = {
-  setupFilesAfterEnv: ["jest-extended"],
-  collectCoverage: true,
-  reporters: [
-    "default",
-    ["jest-junit", {
-      outputDirectory: './target/surefire-reports',
-      outputName: 'em-angular-unit-tests.xml'
-    }],
-  ]
+import { Location } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+import { getAntiCacheQueryParam } from './get-anti-cache-query-param';
+
+export const translateHttpLoaderFactory = (http: HttpClient, location: Location): TranslateHttpLoader => {
+  const locationPath = location.path();
+  const antiCacheQueryParam = getAntiCacheQueryParam(locationPath);
+
+  return new TranslateHttpLoader(http, 'assets/i18n/', `.json?${antiCacheQueryParam}`);
 };
