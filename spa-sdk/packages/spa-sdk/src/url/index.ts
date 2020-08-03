@@ -14,5 +14,14 @@
  * limitations under the License.
  */
 
-export * from './builder';
+import { ContainerModule } from 'inversify';
+import { UrlBuilderImpl, UrlBuilderService } from './builder';
+
+export function UrlModule() {
+  return new ContainerModule((bind) => {
+    bind(UrlBuilderService).to(UrlBuilderImpl).inRequestScope();
+  });
+}
+
+export { UrlBuilderOptionsToken, UrlBuilderOptions, UrlBuilderService, UrlBuilder } from './builder';
 export * from './utils';
