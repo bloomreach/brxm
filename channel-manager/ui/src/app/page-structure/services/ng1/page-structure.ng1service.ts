@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-export interface Version {
-  jcrUUID: string;
-  timestamp: number;
-  userName: string;
-  comment: string;
+import { InjectionToken } from '@angular/core';
+
+export interface Ng1PageStructureService {
+  getPage(): any;
 }
+
+export const NG1_PAGESTRUCTURE_SERVICE = new InjectionToken<Ng1PageStructureService>('NG1_PAGESTRUCTURE_SERVICE');

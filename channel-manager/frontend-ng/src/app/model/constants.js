@@ -15,6 +15,7 @@
  */
 
 // Should match HST's org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.
+export const BRANCH_ID = 'HST-Branch-Id';
 export const CHANNEL_ID = 'HST-Channel-Id';
 export const CONTEXT_PATH = 'HST-Context-Path';
 export const DEFAULT_RENDER_VARIANT = 'hippo-default';
@@ -47,6 +48,7 @@ export const TYPE_MANAGE_CONTENT_LINK = 'MANAGE_CONTENT_LINK';
 export const TYPE_PAGE_META = 'PAGE-META-DATA';
 export const TYPE_PROCESSED_HEAD_CONTRIBUTIONS = 'HST_PROCESSED_HEAD_CONTRIBUTIONS';
 export const TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS = 'HST_UNPROCESSED_HEAD_CONTRIBUTIONS';
+export const UNPUBLISHED_VARIANT_ID = 'HST-Unpublished-Variant-Id';
 export const XTYPE = 'HST-XType';
 export const XTYPE_NOMARKUP = 'HST.NoMarkup';
 export const XTYPE_SPAN = 'HST.Span';

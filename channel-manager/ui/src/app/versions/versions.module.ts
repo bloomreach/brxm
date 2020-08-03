@@ -14,27 +14,31 @@
  * limitations under the License.
  */
 
+import { CommonModule } from '@angular/common';
 import { Injector, NgModule } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
 
 import { SharedModule } from '../shared/shared.module';
+import { TranslationsModule } from '../translations/translations.module';
 
-import { VersionsTabComponent } from './components/versions-tab/versions-tab.component';
+import { VersionsInfoComponent } from './components/versions-info/versions-info.component';
 
 @NgModule({
   declarations: [
-    VersionsTabComponent,
+    VersionsInfoComponent,
   ],
   imports: [
+    CommonModule,
     SharedModule,
+    TranslationsModule,
   ],
   entryComponents: [
-    VersionsTabComponent,
+    VersionsInfoComponent,
   ],
 })
 export class VersionsModule {
   constructor(readonly injector: Injector) {
-    const versionsTabElement = createCustomElement(VersionsTabComponent, { injector });
-    customElements.define('em-versions-tab', versionsTabElement);
+    const versionsInfoElement = createCustomElement(VersionsInfoComponent, { injector });
+    customElements.define('em-versions-info', versionsInfoElement);
   }
 }

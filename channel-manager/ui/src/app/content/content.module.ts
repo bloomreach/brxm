@@ -13,3 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import { NgModule } from '@angular/core';
+
+import { SharedModule } from '../shared/shared.module';
+
+import { NG1_CONTENT_SERVICE } from './services/ng1/content.ng1service';
+
+@NgModule({
+  imports: [
+    SharedModule,
+  ],
+  providers: [
+    { provide: NG1_CONTENT_SERVICE, useValue: window.angular.element(document.body).injector().get('ContentService') },
+  ],
+})
+export class ContentModule {
+}

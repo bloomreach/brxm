@@ -39,6 +39,7 @@ function config($stateProvider) {
     name: 'hippo-cm.channel.edit-content',
     params: {
       documentId: '',
+      showVersionsInfo: false,
     },
     views: {
       main: {

@@ -14,29 +14,19 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
-import { ContentService } from '../../../services/content.service';
+import { Ng1PageStructureService, NG1_PAGESTRUCTURE_SERVICE } from './ng1/page-structure.ng1service';
 
-@Component({
-  selector: 'em-versions-tab',
-  templateUrl: './versions-tab.component.html',
-  styleUrls: ['./versions-tab.component.scss'],
+@Injectable({
+  providedIn: 'root',
 })
-export class VersionsTabComponent implements OnInit {
-  @Input() documentId!: string;
-  @Input() branchId!: string;
-
+export class PageStructureService {
   constructor(
-    private readonly contentService: ContentService,
+    @Inject(NG1_PAGESTRUCTURE_SERVICE) private readonly ng1PageStructureService: Ng1PageStructureService,
   ) { }
 
-  ngOnInit(): void {
-    this.contentService
-      .getDocumentVersions(this.documentId, this.branchId)
-      .then(versionHistory => {
-        console.log('versionhistory', versionHistory);
-      });
+  getPage(): any {
+    return this.ng1PageStructureService.getPage();
   }
-
 }

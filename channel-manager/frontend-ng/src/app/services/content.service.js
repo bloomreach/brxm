@@ -91,7 +91,7 @@ class ContentService {
     });
   }
 
-  getDocumentVersions(id, branchId) {
+  getDocumentVersionsInfo(id, branchId) {
     return this._send(REST_API_CONTENT_PATH, 'GET', ['documents', id, branchId, 'versions']);
   }
 
