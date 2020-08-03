@@ -27,7 +27,7 @@ const {
 } = require('@bloomreach/frontend-build/lib/env');
 
 const uiProjectBasePath = '../ui/dist/ui/';
-const uiProjectOutputFolder = 'ui/';
+const uiProjectOutputFolder = './';
 
 /* eslint import/no-extraneous-dependencies: "off" */
 const merge = require('webpack-merge');

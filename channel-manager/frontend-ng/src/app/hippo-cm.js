@@ -48,6 +48,10 @@ const hippoCmModule = angular
 
     return $rootElement.attr('iframe-asset');
   })
-  .config(config);
+  .config(config)
+  .run(() => {
+    const event = new Event('angularjsInjectorReady');
+    document.body.dispatchEvent(event);
+  });
 
 export default hippoCmModule;
