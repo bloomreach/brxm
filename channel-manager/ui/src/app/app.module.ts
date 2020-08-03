@@ -17,6 +17,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
+import { CONFIG_SERVICE } from './services/ng1/config.service';
 import { CONTENT_SERVICE } from './services/ng1/content.ng1service';
 import { SharedModule } from './shared/shared.module';
 import { TranslationsModule } from './translations/translations.module';
@@ -31,6 +32,7 @@ import { VersionsModule } from './versions/versions.module';
   ],
   providers: [
     { provide: CONTENT_SERVICE, useValue: window.angular.element(document.body).injector().get('ContentService') },
+    { provide: CONFIG_SERVICE, useValue: window.angular.element(document.body).injector().get('ConfigService') },
   ],
 })
 export class AppModule {

@@ -18,12 +18,14 @@ import { TranslateService } from '@ngx-translate/core';
 import 'jest-extended';
 
 import enTranslations from '../../assets/i18n/en.json';
+import { Ng1ConfigService } from '../services/ng1/config.service';
 
 import { TranslationsModule } from './translations.module';
 
 describe('TranslationsModule', () => {
   let module: TranslationsModule;
   let translateServiceMock: { [key: string]: jest.Mock };
+  let settings: Ng1ConfigService;
 
   beforeEach(() => {
     translateServiceMock = {
@@ -33,7 +35,11 @@ describe('TranslationsModule', () => {
       use: jest.fn(),
     };
 
-    module = new TranslationsModule(translateServiceMock as unknown as TranslateService);
+    settings = {
+      locale: 'nl',
+    } as unknown as typeof settings;
+
+    module = new TranslationsModule(translateServiceMock as unknown as TranslateService, settings);
   });
 
   it('should set a default language', () => {
@@ -57,5 +63,21 @@ describe('TranslationsModule', () => {
       'es',
       'zh',
     ]);
+  });
+
+  it('should use the language from the settings', () => {
+    expect(translateServiceMock.use).toHaveBeenCalledWith('nl');
+  });
+
+  describe('when the current language is not set in the settings', () => {
+    beforeEach(() => {
+      settings = { locale: null } as unknown as typeof settings;
+
+      module = new TranslationsModule(translateServiceMock as unknown as TranslateService, settings);
+    });
+
+    it('should use the default language', () => {
+      expect(translateServiceMock.use).toHaveBeenCalledWith('en');
+    });
   });
 });
