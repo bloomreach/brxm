@@ -14,26 +14,29 @@
  * limitations under the License.
  */
 
-import { Typed } from 'emittery';
-import { CmsUpdateEvent, Events } from '../events';
+import { inject, injectable } from 'inversify';
+import { ApiService, Api } from './api';
+import { CmsUpdateEvent, EventBusService, EventBus } from '../events';
 import { PageFactory, PageModel, Page } from '../page';
-import { Api } from './api';
+
+export const SpaService = Symbol.for('SpaService');
 
 /**
  * SPA entry point interacting with the Channel Manager and the Page Model API.
  */
+@injectable()
 export class Spa {
   private page?: Page;
 
   /**
    * @param eventBus Event bus to exchange data between submodules.
+   * @param api Api client.
    * @param pageFactory Factory to produce page instances.
-   * @param urlBuilder API URL builder.
    */
   constructor(
-    protected eventBus: Typed<Events>,
-    private api: Api,
-    private pageFactory: PageFactory,
+    @inject(EventBusService) protected eventBus: EventBus,
+    @inject(ApiService) private api: Api,
+    @inject(PageFactory) private pageFactory: PageFactory,
   ) {
     this.onCmsUpdate = this.onCmsUpdate.bind(this);
   }
@@ -55,7 +58,7 @@ export class Spa {
    * Initializes the SPA.
    * @param model A preloaded page model or URL to a page model.
    */
-  initialize(model: PageModel | string): this | Promise<this> {
+  initialize(model: PageModel | string): Page | Promise<Page> {
     if (typeof model === 'string') {
       return this.api.getPage(model)
         .then(this.hydrate.bind(this));
@@ -71,7 +74,7 @@ export class Spa {
       this.eventBus.on('cms.update', this.onCmsUpdate);
     }
 
-    return this;
+    return this.page;
   }
 
   /**
@@ -80,12 +83,5 @@ export class Spa {
   destroy() {
     this.eventBus.off('cms.update', this.onCmsUpdate);
     delete this.page;
-  }
-
-  /**
-   * @returns The current page instance.
-   */
-  getPage(): Page | undefined {
-    return this.page;
   }
 }

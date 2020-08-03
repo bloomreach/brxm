@@ -16,7 +16,7 @@
 
 import { Typed } from 'emittery';
 import { Component, PageFactory, PageModel, Page, TYPE_COMPONENT } from '../page';
-import { Events } from '../events';
+import { EventBus, Events } from '../events';
 import { Api } from './api';
 import { Spa } from './spa';
 
@@ -42,7 +42,7 @@ const config = {
 
 describe('Spa', () => {
   let api: jest.Mocked<Api>;
-  let eventBus: Typed<Events>;
+  let eventBus: EventBus;
   let page: jest.Mocked<Page>;
   let pageFactory: jest.MockedFunction<PageFactory>;
   let spa: Spa;
