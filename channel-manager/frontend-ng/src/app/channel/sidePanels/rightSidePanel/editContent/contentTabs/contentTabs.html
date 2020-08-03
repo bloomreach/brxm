@@ -25,9 +25,9 @@
     </edit-content-main>
   </md-tab>
 
-  <md-tab label="{{ ::'VERSIONS' | translate }}">
-    <em-versions-tab documentId="{{ $ctrl.documentId }}"
-                     branchId="{{ $ctrl.branchId }}">
-    </em-versions-tab>
+  <md-tab label="{{ ::'VERSIONS' | translate }}"
+          ng-if="$ctrl.showVersionsInfo"
+          md-active="$ctrl.showVersionsInfo">
+    <versions-info-wrapper></versions-info-wrapper>
   </md-tab>
 </md-tabs>

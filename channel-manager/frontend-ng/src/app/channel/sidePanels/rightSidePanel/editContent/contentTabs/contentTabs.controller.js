@@ -16,13 +16,20 @@
 
 class ContentTabsCtrl {
   constructor(
+    $uiRouterGlobals,
     ContentEditor,
     HippoIframeService,
   ) {
     'ngInject';
 
+    this.$uiRouterGlobals = $uiRouterGlobals;
+
     this.ContentEditor = ContentEditor;
     this.HippoIframeService = HippoIframeService;
+  }
+
+  $onInit() {
+    this.showVersionsInfo = this.$uiRouterGlobals.params.showVersionsInfo;
   }
 
   uiCanExit() {

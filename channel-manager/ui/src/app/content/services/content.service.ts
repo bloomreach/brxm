@@ -14,9 +14,21 @@
  * limitations under the License.
  */
 
-export interface Version {
-  jcrUUID: string;
-  timestamp: number;
-  userName: string;
-  comment: string;
+import { Inject, Injectable } from '@angular/core';
+
+import { VersionsInfo } from '../../versions/models/versions-info.model';
+
+import { Ng1ContentService, NG1_CONTENT_SERVICE } from './ng1/content.ng1service';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ContentService {
+  constructor(
+    @Inject(NG1_CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
+  ) { }
+
+  getDocumentVersionsInfo(documentId: string, branchId: string): Promise<VersionsInfo> {
+    return this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId);
+  }
 }
