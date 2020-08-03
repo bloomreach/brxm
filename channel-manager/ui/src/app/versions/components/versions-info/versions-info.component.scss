@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
 
-import { VersionHistory } from '../../versions/models/version-history.model';
+.mat-list-single-selected-option {
+  background-color: #E7F1F9;
 
-export interface Ng1ContentService {
-  getDocumentVersions(id: string, branchId: string): Promise<VersionHistory>;
+  .mat-line:first-child {
+    font-weight: bold !important;
+  }
 }
 
-export const NG1_CONTENT_SERVICE = new InjectionToken<Ng1ContentService>('NG1_CONTENT_SERVICE');
+.mat-line {
+  font-size: 14px !important;
+}

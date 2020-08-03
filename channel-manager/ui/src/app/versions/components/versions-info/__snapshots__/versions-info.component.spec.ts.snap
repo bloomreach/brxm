@@ -4,8 +4,11 @@ exports[`VersionsTabComponent should create 1`] = `
 <div
   id="root0"
 >
-  <h1>
-    Versions!
-  </h1>
+  <div
+    class="mat-typography"
+  >
+    
+    
+  </div>
 </div>
 `;
