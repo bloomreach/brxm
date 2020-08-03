@@ -17,15 +17,15 @@
 import { Typed } from 'emittery';
 import { ComponentImpl, TYPE_COMPONENT_CONTAINER_ITEM } from './component';
 import { ContainerItemImpl, ContainerItemModel, ContainerItem, isContainerItem } from './container-item';
-import { Events } from '../events';
-import { Factory } from './factory';
-import { Link } from './link';
-import { MetaCollectionModel, MetaCollection } from './meta-collection';
+import { EventBus, Events } from '../events';
+import { LinkFactory } from './link-factory';
+import { MetaCollectionFactory } from './meta-collection-factory';
+import { MetaCollection } from './meta-collection';
 import { PageModel } from './page';
 
-let eventBus: Typed<Events>;
-let linkFactory: jest.Mocked<Factory<[Link], string>>;
-let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], MetaCollection>>;
+let eventBus: EventBus;
+let linkFactory: jest.Mocked<LinkFactory>;
+let metaFactory: jest.MockedFunction<MetaCollectionFactory>;
 
 const model = {
   _meta: {},
@@ -39,8 +39,8 @@ function createContainerItem(containerItemModel = model) {
 
 beforeEach(() => {
   eventBus = new Typed<Events>();
-  linkFactory = { create: jest.fn() };
-  metaFactory = { create: jest.fn() };
+  linkFactory = { create: jest.fn() } as unknown as typeof linkFactory;
+  metaFactory = jest.fn();
 });
 
 describe('ContainerItemImpl', () => {
@@ -108,7 +108,7 @@ describe('ContainerItemImpl', () => {
 
     beforeEach(() => {
       containerItem = createContainerItem({ ...model, id: 'id1', label: 'a' });
-      metaFactory.create.mockClear();
+      metaFactory.mockClear();
     });
 
     it('should not update a container item if it is not the same container item', async () => {
@@ -119,14 +119,14 @@ describe('ContainerItemImpl', () => {
         } as PageModel },
       );
 
-      expect(metaFactory.create).not.toBeCalled();
+      expect(metaFactory).not.toBeCalled();
       expect(containerItem.getType()).toBe('a');
     });
 
     it('should update a meta-data on page.update event', async () => {
       const metaModel = {};
       const meta = {} as MetaCollection;
-      metaFactory.create.mockReturnValueOnce(meta);
+      metaFactory.mockReturnValueOnce(meta);
       await eventBus.emitSerial(
         'page.update',
         { page: {
@@ -134,7 +134,7 @@ describe('ContainerItemImpl', () => {
         } as PageModel },
       );
 
-      expect(metaFactory.create).toBeCalledWith(metaModel);
+      expect(metaFactory).toBeCalledWith(metaModel);
       expect(containerItem.getMeta()).toBe(meta);
     });
 

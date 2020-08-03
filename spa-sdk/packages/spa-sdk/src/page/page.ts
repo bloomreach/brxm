@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-import { Typed } from 'emittery';
+import { inject, injectable } from 'inversify';
+import { ComponentFactory } from './component-factory';
 import { ComponentMeta, ComponentModel, Component } from './component';
 import { ContainerItemModel } from './container-item';
 import { ContainerModel } from './container';
+import { ContentFactory } from './content-factory';
 import { ContentModel, Content } from './content';
-import { Factory } from './factory';
-import { LinkRewriter } from './link-rewriter';
+import { LinkFactory } from './link-factory';
+import { LinkRewriter, LinkRewriterService } from './link-rewriter';
 import { Link, TYPE_LINK_INTERNAL } from './link';
-import { Events, PageUpdateEvent } from '../events';
+import { EventBusService, EventBus, PageUpdateEvent } from '../events';
+import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionModel, MetaCollection } from './meta-collection';
 import { Reference, isReference } from './reference';
 import { Visitor, Visit } from './relevance';
+
+export const PageModelToken = Symbol.for('PageModelToken');
 
 /**
  * @hidden
@@ -173,30 +178,34 @@ export interface Page {
   toJSON(): PageModel;
 }
 
+@injectable()
 export class PageImpl implements Page {
   protected content: Map<string, Content>;
 
-  constructor(
-    protected model: PageModel,
-    protected root: Component,
-    private contentFactory: Factory<[ContentModel], Content>,
-    private eventBus: Typed<Events>,
-    private linkFactory: Factory<[Link | string], string>,
-    private linkRewriter: LinkRewriter,
-    private metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
-  ) {
-    eventBus.on('page.update', this.onPageUpdate.bind(this));
+  protected root: Component;
 
+  constructor(
+    @inject(PageModelToken) protected model: PageModel,
+    @inject(ComponentFactory) componentFactory: ComponentFactory,
+    @inject(ContentFactory) private contentFactory: ContentFactory,
+    @inject(EventBusService) private eventBus: EventBus,
+    @inject(LinkFactory) private linkFactory: LinkFactory,
+    @inject(LinkRewriterService) private linkRewriter: LinkRewriter,
+    @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
+  ) {
+    this.eventBus.on('page.update', this.onPageUpdate.bind(this));
+
+    this.root = componentFactory.create(model.page);
     this.content = new Map(
       Object.entries(model.content || {}).map(
-        ([alias, model]) => [alias, contentFactory.create(model)],
+        ([alias, model]) => [alias, this.contentFactory(model)],
       ),
     );
   }
 
   protected onPageUpdate(event: PageUpdateEvent) {
     Object.entries(event.page.content || {}).forEach(
-      ([alias, model]) => this.content.set(alias, this.contentFactory.create(model)),
+      ([alias, model]) => this.content.set(alias, this.contentFactory(model)),
     );
   }
 
@@ -219,7 +228,7 @@ export class PageImpl implements Page {
   }
 
   getMeta(meta: MetaCollectionModel) {
-    return this.metaFactory.create(meta);
+    return this.metaFactory(meta);
   }
 
   getTitle() {
@@ -227,7 +236,7 @@ export class PageImpl implements Page {
   }
 
   getUrl(link?: Link | string) {
-    return this.linkFactory.create(link || { ...this.model._links.site, type: TYPE_LINK_INTERNAL });
+    return this.linkFactory.create(link as any || { ...this.model._links.site, type: TYPE_LINK_INTERNAL });
   }
 
   getVisitor() {
