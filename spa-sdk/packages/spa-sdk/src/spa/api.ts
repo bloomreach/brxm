@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+import { inject, injectable } from 'inversify';
 import { PageModel, Visitor } from '../page';
-import { UrlBuilder } from '../url';
+import { UrlBuilderService, UrlBuilder } from '../url';
 import { HttpClientConfig, HttpClient, HttpRequest } from './http';
 
 const DEFAULT_AUTHORIZATION_HEADER = 'Authorization';
 const DEFAULT_SERVER_ID_HEADER = 'Server-Id';
+
+export const ApiOptionsToken = Symbol.for('ApiOptionsToken');
+export const ApiService = Symbol.for('ApiService');
 
 export interface ApiOptions {
   /**
@@ -79,8 +83,12 @@ export interface Api {
   getComponent(path: string, payload: object): Promise<PageModel>;
 }
 
+@injectable()
 export class ApiImpl implements Api {
-  constructor(private urlBuilder: UrlBuilder, private options: ApiOptions) {}
+  constructor(
+    @inject(UrlBuilderService) private urlBuilder: UrlBuilder,
+    @inject(ApiOptionsToken) private options: ApiOptions,
+  ) {}
 
   getPage(path: string) {
     const url = this.urlBuilder.getApiUrl(path);
