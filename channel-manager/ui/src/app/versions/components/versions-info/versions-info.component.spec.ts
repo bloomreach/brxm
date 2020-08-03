@@ -15,36 +15,45 @@
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatListModule } from '@angular/material/list';
+import { TranslateModule } from '@ngx-translate/core';
 
-import { ContentService } from '../../../services/content.service';
+import { ContentService } from '../../../content/services/content.service';
+import { PageStructureService } from '../../../page-structure/services/page-structure.service';
 
-import { VersionsTabComponent } from './versions-tab.component';
+import { VersionsInfoComponent } from './versions-info.component';
 
 describe('VersionsTabComponent', () => {
-  let component: VersionsTabComponent;
+  let component: VersionsInfoComponent;
   let componentEl: HTMLElement;
-  let fixture: ComponentFixture<VersionsTabComponent>;
+  let fixture: ComponentFixture<VersionsInfoComponent>;
 
   beforeEach(() => {
-    const contentServiceMock = {
-      getDocumentVersions: jest.fn(() => Promise.resolve(
-        {
-          versions: [],
-          currentVersion: '',
+    const contentServiceMock = {};
+    const pageStructureServiceMock = {
+      getPage: () => ({
+        getMeta: () => ({
+          getBranchId: jest.fn(() => 'testBranchId'),
+          getUnpublishedVariantId: jest.fn(() => 'testUnpublishedVariantId'),
         }),
-      ),
+      }),
     };
 
     TestBed.configureTestingModule({
-      declarations: [VersionsTabComponent],
+      declarations: [VersionsInfoComponent],
+      imports: [
+        MatListModule,
+        TranslateModule.forRoot(),
+      ],
       providers: [
         { provide: ContentService, useValue: contentServiceMock },
+        { provide: PageStructureService, useValue: pageStructureServiceMock },
       ],
     });
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(VersionsTabComponent);
+    fixture = TestBed.createComponent(VersionsInfoComponent);
     component = fixture.componentInstance;
     componentEl = fixture.nativeElement;
     fixture.detectChanges();

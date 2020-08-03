@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-export interface Version {
-  jcrUUID: string;
-  timestamp: number;
-  userName: string;
-  comment: string;
+import { Version } from './version.model';
+
+export interface VersionsInfo {
+  currentVersionUUID: string;
+  versions: Version[];
 }

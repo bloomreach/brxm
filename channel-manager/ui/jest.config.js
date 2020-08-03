@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// Make sure unit tests always run in the same timezone
+process.env.TZ = 'CET';
+
 module.exports = {
   setupFilesAfterEnv: ["jest-extended"],
   collectCoverage: true,

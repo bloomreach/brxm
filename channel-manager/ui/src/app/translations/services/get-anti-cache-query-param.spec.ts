@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { default as MockDate } from 'mockdate';
+
 import { getAntiCacheQueryParam } from './get-anti-cache-query-param';
 
 describe('getAntiCacheQueryParam', () => {
@@ -26,11 +28,15 @@ describe('getAntiCacheQueryParam', () => {
   });
 
   it('should create anti cache query param if the location url does not contain antiCache', () => {
-    const expected = `antiCache=${new Date().toLocaleString()}`;
+    const dateString = 'June 12, 1988 15:10:08';
+    MockDate.set(dateString);
+
+    const expected = `antiCache=${new Date(dateString).toLocaleString()}`;
 
     const actual = getAntiCacheQueryParam('/some/path');
 
     expect(actual).toBe(expected);
+    MockDate.reset();
   });
 
   it('should be able to find the antiCache query param if there are a few query params in the url', () => {
