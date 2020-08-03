@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-import { ContainerModule } from 'inversify';
-import { UrlBuilderImpl, UrlBuilderService } from './builder';
+import { Builder } from './factory';
+import { MetaCollectionModel, MetaCollection } from './meta-collection';
 
-export function UrlModule() {
-  return new ContainerModule((bind) => {
-    bind(UrlBuilderService).to(UrlBuilderImpl).inSingletonScope();
-  });
-}
+export const MetaCollectionFactory = Symbol.for('MetaCollectionFactory');
 
-export { UrlBuilderOptionsToken, UrlBuilderOptions, UrlBuilderService, UrlBuilder } from './builder';
-export * from './utils';
+export type MetaCollectionFactory = Builder<[MetaCollectionModel], MetaCollection>;

@@ -16,7 +16,7 @@
 
 import { Typed } from 'emittery';
 import { CmsUpdateEvent, Events } from '../events';
-import { Factory, PageModel, Page } from '../page';
+import { PageFactory, PageModel, Page } from '../page';
 import { Api } from './api';
 
 /**
@@ -33,7 +33,7 @@ export class Spa {
   constructor(
     protected eventBus: Typed<Events>,
     private api: Api,
-    private pageFactory: Factory<[PageModel], Page>,
+    private pageFactory: PageFactory,
   ) {
     this.onCmsUpdate = this.onCmsUpdate.bind(this);
   }
@@ -65,7 +65,7 @@ export class Spa {
   }
 
   private hydrate(model: PageModel) {
-    this.page = this.pageFactory.create(model);
+    this.page = this.pageFactory(model);
 
     if (this.page.isPreview()) {
       this.eventBus.on('cms.update', this.onCmsUpdate);

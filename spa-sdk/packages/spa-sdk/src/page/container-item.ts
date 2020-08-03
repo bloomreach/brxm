@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
+import { inject, injectable } from 'inversify';
 import {
   ComponentImpl,
   ComponentMeta,
   ComponentModel,
+  ComponentModelToken,
   ComponentParameters,
   Component,
   TYPE_COMPONENT_CONTAINER_ITEM,
 } from './component';
 import { EmitterMixin, Emitter } from '../emitter';
-import { EventBus, PageUpdateEvent } from '../events';
-import { Factory } from './factory';
-import { Link } from './link';
-import { MetaCollectionModel, MetaCollection } from './meta-collection';
+import { EventBusService, EventBus, PageUpdateEvent } from '../events';
+import { LinkFactory } from './link-factory';
+import { MetaCollectionFactory } from './meta-collection-factory';
 
 const PARAMETER_HIDDEN = 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide';
 
@@ -87,15 +88,16 @@ export interface ContainerItem extends Component, Emitter<ContainerItemEvents> {
   isHidden(): boolean;
 }
 
+@injectable()
 export class ContainerItemImpl
   extends EmitterMixin<typeof ComponentImpl, ContainerItemEvents>(ComponentImpl)
   implements ContainerItem
 {
   constructor(
-    protected model: ContainerItemModel,
-    eventBus: EventBus,
-    linkFactory: Factory<[Link], string>,
-    private metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
+    @inject(ComponentModelToken) protected model: ContainerItemModel,
+    @inject(EventBusService) eventBus: EventBus,
+    @inject(LinkFactory) linkFactory: LinkFactory,
+    @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
   ) {
     super(model, [], linkFactory, metaFactory);
 
@@ -109,7 +111,7 @@ export class ContainerItemImpl
     }
 
     this.model = model as ContainerItemModel;
-    this.meta = this.metaFactory.create(model._meta);
+    this.meta = this.metaFactory(model._meta);
     this.emit('update', {});
   }
 
