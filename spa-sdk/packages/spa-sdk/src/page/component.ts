@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-import { Factory } from './factory';
+import { inject, injectable } from 'inversify';
+import { LinkFactory } from './link-factory';
 import { Link } from './link';
+import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionModel, MetaCollection } from './meta-collection';
+
+export const ComponentChildrenToken = Symbol.for('ComponentChildrenToken');
+export const ComponentModelToken = Symbol.for('ComponentModelToken');
 
 /**
  * Generic component type.
@@ -128,16 +133,17 @@ export interface Component {
   getComponentById<U extends Component>(id: string): U | this | undefined;
 }
 
+@injectable()
 export class ComponentImpl implements Component {
   protected meta: MetaCollection;
 
   constructor(
-    protected model: ComponentModel,
-    protected children: Component[],
-    private linkFactory: Factory<[Link], string>,
-    metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
+    @inject(ComponentModelToken) protected model: ComponentModel,
+    @inject(ComponentChildrenToken) protected children: Component[],
+    @inject(LinkFactory) private linkFactory: LinkFactory,
+    @inject(MetaCollectionFactory) metaFactory: MetaCollectionFactory,
   ) {
-    this.meta = metaFactory.create(model._meta);
+    this.meta = metaFactory(this.model._meta);
   }
 
   getId() {

@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-import { ContainerModule } from 'inversify';
-import { UrlBuilderImpl, UrlBuilderService } from './builder';
+import { Builder } from './factory';
+import { ContentModel, Content } from './content';
 
-export function UrlModule() {
-  return new ContainerModule((bind) => {
-    bind(UrlBuilderService).to(UrlBuilderImpl).inSingletonScope();
-  });
-}
+export const ContentFactory = Symbol.for('ContentFactory');
 
-export { UrlBuilderOptionsToken, UrlBuilderOptions, UrlBuilderService, UrlBuilder } from './builder';
-export * from './utils';
+export type ContentFactory = Builder<[ContentModel], Content>;

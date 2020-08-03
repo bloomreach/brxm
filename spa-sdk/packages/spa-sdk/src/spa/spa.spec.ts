@@ -15,7 +15,7 @@
  */
 
 import { Typed } from 'emittery';
-import { Component, Factory, PageModel, Page, TYPE_COMPONENT } from '../page';
+import { Component, PageFactory, PageModel, Page, TYPE_COMPONENT } from '../page';
 import { Events } from '../events';
 import { Api } from './api';
 import { Spa } from './spa';
@@ -44,7 +44,7 @@ describe('Spa', () => {
   let api: jest.Mocked<Api>;
   let eventBus: Typed<Events>;
   let page: jest.Mocked<Page>;
-  let pageFactory: jest.Mocked<Factory<[PageModel], Page>>;
+  let pageFactory: jest.MockedFunction<PageFactory>;
   let spa: Spa;
 
   beforeEach(() => {
@@ -58,10 +58,10 @@ describe('Spa', () => {
       getComponent: jest.fn(),
       isPreview: jest.fn(),
     } as unknown as jest.Mocked<Page>;
-    pageFactory = { create: jest.fn() };
+    pageFactory = jest.fn();
 
     spyOn(eventBus, 'on').and.callThrough();
-    pageFactory.create.mockReturnValue(page);
+    pageFactory.mockReturnValue(page);
     spa = new Spa(eventBus, api, pageFactory);
   });
 
@@ -78,11 +78,11 @@ describe('Spa', () => {
 
       spa.initialize(model);
       expect(api.getPage).not.toBeCalled();
-      expect(pageFactory.create).toBeCalledWith(model);
+      expect(pageFactory).toBeCalledWith(model);
     });
 
     it('should create a page instance', () => {
-      expect(pageFactory.create).toBeCalledWith(model);
+      expect(pageFactory).toBeCalledWith(model);
     });
 
     it('should subscribe for cms.update event', async () => {

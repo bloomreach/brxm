@@ -17,12 +17,11 @@
 import { ComponentImpl, TYPE_COMPONENT_CONTAINER } from './component';
 import { ContainerImpl, ContainerModel, isContainer, TYPE_CONTAINER_BOX } from './container';
 import { ContainerItem } from './container-item';
-import { Factory } from './factory';
-import { Link } from './link';
-import { MetaCollectionModel, MetaCollection } from './meta-collection';
+import { LinkFactory } from './link-factory';
+import { MetaCollectionFactory } from './meta-collection-factory';
 
-let linkFactory: jest.Mocked<Factory<[Link], string>>;
-let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], MetaCollection>>;
+let linkFactory: jest.Mocked<LinkFactory>;
+let metaFactory: jest.MockedFunction<MetaCollectionFactory>;
 
 const model = {
   _meta: {},
@@ -35,8 +34,8 @@ function createContainer(containerModel = model, children: ContainerItem[] = [])
 }
 
 beforeEach(() => {
-  linkFactory = { create: jest.fn() };
-  metaFactory = { create: jest.fn() };
+  linkFactory = { create: jest.fn() } as unknown as typeof linkFactory;
+  metaFactory = jest.fn();
 });
 
 describe('ContainerImpl', () => {
