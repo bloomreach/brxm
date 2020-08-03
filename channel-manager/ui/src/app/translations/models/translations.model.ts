@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-module.exports = {
-  setupFilesAfterEnv: ["jest-extended"],
-  collectCoverage: true,
-  reporters: [
-    "default",
-    ["jest-junit", {
-      outputDirectory: './target/surefire-reports',
-      outputName: 'em-angular-unit-tests.xml'
-    }],
-  ]
-};
+export interface Translations {
+  [key: string]: string;
+}
