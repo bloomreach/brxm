@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-module.exports = {
-  setupFilesAfterEnv: ["jest-extended"],
-  collectCoverage: true,
-  reporters: [
-    "default",
-    ["jest-junit", {
-      outputDirectory: './target/surefire-reports',
-      outputName: 'em-angular-unit-tests.xml'
-    }],
-  ]
-};
+const QUERY_PARAM_NAME = 'antiCache';
+
+export function getAntiCacheQueryParam(locationPath: string): string {
+  const results = new RegExp(`[?&]${QUERY_PARAM_NAME}=([^&#]*)`).exec(locationPath);
+
+  const antiCacheValue = results ? results[1] : new Date().toLocaleString();
+
+  return `${QUERY_PARAM_NAME}=${antiCacheValue}`;
+}

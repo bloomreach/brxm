@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
 import { CONTENT_SERVICE } from './services/ng1/content.ng1service';
 import { SharedModule } from './shared/shared.module';
+import { TranslationsModule } from './translations/translations.module';
 import { VersionsModule } from './versions/versions.module';
 
 @NgModule({
   imports: [
     SharedModule,
     VersionsModule,
+    TranslationsModule,
+    HttpClientModule,
   ],
   providers: [
     { provide: CONTENT_SERVICE, useValue: window.angular.element(document.body).injector().get('ContentService') },
