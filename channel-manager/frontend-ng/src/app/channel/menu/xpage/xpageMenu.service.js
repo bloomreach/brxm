@@ -19,15 +19,19 @@ import MenuService from '../menu.service';
 class XPageMenuService extends MenuService {
   constructor(
     $translate,
+    $state,
     DialogService,
     PageService,
+    PageStructureService,
   ) {
     'ngInject';
 
     super();
 
     this.$translate = $translate;
+    this.$state = $state;
     this.DialogService = DialogService;
+    this.PageStructureService = PageStructureService;
 
     function isEnabled(action) {
       return PageService.isActionEnabled('xpage', action);
@@ -43,6 +47,10 @@ class XPageMenuService extends MenuService {
     });
 
     menu
+      .addAction('versions', {
+        onClick: () => this._showVersions(),
+        translationKey: 'TOOLBAR_MENU_XPAGE_VERSIONS',
+      })
       .addAction('new', {
         isEnabled: () => isEnabled('new'),
         isVisible: () => isVisible('new'),
@@ -70,6 +78,18 @@ class XPageMenuService extends MenuService {
       .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
+  }
+
+  _showVersions() {
+    const documentId = this.PageStructureService
+      .getPage()
+      .getMeta()
+      .getUnpublishedVariantId();
+
+    this.$state.go('hippo-cm.channel.edit-content', {
+      documentId,
+      showVersionsInfo: true,
+    });
   }
 }
 

@@ -21,6 +21,7 @@ import editContentMainComponent from './editContentMain/editContentMain.componen
 import editContentIconComponent from './editContentIcon/editContentIcon.component';
 import editContentToolsComponent from './editContentTools/editContentMain.component';
 import contentTabsComponent from './contentTabs/contentTabs.component';
+import versionsInfoWrapperComponent from './versionsInfoWrapper/versionsInfoWrapper.component';
 
 const editContentModule = angular
   .module('hippo-cm.channel.rightSidePanel.editContentModule', [])
@@ -30,6 +31,7 @@ const editContentModule = angular
   .component('editContentMain', editContentMainComponent)
   .component('editContentIcon', editContentIconComponent)
   .component('editContentTools', editContentToolsComponent)
-  .component('contentTabs', contentTabsComponent);
+  .component('contentTabs', contentTabsComponent)
+  .component('versionsInfoWrapper', versionsInfoWrapperComponent);
 
 export default editContentModule.name;

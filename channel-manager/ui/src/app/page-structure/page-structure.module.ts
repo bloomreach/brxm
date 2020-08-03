@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-import { Version } from './version.model';
+import { NgModule } from '@angular/core';
 
-export interface VersionHistory {
-  currentVersion: string;
-  versions: Version[];
+import { SharedModule } from '../shared/shared.module';
+
+import { NG1_PAGESTRUCTURE_SERVICE } from './services/ng1/page-structure.ng1service';
+
+@NgModule({
+  imports: [
+    SharedModule,
+  ],
+  providers: [
+    { provide: NG1_PAGESTRUCTURE_SERVICE, useValue: window.angular.element(document.body).injector().get('PageStructureService') },
+  ],
+})
+export class PageStructureModule {
 }

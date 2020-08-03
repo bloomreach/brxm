@@ -27,7 +27,13 @@ $custom-typography: mat-typography-config(
 $primary: mat-palette($blue);
 $accent: mat-palette($orange);
 $warn: mat-palette($red);
-$theme: mat-light-theme($primary, $accent, $warn);
+$theme: mat-light-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+  ),
+));
 
 @include angular-material-theme($theme);
 
@@ -35,3 +41,4 @@ $theme: mat-light-theme($primary, $accent, $warn);
 .mat-typography {
   color: map-get($text-color, "dark");
 }
+
