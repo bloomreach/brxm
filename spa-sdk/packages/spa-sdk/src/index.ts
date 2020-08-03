@@ -52,7 +52,16 @@ import {
 } from './page';
 import { Configuration, ConfigurationWithProxy, ConfigurationWithJwt, isConfigurationWithProxy } from './configuration';
 import { EventBus, EventBusService, EventsModule } from './events';
-import { UrlBuilder, UrlBuilderImpl, appendSearchParams, extractSearchParams, isMatched, parseUrl } from './url';
+import {
+  UrlModule,
+  UrlBuilderOptionsToken,
+  UrlBuilderService,
+  UrlBuilder,
+  appendSearchParams,
+  extractSearchParams,
+  isMatched,
+  parseUrl,
+} from './url';
 
 const DEFAULT_AUTHORIZATION_PARAMETER = 'token';
 const DEFAULT_SERVER_ID_PARAMETER = 'server-id';
@@ -62,7 +71,7 @@ const domParser = new xmldom.DOMParser();
 const pages = new WeakMap<Page, Spa>();
 const xmlSerializer = new xmldom.XMLSerializer();
 
-container.load(EventsModule(), CmsModule());
+container.load(EventsModule(), CmsModule(), UrlModule());
 
 function onReady<T, U>(value: T | Promise<T>, callback: (value: T) => U): U | Promise<U> {
   return value instanceof Promise
@@ -117,7 +126,11 @@ function initializeWithProxy(configuration: ConfigurationWithProxy, model?: Page
   const options = isMatched(configuration.request.path, configuration.options.preview.spaBaseUrl)
     ? configuration.options.preview
     : configuration.options.live;
-  const url =  new UrlBuilderImpl(options);
+
+  container.bind(UrlBuilderOptionsToken).toConstantValue(options);
+  const url = container.get<UrlBuilder>(UrlBuilderService);
+  container.unbind(UrlBuilderOptionsToken);
+
   const api = new ApiImpl(url, configuration);
   const spa = initializeSpa(api, url);
 
@@ -146,7 +159,10 @@ function initializeWithJwt(configuration: ConfigurationWithJwt, model?: PageMode
     spaBaseUrl: appendSearchParams(configuration.spaBaseUrl ?? '', searchParams),
   };
 
-  const url =  new UrlBuilderImpl(config);
+  container.bind(UrlBuilderOptionsToken).toConstantValue(config);
+  const url = container.get<UrlBuilder>(UrlBuilderService);
+  container.unbind(UrlBuilderOptionsToken);
+
   const api = new ApiImpl(url, { authorizationToken, serverId, ...config });
   const spa = initializeSpa(api, url);
 
