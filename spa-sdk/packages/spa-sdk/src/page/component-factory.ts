@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
+import { injectable } from 'inversify';
 import { ComponentModel, ComponentType, Component } from './component';
-import { MultipleTypeFactory } from './factory';
+import { SimpleFactory } from './factory';
 
 interface Task {
   model: ComponentModel;
@@ -28,7 +29,8 @@ type ComponentBuilder = (model: ComponentModel, children: Component[]) => Compon
 /**
  * A component factory producing components based on a type.
  */
-export class ComponentFactory extends MultipleTypeFactory<ComponentType, ComponentBuilder> {
+@injectable()
+export class ComponentFactory extends SimpleFactory<ComponentType, ComponentBuilder> {
   /**
    * Produces a component based on the model.
    * @param model The component model.
