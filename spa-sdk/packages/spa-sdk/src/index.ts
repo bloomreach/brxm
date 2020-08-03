@@ -21,22 +21,19 @@
 
 import 'reflect-metadata';
 import { Container } from 'inversify';
-import { Api, ApiImpl, Spa } from './spa';
+import { SpaModule, SpaService, Spa, ApiOptionsToken } from './spa';
 import { CmsService, Cms, CmsModule, PostMessageService, PostMessage } from './cms';
 import {
-  PageFactory,
   PageModel,
   PageModule,
   Page,
   isPage,
 } from './page';
 import { Configuration, ConfigurationWithProxy, ConfigurationWithJwt, isConfigurationWithProxy } from './configuration';
-import { EventBus, EventBusService, EventsModule } from './events';
+import { EventsModule } from './events';
 import {
   UrlModule,
   UrlBuilderOptionsToken,
-  UrlBuilderService,
-  UrlBuilder,
   appendSearchParams,
   extractSearchParams,
   isMatched,
@@ -47,42 +44,38 @@ const DEFAULT_AUTHORIZATION_PARAMETER = 'token';
 const DEFAULT_SERVER_ID_PARAMETER = 'server-id';
 
 const container = new Container({ skipBaseClassChecks: true });
-const pages = new WeakMap<Page, Spa>();
+const pages = new WeakMap<Page, Container>();
 
 container.load(EventsModule(), CmsModule(), UrlModule());
 
-function onReady<T, U>(value: T | Promise<T>, callback: (value: T) => U): U | Promise<U> {
+function onReady<T>(value: T | Promise<T>, callback: (value: T) => unknown): T | Promise<T> {
+  const wrapper = (result: T) => (callback(result), result);
+
   return value instanceof Promise
-    ? value.then(callback)
-    : callback(value);
+    ? value.then(wrapper)
+    : wrapper(value);
 }
 
-function initializeSpa(api: Api, scope: Container) {
-  const eventBus = scope.get<EventBus>(EventBusService);
-  const pageFactory = scope.get<PageFactory>(PageFactory);
-
-  return new Spa(eventBus, api, pageFactory);
-}
-
-function initializeWithProxy(configuration: ConfigurationWithProxy, model?: PageModel) {
+function initializeWithProxy(scope: Container, configuration: ConfigurationWithProxy, model?: PageModel) {
   const options = isMatched(configuration.request.path, configuration.options.preview.spaBaseUrl)
     ? configuration.options.preview
     : configuration.options.live;
-  const scope = container.createChild();
 
-  scope.load(UrlModule(), PageModule());
+  scope.load(PageModule(), SpaModule(), UrlModule());
+  scope.bind(ApiOptionsToken).toConstantValue(configuration);
   scope.bind(UrlBuilderOptionsToken).toConstantValue(options);
-
-  const url = scope.get<UrlBuilder>(UrlBuilderService);
-  const api = new ApiImpl(url, configuration);
-  const spa = initializeSpa(api, scope);
-
   scope.getNamed<Cms>(CmsService, 'cms14').initialize(configuration);
 
-  return spa.initialize(model ?? configuration.request.path);
+  return onReady(
+    scope.get<Spa>(SpaService).initialize(model ?? configuration.request.path),
+    () => {
+      scope.unbind(ApiOptionsToken);
+      scope.unbind(UrlBuilderOptionsToken);
+    },
+  );
 }
 
-function initializeWithJwt(configuration: ConfigurationWithJwt, model?: PageModel) {
+function initializeWithJwt(scope: Container, configuration: ConfigurationWithJwt, model?: PageModel) {
   const authorizationParameter = configuration.authorizationQueryParameter ?? DEFAULT_AUTHORIZATION_PARAMETER;
   const endpointParameter = configuration.endpointQueryParameter ?? '';
   const serverIdParameter = configuration.serverIdQueryParameter ?? DEFAULT_SERVER_ID_PARAMETER;
@@ -101,25 +94,22 @@ function initializeWithJwt(configuration: ConfigurationWithJwt, model?: PageMode
     cmsBaseUrl: configuration.cmsBaseUrl ?? endpoint,
     spaBaseUrl: appendSearchParams(configuration.spaBaseUrl ?? '', searchParams),
   };
-  const scope = container.createChild();
 
-  scope.load(PageModule(), UrlModule());
+  scope.load(PageModule(), SpaModule(), UrlModule());
+  scope.bind(ApiOptionsToken).toConstantValue({ authorizationToken, serverId, ...config });
   scope.bind(UrlBuilderOptionsToken).toConstantValue(config);
 
-  const url = scope.get<UrlBuilder>(UrlBuilderService);
-  const api = new ApiImpl(url, { authorizationToken, serverId, ...config });
-  const spa = initializeSpa(api, scope);
-
   return onReady(
-    spa.initialize(model ?? path),
-    (spa) => {
-      if (spa.getPage()?.isPreview() && config.cmsBaseUrl) {
+    scope.get<Spa>(SpaService).initialize(model ?? path),
+    (page) => {
+      if (page.isPreview() && config.cmsBaseUrl) {
         const { origin } = parseUrl(config.cmsBaseUrl);
         scope.get<PostMessage>(PostMessageService).initialize({ ...config, origin });
         scope.get<Cms>(CmsService).initialize(config);
       }
 
-      return spa;
+      scope.unbind(ApiOptionsToken);
+      scope.unbind(UrlBuilderOptionsToken);
     },
   );
 }
@@ -144,16 +134,13 @@ export function initialize(configuration: Configuration, model?: Page | PageMode
     return model;
   }
 
+  const scope = container.createChild();
+
   return onReady(
     isConfigurationWithProxy(configuration)
-      ? initializeWithProxy(configuration, model)
-      : initializeWithJwt(configuration, model),
-    (spa) => {
-      const page = spa.getPage()!;
-      pages.set(page, spa);
-
-      return page;
-    },
+      ? initializeWithProxy(scope, configuration, model)
+      : initializeWithJwt(scope, configuration, model),
+    page => pages.set(page, scope),
   );
 }
 
@@ -162,7 +149,7 @@ export function initialize(configuration: Configuration, model?: Page | PageMode
  * @param page Page instance to destroy.
  */
 export function destroy(page: Page): void {
-  return pages.get(page)?.destroy();
+  return pages.get(page)?.get<Spa>(SpaService).destroy();
 }
 
 export { Configuration } from './configuration';
