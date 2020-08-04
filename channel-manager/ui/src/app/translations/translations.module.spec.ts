@@ -18,7 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 import 'jest-extended';
 
 import enTranslations from '../../assets/i18n/en.json';
-import { Ng1ConfigService } from '../services/ng1/config.service';
+import { Ng1ConfigService } from '../services/ng1/config.ng1.service';
 
 import { TranslationsModule } from './translations.module';
 
