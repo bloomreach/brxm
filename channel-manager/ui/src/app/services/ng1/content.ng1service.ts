@@ -22,4 +22,4 @@ export interface Ng1ContentService {
   getDocumentVersions(id: string, branchId: string): Promise<VersionHistory>;
 }
 
-export const CONTENT_SERVICE = new InjectionToken<Ng1ContentService>('CONTENT_SERVICE');
+export const NG1_CONTENT_SERVICE = new InjectionToken<Ng1ContentService>('NG1_CONTENT_SERVICE');

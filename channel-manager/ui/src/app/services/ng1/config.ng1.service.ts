@@ -24,4 +24,4 @@ export interface Ng1ConfigService {
   isDevMode(): boolean;
 }
 
-export const CONFIG_SERVICE = new InjectionToken<Ng1ConfigService>('CONFIG_SERVICE');
+export const NG1_CONFIG_SERVICE = new InjectionToken<Ng1ConfigService>('NG1_CONFIG_SERVICE');
