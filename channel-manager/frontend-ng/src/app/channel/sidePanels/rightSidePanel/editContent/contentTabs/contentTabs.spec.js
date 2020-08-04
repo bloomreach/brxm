@@ -14,4 +14,135 @@
  * limitations under the License.
  */
 
-describe('ContentTabsCtrl', () => {});
+describe('ContentTabsCtrl', () => {
+  let $q;
+  let $scope;
+  let ContentEditor;
+  let HippoIframeService;
+
+  let $ctrl;
+
+  beforeEach(() => {
+    angular.mock.module('hippo-cm');
+
+    inject(($componentController, _$q_, $rootScope) => {
+      $q = _$q_;
+      ContentEditor = jasmine.createSpyObj('ContentEditor', [
+        'close',
+        'confirmPublication',
+        'confirmSaveOrDiscardChanges',
+        'discardChanges',
+        'getDocument',
+        'getDocumentDisplayName',
+        'getDocumentErrorMessages',
+        'getDocumentId',
+        'getDocumentType',
+        'isDocumentDirty',
+        'isEditing',
+        'isKeepDraftAllowed',
+        'isPristine',
+        'isPublishAllowed',
+        'isRetainable',
+        'keepDraft',
+        'publish',
+        'save',
+      ]);
+      HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
+      $scope = $rootScope.$new();
+
+      $ctrl = $componentController('contentTabs', {
+        ContentEditor,
+        HippoIframeService,
+      });
+    });
+  });
+
+  describe('ui-router state exit', () => {
+    describe('when opening another document', () => {
+      it('succeeds when document is retainable', (done) => {
+        ContentEditor.isRetainable.and.returnValue(true);
+        ContentEditor.keepDraft.and.returnValue($q.resolve());
+        $ctrl.uiCanExit().then(() => {
+          expect(ContentEditor.close).toHaveBeenCalled();
+          done();
+        });
+        $scope.$digest();
+      });
+      it('succeeds when saving changes and reloads the iframe', (done) => {
+        ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('SAVE'));
+        ContentEditor.discardChanges.and.returnValue($q.resolve());
+
+        $ctrl.uiCanExit().then(() => {
+          expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
+          expect(ContentEditor.close).toHaveBeenCalled();
+          expect(HippoIframeService.reload).toHaveBeenCalled();
+          done();
+        });
+        $scope.$digest();
+      });
+
+      it('succeeds and still closes the editor when discarding changes fails after confirmation of saving changes', (done) => { // eslint-disable-line max-len
+        ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('SAVE'));
+        ContentEditor.discardChanges.and.returnValue($q.reject());
+
+        $ctrl.uiCanExit().then(() => {
+          expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
+          expect(ContentEditor.close).toHaveBeenCalled();
+          expect(HippoIframeService.reload).toHaveBeenCalled();
+          done();
+        });
+        $scope.$digest();
+      });
+
+      it('succeeds when discarding changes', (done) => {
+        ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('DISCARD'));
+        ContentEditor.discardChanges.and.returnValue($q.resolve());
+
+        $ctrl.uiCanExit().then(() => {
+          expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
+          expect(ContentEditor.close).toHaveBeenCalled();
+          expect(HippoIframeService.reload).not.toHaveBeenCalled();
+          done();
+        });
+        $scope.$digest();
+      });
+
+      it('succeeds and still closes the editor when discarding changes fails after discard changes confirmation', (done) => { // eslint-disable-line max-len
+        ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('DISCARD'));
+        ContentEditor.discardChanges.and.returnValue($q.reject());
+
+        $ctrl.uiCanExit().then(() => {
+          expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
+          expect(ContentEditor.close).toHaveBeenCalled();
+          expect(HippoIframeService.reload).not.toHaveBeenCalled();
+          done();
+        });
+        $scope.$digest();
+      });
+
+      it('fails when save or discard changes is canceled', (done) => {
+        ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
+
+        $ctrl.uiCanExit().catch(() => {
+          expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
+          done();
+        });
+        $scope.$digest();
+      });
+    });
+
+    it('succeeds when switching editor ', (done) => {
+      // because the editor is already closed in switchEditor(),
+      // no confirmation dialog will be shown and no document will be discarded
+      ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
+      ContentEditor.discardChanges.and.returnValue($q.resolve());
+
+      $ctrl.uiCanExit().then(done);
+      $scope.$digest();
+    });
+  });
+});
