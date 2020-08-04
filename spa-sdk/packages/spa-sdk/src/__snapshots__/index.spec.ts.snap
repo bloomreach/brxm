@@ -50,16 +50,6 @@ Object {
 }
 `;
 
-exports[`initialize should initialize using endpoint from the query string 1`] = `
-Array [
-  Object {
-    "headers": Object {},
-    "method": "GET",
-    "url": "http://example.com/api/",
-  },
-]
-`;
-
 exports[`initialize should react on a component rendering 1`] = `
 Array [
   Object {
