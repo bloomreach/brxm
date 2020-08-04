@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VersionsTabComponent should create 1`] = `
+<div
+  id="root0"
+>
+  <h1>
+    Versions!
+  </h1>
+</div>
+`;
