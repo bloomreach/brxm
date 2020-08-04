@@ -16,25 +16,41 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { ContentService } from '../../../services/content.service';
+
 import { VersionsTabComponent } from './versions-tab.component';
 
 describe('VersionsTabComponent', () => {
   let component: VersionsTabComponent;
+  let componentEl: HTMLElement;
   let fixture: ComponentFixture<VersionsTabComponent>;
 
   beforeEach(() => {
+    const contentServiceMock = {
+      getDocumentVersions: jest.fn(() => Promise.resolve(
+        {
+          versions: [],
+          currentVersion: '',
+        }),
+      ),
+    };
+
     TestBed.configureTestingModule({
-      declarations: [ VersionsTabComponent ],
+      declarations: [VersionsTabComponent],
+      providers: [
+        { provide: ContentService, useValue: contentServiceMock },
+      ],
     });
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(VersionsTabComponent);
     component = fixture.componentInstance;
+    componentEl = fixture.nativeElement;
     fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(componentEl).toMatchSnapshot();
   });
 });
