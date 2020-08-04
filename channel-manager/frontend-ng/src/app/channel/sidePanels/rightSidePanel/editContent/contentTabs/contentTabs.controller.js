@@ -16,16 +16,36 @@
 
 class ContentTabsCtrl {
   constructor(
-    $uiRouterGlobals,
+    ContentEditor,
+    HippoIframeService,
   ) {
     'ngInject';
 
-    this.$uiRouterGlobals = $uiRouterGlobals;
+    this.ContentEditor = ContentEditor;
+    this.HippoIframeService = HippoIframeService;
   }
 
-  $ngInit() {
-    this.documentId = this.$uiRouterGlobals.params.documentId;
-    this.branchId = 'master';
+  uiCanExit() {
+    if (this.ContentEditor.isRetainable()) {
+      return this.ContentEditor.keepDraft()
+        .finally(() => this.ContentEditor.close());
+    }
+    return this._confirmExit()
+      .then(() => this.ContentEditor.discardChanges()
+        .catch(() => {
+          // ignore errors of discardChanges: if it fails (e.g. because an admin unlocked the document)
+          // the editor should still be closed.
+        })
+        .finally(() => this.ContentEditor.close()));
+  }
+
+  _confirmExit() {
+    return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_TO_DOCUMENT')
+      .then((action) => {
+        if (action === 'SAVE') {
+          this.HippoIframeService.reload();
+        }
+      });
   }
 }
 
