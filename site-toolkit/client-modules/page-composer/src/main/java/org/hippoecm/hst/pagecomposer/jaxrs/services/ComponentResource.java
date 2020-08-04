@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
@@ -33,12 +32,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ActionsRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ActionsAndStatesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Action;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.state.XPageState;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
@@ -49,16 +51,21 @@ import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivilege
 public class ComponentResource extends AbstractConfigResource {
 
     private ActionService actionService;
+    private StateService stateService;
 
     public void setActionService(final ActionService actionService) {
         this.actionService = actionService;
+    }
+
+    public void setStateService(final StateService stateService) {
+        this.stateService = stateService;
     }
 
     @GET
     @Path("/item/{siteMapItemUuid}")
     @Produces(MediaType.APPLICATION_JSON)
     @PrivilegesAllowed({CHANNEL_VIEWER_PRIVILEGE_NAME, XPAGE_REQUIRED_PRIVILEGE_NAME})
-    public Object getActions(
+    public Object getActionsAndStates(
             @HeaderParam("hostGroup") String hostGroup,
             @Context HttpServletRequest servletRequest,
             @PathParam("siteMapItemUuid") String siteMapItemUuid
@@ -77,18 +84,19 @@ public class ComponentResource extends AbstractConfigResource {
                 throw new IllegalStateException("CmsSessionContext should never be null here");
             }
             final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
+            final PageComposerContextService pageComposerContextService = getPageComposerContextService();
             final ActionContext actionContext = new ActionContext(
-                    getPageComposerContextService(),
+                    pageComposerContextService,
                     siteMapItemUuid,
                     contextPayload,
                     hostGroup
             );
-            return ok("", getActionsRepresentation(actionContext), false);
-        });
-    }
+            final Map<String, Set<Action>> actionsByCategory = actionService.getActionsByCategory(actionContext);
 
-    private ActionsRepresentation getActionsRepresentation(ActionContext actionContext) throws RepositoryException {
-        final Map<String, Set<Action>> actionsByCategory = actionService.getActionsByCategory(actionContext);
-        return ActionsRepresentation.represent(actionsByCategory);
+            final StateContext stateContext = new StateContext(pageComposerContextService);
+            final XPageState xPageState = stateService.getXPageState(stateContext);
+
+            return ok("", ActionsAndStatesRepresentation.represent(actionsByCategory, xPageState), false);
+        });
     }
 }

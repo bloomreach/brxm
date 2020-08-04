@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ActionsRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ActionsAndStatesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Category;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction;
@@ -73,10 +73,10 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
 
         final String containerTestPageId = getNodeId("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage");
 
-        final MockHttpServletResponse response = getActionsRequest(containerTestPageId);
+        final MockHttpServletResponse response = getActionsAndStatesRequest(containerTestPageId);
         Assertions.assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
 
-        final Map<String, Boolean> actions = flatten(getActions(response));
+        final Map<String, Boolean> actions = flatten(getActionsAndStates(response));
 
         final Map<String, Boolean> expectedActionItems = ImmutableMap.<String, Boolean>builder()
                 .put(key(channel(), CHANNEL_CLOSE), true)
@@ -105,10 +105,10 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         session.save();
         session.logout();
 
-        final MockHttpServletResponse response = getActionsRequest(containerTestPageId);
+        final MockHttpServletResponse response = getActionsAndStatesRequest(containerTestPageId);
         Assertions.assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
 
-        final Map<String, Boolean> actions = flatten(getActions(response));
+        final Map<String, Boolean> actions = flatten(getActionsAndStates(response));
 
         final Map<String, Boolean> expectedActionItems = ImmutableMap.<String, Boolean>builder()
                 .put(key(channel(), CHANNEL_CLOSE), true)
@@ -137,10 +137,10 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         hippoSession.save();
         hippoSession.logout();
 
-        final MockHttpServletResponse response = getActionsRequest(documentXPageId);
+        final MockHttpServletResponse response = getActionsAndStatesRequest(documentXPageId);
         Assertions.assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
 
-        final Map<String, Boolean> actions = flatten(getActions(response));
+        final Map<String, Boolean> actions = flatten(getActionsAndStates(response));
 
         final Map<String, Boolean> expectedActionItems = ImmutableMap.<String, Boolean>builder()
                 .put(key(channel(), CHANNEL_CLOSE), true)
@@ -158,7 +158,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .isEqualTo(expectedActionItems);
     }
 
-    private MockHttpServletResponse getActionsRequest(String containerId) throws RepositoryException, IOException, ServletException {
+    private MockHttpServletResponse getActionsAndStatesRequest(String containerId) throws RepositoryException, IOException, ServletException {
 
 
         final String homeSiteMapItemUuid = getNodeId("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home");
@@ -172,18 +172,18 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         return render(mountId, requestResponseMock, ADMIN_CREDENTIALS, null);
     }
 
-    private ActionsRepresentation getActions(MockHttpServletResponse response) throws UnsupportedEncodingException, JsonProcessingException {
+    private ActionsAndStatesRepresentation getActionsAndStates(MockHttpServletResponse response) throws UnsupportedEncodingException, JsonProcessingException {
         final ExtResponseRepresentation extResponseRepresentation = mapper.readValue(response.getContentAsString(), ExtResponseRepresentation.class);
         // Jackson's representation for the data object is a map of maps.
         // However, for assertions we prefer the ActionRepresentation.
         // So 1st we map the data to a string
         final String dataAsString = mapper.writeValueAsString(extResponseRepresentation.getData());
         // and then back again to an ActionRepresentation
-        return mapper.readValue(dataAsString, ActionsRepresentation.class);
+        return mapper.readValue(dataAsString, ActionsAndStatesRepresentation.class);
     }
 
-    private Map<String, Boolean> flatten(ActionsRepresentation actionsRepresentation) {
-        return actionsRepresentation.getActions().entrySet().stream()
+    private Map<String, Boolean> flatten(ActionsAndStatesRepresentation actionsAndStatesRepresentation) {
+        return actionsAndStatesRepresentation.getActions().entrySet().stream()
                 .flatMap(ec -> ec.getValue().getItems().entrySet().stream().map(ea -> Pair.of(ec.getKey() + "." + ea.getKey(), ea.getValue().isEnabled())))
                 .collect(toMap(Pair::getLeft, Pair::getRight));
     }
