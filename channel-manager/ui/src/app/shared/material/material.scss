@@ -14,4 +14,24 @@
  * limitations under the License.
  */
 
-@import './app/shared/material/material';
+@import '~@angular/material/theming';
+@import '~@bloomreach/frontend-theme/palettes';
+@import 'variables';
+
+$custom-typography: mat-typography-config(
+  $font-family: inspect($font-family)
+);
+
+@include mat-core($custom-typography);
+
+$primary: mat-palette($blue);
+$accent: mat-palette($orange);
+$warn: mat-palette($red);
+$theme: mat-light-theme($primary, $accent, $warn);
+
+@include angular-material-theme($theme);
+
+// default body text color
+.mat-typography {
+  color: map-get($text-color, "dark");
+}
