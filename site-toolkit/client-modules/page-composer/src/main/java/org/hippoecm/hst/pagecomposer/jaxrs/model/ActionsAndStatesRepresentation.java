@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,23 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Action;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.state.XPageState;
 
 import static java.util.stream.Collectors.toMap;
 
-public final class ActionsRepresentation {
+public final class ActionsAndStatesRepresentation {
 
     private Map<String, CategoryRepresentation> actions;
+    private StatesRepresentation states;
 
-    public static ActionsRepresentation represent(Map<String, Set<Action>> actionsByCategory) {
-        final ActionsRepresentation representation = new ActionsRepresentation();
+    public static ActionsAndStatesRepresentation represent(final Map<String, Set<Action>> actionsByCategory,
+                                                           final XPageState xPageState) {
+        final ActionsAndStatesRepresentation representation = new ActionsAndStatesRepresentation();
         representation.setActions(actionsByCategory.entrySet().stream()
                 .collect(toMap(
                         Map.Entry::getKey,
                         e -> CategoryRepresentation.represent(e.getValue()))));
+        representation.setStates(StatesRepresentation.represent(xPageState));
         return representation;
     }
 
@@ -42,5 +46,13 @@ public final class ActionsRepresentation {
 
     public void setActions(final Map<String, CategoryRepresentation> actions) {
         this.actions = actions;
+    }
+
+    public StatesRepresentation getStates() {
+        return states;
+    }
+
+    public void setStates(final StatesRepresentation states) {
+        this.states = states;
     }
 }

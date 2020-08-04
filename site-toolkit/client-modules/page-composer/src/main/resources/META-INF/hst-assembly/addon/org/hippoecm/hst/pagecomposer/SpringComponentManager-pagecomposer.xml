@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2020 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -284,6 +284,7 @@
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ComponentResource" parent="abstractConfigResource">
               <property name="actionService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService" />
+              <property name="stateService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateService" />
             </bean>
           </constructor-arg>
         </bean>
@@ -291,6 +292,7 @@
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageResource" parent="abstractConfigResource">
               <property name="actionService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService" />
+              <property name="stateService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateService" />
             </bean>
           </constructor-arg>
         </bean>
@@ -324,6 +326,16 @@
       </bean>
     </constructor-arg>
     <property name="actionProviders" ref="actionProviders" />
+  </bean>
+
+  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateServiceImpl">
+    <constructor-arg>
+      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateProviderContextFactory">
+        <constructor-arg>
+          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.state.XPageStateContextFactory" />
+        </constructor-arg>
+      </bean>
+    </constructor-arg>
   </bean>
 
   <!-- Pipelining -->
