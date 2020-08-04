@@ -533,6 +533,8 @@ public class Main extends PluginApplication {
         if (log.isInfoEnabled()) {
             log.info("Hippo CMS application " + applicationName + " has started");
         }
+
+        getApplicationSettings().setAccessDeniedPage(PluginPage.class);
     }
 
     protected IPackageResourceGuard createPackageResourceGuard() {
