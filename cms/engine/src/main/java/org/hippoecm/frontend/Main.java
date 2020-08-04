@@ -557,6 +557,7 @@ public class Main extends PluginApplication {
         }
 
         addHeaderResponseDecorator();
+        getApplicationSettings().setAccessDeniedPage(PluginPage.class);
     }
 
     @Override
