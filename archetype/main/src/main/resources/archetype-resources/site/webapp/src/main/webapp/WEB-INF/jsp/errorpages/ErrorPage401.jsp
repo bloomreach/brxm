@@ -32,35 +32,23 @@
   <div class="hippo-login-panel">
     <form class="hippo-login-panel-form" name="signInForm" method="post" action="${loginProxyUrl}">
       <h2>
-        <div class="hippo-global-hideme"><span>BloomReach Experience</span></div>
+        <div class="hippo-global-hideme"><span><fmt:message key="label.authen.required"/></span></div>
       </h2>
       <div class="hippo-login-form-container">
-        <table>
-          <tr>
-            <td>
-              <p>
-                <fmt:message key="message.authen.required">
-                  <fmt:param value="<%=destination%>"/>
-                </fmt:message>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <p>
-                <a href="${loginFormUrl}"><fmt:message key="message.try.again"/></a>
-                <br/><br/>
-                <fmt:message key="message.page.auto.redirect.in.seconds">
-                  <fmt:param value="<%=autoRedirectSeconds%>"/>
-                </fmt:message>
-              </p>
-            </td>
-          </tr>
-        </table>
+        <p>
+          <fmt:message key="message.authen.required">
+            <fmt:param value="<%=destination%>"/>
+          </fmt:message>
+        </p>
+        <p>
+          <a href="${loginFormUrl}"><fmt:message key="message.try.again"/></a>
+          <br/><br/>
+          <fmt:message key="message.page.auto.redirect.in.seconds">
+            <fmt:param value="<%=autoRedirectSeconds%>"/>
+          </fmt:message>
+        </p>
       </div>
     </form>
-    <div class="hippo-login-panel-copyright">
-      &copy; 1999-2018 BloomReach B.V.
-    </div>
   </div>
 </div>
 </body>
