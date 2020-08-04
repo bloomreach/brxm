@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,24 +76,7 @@ class Step2Controller {
   }
 
   save() {
-    const stopLoading = this.startLoading();
-
-    return this.ContentEditor.save(true)
-      .then(() => {
-        this.form.$setPristine();
-        this.documentIsSaved = true;
-        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
-        return this.ContentEditor.discardChanges()
-          .then(() => this.Step2Service.saveComponentParameter())
-          .then(() => {
-            this.CreateContentService.finish(this.ContentEditor.getDocumentId());
-          })
-          .finally(() => {
-            this.CmsService.reportUsageStatistic('CreateContent2Done');
-          });
-      })
-      .catch(() => this._focusFirstInvalidField())
-      .finally(stopLoading);
+    return this.performAction(this.ContentEditor.save(true));
   }
 
   startLoading() {
@@ -170,6 +153,39 @@ class Step2Controller {
 
   openEditNameUrlDialog() {
     this.Step2Service.openEditNameUrlDialog();
+  }
+
+  isKeepDraftShown() {
+    return this.ContentEditor.isKeepDraftAllowed();
+  }
+
+  keepDraft() {
+    return this.performAction(this.ContentEditor.keepDraft());
+  }
+
+  performAction(actionPromise) {
+    const stopLoading = this.startLoading();
+
+    return actionPromise
+      .then(() => {
+        this.form.$setPristine();
+        this.documentIsSaved = true;
+        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
+        return this.ContentEditor.discardChanges()
+          .then(() => this.Step2Service.saveComponentParameter())
+          .then(() => {
+            this.CreateContentService.finish(this.ContentEditor.getDocumentId());
+          })
+          .finally(() => {
+            this.CmsService.reportUsageStatistic('CreateContent2Done');
+          });
+      })
+      .catch(() => this._focusFirstInvalidField())
+      .finally(stopLoading);
+  }
+
+  isKeepDraftEnabled() {
+    return this.isEditing() && this.isDocumentDirty();
   }
 }
 
