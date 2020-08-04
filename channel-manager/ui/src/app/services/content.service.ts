@@ -18,14 +18,14 @@ import { Inject, Injectable } from '@angular/core';
 
 import { VersionHistory } from '../versions/models/version-history.model';
 
-import { CONTENT_SERVICE, Ng1ContentService } from './ng1/content.ng1service';
+import { Ng1ContentService, NG1_CONTENT_SERVICE } from './ng1/content.ng1service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ContentService {
   constructor(
-    @Inject(CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
+    @Inject(NG1_CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
   ) { }
 
   getDocumentVersions(id: string, branchId: string): Promise<VersionHistory> {

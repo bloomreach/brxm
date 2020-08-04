@@ -20,7 +20,7 @@ import { Inject, NgModule } from '@angular/core';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import enTranslations from '../../assets/i18n/en.json';
-import { CONFIG_SERVICE, Ng1ConfigService } from '../services/ng1/config.service';
+import { Ng1ConfigService, NG1_CONFIG_SERVICE } from '../services/ng1/config.ng1.service';
 
 import { Translations } from './models/translations.model';
 import { translateHttpLoaderFactory } from './services/translate-http-loader.factory';
@@ -40,7 +40,7 @@ import { translateHttpLoaderFactory } from './services/translate-http-loader.fac
 export class TranslationsModule {
   constructor(
     private readonly translateService: TranslateService,
-    @Inject(CONFIG_SERVICE) ng1ConfigService: Ng1ConfigService,
+    @Inject(NG1_CONFIG_SERVICE) ng1ConfigService: Ng1ConfigService,
   ) {
     this.setUpTranslations(ng1ConfigService.locale, 'en', enTranslations);
   }
