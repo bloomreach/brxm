@@ -29,9 +29,17 @@ import {
   Page,
   isPage,
 } from './page';
-import { Configuration, ConfigurationWithProxy, ConfigurationWithJwt, isConfigurationWithProxy } from './configuration';
+import {
+  Configuration,
+  ConfigurationWithProxy,
+  ConfigurationWithJwt09,
+  ConfigurationWithJwt10,
+  isConfigurationWithJwt09,
+  isConfigurationWithProxy,
+} from './configuration';
 import { EventsModule } from './events';
 import {
+  UrlModule09,
   UrlModule,
   UrlBuilderOptionsToken,
   appendSearchParams,
@@ -61,7 +69,7 @@ function initializeWithProxy(scope: Container, configuration: ConfigurationWithP
     ? configuration.options.preview
     : configuration.options.live;
 
-  scope.load(PageModule(), SpaModule(), UrlModule());
+  scope.load(PageModule(), SpaModule(), UrlModule09());
   scope.bind(ApiOptionsToken).toConstantValue(configuration);
   scope.bind(UrlBuilderOptionsToken).toConstantValue(options);
   scope.getNamed<Cms>(CmsService, 'cms14').initialize(configuration);
@@ -75,7 +83,37 @@ function initializeWithProxy(scope: Container, configuration: ConfigurationWithP
   );
 }
 
-function initializeWithJwt(scope: Container, configuration: ConfigurationWithJwt, model?: PageModel) {
+function initializeWithJwt09(scope: Container, configuration: ConfigurationWithJwt09, model?: PageModel) {
+  const authorizationParameter = configuration.authorizationQueryParameter ?? DEFAULT_AUTHORIZATION_PARAMETER;
+  const serverIdParameter = configuration.serverIdQueryParameter ?? DEFAULT_SERVER_ID_PARAMETER;
+  const { url: path, searchParams } = extractSearchParams(
+    configuration.request.path,
+    [authorizationParameter, serverIdParameter].filter(Boolean),
+  );
+  const authorizationToken = searchParams.get(authorizationParameter) ?? undefined;
+  const serverId = searchParams.get(serverIdParameter) ?? undefined;
+  const config = { ...configuration, spaBaseUrl: appendSearchParams(configuration.spaBaseUrl ?? '', searchParams) };
+
+  scope.load(PageModule(), SpaModule(), UrlModule09());
+  scope.bind(ApiOptionsToken).toConstantValue({ authorizationToken, serverId, ...config });
+  scope.bind(UrlBuilderOptionsToken).toConstantValue(config);
+
+  return onReady(
+    scope.get<Spa>(SpaService).initialize(model ?? path),
+    (page) => {
+      if (page.isPreview() && config.cmsBaseUrl) {
+        const { origin } = parseUrl(config.cmsBaseUrl);
+        scope.get<PostMessage>(PostMessageService).initialize({ ...config, origin });
+        scope.get<Cms>(CmsService).initialize(config);
+      }
+
+      scope.unbind(ApiOptionsToken);
+      scope.unbind(UrlBuilderOptionsToken);
+    },
+  );
+}
+
+function initializeWithJwt10(scope: Container, configuration: ConfigurationWithJwt10, model?: PageModel) {
   const authorizationParameter = configuration.authorizationQueryParameter ?? DEFAULT_AUTHORIZATION_PARAMETER;
   const endpointParameter = configuration.endpointQueryParameter ?? '';
   const serverIdParameter = configuration.serverIdQueryParameter ?? DEFAULT_SERVER_ID_PARAMETER;
@@ -88,11 +126,8 @@ function initializeWithJwt(scope: Container, configuration: ConfigurationWithJwt
   const serverId = searchParams.get(serverIdParameter) ?? undefined;
   const config = {
     ...configuration,
-    apiBaseUrl: configuration.cmsBaseUrl || !configuration.apiBaseUrl || !endpoint
-      ? configuration.apiBaseUrl
-      : `${endpoint}${configuration.apiBaseUrl}`,
-    cmsBaseUrl: configuration.cmsBaseUrl ?? endpoint,
-    spaBaseUrl: appendSearchParams(configuration.spaBaseUrl ?? '', searchParams),
+    endpoint: configuration.endpoint ?? endpoint,
+    baseUrl: appendSearchParams(configuration.baseUrl ?? '', searchParams),
   };
 
   scope.load(PageModule(), SpaModule(), UrlModule());
@@ -102,8 +137,8 @@ function initializeWithJwt(scope: Container, configuration: ConfigurationWithJwt
   return onReady(
     scope.get<Spa>(SpaService).initialize(model ?? path),
     (page) => {
-      if (page.isPreview() && config.cmsBaseUrl) {
-        const { origin } = parseUrl(config.cmsBaseUrl);
+      if (page.isPreview() && config.endpoint) {
+        const { origin } = parseUrl(config.endpoint);
         scope.get<PostMessage>(PostMessageService).initialize({ ...config, origin });
         scope.get<Cms>(CmsService).initialize(config);
       }
@@ -137,9 +172,9 @@ export function initialize(configuration: Configuration, model?: Page | PageMode
   const scope = container.createChild();
 
   return onReady(
-    isConfigurationWithProxy(configuration)
-      ? initializeWithProxy(scope, configuration, model)
-      : initializeWithJwt(scope, configuration, model),
+    isConfigurationWithProxy(configuration) ? initializeWithProxy(scope, configuration, model) :
+    isConfigurationWithJwt09(configuration) ? initializeWithJwt09(scope, configuration, model) :
+    initializeWithJwt10(scope, configuration, model),
     page => pages.set(page, scope),
   );
 }
