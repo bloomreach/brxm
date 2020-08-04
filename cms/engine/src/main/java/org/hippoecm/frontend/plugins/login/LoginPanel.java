@@ -23,14 +23,18 @@ import java.util.MissingResourceException;
 
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.ThreadContext;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
+import org.apache.wicket.authorization.Action;
+import org.apache.wicket.authorization.UnauthorizedActionException;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -45,6 +49,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.UserCredentials;
@@ -132,7 +137,11 @@ public class LoginPanel extends Panel {
         Main main = (Main) Application.get();
         main.resetConnection();
 
-        info(getReason(cause));
+        String reason = getReason(cause);
+        getSession().error(reason);
+
+        ((WebResponse) ThreadContext.getRequestCycle().getResponse()).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        throw new UnauthorizedActionException(this, new Action(Action.RENDER));
     }
 
     private String getReason(final Cause cause) {
