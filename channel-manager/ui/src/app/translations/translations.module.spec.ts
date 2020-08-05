@@ -17,7 +17,6 @@
 import { TranslateService } from '@ngx-translate/core';
 import 'jest-extended';
 
-import enTranslations from '../../assets/i18n/en.json';
 import { Ng1ConfigService } from '../services/ng1/config.ng1.service';
 
 import { TranslationsModule } from './translations.module';
@@ -44,14 +43,6 @@ describe('TranslationsModule', () => {
 
   it('should set a default language', () => {
     expect(translateServiceMock.setDefaultLang).toHaveBeenCalledWith('en');
-  });
-
-  it('should set default translations', () => {
-    expect(translateServiceMock.setTranslation).toHaveBeenCalledWith('en', enTranslations);
-  });
-
-  it('should set default translations before the default language', () => {
-    expect(translateServiceMock.setTranslation).toHaveBeenCalledBefore(translateServiceMock.setDefaultLang);
   });
 
   it('should add available languages', () => {
