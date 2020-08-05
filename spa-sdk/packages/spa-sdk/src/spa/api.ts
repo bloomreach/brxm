@@ -17,7 +17,7 @@
 import { inject, injectable } from 'inversify';
 import { PageModel, Visitor } from '../page';
 import { UrlBuilderService, UrlBuilder } from '../url';
-import { HttpClientConfig, HttpClient, HttpRequest } from './http';
+import { HttpClientConfig, HttpClient, HttpHeaders, HttpRequest } from './http';
 
 const DEFAULT_AUTHORIZATION_HEADER = 'Authorization';
 const DEFAULT_SERVER_ID_HEADER = 'Server-Id';
@@ -85,10 +85,37 @@ export interface Api {
 
 @injectable()
 export class ApiImpl implements Api {
+  private static getHeaders(options: ApiOptions) {
+    const { remoteAddress: ip } = options.request.connection || {};
+    const { host, ...headers } = options.request.headers || {};
+    const {
+      authorizationHeader = DEFAULT_AUTHORIZATION_HEADER,
+      authorizationToken,
+      serverIdHeader = DEFAULT_SERVER_ID_HEADER,
+      serverId,
+      visitor,
+    } = options;
+
+    return {
+      ...ip && { 'x-forwarded-for': ip },
+      ...authorizationToken && { [authorizationHeader]: `Bearer ${authorizationToken}` },
+      ...serverId && { [serverIdHeader]: serverId },
+      ...visitor && { [visitor.header]: visitor.id },
+      ...headers,
+    };
+  }
+
+  private headers: HttpHeaders;
+
+  private httpClient: HttpClient<PageModel>;
+
   constructor(
     @inject(UrlBuilderService) private urlBuilder: UrlBuilder,
-    @inject(ApiOptionsToken) private options: ApiOptions,
-  ) {}
+    @inject(ApiOptionsToken) options: ApiOptions,
+  ) {
+    this.headers = ApiImpl.getHeaders(options);
+    this.httpClient = options.httpClient;
+  }
 
   getPage(path: string) {
     const url = this.urlBuilder.getApiUrl(path);
@@ -111,24 +138,10 @@ export class ApiImpl implements Api {
   }
 
   private async send(config: HttpClientConfig) {
-    const { remoteAddress: ip } = this.options.request.connection || {};
-    const { host, ...headers } = this.options.request.headers || {};
-    const {
-      authorizationHeader = DEFAULT_AUTHORIZATION_HEADER,
-      authorizationToken,
-      serverIdHeader = DEFAULT_SERVER_ID_HEADER,
-      serverId,
-      visitor,
-    } = this.options;
-
-    const response = await this.options.httpClient({...config, headers: {
-      ...ip && { 'x-forwarded-for': ip },
-      ...authorizationToken && { [authorizationHeader]: `Bearer ${authorizationToken}` },
-      ...serverId && { [serverIdHeader]: serverId },
-      ...visitor && { [visitor.header]: visitor.id },
-      ...headers,
-      ...config.headers,
-    }});
+    const response = await this.httpClient({
+      ...config,
+      headers: { ...this.headers, ...config.headers },
+    });
 
     return response.data;
   }
