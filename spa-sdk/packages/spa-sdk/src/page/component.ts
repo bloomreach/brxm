@@ -15,10 +15,10 @@
  */
 
 import { inject, injectable } from 'inversify';
-import { LinkFactory } from './link-factory';
 import { Link } from './link';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionModel, MetaCollection } from './meta-collection';
+import { UrlBuilderService, UrlBuilder } from '../url';
 
 export const ComponentChildrenToken = Symbol.for('ComponentChildrenToken');
 export const ComponentModelToken = Symbol.for('ComponentModelToken');
@@ -140,8 +140,8 @@ export class ComponentImpl implements Component {
   constructor(
     @inject(ComponentModelToken) protected model: ComponentModel,
     @inject(ComponentChildrenToken) protected children: Component[],
-    @inject(LinkFactory) private linkFactory: LinkFactory,
     @inject(MetaCollectionFactory) metaFactory: MetaCollectionFactory,
+    @inject(UrlBuilderService) private urlBuilder: UrlBuilder,
   ) {
     this.meta = metaFactory(this.model._meta);
   }
@@ -160,7 +160,7 @@ export class ComponentImpl implements Component {
   }
 
   getUrl() {
-    return this.linkFactory.create(this.model._links.componentRendering);
+    return this.urlBuilder.getApiUrl(this.model._links.componentRendering.href);
   }
 
   getName() {
