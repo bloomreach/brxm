@@ -1,0 +1,34 @@
+{
+  "id": "contentFeed",
+  "name": "Content Feed",
+  "icon": "/essentials/feature/images/icon.png",
+  "introduction": "Prepares your project to create a Content Feed export to use in Search Management.",
+  "description": "Please note that this component is a BRX-only component. Adding this component to the community version, or in a brXM project that is not configured for the integrated BRX product, is not supported.",
+  "documentationLink": "https://documentation.bloomreach.com/library/enterprise/enterprise-features/",
+  "installWithParameters": false,
+  "packageFile": "/META-INF/content_feed_instructions.xml",
+  "type": "feature",
+  "vendor" : {
+    "name" : "Bloomreach",
+    "url" : "https://www.bloomreach.com"
+  },
+  "categories": {
+    "application": [
+      "integration"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "enterprise"
+    ]
+  },
+  "pluginDependencies": [
+    {
+      "pluginId": "crisp"
+    },
+    {
+      "pluginId": "enterpriseProject"
+    }
+  ]
+}
