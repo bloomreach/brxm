@@ -19,10 +19,8 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, NgModule } from '@angular/core';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import enTranslations from '../../assets/i18n/en.json';
 import { Ng1ConfigService, NG1_CONFIG_SERVICE } from '../services/ng1/config.ng1.service';
 
-import { Translations } from './models/translations.model';
 import { translateHttpLoaderFactory } from './services/translate-http-loader.factory';
 
 @NgModule({
@@ -42,11 +40,11 @@ export class TranslationsModule {
     private readonly translateService: TranslateService,
     @Inject(NG1_CONFIG_SERVICE) ng1ConfigService: Ng1ConfigService,
   ) {
-    this.setUpTranslations(ng1ConfigService.locale, 'en', enTranslations);
+    this.setUpTranslations(ng1ConfigService.locale, 'en');
   }
 
-  private setUpTranslations(language: string, defaultLanguage: string, defaultTranslations: Translations): void {
-    this.setDefaultLanguage(defaultLanguage, defaultTranslations);
+  private setUpTranslations(language: string, defaultLanguage: string): void {
+    this.translateService.setDefaultLang(defaultLanguage);
 
     this.translateService.addLangs([
       'en',
@@ -58,10 +56,5 @@ export class TranslationsModule {
     ]);
 
     this.translateService.use(language || defaultLanguage);
-  }
-
-  private setDefaultLanguage(defaultLang: string, defaultTranslations: Translations): void {
-    this.translateService.setTranslation(defaultLang, defaultTranslations);
-    this.translateService.setDefaultLang(defaultLang);
   }
 }
