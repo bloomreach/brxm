@@ -126,6 +126,7 @@ function initializeWithJwt10(scope: Container, configuration: ConfigurationWithJ
   const serverId = searchParams.get(serverIdParameter) ?? undefined;
   const config = {
     ...configuration,
+    apiVersion: '1.0',
     endpoint: configuration.endpoint ?? endpoint,
     baseUrl: appendSearchParams(configuration.baseUrl ?? '', searchParams),
   };
