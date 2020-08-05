@@ -39,6 +39,7 @@
     <module>bloomreach-cloud</module>
     <module>brx-iam-integration</module>
     <module>content-blocks</module>
+    <module>content-feed</module>
     <module>document-wizard</module>
     <module>events</module>
     <module>faq</module>
