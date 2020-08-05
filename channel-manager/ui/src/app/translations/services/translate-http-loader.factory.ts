@@ -24,5 +24,5 @@ export const translateHttpLoaderFactory = (http: HttpClient, location: Location)
   const locationPath = location.path();
   const antiCacheQueryParam = getAntiCacheQueryParam(locationPath);
 
-  return new TranslateHttpLoader(http, 'assets/i18n/', `.json?${antiCacheQueryParam}`);
+  return new TranslateHttpLoader(http, 'i18n/', `.json?${antiCacheQueryParam}`);
 };
