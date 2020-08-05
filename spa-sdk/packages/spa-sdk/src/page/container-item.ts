@@ -26,8 +26,8 @@ import {
 } from './component';
 import { EmitterMixin, Emitter } from '../emitter';
 import { EventBusService, EventBus, PageUpdateEvent } from '../events';
-import { LinkFactory } from './link-factory';
 import { MetaCollectionFactory } from './meta-collection-factory';
+import { UrlBuilderService, UrlBuilder } from '../url';
 
 const PARAMETER_HIDDEN = 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide';
 
@@ -96,10 +96,10 @@ export class ContainerItemImpl
   constructor(
     @inject(ComponentModelToken) protected model: ContainerItemModel,
     @inject(EventBusService) eventBus: EventBus,
-    @inject(LinkFactory) linkFactory: LinkFactory,
     @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
+    @inject(UrlBuilderService) urlBuilder: UrlBuilder,
   ) {
-    super(model, [], linkFactory, metaFactory);
+    super(model, [], metaFactory, urlBuilder);
 
     eventBus.on('page.update', this.onPageUpdate.bind(this));
   }
