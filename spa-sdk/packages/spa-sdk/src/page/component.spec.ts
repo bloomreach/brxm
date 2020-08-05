@@ -15,12 +15,12 @@
  */
 
 import { ComponentImpl, ComponentModel, Component, TYPE_COMPONENT, isComponent } from './component';
-import { LinkFactory } from './link-factory';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollection } from './meta-collection';
+import { UrlBuilder } from '../url';
 
-let linkFactory: jest.Mocked<LinkFactory>;
 let metaFactory: jest.MockedFunction<MetaCollectionFactory>;
+let urlBuilder: jest.Mocked<UrlBuilder>;
 
 const model = {
   _links: { componentRendering: { href: 'url' } },
@@ -30,12 +30,12 @@ const model = {
 } as ComponentModel;
 
 function createComponent(componentModel = model, children: Component[] = []) {
-  return new ComponentImpl(componentModel, children, linkFactory, metaFactory);
+  return new ComponentImpl(componentModel, children, metaFactory, urlBuilder);
 }
 
 beforeEach(() => {
-  linkFactory = { create: jest.fn() } as unknown as typeof linkFactory;
   metaFactory = jest.fn();
+  urlBuilder = { getApiUrl: jest.fn() } as unknown as typeof urlBuilder;
 });
 
 describe('ComponentImpl', () => {
@@ -77,10 +77,10 @@ describe('ComponentImpl', () => {
     it('should return a model url', () => {
       const component = createComponent();
 
-      linkFactory.create.mockReturnValueOnce('url');
+      urlBuilder.getApiUrl.mockReturnValueOnce('url');
 
       expect(component.getUrl()).toBe('url');
-      expect(linkFactory.create).toBeCalledWith({ href: 'url' });
+      expect(urlBuilder.getApiUrl).toBeCalledWith('url');
     });
 
     it('should return undefined when component links are missing', () => {
