@@ -38,7 +38,7 @@ describe('translateHttpLoaderFactory', () => {
   });
 
   it('should create TranslateHttpLoader', () => {
-    const expected = new TranslateHttpLoader(httpClientMock, 'assets/i18n/', '.json?antiCache=some-unique-hash');
+    const expected = new TranslateHttpLoader(httpClientMock, 'i18n/', '.json?antiCache=some-unique-hash');
 
     const actual = translateHttpLoaderFactory(httpClientMock, locationMock);
 
