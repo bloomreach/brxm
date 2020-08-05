@@ -18,14 +18,14 @@ import { Typed } from 'emittery';
 import { ComponentImpl, TYPE_COMPONENT_CONTAINER_ITEM } from './component';
 import { ContainerItemImpl, ContainerItemModel, ContainerItem, isContainerItem } from './container-item';
 import { EventBus, Events } from '../events';
-import { LinkFactory } from './link-factory';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollection } from './meta-collection';
 import { PageModel } from './page';
+import { UrlBuilder } from '../url';
 
 let eventBus: EventBus;
-let linkFactory: jest.Mocked<LinkFactory>;
 let metaFactory: jest.MockedFunction<MetaCollectionFactory>;
+let urlBuilder: jest.Mocked<UrlBuilder>;
 
 const model = {
   _meta: {},
@@ -34,13 +34,13 @@ const model = {
 } as ContainerItemModel;
 
 function createContainerItem(containerItemModel = model) {
-  return new ContainerItemImpl(containerItemModel, eventBus, linkFactory, metaFactory);
+  return new ContainerItemImpl(containerItemModel, eventBus, metaFactory, urlBuilder);
 }
 
 beforeEach(() => {
   eventBus = new Typed<Events>();
-  linkFactory = { create: jest.fn() } as unknown as typeof linkFactory;
   metaFactory = jest.fn();
+  urlBuilder = {} as unknown as typeof urlBuilder;
 });
 
 describe('ContainerItemImpl', () => {
@@ -174,7 +174,7 @@ describe('isContainerItem', () => {
   });
 
   it('should return false', () => {
-    const component = new ComponentImpl(model, [], linkFactory, metaFactory);
+    const component = new ComponentImpl(model, [], metaFactory, urlBuilder);
 
     expect(isContainerItem(undefined)).toBe(false);
     expect(isContainerItem(component)).toBe(false);
