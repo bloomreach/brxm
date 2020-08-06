@@ -19,15 +19,15 @@ overlay-toggle {
 
   .md-button {
     &.active {
-      background-color: map-get($blue, '50');
+      background-color: map-get($blue, 50);
 
       md-icon {
-        color: map-get($blue, '400');
+        color: map-get($blue, 400);
       }
     }
 
     &:not([disabled]).md-icon-button:hover {
-      background-color: map-get($grey, '300');
+      background-color: map-get($grey, 300);
     }
   }
 }
