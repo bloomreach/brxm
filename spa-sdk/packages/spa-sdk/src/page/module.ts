@@ -31,6 +31,8 @@ import { ContainerItemImpl } from './container-item';
 import { ContentFactory } from './content-factory';
 import { DocumentImpl, DocumentModelToken, TYPE_DOCUMENT } from './document';
 import { DomParserService, LinkRewriterImpl, LinkRewriterService, XmlSerializerService } from './link-rewriter';
+import { ImageFactory, ImageImpl, ImageModelToken, ImageModel } from './image';
+import { ImageSetImpl, ImageSetModelToken, TYPE_IMAGE_SET } from './image-set';
 import { LinkFactory } from './link-factory';
 import { MenuImpl, MenuModelToken, TYPE_MENU } from './menu';
 import { MenuItemFactory, MenuItemImpl, MenuItemModelToken, MenuItemModel } from './menu-item';
@@ -76,6 +78,14 @@ export function PageModule() {
       return scope.get(MenuItemImpl);
     });
 
+    bind(ImageFactory).toFactory(({ container }) => (model: ImageModel) => {
+      const scope = container.createChild();
+      scope.bind(ImageImpl).toSelf();
+      scope.bind(ImageModelToken).toConstantValue(model);
+
+      return scope.get(ImageImpl);
+    });
+
     bind(ContentFactory).toSelf().inSingletonScope().onActivation(({ container }, factory) => factory
       .register(TYPE_DOCUMENT, (model) => {
         const scope = container.createChild();
@@ -83,6 +93,13 @@ export function PageModule() {
         scope.bind(DocumentModelToken).toConstantValue(model);
 
         return scope.get(DocumentImpl);
+      })
+      .register(TYPE_IMAGE_SET, (model) => {
+        const scope = container.createChild();
+        scope.bind(ImageSetImpl).toSelf();
+        scope.bind(ImageSetModelToken).toConstantValue(model);
+
+        return scope.get(ImageSetImpl);
       })
       .register(TYPE_MENU, (model) => {
         const scope = container.createChild();
