@@ -20,14 +20,15 @@ import { ComponentMeta, ComponentModel, Component } from './component';
 import { ContainerItemModel } from './container-item';
 import { ContainerModel } from './container';
 import { ContentFactory } from './content-factory';
-import { ContentModel, Content } from './content';
+import { ContentModel } from './content';
+import { Content } from './content09';
+import { EventBusService, EventBus, PageUpdateEvent } from '../events';
 import { LinkFactory } from './link-factory';
 import { LinkRewriter, LinkRewriterService } from './link-rewriter';
-import { Link, TYPE_LINK_INTERNAL } from './link';
-import { EventBusService, EventBus, PageUpdateEvent } from '../events';
+import { Link } from './link';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionModel, MetaCollection } from './meta-collection';
-import { Reference, isReference } from './reference';
+import { Reference, isReference, resolve } from './reference';
 import { Visitor, Visit } from './relevance';
 
 export const PageModelToken = Symbol.for('PageModelToken');
@@ -50,7 +51,7 @@ interface PageRootMeta extends ComponentMeta {
  * @hidden
  */
 interface PageRootModel {
-  _meta: PageRootMeta;
+  meta: PageRootMeta;
 }
 
 /**
@@ -58,6 +59,11 @@ interface PageRootModel {
  * @hidden
  */
 interface PageMeta {
+  /**
+   * The current Page Model version.
+   */
+  version?: string;
+
   /**
    * Meta-data about the current visitor. Available when the Relevance Module is enabled.
    * @see https://documentation.bloomreach.com/library/enterprise/enterprise-features/targeting/targeting.html
@@ -81,10 +87,10 @@ interface PageMeta {
  * @hidden
  */
 export interface PageModel {
-  _links: Record<PageLinks, Link>;
-  _meta: PageMeta;
-  content?: { [reference: string]: ContentModel };
-  page: (ComponentModel | ContainerItemModel | ContainerModel) & PageRootModel;
+  links: Record<PageLinks, Link>;
+  meta: PageMeta;
+  page: Record<string,  (ComponentModel | ContainerItemModel | ContainerModel) & PageRootModel | ContentModel>;
+  root: Reference;
 }
 
 /**
@@ -110,6 +116,13 @@ export interface Page {
    * an [RFC-6901](https://tools.ietf.org/html/rfc6901) JSON Pointer.
    */
   getContent(reference: Reference | string): Content | undefined;
+
+  /**
+   * Gets a custom content item used on the page.
+   * @param reference The reference to the content. It can be an object containing
+   * an [RFC-6901](https://tools.ietf.org/html/rfc6901) JSON Pointer.
+   */
+  getContent<T>(reference: Reference | string): T | undefined;
 
   /**
    * Generates a meta-data collection from the provided meta-data model.
@@ -144,6 +157,11 @@ export interface Page {
   getUrl(path: string): string;
 
   /**
+   * @return The Page Model version.
+   */
+  getVersion(): string | undefined;
+
+  /**
    * @return The current visitor data.
    */
   getVisitor(): Visitor | undefined;
@@ -175,14 +193,14 @@ export interface Page {
   /**
    * @return A plain JavaScript object of the page model.
    */
-  toJSON(): PageModel;
+  toJSON(): object;
 }
 
 @injectable()
 export class PageImpl implements Page {
-  protected content: Map<string, Content>;
+  protected content = new WeakMap<object, unknown>();
 
-  protected root: Component;
+  protected root?: Component;
 
   constructor(
     @inject(PageModelToken) protected model: PageModel,
@@ -195,36 +213,35 @@ export class PageImpl implements Page {
   ) {
     this.eventBus.on('page.update', this.onPageUpdate.bind(this));
 
-    this.root = componentFactory.create(model.page);
-    this.content = new Map(
-      Object.entries(model.content || {}).map(
-        ([alias, model]) => [alias, this.contentFactory(model)],
-      ),
-    );
+    this.root = componentFactory.create(model);
   }
 
   protected onPageUpdate(event: PageUpdateEvent) {
-    Object.entries(event.page.content || {}).forEach(
-      ([alias, model]) => this.content.set(alias, this.contentFactory(model)),
-    );
-  }
-
-  private static getContentReference(reference: Reference) {
-    return  reference.$ref.split('/', 3)[2] || '';
+    Object.assign(this.model.page, event.page.page);
   }
 
   getComponent<T extends Component>(): T;
   getComponent<T extends Component>(...componentNames: string[]): T | undefined;
   getComponent(...componentNames: string[]) {
-    return this.root.getComponent(...componentNames);
+    return this.root?.getComponent(...componentNames);
   }
 
-  getContent(reference: Reference | string) {
-    const contentReference = isReference(reference)
-      ? PageImpl.getContentReference(reference)
-      : reference;
+  getContent<T>(reference: Reference | string): T | undefined;
+  getContent(reference: Reference | string): unknown | undefined {
+    const model = resolve<ContentModel>(
+      this.model,
+      isReference(reference) ? reference : { $ref: `/page/${reference}` },
+    );
 
-    return this.content.get(contentReference);
+    if (!model) {
+      return undefined;
+    }
+
+    if (!this.content.has(model)) {
+      this.content.set(model, this.contentFactory.create(model));
+    }
+
+    return this.content.get(model);
   }
 
   getMeta(meta: MetaCollectionModel) {
@@ -232,23 +249,27 @@ export class PageImpl implements Page {
   }
 
   getTitle() {
-    return this.model.page._meta.pageTitle;
+    return resolve<PageRootModel>(this.model, this.model.root)?.meta?.pageTitle;
   }
 
   getUrl(link?: Link | string) {
-    return this.linkFactory.create(link as any || { ...this.model._links.site, type: TYPE_LINK_INTERNAL });
+    return this.linkFactory.create(link as any || this.model.links.site);
+  }
+
+  getVersion() {
+    return this.model.meta.version;
   }
 
   getVisitor() {
-    return this.model._meta.visitor;
+    return this.model.meta.visitor;
   }
 
   getVisit() {
-    return this.model._meta.visit;
+    return this.model.meta.visit;
   }
 
   isPreview() {
-    return !!this.model._meta.preview;
+    return !!this.model.meta.preview;
   }
 
   rewriteLinks(content: string, type: SupportedType = 'text/html') {
