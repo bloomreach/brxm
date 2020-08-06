@@ -50,29 +50,16 @@ Object {
 }
 `;
 
-exports[`initialize should initialize using endpoint from the query string 1`] = `
-Array [
-  Object {
-    "headers": Object {
-      "Accept-Version": "1.0",
-    },
-    "method": "GET",
-    "url": "http://example.com/api/",
-  },
-]
-`;
-
 exports[`initialize should react on a component rendering 1`] = `
 Array [
   Object {
     "data": "some=value",
     "headers": Object {
-      "Accept-Version": "1.0",
       "Authorization": "Bearer something",
       "Content-Type": "application/x-www-form-urlencoded",
     },
     "method": "POST",
-    "url": "http://127.0.0.1/site/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1",
+    "url": "http://localhost:8080/site/my-spa/resourceapi?_hn%3Atype=component-rendering&_hn%3Aref=r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1",
   },
 ]
 `;
