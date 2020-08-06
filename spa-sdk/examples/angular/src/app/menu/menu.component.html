@@ -17,23 +17,23 @@
 <ng-template [ngIf]="menu">
   <ng-container [brManageMenuButton]="menu"></ng-container>
 
-  <li *ngFor="let item of menu.siteMenuItems" key={index} class="nav-item" [ngClass]="{ active: item.selected }">
-    <span *ngIf="!item._links.site"
+  <li *ngFor="let item of menu.getItems()" key={index} class="nav-item" [ngClass]="{ active: item.isSelected() }">
+    <span *ngIf="!item.getUrl()"
       class="nav-link text-capitalize disabled">
-      {{ item.name }}
+      {{ item.getName() }}
     </span>
 
-    <a *ngIf="item._links.site | isExternalLink"
+    <a *ngIf="item.getLink() | isExternalLink"
       class="nav-link text-capitalize"
-      [href]="item._links.site.href">
-      {{ item.name }}
+      [href]="item.getUrl()">
+      {{ item.getName() }}
     </a>
 
-    <a *ngIf="item._links.site | isInternalLink"
+    <a *ngIf="item.getLink() | isInternalLink"
       class="nav-link text-capitalize"
-      [routerLink]="page.getUrl(item._links.site) | parseUrl: 'pathname'"
-      [queryParams]="page.getUrl(item._links.site) | parseUrl: 'searchParams'">
-      {{ item.name }}
+      [routerLink]="item.getUrl() | parseUrl: 'pathname'"
+      [queryParams]="item.getUrl() | parseUrl: 'searchParams'">
+      {{ item.getName() }}
     </a>
   </li>
 </ng-template>
