@@ -45,11 +45,11 @@ md-toolbar.hippo-toolbar {
   }
 
   .md-container {
-    background-color: map-get($grey, '200');
+    background-color: map-get($grey, 200);
   }
 
   .md-bar {
-    background-color: map-get($grey, '400');
+    background-color: map-get($grey, 400);
   }
 
   .md-button {
@@ -61,7 +61,7 @@ md-toolbar.hippo-toolbar {
     padding-left: 2px;
 
     .md-open > .md-button {
-      background-color: map-get($grey, '300');
+      background-color: map-get($grey, 300);
     }
 
     md-menu > .md-button {
@@ -109,7 +109,7 @@ md-toolbar.hippo-toolbar {
     margin: 0;
 
     &[disabled] md-select-value md-icon {
-      color: map-get($grey, '500');
+      color: map-get($grey, 500);
     }
   }
 

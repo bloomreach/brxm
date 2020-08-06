@@ -18,7 +18,7 @@
 
 search {
   .md-subheader {
-    box-shadow: 0 4px 5px 0 map-get($grey, '300');
+    box-shadow: 0 4px 5px 0 map-get($grey, 300);
     font-size: 12px;
     padding-left: 40px;
 
@@ -37,12 +37,12 @@ search {
       width: 100%;
 
       md-icon {
-        color: map-get($grey, '500') !important;
+        color: map-get($grey, 500) !important;
         top: 6px;
       }
 
       &:not(.md-input-invalid).md-input-focused md-icon {
-        color: map-get($grey, '600') !important;
+        color: map-get($grey, 600) !important;
       }
     }
 

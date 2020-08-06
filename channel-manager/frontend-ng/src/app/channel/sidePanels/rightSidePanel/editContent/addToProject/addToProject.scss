@@ -17,7 +17,7 @@
 @import 'variables';
 
 .add-to-project {
-  background-color: map-get($grey, '100');
+  background-color: map-get($grey, 100);
   box-shadow: 0 3px 8px $overlay-link-shadow-color-light;
 
   .md-button {
