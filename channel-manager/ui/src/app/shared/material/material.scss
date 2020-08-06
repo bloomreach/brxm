@@ -39,6 +39,6 @@ $theme: mat-light-theme((
 
 // default body text color
 .mat-typography {
-  color: map-get($text-color, "dark");
+  color: map-get($text-color, dark);
 }
 
