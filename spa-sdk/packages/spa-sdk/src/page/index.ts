@@ -20,6 +20,8 @@ import { isContainer as isContainer10, Container } from './container';
 import { isContainer as isContainer09 } from './container09';
 import { isContainerItem as isContainerItem10, ContainerItem } from './container-item';
 import { isContainerItem as isContainerItem09 } from './container-item09';
+import { Menu as Menu10 } from './menu';
+import { Menu as Menu09 } from './menu09';
 import { PageModel as PageModel10, Page, isPage as isPage10 } from './page';
 import { PageModel as PageModel09, isPage as isPage09 } from './page09';
 
@@ -61,6 +63,12 @@ export function isPage(value: any): value is Page {
  */
 export type PageModel = PageModel10 | PageModel09;
 
+/**
+ * Menu content model.
+ * @hidden
+ */
+export type Menu = Menu09 | Menu09 & Menu10;
+
 export {
   Component,
   TYPE_COMPONENT,
@@ -84,7 +92,8 @@ export {
 export { Content, isContent } from './content09';
 export { Document, TYPE_DOCUMENT, isDocument } from './document';
 export { Link, TYPE_LINK_EXTERNAL, TYPE_LINK_INTERNAL, TYPE_LINK_RESOURCE, isLink } from './link';
-export { Menu } from './menu09';
+export { MenuItem } from './menu-item';
+export { TYPE_MENU, isMenu } from './menu';
 export { MetaCollection } from './meta-collection';
 export { MetaComment, isMetaComment } from './meta-comment';
 export { Meta, META_POSITION_BEGIN, META_POSITION_END, isMeta } from './meta';
