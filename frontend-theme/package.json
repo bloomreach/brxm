@@ -1,7 +1,6 @@
 {
   "name": "@bloomreach/frontend-theme",
-  "private": false,
-  "version": "1.0.0-6",
+  "version": "1.0.0-7",
   "description": "A sharable set of color variables",
   "author": "Bloomreach",
   "license": "Apache-2.0",
