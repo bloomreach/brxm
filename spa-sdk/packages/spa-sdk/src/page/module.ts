@@ -32,6 +32,8 @@ import { ContentFactory } from './content-factory';
 import { DocumentImpl, DocumentModelToken, TYPE_DOCUMENT } from './document';
 import { DomParserService, LinkRewriterImpl, LinkRewriterService, XmlSerializerService } from './link-rewriter';
 import { LinkFactory } from './link-factory';
+import { MenuImpl, MenuModelToken, TYPE_MENU } from './menu';
+import { MenuItemFactory, MenuItemImpl, MenuItemModelToken, MenuItemModel } from './menu-item';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionImpl, MetaCollectionModelToken, MetaCollectionModel } from './meta-collection';
 import { MetaCommentImpl } from './meta-comment';
@@ -66,6 +68,14 @@ export function PageModule() {
       .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position)),
     );
 
+    bind(MenuItemFactory).toFactory(({ container }) => (model: MenuItemModel) => {
+      const scope = container.createChild();
+      scope.bind(MenuItemImpl).toSelf();
+      scope.bind(MenuItemModelToken).toConstantValue(model);
+
+      return scope.get(MenuItemImpl);
+    });
+
     bind(ContentFactory).toSelf().inSingletonScope().onActivation(({ container }, factory) => factory
       .register(TYPE_DOCUMENT, (model) => {
         const scope = container.createChild();
@@ -73,6 +83,13 @@ export function PageModule() {
         scope.bind(DocumentModelToken).toConstantValue(model);
 
         return scope.get(DocumentImpl);
+      })
+      .register(TYPE_MENU, (model) => {
+        const scope = container.createChild();
+        scope.bind(MenuImpl).toSelf();
+        scope.bind(MenuModelToken).toConstantValue(model);
+
+        return scope.get(MenuImpl);
       }),
     );
 
