@@ -20,7 +20,7 @@
   "main": "dist/index.js",
   "browser": "dist/index.js",
   "module": "dist/index.mjs",
-  "es2015": "dist/index.es6.mjs",
+  "es2015": "dist/index.es6.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/"
