@@ -11,7 +11,7 @@ docker run --net=host bloomreach/xm-spa-example
 
 Then, copy `.env.dist` file to `.env` and specify the brXM instance to fetch the page model from:
 ```
-REACT_APP_CMS_BASE_URL=http://localhost:8080/site
+REACT_APP_BRXM_ENDPOINT=http://localhost:8080/site/resourceapi
 ```
 
 Finally, build and run the React app as follows:
