@@ -15,7 +15,7 @@
  */
 
 import { ContainerModule } from 'inversify';
-import xmldom from 'xmldom';
+import { DOMParser, XMLSerializer } from 'xmldom';
 
 import { ComponentFactory } from './component-factory09';
 import { ComponentImpl, TYPE_COMPONENT, TYPE_COMPONENT_CONTAINER, TYPE_COMPONENT_CONTAINER_ITEM } from './component09';
@@ -40,8 +40,8 @@ import { UrlBuilderService, UrlBuilder } from '../url';
 export function PageModule() {
   return new ContainerModule((bind) => {
     bind(LinkRewriterService).to(LinkRewriterImpl).inSingletonScope();
-    bind(DomParserService).toConstantValue(new xmldom.DOMParser());
-    bind(XmlSerializerService).toConstantValue(new xmldom.XMLSerializer());
+    bind(DomParserService).toConstantValue(new DOMParser());
+    bind(XmlSerializerService).toConstantValue(new XMLSerializer());
 
     bind(LinkFactory).toSelf().inSingletonScope().onActivation(({ container }, factory) => {
       const url = container.get<UrlBuilder>(UrlBuilderService);
