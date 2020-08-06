@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { Content } from '@bloomreach/spa-sdk';
+import { Document } from '@bloomreach/spa-sdk';
 import { BrManageContentButton, BrPageContext, BrProps } from '@bloomreach/react-sdk';
 import routes from '../routes';
 
@@ -30,14 +30,14 @@ export function NewsList(props: BrProps) {
 
   return (
     <div>
-      { pageable.items.map((reference, key) => <NewsListItem key={key} item={props.page.getContent(reference)!} />) }
+      { pageable.items.map((reference, key) => <NewsListItem key={key} item={props.page.getContent<Document>(reference)!} />) }
       <NewsListPagination {...pageable} />
     </div>
   );
 }
 
 interface NewsListItemProps {
-  item: Content;
+  item: Document;
 }
 
 export function NewsListItem({ item }: NewsListItemProps) {
@@ -69,29 +69,26 @@ export function NewsListPagination(props: Pageable) {
     return null;
   }
 
-  const url = page.getUrl();
-  const getUrl = (page: number) => `${url}${url.includes('?') ? '&' : '?'}page=${page}`;
-
   return (
     <nav aria-label="News List Pagination">
       <ul className="pagination">
         <li className={`page-item ${props.previous ? '' : 'disabled'}`}>
-          <Link route={props.previous ? getUrl(props.previousPage!) : '#'}>
+          <Link route={props.previous ? page.getUrl(`?page=${props.previousPage}`) : '#'}>
             <a className="page-link" aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
               <span className="sr-only">Previous</span>
             </a>
           </Link>
         </li>
-        { props.pageNumbersArray.map((page, key) => (
-          <li key={key} className={`page-item ${page === props.currentPage ? 'active' : ''}`}>
-            <Link route={getUrl(page)}>
-              <a className="page-link">{page}</a>
+        { props.pageNumbersArray.map((pageNumber, key) => (
+          <li key={key} className={`page-item ${pageNumber === props.currentPage ? 'active' : ''}`}>
+            <Link route={page.getUrl(`?page=${pageNumber}`)}>
+              <a className="page-link">{pageNumber}</a>
             </Link>
           </li>
         )) }
         <li className={`page-item ${props.next ? '' : 'disabled'}`}>
-          <Link route={props.next ? getUrl(props.nextPage!) : '#'}>
+          <Link route={props.next ? page.getUrl(`?page=${props.nextPage}`) : '#'}>
             <a className="page-link" aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
               <span className="sr-only">Next</span>
