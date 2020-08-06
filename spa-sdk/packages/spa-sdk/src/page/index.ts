@@ -59,13 +59,11 @@ export function isPage(value: any): value is Page {
 
 /**
  * Model of a page.
- * @hidden
  */
 export type PageModel = PageModel10 | PageModel09;
 
 /**
  * Menu content model.
- * @hidden
  */
 export type Menu = Menu09 | Menu09 & Menu10;
 

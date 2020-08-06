@@ -21,9 +21,6 @@ export const ImageSetModelToken = Symbol.for('ImageSetModelToken');
 
 export const TYPE_IMAGE_SET = 'imageset';
 
-/**
- * @hidden
- */
 interface ImageSetDataModel {
   description: string | null;
   displayName: string;
@@ -37,7 +34,6 @@ interface ImageSetDataModel {
 
 /**
  * Image set model.
- * @hidden
  */
 export interface ImageSetModel {
   data: ImageSetDataModel;

@@ -40,19 +40,12 @@ export type ComponentType = typeof TYPE_COMPONENT
   | typeof TYPE_COMPONENT_CONTAINER_ITEM
   | typeof TYPE_COMPONENT_CONTAINER;
 
-/**
- * @hidden
- */
 type ComponentLinks = 'componentRendering';
 
-/**
- * @hidden
- */
 type ComponentModels = Record<string, any>;
 
 /**
  * Model of a component.
- * @hidden
  */
 export interface ComponentModel {
   _links: Record<ComponentLinks, Link>;

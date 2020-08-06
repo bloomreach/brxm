@@ -23,9 +23,6 @@ export const MenuModelToken = Symbol.for('MenuModelToken');
 
 export const TYPE_MENU = 'menu';
 
-/**
- * @hidden
- */
 interface MenuDataModel {
   name: string;
   selectSiteMenuItem: MenuItemModel | null;
@@ -34,7 +31,6 @@ interface MenuDataModel {
 
 /**
  * Essentials component menu model.
- * @hidden
  */
 export interface MenuModel {
   data: MenuDataModel;

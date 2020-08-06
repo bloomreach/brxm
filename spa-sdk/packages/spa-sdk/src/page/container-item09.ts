@@ -32,7 +32,6 @@ const PARAMETER_HIDDEN = 'com.onehippo.cms7.targeting.TargetingParameterUtil.hid
 
 /**
  * Model of a container item.
- * @hidden
  */
 export interface ContainerItemModel extends ComponentModel {
   _meta: ContainerItemMeta;
