@@ -16,7 +16,7 @@
 
 import { Typed } from 'emittery';
 import { ContainerModule } from 'inversify';
-import { ComponentModel, PageModel } from './page';
+import { PageModel } from './page';
 
 export const EventBusService = Symbol.for('EventBusService');
 
@@ -35,7 +35,7 @@ export interface CmsUpdateEvent {
   /**
    * Component's id.
    */
-  id: ComponentModel['id'];
+  id: string;
 
   /**
    * Updated component's properties.
