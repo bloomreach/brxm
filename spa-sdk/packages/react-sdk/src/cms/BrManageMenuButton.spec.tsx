@@ -15,10 +15,13 @@
  */
 
 import React from 'react';
+import { mocked } from 'ts-jest/utils';
 import { shallow } from 'enzyme';
-import { Menu, MetaCollection, Page } from '@bloomreach/spa-sdk';
+import { Menu, MetaCollection, Page, isMenu } from '@bloomreach/spa-sdk';
 import { BrManageMenuButton } from './BrManageMenuButton';
 import { BrMeta } from '../meta';
+
+jest.mock('@bloomreach/spa-sdk');
 
 describe('BrManageMenuButton', () => {
   const context = {
@@ -63,6 +66,21 @@ describe('BrManageMenuButton', () => {
     const wrapper = shallow(<BrManageMenuButton {...props} />, { context });
 
     expect(context.getMeta).toHaveBeenCalledWith(props.menu._meta);
+    expect(
+      wrapper
+        .find(BrMeta)
+        .first()
+        .prop('meta'),
+    ).toBe(meta);
+  });
+
+  it('should render a menu-button meta-data', () => {
+    const meta = {} as MetaCollection;
+    props.menu = { getMeta: jest.fn(() => meta) } as unknown as Menu;
+    context.isPreview.mockReturnValueOnce(true);
+    mocked(isMenu).mockReturnValueOnce(true);
+    const wrapper = shallow(<BrManageMenuButton {...props} />, { context });
+
     expect(
       wrapper
         .find(BrMeta)
