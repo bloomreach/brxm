@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { default as model } from './index.fixture.json';
+import { default as model } from './index09.fixture.json';
 import {
   destroy,
   initialize,
@@ -36,9 +36,9 @@ describe('initialize', () => {
     page = await initialize({
       httpClient,
       window,
-      baseUrl: '//example.com',
-      endpoint: 'http://localhost:8080/site/my-spa/resourceapi',
+      cmsBaseUrl: 'http://localhost:8080/site/my-spa',
       request: { path: '/?token=something' },
+      spaBaseUrl: '//example.com',
     });
   });
 
@@ -46,16 +46,23 @@ describe('initialize', () => {
     destroy(page);
   });
 
-  it('should initialize using endpoint from the query string', async () => {
-    httpClient.mockClear();
+  it('should initialize a reverse proxy-based setup', async () => {
     page = await initialize({
       httpClient,
-      endpointQueryParameter: 'brxm',
-      request: { path: '/?brxm=http://example.com/api' },
+      window,
+      request: { path: '/?bloomreach-preview=true' },
+      options: {
+        live: {
+          cmsBaseUrl: 'http://localhost:8080/site/my-spa',
+        },
+        preview: {
+          cmsBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
+          spaBaseUrl: '//example.com?bloomreach-preview=true',
+        },
+      },
     });
 
-    expect(httpClient).toBeCalled();
-    expect(httpClient.mock.calls[0]).toMatchSnapshot();
+    expect(page.getTitle()).toBe('Homepage');
   });
 
   it('should be a page entity', () => {
@@ -83,7 +90,7 @@ describe('initialize', () => {
   it.each`
     link                   | expected
     ${''}                  | ${'//example.com/?token=something'}
-    ${'/news'} | ${'//example.com/news?token=something'}
+    ${'/site/my-spa/news'} | ${'//example.com/news?token=something'}
     ${{ href: 'http://127.0.0.1/news?a=b', type: TYPE_LINK_EXTERNAL }}     | ${'http://127.0.0.1/news?a=b'}
     ${{ href: '/news?a=b', type: TYPE_LINK_INTERNAL }}                     | ${'//example.com/news?a=b&token=something'}
     ${{ href: 'news#hash', type: TYPE_LINK_INTERNAL }}                     | ${'//example.com/news?token=something#hash'}
@@ -181,7 +188,6 @@ describe('initialize', () => {
     const banner1 = page.getComponent('main', 'banner1') as ContainerItem;
     const listener0 = jest.fn();
     const listener1 = jest.fn();
-    const [[id, containerItemModel]] = Object.entries(model.page).filter(([, { id }]: any) => id === 'r1_r1_r1');
 
     httpClient.mockClear();
     banner0.on('update', listener0);
@@ -190,9 +196,8 @@ describe('initialize', () => {
     httpClient.mockImplementationOnce(async () => ({
       data: {
         ...model,
-        page: { [id]: containerItemModel },
-        root: { $ref: `/page/${id}` },
-      } as unknown as PageModel,
+        page: model.page.components[0].components[0],
+      } as PageModel,
     }));
 
     window.postMessage(
