@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,76 +17,27 @@
 import { inject, injectable } from 'inversify';
 import {
   ComponentImpl,
-  ComponentMeta,
   ComponentModel,
-  ComponentModelToken,
-  Component,
   TYPE_COMPONENT_CONTAINER_ITEM,
-} from './component';
-import { EmitterMixin, Emitter } from '../emitter';
+} from './component09';
+import { ComponentModelToken } from './component';
+import { ContainerItemEvents, ContainerItemMeta, ContainerItem } from './container-item';
+import { EmitterMixin } from '../emitter';
 import { EventBusService, EventBus, PageUpdateEvent } from '../events';
-import { LinkFactory } from './link-factory';
 import { MetaCollectionFactory } from './meta-collection-factory';
-import { PageModel } from './page';
-import { resolve } from './reference';
+import { PageModel } from './page09';
+import { UrlBuilderService, UrlBuilder } from '../url';
 
 const PARAMETER_HIDDEN = 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide';
-
-/**
- * @hidden
- */
-interface ContainerItemParameters {
-  [PARAMETER_HIDDEN]?: 'on' | 'off';
-  [parameter: string]: string | undefined;
-}
-
-/**
- * Meta-data of a container item.
- * @hidden
- */
-export interface ContainerItemMeta extends ComponentMeta {
-  params?: ContainerItemParameters;
-  paramsInfo?: ComponentMeta['params'];
-}
 
 /**
  * Model of a container item.
  * @hidden
  */
 export interface ContainerItemModel extends ComponentModel {
-  meta: ContainerItemMeta;
+  _meta: ContainerItemMeta;
   label?: string;
   type: typeof TYPE_COMPONENT_CONTAINER_ITEM;
-}
-
-/**
- * Container item update event.
- */
-export interface ContainerItemUpdateEvent {}
-
-export interface ContainerItemEvents {
-  update: ContainerItemUpdateEvent;
-}
-
-/**
- * A component that can be configured in the UI.
- */
-export interface ContainerItem extends Component, Emitter<ContainerItemEvents> {
-  /**
-   * Returns the type of a container item. The available types depend on which
-   * container items have been configured in the backend.
-   *
-   * @return The type of a container item (e.g. "Banner").
-   */
-  getType(): string | undefined;
-
-  /**
-   * Returns whether the component should not render anything.
-   * Hiding components is only possible with the Relevance feature.
-   *
-   * @return Whether the component is hidden or not.
-   */
-  isHidden(): boolean;
 }
 
 @injectable()
@@ -97,23 +48,22 @@ export class ContainerItemImpl
   constructor(
     @inject(ComponentModelToken) protected model: ContainerItemModel,
     @inject(EventBusService) eventBus: EventBus,
-    @inject(LinkFactory) linkFactory: LinkFactory,
     @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
+    @inject(UrlBuilderService) urlBuilder: UrlBuilder,
   ) {
-    super(model, [], linkFactory, metaFactory);
+    super(model, [], metaFactory, urlBuilder);
 
     eventBus.on('page.update', this.onPageUpdate.bind(this));
   }
 
   protected onPageUpdate(event: PageUpdateEvent) {
-    const page = event.page as PageModel;
-    const model = resolve<ContainerItemModel>(page, page.root);
-    if (model?.id !== this.getId()) {
+    const { page: model } = event.page as PageModel;
+    if (model.id !== this.getId()) {
       return;
     }
 
-    this.model = model;
-    this.meta = this.metaFactory(model.meta);
+    this.model = model as ContainerItemModel;
+    this.meta = this.metaFactory(model._meta);
     this.emit('update', {});
   }
 
@@ -122,11 +72,11 @@ export class ContainerItemImpl
   }
 
   isHidden() {
-    return this.model.meta.params?.[PARAMETER_HIDDEN] === 'on';
+    return this.model._meta.params?.[PARAMETER_HIDDEN] === 'on';
   }
 
-  getParameters(): ContainerItemParameters {
-    return this.model.meta.paramsInfo || {};
+  getParameters(): ReturnType<ContainerItem['getParameters']> {
+    return this.model._meta.paramsInfo || {};
   }
 }
 

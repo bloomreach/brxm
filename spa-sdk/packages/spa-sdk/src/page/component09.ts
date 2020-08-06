@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,46 +15,35 @@
  */
 
 import { inject, injectable } from 'inversify';
-import { LinkFactory } from './link-factory';
+import { ComponentChildrenToken, ComponentModelToken, ComponentMeta, Component } from './component';
 import { Link } from './link';
 import { MetaCollectionFactory } from './meta-collection-factory';
-import { MetaCollectionModel, MetaCollection } from './meta-collection';
-import { Reference } from './reference';
-
-export const ComponentChildrenToken = Symbol.for('ComponentChildrenToken');
-export const ComponentModelToken = Symbol.for('ComponentModelToken');
+import { MetaCollection } from './meta-collection';
+import { UrlBuilderService, UrlBuilder } from '../url';
 
 /**
  * Generic component type.
  */
-export const TYPE_COMPONENT = 'component';
+export const TYPE_COMPONENT = 'COMPONENT';
 
 /**
  * Container item type.
  */
-export const TYPE_COMPONENT_CONTAINER_ITEM = 'container-item';
+export const TYPE_COMPONENT_CONTAINER_ITEM = 'CONTAINER_ITEM_COMPONENT';
 
 /**
  * Container type.
  */
-export const TYPE_COMPONENT_CONTAINER = 'container';
+export const TYPE_COMPONENT_CONTAINER = 'CONTAINER_COMPONENT';
 
 export type ComponentType = typeof TYPE_COMPONENT
   | typeof TYPE_COMPONENT_CONTAINER_ITEM
   | typeof TYPE_COMPONENT_CONTAINER;
 
 /**
- * Meta-data of a component.
  * @hidden
  */
-export interface ComponentMeta extends MetaCollectionModel {
-  params?: ComponentParameters;
-}
-
-/**
- * @hidden
- */
-type ComponentLinks = 'self';
+type ComponentLinks = 'componentRendering';
 
 /**
  * @hidden
@@ -62,75 +51,17 @@ type ComponentLinks = 'self';
 type ComponentModels = Record<string, any>;
 
 /**
- * @hidden
- */
-type ComponentParameters = Partial<Record<string, string>>;
-
-/**
  * Model of a component.
  * @hidden
  */
 export interface ComponentModel {
-  children?: Reference[];
+  _links: Record<ComponentLinks, Link>;
+  _meta: ComponentMeta;
   id: string;
-  links: Record<ComponentLinks, Link>;
-  meta: ComponentMeta;
   models?: ComponentModels;
   name?: string;
   type: ComponentType;
-}
-
-/**
- * A component in the current page.
- */
-export interface Component {
-  /**
-   * @return The component id.
-   */
-  getId(): string;
-
-  /**
-   * @return The component meta-data collection.
-   */
-  getMeta(): MetaCollection;
-
-  /**
-   * @return The map of the component models.
-   */
-  getModels<T extends ComponentModels>(): T;
-
-  /**
-   * @return The link to the partial component model.
-   */
-  getUrl(): string | undefined;
-
-  /**
-   * @return The name of the component.
-   */
-  getName(): string;
-
-  /**
-   * @return The parameters of the component.
-   */
-  getParameters(): ComponentParameters;
-
-  /**
-   * @return The direct children of the component.
-   */
-  getChildren(): Component[];
-
-  /**
-   * Looks up for a nested component.
-   * @param componentNames A lookup path.
-   */
-  getComponent<U extends Component>(...componentNames: string[]): U | undefined;
-  getComponent(): this;
-
-  /**
-   * Looks up for a nested component by its id.
-   * @param id A component id.
-   */
-  getComponentById<U extends Component>(id: string): U | this | undefined;
+  components?: ComponentModel[];
 }
 
 @injectable()
@@ -140,10 +71,10 @@ export class ComponentImpl implements Component {
   constructor(
     @inject(ComponentModelToken) protected model: ComponentModel,
     @inject(ComponentChildrenToken) protected children: Component[],
-    @inject(LinkFactory) private linkFactory: LinkFactory,
     @inject(MetaCollectionFactory) metaFactory: MetaCollectionFactory,
+    @inject(UrlBuilderService) private urlBuilder: UrlBuilder,
   ) {
-    this.meta = metaFactory(this.model.meta);
+    this.meta = metaFactory(this.model._meta);
   }
 
   getId() {
@@ -160,7 +91,7 @@ export class ComponentImpl implements Component {
   }
 
   getUrl() {
-    return this.linkFactory.create(this.model.links.self);
+    return this.urlBuilder.getApiUrl(this.model._links.componentRendering.href);
   }
 
   getName() {
@@ -168,7 +99,7 @@ export class ComponentImpl implements Component {
   }
 
   getParameters() {
-    return this.model.meta.params || {};
+    return this.model._meta.params || {};
   }
 
   getChildren() {

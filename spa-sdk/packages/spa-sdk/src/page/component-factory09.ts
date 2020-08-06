@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,15 @@
  */
 
 import { injectable } from 'inversify';
-import { ComponentModel, ComponentType, Component } from './component';
+import { ComponentModel, ComponentType } from './component09';
+import { Component } from './component';
 import { SimpleFactory } from './factory';
-import { PageModel } from './page';
-import { resolve } from './reference';
+
+interface Task {
+  model: ComponentModel;
+  children?: Component[];
+  siblings?: Component[];
+}
 
 type ComponentBuilder = (model: ComponentModel, children: Component[]) => Component;
 
@@ -28,30 +33,33 @@ type ComponentBuilder = (model: ComponentModel, children: Component[]) => Compon
 @injectable()
 export class ComponentFactory extends SimpleFactory<ComponentType, ComponentBuilder> {
   /**
-   * Produces a component based on the page model.
-   * @param page The page model.
+   * Produces a component based on the model.
+   * @param model The component model.
    */
-  create(page: PageModel) {
-    const heap = [page.root];
-    const pool = new Map<ComponentModel, Component>();
+  create(model: ComponentModel) {
+    let component: Component;
+    const queue = [{ model } as Task];
 
-    // tslint:disable-next-line: no-increment-decrement
-    for (let i = 0; i < heap.length; i++) {
-      heap.push(...resolve<ComponentModel>(page, heap[i])?.children ?? []);
+    while (queue.length) {
+      const head = queue.shift()!;
+      if (!head.children && head.model.components?.length) {
+        head.children = [];
+        queue.unshift(
+          ...head.model.components.map(model => ({ model, siblings: head.children })),
+          head,
+        );
+
+        continue;
+      }
+
+      component = this.buildComponent(head.model, head.children ?? []);
+
+      if (head.siblings) {
+        head.siblings.push(component);
+      }
     }
 
-    return heap.reverse().reduce<Component | undefined>(
-      (previous, reference) => {
-        const model = resolve<ComponentModel>(page, reference)!;
-        const children = model?.children?.map(child => pool.get(resolve<ComponentModel>(page, child)!)!) ?? [];
-        const component = this.buildComponent(model, children);
-
-        pool.set(model, component);
-
-        return component;
-      },
-      undefined,
-    );
+    return component!;
   }
 
   private buildComponent(model: ComponentModel, children: Component[]) {

@@ -14,110 +14,65 @@
  * limitations under the License.
  */
 
-import { ContainerModule } from 'inversify';
-import xmldom from 'xmldom';
+import { isComponent as isComponent10, Component } from './component';
+import { isComponent as isComponent09 } from './component09';
+import { isContainer as isContainer10, Container } from './container';
+import { isContainer as isContainer09 } from './container09';
+import { isContainerItem as isContainerItem10, ContainerItem } from './container-item';
+import { isContainerItem as isContainerItem09 } from './container-item09';
+import { PageModel as PageModel10, Page, isPage as isPage10 } from './page';
+import { PageModel as PageModel09, isPage as isPage09 } from './page09';
 
-import { ComponentFactory } from './component-factory';
-import {
-  ComponentChildrenToken,
-  ComponentImpl,
-  ComponentModelToken,
-  TYPE_COMPONENT,
-  TYPE_COMPONENT_CONTAINER,
-  TYPE_COMPONENT_CONTAINER_ITEM,
-} from './component';
-import { ContainerImpl } from './container';
-import { ContainerItemImpl } from './container-item';
-import { ContentFactory } from './content-factory';
-import { ContentImpl, ContentModelToken, ContentModel } from './content';
-import { DomParserService, LinkRewriterImpl, LinkRewriterService, XmlSerializerService } from './link-rewriter';
-import { LinkFactory } from './link-factory';
-import { MetaCollectionFactory } from './meta-collection-factory';
-import { MetaCollectionImpl, MetaCollectionModelToken, MetaCollectionModel } from './meta-collection';
-import { MetaCommentImpl } from './meta-comment';
-import { MetaFactory } from './meta-factory';
-import { PageFactory } from './page-factory';
-import { PageImpl, PageModelToken, PageModel } from './page';
-import { TYPE_LINK_INTERNAL } from './link';
-import { TYPE_META_COMMENT } from './meta';
-import { UrlBuilderService, UrlBuilder } from '../url';
-
-export function PageModule() {
-  return new ContainerModule((bind) => {
-    bind(LinkRewriterService).to(LinkRewriterImpl).inSingletonScope();
-    bind(DomParserService).toConstantValue(new xmldom.DOMParser());
-    bind(XmlSerializerService).toConstantValue(new xmldom.XMLSerializer());
-
-    bind(LinkFactory).toSelf().inSingletonScope().onActivation(({ container }, factory) => {
-      const url = container.get<UrlBuilder>(UrlBuilderService);
-
-      return factory.register(TYPE_LINK_INTERNAL, url.getSpaUrl.bind(url));
-    });
-
-    bind(MetaCollectionFactory).toFactory(({ container }) => (model: MetaCollectionModel) => {
-      const scope = container.createChild();
-      scope.bind(MetaCollectionImpl).toSelf();
-      scope.bind(MetaCollectionModelToken).toConstantValue(model);
-
-      return scope.get(MetaCollectionImpl);
-    });
-
-    bind(MetaFactory).toSelf().inSingletonScope().onActivation((context, factory) => factory
-      .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position)),
-    );
-
-    bind(ContentFactory).toFactory(({ container }) => (model: ContentModel) => {
-      const scope = container.createChild();
-      scope.bind(ContentImpl).toSelf();
-      scope.bind(ContentModelToken).toConstantValue(model);
-
-      return scope.get(ContentImpl);
-    });
-
-    bind(ComponentFactory).toSelf().inSingletonScope().onActivation(({ container }, factory) => factory
-      .register(TYPE_COMPONENT, (model, children) => {
-        const scope = container.createChild();
-        scope.bind(ComponentImpl).toSelf();
-        scope.bind(ComponentModelToken).toConstantValue(model);
-        scope.bind(ComponentChildrenToken).toConstantValue(children);
-
-        return scope.get(ComponentImpl);
-      })
-      .register(TYPE_COMPONENT_CONTAINER, (model, children) => {
-        const scope = container.createChild();
-        scope.bind(ContainerImpl).toSelf();
-        scope.bind(ComponentModelToken).toConstantValue(model);
-        scope.bind(ComponentChildrenToken).toConstantValue(children);
-
-        return scope.get(ContainerImpl);
-      })
-      .register(TYPE_COMPONENT_CONTAINER_ITEM, (model) => {
-        const scope = container.createChild();
-        scope.bind(ContainerItemImpl).toSelf();
-        scope.bind(ComponentModelToken).toConstantValue(model);
-
-        return scope.get(ContainerItemImpl);
-      }),
-    );
-
-    bind(PageFactory).toFactory(({ container }) => (model: PageModel) => {
-      const scope = container.createChild();
-      scope.bind(PageImpl).toSelf();
-      scope.bind(PageModelToken).toConstantValue(model);
-
-      return scope.get(PageImpl);
-    });
-  });
+/**
+ * Checks whether a value is a page component.
+ * @param value The value to check.
+ */
+export function isComponent(value: any): value is Component {
+  return isComponent10(value) || isComponent09(value);
 }
+
+/**
+ * Checks whether a value is a page container.
+ * @param value The value to check.
+ */
+export function isContainer(value: any): value is Container {
+  return isContainer10(value) || isContainer09(value);
+}
+
+/**
+ * Checks whether a value is a page container item.
+ * @param value The value to check.
+ */
+export function isContainerItem(value: any): value is ContainerItem {
+  return isContainerItem10(value) || isContainerItem09(value);
+}
+
+/**
+ * Checks whether a value is a page.
+ * @param value The value to check.
+ */
+export function isPage(value: any): value is Page {
+  return isPage10(value) || isPage09(value);
+}
+
+/**
+ * Model of a page.
+ * @hidden
+ */
+export type PageModel = PageModel10 | PageModel09;
 
 export {
   Component,
   TYPE_COMPONENT,
   TYPE_COMPONENT_CONTAINER,
   TYPE_COMPONENT_CONTAINER_ITEM,
-  isComponent,
 } from './component';
-export { ContainerItem, isContainerItem } from './container-item';
+export {
+  TYPE_COMPONENT as TYPE_COMPONENT_09,
+  TYPE_COMPONENT_CONTAINER as TYPE_COMPONENT_CONTAINER_09,
+  TYPE_COMPONENT_CONTAINER_ITEM as TYPE_COMPONENT_CONTAINER_ITEM_09,
+} from './component09';
+export { ContainerItem } from './container-item';
 export {
   Container,
   TYPE_CONTAINER_BOX,
@@ -125,15 +80,17 @@ export {
   TYPE_CONTAINER_NO_MARKUP,
   TYPE_CONTAINER_ORDERED_LIST,
   TYPE_CONTAINER_UNORDERED_LIST,
-  isContainer,
 } from './container';
-export { Content } from './content';
+export { Content, isContent } from './content09';
+export { Document, TYPE_DOCUMENT, isDocument } from './document';
 export { Link, TYPE_LINK_EXTERNAL, TYPE_LINK_INTERNAL, TYPE_LINK_RESOURCE, isLink } from './link';
-export { Menu } from './menu';
+export { Menu } from './menu09';
 export { MetaCollection } from './meta-collection';
 export { MetaComment, isMetaComment } from './meta-comment';
 export { Meta, META_POSITION_BEGIN, META_POSITION_END, isMeta } from './meta';
 export { PageFactory } from './page-factory';
-export { PageModel, Page, isPage } from './page';
+export { PageModule } from './module';
+export { PageModule as PageModule09 } from './module09';
+export { Page } from './page';
 export { Reference, isReference } from './reference';
 export { Visitor, Visit } from './relevance';
