@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,22 @@
  */
 
 import { Typed } from 'emittery';
-import { Component, TYPE_COMPONENT } from './component';
-import { ComponentFactory } from './component-factory';
-import { ContentFactory } from './content-factory';
-import { ContentModel } from './content';
+import { Component } from './component';
+import { ComponentFactory } from './component-factory09';
+import { ContentFactory } from './content-factory09';
+import { ContentModel, Content } from './content09';
 import { EventBus, Events } from '../events';
 import { LinkFactory } from './link-factory';
 import { LinkRewriter } from './link-rewriter';
-import { TYPE_LINK_INTERNAL, TYPE_LINK_EXTERNAL } from './link';
+import { TYPE_COMPONENT } from './component09';
+import { TYPE_LINK_INTERNAL } from './link';
 import { MetaCollectionFactory } from './meta-collection-factory';
-import { PageImpl, PageModel, Page, isPage } from './page';
+import { PageImpl, PageModel, isPage } from './page09';
+import { Page } from './page';
 
 let componentFactory: jest.Mocked<ComponentFactory>;
-let content: unknown;
-let contentFactory: jest.Mocked<ContentFactory>;
+let content: Content;
+let contentFactory: jest.MockedFunction<ContentFactory>;
 let eventBus: EventBus;
 let linkFactory: jest.Mocked<LinkFactory>;
 let linkRewriter: jest.Mocked<LinkRewriter>;
@@ -36,15 +38,12 @@ let metaFactory: jest.MockedFunction<MetaCollectionFactory>;
 let root: Component;
 
 const model = {
-  links: {
-    self: { href: 'self-url', type: TYPE_LINK_EXTERNAL },
-    site: { href: 'site-url', type: TYPE_LINK_INTERNAL },
+  _links: {
+    self: { href: 'self-url' },
+    site: { href: 'site-url' },
   },
-  meta: {},
-  page: {
-    root: { id: 'id', meta: {}, type: TYPE_COMPONENT },
-  },
-  root: { $ref: '/page/root' },
+  _meta: {},
+  page: { _meta: {}, id: 'id', type: TYPE_COMPONENT },
 } as PageModel;
 
 function createPage(pageModel = model) {
@@ -53,8 +52,8 @@ function createPage(pageModel = model) {
 
 beforeEach(() => {
   componentFactory = { create: jest.fn(() => root) } as unknown as typeof componentFactory;
-  content = {};
-  contentFactory = { create: jest.fn(() => content) } as unknown as typeof contentFactory;
+  content = {} as jest.Mocked<Content>;
+  contentFactory = jest.fn(() => content) as unknown as typeof contentFactory;
   eventBus = new Typed<Events>();
   linkFactory = { create: jest.fn() } as unknown as typeof linkFactory;
   linkRewriter = { rewrite: jest.fn() } as unknown as jest.Mocked<LinkRewriter>;
@@ -78,24 +77,21 @@ describe('PageImpl', () => {
     beforeEach(() => {
       page = createPage({
         ...model,
-        page: {
-          ...model.page,
-          content1: { id: 'id1', type: 'document' } as ContentModel,
-          content2: { id: 'id2', type: 'document' } as ContentModel,
+        content: {
+          content1: { id: 'id1', name: 'content1' } as ContentModel,
+          content2: { id: 'id2', name: 'content2' } as ContentModel,
         },
       });
     });
 
-    it('should return a content item', () => {
-      expect(page.getContent('content1')).toBe(content);
-      expect(page.getContent('content1')).toBe(content);
-      expect(contentFactory.create).toBeCalledTimes(1);
-      expect(contentFactory.create).toHaveBeenCalledWith({ id: 'id1', type: 'document' });
+    it('should create content instances', () => {
+      expect(contentFactory).toBeCalledTimes(2);
+      expect(contentFactory).nthCalledWith(1, { id: 'id1', name: 'content1' });
+      expect(contentFactory).nthCalledWith(2, { id: 'id2', name: 'content2' });
     });
 
-    it('should return a content item by reference', () => {
-      expect(page.getContent({ $ref: '/page/content2' })).toBe(content);
-      expect(contentFactory.create).toHaveBeenCalledWith({ id: 'id2', type: 'document' });
+    it('should return a content item', () => {
+      expect(page.getContent('content1')).toBe(content);
     });
   });
 
@@ -115,8 +111,9 @@ describe('PageImpl', () => {
       const page = createPage({
         ...model,
         page: {
-          root: { ...model.page.root, meta: { pageTitle: 'something' } },
-        } as PageModel['page'],
+          ...model.page,
+          _meta: { pageTitle: 'something' },
+        },
       });
 
       expect(page.getTitle()).toBe('something');
@@ -154,10 +151,10 @@ describe('PageImpl', () => {
     it('should return a version', () => {
       const page = createPage({
         ...model,
-        meta: { version: '1.0' },
+        _meta: { version: '0.9' },
       });
 
-      expect(page.getVersion()).toEqual('1.0');
+      expect(page.getVersion()).toEqual('0.9');
     });
 
     it('should return an undefined value', () => {
@@ -171,7 +168,7 @@ describe('PageImpl', () => {
     it('should return a visitor', () => {
       const page = createPage({
         ...model,
-        meta: {
+        _meta: {
           visitor: {
             id: 'some-id',
             header: 'some-header',
@@ -198,7 +195,7 @@ describe('PageImpl', () => {
     it('should return a visit', () => {
       const page = createPage({
         ...model,
-        meta: {
+        _meta: {
           visit: {
             id: 'some-id',
             new: false,
@@ -221,7 +218,7 @@ describe('PageImpl', () => {
 
   describe('isPreview', () => {
     it('should return true', () => {
-      const page = createPage({ ...model, meta: { preview: true } });
+      const page = createPage({ ...model, _meta: { preview: true } });
 
       expect(page.isPreview()).toBe(true);
     });
@@ -239,17 +236,15 @@ describe('PageImpl', () => {
 
       expect(page.getContent('content')).toBeUndefined();
 
-      await eventBus.emitSerial('page.update', {
-        page: {
-          ...model,
-          page: {
-            content: { id: 'id', type: 'document' } as ContentModel,
-          },
+      await eventBus.emitSerial('page.update', { page: {
+        ...model,
+        content: {
+          content: { id: 'id', name: 'content' } as ContentModel,
         },
-      });
+      } });
 
+      expect(contentFactory).toBeCalledWith({ id: 'id', name: 'content' });
       expect(page.getContent('content')).toBe(content);
-      expect(contentFactory.create).toBeCalledWith({ id: 'id', type: 'document' });
     });
   });
 

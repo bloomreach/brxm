@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,29 @@
  * limitations under the License.
  */
 
-import { ComponentImpl, ComponentModel, Component, TYPE_COMPONENT, isComponent } from './component';
-import { LinkFactory } from './link-factory';
+import { ComponentImpl, ComponentModel, TYPE_COMPONENT, isComponent } from './component09';
+import { Component } from './component';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollection } from './meta-collection';
+import { UrlBuilder } from '../url';
 
-let linkFactory: jest.Mocked<LinkFactory>;
 let metaFactory: jest.MockedFunction<MetaCollectionFactory>;
+let urlBuilder: jest.Mocked<UrlBuilder>;
 
 const model = {
-  links: { self: { href: 'url' } },
-  meta: {},
+  _links: { componentRendering: { href: 'url' } },
+  _meta: {},
   id: 'id',
   type: TYPE_COMPONENT,
 } as ComponentModel;
 
 function createComponent(componentModel = model, children: Component[] = []) {
-  return new ComponentImpl(componentModel, children, linkFactory, metaFactory);
+  return new ComponentImpl(componentModel, children, metaFactory, urlBuilder);
 }
 
 beforeEach(() => {
-  linkFactory = { create: jest.fn() } as unknown as typeof linkFactory;
   metaFactory = jest.fn();
+  urlBuilder = { getApiUrl: jest.fn() } as unknown as typeof urlBuilder;
 });
 
 describe('ComponentImpl', () => {
@@ -54,7 +55,7 @@ describe('ComponentImpl', () => {
       metaFactory.mockReturnValueOnce(meta);
       const component = createComponent();
 
-      expect(metaFactory).toBeCalledWith(model.meta);
+      expect(metaFactory).toBeCalledWith(model._meta);
       expect(component.getMeta()).toEqual(meta);
     });
   });
@@ -77,10 +78,10 @@ describe('ComponentImpl', () => {
     it('should return a model url', () => {
       const component = createComponent();
 
-      linkFactory.create.mockReturnValueOnce('url');
+      urlBuilder.getApiUrl.mockReturnValueOnce('url');
 
       expect(component.getUrl()).toBe('url');
-      expect(linkFactory.create).toBeCalledWith({ href: 'url' });
+      expect(urlBuilder.getApiUrl).toBeCalledWith('url');
     });
 
     it('should return undefined when component links are missing', () => {
@@ -108,7 +109,7 @@ describe('ComponentImpl', () => {
     it('should return parameters', () => {
       const component = createComponent({
         ...model,
-        meta: {
+        _meta: {
           params: { a: '1', b: '2' },
         },
       });

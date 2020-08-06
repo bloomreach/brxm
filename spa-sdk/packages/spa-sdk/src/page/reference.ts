@@ -28,3 +28,10 @@ export interface Reference {
 export function isReference(value: any): value is Reference {
   return !!value?.$ref;
 }
+
+export function resolve<T>(object: Record<string, any>, reference: Reference): T | undefined {
+  return reference.$ref.split('/').reduce(
+    (value, key) => key ? value?.[key] : object,
+    object,
+  ) as T;
+}

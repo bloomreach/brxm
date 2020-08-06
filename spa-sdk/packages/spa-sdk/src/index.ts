@@ -25,6 +25,7 @@ import { SpaModule, SpaService, Spa, ApiOptionsToken } from './spa';
 import { CmsService, Cms, CmsModule, PostMessageService, PostMessage } from './cms';
 import {
   PageModel,
+  PageModule09,
   PageModule,
   Page,
   isPage,
@@ -69,7 +70,7 @@ function initializeWithProxy(scope: Container, configuration: ConfigurationWithP
     ? configuration.options.preview
     : configuration.options.live;
 
-  scope.load(PageModule(), SpaModule(), UrlModule09());
+  scope.load(PageModule09(), SpaModule(), UrlModule09());
   scope.bind(ApiOptionsToken).toConstantValue(configuration);
   scope.bind(UrlBuilderOptionsToken).toConstantValue(options);
   scope.getNamed<Cms>(CmsService, 'cms14').initialize(configuration);
@@ -94,7 +95,7 @@ function initializeWithJwt09(scope: Container, configuration: ConfigurationWithJ
   const serverId = searchParams.get(serverIdParameter) ?? undefined;
   const config = { ...configuration, spaBaseUrl: appendSearchParams(configuration.spaBaseUrl ?? '', searchParams) };
 
-  scope.load(PageModule(), SpaModule(), UrlModule09());
+  scope.load(PageModule09(), SpaModule(), UrlModule09());
   scope.bind(ApiOptionsToken).toConstantValue({ authorizationToken, serverId, ...config });
   scope.bind(UrlBuilderOptionsToken).toConstantValue(config);
 
@@ -194,6 +195,7 @@ export {
   ContainerItem,
   Container,
   Content,
+  Document,
   Link,
   Menu,
   MetaCollection,
@@ -205,6 +207,8 @@ export {
   isComponent,
   isContainerItem,
   isContainer,
+  isContent,
+  isDocument,
   isLink,
   isMetaComment,
   isMeta,

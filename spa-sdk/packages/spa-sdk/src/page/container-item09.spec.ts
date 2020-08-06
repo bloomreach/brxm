@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,32 +15,33 @@
  */
 
 import { Typed } from 'emittery';
-import { ComponentImpl, TYPE_COMPONENT_CONTAINER_ITEM } from './component';
-import { ContainerItemImpl, ContainerItemModel, ContainerItem, isContainerItem } from './container-item';
+import { ComponentImpl, TYPE_COMPONENT_CONTAINER_ITEM } from './component09';
+import { ContainerItemImpl, ContainerItemModel, isContainerItem } from './container-item09';
+import { ContainerItem } from './container-item';
 import { EventBus, Events } from '../events';
-import { LinkFactory } from './link-factory';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollection } from './meta-collection';
-import { PageModel } from './page';
+import { PageModel } from './page09';
+import { UrlBuilder } from '../url';
 
 let eventBus: EventBus;
-let linkFactory: jest.Mocked<LinkFactory>;
 let metaFactory: jest.MockedFunction<MetaCollectionFactory>;
+let urlBuilder: jest.Mocked<UrlBuilder>;
 
 const model = {
-  meta: {},
+  _meta: {},
   id: 'id',
   type: TYPE_COMPONENT_CONTAINER_ITEM,
 } as ContainerItemModel;
 
 function createContainerItem(containerItemModel = model) {
-  return new ContainerItemImpl(containerItemModel, eventBus, linkFactory, metaFactory);
+  return new ContainerItemImpl(containerItemModel, eventBus, metaFactory, urlBuilder);
 }
 
 beforeEach(() => {
   eventBus = new Typed<Events>();
-  linkFactory = { create: jest.fn() } as unknown as typeof linkFactory;
   metaFactory = jest.fn();
+  urlBuilder = {} as unknown as typeof urlBuilder;
 });
 
 describe('ContainerItemImpl', () => {
@@ -56,7 +57,7 @@ describe('ContainerItemImpl', () => {
     it('should be hidden', () => {
       const containerItem = createContainerItem({
         ...model,
-        meta: {
+        _meta: {
           params: { 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide': 'on' },
         },
       });
@@ -67,14 +68,14 @@ describe('ContainerItemImpl', () => {
     it('should not be hidden', () => {
       const containerItem1 = createContainerItem({
         ...model,
-        meta: {
+        _meta: {
           params: { 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide': 'off' },
         },
       });
 
       const containerItem2 = createContainerItem({
         ...model,
-        meta: { params: {} },
+        _meta: { params: {} },
       });
       const containerItem3 = createContainerItem();
 
@@ -88,7 +89,7 @@ describe('ContainerItemImpl', () => {
     it('should return parameters', () => {
       const containerItem = createContainerItem({
         ...model,
-        meta: {
+        _meta: {
           paramsInfo: { a: '1', b: '2' },
         },
       });
@@ -116,8 +117,7 @@ describe('ContainerItemImpl', () => {
         'page.update',
         { page: {
           page: { ...model, id: 'id2', label: 'b' },
-          root: { $ref: '/page/id2' },
-        } as unknown as PageModel },
+        } as PageModel },
       );
 
       expect(metaFactory).not.toBeCalled();
@@ -130,12 +130,9 @@ describe('ContainerItemImpl', () => {
       metaFactory.mockReturnValueOnce(meta);
       await eventBus.emitSerial(
         'page.update',
-        {
-          page: {
-            page: { root: { ...model, id: 'id1', meta: metaModel } },
-            root: { $ref: '/page/root' },
-          } as unknown as PageModel,
-        },
+        { page: {
+          page: { ...model, id: 'id1', _meta: metaModel },
+        } as PageModel },
       );
 
       expect(metaFactory).toBeCalledWith(metaModel);
@@ -145,12 +142,9 @@ describe('ContainerItemImpl', () => {
     it('should update a model on page.update event', async () => {
       await eventBus.emitSerial(
         'page.update',
-        {
-          page: {
-            page: { root: { ...model, id: 'id1', label: 'b' } },
-            root: { $ref: '/page/root' },
-          } as unknown as PageModel,
-        },
+        { page: {
+          page: { ...model, id: 'id1', label: 'b' },
+        } as PageModel },
       );
 
       expect(containerItem.getType()).toBe('b');
@@ -162,12 +156,9 @@ describe('ContainerItemImpl', () => {
 
       await eventBus.emitSerial(
         'page.update',
-        {
-          page: {
-            page: { root: { ...model, id: 'id1' } },
-            root: { $ref: '/page/root' },
-          } as unknown as PageModel,
-        },
+        { page: {
+          page: { ...model, id: 'id1' },
+        } as PageModel },
       );
       await new Promise(process.nextTick);
 
@@ -184,7 +175,7 @@ describe('isContainerItem', () => {
   });
 
   it('should return false', () => {
-    const component = new ComponentImpl(model, [], linkFactory, metaFactory);
+    const component = new ComponentImpl(model, [], metaFactory, urlBuilder);
 
     expect(isContainerItem(undefined)).toBe(false);
     expect(isContainerItem(component)).toBe(false);
