@@ -15,9 +15,8 @@
  */
 
 import { Builder } from './factory';
-import { PageModel, Page } from './page';
-import { PageModel as PageModel09 } from './page09';
+import { ContentModel, Content } from './content09';
 
-export const PageFactory = Symbol.for('PageFactory');
+export const ContentFactory = Symbol.for('ContentFactory');
 
-export type PageFactory = Builder<[PageModel | PageModel09], Page>;
+export type ContentFactory = Builder<[ContentModel], Content>;

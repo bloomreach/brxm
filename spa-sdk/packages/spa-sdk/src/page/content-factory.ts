@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-import { Builder } from './factory';
-import { ContentModel, Content } from './content';
+import { injectable } from 'inversify';
+import { Builder, SimpleFactory } from './factory';
+import { ContentModel } from './content';
 
-export const ContentFactory = Symbol.for('ContentFactory');
+type ContentBuilder = Builder<[ContentModel], unknown>;
 
-export type ContentFactory = Builder<[ContentModel], Content>;
+@injectable()
+export class ContentFactory extends SimpleFactory<ContentModel['type'], ContentBuilder> {
+  create(model: ContentModel) {
+    if (!this.mapping.has(model.type)) {
+      return model;
+    }
+
+    return this.mapping.get(model.type)!(model);
+  }
+}
