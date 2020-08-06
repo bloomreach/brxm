@@ -31,7 +31,7 @@ export default function App(props: RouteComponentProps) {
       path: `${props.location.pathname}${props.location.search}`,
     },
   };
-  const mapping = { Banner, Content, 'News List': NewsList };
+  const mapping = { Banner, Content, 'News List': NewsList, 'Simple Content': Content };
 
   return (
     <BrPage configuration={configuration} mapping={mapping}>

@@ -35,6 +35,10 @@ export class ContentComponent {
     return this.document?.getData<DocumentData>();
   }
 
+  get date(){
+    return this.data?.date ?? this.data?.publicationDate;
+  }
+
   get image() {
     return this.data?.image && this.page.getContent(this.data.image);
   }
