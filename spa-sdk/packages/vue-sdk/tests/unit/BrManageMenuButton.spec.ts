@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+import { mocked } from 'ts-jest/utils';
 import { shallowMount } from '@vue/test-utils';
 import { Component, Prop, Provide, Vue } from 'vue-property-decorator';
-import { MetaCollection, Menu, Page } from '@bloomreach/spa-sdk';
+import { MetaCollection, Menu, Page, isMenu } from '@bloomreach/spa-sdk';
 import BrManageMenuButton from '@/BrManageMenuButton.vue';
 import BrMeta from '@/BrMeta.vue';
+
+jest.mock('@bloomreach/spa-sdk');
 
 @Component({ template: '<div />' })
 class BrPage extends Vue {
@@ -31,7 +34,6 @@ class BrPage extends Vue {
 
 describe('BrManageMenuButton', () => {
   const meta = {} as MetaCollection;
-  const menu = { _meta: {} } as Menu;
   let page: jest.Mocked<Page>;
   let provide: Function;
 
@@ -47,18 +49,31 @@ describe('BrManageMenuButton', () => {
 
   describe('render', () => {
     it('should render nothing when it is not a preview', () => {
+      const menu = { _meta: {} } as Menu;
       const wrapper = shallowMount(BrManageMenuButton, { provide, propsData: { menu } });
 
       expect(wrapper.html()).toBe('');
     });
 
-    it('should render a menu button meta', () => {
+    it('should render menu-button meta-data created with the page', () => {
       page.isPreview.mockReturnValueOnce(true);
+      mocked(isMenu).mockReturnValue(false);
+      const menu = { _meta: {} } as Menu;
       const wrapper = shallowMount(BrManageMenuButton, { provide, propsData: { menu } });
       const props = wrapper.findComponent(BrMeta).props();
 
       // eslint-disable-next-line no-underscore-dangle
       expect(page.getMeta).toBeCalledWith(menu._meta);
+      expect(props.meta).toBe(meta);
+    });
+
+    it('should render a menu button meta', () => {
+      page.isPreview.mockReturnValueOnce(true);
+      mocked(isMenu).mockReturnValue(true);
+      const menu = { getMeta: jest.fn(() => meta) };
+      const wrapper = shallowMount(BrManageMenuButton, { provide, propsData: { menu } });
+      const props = wrapper.findComponent(BrMeta).props();
+
       expect(props.meta).toBe(meta);
     });
   });
