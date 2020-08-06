@@ -73,6 +73,7 @@ import NewsList from './components/BrNewsList.vue';
         Content,
         menu: Menu,
         'News List': NewsList,
+        'Simple Content': Content,
       },
     };
   },
