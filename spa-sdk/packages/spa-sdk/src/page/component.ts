@@ -45,30 +45,19 @@ export type ComponentType = typeof TYPE_COMPONENT
 
 /**
  * Meta-data of a component.
- * @hidden
  */
 export interface ComponentMeta extends MetaCollectionModel {
   params?: ComponentParameters;
 }
 
-/**
- * @hidden
- */
 type ComponentLinks = 'self';
 
-/**
- * @hidden
- */
 type ComponentModels = Record<string, any>;
 
-/**
- * @hidden
- */
 type ComponentParameters = Partial<Record<string, string>>;
 
 /**
  * Model of a component.
- * @hidden
  */
 export interface ComponentModel {
   children?: Reference[];

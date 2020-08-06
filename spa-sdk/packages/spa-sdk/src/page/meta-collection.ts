@@ -21,9 +21,6 @@ import { isMetaComment } from './meta-comment';
 
 export const MetaCollectionModelToken = Symbol.for('MetaCollectionModelToken');
 
-/**
- * @hidden
- */
 export interface MetaCollectionModel {
   beginNodeSpan?: MetaModel[];
   endNodeSpan?: MetaModel[];

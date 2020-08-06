@@ -24,14 +24,10 @@ export const ImageModelToken = Symbol.for('ImageModelToken');
 
 export type ImageFactory = Builder<[ImageModel], Image>;
 
-/**
- * @hidden
- */
 type ImageLinks = 'site';
 
 /**
  * Image model.
- * @hidden
  */
 export interface ImageModel {
   displayName: string;
