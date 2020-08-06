@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,10 @@ import { Banner, Content, Menu, NewsList } from './components';
 
 export default function App(props: RouteComponentProps) {
   const configuration = {
-    httpClient: axios,
-    apiBaseUrl: process.env.REACT_APP_API_BASE_URL,
-    cmsBaseUrl: process.env.REACT_APP_CMS_BASE_URL,
-    spaBaseUrl: process.env.REACT_APP_SPA_BASE_URL,
+    baseUrl: process.env.REACT_APP_BASE_URL,
+    endpoint: process.env.REACT_APP_BRXM_ENDPOINT,
     endpointQueryParameter: 'brxm',
+    httpClient: axios,
     request: {
       path: `${props.location.pathname}${props.location.search}`,
     },
