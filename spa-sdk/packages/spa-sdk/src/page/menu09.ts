@@ -17,14 +17,10 @@
 import { Link } from './link';
 import { MetaCollectionModel } from './meta-collection';
 
-/**
- * @hidden
- */
 type MenuItemLinks = 'site';
 
 /**
  * Essentials component menu model.
- * @hidden
  */
 export interface Menu {
   _meta?: MetaCollectionModel;
@@ -34,7 +30,6 @@ export interface Menu {
 
 /**
  * Essentials component menu item model.
- * @hidden
  */
 export interface MenuItem {
   childMenuItems: MenuItem[];

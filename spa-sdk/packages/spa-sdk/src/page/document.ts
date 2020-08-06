@@ -24,14 +24,8 @@ export const DocumentModelToken = Symbol.for('DocumentModelToken');
 
 export const TYPE_DOCUMENT = 'document';
 
-/**
- * @hidden
- */
 type DocumentLinks = 'site';
 
-/**
- * @hidden
- */
 interface DocumentDataModel {
   id: string;
   localeString?: string;
@@ -41,7 +35,6 @@ interface DocumentDataModel {
 
 /**
  * Model of a document item.
- * @hidden
  */
 export interface DocumentModel {
   data: DocumentDataModel;

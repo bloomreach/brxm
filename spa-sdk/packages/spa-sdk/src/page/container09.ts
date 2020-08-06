@@ -21,7 +21,6 @@ import { ContainerType, Container } from './container';
 
 /**
  * Model of a container item.
- * @hidden
  */
 export interface ContainerModel extends ComponentModel {
   type: typeof TYPE_COMPONENT_CONTAINER;
