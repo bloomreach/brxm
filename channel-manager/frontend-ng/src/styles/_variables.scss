@@ -46,10 +46,10 @@ $bloomreach-red: #d40022;
 $bloomreach-white: #fff;
 
 // Text colors
-$text-dark: map-get($text-color, 'dark');
-$text-light: map-get($text-color, 'light');
-$text-dim: map-get($text-color, 'dim');
-$text-disabled: map-get($text-color, 'disabled');
+$text-dark: map-get($text-color, dark);
+$text-light: map-get($text-color, light);
+$text-dim: map-get($text-color, dim);
+$text-disabled: map-get($text-color, disabled);
 $icon-button-default: $text-dim;
 
 // Typography
@@ -106,7 +106,7 @@ $dialog-footer-border-top: 1px solid $bloomreach-gray-12;
 
 // Picker
 $picker-subheader-bgcolor: $bloomreach-gray-5;
-$picker-border-color: map-get($grey, '200');
+$picker-border-color: map-get($grey, 200);
 
 // Tree
 $tree-bg: $white;
@@ -164,11 +164,11 @@ $embedded-link-width: 40px;
 // Overlay
 $overlay-box-minheight: 50px;
 
-$overlay-container-outline-color: map-get($grey, '600');
+$overlay-container-outline-color: map-get($grey, 600);
 $overlay-container-inline-color: $white;
 $overlay-container-glow-color: rgba(105, 114, 121, .75);
-$overlay-container-label-bgcolor: map-get($grey, '600');
-$overlay-container-label-border-color: map-get($grey, '600');
+$overlay-container-label-bgcolor: map-get($grey, 600);
+$overlay-container-label-border-color: map-get($grey, 600);
 $overlay-container-add-mode-hover-bgcolor: rgba(184, 188, 191, .9);
 
 $overlay-component-outline-color: $blue-500;
@@ -180,28 +180,28 @@ $overlay-component-label-border-color: $blue-500;
 $overlay-component-active-outline-color: $orange-a700;
 $overlay-component-active-glow-color: rgba($orange-a700, .75);
 $overlay-component-active-hover-shadow-color: rgba($orange-a700, .25);
-$overlay-component-active-label-bgcolor: map-get($orange, '500');
-$overlay-component-active-label-border-color: map-get($orange, '500');
-$overlay-component-dragging-outline-color: map-get($grey, 'A700');
-$overlay-component-dragging-glow-color: rgba(map-get($grey, 'A700'), .75);
+$overlay-component-active-label-bgcolor: map-get($orange, 500);
+$overlay-component-active-label-border-color: map-get($orange, 500);
+$overlay-component-dragging-outline-color: map-get($grey, A700);
+$overlay-component-dragging-glow-color: rgba(map-get($grey, A700), .75);
 
 $overlay-label-color: $white;
 $overlay-label-font-size: 12px;
 
-$overlay-lock-bgcolor: map-get($grey, '600');
+$overlay-lock-bgcolor: map-get($grey, 600);
 $overlay-lock-color: $white;
 $overlay-lock-font-size: $overlay-label-font-size;
 $overlay-lock-height: 26px;
 $overlay-lock-width: 26px;
 
-$overlay-link-bgcolor: map-get($orange, 'A400');
+$overlay-link-bgcolor: map-get($orange, A400);
 $overlay-link-shadow-color: rgba(0, 0, 0, .26);
 $overlay-link-shadow-color-light: rgba(0, 0, 0, .1);
 $overlay-link-fill-color: $white;
 $overlay-link-transition: 300ms cubic-bezier(.55, 0, .55, .2);
 $overlay-link-hover-bgcolor: #e06717;
 $overlay-link-active-shadow-color: rgba(0, 0, 0, .4);
-$overlay-link-clicked-bgcolor: map-get($orange, 'A200');
+$overlay-link-clicked-bgcolor: map-get($orange, A200);
 $overlay-link-shadow-color: rgba(0, 0, 0, .3);
 
 $overlay-link-shadow-active: 1px 3px 8px 2px $overlay-link-shadow-color;
@@ -211,7 +211,7 @@ $overlay-menu-link-bgcolor: $bloomreach-blue-primary;
 $overlay-menu-link-hover-bgcolor: $bloomreach-blue-dark;
 $overlay-menu-link-clicked-bgcolor: $bloomreach-blue-dark;
 
-$overlay-icon-fill: map-get($grey, '600');
+$overlay-icon-fill: map-get($grey, 600);
 $overlay-icon-size: 24px;
 
 $overlay-drop-area-shadow-color: $bloomreach-blue-primary;
