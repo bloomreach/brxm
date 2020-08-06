@@ -33,7 +33,6 @@ import { Reference, isReference } from './reference';
 
 /**
  * Meta-data of a page root component.
- * @hidden
  */
 interface PageRootMeta extends ComponentMeta {
   pageTitle?: string;
@@ -41,7 +40,6 @@ interface PageRootMeta extends ComponentMeta {
 
 /**
  * Model of a page root component.
- * @hidden
  */
 interface PageRootModel {
   _meta: PageRootMeta;
@@ -49,7 +47,6 @@ interface PageRootModel {
 
 /**
  * Model of a page.
- * @hidden
  */
 export interface PageModel {
   _links: PageModel10['links'];

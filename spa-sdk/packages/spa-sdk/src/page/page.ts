@@ -33,14 +33,10 @@ import { Visitor, Visit } from './relevance';
 
 export const PageModelToken = Symbol.for('PageModelToken');
 
-/**
- * @hidden
- */
 type PageLinks = 'self' | 'site';
 
 /**
  * Meta-data of a page root component.
- * @hidden
  */
 interface PageRootMeta extends ComponentMeta {
   pageTitle?: string;
@@ -48,7 +44,6 @@ interface PageRootMeta extends ComponentMeta {
 
 /**
  * Model of a page root component.
- * @hidden
  */
 interface PageRootModel {
   meta: PageRootMeta;
@@ -56,7 +51,6 @@ interface PageRootModel {
 
 /**
  * Meta-data of a page.
- * @hidden
  */
 interface PageMeta {
   /**
@@ -84,7 +78,6 @@ interface PageMeta {
 
 /**
  * Model of a page.
- * @hidden
  */
 export interface PageModel {
   links: Record<PageLinks, Link>;
