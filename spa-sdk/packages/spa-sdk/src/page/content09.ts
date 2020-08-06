@@ -22,14 +22,10 @@ import { MetaCollectionModel, MetaCollection } from './meta-collection';
 
 export const ContentModelToken = Symbol.for('ContentModelToken');
 
-/**
- * @hidden
- */
 type ContentLinks = 'site';
 
 /**
  * Model of a content item.
- * @hidden
  */
 export interface ContentModel {
   _links: Record<ContentLinks, Link>;

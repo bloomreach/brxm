@@ -24,15 +24,8 @@ export const MenuItemModelToken = Symbol.for('MenuItemModelToken');
 
 export type MenuItemFactory = Builder<[MenuItemModel], MenuItem>;
 
-/**
- * @hidden
- */
 type MenuItemLinks = 'site';
 
-/**
- * Essentials component menu item model.
- * @hidden
- */
 export interface MenuItemModel {
   childMenuItems: MenuItemModel[];
   depth: number;
