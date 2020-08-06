@@ -111,16 +111,14 @@ export function PageModule() {
 }
 
 export {
-  ComponentModel,
   Component,
   TYPE_COMPONENT,
   TYPE_COMPONENT_CONTAINER,
   TYPE_COMPONENT_CONTAINER_ITEM,
   isComponent,
 } from './component';
-export { ContainerItemModel, ContainerItem, isContainerItem } from './container-item';
+export { ContainerItem, isContainerItem } from './container-item';
 export {
-  ContainerModel,
   Container,
   TYPE_CONTAINER_BOX,
   TYPE_CONTAINER_INLINE,
@@ -129,12 +127,12 @@ export {
   TYPE_CONTAINER_UNORDERED_LIST,
   isContainer,
 } from './container';
-export { ContentModel, Content } from './content';
+export { Content } from './content';
 export { Link, TYPE_LINK_EXTERNAL, TYPE_LINK_INTERNAL, TYPE_LINK_RESOURCE, isLink } from './link';
 export { Menu } from './menu';
-export { MetaCollectionModel, MetaCollection } from './meta-collection';
+export { MetaCollection } from './meta-collection';
 export { MetaComment, isMetaComment } from './meta-comment';
-export { MetaModel, Meta, META_POSITION_BEGIN, META_POSITION_END, isMeta } from './meta';
+export { Meta, META_POSITION_BEGIN, META_POSITION_END, isMeta } from './meta';
 export { PageFactory } from './page-factory';
 export { PageModel, Page, isPage } from './page';
 export { Reference, isReference } from './reference';
