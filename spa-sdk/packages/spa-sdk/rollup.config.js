@@ -54,7 +54,7 @@ export default [
   {
     input: 'src/index.ts',
     output: [{
-      file: 'dist/index.es6.mjs',
+      file: 'dist/index.es6.js',
       format: 'esm',
     }],
     external: [
