@@ -37,12 +37,13 @@ import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer;
 import org.hippoecm.frontend.plugins.standardworkflow.components.LanguageField;
-import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.XPageLayoutContainer;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.AddDocumentValidator;
+import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.XPageLayoutContainer;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.widgets.NameUriField;
-import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
+import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.StringCodec;
 
 public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
 
@@ -118,15 +119,26 @@ public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
         }
         add(languageField);
 
-        add(new XPageLayoutContainer("xpage-layout",
-                new PropertyModel<>(addDocumentModel, "xPageLayout"),
-                xPageLayoutListModel));
+        final XPageLayoutContainer xPageLayoutContainer = new XPageLayoutContainer("xpage-layout",
+                new PropertyModel<>(addDocumentModel,
+                        "xPageLayout"),
+                xPageLayoutListModel);
+        if (hasFolderPrototype(prototypes) || xPageLayoutListModel.getObject().isEmpty()) {
+            xPageLayoutContainer.setVisible(false);
+        }
+        add(xPageLayoutContainer);
+
 
         add(new AddDocumentValidator(this, nameUriContainer, workflowDescriptorModel));
 
         add(ClassAttribute.append("add-document-dialog"));
 
         setSize(DialogConstants.MEDIUM_AUTO);
+    }
+
+    private boolean hasFolderPrototype(final Set<String> prototypeNamesAndTypes) {
+        return prototypeNamesAndTypes.contains(HippoStdNodeType.NT_FOLDER) ||
+                prototypeNamesAndTypes.contains(HippoStdNodeType.NT_DIRECTORY);
     }
 
     @Override
