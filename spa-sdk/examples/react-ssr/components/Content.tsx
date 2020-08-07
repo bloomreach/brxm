@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,23 +15,30 @@
  */
 
 import React from 'react';
+import { Document, ImageSet } from '@bloomreach/spa-sdk';
 import { BrManageContentButton, BrProps } from '@bloomreach/react-sdk';
 
 export function Content(props: BrProps) {
   const { document: documentRef } = props.component.getModels<DocumentModels>();
-  const document = documentRef && props.page.getContent(documentRef);
+  const document = documentRef && props.page.getContent<Document>(documentRef);
 
   if (!document) {
     return null;
   }
 
-  const { author, content, date, image: imageRef, title } = document.getData<DocumentData>();
-  const image = imageRef && props.page.getContent(imageRef);
+  const {
+    author,
+    content,
+    publicationDate,
+    date = publicationDate,
+    image: imageRef,
+    title } = document.getData<DocumentData>();
+  const image = imageRef && props.page.getContent<ImageSet>(imageRef);
 
   return (
     <div className={props.page.isPreview() ? 'has-edit-button' : ''}>
       <BrManageContentButton content={document} />
-      { image && <img className="img-fluid mb-3" src={image.getUrl()} alt={title} /> }
+      { image && <img className="img-fluid mb-3" src={image.getOriginal()?.getUrl()} alt={title} /> }
       { title && <h1>{title}</h1> }
       { author && <p className="mb-3 text-muted">{author}</p> }
       { date && <p className="mb-3 small text-muted">{new Date(date).toDateString()}</p> }

@@ -42,9 +42,8 @@ export default class Index extends React.Component<IndexProps> {
   static async getInitialProps(context: NextPageContext) {
     const cookies = parseCookies(context);
     const configuration = {
-      apiBaseUrl: publicRuntimeConfig.apiBaseUrl,
-      cmsBaseUrl: publicRuntimeConfig.cmsBaseUrl,
-      spaBaseUrl: publicRuntimeConfig.spaBaseUrl,
+      baseUrl: publicRuntimeConfig.baseUrl,
+      endpoint: publicRuntimeConfig.endpoint,
       endpointQueryParameter: 'brxm',
       request: { path: context.asPath ?? '' },
       visitor:  cookies[VISITOR_COOKIE]
@@ -73,12 +72,12 @@ export default class Index extends React.Component<IndexProps> {
       );
     }
 
-    if (configuration.cmsBaseUrl) {
+    if (configuration.endpoint) {
       // Limit the number of hosts that are allowed to embed your application.
       // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
       context?.res?.setHeader(
         'Content-Security-Policy',
-        `frame-ancestors 'self' ${new URL(configuration.cmsBaseUrl, `http://${context.req?.headers.host}`).host}`,
+        `frame-ancestors 'self' ${new URL(configuration.endpoint, `http://${context.req?.headers.host}`).host}`,
       );
     }
 
@@ -91,7 +90,7 @@ export default class Index extends React.Component<IndexProps> {
 
   render() {
     const configuration = { ...this.props.configuration, httpClient: axios };
-    const mapping = { Banner, Content, 'News List': NewsList };
+    const mapping = { Banner, Content, 'News List': NewsList, 'Simple Content': Content };
 
     return (
       <div  className="d-flex flex-column vh-100">

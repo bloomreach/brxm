@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g fill="currentColor">
+            <path d="M12,0 C18.627417,0 24,5.372583 24,12 C24,13.0362344 23.8686559,14.0417918 23.6217076,15.0009322 L21.5419205,15.0008825 C21.8395465,14.0535849 22,13.0455304 22,12 C22,6.4771525 17.5228475,2 12,2 C6.4771525,2 2,6.4771525 2,12 C2,16.8379226 5.43552894,20.8734344 10.0000191,21.7999676 L10.0001873,23.8341145 C4.32466846,22.8820355 0,17.946058 0,12 C0,5.372583 5.372583,0 12,0 Z M16.5,16 C19,16 21.135,17.4513333 22,19.5 C21.135,21.5486667 19,23 16.5,23 C14,23 11.865,21.5486667 11,19.5 C11.865,17.4513333 14,16 16.5,16 Z M16.5,17 C15.12,17 14,18.12 14,19.5 C14,20.88 15.12,22 16.5,22 C17.88,22 19,20.88 19,19.5 C19,18.12 17.88,17 16.5,17 Z M16.5,18 C17.33,18 18,18.67 18,19.5 C18,20.33 17.33,21 16.5,21 C15.67,21 15,20.33 15,19.5 C15,18.67 15.67,18 16.5,18 Z M13.5,8.5 L15.5,10.5 L9,17 L7,17 L7,15 L13.5,8.5 Z M15.5,6.5 C15.8333333,6.16666667 16.1666667,6.16666667 16.5,6.5 L16.5,6.5 L17.5,7.5 C17.8333333,7.83333333 17.8333333,8.16666667 17.5,8.5 C17.1666667,8.83333333 16.6666667,9.33333333 16,10 L16,10 L14,8 Z"></path>
+        </g>
+    </g>
+</svg>
