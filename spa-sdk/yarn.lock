@@ -2452,6 +2452,7 @@ __metadata:
     "@types/jest": ^25.2
     codelyzer: ^5.2
     jest: ^26.0
+    jest-junit: ^11.1
     ng-packagr: ^9.1
     rxjs: ^6.5
     ts-node: ^8.10
@@ -2486,6 +2487,7 @@ __metadata:
     jest: ^26.0
     jest-environment-enzyme: ^7.1
     jest-enzyme: ^7.1
+    jest-junit: ^11.1
     react: ^16.12
     rollup: ^2.10
     rollup-plugin-babel: ^4.4
@@ -2517,6 +2519,7 @@ __metadata:
     emittery: ^0.7
     inversify: ^5.0
     jest: ^26.0
+    jest-junit: ^11.1
     js-beautify: ^1.11
     reflect-metadata: ^0.1
     rollup: ^2.10
@@ -2556,6 +2559,7 @@ __metadata:
     eslint-plugin-import: ^2.20
     eslint-plugin-prettier: ^3.1
     eslint-plugin-vue: ^6.2
+    jest-junit: ^11.1
     prettier: ^2.0
     ts-jest: ^26.0
     typescript: ^3.8
@@ -14844,6 +14848,18 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"jest-junit@npm:^11.1":
+  version: 11.1.0
+  resolution: "jest-junit@npm:11.1.0"
+  dependencies:
+    mkdirp: ^1.0.4
+    strip-ansi: ^5.2.0
+    uuid: ^3.3.3
+    xml: ^1.0.1
+  checksum: 1166ceac6f77cd7c16fb1efb16f649bc1b7eed02ddb90e6009c376e4598641e07a0071adeec8c60f3d651f7cc67fef27ad419e6c151926c188624027d9c7a6be
+  languageName: node
+  linkType: hard
+
 "jest-leak-detector@npm:^24.9.0":
   version: 24.9.0
   resolution: "jest-leak-detector@npm:24.9.0"
@@ -24626,7 +24642,7 @@ resolve@1.15.0:
   languageName: node
   linkType: hard
 
-"uuid@npm:^3.0.0, uuid@npm:^3.0.1, uuid@npm:^3.3.2, uuid@npm:^3.4.0":
+"uuid@npm:^3.0.0, uuid@npm:^3.0.1, uuid@npm:^3.3.2, uuid@npm:^3.3.3, uuid@npm:^3.4.0":
   version: 3.4.0
   resolution: "uuid@npm:3.4.0"
   bin:
@@ -25930,6 +25946,13 @@ resolve@1.15.0:
   version: 3.0.0
   resolution: "xml-name-validator@npm:3.0.0"
   checksum: b96679a42e6be36d2433987fe3cc45e972d20d7c2c2a787a2d6b2da94392bd9f23f671cdba29a91211289a2fa8e6965e466dbc1105d0e5730fc3a43e4f1a0688
+  languageName: node
+  linkType: hard
+
+"xml@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "xml@npm:1.0.1"
+  checksum: adde7652a6f6010d28079586e7f608d616138bcb6c44bbc9174292b5cc2fab09b351d6c5f009e9304df2e0030888198225dd2e9ccbf51b776c8928479bfea4cb
   languageName: node
   linkType: hard
 
