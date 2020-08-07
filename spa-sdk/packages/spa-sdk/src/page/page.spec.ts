@@ -22,7 +22,7 @@ import { ContentModel } from './content';
 import { EventBus, Events } from '../events';
 import { LinkFactory } from './link-factory';
 import { LinkRewriter } from './link-rewriter';
-import { TYPE_LINK_INTERNAL, TYPE_LINK_EXTERNAL } from './link';
+import { Link, TYPE_LINK_INTERNAL, TYPE_LINK_EXTERNAL, isLink } from './link';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { PageImpl, PageModel, Page, isPage } from './page';
 
@@ -130,13 +130,10 @@ describe('PageImpl', () => {
   });
 
   describe('getUrl', () => {
-    beforeEach(() => {
-      linkFactory.create.mockReturnValueOnce('url');
-    });
-
     it('should pass a link to the link factory', () => {
       const link = { href: '' };
       const page = createPage();
+      linkFactory.create.mockReturnValueOnce('url');
 
       expect(page.getUrl(link)).toBe('url');
       expect(linkFactory.create).toBeCalledWith(link);
@@ -144,9 +141,29 @@ describe('PageImpl', () => {
 
     it('should pass the current page link', () => {
       const page = createPage();
+      linkFactory.create.mockReturnValueOnce('url');
 
       expect(page.getUrl()).toBe('url');
       expect(linkFactory.create).toBeCalledWith({ href: 'site-url', type: TYPE_LINK_INTERNAL });
+    });
+
+    it.each`
+      link                  | base                    | expected
+      ${'something'}        | ${'/news'}              | ${'/news/something'}
+      ${'/something'}       | ${'/news'}              | ${'/something'}
+      ${'something'}        | ${'/'}                  | ${'/something'}
+      ${'?page=1'}          | ${'/news'}              | ${'/news?page=1'}
+    `('should resolve "$link" to "$expected" relative to "$base"', ({ link, base, expected }) => {
+      const page = createPage({
+        ...model,
+        links: {
+          ...model.links,
+          site: { ...model.links.site, href: base },
+        },
+      });
+      linkFactory.create.mockImplementationOnce((link: Link | string) => isLink(link) ? link.href : link);
+
+      expect(page.getUrl(link)).toBe(expected);
     });
   });
 
