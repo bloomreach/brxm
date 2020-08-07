@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-import { CommonModule, DatePipe } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
-import { TranslationsModule } from '../translations/translations.module';
+import { XPageState } from '../../../models/xpage-state.model';
 
-import { MaterialModule } from './material/material.module';
-
-@NgModule({
-  providers: [
-    DatePipe,
-  ],
-  exports: [
-    BrowserModule,
-    CommonModule,
-    MaterialModule,
-    TranslationsModule,
-    HttpClientModule,
-  ],
+@Component({
+  templateUrl: 'notification-bar.component.html',
+  styleUrls: ['notification-bar.component.scss'],
 })
-export class SharedModule { }
+export class NotificationBarComponent {
+  @Input()
+  xPageState!: XPageState;
+}

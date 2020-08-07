@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-import { CommonModule, DatePipe } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { DocumentState } from './document-state.enum';
+import { ScheduledRequest } from './scheduled-request.model';
+import { WorkflowRequest } from './workflow-request.model';
 
-import { TranslationsModule } from '../translations/translations.module';
-
-import { MaterialModule } from './material/material.module';
-
-@NgModule({
-  providers: [
-    DatePipe,
-  ],
-  exports: [
-    BrowserModule,
-    CommonModule,
-    MaterialModule,
-    TranslationsModule,
-    HttpClientModule,
-  ],
-})
-export class SharedModule { }
+export interface XPageState {
+  branchId: string;
+  id: string;
+  name: string;
+  scheduledRequest: ScheduledRequest;
+  state: DocumentState;
+  workflowRequest: WorkflowRequest;
+}

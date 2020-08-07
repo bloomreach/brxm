@@ -14,14 +14,30 @@
  * limitations under the License.
  */
 
+// tslint:disable-next-line:match-default-export-name
+import xpageIcon from '!!raw-loader!./icons/xpage.svg';
+// tslint:disable-next-line:match-default-export-name
+import mdiIcons from '!!raw-loader!@mdi/angular-material/mdi.svg';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @NgModule({
   exports: [
     MatButtonModule,
     MatListModule,
+    MatIconModule,
   ],
 })
-export class MaterialModule { }
+export class MaterialModule {
+  constructor(private readonly iconRegistry: MatIconRegistry, private readonly domSanitizer: DomSanitizer) {
+    this.registerCustomIcons();
+  }
+
+  private registerCustomIcons(): void {
+    this.iconRegistry.addSvgIconSetLiteral(this.domSanitizer.bypassSecurityTrustHtml(mdiIcons));
+    this.iconRegistry.addSvgIconLiteral('xpage', this.domSanitizer.bypassSecurityTrustHtml(xpageIcon));
+  }
+}
