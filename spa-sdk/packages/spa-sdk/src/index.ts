@@ -186,7 +186,10 @@ export function initialize(configuration: Configuration, model?: Page | PageMode
  * @param page Page instance to destroy.
  */
 export function destroy(page: Page): void {
-  return pages.get(page)?.get<Spa>(SpaService).destroy();
+  const scope = pages.get(page);
+  pages.delete(page);
+
+  return scope?.get<Spa>(SpaService).destroy();
 }
 
 export { Configuration } from './configuration';
