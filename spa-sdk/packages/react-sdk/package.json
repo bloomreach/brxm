@@ -58,6 +58,7 @@
     "jest": "^26.0",
     "jest-environment-enzyme": "^7.1",
     "jest-enzyme": "^7.1",
+    "jest-junit": "^11.1",
     "react": "^16.12",
     "rollup": "^2.10",
     "rollup-plugin-babel": "^4.4",
@@ -71,9 +72,16 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "reporters": [
+      "default",
+      "jest-junit"
+    ],
     "setupFilesAfterEnv": [
       "jest-enzyme"
     ],
     "testEnvironment": "enzyme"
+  },
+  "jest-junit": {
+    "outputDirectory": "coverage"
   }
 }

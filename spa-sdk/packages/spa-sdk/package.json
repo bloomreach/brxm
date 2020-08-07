@@ -34,10 +34,17 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "reporters": [
+      "default",
+      "jest-junit"
+    ],
     "setupFiles": [
       "reflect-metadata"
     ],
     "testEnvironment": "jsdom"
+  },
+  "jest-junit": {
+    "outputDirectory": "coverage"
   },
   "browserslist": [
     "last 1 chrome version",
@@ -56,6 +63,7 @@
     "@types/xmldom": "^0.1",
     "babel-plugin-transform-async-to-promises": "^0.8",
     "jest": "^26.0",
+    "jest-junit": "^11.1",
     "js-beautify": "^1.11",
     "rollup": "^2.10",
     "rollup-plugin-babel": "^4.4",
