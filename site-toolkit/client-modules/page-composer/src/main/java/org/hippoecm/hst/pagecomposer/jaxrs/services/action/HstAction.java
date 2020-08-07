@@ -33,9 +33,19 @@ public enum HstAction {
     PAGE_DELETE("delete", HstCategories.page()),
     PAGE_NEW("new", HstCategories.page()),
 
+    XPAGE_PUBLISH("publish", HstCategories.xpage()),
+    XPAGE_SCHEDULE_PUBLICATION("schedule-publish", HstCategories.xpage()),
+    XPAGE_REQUEST_PUBLICATION("request-publish", HstCategories.xpage()),
+    XPAGE_REQUEST_SCHEDULE_PUBLICATION("request-schedule-publish", HstCategories.xpage()),
+
+    XPAGE_UNPUBLISH("unpublish", HstCategories.xpage()),
+    XPAGE_SCHEDULE_UNPUBLICATION("schedule-unpublish", HstCategories.xpage()),
+    XPAGE_REQUEST_UNPUBLICATION("request-unpublish", HstCategories.xpage()),
+    XPAGE_REQUEST_SCHEDULE_UNPUBLICATION("request-schedule-unpublish", HstCategories.xpage()),
+
+    XPAGE_COPY("copy", HstCategories.xpage()),
     XPAGE_MOVE("move", HstCategories.xpage()),
     XPAGE_DELETE("delete", HstCategories.xpage()),
-    XPAGE_NEW("new", HstCategories.xpage()),
     ;
 
     private final String name;

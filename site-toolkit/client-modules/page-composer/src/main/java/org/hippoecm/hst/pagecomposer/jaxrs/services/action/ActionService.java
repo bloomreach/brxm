@@ -16,12 +16,15 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
+import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.WorkflowException;
+
 public interface ActionService {
 
-    Map<String, Set<Action>> getActionsByCategory(ActionContext actionContext) throws RepositoryException;
+    Map<String, Set<Action>> getActionsByCategory(ActionContext actionContext) throws RepositoryException, WorkflowException, RemoteException;
 }

@@ -59,7 +59,11 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.PAGE
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.PAGE_PROPERTIES;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_DELETE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_MOVE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_NEW;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_COPY;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_PUBLISH;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_SCHEDULE_PUBLICATION;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_SCHEDULE_UNPUBLICATION;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_UNPUBLISH;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.channel;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.page;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.xpage;
@@ -151,7 +155,11 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(channel(), CHANNEL_SETTINGS), true)
                 .put(key(xpage(), XPAGE_DELETE), false)
                 .put(key(xpage(), XPAGE_MOVE), false)
-                .put(key(xpage(), XPAGE_NEW), false)
+                .put(key(xpage(), XPAGE_COPY), true)
+                .put(key(xpage(), XPAGE_PUBLISH), false)
+                .put(key(xpage(), XPAGE_SCHEDULE_PUBLICATION), false)
+                .put(key(xpage(), XPAGE_SCHEDULE_UNPUBLICATION), true)
+                .put(key(xpage(), XPAGE_UNPUBLISH), true)
                 .build();
         Assertions.assertThat(actions)
                 .describedAs("A page component request contains all channel and page components")
