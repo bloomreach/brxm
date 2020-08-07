@@ -75,6 +75,16 @@ class PageService {
     const action = this.getAction(category, name);
     return !!(action && action.enabled);
   }
+
+  hasState(category) {
+    return !!(this.states && this.states[category]);
+  }
+
+  getState(category) {
+    return this.hasState(category)
+      ? this.states[category]
+      : null;
+  }
 }
 
 export default PageService;
