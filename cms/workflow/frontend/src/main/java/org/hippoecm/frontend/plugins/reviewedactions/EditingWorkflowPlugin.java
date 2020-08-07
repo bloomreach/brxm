@@ -191,17 +191,16 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     if (editor.isModified() || !editor.isValid()) {
                         final boolean showAdditionalMessageForTransferableDraft =
                                 isActionAllowed(getWorkflow().hints(), "saveDraft");
-                        final StringResourceModel additionalMessage =
-                                getResourceModel("additional-cancel-dialog-message-for-draft")
+                        final IModel<String> additionalMessage =
+                                getResourceModel("cancel-dialog-additional-message-for-draft")
                                         .setParameters(getDocumentDisplayName());
-                        final StringResourceModel title = getResourceModel("cancel-dialog-title");
-                        final StringResourceModel message = getResourceModel("cancel-dialog-message")
+                        final IModel<String> title = getResourceModel("cancel-dialog-title");
+                        final IModel<String> message = getResourceModel("cancel-dialog-message")
                                 .setParameters(getDocumentDisplayName());
-                        final StringResourceModel okLabel = getResourceModel("cancel-dialog-ok-button");
-                        final CancelDialog cancelComponent = showAdditionalMessageForTransferableDraft ?
+                        final IModel<String> okLabel = getResourceModel("cancel-dialog-ok-button");
+                        return showAdditionalMessageForTransferableDraft ?
                                 new CancelDialog(title, message, additionalMessage, okLabel, cancelAction) :
                                 new CancelDialog(title, message, okLabel, cancelAction);
-                        return cancelComponent;
                     }
                 } catch (RepositoryException | EditorException | RemoteException | WorkflowException e) {
                     log.error("Could not create cancel dialog for document: { displayName: {} }", getDocumentDisplayName(), e);
