@@ -15,7 +15,7 @@
  */
 
 export enum XPageStatus {
-  Published,
+  Published = 1,
   Offline,
   UnpublishedChanges,
   PublicationRequest,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { XPageState } from '../../../models/xpage-state.model';
 
