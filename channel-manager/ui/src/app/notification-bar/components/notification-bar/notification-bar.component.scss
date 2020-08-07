@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-import { CommonModule, DatePipe } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+@import 'variables';
 
-import { TranslationsModule } from '../translations/translations.module';
+:host {
+  align-items: center;
+  background-color: $notification-banner-bgcolor;
+  box-shadow: $notification-banner-shadow;
+  display: flex;
+  font-size: $notification-banner-fontsize;
+  height: $notification-banner-height;
+  justify-content: space-between;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
 
-import { MaterialModule } from './material/material.module';
+  .label {
+    align-items: center;
+    display: flex;
 
-@NgModule({
-  providers: [
-    DatePipe,
-  ],
-  exports: [
-    BrowserModule,
-    CommonModule,
-    MaterialModule,
-    TranslationsModule,
-    HttpClientModule,
-  ],
-})
-export class SharedModule { }
+    em-notification-bar-status-icon {
+      margin-right: 4px;
+      height: 24px;
+    }
+  }
+}
