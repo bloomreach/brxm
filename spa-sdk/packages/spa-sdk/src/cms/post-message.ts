@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+import { injectable } from 'inversify';
 import { isMatched } from '../url';
 import { Events, Message, Procedures, Rpc } from './rpc';
+
+export const PostMessageService = Symbol.for('PostMessageService');
 
 const GLOBAL_WINDOW = typeof window === 'undefined' ? undefined : window;
 
@@ -32,36 +35,37 @@ export interface PostMessageOptions {
   window?: Window;
 }
 
+@injectable()
 export class PostMessage<
-  TRemoteProcedures extends Procedures,
-  TRemoteEvents extends Events,
-  TProcedures extends Procedures,
-  TEvents extends Events,
+  TRemoteProcedures extends Procedures = Procedures,
+  TRemoteEvents extends Events = Events,
+  TProcedures extends Procedures = Procedures,
+  TEvents extends Events = Events,
 > extends Rpc<TRemoteProcedures, TRemoteEvents, TProcedures, TEvents> {
-  private options?: PostMessageOptions;
+  private origin?: string;
+
+  private window?: Window;
 
   constructor() {
     super();
-
     this.onMessage = this.onMessage.bind(this);
   }
 
-  private get window() {
-    return this.options?.window || GLOBAL_WINDOW;
-  }
-
-  initialize(options: PostMessageOptions) {
+  initialize({ origin, window = GLOBAL_WINDOW }: PostMessageOptions) {
     this.window?.removeEventListener('message', this.onMessage, false);
-    this.options = options;
+    this.origin = origin;
+    this.window = window;
     this.window?.addEventListener('message', this.onMessage, false);
   }
 
   protected send(message: Message) {
-    this.window?.parent?.postMessage(message, this.options!.origin);
+    if (this.origin) {
+      this.window?.parent?.postMessage(message, this.origin);
+    }
   }
 
   private onMessage(event: MessageEvent) {
-    if (!event.data || !this.options || !isMatched(event.origin, this.options.origin)) {
+    if (!event.data || !isMatched(event.origin, this.origin)) {
       return;
     }
 

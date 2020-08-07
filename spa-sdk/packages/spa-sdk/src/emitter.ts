@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import emittery, { Events } from 'emittery';
+import { Events, Typed } from 'emittery';
 
 type Constructor = new (...args: any[]) => any;
 
@@ -54,7 +54,7 @@ export function EmitterMixin<T extends Constructor, U extends Events>(Super: T) 
      * @todo should be private
      * @see https://github.com/Microsoft/TypeScript/issues/17293
      */
-    /* private */ emitter = new emittery.Typed<U>();
+    /* private */ emitter = new Typed<U>();
 
     on = this.emitter.on.bind(this.emitter);
     off = this.emitter.off.bind(this.emitter);

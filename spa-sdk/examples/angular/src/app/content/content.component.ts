@@ -15,7 +15,7 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { Component as BrComponent, Page } from '@bloomreach/spa-sdk';
+import { Component as BrComponent, Document, ImageSet, Page } from '@bloomreach/spa-sdk';
 
 @Component({
   selector: 'br-content',
@@ -28,7 +28,7 @@ export class ContentComponent {
   get document() {
     const { document } = this.component.getModels<DocumentModels>();
 
-    return document && this.page.getContent(document);
+    return document && this.page.getContent<Document>(document);
   }
 
   get data() {
@@ -40,6 +40,6 @@ export class ContentComponent {
   }
 
   get image() {
-    return this.data?.image && this.page.getContent(this.data.image);
+    return this.data?.image && this.page.getContent<ImageSet>(this.data.image);
   }
 }
