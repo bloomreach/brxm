@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NotificationBarStatusTextComponent if xpage status is Offline should render NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE label 1`] = `
+<div
+  id="root4"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_OFFLINEpage namelife1596811323
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is PublicationRequest should render NOTIFICATION_BAR_XPAGE_LABEL_PUBLICATION_REQUESTED label 1`] = `
+<div
+  id="root8"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_PUBLICATION_REQUESTEDpage namelife1596811323
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is Published should render NOTIFICATION_BAR_XPAGE_LABEL_LIVE label 1`] = `
+<div
+  id="root2"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_LIVEpage namelife1596811323
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is RejectedRequest should render NOTIFICATION_BAR_XPAGE_LABEL_REQUEST_REJECTED label 1`] = `
+<div
+  id="root10"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_REQUEST_REJECTEDpage namelife1596811323
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is ScheduledPublication should render NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION label 1`] = `
+<div
+  id="root14"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATIONpage namelife1596811323
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is ScheduledPublicationRequest should render NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTED label 1`] = `
+<div
+  id="root18"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTEDpage nameoffline1596811323
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is ScheduledToTakeOffline should render NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE label 1`] = `
+<div
+  id="root16"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINEpage namelife1596811323
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is ScheduledToTakeOfflineRequest should render NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTED label 1`] = `
+<div
+  id="root20"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTEDpage nameunpublished changes1596811323
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is TakeOfflineRequest should render NOTIFICATION_BAR_XPAGE_LABEL_TAKE_OFFLINE_REQUESTED label 1`] = `
+<div
+  id="root12"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_TAKE_OFFLINE_REQUESTEDpage namelife1596811323
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is UnpublishedChanges should render NOTIFICATION_BAR_XPAGE_LABEL_LIVE_UNPUBLISHED_CHANGES label 1`] = `
+<div
+  id="root6"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_LIVE_UNPUBLISHED_CHANGESpage namelife1596811323
+
+</div>
+`;
