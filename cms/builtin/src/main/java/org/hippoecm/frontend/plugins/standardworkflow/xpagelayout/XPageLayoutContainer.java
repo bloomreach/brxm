@@ -44,7 +44,6 @@ public class XPageLayoutContainer extends WebMarkupContainer {
         pageLayoutDropDownChoice.setNullValid(false);
         pageLayoutDropDownChoice.setLabel(xPageLayoutLabelModel);
         add(pageLayoutDropDownChoice);
-        setVisible(!xPageLayoutListModel.getObject().isEmpty());
     }
 
     final IChoiceRenderer<XPageLayout> choiceRenderer =
