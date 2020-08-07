@@ -30,14 +30,9 @@ import { Ng1PageService, NG1_PAGE_SERVICE } from './ng1/page.ng1.service';
 export class PageService {
   constructor(@Inject(NG1_PAGE_SERVICE) private readonly ng1PageService: Ng1PageService) { }
 
-  getXPageStatus(state: XPageState): XPageStatus | undefined {
-    if (!this.ng1PageService.states?.xpage) {
-      return undefined;
-    }
-
-    const xPageState = this.ng1PageService.states.xpage.state;
-    const xPageWorkflowRequest = this.ng1PageService.states.xpage.workflowRequest;
-    const xPageScheduledRequest = this.ng1PageService.states.xpage.scheduledRequest;
+  getXPageStatus(xPageState: XPageState): XPageStatus | undefined {
+    const xPageWorkflowRequest = xPageState.workflowRequest;
+    const xPageScheduledRequest = xPageState.scheduledRequest;
 
     if (xPageWorkflowRequest) {
       switch (xPageWorkflowRequest.type) {
@@ -56,7 +51,7 @@ export class PageService {
       }
     }
 
-    switch (xPageState) {
+    switch (xPageState.state) {
       case DocumentState.Live: return XPageStatus.Published;
       case DocumentState.Unpublished: return XPageStatus.UnpublishedChanges;
       case DocumentState.New: return XPageStatus.Offline;
