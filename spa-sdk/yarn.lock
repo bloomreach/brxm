@@ -2369,6 +2369,8 @@ __metadata:
     "@types/react-router-dom": ^5.1
     axios: ^0.19
     dotenv: ^8.2
+    eslint: ^6.8
+    eslint-config-react-app: ^5.2
     express: ^4.17
     react: ^16.13
     react-dom: ^16.13
@@ -10697,7 +10699,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-react-app@npm:^5.2.1":
+"eslint-config-react-app@npm:^5.2, eslint-config-react-app@npm:^5.2.1":
   version: 5.2.1
   resolution: "eslint-config-react-app@npm:5.2.1"
   dependencies:
