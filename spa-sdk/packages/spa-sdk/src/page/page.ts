@@ -25,11 +25,12 @@ import { Content } from './content09';
 import { EventBusService, EventBus, PageUpdateEvent } from '../events';
 import { LinkFactory } from './link-factory';
 import { LinkRewriter, LinkRewriterService } from './link-rewriter';
-import { Link } from './link';
+import { Link, isLink } from './link';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionModel, MetaCollection } from './meta-collection';
 import { Reference, isReference, resolve } from './reference';
 import { Visitor, Visit } from './relevance';
+import { isAbsoluteUrl, resolveUrl } from '../url';
 
 export const PageModelToken = Symbol.for('PageModelToken');
 
@@ -251,7 +252,11 @@ export class PageImpl implements Page {
   }
 
   getUrl(link?: Link | string) {
-    return this.linkFactory.create(link as any || this.model.links.site);
+    if (!link || isLink(link) || isAbsoluteUrl(link)) {
+      return this.linkFactory.create(link as any || this.model.links.site || '');
+    }
+
+    return resolveUrl(link, this.linkFactory.create(this.model.links.site) || '');
   }
 
   getVersion() {
