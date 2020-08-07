@@ -66,7 +66,7 @@
 
     // returns the variant for copying and checking copy access privileges
     def getCopySource() {
-      published ?: unpublished ?: null
+    published ?: unpublished ?: draft
     }
 
     // returns the variant for deleting and checking delete privileges
@@ -215,7 +215,7 @@
             <!-- if current user is holder, (s)he is allowed to obtain editable instance -->
             <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
             <hippo:action action="commitEditableInstance" enabledExpr="true"/>
-            <if cond="!!draft">
+            <if cond="!!draft and !unpublished and !published">
               <hippo:action action="saveDraft" enabledExpr="true"/>
             </if>
           <else/>
@@ -983,7 +983,7 @@
           </if>
         </onentry>
         <!-- event-less transition to terminatable state if the document is not live and not being edited -->
-        <transition target="terminateable" cond="!anyBranchLive and !editing"/>
+        <transition target="terminateable" cond="!anyBranchLive and (!editing or (!!draft and !published and !unpublished and transferable))"/>
       </state>
 
       <!-- the terminateable state becomes active when the document is not live and not being edited -->
@@ -1025,7 +1025,8 @@
       <!-- the initial no-copy state is used and active when the user is not an author (granted hippo:author) -->
       <state id="no-copy">
         <!-- event-less transition to copyable state when the user is an author (granted hippo:author) -->
-        <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:author') and branchExists and not transferable"/>
+        <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:author') and branchExists and
+        ((!!published or !!unpublished) or (!!draft and !published and !unpublished and transferable))"/>
       </state>
 
       <!-- the state copyable is active for users which are author (granted hippo:author) -->

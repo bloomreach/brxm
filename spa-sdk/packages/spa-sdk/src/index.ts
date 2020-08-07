@@ -19,113 +19,102 @@
  * @module index
  */
 
-import xmldom from 'xmldom';
-import emittery from 'emittery';
-import { Api, ApiImpl, Spa } from './spa';
-import { Cms14Impl, CmsImpl, PostMessage } from './cms';
+import 'reflect-metadata';
+import { Container } from 'inversify';
+import { SpaModule, SpaService, Spa, ApiOptionsToken } from './spa';
+import { CmsService, Cms, CmsModule, PostMessageService, PostMessage } from './cms';
 import {
-  ComponentFactory,
-  ComponentImpl,
-  ContainerItemImpl,
-  ContainerItemModel,
-  ContainerItem,
-  ContainerImpl,
-  ContainerModel,
-  ContentImpl,
-  LinkFactory,
-  LinkRewriterImpl,
-  MetaCollectionImpl,
-  MetaCollectionModel,
-  MetaCommentImpl,
-  MetaFactory,
-  PageImpl,
   PageModel,
+  PageModule09,
+  PageModule,
   Page,
-  SingleTypeFactory,
-  TYPE_COMPONENT,
-  TYPE_COMPONENT_CONTAINER_ITEM,
-  TYPE_COMPONENT_CONTAINER,
-  TYPE_META_COMMENT,
-  TYPE_LINK_INTERNAL,
   isPage,
 } from './page';
-import { Configuration, ConfigurationWithProxy, ConfigurationWithJwt, isConfigurationWithProxy } from './configuration';
-import { Events } from './events';
-import { UrlBuilder, UrlBuilderImpl, appendSearchParams, extractSearchParams, isMatched, parseUrl } from './url';
+import {
+  Configuration,
+  ConfigurationWithProxy,
+  ConfigurationWithJwt09,
+  ConfigurationWithJwt10,
+  isConfigurationWithJwt09,
+  isConfigurationWithProxy,
+} from './configuration';
+import { EventsModule } from './events';
+import {
+  UrlModule09,
+  UrlModule,
+  UrlBuilderOptionsToken,
+  appendSearchParams,
+  extractSearchParams,
+  isMatched,
+  parseUrl,
+} from './url';
 
 const DEFAULT_AUTHORIZATION_PARAMETER = 'token';
 const DEFAULT_SERVER_ID_PARAMETER = 'server-id';
 
-const eventBus = new emittery.Typed<Events>();
-const postMessage = new PostMessage();
-const cms14 = new Cms14Impl(eventBus);
-const cms = new CmsImpl(eventBus, postMessage, postMessage);
-const domParser = new xmldom.DOMParser();
-const pages = new WeakMap<Page, Spa>();
-const xmlSerializer = new xmldom.XMLSerializer();
+const container = new Container({ skipBaseClassChecks: true });
+const pages = new WeakMap<Page, Container>();
 
-function onReady<T, U>(value: T | Promise<T>, callback: (value: T) => U): U | Promise<U> {
+container.load(EventsModule(), CmsModule(), UrlModule());
+
+function onReady<T>(value: T | Promise<T>, callback: (value: T) => unknown): T | Promise<T> {
+  const wrapper = (result: T) => (callback(result), result);
+
   return value instanceof Promise
-    ? value.then(callback)
-    : callback(value);
+    ? value.then(wrapper)
+    : wrapper(value);
 }
 
-function initializeSpa(api: Api, url: UrlBuilder) {
-  const linkFactory = new LinkFactory()
-    .register(TYPE_LINK_INTERNAL, url.getSpaUrl.bind(url));
-  const linkRewriter = new LinkRewriterImpl(linkFactory, domParser, xmlSerializer);
-  const metaFactory = new MetaFactory()
-    .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position));
-  const metaCollectionFactory = new SingleTypeFactory(
-    (model: MetaCollectionModel) => new MetaCollectionImpl(model, metaFactory),
-  );
-  const componentFactory = new ComponentFactory()
-    .register(TYPE_COMPONENT, (model, children) => new ComponentImpl(
-      model,
-      children,
-      linkFactory,
-      metaCollectionFactory,
-    ))
-    .register(TYPE_COMPONENT_CONTAINER, (model, children) => new ContainerImpl(
-      model as ContainerModel,
-      children as ContainerItem[],
-      linkFactory,
-      metaCollectionFactory,
-    ))
-    .register(TYPE_COMPONENT_CONTAINER_ITEM, model => new ContainerItemImpl(
-      model as ContainerItemModel,
-      eventBus,
-      linkFactory,
-      metaCollectionFactory,
-    ));
-  const contentFactory = new SingleTypeFactory(model => new ContentImpl(model, linkFactory, metaCollectionFactory));
-  const pageFactory = new SingleTypeFactory(model => new PageImpl(
-    model,
-    componentFactory.create(model.page),
-    contentFactory,
-    eventBus,
-    linkFactory,
-    linkRewriter,
-    metaCollectionFactory,
-  ));
-
-  return new Spa(eventBus, api, pageFactory);
-}
-
-function initializeWithProxy(configuration: ConfigurationWithProxy, model?: PageModel) {
+function initializeWithProxy(scope: Container, configuration: ConfigurationWithProxy, model?: PageModel) {
   const options = isMatched(configuration.request.path, configuration.options.preview.spaBaseUrl)
     ? configuration.options.preview
     : configuration.options.live;
-  const url =  new UrlBuilderImpl(options);
-  const api = new ApiImpl(url, configuration);
-  const spa = initializeSpa(api, url);
 
-  cms14.initialize(configuration);
+  scope.load(PageModule09(), SpaModule(), UrlModule09());
+  scope.bind(ApiOptionsToken).toConstantValue(configuration);
+  scope.bind(UrlBuilderOptionsToken).toConstantValue(options);
+  scope.getNamed<Cms>(CmsService, 'cms14').initialize(configuration);
 
-  return spa.initialize(model ?? configuration.request.path);
+  return onReady(
+    scope.get<Spa>(SpaService).initialize(model ?? configuration.request.path),
+    () => {
+      scope.unbind(ApiOptionsToken);
+      scope.unbind(UrlBuilderOptionsToken);
+    },
+  );
 }
 
-function initializeWithJwt(configuration: ConfigurationWithJwt, model?: PageModel) {
+function initializeWithJwt09(scope: Container, configuration: ConfigurationWithJwt09, model?: PageModel) {
+  const authorizationParameter = configuration.authorizationQueryParameter ?? DEFAULT_AUTHORIZATION_PARAMETER;
+  const serverIdParameter = configuration.serverIdQueryParameter ?? DEFAULT_SERVER_ID_PARAMETER;
+  const { url: path, searchParams } = extractSearchParams(
+    configuration.request.path,
+    [authorizationParameter, serverIdParameter].filter(Boolean),
+  );
+  const authorizationToken = searchParams.get(authorizationParameter) ?? undefined;
+  const serverId = searchParams.get(serverIdParameter) ?? undefined;
+  const config = { ...configuration, spaBaseUrl: appendSearchParams(configuration.spaBaseUrl ?? '', searchParams) };
+
+  scope.load(PageModule09(), SpaModule(), UrlModule09());
+  scope.bind(ApiOptionsToken).toConstantValue({ authorizationToken, serverId, ...config });
+  scope.bind(UrlBuilderOptionsToken).toConstantValue(config);
+
+  return onReady(
+    scope.get<Spa>(SpaService).initialize(model ?? path),
+    (page) => {
+      if (page.isPreview() && config.cmsBaseUrl) {
+        const { origin } = parseUrl(config.cmsBaseUrl);
+        scope.get<PostMessage>(PostMessageService).initialize({ ...config, origin });
+        scope.get<Cms>(CmsService).initialize(config);
+      }
+
+      scope.unbind(ApiOptionsToken);
+      scope.unbind(UrlBuilderOptionsToken);
+    },
+  );
+}
+
+function initializeWithJwt10(scope: Container, configuration: ConfigurationWithJwt10, model?: PageModel) {
   const authorizationParameter = configuration.authorizationQueryParameter ?? DEFAULT_AUTHORIZATION_PARAMETER;
   const endpointParameter = configuration.endpointQueryParameter ?? '';
   const serverIdParameter = configuration.serverIdQueryParameter ?? DEFAULT_SERVER_ID_PARAMETER;
@@ -138,27 +127,26 @@ function initializeWithJwt(configuration: ConfigurationWithJwt, model?: PageMode
   const serverId = searchParams.get(serverIdParameter) ?? undefined;
   const config = {
     ...configuration,
-    apiBaseUrl: configuration.cmsBaseUrl || !configuration.apiBaseUrl || !endpoint
-      ? configuration.apiBaseUrl
-      : `${endpoint}${configuration.apiBaseUrl}`,
-    cmsBaseUrl: configuration.cmsBaseUrl ?? endpoint,
-    spaBaseUrl: appendSearchParams(configuration.spaBaseUrl ?? '', searchParams),
+    apiVersion: '1.0',
+    endpoint: configuration.endpoint ?? endpoint,
+    baseUrl: appendSearchParams(configuration.baseUrl ?? '', searchParams),
   };
 
-  const url =  new UrlBuilderImpl(config);
-  const api = new ApiImpl(url, { authorizationToken, serverId, ...config });
-  const spa = initializeSpa(api, url);
+  scope.load(PageModule(), SpaModule(), UrlModule());
+  scope.bind(ApiOptionsToken).toConstantValue({ authorizationToken, serverId, ...config });
+  scope.bind(UrlBuilderOptionsToken).toConstantValue(config);
 
   return onReady(
-    spa.initialize(model ?? path),
-    (spa) => {
-      if (spa.getPage()?.isPreview() && config.cmsBaseUrl) {
-        const { origin } = parseUrl(config.cmsBaseUrl);
-        postMessage.initialize({ ...config, origin });
-        cms.initialize(config);
+    scope.get<Spa>(SpaService).initialize(model ?? path),
+    (page) => {
+      if (page.isPreview() && config.endpoint) {
+        const { origin } = parseUrl(config.endpoint);
+        scope.get<PostMessage>(PostMessageService).initialize({ ...config, origin });
+        scope.get<Cms>(CmsService).initialize(config);
       }
 
-      return spa;
+      scope.unbind(ApiOptionsToken);
+      scope.unbind(UrlBuilderOptionsToken);
     },
   );
 }
@@ -183,16 +171,13 @@ export function initialize(configuration: Configuration, model?: Page | PageMode
     return model;
   }
 
-  return onReady(
-    isConfigurationWithProxy(configuration)
-      ? initializeWithProxy(configuration, model)
-      : initializeWithJwt(configuration, model),
-    (spa) => {
-      const page = spa.getPage()!;
-      pages.set(page, spa);
+  const scope = container.createChild();
 
-      return page;
-    },
+  return onReady(
+    isConfigurationWithProxy(configuration) ? initializeWithProxy(scope, configuration, model) :
+    isConfigurationWithJwt09(configuration) ? initializeWithJwt09(scope, configuration, model) :
+    initializeWithJwt10(scope, configuration, model),
+    page => pages.set(page, scope),
   );
 }
 
@@ -201,7 +186,10 @@ export function initialize(configuration: Configuration, model?: Page | PageMode
  * @param page Page instance to destroy.
  */
 export function destroy(page: Page): void {
-  return pages.get(page)?.destroy();
+  const scope = pages.get(page);
+  pages.delete(page);
+
+  return scope?.get<Spa>(SpaService).destroy();
 }
 
 export { Configuration } from './configuration';
@@ -210,7 +198,11 @@ export {
   ContainerItem,
   Container,
   Content,
+  Document,
+  ImageSet,
+  Image,
   Link,
+  MenuItem,
   Menu,
   MetaCollection,
   MetaComment,
@@ -221,7 +213,11 @@ export {
   isComponent,
   isContainerItem,
   isContainer,
+  isContent,
+  isDocument,
+  isImageSet,
   isLink,
+  isMenu,
   isMetaComment,
   isMeta,
   isPage,

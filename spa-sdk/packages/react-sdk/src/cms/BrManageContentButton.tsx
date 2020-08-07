@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { Content } from '@bloomreach/spa-sdk';
+import { Content, Document } from '@bloomreach/spa-sdk';
 import { BrMeta } from '../meta';
 import { BrPageContext } from '../page/BrPageContext';
 
@@ -23,7 +23,7 @@ interface BrManageContentButtonProps {
   /**
    * The content entity to open for editing.
    */
-  content: Content;
+  content: Content | Document;
 }
 
 /**
