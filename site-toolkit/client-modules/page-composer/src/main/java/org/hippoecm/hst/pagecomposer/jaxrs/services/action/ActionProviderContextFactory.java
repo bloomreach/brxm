@@ -16,9 +16,12 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
+import java.rmi.RemoteException;
+
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.branch.BranchConstants;
 
 public class ActionProviderContextFactory {
@@ -37,7 +40,7 @@ public class ActionProviderContextFactory {
         this.xPageActionContextFactory = xPageActionContextFactory;
     }
 
-    public ActionProviderContext make(ActionContext actionContext) throws RepositoryException {
+    public ActionProviderContext make(ActionContext actionContext) throws RepositoryException, WorkflowException, RemoteException {
         final PageComposerContextService contextService = actionContext.getContextService();
         return new ActionProviderContext()
                 .setExperiencePageRequest(contextService.isExperiencePageRequest())
