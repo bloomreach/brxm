@@ -24,6 +24,7 @@ import CmsService from './cms.service';
 import ConfigService from './config.service';
 import ContentService from './content.service';
 import DialogService from './dialog.service';
+import DocumentWorkflowService from './documentWorkflow.service';
 import DomService from './dom.service';
 import ExtensionService from './extension.service';
 import FeedbackService from './feedback.service';
@@ -50,6 +51,7 @@ const servicesModule = angular
   .service('ConfigService', ConfigService)
   .service('ContentService', ContentService)
   .service('DialogService', DialogService)
+  .service('DocumentWorkflowService', DocumentWorkflowService)
   .service('DomService', DomService)
   .service('ExtensionService', ExtensionService)
   .service('FeedbackService', FeedbackService)
