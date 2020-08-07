@@ -51,14 +51,18 @@ The `initialize` function supports several options you may use to customize page
 
 Option | Required | Default | Description
 --- | :---: | --- | ---
+`apiVersion` | no | _none_ | Current API version. By default, the compatible with the current setup version will be chosen.
+`apiVersionHeader` | `"Accept-Version"` | _none_ | API version header.
 `apiBaseUrl` | no | `cmsBaseUrl` + `"/resourceapi"` | Base URL of the Page Model API (e.g. `http://localhost:8080/site/resourceapi` or `http://localhost:8080/site/channel/resourceapi`). This option will be ignored if `options` is present.
 `authorizationHeader` | no | `"Authorization"` | Authorization header for the Page Model API.
 `authorizationQueryParameter` | no | `"token"` | The query string parameter used to pass authorization header value.
 `authorizationToken` | no | _none_ | Authorization token for the Page Model API. By default, the SDK will try to extract the token from the request query string using `authorizationQueryParameter` option.
+`baseUrl` | no | `""` | Base URL of the SPA (e.g. `/account` or `//www.example.com`). This option can only be used if `endpoint` is present.
+`endpoint` | _exclusive_ | _none_ | Base URL of the Page Model API (e.g. `http://localhost:8080/site/resourceapi` or `http://localhost:8080/site/channel/resourceapi`). This option is exclusive and should not be used together with `options` or `cmsBaseUrl`.
 `endpointQueryParameter` | no | _none_ | The query string parameter used as the brXM endpoint (`cmsBaseUrl`). The option will be ignored if the `cmsBaseUrl` option is not empty. In case when this option is used, the `apiBaseUrl` will be prepended with the value from the query parameter. This option should be used only for testing or debugging. By default, the option is disabled.
-`cmsBaseUrl` | _exclusive_ | _none_ | Base URL of the site (e.g. `http://localhost:8080/site` or `http://localhost:8080/site/channel`). This option is exclusive and should not be used together with `options`.
+`cmsBaseUrl` | _exclusive_ | _none_ | Base URL of the site (e.g. `http://localhost:8080/site` or `http://localhost:8080/site/channel`). This option is exclusive and should not be used together with `options` or `endpoint`.
 `httpClient` | yes | _none_ | The HTTP client that will be used to fetch the page model. Signature is similar to [Axios](https://github.com/axios/axios#axiosconfig) client.
-`options` | _exclusive_ | _none_ | The CMS URL options. This option is exclusive and should not be used together with `cmsBaseUrl`. Use this property to enable the UrlRewriter-based setup. The option is **deprecated** and will be removed in the next major release.
+`options` | _exclusive_ | _none_ | The CMS URL options. This option is exclusive and should not be used together with `cmsBaseUrl` or `endpoint`. Use this property to enable the UrlRewriter-based setup. The option is **deprecated** and will be removed in the next major release.
 `options.live` | yes | _none_ | The CMS URL options for the live site.
 `options.live.apiBaseUrl` | no | `options.live.cmsBaseUrl` + `"/resourceapi"` | Base URL of the Page Model API for the live site (e.g. `http://localhost:8080/site/resourceapi` or `http://localhost:8080/site/channel/resourceapi`).
 `options.live.cmsBaseUrl` | yes | _none_ | Base URL of the live site (e.g. `http://localhost:8080/site` or `http://localhost:8080/site/channel`).
@@ -92,6 +96,10 @@ Function | Description
 `isComponent(value): boolean` | Checks whether a value is a page component.
 `isContainer(value): boolean` | Checks whether a value is a page container.
 `isContainerItem(value): boolean` | Checks whether a value is a page container item.
+`isContent(value): boolean` | Checks whether a value is a content object.
+`isDocument(value): boolean` | Checks whether a value is a document object.
+`isImageSet(value): boolean` | Checks whether a value is an image set object.
+`isMenu(value): boolean` | Checks whether a value is a menu object.
 `isMeta(value): boolean` | Checks whether a value is a meta-data object.
 `isMetaComment(value): boolean` | Checks whether a value is a meta-data comment.
 `isLink(value): boolean` | Checks whether a value is a link.
@@ -118,11 +126,12 @@ The `Page` class represents the brXM page to render. This is the main entry poin
 Method | Description
 --- | ---
 <code>getComponent(...componentNames): Component &vert; undefined</code> | Gets a component in the page (e.g. `getComponent('main', 'right')`). If `componentNames` is omitted, then the page root component will be returned.
-<code>getContent(reference: Reference &vert; string): Content &vert; undefined</code> | Gets a content item used on the page.
+<code>getContent<T>(reference: Reference &vert; string): Content &vert; T &vert; undefined</code> | Gets a content item used on the page.
 `getMeta(meta): MetaCollection` | Generates a meta-data collection from the provided `meta` model.
 <code>getTitle(): string &vert; undefined</code> | Gets the title of the page, or `undefined` if not configured.
-`getUrl(link?: Link): string` | Generates a URL for a link object.<br> - If the link object type is internal, then it will prepend `spaBaseUrl`. In case when the link starts with the same path as in `cmsBaseUrl`, this part will be removed.<br> - If the link parameter is omitted, then the link to the current page will be returned.<br> - In other cases, the link will be returned as-is.
-`getUrl(path: string): string` | Generates an SPA URL for the path.<br> - If it is a relative path, then it will prepend `spaBaseUrl`.<br> - If it is an absolute path, then the behavior will be similar to internal link generation.
+`getUrl(link?: Link): string` | Generates a URL for a link object.<br> - If the link object type is internal, then it will prepend `spaBaseUrl` or `baseUrl`. In case when the link starts with the same path as in `cmsBaseUrl`, this part will be removed.<br> - If the link parameter is omitted, then the link to the current page will be returned.<br> - In other cases, the link will be returned as-is.
+`getUrl(path: string): string` | Generates an SPA URL for the path.<br> - If it is a relative path and `cmsBaseUrl` is present, then it will prepend `spaBaseUrl`.<br> - If it is an absolute path and `cmsBaseUrl` is present, then the behavior will be similar to internal link generation.<br> - If it is a relative path and `endpoint` is present, then it will resolve this link relative to the current page URL.<br> - If it is an absolute path and `endpoint` is present, then it will resolve this link relative to the `baseUrl` option.
+<code> getVersion(): string &vert; undefined</code> | Returns the Page Model version.
 <code>getVisitor(): Visitor &vert; undefined</code> | Gets the current visitor information, or undefined if the [Relevance Module](https://documentation.bloomreach.com/library/enterprise/enterprise-features/targeting/targeting.html) is not enabled. The `Visitor` object consists of the following properties:<br> - `id: string` - the current visitor identifier;<br> - `header: string` - an HTTP-header using to pass the visitor identifier to the Page Model API.
 <code>getVisit(): Visit &vert; undefined</code> | Gets the current visit information, or undefined if the [Relevance Module](https://documentation.bloomreach.com/library/enterprise/enterprise-features/targeting/targeting.html) is not enabled. The `Visit` object consists of the following properties:<br> - `id: string` - the current visit identifier;<br> - `new: boolean` - a flag showing that this is a new visit.
 `isPreview(): boolean` | Returns whether the page is in the preview mode.
@@ -173,6 +182,71 @@ Method | Description
 `getName(): string` | Returns the content name.
 `getData(): object` | Returns the content data as it is returned in the Page Model API.
 <code>getUrl(): string &vert; undefined</code> | Returns the link to the content.
+
+##### Document
+The `Document` object holds document data that is used by the page components.
+
+Method | Description
+--- | ---
+`getId(): string` | Returns the document id.
+<code>getLocale(): string &vert; undefined</code> | Returns the document locale.
+`getMeta(): MetaCollection` | Returns the document meta-data collection.
+`getName(): string` | Returns the document name.
+`getData(): object` | Returns the document data as it is returned in the Page Model API.
+<code>getUrl(): string &vert; undefined</code> | Returns the link to the content.
+
+##### ImageSet
+The `ImageSet` object holds images collection that is used by the page components.
+
+Method | Description
+--- | ---
+<code>getDescription(): string &vert; undefined;</code> | Returns the image set description.
+`getDisplayName(): string` | Returns the image set display name.
+`getId(): string` | Returns the document id.
+`getFileName(): string` | Returns the image set file name.
+`getId(): string` | Returns the image set id.
+`getLocale(): string | undefined` | Returns the image set locale.
+`getName(): string` | Returns the image name.
+<code>getOriginal(): Image &vert; undefined</code> | Returns the original image.
+<code>getThumbnail(): Image &vert; undefined</code> | Returns the thumbnail.
+
+##### Image
+The `Image` object holds an image object that is used by the `ImageSet` object.
+
+Method | Description
+--- | ---
+`getDisplayName(): string` | Returns the image display name.
+<code>getFileName(): string &vert; undefined</code> | Returns the image file name.
+`getHeight(): number` | Returns the image height.
+`getMimeType(): string` | Returns the image mime-type.
+`getName(): string` | Returns the image name.
+`getSize(): number` | Returns the image size.
+<code>getUrl(): string &vert; undefined</code> | Returns the image link.
+`getWidth(): number` | Returns the image width.
+
+##### Menu
+The `Menu` object holds the page menu data with all the menu items.
+
+Method | Description
+--- | ---
+`getItems(): MenuItem[]` | Returns the menu items.
+`getMeta(): MetaCollection` | Returns the menu meta-data collection.
+<code>getSelected(): MenuItem &vert; undefined</code> | Returns the current menu item.
+
+##### MenuItem
+The `MenuItem` object holds a menu item that is used by the `Menu` object.
+
+Method | Description
+--- | ---
+`getChildren(): MenuItem[]` | Returns the child items.
+`getDepth(): number` | Returns the menu item depth level.
+<code>getLink(): Link &vert; undefined</code> | Returns the menu item link.
+`getName(): string` | Returns the menu item name.
+`getParameters(): object` | Returns the menu item parameters.
+<code>getUrl(): string &vert; undefined</code> | Returns the menu item url.
+`isExpanded(): boolean` | Returns whether the menu item is expanded.
+`isRepositoryBased(): boolean` | Returns whether the menu item is repository based.
+`isSelected(): boolean` | Returns whether the menu item is selected.
 
 ##### MetaCollection
 Method | Description
