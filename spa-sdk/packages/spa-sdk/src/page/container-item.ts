@@ -14,46 +14,42 @@
  * limitations under the License.
  */
 
-import { Typed } from 'emittery';
+import { inject, injectable } from 'inversify';
 import {
   ComponentImpl,
   ComponentMeta,
   ComponentModel,
-  ComponentParameters,
+  ComponentModelToken,
   Component,
   TYPE_COMPONENT_CONTAINER_ITEM,
 } from './component';
 import { EmitterMixin, Emitter } from '../emitter';
-import { Events, PageUpdateEvent } from '../events';
-import { Factory } from './factory';
-import { Link } from './link';
-import { MetaCollectionModel, MetaCollection } from './meta-collection';
+import { EventBusService, EventBus, PageUpdateEvent } from '../events';
+import { LinkFactory } from './link-factory';
+import { MetaCollectionFactory } from './meta-collection-factory';
+import { PageModel } from './page';
+import { resolve } from './reference';
 
 const PARAMETER_HIDDEN = 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide';
 
-/**
- * Parameters of a container item.
- * @hidden
- */
-export interface ContainerItemParameters extends ComponentParameters {
+interface ContainerItemParameters {
   [PARAMETER_HIDDEN]?: 'on' | 'off';
+  [parameter: string]: string | undefined;
 }
 
 /**
  * Meta-data of a container item.
- * @hidden
  */
 export interface ContainerItemMeta extends ComponentMeta {
   params?: ContainerItemParameters;
-  paramsInfo?: ComponentParameters;
+  paramsInfo?: ComponentMeta['params'];
 }
 
 /**
  * Model of a container item.
- * @hidden
  */
 export interface ContainerItemModel extends ComponentModel {
-  _meta: ContainerItemMeta;
+  meta: ContainerItemMeta;
   label?: string;
   type: typeof TYPE_COMPONENT_CONTAINER_ITEM;
 }
@@ -63,7 +59,7 @@ export interface ContainerItemModel extends ComponentModel {
  */
 export interface ContainerItemUpdateEvent {}
 
-interface ContainerItemEvents {
+export interface ContainerItemEvents {
   update: ContainerItemUpdateEvent;
 }
 
@@ -88,15 +84,16 @@ export interface ContainerItem extends Component, Emitter<ContainerItemEvents> {
   isHidden(): boolean;
 }
 
+@injectable()
 export class ContainerItemImpl
   extends EmitterMixin<typeof ComponentImpl, ContainerItemEvents>(ComponentImpl)
   implements ContainerItem
 {
   constructor(
-    protected model: ContainerItemModel,
-    eventBus: Typed<Events>,
-    linkFactory: Factory<[Link], string>,
-    private metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
+    @inject(ComponentModelToken) protected model: ContainerItemModel,
+    @inject(EventBusService) eventBus: EventBus,
+    @inject(LinkFactory) linkFactory: LinkFactory,
+    @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
   ) {
     super(model, [], linkFactory, metaFactory);
 
@@ -104,13 +101,14 @@ export class ContainerItemImpl
   }
 
   protected onPageUpdate(event: PageUpdateEvent) {
-    const { page: model } = event.page;
-    if (model.id !== this.getId()) {
+    const page = event.page as PageModel;
+    const model = resolve<ContainerItemModel>(page, page.root);
+    if (model?.id !== this.getId()) {
       return;
     }
 
-    this.model = model as ContainerItemModel;
-    this.meta = this.metaFactory.create(model._meta);
+    this.model = model;
+    this.meta = this.metaFactory(model.meta);
     this.emit('update', {});
   }
 
@@ -119,11 +117,11 @@ export class ContainerItemImpl
   }
 
   isHidden() {
-    return this.model._meta.params?.[PARAMETER_HIDDEN] === 'on';
+    return this.model.meta.params?.[PARAMETER_HIDDEN] === 'on';
   }
 
   getParameters(): ContainerItemParameters {
-    return this.model._meta.paramsInfo || {};
+    return this.model.meta.paramsInfo || {};
   }
 }
 

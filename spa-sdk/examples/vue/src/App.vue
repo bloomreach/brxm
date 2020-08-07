@@ -62,9 +62,8 @@ import NewsList from './components/BrNewsList.vue';
     return {
       configuration: {
         httpClient: axios,
-        apiBaseUrl: process.env.VUE_APP_API_BASE_URL,
-        cmsBaseUrl: process.env.VUE_APP_CMS_BASE_URL,
-        spaBaseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
+        baseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
+        endpoint: process.env.VUE_APP_BRXM_ENDPOINT,
         endpointQueryParameter: 'brxm',
         request: { path: this.$route.fullPath },
       },

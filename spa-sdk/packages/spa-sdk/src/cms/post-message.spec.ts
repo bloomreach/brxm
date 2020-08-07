@@ -21,7 +21,7 @@ import { PostMessage } from './post-message';
 jest.mock('../url');
 
 describe('PostMessage', () => {
-  let postMessage: PostMessage<any, any, any, any>;
+  let postMessage: PostMessage;
 
   beforeEach(() => {
     postMessage = new PostMessage();
