@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -76,7 +77,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
 
     Node root, node;
     WorkflowManager manager;
-    String[] content = {
+    final String[] content = {
         "/test/f", "hippostd:folder",
         "/test/attic", "hippostd:folder",
         "/test/aap", "hippostd:folder",
@@ -183,7 +184,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     public void testFolder() throws RepositoryException, WorkflowException, RemoteException {
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
         assertNotNull(workflow);
-        Map<String,Set<String>> types = workflow.list();
+        Map<String,Set<String>> types = (Map<String, Set<String>>) workflow.hints().get("prototypes");
         assertNotNull(types);
         assertTrue(types.containsKey("new-folder"));
         assertTrue(types.get("new-folder").contains("hippostd:folder"));
@@ -199,7 +200,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     public void testDirectory() throws RepositoryException, WorkflowException, RemoteException {
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
         assertNotNull(workflow);
-        Map<String,Set<String>> types = workflow.list();
+        Map<String,Set<String>> types = (Map<String, Set<String>>) workflow.hints().get("prototypes");
         assertNotNull(types);
         assertTrue(types.containsKey("new-collection"));
         assertTrue(types.get("new-collection").contains("hippostd:directory"));
@@ -215,7 +216,8 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     public void testNonExistent() throws RepositoryException, WorkflowException, RemoteException {
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
         assertNotNull(workflow);
-        Map<String,Set<String>> types = workflow.list();
+        final Serializable prototypes = workflow.hints().get("prototypes");
+        Map<String,Set<String>> types = (Map<String, Set<String>>) prototypes;
         assertNotNull(types);
 
         assertFalse(types.containsKey("new-does-not-exist"));
@@ -243,7 +245,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
 
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
         assertNotNull(workflow);
-        Map<String,Set<String>> types = workflow.list();
+        Map<String,Set<String>> types = (Map<String, Set<String>>) workflow.hints().get("prototypes");
         assertNotNull(types);
         assertTrue(types.containsKey("simple"));
         assertTrue(types.get("simple").contains("new-document"));
@@ -518,10 +520,13 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     private Node createDocument() throws RepositoryException {
         Node source = session.getNode("/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/new-document");
         Node originalHandle = JcrUtils.copy(source, "d", node);
-        Node originalDocument = originalHandle.getNode("new-document");
-        session.move(originalDocument.getPath(), originalHandle.getPath() + "/d");
-        session.save();
-        return originalDocument;
+        if (originalHandle != null){
+            Node originalDocument = originalHandle.getNode("new-document");
+            session.move(originalDocument.getPath(), originalHandle.getPath() + "/d");
+            session.save();
+            return originalDocument;
+        }
+        return null;
     }
 
     private static void createDirectories(Session session, WorkflowManager manager, Node node, Random random, int numiters)
@@ -542,7 +547,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
             session.refresh(false);
             FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", parent);
             assertNotNull(workflow);
-            Map<String,Set<String>> types = workflow.list();
+            Map<String,Set<String>> types = (Map<String, Set<String>>) workflow.hints().get("prototypes");
             assertNotNull(types);
             assertTrue(types.containsKey("new-folder"));
             assertTrue(types.get("new-folder").contains("hippostd:folder"));
@@ -569,8 +574,8 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     private Exception concurrentError = null;
 
     private class ConcurrentRunner extends Thread {
-        long seed;
-        int niters;
+        final long seed;
+        final int niters;
         ConcurrentRunner(long seed, int niters) {
             this.seed = seed;
             this.niters = niters;
