@@ -48,7 +48,7 @@
 
 <script lang="ts">
 import { Configuration, initialize } from '@bloomreach/spa-sdk';
-import { Component, Vue } from 'nuxt-property-decorator';
+import { Component, Vue, Watch } from 'nuxt-property-decorator';
 
 import Banner from '~/components/BrBanner.vue';
 import Content from '~/components/BrContent.vue';
@@ -61,9 +61,8 @@ const VISITOR_COOKIE_MAX_AGE_IN_SECONDS = 365 * 24 * 60 * 60;
 @Component({
   async asyncData(context) {
     const configuration = {
-      apiBaseUrl: process.env.VUE_APP_API_BASE_URL,
-      cmsBaseUrl: process.env.VUE_APP_CMS_BASE_URL,
-      spaBaseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
+      baseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
+      endpoint: process.env.VUE_APP_BRXM_ENDPOINT,
       endpointQueryParameter: 'brxm',
       request: {
         path: context.route.fullPath,
@@ -114,6 +113,15 @@ export default class App extends Vue {
 
   beforeMount() {
     this.configuration.httpClient = this.$axios;
+  }
+
+  beforeUpdate() {
+    this.configuration.httpClient = this.$axios;
+  }
+
+  @Watch('$route', { deep: true })
+  navigate() {
+    this.$set(this.configuration, 'request', { path: this.$route.fullPath });
   }
 }
 </script>
