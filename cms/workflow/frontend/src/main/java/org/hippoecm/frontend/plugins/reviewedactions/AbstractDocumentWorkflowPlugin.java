@@ -252,7 +252,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
 
         CancelDialog(final IModel<String> title, final IModel<String> text, IModel<String> question,
                 final IModel<String> okLabel, final StdWorkflow workflow) {
-            super(title, null, text, question);
+            super(title, text, null, question);
             setSize(DialogConstants.SMALL_AUTO);
             setOkLabel(okLabel);
             this.workflow = workflow;
