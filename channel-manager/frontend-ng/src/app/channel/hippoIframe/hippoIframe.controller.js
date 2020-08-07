@@ -39,6 +39,7 @@ class HippoIframeCtrl {
     ScrollService,
     SpaService,
     ViewportService,
+    PageService,
   ) {
     'ngInject';
 
@@ -63,6 +64,7 @@ class HippoIframeCtrl {
     this.ScrollService = ScrollService;
     this.SpaService = SpaService;
     this.ViewportService = ViewportService;
+    this.PageService = PageService;
 
     this.iframeJQueryElement = this.$element.find('iframe');
     this._onSpaReady = this._onSpaReady.bind(this);
@@ -77,6 +79,10 @@ class HippoIframeCtrl {
     this._onDragStart = this._onDragStart.bind(this);
     this._onDragStop = this._onDragStop.bind(this);
     this._onMenuEdit = this._onMenuEdit.bind(this);
+  }
+
+  get xPageState() {
+    return this.PageService.states ? this.PageService.states.xpage : undefined;
   }
 
   $onInit() {

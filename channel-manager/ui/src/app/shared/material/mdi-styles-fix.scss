@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-import { CommonModule, DatePipe } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+button.mat-menu-item {
+  line-height: 24px !important;
+}
 
-import { TranslationsModule } from '../translations/translations.module';
+a.mat-menu-item > mat-icon {
+  margin-bottom: 14px;
+}
 
-import { MaterialModule } from './material/material.module';
-
-@NgModule({
-  providers: [
-    DatePipe,
-  ],
-  exports: [
-    BrowserModule,
-    CommonModule,
-    MaterialModule,
-    TranslationsModule,
-    HttpClientModule,
-  ],
-})
-export class SharedModule { }
+.mat-icon svg {
+  height: 24px;
+  width: 24px;
+}
