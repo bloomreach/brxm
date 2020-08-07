@@ -15,12 +15,12 @@
  */
 
 import { Typed } from 'emittery';
-import { Events } from '../events';
+import { EventBus, Events } from '../events';
 import { Cms14Impl } from './cms14';
 
 describe('Cms', () => {
   let cms: Cms14Impl;
-  let eventBus: Typed<Events>;
+  let eventBus: EventBus;
   let window: Window;
 
   beforeEach(() => {

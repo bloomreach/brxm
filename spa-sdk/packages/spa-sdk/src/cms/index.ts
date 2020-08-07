@@ -14,7 +14,22 @@
  * limitations under the License.
  */
 
-export * from './cms';
-export * from './cms14';
-export * from './post-message';
-export * from './rpc';
+import { ContainerModule } from 'inversify';
+import { CmsImpl, CmsService } from './cms';
+import { Cms14Impl } from './cms14';
+import { PostMessageService, PostMessage } from './post-message';
+import { RpcClientService, RpcServerService } from './rpc';
+
+export function CmsModule() {
+  return new ContainerModule((bind) => {
+    bind(PostMessageService).to(PostMessage).inSingletonScope();
+    bind(RpcClientService).toService(PostMessageService);
+    bind(RpcServerService).toService(PostMessageService);
+    bind(CmsService).to(CmsImpl).inSingletonScope().whenTargetIsDefault();
+    bind(CmsService).to(Cms14Impl).inSingletonScope().whenTargetNamed('cms14');
+  });
+}
+
+export { CmsOptions, CmsService, Cms } from './cms';
+export { PostMessageService, PostMessage } from './post-message';
+export { RpcClientService, RpcClient, RpcServerService, RpcServer } from './rpc';
