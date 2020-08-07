@@ -172,4 +172,33 @@ describe('PageService', () => {
       });
     });
   });
+
+  describe('states', () => {
+    beforeEach(() => {
+      PageService.states = { xpage: {} };
+    });
+
+    describe('hasState', () => {
+      it('should return false', () => {
+        expect(PageService.hasState('page')).toBe(false);
+
+        PageService.states = null;
+        expect(PageService.hasState('xpage')).toBe(false);
+      });
+
+      it('should return true', () => {
+        expect(PageService.hasState('xpage')).toBe(true);
+      });
+    });
+
+    describe('getState', () => {
+      it('should return null', () => {
+        expect(PageService.getState('page')).toBeNull();
+      });
+
+      it('should return an state', () => {
+        expect(PageService.getState('xpage')).not.toBeNull();
+      });
+    });
+  });
 });
