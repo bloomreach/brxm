@@ -47,7 +47,7 @@ public class XPageLayoutContainer extends WebMarkupContainer {
         setVisible(!xPageLayoutListModel.getObject().isEmpty());
     }
 
-    IChoiceRenderer<XPageLayout> choiceRenderer =
+    final IChoiceRenderer<XPageLayout> choiceRenderer =
             new IChoiceRenderer<XPageLayout>() {
                 @Override
                 public String getDisplayValue(final XPageLayout object) {
