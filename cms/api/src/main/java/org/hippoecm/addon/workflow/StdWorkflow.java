@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.attributes.TitleAttribute;
@@ -206,7 +208,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
 
     @Override
     protected void invoke() {
-        Dialog dialog = createRequestDialog();
+        final Dialog dialog = createRequestDialog();
         if (dialog != null) {
             pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(dialog);
         } else {
@@ -217,6 +219,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
                 log.info("Workflow call failed", ex);
                 exception = ex;
             }
+
             if (exception != null && pluginContext != null) {
                 pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(
                         createResponseDialog(exception));
@@ -246,6 +249,11 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         session.refresh(false);
         UserSession us = UserSession.get();
         us.getFacetRootsObserver().broadcastEvents();
+
+        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (target != null) {
+            target.appendJavaScript("Hippo.Workflow.resolve();");
+        }
     }
 
     protected String execute(T workflow) throws Exception {
@@ -254,7 +262,15 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
 
     @Override
     public void invokeWorkflow() throws Exception {
-        execute();
+        try {
+            execute();
+        } catch (final Exception e) {
+            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+            if (target != null) {
+                target.appendJavaScript(String.format("Hippo.Workflow.reject('%s');", e.getMessage()));
+            }
+            throw e;
+        }
     }
 
     @Override
