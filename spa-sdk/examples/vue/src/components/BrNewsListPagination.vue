@@ -24,12 +24,12 @@
         </router-link>
       </li>
       <li
-        v-for="(page, key) in pageable.pageNumbersArray"
+        v-for="(pageNumber, key) in pageable.pageNumbersArray"
         :key="key"
         class="page-item"
-        :class="{ active: page === pageable.currentPage }"
+        :class="{ active: pageNumber === pageable.currentPage }"
       >
-        <router-link :to="getPageUrl(page)" class="page-link">{{ page }}</router-link>
+        <router-link :to="page.getUrl(`?page=${pageNumber}`)" class="page-link">{{ pageNumber }}</router-link>
       </li>
       <li class="page-item" :class="{ disabled: !pageable.next }">
         <router-link :to="nextUrl" class="page-link" aria-label="Next">
@@ -49,11 +49,11 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
   computed: {
     nextUrl(this: BrNewsListPagination) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return this.pageable.next ? this.getPageUrl(this.pageable.nextPage!) : '#';
+      return this.pageable.next ? this.page.getUrl(`?page=${this.pageable.nextPage}`) : '#';
     },
     previousUrl(this: BrNewsListPagination) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return this.pageable.previous ? this.getPageUrl(this.pageable.previousPage!) : '#';
+      return this.pageable.previous ? this.page.getUrl(`?page=${this.pageable.previousPage}`) : '#';
     },
   },
   name: 'br-news-list-pagination',
@@ -62,11 +62,5 @@ export default class BrNewsListPagination extends Vue {
   @Prop() pageable!: Pageable;
 
   @Prop() page!: Page;
-
-  getPageUrl(page: number) {
-    const url = this.page.getUrl();
-
-    return `${url}${url.includes('?') ? '&' : '?'}page=${page}`;
-  }
 }
 </script>
