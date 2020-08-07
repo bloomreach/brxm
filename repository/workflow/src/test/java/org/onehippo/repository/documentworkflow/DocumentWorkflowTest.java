@@ -205,42 +205,6 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .states()
         );
 
-        // draft + unpublished + published + transferable ( other user )
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, true);
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"otheruser");
-
-        assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit().editable()
-                .editDraft()
-                .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
-                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .terminateable(false)
-                .saveUnpublished(false)
-                .hints());
-        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                .status().logEvent().noRequest().versionable().noTerminate().noBranchable()
-                .noPublish().noDepublish().editable().noCopy()
-                .noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().canDepublishBranch()
-                .states()
-        );
-
-        // draft + unpublished + published + transferable ( same user )
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"testuser");
-
-        assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit().editable().editDraft()
-                .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
-                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .terminateable(false)
-                .saveUnpublished(false)
-                .hints());
-        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                .status().logEvent().noRequest().versionable().noTerminate().noBranchable()
-                .noPublish().depublishable().editable().noCopy()
-                .noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().canDepublishBranch()
-                .states()
-        );
-
         publishedVariant.remove();
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, (String) null);
