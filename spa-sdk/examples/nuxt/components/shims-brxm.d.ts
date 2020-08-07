@@ -22,6 +22,7 @@ interface DocumentData {
   author: string;
   content: DocumentContent;
   date: number;
+  publicationDate: number;
   image: import('@bloomreach/spa-sdk').Reference;
   introduction: string;
   title: string;

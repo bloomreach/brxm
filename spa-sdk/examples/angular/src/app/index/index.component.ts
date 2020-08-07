@@ -48,6 +48,7 @@ export class IndexComponent implements OnInit {
     Banner: BannerComponent,
     Content: ContentComponent,
     'News List': NewsListComponent,
+    'Simple Content': ContentComponent,
   };
 
   private navigationEnd: Observable<NavigationEnd>;
