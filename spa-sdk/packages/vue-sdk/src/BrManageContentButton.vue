@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { Content, Page } from '@bloomreach/spa-sdk';
+import { Content, Document, Page } from '@bloomreach/spa-sdk';
 import { Component, Inject, Prop, Vue } from 'vue-property-decorator';
 import BrMeta from './BrMeta.vue';
 
@@ -39,7 +39,7 @@ export default class BrManageContentButton extends Vue {
   /**
    * The content entity to open for editing.
    */
-  @Prop() content!: Content;
+  @Prop() content!: Content | Document;
 
   @Inject() private page$?: () => Page;
 }
