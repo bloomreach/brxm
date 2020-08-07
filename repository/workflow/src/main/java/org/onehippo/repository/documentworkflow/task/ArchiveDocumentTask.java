@@ -78,7 +78,7 @@ public class ArchiveDocumentTask extends AbstractDocumentTask {
 
         try {
             variant = dh.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
-            if (variant == null) {
+            if (variant != null) {
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", variant);
                 defaultWorkflow.archive();
             }
