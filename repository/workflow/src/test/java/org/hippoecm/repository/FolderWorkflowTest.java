@@ -194,6 +194,34 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         assertEquals("/test/f/d",node.getPath());
         assertTrue(node.isNodeType("hippostd:folder"));
         assertFalse(node.hasProperty(HippoNodeType.HIPPO_AVAILABILITY));
+        assertFalse(node.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER));
+        assertFalse(node.hasProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID));
+        assertFalse(node.getNodes().hasNext());
+    }
+
+    @Test
+    public void testXPageFolder() throws RepositoryException, WorkflowException, RemoteException {
+        node.addMixin(HippoStdNodeType.NT_XPAGE_FOLDER);
+        node.setProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID, "hap");
+        session.save();
+        node = root.getNode("f");
+        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
+        assertNotNull(workflow);
+        Map<String,Set<String>> types = workflow.list();
+        assertNotNull(types);
+        assertTrue(types.containsKey("new-folder"));
+        assertTrue(types.get("new-folder").contains("hippostd:folder"));
+        String path = workflow.add("new-folder", "hippostd:folder", "d");
+        assertNotNull(path);
+        node = session.getRootNode().getNode(path.substring(1));
+        assertEquals("/test/f/d",node.getPath());
+        assertTrue(node.isNodeType("hippostd:folder"));
+        assertFalse(node.hasProperty(HippoNodeType.HIPPO_AVAILABILITY));
+        assertTrue(node.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER));
+        assertEquals("hap", node.getProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID).getString());
+        assertTrue(node.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER));
+        assertEquals("hap", node.getProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID).getString());
+        assertFalse(node.getNodes().hasNext());
     }
 
     @Test
@@ -210,6 +238,30 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         assertEquals("/test/f/d",node.getPath());
         assertTrue(node.isNodeType("hippostd:directory"));
         assertFalse(node.hasProperty(HippoNodeType.HIPPO_AVAILABILITY));
+        assertFalse(node.getNodes().hasNext());
+    }
+
+    @Test
+    public void testXpageDirectory() throws RepositoryException, WorkflowException, RemoteException {
+        node.addMixin(HippoStdNodeType.NT_XPAGE_FOLDER);
+        node.setProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID, "hap");
+        session.save();
+        node = root.getNode("f");
+        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
+        assertNotNull(workflow);
+        Map<String,Set<String>> types = workflow.list();
+        assertNotNull(types);
+        assertTrue(types.containsKey("new-collection"));
+        assertTrue(types.get("new-collection").contains("hippostd:directory"));
+        String path = workflow.add("new-collection", "hippostd:directory", "d");
+        assertNotNull(path);
+        node = session.getRootNode().getNode(path.substring(1));
+        assertEquals("/test/f/d",node.getPath());
+        assertTrue(node.isNodeType("hippostd:directory"));
+        assertFalse(node.hasProperty(HippoNodeType.HIPPO_AVAILABILITY));
+        assertTrue(node.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER));
+        assertEquals("hap", node.getProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID).getString());
+        assertFalse(node.getNodes().hasNext());
     }
 
     @Test
