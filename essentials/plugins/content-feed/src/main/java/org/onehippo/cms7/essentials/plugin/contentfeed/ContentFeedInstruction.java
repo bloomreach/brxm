@@ -109,6 +109,6 @@ public class ContentFeedInstruction implements Instruction {
     @Override
     public void populateChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
         changeMessageQueue.accept(Type.EXECUTE,
-                "Add HST configuration property to configure Content Feed in cms and site webapps.");
+                "Add HST configuration properties to configure Content Feed Export & Search in cms and site webapps.");
     }
 }
