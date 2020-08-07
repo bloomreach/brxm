@@ -105,6 +105,7 @@ const VISITOR_COOKIE_MAX_AGE_IN_SECONDS = 365 * 24 * 60 * 60;
       Content,
       menu: Menu,
       'News List': NewsList,
+      'Simple Content': Content,
     },
   }),
 })
