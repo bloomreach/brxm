@@ -19,6 +19,6 @@
   <img *ngIf="image" class="img-fluid" [src]="image.getUrl()" [alt]="data?.title || ''" />
   <h1 *ngIf="data?.title">{{ data!.title }}</h1>
   <p *ngIf="data?.author" class="mb-3 text-muted">{{ data!.author }}</p>
-  <p *ngIf="data?.date" class="mb-3 small text-muted">{{ data!.date | date }}</p>
+  <p *ngIf="date" class="mb-3 small text-muted">{{ date | date }}</p>
   <div *ngIf="data?.content" [innerHTML]="page.rewriteLinks(data!.content!.value)"></div>
 </div>

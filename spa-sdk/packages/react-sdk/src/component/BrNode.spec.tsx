@@ -59,43 +59,39 @@ describe('BrNode', () => {
   });
 
   it('should render a component', () => {
-    const wrapper = shallow(<BrNode {...props}><a/></BrNode>, { context });
+    const wrapper = shallow(<BrNode {...props} />, { context });
     const component = wrapper.find(BrNodeComponent);
 
     expect(component.exists()).toBe(true);
     expect(component.prop('component')).toBe(props.component);
     expect(component.prop('page')).toEqual(context);
-    expect(component.contains(<a/>)).toBe(true);
   });
 
   it('should render a container', () => {
     mocked(isContainer).mockReturnValueOnce(true);
-    const wrapper = shallow(<BrNode {...props}><a/></BrNode>, { context });
+    const wrapper = shallow(<BrNode {...props} />, { context });
     const container = wrapper.find(BrNodeContainer);
 
     expect(container.exists()).toBe(true);
     expect(container.prop('component')).toBe(props.component);
     expect(container.prop('page')).toEqual(context);
-    expect(container.contains(<a/>)).toBe(true);
   });
 
   it('should render a container item', () => {
     mocked(isContainerItem).mockReturnValueOnce(true);
-    const wrapper = shallow(<BrNode {...props}><a/></BrNode>, { context });
+    const wrapper = shallow(<BrNode {...props} />, { context });
     const containerItem = wrapper.find(BrNodeContainerItem);
 
     expect(containerItem.exists()).toBe(true);
     expect(containerItem.prop('component')).toBe(props.component);
     expect(containerItem.prop('page')).toEqual(context);
-    expect(containerItem.contains(<a/>)).toBe(true);
   });
 
-  it('should pass children if present', () => {
+  it('should render children if present', () => {
     const wrapper = shallow(<BrNode {...props}><a/><b/></BrNode>);
-    const component = wrapper.find(BrNodeComponent);
 
-    expect(component.contains(<a/>)).toBe(true);
-    expect(component.contains(<b/>)).toBe(true);
+    expect(wrapper.contains(<a/>)).toBe(true);
+    expect(wrapper.contains(<b/>)).toBe(true);
   });
 
   it('should render model children if component children are not present', () => {

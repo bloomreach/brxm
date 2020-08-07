@@ -91,7 +91,7 @@ export default class Index extends React.Component<IndexProps> {
 
   render() {
     const configuration = { ...this.props.configuration, httpClient: axios };
-    const mapping = { Banner, Content, 'News List': NewsList };
+    const mapping = { Banner, Content, 'News List': NewsList, 'Simple Content': Content };
 
     return (
       <div  className="d-flex flex-column vh-100">
