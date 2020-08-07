@@ -14,4 +14,6 @@
   limitations under the License.
   -->
 
-{{ text | translate:textParams }}
+<ng-container *ngIf="text">
+  {{ text | translate:textParams }}
+</ng-container>
