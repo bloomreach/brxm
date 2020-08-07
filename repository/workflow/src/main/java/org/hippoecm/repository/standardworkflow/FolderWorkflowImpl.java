@@ -33,7 +33,6 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import javax.jcr.AccessDeniedException;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -416,7 +415,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         if (!result.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
                             result.addMixin(JcrConstants.MIX_REFERENCEABLE);
                         }
-                        copySubProtoTypeToDraftVariant(arguments, result);
                         break;
                     }
                 } else if (prototypeNode.getName().equals(type)) {
@@ -465,28 +463,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             if (subject.hasProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID)) {
                 String channelId = subject.getProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID).getString();
                 result.setProperty(HippoStdNodeType.HIPPOSTD_CHANNEL_ID, channelId);
-            }
-        }
-    }
-
-    private void copySubProtoTypeToDraftVariant(final Map<String, String> arguments, final Node result)
-            throws RepositoryException {
-        if (arguments.containsKey(SUB_PROTO_TYPE_UUID)) {
-            final String subProtoTypeUUID = arguments.get(SUB_PROTO_TYPE_UUID);
-            try{
-                final Node hstPage = rootSession.getNodeByIdentifier(subProtoTypeUUID);
-                log.debug("Adding mixin : {} to draft variant: { path : {} }",
-                        MIXIN_HST_XPAGE, JcrUtils.getNodePathQuietly(result));
-                result.addMixin(MIXIN_HST_XPAGE);
-                log.debug("Copying subPrototype : { uuid: {} } to draft variant : { path: {} }",
-                        subProtoTypeUUID, JcrUtils.getNodePathQuietly(result));
-                JcrUtils.copy(hstPage, HST_PAGE, result);
-            }
-            catch (ItemNotFoundException e){
-                String message = String.format("Cannot find sub prototype with uuid: %s. Please make " +
-                        "sure that the subPrototypes property of the hst:channelinfo node contains a " +
-                        "valid sub prototype uuid.", subProtoTypeUUID);
-                throw new RepositoryException(message, e);
             }
         }
     }
