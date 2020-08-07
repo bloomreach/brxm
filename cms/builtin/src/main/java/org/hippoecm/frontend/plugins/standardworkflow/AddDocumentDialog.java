@@ -48,8 +48,8 @@ public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
 
     private final NameUriField nameUriContainer;
 
-    private IModel<String> title;
-    private LanguageField languageField;
+    private final IModel<String> title;
+    private final LanguageField languageField;
     private final IModel<StringCodec> nodeNameCodecModel;
 
     public AddDocumentDialog(AddDocumentArguments addDocumentModel, IModel<String> title, String category,
