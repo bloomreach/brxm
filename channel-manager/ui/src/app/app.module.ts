@@ -14,31 +14,27 @@
  * limitations under the License.
  */
 
-import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 
 import { ContentModule } from './content/content.module';
+import { NotificationBarModule } from './notification-bar/notification-bar.module';
 import { PageStructureModule } from './page-structure/page-structure.module';
 import { NG1_CONFIG_SERVICE } from './services/ng1/config.ng1.service';
+import { NG1_PAGE_SERVICE } from './services/ng1/page.ng1.service';
 import { SharedModule } from './shared/shared.module';
-import { TranslationsModule } from './translations/translations.module';
 import { VersionsModule } from './versions/versions.module';
 
 @NgModule({
   imports: [
-    BrowserModule,
-    CommonModule,
     SharedModule,
-    VersionsModule,
-    TranslationsModule,
-    HttpClientModule,
     ContentModule,
     PageStructureModule,
+    NotificationBarModule,
+    VersionsModule,
   ],
   providers: [
     { provide: NG1_CONFIG_SERVICE, useValue: window.angular.element(document.body).injector().get('ConfigService') },
+    { provide: NG1_PAGE_SERVICE, useValue: window.angular.element(document.body).injector().get('PageService') },
   ],
 })
 export class AppModule {

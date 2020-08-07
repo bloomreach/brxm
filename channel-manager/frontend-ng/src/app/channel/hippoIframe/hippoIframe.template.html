@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<notification-banner ng-if="$ctrl.isXPage()"></notification-banner>
+<em-notification-bar ng-if="$ctrl.isXPage()" ng-prop-x_page_state="$ctrl.xPageState"></em-notification-bar>
 
 <!-- The gray background behind the channel. Visible when the viewport is constrained. -->
 <div class="channel-iframe-canvas"

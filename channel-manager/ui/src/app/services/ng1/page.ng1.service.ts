@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-import { CommonModule, DatePipe } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { InjectionToken } from '@angular/core';
 
-import { TranslationsModule } from '../translations/translations.module';
+import { XPageState } from '../../models/xpage-state.model';
 
-import { MaterialModule } from './material/material.module';
+export interface Ng1PageService {
+  states: { xpage?: XPageState };
+}
 
-@NgModule({
-  providers: [
-    DatePipe,
-  ],
-  exports: [
-    BrowserModule,
-    CommonModule,
-    MaterialModule,
-    TranslationsModule,
-    HttpClientModule,
-  ],
-})
-export class SharedModule { }
+export const NG1_PAGE_SERVICE = new InjectionToken<Ng1PageService>('NG1_PAGE_SERVICE');
