@@ -47,7 +47,7 @@ import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
-class XPageUtils {
+public class XPageUtils {
 
     private static final Logger log = LoggerFactory.getLogger(XPageUtils.class);
 
@@ -64,8 +64,8 @@ class XPageUtils {
      * someone else is already editing it
      *
      */
-    static DocumentWorkflow getDocumentWorkflow(final HippoSession userSession,
-                                                final PageComposerContextService contextService) throws RepositoryException, WorkflowException {
+    public static DocumentWorkflow getDocumentWorkflow(final HippoSession userSession,
+                                                       final PageComposerContextService contextService) throws RepositoryException, WorkflowException {
 
         // userSession is allowed to read the node since has XPAGE_REQUIRED_PRIVILEGE_NAME on the node
         final Node handle = userSession.getNodeByIdentifier(contextService.getExperiencePageHandleUUID());

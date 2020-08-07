@@ -30,7 +30,6 @@ import javax.jcr.RepositoryException;
 import org.assertj.core.api.Assertions;
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,13 +56,13 @@ public class ActionServiceImplTest {
     }
 
     @Test
-    public void get_actions_empty() throws RepositoryException {
+    public void get_actions_empty() throws Exception {
         final Map<String, Set<Action>> actions = service.getActionsByCategory(actionContext);
         Assertions.assertThat(actions).isEmpty();
     }
 
     @Test
-    public void get_actions_grouped_by_category() throws RepositoryException {
+    public void get_actions_grouped_by_category() throws Exception {
 
         final int nrOfCategories = ThreadLocalRandom.current().nextInt(2, 32);
         final int nrOfActions = ThreadLocalRandom.current().nextInt(2, 32);

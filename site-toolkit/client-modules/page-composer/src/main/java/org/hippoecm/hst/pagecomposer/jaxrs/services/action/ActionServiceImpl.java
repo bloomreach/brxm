@@ -16,12 +16,15 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.action;
 
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
+
+import org.hippoecm.repository.api.WorkflowException;
 
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.groupingBy;
@@ -41,7 +44,7 @@ public final class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public Map<String, Set<Action>> getActionsByCategory(ActionContext actionContext) throws RepositoryException {
+    public Map<String, Set<Action>> getActionsByCategory(ActionContext actionContext) throws RepositoryException, WorkflowException, RemoteException {
         final ActionProviderContext context = contextFactory.make(actionContext);
         return actionProviders.stream()
                 .map(actionProvider -> Optional.ofNullable(actionProvider.getActions(context)).orElse(emptySet()))
