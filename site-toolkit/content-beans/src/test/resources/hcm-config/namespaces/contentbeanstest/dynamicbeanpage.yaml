@@ -60,6 +60,14 @@ definitions:
             hipposysedit:path: contentbeanstest:multipleValueSingleBooleanTypeField
             hipposysedit:primary: false
             hipposysedit:type: Boolean
+          /unknownBooleanTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:unknownBooleanTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: UnknownBoolean
           /doubleTypeField:
             jcr:primaryType: hipposysedit:field
             hipposysedit:mandatory: false
@@ -267,6 +275,7 @@ definitions:
           contentbeanstest:stringTypeField: ''
           contentbeanstest:unknownStringTypeField: ''
           contentbeanstest:booleanTypeField: false
+          contentbeanstest:unknownBooleanTypeField: false
           contentbeanstest:doubleTypeField: 0.0
           contentbeanstest:longTypeField: 0
           contentbeanstest:dateTypeField: 0001-01-01T13:00:00+01:00
