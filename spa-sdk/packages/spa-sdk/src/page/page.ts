@@ -130,7 +130,7 @@ export interface Page {
 
   /**
    * Generates a URL for a link object.
-   * - If the link object type is internal, then it will prepend `spaBaseUrl`.
+   * - If the link object type is internal, then it will prepend `spaBaseUrl` or `baseUrl`.
    *   In case when the link starts with the same path as in `cmsBaseUrl`, this part will be removed.
    *   For example, for link `/site/_cmsinternal/spa/about` with configuration options
    *   `cmsBaseUrl = "http://localhost:8080/site/_cmsinternal/spa"` and `spaBaseUrl = "http://example.com"`
@@ -143,8 +143,13 @@ export interface Page {
 
   /**
    * Generates an SPA URL for the path.
-   * - If it is a relative path, then it will prepend `spaBaseUrl`.
-   * - If it is an absolute path, then the behavior will be similar to internal link generation.
+   * - If it is a relative path and `cmsBaseUrl` is present, then it will prepend `spaBaseUrl`.
+   * - If it is an absolute path and `cmsBaseUrl` is present,
+   *   then the behavior will be similar to internal link generation.
+   * - If it is a relative path and `endpoint` is present,
+   *   then it will resolve this link relative to the current page URL.
+   * - If it is an absolute path and `endpoint` is present,
+   *   then it will resolve this link relative to the `baseUrl` option.
    * @param path The path to generate URL.
    */
   getUrl(path: string): string;
