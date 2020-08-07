@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package org.hippoecm.addon.workflow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.repository.api.WorkflowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +54,8 @@ public class WorkflowDialog<T> extends Dialog<T> {
         // Hide notification label by default until a model is set by calling #setNotification
         notification.setVisible(false);
         add(notification);
+
+        setCancelAction(T -> "Hippo.Workflow.reject();");
     }
 
     @Override
