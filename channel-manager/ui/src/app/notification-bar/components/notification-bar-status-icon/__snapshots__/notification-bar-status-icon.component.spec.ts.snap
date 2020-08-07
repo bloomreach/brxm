@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NotificationBarStatusIconComponent if xpage status is Offline should render minus-circle-outline 1`] = `
+<div
+  id="root4"
+>
+  <mat-icon>
+    minus-circle-outline
+  </mat-icon>
+</div>
+`;
+
+exports[`NotificationBarStatusIconComponent if xpage status is PublicationRequest should render comment-processing-outline 1`] = `
+<div
+  id="root8"
+>
+  <mat-icon>
+    comment-processing-outline
+  </mat-icon>
+</div>
+`;
+
+exports[`NotificationBarStatusIconComponent if xpage status is Published should render xpage 1`] = `
+<div
+  id="root2"
+>
+  <mat-icon>
+    xpage
+  </mat-icon>
+</div>
+`;
+
+exports[`NotificationBarStatusIconComponent if xpage status is RejectedRequest should render comment-remove-outline 1`] = `
+<div
+  id="root10"
+>
+  <mat-icon>
+    comment-remove-outline
+  </mat-icon>
+</div>
+`;
+
+exports[`NotificationBarStatusIconComponent if xpage status is ScheduledPublication should render calendar-clock 1`] = `
+<div
+  id="root14"
+>
+  <mat-icon>
+    calendar-clock
+  </mat-icon>
+</div>
+`;
+
+exports[`NotificationBarStatusIconComponent if xpage status is ScheduledPublicationRequest should render comment-processing-outline 1`] = `
+<div
+  id="root18"
+>
+  <mat-icon>
+    comment-processing-outline
+  </mat-icon>
+</div>
+`;
+
+exports[`NotificationBarStatusIconComponent if xpage status is ScheduledToTakeOffline should render calendar-clock 1`] = `
+<div
+  id="root16"
+>
+  <mat-icon>
+    calendar-clock
+  </mat-icon>
+</div>
+`;
+
+exports[`NotificationBarStatusIconComponent if xpage status is ScheduledToTakeOfflineRequest should render comment-processing-outline 1`] = `
+<div
+  id="root20"
+>
+  <mat-icon>
+    comment-processing-outline
+  </mat-icon>
+</div>
+`;
+
+exports[`NotificationBarStatusIconComponent if xpage status is TakeOfflineRequest should render comment-processing-outline 1`] = `
+<div
+  id="root12"
+>
+  <mat-icon>
+    comment-processing-outline
+  </mat-icon>
+</div>
+`;
+
+exports[`NotificationBarStatusIconComponent if xpage status is UnpublishedChanges should render alert-outline 1`] = `
+<div
+  id="root6"
+>
+  <mat-icon>
+    alert-outline
+  </mat-icon>
+</div>
+`;

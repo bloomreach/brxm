@@ -29,12 +29,6 @@ import { PageService } from '../../../services/page.service';
 export class NotificationBarStatusTextComponent {
   @Input()
   set state(value: XPageState) {
-    if (!value) {
-      this.text = undefined;
-      this.textParams = undefined;
-      return;
-    }
-
     this.text = this.getText(value);
     this.textParams = {
       pageName: value.name,
