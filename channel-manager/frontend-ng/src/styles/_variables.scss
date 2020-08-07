@@ -266,6 +266,10 @@ $overlay-link-shadow-color: rgba(0, 0, 0, .3);
 $overlay-link-shadow-active: 1px 3px 8px 2px $overlay-link-shadow-color;
 $overlay-link-shadow-hover: 1px 3px 8px 1px $overlay-link-shadow-color;
 
+$overlay-menu-link-bgcolor: $bloomreach-blue-primary;
+$overlay-menu-link-hover-bgcolor: $bloomreach-blue-dark;
+$overlay-menu-link-clicked-bgcolor: $bloomreach-blue-dark;
+
 $overlay-icon-fill: $grey-600;
 $overlay-icon-size: 24px;
 

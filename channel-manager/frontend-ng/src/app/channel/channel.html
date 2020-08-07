@@ -49,7 +49,7 @@
                         default-state="false"
                         state="$ctrl.isComponentsOverlayDisplayed"
                         on-state-change="$ctrl.isComponentsOverlayDisplayed = state"
-                        icon-svg="toggle_components_overlay"
+                        icon-svg="toggle-components-overlay"
                         tooltip="{{ $ctrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
                         class="qa-toggle-components"
                         ng-if="$ctrl.isEditable()">
@@ -60,7 +60,7 @@
                         default-state="true"
                         state="$ctrl.isContentOverlayDisplayed"
                         on-state-change="$ctrl.isContentOverlayDisplayed = state"
-                        icon-svg="document"
+                        icon-svg="toggle-editing-overlay"
                         class="qa-toggle-content"
                         tooltip="{{ $ctrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}">
         </overlay-toggle>
