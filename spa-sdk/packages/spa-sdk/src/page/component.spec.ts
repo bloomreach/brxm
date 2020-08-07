@@ -15,16 +15,16 @@
  */
 
 import { ComponentImpl, ComponentModel, Component, TYPE_COMPONENT, isComponent } from './component';
-import { Factory } from './factory';
-import { Link } from './link';
-import { MetaCollectionModel, MetaCollection } from './meta-collection';
+import { LinkFactory } from './link-factory';
+import { MetaCollectionFactory } from './meta-collection-factory';
+import { MetaCollection } from './meta-collection';
 
-let linkFactory: jest.Mocked<Factory<[Link], string>>;
-let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], MetaCollection>>;
+let linkFactory: jest.Mocked<LinkFactory>;
+let metaFactory: jest.MockedFunction<MetaCollectionFactory>;
 
 const model = {
-  _links: { componentRendering: { href: 'url' } },
-  _meta: {},
+  links: { self: { href: 'url' } },
+  meta: {},
   id: 'id',
   type: TYPE_COMPONENT,
 } as ComponentModel;
@@ -34,8 +34,8 @@ function createComponent(componentModel = model, children: Component[] = []) {
 }
 
 beforeEach(() => {
-  linkFactory = { create: jest.fn() };
-  metaFactory = { create: jest.fn() };
+  linkFactory = { create: jest.fn() } as unknown as typeof linkFactory;
+  metaFactory = jest.fn();
 });
 
 describe('ComponentImpl', () => {
@@ -51,10 +51,10 @@ describe('ComponentImpl', () => {
     it('should return a meta-data collection', () => {
       const meta = {} as MetaCollection;
 
-      metaFactory.create.mockReturnValueOnce(meta);
+      metaFactory.mockReturnValueOnce(meta);
       const component = createComponent();
 
-      expect(metaFactory.create).toBeCalledWith(model._meta);
+      expect(metaFactory).toBeCalledWith(model.meta);
       expect(component.getMeta()).toEqual(meta);
     });
   });
@@ -108,7 +108,7 @@ describe('ComponentImpl', () => {
     it('should return parameters', () => {
       const component = createComponent({
         ...model,
-        _meta: {
+        meta: {
           params: { a: '1', b: '2' },
         },
       });

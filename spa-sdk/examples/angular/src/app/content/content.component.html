@@ -16,7 +16,7 @@
 
 <div *ngIf="document" [ngClass]="{ 'has-edit-button': page.isPreview() }">
   <ng-container [brManageContentButton]="document"></ng-container>
-  <img *ngIf="image" class="img-fluid" [src]="image.getUrl()" [alt]="data?.title || ''" />
+  <img *ngIf="image" class="img-fluid" [src]="image.getOriginal()?.getUrl()" [alt]="data?.title || ''" />
   <h1 *ngIf="data?.title">{{ data!.title }}</h1>
   <p *ngIf="data?.author" class="mb-3 text-muted">{{ data!.author }}</p>
   <p *ngIf="date" class="mb-3 small text-muted">{{ date | date }}</p>
