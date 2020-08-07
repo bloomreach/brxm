@@ -46,5 +46,5 @@ export interface Link {
  * @param value The value to check.
  */
 export function isLink(value: any): value is Link {
-  return !!value?.href;
+  return !!(value && Object.prototype.hasOwnProperty.call(value, 'href'));
 }

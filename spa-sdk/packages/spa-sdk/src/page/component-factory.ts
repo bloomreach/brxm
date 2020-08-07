@@ -14,49 +14,44 @@
  * limitations under the License.
  */
 
+import { injectable } from 'inversify';
 import { ComponentModel, ComponentType, Component } from './component';
-import { MultipleTypeFactory } from './factory';
-
-interface Task {
-  model: ComponentModel;
-  children?: Component[];
-  siblings?: Component[];
-}
+import { SimpleFactory } from './factory';
+import { PageModel } from './page';
+import { resolve } from './reference';
 
 type ComponentBuilder = (model: ComponentModel, children: Component[]) => Component;
 
 /**
  * A component factory producing components based on a type.
  */
-export class ComponentFactory extends MultipleTypeFactory<ComponentType, ComponentBuilder> {
+@injectable()
+export class ComponentFactory extends SimpleFactory<ComponentType, ComponentBuilder> {
   /**
-   * Produces a component based on the model.
-   * @param model The component model.
+   * Produces a component based on the page model.
+   * @param page The page model.
    */
-  create(model: ComponentModel) {
-    let component: Component;
-    const queue = [{ model } as Task];
+  create(page: PageModel) {
+    const heap = [page.root];
+    const pool = new Map<ComponentModel, Component>();
 
-    while (queue.length) {
-      const head = queue.shift()!;
-      if (!head.children && head.model.components?.length) {
-        head.children = [];
-        queue.unshift(
-          ...head.model.components.map(model => ({ model, siblings: head.children })),
-          head,
-        );
-
-        continue;
-      }
-
-      component = this.buildComponent(head.model, head.children ?? []);
-
-      if (head.siblings) {
-        head.siblings.push(component);
-      }
+    // tslint:disable-next-line: no-increment-decrement
+    for (let i = 0; i < heap.length; i++) {
+      heap.push(...resolve<ComponentModel>(page, heap[i])?.children ?? []);
     }
 
-    return component!;
+    return heap.reverse().reduce<Component | undefined>(
+      (previous, reference) => {
+        const model = resolve<ComponentModel>(page, reference)!;
+        const children = model?.children?.map(child => pool.get(resolve<ComponentModel>(page, child)!)!) ?? [];
+        const component = this.buildComponent(model, children);
+
+        pool.set(model, component);
+
+        return component;
+      },
+      undefined,
+    );
   }
 
   private buildComponent(model: ComponentModel, children: Component[]) {
