@@ -76,7 +76,7 @@ class Step2Controller {
   }
 
   save() {
-    return this.performAction(this.ContentEditor.save(true));
+    return this.performAction(() => this.ContentEditor.save(true));
   }
 
   startLoading() {
@@ -160,13 +160,13 @@ class Step2Controller {
   }
 
   keepDraft() {
-    return this.performAction(this.ContentEditor.keepDraft());
+    return this.performAction(() => this.ContentEditor.keepDraft());
   }
 
   performAction(actionPromise) {
     const stopLoading = this.startLoading();
 
-    return actionPromise
+    return actionPromise()
       .then(() => {
         this.form.$setPristine();
         this.documentIsSaved = true;
@@ -182,10 +182,6 @@ class Step2Controller {
       })
       .catch(() => this._focusFirstInvalidField())
       .finally(stopLoading);
-  }
-
-  isKeepDraftEnabled() {
-    return this.isEditing() && this.isDocumentDirty();
   }
 }
 
