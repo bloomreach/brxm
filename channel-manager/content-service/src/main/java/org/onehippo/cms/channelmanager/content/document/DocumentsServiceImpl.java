@@ -438,7 +438,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
             final Map<String, Serializable> hints = documentWorkflow.hints();
-            return (Boolean.TRUE.equals(hints.get(AbstractSaveDraftDocumentService.SAVE_DRAFT)));
+            return Boolean.TRUE.equals(hints.get(AbstractSaveDraftDocumentService.SAVE_DRAFT));
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to determine if save draft is allowed for document: { path : {}}"
                     , JcrUtils.getNodePathQuietly(handle));
