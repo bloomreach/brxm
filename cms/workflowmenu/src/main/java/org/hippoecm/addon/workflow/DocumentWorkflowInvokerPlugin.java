@@ -78,7 +78,7 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
             }
 
             try {
-                actionDescription.invoke();
+                actionDescription.invokeAsPromise();
             } catch (final Exception e) {
                 log.error("Failed to invoke workflow action {}.{} on document {}", category, action, uuid, e);
             }

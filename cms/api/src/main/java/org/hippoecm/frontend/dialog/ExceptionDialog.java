@@ -50,9 +50,6 @@ public class ExceptionDialog extends Dialog {
             }
         });
         setCancelVisible(false);
-
-        setCloseAction(object -> String.format("Hippo.Workflow.reject('%s');", message));
-        setCancelAction(object -> String.format("Hippo.Workflow.reject('%s');", message));
     }
 
     public ExceptionDialog(Exception exception) {

@@ -16,13 +16,11 @@
 package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.attributes.TitleAttribute;
@@ -215,9 +213,11 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
             Exception exception = null;
             try {
                 execute();
+                resolve(null);
             } catch (Exception ex) {
                 log.info("Workflow call failed", ex);
                 exception = ex;
+                reject(exception.getMessage());
             }
 
             if (exception != null && pluginContext != null) {
@@ -249,11 +249,6 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         session.refresh(false);
         UserSession us = UserSession.get();
         us.getFacetRootsObserver().broadcastEvents();
-
-        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
-            target.appendJavaScript("Hippo.Workflow.resolve();");
-        }
     }
 
     protected String execute(T workflow) throws Exception {
@@ -264,11 +259,9 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
     public void invokeWorkflow() throws Exception {
         try {
             execute();
+            resolve(null);
         } catch (final Exception e) {
-            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
-                target.appendJavaScript(String.format("Hippo.Workflow.reject('%s');", e.getMessage()));
-            }
+            reject(e.getMessage());
             throw e;
         }
     }
