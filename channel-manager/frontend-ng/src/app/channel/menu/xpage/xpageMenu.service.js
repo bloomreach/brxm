@@ -48,10 +48,27 @@ class XPageMenuService extends MenuService {
       translationKey: 'TOOLBAR_BUTTON_XPAGE',
     });
 
+    function success(key, msg) {
+      FeedbackService.showNotification(`${key}_SUCCESS`, { msg });
+    }
+
+    function failure(key, msg) {
+      try {
+        msg = JSON.parse(msg);
+      // eslint-disable-next-line no-empty
+      } catch (error) {}
+
+      if (msg && msg.cancelled === true) {
+        return;
+      }
+
+      FeedbackService.showError(`${key}_ERROR`, { msg });
+    }
+
     function invokeWorkflow(onClick, translationKey) {
       return () => onClick(getDocumentId())
-        .then(msg => FeedbackService.showNotification(`${translationKey}_SUCCESS`, { msg }))
-        .catch(msg => FeedbackService.showError(`${translationKey}_ERROR`, { msg }))
+        .then(msg => success(translationKey, msg))
+        .catch(msg => failure(translationKey, msg))
         .finally(() => PageService.load());
     }
 
