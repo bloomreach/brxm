@@ -49,4 +49,30 @@
   <bean class="org.hippoecm.hst.platform.services.experiencepage.ExperiencePageServiceImpl" init-method="init" destroy-method="destroy">
   </bean>
 
+
+  <bean id="customValueListProviders" class="org.springframework.beans.factory.config.MapFactoryBean">
+    <property name="targetMapClass">
+      <value>java.util.HashMap</value>
+    </property>
+    <property name="sourceMap">
+      <map>
+      </map>
+    </property>
+  </bean>
+
+  <bean id="ValueListProviderService" class="org.hippoecm.hst.platform.services.ValueListProviderServiceImpl" >
+      <constructor-arg  name="providers" >
+        <bean class="org.springframework.beans.factory.config.MapFactoryBean">
+          <property name="targetMapClass">
+            <value>java.util.HashMap</value>
+          </property>
+          <property name="sourceMap">
+            <map>
+              <entry key="menu-list-provider" value="org.hippoecm.hst.platform.provider.MenuListProvider" />
+            </map>
+          </property>
+        </bean>
+      </constructor-arg>
+      <constructor-arg name="customProviders" ref="customValueListProviders"/>
+  </bean>
 </beans>

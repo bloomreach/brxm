@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Bloomreach
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -513,6 +513,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                     return;
                 }
             case PropertyType.STRING :
+            case PropertyType.NAME :
                 if(propDef.isMultiple()) {
                     Value[] values = p.getValues();
                     String[] strings = new String[values.length];
@@ -584,9 +585,8 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                         this.propertyMap.addAvailableProperty(propertyName);
                     }
                     return;
-                }    
-                
-            default: 
+                }
+            default:
                 log.info("getPropObject is only support for boolean, long, double, date and strings. Return null");
                 return ;
             }
@@ -625,8 +625,9 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                         PropertyType.BOOLEAN  == p.getType() || 
                         PropertyType.DATE  == p.getType() ||
                         PropertyType.DOUBLE  == p.getType() ||
-                        PropertyType.LONG == p.getType()) {
-                  loadProperty(p, p.getDefinition(), p.getName());
+                        PropertyType.LONG == p.getType() ||
+                        PropertyType.NAME == p.getType()) {
+                    loadProperty(p, p.getDefinition(), p.getName());
                 }
             }
         } catch (RepositoryException e) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,10 +49,10 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.parameters.DropDownList;
-import org.hippoecm.hst.core.parameters.EmptyValueListProvider;
 import org.hippoecm.hst.core.parameters.ValueListProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
@@ -149,11 +149,15 @@ public class ChannelServiceImpl implements ChannelService {
 
                 if (DropDownList.class.isAssignableFrom(annotation.getClass())) {
                     final DropDownList dropDownListAnnotation = (DropDownList) annotation;
-                    final Class<? extends ValueListProvider> valueListProviderClass = dropDownListAnnotation.valueListProvider();
+                    String valueListProviderKey = dropDownListAnnotation.valueListProviderKey();
+                    final Class<? extends ValueListProvider> valueListProviderClass =
+                        dropDownListAnnotation.valueListProvider();
 
-                    if (valueListProviderClass != null && !EmptyValueListProvider.class.isAssignableFrom(valueListProviderClass)) {
-                        try {
-                            final ValueListProvider valueListProvider = (ValueListProvider) valueListProviderClass.newInstance();
+                    try {
+                        final ValueListProvider valueListProvider = ParametersInfoProcessor.getValueListProvider(
+                            valueListProviderKey, valueListProviderClass, null);
+
+                        if (valueListProvider != null) {
                             final List<String> valueList = valueListProvider.getValues();
 
                             // NOTE: The following block adds i18n labels for the dynamic values from the custom ValueListProvider.
@@ -177,22 +181,29 @@ public class ChannelServiceImpl implements ChannelService {
                                 public Class<? extends Annotation> annotationType() {
                                     return DropDownList.class;
                                 }
+
                                 @Override
                                 public String[] value() {
                                     return valueList.toArray(new String[valueList.size()]);
                                 }
+
                                 @Override
                                 public Class<? extends ValueListProvider> valueListProvider() {
                                     return valueListProviderClass;
+                                }
+
+                                @Override
+                                public String valueListProviderKey() {
+                                    return valueListProviderKey;
                                 }
                             };
 
                             itemAugmented = true;
                             anyItemAugmented = true;
-                        } catch (Exception e) {
-                            log.error("Failed to create or invoke the custom valueListProvider: '{}'.",
-                                    valueListProviderClass, e);
                         }
+                    } catch (Exception e) {
+                        log.error("Failed to create or invoke the custom valueListProvider: '{}'.",
+                                valueListProviderClass, e);
                     }
                 }
 

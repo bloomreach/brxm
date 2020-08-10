@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { Content, Page } from '@bloomreach/spa-sdk';
+import { Document, Page } from '@bloomreach/spa-sdk';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({
@@ -52,7 +52,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
   name: 'br-news-list-item',
 })
 export default class BrNewsListItem extends Vue {
-  @Prop() item!: Content;
+  @Prop() item!: Document;
 
   @Prop() page!: Page;
 }

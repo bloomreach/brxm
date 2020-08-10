@@ -30,13 +30,13 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
@@ -77,13 +77,92 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
 
     private void createAndDeleteAs(final SimpleCredentials creds, final boolean allowed) throws IOException, ServletException, RepositoryException {
 
-
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
         final String containerId = getNodeId(PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container");
-        final String catalogId = getNodeId("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+
+        String oldStyleCatalogItemPath = "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem";
+        String newStyleCatalogItemPath = "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testdefinition";
+
+        final String oldStyleCatalogId = getNodeId(oldStyleCatalogItemPath);
+        final String newStyleCatalogId = getNodeId(newStyleCatalogItemPath);
 
 
+        final String oldStyleCreatedUUID = create(creds, allowed, mountId, containerId, oldStyleCatalogId);
+        final String newStyleCreatedUUID = create(creds, allowed, mountId, containerId, newStyleCatalogId);
+
+        if (allowed) {
+            final Session session = createSession(ADMIN_CREDENTIALS);
+            assertTrue(session.nodeExists(PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/testitem"));
+            assertTrue(session.nodeExists(PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/testdefinition"));
+
+            final Node oldStyleContainerItem = session.getNodeByIdentifier(oldStyleCreatedUUID);
+            final Node newStyleContainerItem = session.getNodeByIdentifier(newStyleCreatedUUID);
+
+            // assert newly created container item does not have the catalog item copied (old style) but keeps a
+            // hst:componentdefinition reference
+            assertThat(session.getNode(oldStyleCatalogItemPath)
+                    .isNodeType("hst:containeritemcomponent"))
+                    .as("Catalog item is a hst:containeritemcomponent")
+                    .isTrue();
+            assertThat(session.getNode(oldStyleCatalogItemPath)
+                    .hasProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME))
+                    .as("Catalog item expected to have classname")
+                    .isTrue();
+            assertThat(oldStyleContainerItem.hasProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME))
+                    .as("Component item referencing catalog item expected to have classname")
+                    .isTrue();
+            assertThat(oldStyleContainerItem.hasProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION))
+                    .as("Expected newly created container item not to have hst:componentdefinition property")
+                    .isFalse();
+
+            assertThat(session.getNode(newStyleCatalogItemPath)
+                    .isNodeType("hst:componentdefinition"))
+                    .as("Catalog item is a hst:componentdefinition")
+                    .isTrue();
+            assertThat(session.getNode(newStyleCatalogItemPath)
+                    .hasProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME))
+                    .as("Catalog item expected to have classname")
+                    .isTrue();
+            assertThat(newStyleContainerItem.hasProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME))
+                    .as("Component item referencing catalog item expected not to have classname")
+                    .isFalse();
+            assertThat(JcrUtils.getStringProperty(newStyleContainerItem, COMPONENT_PROPERTY_COMPONENTDEFINITION, null))
+                    .as("Expected newly created container item to have hst:componentdefinition property pointing " +
+                            "to catalog item")
+                    .isEqualTo("hst:components/testpackage/testdefinition");
+
+            RequestResponseMock deleteRequestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + containerId + "./" + oldStyleCreatedUUID, null,
+                    "DELETE");
+            MockHttpServletResponse deleteResponse = render(mountId, deleteRequestResponse, creds);
+            assertEquals(Response.Status.OK.getStatusCode(), deleteResponse.getStatus());
+
+            deleteRequestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + containerId + "./" + newStyleCreatedUUID, null,
+                    "DELETE");
+            deleteResponse = render(mountId, deleteRequestResponse, creds);
+            assertEquals(Response.Status.OK.getStatusCode(), deleteResponse.getStatus());
+
+            try {
+                session.getNodeByIdentifier(oldStyleCreatedUUID);
+                fail("Item expected to have been deleted again");
+            } catch (ItemNotFoundException e) {
+                // expected
+            }
+
+            try {
+                session.getNodeByIdentifier(newStyleCreatedUUID);
+                fail("Item expected to have been deleted again");
+            } catch (ItemNotFoundException e) {
+                // expected
+            }
+
+            session.logout();
+        }
+    }
+
+    private String create(final SimpleCredentials creds, final boolean allowed, final String mountId, final String containerId, final String catalogId) throws IOException, ServletException, RepositoryException {
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + containerId + "./" + catalogId, null,
                 "POST");
@@ -92,52 +171,15 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
         final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, creds);
         final ExtResponseRepresentation extResponse = mapper.readerFor(ExtResponseRepresentation.class).readValue(createResponse.getContentAsString());
         if (allowed) {
-            final Map<String, ?> map = (Map) extResponse.getData();
-
-            final Session session = createSession(ADMIN_CREDENTIALS);
-
             assertEquals(Response.Status.CREATED.getStatusCode(), createResponse.getStatus());
+            final Map<String, ?> map = (Map) extResponse.getData();
             final String createdUUID = map.get("id").toString();
-
-            // newly created item
-            assertTrue(session.nodeExists(PREVIEW_CONTAINER_TEST_PAGE_PATH + "/main/container/testitem"));
-
-            final Node newContainerItem = session.getNodeByIdentifier(createdUUID);
-
-            // assert newly created container item does not have the catalog item copied (old style) but keeps a
-            // hst:componentdefinition reference
-            assertThat(session.getNode("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem")
-                    .hasProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME))
-                    .as("Catalog item expected to have classname")
-                    .isTrue();
-            assertThat(newContainerItem.hasProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME))
-                    .as("Component item referencing catalog item expected not to have classname")
-                    .isFalse();
-
-            assertThat(JcrUtils.getStringProperty(newContainerItem, COMPONENT_PROPERTY_COMPONENTDEFINITION, null))
-                    .as("Expected newly created container item to have hst:componentdefinition property pointing " +
-                            "to catalog item")
-                    .isEqualTo("hst:components/testpackage/testitem");
-
-
-            final RequestResponseMock deleteRequestResponse = mockGetRequestResponse(
-                    "http", "localhost", "/_rp/" + containerId + "./" + createdUUID, null,
-                    "DELETE");
-            final MockHttpServletResponse deleteResponse = render(mountId, deleteRequestResponse, creds);
-            assertEquals(Response.Status.OK.getStatusCode(), deleteResponse.getStatus());
-
-            try {
-                session.getNodeByIdentifier(createdUUID);
-                fail("Item expected to have been deleted again");
-            } catch (ItemNotFoundException e) {
-                // expected
-            }
-
-            session.logout();
-
+            return createdUUID;
         } else {
             assertEquals("FORBIDDEN", extResponse.getErrorCode());
         }
+
+        return null;
     }
 
     @Test

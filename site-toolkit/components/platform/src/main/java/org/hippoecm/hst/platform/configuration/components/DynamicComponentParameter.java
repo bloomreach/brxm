@@ -136,34 +136,24 @@ public class DynamicComponentParameter implements DynamicParameter{
 
     public static class DropdownListParameterConfigImpl implements DropdownListParameterConfig {
         public static final String VALUE = "hst:value";
-        public static final String VALUE_LIST_PROVIDER = "hst:valuelistprovider";
+        public static final String VALUE_LIST_PROVIDER_KEY = "hst:valuelistprovider";
         public static final String VALUE_SOURCE_ID = "hst:sourceid";
 
         private final String[] values;
         private Class<? extends ValueListProvider> valueListProvider = EmptyValueListProvider.class;
+        private String valueListProviderKey;
         private final String sourceId;
 
         public DropdownListParameterConfigImpl(final DropDownList annotation) {
             values = annotation.value();
             valueListProvider = annotation.valueListProvider();
+            valueListProviderKey = annotation.valueListProviderKey();
             sourceId = EMPTY;
         }
 
         public DropdownListParameterConfigImpl(final HstNode dropdownNode) {
             final ValueProvider valueProvider = dropdownNode.getValueProvider();
-            final String valuelistprovider = valueProvider.getString(VALUE_LIST_PROVIDER);
-            if (!StringUtils.isEmpty(valuelistprovider)) {
-                try {
-                    final Class<? extends ValueListProvider> valueListProviderClass = (Class<? extends ValueListProvider>) Class
-                            .forName(valuelistprovider);
-                    if (valueListProviderClass != null) {
-                        valueListProvider = valueListProviderClass;
-                    }
-                } catch (ClassNotFoundException e) {
-                    log.warn("The class name defined in hst:valueListProvider property is not found: {}",
-                            valuelistprovider);
-                }
-            }
+            valueListProviderKey = ofNullable(valueProvider.getString(VALUE_LIST_PROVIDER_KEY)).orElse(EMPTY);
             values = ofNullable(valueProvider.getStrings(VALUE)).orElse(new String[] {});
             sourceId = ofNullable(valueProvider.getString(VALUE_SOURCE_ID)).orElse(EMPTY);
         }
@@ -172,8 +162,14 @@ public class DynamicComponentParameter implements DynamicParameter{
             return values;
         }
 
+        @Override
         public Class<? extends ValueListProvider> getValueListProvider() {
             return valueListProvider;
+        }
+
+        @Override
+        public String getValueListProviderKey() {
+            return valueListProviderKey;
         }
 
         @Override

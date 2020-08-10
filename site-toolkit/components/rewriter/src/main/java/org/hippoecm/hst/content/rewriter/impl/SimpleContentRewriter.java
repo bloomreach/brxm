@@ -410,7 +410,12 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
             } catch (ItemNotFoundException | PathNotFoundException e) {
                 log.info("Unable to rewrite path '{}' for node '{}' to proper url : '{}'.", new String[]{linkPath, nodePath, e.getMessage()});
             } catch (RepositoryException e) {
-                log.warn("Unable to rewrite path '{}' for node '{}' to proper url : '{}'.", new String[]{linkPath, nodePath, e.getMessage()});
+                if (e.getCause() instanceof IllegalArgumentException) {
+                    // invalid docbase, do not log content issues on warn level
+                    log.info("Unable to rewrite path '{}' for node '{}' to proper url : '{}'.", new String[]{linkPath, nodePath, e.getMessage()});
+                } else {
+                    log.warn("Unable to rewrite path '{}' for node '{}' to proper url : '{}'.", new String[]{linkPath, nodePath, e.getMessage()});
+                }
             }
         }
         return null;

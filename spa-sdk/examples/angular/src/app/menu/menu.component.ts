@@ -15,7 +15,7 @@
  */
 
 import { Component, HostBinding, Input } from '@angular/core';
-import { Component as BrComponent, Page } from '@bloomreach/spa-sdk';
+import { Component as BrComponent, Menu, Page, isMenu } from '@bloomreach/spa-sdk';
 
 @Component({
   selector: 'ul.br-menu', // tslint:disable-line: component-selector
@@ -33,6 +33,9 @@ export class MenuComponent {
   }
 
   get menu() {
-    return this.component.getModels<MenuModels>()?.menu;
+    const menuRef = this.component.getModels<MenuModels>()?.menu;
+    const menu = menuRef && this.page.getContent<Menu>(menuRef);
+
+    return isMenu(menu) ? menu : undefined;
   }
 }

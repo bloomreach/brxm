@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.DynamicFieldGroup;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.model.HstNode;
@@ -179,19 +181,17 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             }
         }
 
+        final Map<String, List<DynamicParameter>> legacyComponentParametersCache = new HashMap<>();
+        final Map<String, List<DynamicFieldGroup>> legacyComponentFieldGroupsCache = new HashMap<>();
+
         for (HstComponentConfiguration child : populate) {
             if (isEmpty(child.getComponentDefinition())) {
 
                 // In case the component is a container item, this is legacy component instances support. For components
                 // that are not hst:components, this is not legacy!
                 // If component instance does not have a component definition reference, explicitly populate component parameters.
-                //TODO SS: In case of legacy component instances, there is an extra memory overhead because
-                // field group information & parameter definitions are stored on a component instance level,
-                // instead of storing that on a catalog item level.
-                // More over, field group info has no use during delivery and really belongs to a catalog item level
-                //
-                ((HstComponentConfigurationService) child).populateAnnotationComponentParameters(websiteClassLoader);
-                ((HstComponentConfigurationService) child).populateFieldGroups(websiteClassLoader);
+                ((HstComponentConfigurationService) child).populateLegacyComponentParameters(websiteClassLoader,legacyComponentParametersCache);
+                ((HstComponentConfigurationService) child).populateLegacyFieldGroups(websiteClassLoader, legacyComponentFieldGroupsCache);
                 ((HstComponentConfigurationService) child).populateComponentReferences(canonicalComponentConfigurations);
             }
         }
