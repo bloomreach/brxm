@@ -56,23 +56,23 @@ public class BranchInfoBuilderTest {
         return Arrays.asList(new Object[][]{
                 {getUserInfoBuilder()
                         .draftChanges(true)
-                        , "Core document (offline, draft changes)"},
+                        , "Core document (offline, draft)"},
                 {getUserInfoBuilder()
                         .draftChanges(true)
                         .unpublishedChanges(true)
-                        , "Core document (offline, draft changes)"},
+                        , "Core document (offline, draft)"},
                 {getUserInfoBuilder()
                         .unpublishedChanges(true)
                         , "Core document (offline)"},
                 {getUserInfoBuilder()
                         .draftChanges(true)
                         .live(true)
-                        , "Core document (live, draft changes)"},
+                        , "Core document (live, draft)"},
                 {getUserInfoBuilder()
                         .draftChanges(true)
                         .live(true)
                         .unpublishedChanges(true)
-                        , "Core document (live, draft changes)"},
+                        , "Core document (live, draft)"},
                 {getUserInfoBuilder()
                         , "Core document (offline)"},
                 {getUserInfoBuilder()
@@ -81,15 +81,15 @@ public class BranchInfoBuilderTest {
                 {getUserInfoBuilder()
                         .draftChanges(true)
                         .unpublishedChanges(true)
-                        , "Core document (offline, draft changes)"},
+                        , "Core document (offline, draft)"},
                 {new BranchInfoBuilder(propertyResolver, "Arbitrary branch text for 'q'")
                         .draftChanges(true)
                         .unpublishedChanges(true)
-                        , "Arbitrary branch text for 'q' (offline, draft changes)"},
+                        , "Arbitrary branch text for 'q' (offline, draft)"},
                 {new BranchInfoBuilder(propertyResolver, "Core document")
                         .draftChanges(true)
                         .unpublishedChanges(true)
-                        , "Core document (offline, draft changes)"},
+                        , "Core document (offline, draft)"},
         });
     }
 
