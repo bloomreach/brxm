@@ -54,8 +54,6 @@ public class WorkflowDialog<T> extends Dialog<T> {
         // Hide notification label by default until a model is set by calling #setNotification
         notification.setVisible(false);
         add(notification);
-
-        setCancelAction(T -> "Hippo.Workflow.reject();");
     }
 
     @Override
@@ -82,6 +80,15 @@ public class WorkflowDialog<T> extends Dialog<T> {
             log.error("Could not execute workflow.", e);
             error(e);
         }
+    }
+
+    @Override
+    public void onClose() {
+        if (cancelled) {
+            invoker.reject("{ cancelled: true }");
+        }
+
+        super.onClose();
     }
 
     @Override
