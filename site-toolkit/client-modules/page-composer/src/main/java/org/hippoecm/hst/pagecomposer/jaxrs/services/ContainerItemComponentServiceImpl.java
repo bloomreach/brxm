@@ -48,7 +48,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorExcept
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.UnknownClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.PageComposerUtil;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,28 +92,6 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
         Set<String> removedVariants = doRetainVariants(containerItem, variants, versionStamp);
         log.info("Removed variants: {}", removedVariants);
         return new ImmutablePair<>(removedVariants, false);
-    }
-
-    @Override
-    public Pair<Node, Boolean> createVariant(final String variantId, final long versionStamp) throws ClientException, RepositoryException, ServerErrorException {
-        try {
-            Node containerItem = getCurrentContainerItem();
-            HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
-            if (componentParameters.hasPrefix(variantId)) {
-                throw new ClientException("Cannot create variant '" + variantId + "' because it already exists", ClientError.ITEM_EXISTS);
-            }
-            doCreateVariant(containerItem, componentParameters, variantId);
-
-            componentParameters.save(versionStamp);
-            log.info("Variant '{}' created successfully", variantId);
-            return new ImmutablePair<>(containerItem, false);
-        } catch (IllegalStateException | IllegalArgumentException e) {
-            log.warn("Could not create variant '{}'", variantId, e);
-            throw new UnknownClientException("Could not create variant '" + variantId + "'");
-        } catch (RepositoryException e) {
-            log.error("Unable to create new variant '{}'", variantId, e);
-            throw e;
-        }
     }
 
     private Locale getLocale(final String localeString) {
@@ -273,28 +250,6 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
             return this.pageComposerContextService.getEditingMount().getContentPath();
         }
         return StringUtils.EMPTY;
-    }
-
-    /**
-     * Creates a new variant. The new variant will consists of all the explicitly configured 'default' parameters and
-     * values <b>MERGED</b> with all default annotated parameters (and their values) that are not explicitly configured
-     * as 'default' parameter.
-     *
-     * @param containerItem       the node of the current container item
-     * @param componentParameters the component parameters of the current container item
-     * @param variantId           the id of the variant to create
-     * @throws RepositoryException when something went wrong in the repository
-     */
-    private void doCreateVariant(final Node containerItem,
-                                 final HstComponentParameters componentParameters,
-                                 final String variantId) throws RepositoryException, IllegalStateException {
-
-        Map<String, String> annotatedParameters = PageComposerUtil.getAnnotatedDefaultValues(containerItem);
-
-        for (String parameterName : annotatedParameters.keySet()) {
-            String value = componentParameters.hasDefaultParameter(parameterName) ? componentParameters.getDefaultValue(parameterName) : annotatedParameters.get(parameterName);
-            componentParameters.setValue(variantId, parameterName, value);
-        }
     }
 
     /**

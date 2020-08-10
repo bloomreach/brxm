@@ -245,7 +245,9 @@ export default class OverlayService {
         this._syncElement(element);
 
         overlays.add(element.getOverlayElement()[0]);
-        overlays.add(element.getBoxElement()[0]);
+        if (element.hasGeneratedBoxElement()) {
+          overlays.add(element.getBoxElement()[0]);
+        }
       });
 
     if (this._overlays) {

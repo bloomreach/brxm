@@ -73,6 +73,9 @@
         "document" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         },
+        "pageable" : {
+          "$ref" : "/page/uid4"
+        },
         "document-again" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         },
@@ -84,8 +87,7 @@
           }
         },
         "notFoundLink" : {
-          "href" : "/pagenotfound",
-          "type" : "internal"
+          "type" : "unknown"
         },
         "menu" : {
           "$ref" : "/page/uid3"
@@ -147,7 +149,7 @@
         "localeString" : "en_US",
         "id" : "1ca07af9-cdf5-4bdd-9908-f991245bb062",
         "bar" : {
-          "$ref" : "/page/uid4"
+          "$ref" : "/page/uid5"
         },
         "foo" : {
           "name" : "foo",
@@ -173,9 +175,9 @@
       "type" : "component",
       "componentClass" : "org.hippoecm.hst.test.HeaderComponent",
       "children" : [ {
-        "$ref" : "/page/uid5"
-      }, {
         "$ref" : "/page/uid6"
+      }, {
+        "$ref" : "/page/uid7"
       } ]
     },
     "uid2" : {
@@ -309,6 +311,219 @@
         } ]
       }
     },
+    "uid4" : {
+      "offset" : 50,
+      "items" : [ {
+        "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+      }, {
+        "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+      }, {
+        "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+      }, {
+        "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+      }, {
+        "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+      }, {
+        "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+      }, {
+        "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+      }, {
+        "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+      }, {
+        "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+      }, {
+        "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+      } ],
+      "total" : 105,
+      "first" : {
+        "number" : 1,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=1&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=1&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      },
+      "previous" : {
+        "number" : 5,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=5&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=5&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      },
+      "current" : {
+        "number" : 6,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=6&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=6&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      },
+      "next" : {
+        "number" : 7,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=7&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=7&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      },
+      "last" : {
+        "number" : 11,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=11&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=11&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      },
+      "pages" : [ {
+        "number" : 1,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=1&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=1&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      }, {
+        "number" : 2,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=2&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=2&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      }, {
+        "number" : 3,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=3&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=3&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      }, {
+        "number" : 4,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=4&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=4&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      }, {
+        "number" : 5,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=5&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=5&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      }, {
+        "number" : 6,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=6&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=6&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      }, {
+        "number" : 7,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=7&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=7&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      }, {
+        "number" : 8,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=8&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=8&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      }, {
+        "number" : 9,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=9&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=9&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      }, {
+        "number" : 10,
+        "links" : {
+          "site" : {
+            "href" : "/?org.hippoecm.hst.container.render_host=localhost&r27:page=10&r27:size=10&r27:limit=10",
+            "type" : "internal"
+          },
+          "self" : {
+            "href" : "http://localhost/site/_cmsinternal/spa/resourceapi?org.hippoecm.hst.container.render_host=localhost&r27:page=10&r27:size=10&r27:limit=10",
+            "type" : "external"
+          }
+        }
+      } ],
+      "size" : 10,
+      "enabled" : true
+    },
     "u303d40ebf98c4d6184c7a1ba14b5ceb3" : {
       "type" : "document",
       "links" : {
@@ -421,11 +636,11 @@
         "id" : "5e56d406-b302-445e-9f80-e624ba053bc4"
       }
     },
-    "uid4" : {
+    "uid5" : {
       "name" : "bar",
       "text" : "Bar Text"
     },
-    "uid5" : {
+    "uid6" : {
       "id" : "r27_r1_r1",
       "links" : {
         "self" : {
@@ -440,7 +655,7 @@
       "type" : "component",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     },
-    "uid6" : {
+    "uid7" : {
       "id" : "r27_r1_r2",
       "links" : {
         "self" : {
@@ -456,16 +671,16 @@
       "xtype" : "hst.vbox",
       "componentClass" : "org.hippoecm.hst.builtin.components.StandardContainerComponent",
       "children" : [ {
-        "$ref" : "/page/uid7"
-      }, {
         "$ref" : "/page/uid8"
       }, {
         "$ref" : "/page/uid9"
       }, {
         "$ref" : "/page/uid10"
+      }, {
+        "$ref" : "/page/uid11"
       } ]
     },
-    "uid7" : {
+    "uid8" : {
       "id" : "r27_r1_r2_r1",
       "links" : {
         "self" : {
@@ -485,7 +700,7 @@
       "type" : "container-item",
       "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     },
-    "uid8" : {
+    "uid9" : {
       "id" : "r27_r1_r2_r2",
       "links" : {
         "self" : {
@@ -505,7 +720,7 @@
       "type" : "container-item",
       "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     },
-    "uid9" : {
+    "uid10" : {
       "id" : "r27_r1_r2_r3",
       "links" : {
         "self" : {
@@ -518,14 +733,13 @@
           "path" : "banners/banner102"
         },
         "params" : {
-          "path" : "banners/banner102"
         }
       },
       "name" : "banner-new-style",
       "type" : "container-item",
       "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     },
-    "uid10" : {
+    "uid11" : {
       "id" : "r27_r1_r2_r4",
       "links" : {
         "self" : {

@@ -32,10 +32,17 @@ export class BrNode extends React.Component<BrNodeProps> {
   context: React.ContextType<typeof BrPageContext>;
 
   private renderNode() {
+    if (React.Children.count(this.props.children)) {
+      return this.props.children;
+    }
+
+    const children = this.props.component.getChildren()
+      .map((child, index) => <BrNode key={index} component={child} />);
+
     if (isContainer(this.props.component)) {
       return (
         <BrNodeContainer component={this.props.component} page={this.context!}>
-          {this.renderChildren()}
+          {children}
         </BrNodeContainer>
       );
     }
@@ -43,22 +50,16 @@ export class BrNode extends React.Component<BrNodeProps> {
     if (isContainerItem(this.props.component)) {
       return (
         <BrNodeContainerItem component={this.props.component} page={this.context!}>
-          {this.renderChildren()}
+          {children}
         </BrNodeContainerItem>
       );
     }
 
     return (
       <BrNodeComponent component={this.props.component} page={this.context!}>
-        {this.renderChildren()}
+        {children}
       </BrNodeComponent>
     );
-  }
-
-  private renderChildren() {
-    return this.props.children
-      ?? this.props.component.getChildren()
-        .map((child, index) => <BrNode key={index} component={child} />);
   }
 
   render() {

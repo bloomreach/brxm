@@ -18,8 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
 
 public interface ContainerItemComponentResourceInterface {
@@ -69,20 +67,6 @@ public interface ContainerItemComponentResourceInterface {
      * @return whether saving the parameters went successfully or not.
      */
     Response moveAndUpdateVariant(String variantId, String  newVariantId, long versionStamp, final MultivaluedHashMap<String, String> params);
-
-    /**
-     * <p> Creates new variant with all values from the 'default' variant. Note that <b>only</b> the values of 'default'
-     * variant are copied that are actually represented by a {@link Parameter} annotation in the corresponding HST
-     * component {@link ParametersInfo} interface. If the 'default' does not have a parametervalue configured, then the
-     * default value if present from {@link Parameter} for that parametername is used. </p> <p> If the variant already
-     * exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}. If created, we return {@link
-     * AbstractConfigResource#created(String)} </p>
-     *
-     * @param variantId the variant to create
-     * @return If the variant already exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}.
-     * If created, we return {@link AbstractConfigResource#created(String)}
-     */
-    Response createVariant(String variantId, long versionStamp);
 
     Response deleteVariant(String variantId, long versionStamp);
 }

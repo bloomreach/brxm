@@ -19,6 +19,7 @@ package org.onehippo.cms7.event;
 public class HippoEventConstants {
 
     public static final String CATEGORY_USER_MANAGEMENT = "user-management";
+    public static final String CATEGORY_USERROLE_MANAGEMENT = "userrole-management";
     public static final String CATEGORY_GROUP_MANAGEMENT = "group-management";
     public static final String CATEGORY_PERMISSIONS_MANAGEMENT = "permissions-management";
     public static final String CATEGORY_SECURITY = "security";

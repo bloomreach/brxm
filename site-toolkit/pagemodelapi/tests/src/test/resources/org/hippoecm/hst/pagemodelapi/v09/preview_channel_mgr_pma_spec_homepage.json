@@ -1,6 +1,7 @@
 {
   "id":"r27",
   "_meta":{
+    "preview":true,
     "version":"0.9",
     "branch":"master"
   },
@@ -348,8 +349,7 @@
         }
       },
       "notFoundLink":{
-        "href":"/site/_cmsinternal/spa/pagenotfound",
-        "type":"internal"
+        "type":"unknown"
       },
       "menu":{
         "name":"main",
@@ -530,10 +530,10 @@
             },
             "_links":{
               "componentRendering":{
-                "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r1"
+                "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r1&org.hippoecm.hst.container.render_host=localhost"
               },
               "self":{
-                "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r1",
+                "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r1&org.hippoecm.hst.container.render_host=localhost",
                 "type":"external"
               }
             }
@@ -559,10 +559,10 @@
                 },
                 "_links":{
                   "componentRendering":{
-                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r1"
+                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r1&org.hippoecm.hst.container.render_host=localhost"
                   },
                   "self":{
-                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r1",
+                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r1&org.hippoecm.hst.container.render_host=localhost",
                     "type":"external"
                   }
                 }
@@ -582,10 +582,10 @@
                 },
                 "_links":{
                   "componentRendering":{
-                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r2"
+                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r2&org.hippoecm.hst.container.render_host=localhost"
                   },
                   "self":{
-                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r2",
+                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r2&org.hippoecm.hst.container.render_host=localhost",
                     "type":"external"
                   }
                 }
@@ -605,10 +605,10 @@
                 },
                 "_links":{
                   "componentRendering":{
-                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r3"
+                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r3&org.hippoecm.hst.container.render_host=localhost"
                   },
                   "self":{
-                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r3",
+                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r3&org.hippoecm.hst.container.render_host=localhost",
                     "type":"external"
                   }
                 }
@@ -628,10 +628,10 @@
                 },
                 "_links":{
                   "componentRendering":{
-                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r4"
+                    "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r4&org.hippoecm.hst.container.render_host=localhost"
                   },
                   "self":{
-                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r4",
+                    "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2_r4&org.hippoecm.hst.container.render_host=localhost",
                     "type":"external"
                   }
                 }
@@ -645,10 +645,10 @@
             },
             "_links":{
               "componentRendering":{
-                "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2"
+                "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2&org.hippoecm.hst.container.render_host=localhost"
               },
               "self":{
-                "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2",
+                "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1_r2&org.hippoecm.hst.container.render_host=localhost",
                 "type":"external"
               }
             }
@@ -664,10 +664,10 @@
         },
         "_links":{
           "componentRendering":{
-            "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1"
+            "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1&org.hippoecm.hst.container.render_host=localhost"
           },
           "self":{
-            "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1",
+            "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r1&org.hippoecm.hst.container.render_host=localhost",
             "type":"external"
           }
         }
@@ -684,10 +684,10 @@
         },
         "_links":{
           "componentRendering":{
-            "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r2"
+            "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r2&org.hippoecm.hst.container.render_host=localhost"
           },
           "self":{
-            "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r2",
+            "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27_r2&org.hippoecm.hst.container.render_host=localhost",
             "type":"external"
           }
         }
@@ -706,10 +706,10 @@
     },
     "_links":{
       "componentRendering":{
-        "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27"
+        "href":"/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27&org.hippoecm.hst.container.render_host=localhost"
       },
       "self":{
-        "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27",
+        "href":"http://localhost/site/_cmsinternal/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r27&org.hippoecm.hst.container.render_host=localhost",
         "type":"external"
       }
     }
@@ -728,14 +728,29 @@
       },
       "name":"homepage",
       "displayName":"Home Page",
-      "summary":"Summary of the homepage",
       "date":1249891507580,
       "title":"This is the homepage",
       "body":{
         "value":"This is the content of the homepage with a link to <a href=\"/site/_cmsinternal/spa/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
       },
+      "summary":"Summary of the homepage",
+      "selfBean":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
       "selfInstance":{
         "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
+      "newsDocument":{
+        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+      },
+      "folderBean":{
+        "$ref":"/content/ucbcbcbcb5fa848a8b03b4524373d992a"
+      },
+      "imageSetBean":{
+        "$ref":"/content/udb02dde500984488a72c2a4fc6d51beb"
+      },
+      "assetBean":{
+        "$ref":"/content/u5e56d406b302445e9f80e624ba053bc4"
       },
       "childObject":{
         "name":"just-some-name",
@@ -751,21 +766,6 @@
           "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
         }
       ],
-      "newsDocument":{
-        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-      },
-      "folderBean":{
-        "$ref":"/content/ucbcbcbcb5fa848a8b03b4524373d992a"
-      },
-      "imageSetBean":{
-        "$ref":"/content/udb02dde500984488a72c2a4fc6d51beb"
-      },
-      "assetBean":{
-        "$ref":"/content/u5e56d406b302445e9f80e624ba053bc4"
-      },
-      "selfBean":{
-        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
-      },
       "localeString":"en_US",
       "bar":{
         "name":"bar",
@@ -789,12 +789,12 @@
       },
       "name":"News1",
       "displayName":"News1",
-      "summary":"Summary about news item 1",
       "date":1239782707580,
       "title":"News Item 1",
       "body":{
         "value":"My news item 1 content"
       },
+      "summary":"Summary about news item 1",
       "textDocument":{
         "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
       },
@@ -823,8 +823,7 @@
       },
       "_links":{
         "site":{
-          "href":"/site/_cmsinternal/spa/pagenotfound",
-          "type":"internal"
+          "type":"unknown"
         }
       },
       "name":"picture.jpeg",
@@ -872,8 +871,7 @@
       },
       "_links":{
         "site":{
-          "href":"/site/_cmsinternal/spa/pagenotfound",
-          "type":"internal"
+          "type":"unknown"
         }
       },
       "name":"testdata.pdf",

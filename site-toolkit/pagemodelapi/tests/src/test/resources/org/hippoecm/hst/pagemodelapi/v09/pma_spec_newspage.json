@@ -348,8 +348,7 @@
         }
       },
       "notFoundLink":{
-        "href":"/site/spa/pagenotfound",
-        "type":"internal"
+        "type" : "unknown"
       },
       "menu":{
         "name":"main",
