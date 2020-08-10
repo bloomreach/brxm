@@ -236,4 +236,17 @@ describe('XPageMenuService', () => {
       expectWorkflow('request-schedule-unpublish', DocumentWorkflowService.requestScheduleUnpublication);
     });
   });
+
+  describe('workflow cancelled by the user', () => {
+    it('should not show a toast when a workflow action is rejected with a "cancelled" flag', () => {
+      const action = addAction('publish');
+
+      DocumentWorkflowService.publish.and.returnValue($q.reject('{ "cancelled": true }'));
+
+      action.onClick();
+      $rootScope.$digest();
+
+      expect(FeedbackService.showError).not.toHaveBeenCalled();
+    });
+  });
 });
