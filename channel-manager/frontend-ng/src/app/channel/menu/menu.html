@@ -1,5 +1,5 @@
 <!--
-  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -23,9 +23,13 @@
       <md-icon ng-if="menu.hasIconName() && menu.isIconVisible()" md-font-icon="{{::menu.iconName}}"></md-icon>
       <md-icon ng-if="menu.hasIconSvg() && menu.isIconVisible()" md-svg-icon="{{ ::menu.iconSvg}}"></md-icon>
     </md-button>
-    <md-menu-content class="qa-{{ ::menu.name }}-menu {{ ::menu.name }}-menu dropdown-menu-content"
+    <md-menu-content ng-class="{
+                       'qa-{{ ::menu.name }}-menu': true,
+                       '{{ ::menu.name }}-menu': true,
+                       'dropdown-menu-content': true
+                     }"
                      width="{{ ::menu.width}}">
-      <md-menu-item ng-class="{'md-indent': menu.hasIcons()}"
+      <md-menu-item ng-class="{'md-indent': menu.hasIcons(), '{{ ::menu.name }}-menu-{{ ::item.name }}-item': true}"
                     ng-repeat-start="item in menu.items track by item.name"
                     ng-if="item.type === 'action' && item.isVisible()">
         <md-icon ng-if="item.hasIconName() && item.isIconVisible()"
