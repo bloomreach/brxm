@@ -21,6 +21,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.repository.api.WorkflowException;
+import org.onehippo.cms.json.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +86,7 @@ public class WorkflowDialog<T> extends Dialog<T> {
     @Override
     public void onClose() {
         if (cancelled) {
-            invoker.reject("{ cancelled: true }");
+            invoker.reject(Json.object().put("cancelled", true).toString());
         }
 
         super.onClose();
