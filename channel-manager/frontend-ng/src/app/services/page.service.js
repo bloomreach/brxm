@@ -32,15 +32,27 @@ class PageService {
   async load() {
     const page = this.PageStructureService.getPage();
     if (!page) {
+      this.actions = null;
+      this.states = null;
+
       return;
     }
 
     const meta = page.getMeta();
 
-    const { data: { actions, states } } = await this.HstService.doGet(`${meta.getPageId()}`, 'item', `${meta.getSiteMapItemId()}`);
+    try {
+      const { data: { actions, states } } = await this.HstService.doGet(
+        `${meta.getPageId()}`,
+        'item',
+        `${meta.getSiteMapItemId()}`,
+      );
 
-    this.actions = actions;
-    this.states = states;
+      this.actions = actions;
+      this.states = states;
+    } catch (e) {
+      this.actions = null;
+      this.states = null;
+    }
   }
 
   hasActions(category) {
