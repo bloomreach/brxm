@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -120,9 +121,7 @@ public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
         add(languageField);
 
         final XPageLayoutContainer xPageLayoutContainer = new XPageLayoutContainer("xpage-layout",
-                new PropertyModel<>(addDocumentModel,
-                        "xPageLayout"),
-                xPageLayoutListModel);
+                new PropertyModel<>(addDocumentModel, "xPageLayout"), xPageLayoutListModel);
         if (hasFolderPrototype(prototypes) || xPageLayoutListModel.getObject().isEmpty()) {
             xPageLayoutContainer.setVisible(false);
         }
