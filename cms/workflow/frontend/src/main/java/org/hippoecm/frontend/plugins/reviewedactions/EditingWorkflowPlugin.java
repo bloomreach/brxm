@@ -139,7 +139,7 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String getCssClass() {
-                return ButtonStyle.SECONDARY.getCssClass();
+                return ButtonStyle.PRIMARY.getCssClass();
             }
 
             @Override
