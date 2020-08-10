@@ -106,7 +106,7 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
                 }
             }
         } catch (final RepositoryException ex) {
-            log.error(ex.getMessage(), ex);
+            log.error("Failed to lookup handle for node with id {}", uuid, ex);
         }
 
         return null;
