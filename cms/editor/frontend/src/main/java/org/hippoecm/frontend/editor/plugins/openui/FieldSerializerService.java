@@ -16,8 +16,17 @@
 
 package org.hippoecm.frontend.editor.plugins.openui;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
@@ -28,14 +37,8 @@ import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import java.util.Set;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 class FieldSerializerService {
     private static final Set<String> SUPPORTED_PROPERTIES = ImmutableSet.of(
@@ -54,14 +57,31 @@ class FieldSerializerService {
         "OpenUiString"
     );
 
+    private static final Set<Integer> SUPPORTED_JCR_TYPES = ImmutableSet.of(
+        PropertyType.BOOLEAN,
+        PropertyType.DATE,
+        PropertyType.DECIMAL,
+        PropertyType.DOUBLE,
+        PropertyType.LONG,
+        PropertyType.STRING
+    );
+
     private static final Map<String, String> PRIMITIVE_NODES = ImmutableMap.of(
         "hippogallerypicker:imagelink", HippoNodeType.HIPPO_DOCBASE,
         HippoNodeType.NT_MIRROR, HippoNodeType.HIPPO_DOCBASE,
         HippoStdNodeType.NT_HTML, HippoStdNodeType.HIPPOSTD_CONTENT
     );
 
-    static boolean isSupportedType(ContentTypeProperty type) {
-        return SUPPORTED_PROPERTIES.contains(type.getItemType()) && !type.isDerivedItem();
+    static boolean isSupportedType(final ContentTypeProperty type) {
+        if (SUPPORTED_PROPERTIES.contains(type.getItemType()) && !type.isDerivedItem()) {
+            return true;
+        }
+
+        if (SUPPORTED_JCR_TYPES.contains(type.getEffectiveNodeTypeItem().getRequiredType())) {
+            return true;
+        }
+
+        return false;
     }
 
     static boolean isPrimitiveType(ContentType type) {

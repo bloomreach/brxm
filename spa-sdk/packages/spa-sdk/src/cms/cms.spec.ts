@@ -15,13 +15,13 @@
  */
 
 import { Typed } from 'emittery';
-import { Events } from '../events';
+import { EventBus, Events } from '../events';
 import { CmsImpl } from './cms';
 import { RpcClient, RpcServer } from './rpc';
 
 describe('CmsImpl', () => {
   let cms: CmsImpl;
-  let eventBus: Typed<Events>;
+  let eventBus: EventBus;
   let rpcClient: jest.Mocked<RpcClient<any, any>>;
   let rpcServer: jest.Mocked<RpcServer<any, any>>;
 
@@ -122,7 +122,7 @@ describe('CmsImpl', () => {
     const getDocument = jest.fn<Document | undefined, []>(() => sourceDocument);
 
     beforeEach(() => {
-      rpcServer.register.mockImplementationOnce((command, callback) => { inject = callback; });
+      ([[, inject]] = rpcServer.register.mock.calls);
       cms.initialize({ window });
       Object.defineProperty(window, 'document', { get: getDocument });
     });

@@ -38,12 +38,8 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
-import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
-import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.PreviewDecoratorImpl;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -69,7 +65,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
     private HstManager hstSitesManager;
     private HstURLFactory hstURLFactory;
     private Session requestContextSession;
-    private EventPathsInvalidator invalidator;
 
     @Override
     @Before
@@ -91,9 +86,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
 
         ModifiableRequestContextProvider.set(requestContext);
 
-
-        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
     }
 
     @After

@@ -25,11 +25,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
-import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.hippoecm.repository.util.JcrUtils;
@@ -222,9 +218,6 @@ public class XPageIT extends AbstractTestConfigurations {
     }
 
     private void invalidate(String... paths) {
-
-        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
 
         Arrays.stream(paths).forEach(s -> invalidator.eventPaths(s));
 

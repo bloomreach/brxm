@@ -22,6 +22,7 @@ interface DocumentData {
   author: string;
   content: DocumentContent;
   date: number;
+  publicationDate: number;
   image: import('@bloomreach/spa-sdk').Reference;
   introduction: string;
   title: string;
@@ -34,7 +35,7 @@ interface DocumentContent {
 }
 
 interface MenuModels {
-  menu?: import('@bloomreach/spa-sdk').Menu;
+  menu?: import('@bloomreach/spa-sdk').Reference;
 }
 
 interface PageableModels {

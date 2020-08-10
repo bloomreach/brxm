@@ -58,11 +58,15 @@ import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static org.apache.commons.lang3.ArrayUtils.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.jackrabbit.JcrConstants.JCR_FROZENPRIMARYTYPE;
+import static org.apache.jackrabbit.JcrConstants.NT_FROZENNODE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_FIELD_GROUPS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE;
@@ -296,6 +300,20 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                                             final Map<String, HstNode> referableContainers,
                                             String rootConfigurationPathPrefix,
                                             final String explicitName) {
+        this(node, parent, rootNodeName, isCatalogItem, referableContainers, rootConfigurationPathPrefix, explicitName, false);
+    }
+
+    /**
+     * if loadInIsolation = true, it means that for example a container item is loaded out of its parent context
+     */
+    public HstComponentConfigurationService(final HstNode node,
+                                            final HstComponentConfiguration parent,
+                                            final String rootNodeName,
+                                            final boolean isCatalogItem,
+                                            final Map<String, HstNode> referableContainers,
+                                            String rootConfigurationPathPrefix,
+                                            final String explicitName,
+                                            final boolean loadInIsolation) {
 
 
         this.canonicalStoredLocation = StringPool.get(node.getValueProvider().getCanonicalPath());
@@ -326,7 +344,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         this.componentClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
 
-        final String nodeTypeName = node.getNodeTypeName();
+        String nodeTypeName = node.getNodeTypeName();
+        if (NT_FROZENNODE.equals(nodeTypeName)) {
+            // loading an experience page component from version history, take the frozen nodetype
+            nodeTypeName = node.getValueProvider().getString(JCR_FROZENPRIMARYTYPE);
+        }
 
         xpage = NODETYPE_HST_XPAGE.equals(nodeTypeName);
 
@@ -359,7 +381,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 || HstNodeTypes.NODETYPE_HST_COMPONENTDEFINITION.equals(nodeTypeName)) {
             type = Type.CONTAINER_ITEM_COMPONENT;
             componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
-            if (!isCatalogItem && (parent == null || !(Type.CONTAINER_COMPONENT.equals(parent.getComponentType())))) {
+            if (!isCatalogItem && !loadInIsolation && (parent == null || !(Type.CONTAINER_COMPONENT.equals(parent.getComponentType())))) {
                 log.warn("Component of type '{}' at '{}' is not configured below a '{}' node. This is not allowed. " +
                                 "Either change the primary nodetype to '{}' or '{}' or move the node below a node of type '{}'.",
                         new String[]{NODETYPE_HST_CONTAINERITEMCOMPONENT, canonicalStoredLocation,
@@ -1007,6 +1029,36 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return copy;
     }
 
+
+    /**
+     * Populates Legacy component parameters
+     * @param websiteClassLoader Classloader of website application components belong to
+     * @param paramsCache Parameters cache per component class
+     */
+    public void populateLegacyComponentParameters(final ClassLoader websiteClassLoader, @Nonnull Map<String, List<DynamicParameter>> paramsCache) {
+        if (isEmpty(this.getComponentClassName())) {
+            return;
+        }
+
+        if (paramsCache.containsKey(this.getComponentClassName())) {
+            hstDynamicComponentParameters = paramsCache.get(this.getComponentClassName());
+        } else {
+            final ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(this, websiteClassLoader);
+            List<DynamicParameter> dynamicParameters = new ArrayList<>();
+            if (parametersInfo != null) {
+                for (final Method method : parametersInfo.type().getMethods()) {
+                    if (method.isAnnotationPresent(Parameter.class)) {
+                        final Parameter parameter = method.getAnnotation(Parameter.class);
+                        dynamicParameters.add(new DynamicComponentParameter(parameter, method));
+                    }
+                }
+            }
+
+            paramsCache.put(this.getComponentClassName(), dynamicParameters);
+            hstDynamicComponentParameters = dynamicParameters;
+        }
+    }
+
     /**
      * Adds annotation based component parameter definitions
      * @param websiteClassLoader Classloader of website application components belong to
@@ -1052,11 +1104,33 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 });
     }
 
+
+    /**
+     * Populate Field Groups from Annotation model for legacy components
+     * @param websiteClassLoader Website classloader
+     * @param fieldGroupsCache Field Groups cache per component class
+     */
+    protected void populateLegacyFieldGroups(ClassLoader websiteClassLoader, @Nonnull Map<String, List<DynamicFieldGroup>> fieldGroupsCache) {
+        if (isEmpty(this.getComponentClassName())) {
+            return;
+        }
+
+        if (fieldGroupsCache.containsKey(this.getComponentClassName())) {
+            this.fieldGroups = fieldGroupsCache.get(this.getComponentClassName());
+        } else {
+            final ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(this, websiteClassLoader);
+            final Collection<DynamicFieldGroup> annotatedFieldGroups = populateAnnotatedFieldGroups(parametersInfo, new HashMap<>());
+            final ArrayList<DynamicFieldGroup> fieldGroups = new ArrayList<>(annotatedFieldGroups);
+            fieldGroupsCache.put(this.getComponentClassName(), fieldGroups);
+            this.fieldGroups = fieldGroups;
+        }
+    }
+
     /**
      * Populate Field Groups from JCR & Annotation models
      * @param websiteClassLoader Website classloader
      */
-    protected void populateFieldGroups(ClassLoader websiteClassLoader) {
+    public void populateFieldGroups(ClassLoader websiteClassLoader) {
         if (isEmpty(this.getComponentClassName())) {
             return;
         }
