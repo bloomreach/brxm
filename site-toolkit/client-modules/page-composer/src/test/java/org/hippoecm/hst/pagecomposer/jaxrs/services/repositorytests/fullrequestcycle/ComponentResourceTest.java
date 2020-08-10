@@ -18,6 +18,9 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequest
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -30,15 +33,20 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ActionsAndStatesRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.CategoryRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Category;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.state.HstState;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.state.HstStateCategories;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
+import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -73,15 +81,16 @@ import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 public class ComponentResourceTest extends AbstractComponentResourceTest {
 
     @Test
-    public void test_actions_for_unlocked_page_component() throws RepositoryException, IOException, ServletException {
+    public void test_actions_and_states_for_unlocked_page_component() throws RepositoryException, IOException, ServletException {
 
         final String containerTestPageId = getNodeId("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage");
 
         final MockHttpServletResponse response = getActionsAndStatesRequest(containerTestPageId);
         Assertions.assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
 
-        final Map<String, Boolean> actions = flatten(getActionsAndStates(response));
+        final ActionsAndStatesRepresentation actionsAndStates = getActionsAndStates(response);
 
+        final Map<String, Boolean> actions = flattenActions(actionsAndStates.getActions());
         final Map<String, Boolean> expectedActionItems = ImmutableMap.<String, Boolean>builder()
                 .put(key(channel(), CHANNEL_CLOSE), true)
                 .put(key(channel(), CHANNEL_DELETE), false)
@@ -96,12 +105,17 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(page(), PAGE_PROPERTIES), false)
                 .build();
         Assertions.assertThat(actions)
-                .describedAs("A page component request contains all channel and page components")
+                .describedAs("A page component request contains all channel and page actions")
                 .isEqualTo(expectedActionItems);
+
+        final Map<String, Object> states = flattenStates(actionsAndStates.getStates());
+        Assertions.assertThat(states)
+                .describedAs("A page component request contains no states")
+                .isEmpty();
     }
 
     @Test
-    public void test_actions_for_locked_page_component() throws RepositoryException, IOException, ServletException {
+    public void test_actions_and_states_for_locked_page_component() throws RepositoryException, IOException, ServletException {
 
         final String containerTestPageId = getNodeId("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage");
         final Session session = createSession(ADMIN_CREDENTIALS);
@@ -112,7 +126,8 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         final MockHttpServletResponse response = getActionsAndStatesRequest(containerTestPageId);
         Assertions.assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
 
-        final Map<String, Boolean> actions = flatten(getActionsAndStates(response));
+        final ActionsAndStatesRepresentation actionsAndStates = getActionsAndStates(response);
+        final Map<String, Boolean> actions = flattenActions(actionsAndStates.getActions());
 
         final Map<String, Boolean> expectedActionItems = ImmutableMap.<String, Boolean>builder()
                 .put(key(channel(), CHANNEL_CLOSE), true)
@@ -123,12 +138,17 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(channel(), CHANNEL_SETTINGS), true)
                 .build();
         Assertions.assertThat(actions)
-                .describedAs("A page component request contains all channel and page components")
+                .describedAs("A page component request contains all channel and page actions")
                 .isEqualTo(expectedActionItems);
+
+        final Map<String, Object> states = flattenStates(actionsAndStates.getStates());
+        Assertions.assertThat(states)
+                .describedAs("A page component request contains no states")
+                .isEmpty();
     }
 
     @Test
-    public void test_actions_for_xpage_component() throws RepositoryException, IOException, ServletException, WorkflowException {
+    public void test_actions_and_states_for_published_xpage() throws RepositoryException, IOException, ServletException, WorkflowException {
 
         final String xpagePath = "/unittestcontent/documents/unittestproject/experiences/expPage1";
         final String handleId = getNodeId(xpagePath);
@@ -137,6 +157,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         final DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow("default", hippoSession.getNodeByIdentifier(handleId));
         documentWorkflow.depublish();
         documentWorkflow.publish();
+        final String name = DocumentUtils.getDisplayName(documentWorkflow.getNode()).orElse("UNDEFINED");
         final String documentXPageId = getVariant(documentWorkflow.getNode(), UNPUBLISHED).getNode("hst:xpage").getIdentifier();
         hippoSession.save();
         hippoSession.logout();
@@ -144,7 +165,8 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         final MockHttpServletResponse response = getActionsAndStatesRequest(documentXPageId);
         Assertions.assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
 
-        final Map<String, Boolean> actions = flatten(getActionsAndStates(response));
+        final ActionsAndStatesRepresentation actionsAndStates = getActionsAndStates(response);
+        final Map<String, Boolean> actions = flattenActions(actionsAndStates.getActions());
 
         final Map<String, Boolean> expectedActionItems = ImmutableMap.<String, Boolean>builder()
                 .put(key(channel(), CHANNEL_CLOSE), true)
@@ -162,8 +184,20 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(xpage(), XPAGE_UNPUBLISH), true)
                 .build();
         Assertions.assertThat(actions)
-                .describedAs("A page component request contains all channel and page components")
+                .describedAs("An xpage request contains all channel and xpage actions")
                 .isEqualTo(expectedActionItems);
+
+        final Map<String, Object> states = flattenStates(actionsAndStates.getStates());
+
+        final Map<String, ?> expectedStates = ImmutableMap.<String, String>builder()
+                .put(key(HstStateCategories.xpage(), HstState.XPAGE_BRANCH_ID), BranchConstants.MASTER_BRANCH_ID)
+                .put(key(HstStateCategories.xpage(), HstState.XPAGE_ID), handleId)
+                .put(key(HstStateCategories.xpage(), HstState.XPAGE_NAME), name)
+                .put(key(HstStateCategories.xpage(), HstState.XPAGE_STATE), "live")
+                .build();
+        Assertions.assertThat(states)
+                .describedAs("A published xpage request contains only xpage states")
+                .isEqualTo(expectedStates);
     }
 
     private MockHttpServletResponse getActionsAndStatesRequest(String containerId) throws RepositoryException, IOException, ServletException {
@@ -190,14 +224,24 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         return mapper.readValue(dataAsString, ActionsAndStatesRepresentation.class);
     }
 
-    private Map<String, Boolean> flatten(ActionsAndStatesRepresentation actionsAndStatesRepresentation) {
-        return actionsAndStatesRepresentation.getActions().entrySet().stream()
+    private Map<String, Boolean> flattenActions(Map<String, CategoryRepresentation> actions) {
+        return actions.entrySet().stream()
                 .flatMap(ec -> ec.getValue().getItems().entrySet().stream().map(ea -> Pair.of(ec.getKey() + "." + ea.getKey(), ea.getValue().isEnabled())))
+                .collect(toMap(Pair::getLeft, Pair::getRight));
+    }
+
+    private Map<String, Object> flattenStates(Map<String, Map<String, Object>> states) {
+        return states.entrySet().stream()
+                .flatMap(ec -> ec.getValue().entrySet().stream().map(ea -> Pair.of(ec.getKey() + "." + ea.getKey(), ea.getValue())))
                 .collect(toMap(Pair::getLeft, Pair::getRight));
     }
 
     private static String key(Category category, HstAction action) {
         return category.getName() + "." + action.getName();
+    }
+
+    private static String key(Category category, HstState state) {
+        return category.getName() + "." + state.getName();
     }
 
     private Node getVariant(final Node handle, final String state) throws RepositoryException {

@@ -38,9 +38,9 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.state.State;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateService;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.state.XPageState;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
@@ -94,9 +94,9 @@ public class ComponentResource extends AbstractConfigResource {
             final Map<String, Set<Action>> actionsByCategory = actionService.getActionsByCategory(actionContext);
 
             final StateContext stateContext = new StateContext(pageComposerContextService);
-            final XPageState xPageState = stateService.getXPageState(stateContext);
+            final Map<String, Set<State>> statesByCategory = stateService.getStatesByCategory(stateContext);
 
-            return ok("", ActionsAndStatesRepresentation.represent(actionsByCategory, xPageState), false);
+            return ok("", ActionsAndStatesRepresentation.represent(actionsByCategory, statesByCategory), false);
         });
     }
 }
