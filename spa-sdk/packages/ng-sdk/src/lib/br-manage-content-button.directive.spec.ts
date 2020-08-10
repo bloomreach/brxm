@@ -16,16 +16,16 @@
 
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Content, MetaCollection } from '@bloomreach/spa-sdk';
+import { Document, MetaCollection } from '@bloomreach/spa-sdk';
 import { BrManageContentButtonDirective } from './br-manage-content-button.directive';
 
 @Component({ template: '<a [brManageContentButton]="content"></a>' })
 class TestComponent {
-  @Input() content!: Content;
+  @Input() content!: Document;
 }
 
 describe('BrManageContentButtonDirective', () => {
-  let content: Content;
+  let content: Document;
   let meta: jest.Mocked<MetaCollection>;
   let fixture: ComponentFixture<TestComponent>;
 

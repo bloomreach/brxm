@@ -104,7 +104,6 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
     }
 
-    @Ignore("TODO FIX ME!!!!!")
     @Test
     public void get_container_item_of_branched_xpage_for_VERSIONED_XPage() throws Exception {
 
@@ -116,6 +115,20 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // author is also allowed to do a GET on XPageContainerItemComponentResource.getVariant()
         getComponentItemAs(AUTHOR_CREDENTIALS, mountId, frozenBannerComponent.getIdentifier());
     }
+
+
+    @Test
+    public void get_container_item_new_style_of_branched_xpage_for_VERSIONED_XPage() throws Exception {
+
+        final Node frozenBannerNewStyleComponent = getFrozenBannerNewStyleComponent();
+
+        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        getComponentItemAs(ADMIN_CREDENTIALS, mountId, frozenBannerNewStyleComponent.getIdentifier());
+        getComponentItemAs(EDITOR_CREDENTIALS, mountId, frozenBannerNewStyleComponent.getIdentifier());
+        // author is also allowed to do a GET on XPageContainerItemComponentResource.getVariant()
+        getComponentItemAs(AUTHOR_CREDENTIALS, mountId, frozenBannerNewStyleComponent.getIdentifier());
+    }
+
 
     @Test
     public void get_container_item_published_variant_not_allowed() throws Exception {
@@ -250,16 +263,21 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
     @Test
     public void create_extra_variant_while_already_one_exists() throws Exception {
-        final Set<String> set = Stream.of(new String[]{"", "variant1", "newvariant"}).collect(Collectors.toSet());
+        final Set<String> set = Stream.of(new String[]{"hippo-default", "variant1", "newvariant"}).collect(Collectors.toSet());
         createVariantExpectations("newvariant", set, false);
     }
 
     @Test
     public void create_extra_variant_while_already_one_exists_for_VERSIONED_XPage() throws Exception {
-        final Set<String> set = Stream.of(new String[]{"", "variant1", "newvariant"}).collect(Collectors.toSet());
+        final Set<String> set = Stream.of(new String[]{"hippo-default", "variant1", "newvariant"}).collect(Collectors.toSet());
         createVariantExpectations("newvariant", set, true);
     }
 
+    /**
+     * Note quite awkward but the frontend code invokes XPageContainerItemComponentResource#moveAndUpdateVariant() for
+     * creating a new variant, with a PUT method, hence the somewhat unexpected call below returning also a 200 instead
+     * of a CREATED response code
+     */
     private void createVariantExpectations(final String newVariant, final Set<String> variantsExpected,
                                            final boolean frozenXPageTest) throws Exception {
 
@@ -275,12 +293,23 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         }
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
-                "http", "localhost", "/_rp/" + componentItemId + "./" + newVariant, null, "POST");
+                "http", "localhost", "/_rp/" + componentItemId + "./hippo-new-configuration", null, "PUT");
+
+        requestResponse.getRequest().addHeader("Move-To", newVariant);
+
+
+        final MultivaluedMap<String, String> updatedParams = new MultivaluedHashMap<>();
+        updatedParams.putSingle("path", "/my/new/value");
+        updatedParams.putSingle("newparam", "newvalue");
+
+        final MockHttpServletRequest request = requestResponse.getRequest();
+        request.setContent(objectMapper.writeValueAsBytes(updatedParams));
+        request.setContentType("application/json;charset=UTF-8");
 
         // Do it as author which : author should be allowed
         final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
 
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
 
         admin.refresh(false);
@@ -293,10 +322,15 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // container should have timestamp updated
         assertTrue(container.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
 
+        ContainerItemHelper cih = HstServices.getComponentManager().getComponent("containerItemHelper", "org.hippoecm.hst.pagecomposer");
+        final HstComponentParameters parameters = new HstComponentParameters(container.getNode("banner"), cih);
 
-        final List<String> prefixes = JcrUtils.getStringListProperty(container.getNode("banner"), COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES, Collections.emptyList());
+        assertThat(parameters.getPrefixes())
+                .isEqualTo(variantsExpected);
 
-        assertEquals(variantsExpected, new HashSet(prefixes));
+        // assert parameters updated
+        assertEquals("/my/new/value", parameters.getValue("newvariant", "path"));
+        assertEquals("newvalue", parameters.getValue("newvariant", "newparam"));
 
         assertRequiresReload(response, frozenXPageTest);
     }
@@ -306,7 +340,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // first remove all of them which is done in 'retain_empty_variant_removes_all_except_default'
         retain_empty_variant_removes_all_except_default();
 
-        final Set<String> set = Stream.of(new String[]{"", "newvariant"}).collect(Collectors.toSet());
+        final Set<String> set = Stream.of(new String[]{"hippo-default", "newvariant"}).collect(Collectors.toSet());
         createVariantExpectations("newvariant", set, false);
     }
 
@@ -315,7 +349,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // first remove all of them which is done in 'retain_empty_variant_removes_all_except_default'
         retain_empty_variant_removes_all_except_default();
 
-        final Set<String> set = Stream.of(new String[]{"", "newvariant"}).collect(Collectors.toSet());
+        final Set<String> set = Stream.of(new String[]{"hippo-default", "newvariant"}).collect(Collectors.toSet());
         createVariantExpectations("newvariant", set, true);
     }
 
@@ -353,7 +387,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
     @Test
     public void delete_not_last_variant() throws Exception {
         // first create new variant
-        final Set<String> set = Stream.of(new String[]{"", "variant1", "newvariant"}).collect(Collectors.toSet());
+        final Set<String> set = Stream.of(new String[]{"hippo-default", "variant1", "newvariant"}).collect(Collectors.toSet());
         createVariantExpectations("newvariant", set, false);
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");

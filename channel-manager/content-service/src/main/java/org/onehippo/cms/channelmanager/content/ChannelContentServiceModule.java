@@ -27,9 +27,10 @@ import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
 import org.hippoecm.hst.core.internal.BranchSelectionService;
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms.channelmanager.content.document.DocumentVersionServiceImpl;
+import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.BranchSelectionServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.BranchingService;
 import org.onehippo.cms.channelmanager.content.document.util.BranchingServiceImpl;
@@ -77,11 +78,14 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
     private final WorkflowServiceImpl workflowsService;
     private Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
     private BranchSelectionService branchSelectionService;
+    private DocumentVersionServiceImpl documentVersionService;
 
     public ChannelContentServiceModule() {
         this.documentsService = new DocumentsServiceImpl();
         this.workflowsService = new WorkflowServiceImpl();
         this.contextPayloadService = request -> Optional.ofNullable(CmsSessionContext.getContext(request.getSession()).getContextPayload()).orElse(Collections.emptyMap());
+
+        this.documentVersionService = new DocumentVersionServiceImpl();
         addEventListener(new HippoNamespacesEventListener() {
             @Override
             public void onEvent(final EventIterator events) {
@@ -146,7 +150,14 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
     @Override
     protected Object getRestResource(final SessionRequestContextProvider sessionRequestContextProvider) {
-        return new ContentResource(sessionRequestContextProvider, documentsService, workflowsService, contextPayloadService, branchSelectionService);
+        return new ContentResource(
+                sessionRequestContextProvider,
+                documentsService,
+                workflowsService,
+                contextPayloadService,
+                branchSelectionService,
+                documentVersionService
+        );
     }
 
     private abstract static class HippoNamespacesEventListener extends JcrEventListener {

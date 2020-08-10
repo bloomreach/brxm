@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-import { Factory } from './factory';
-import { Link, LinkType, TYPE_LINK_RESOURCE } from './link';
+import { DOMParser, XMLSerializer } from 'xmldom';
+import { injectable, inject } from 'inversify';
+import { LinkFactory } from './link-factory';
+import { LinkType, TYPE_LINK_RESOURCE } from './link';
+
+export const DomParserService = Symbol.for('DomParserService');
+export const LinkRewriterService = Symbol.for('LinkRewriterService');
+export const XmlSerializerService = Symbol.for('XmlSerializerService');
 
 const BODY_CONTENTS = /^<body.*?>(.*)<\/body>$/;
 
@@ -28,11 +34,12 @@ export interface LinkRewriter {
   rewrite(content: string, type?: SupportedType): string;
 }
 
+@injectable()
 export class LinkRewriterImpl implements LinkRewriter {
   constructor(
-    private linkFactory: Factory<[Link | string], string>,
-    private domParser: DOMParser,
-    private xmlSerializer: XMLSerializer,
+    @inject(LinkFactory) private linkFactory: LinkFactory,
+    @inject(DomParserService) private domParser: DOMParser,
+    @inject(XmlSerializerService) private xmlSerializer: XMLSerializer,
   ) {}
 
   rewrite(content: string, type: SupportedType = 'text/html') {

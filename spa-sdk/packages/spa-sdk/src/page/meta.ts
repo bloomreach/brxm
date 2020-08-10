@@ -29,9 +29,6 @@ export const META_POSITION_END = 'end';
 export type MetaType = typeof TYPE_META_COMMENT;
 export type MetaPosition = typeof META_POSITION_BEGIN | typeof META_POSITION_END;
 
-/**
- * @hidden
- */
 export interface MetaModel {
   data: string;
   type: MetaType;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,15 +31,20 @@ import org.onehippo.repository.util.JcrConstants;
 public class MockVersion extends MockNode implements Version {
 
     private final MockVersionHistory history;
+    private Calendar created;
 
     public MockVersion(final String name, final MockVersionHistory history) throws RepositoryException {
         super(name);
         this.history = history;
+        this.created = Calendar.getInstance();
+        setProperty(JcrConstants.JCR_CREATED, created);
     }
 
     public MockVersion(final String name, final String primaryTypeName, final MockVersionHistory history) throws RepositoryException {
         super(name, primaryTypeName);
         this.history = history;
+        this.created = Calendar.getInstance();
+        setProperty(JcrConstants.JCR_CREATED, created);
     }
 
     @Override
@@ -54,7 +59,13 @@ public class MockVersion extends MockNode implements Version {
 
     @Override
     public Calendar getCreated() throws RepositoryException {
-        throw new UnsupportedOperationException();
+        return created;
+    }
+
+    // just for testing purposes be able to reset the creation time
+    public void setCreated(final Calendar created) throws RepositoryException {
+        this.created = created;
+        setProperty(JcrConstants.JCR_CREATED, created);
     }
 
     @Override

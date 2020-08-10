@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import { Typed } from 'emittery';
-import { Events, CmsUpdateEvent } from '../events';
-import { RpcClient, RpcServer, Procedures } from './rpc';
+import { inject, injectable } from 'inversify';
+import { EventBus, EventBusService, CmsUpdateEvent } from '../events';
+import { RpcClient, RpcClientService, RpcServer, RpcServerService, Procedures } from './rpc';
+
+export const CmsService = Symbol.for('CmsService');
 
 const GLOBAL_WINDOW = typeof window === 'undefined' ? undefined : window;
 
@@ -54,17 +56,19 @@ interface SpaEvents {
   ready: never;
 }
 
+@injectable()
 export class CmsImpl implements Cms {
   private window?: Window;
 
   constructor(
-    protected eventBus: Typed<Events>,
-    protected rpcClient: RpcClient<CmsProcedures, CmsEvents>,
-    protected rpcServer: RpcServer<SpaProcedures, SpaEvents>,
+    @inject(EventBusService) protected eventBus: EventBus,
+    @inject(RpcClientService) protected rpcClient: RpcClient<CmsProcedures, CmsEvents>,
+    @inject(RpcServerService) protected rpcServer: RpcServer<SpaProcedures, SpaEvents>,
   ) {
-    this.onPageReady = this.onPageReady.bind(this);
-    this.onUpdate = this.onUpdate.bind(this);
-    this.inject = this.inject.bind(this);
+    this.onStateChange = this.onStateChange.bind(this);
+    this.eventBus.on('page.ready', this.onPageReady.bind(this));
+    this.rpcClient.on('update', this.onUpdate.bind(this));
+    this.rpcServer.register('inject', this.inject.bind(this));
   }
 
   initialize({ window = GLOBAL_WINDOW }: CmsOptions) {
@@ -73,28 +77,25 @@ export class CmsImpl implements Cms {
     }
 
     this.window = window;
-    this.notifyOnReady();
-    this.eventBus.on('page.ready', this.onPageReady);
-    this.rpcClient.on('update', this.onUpdate);
-    this.rpcServer.register('inject', this.inject);
-  }
-
-  private notifyOnReady() {
-    const notify = () => this.rpcServer.trigger('ready', undefined as never);
-    const onStateChange = () => {
-      if (this.window!.document!.readyState === 'loading') {
-        return;
-      }
-
-      notify();
-      this.window!.document!.removeEventListener('readystatechange', onStateChange);
-    };
 
     if (this.window?.document?.readyState !== 'loading') {
-      return notify();
+      return this.onInitialize();
     }
 
-    this.window?.document?.addEventListener('readystatechange', onStateChange);
+    this.window?.document?.addEventListener('readystatechange', this.onStateChange);
+  }
+
+  private onInitialize() {
+    this.rpcServer.trigger('ready', undefined as never);
+  }
+
+  private onStateChange() {
+    if (this.window!.document!.readyState === 'loading') {
+      return;
+    }
+
+    this.onInitialize();
+    this.window!.document!.removeEventListener('readystatechange', this.onStateChange);
   }
 
   protected onPageReady() {

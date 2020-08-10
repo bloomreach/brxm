@@ -262,47 +262,5 @@ public class DocumentWorkflowSaveUnpublishedTest extends AbstractDocumentWorkflo
             session.save();
         }
     }
-
-    @Test
-    public void saveUnpublished_allowed_if_someone_else_is_holder_of_the_draft_but_document_transferable() throws Exception {
-        // after saveDraft, someone else should be allowed to save the unpublished since document has become transferable
-        JcrUtils.copy(session, "/hippo:configuration/hippo:users/admin", "/hippo:configuration/hippo:users/admin2");
-
-        session.save();
-
-        final Session admin2 = server.login(new SimpleCredentials("admin2", "admin".toCharArray()));
-
-        try {
-            // claim the holder for 'admin'
-            documentWorkflow.obtainEditableInstance();
-
-            // save draft by 'admin'
-            documentWorkflow.saveDraft();
-
-            final Node admin2Handle = admin2.getNode(handle.getPath());
-            final DocumentWorkflow admin2DocWorkflow = getDocumentWorkflow(admin2Handle);
-
-            assertTrue("Altough 'admin' is holder, 'admin2' can obtain editable instance since draft has been saved",
-                    (Boolean)admin2DocWorkflow.hints().get("obtainEditableInstance"));
-
-            final String uuid = UUID.randomUUID().toString();
-            // make changes to the unpublished node with 'admin2' and then make sure that 'saveUnpublished' is allowed
-            assertFalse((Boolean)admin2DocWorkflow.hints().get("saveUnpublished"));
-            admin2DocWorkflow.getWorkflowContext().getInternalWorkflowSession()
-                    .getNodeByIdentifier(getVariant(UNPUBLISHED).getIdentifier())
-                    .setProperty(HIPPO_NAME, uuid);
-
-            assertTrue("Altough 'admin' is holder of the draft, #saveUnpublished is allowed for 'admin2' since " +
-                            "draft has been saved",
-                    (Boolean)admin2DocWorkflow.hints().get("saveUnpublished"));
-
-            admin2DocWorkflow.saveUnpublished();
-
-        } finally {
-            admin2.logout();
-            session.getNode("/hippo:configuration/hippo:users/admin2").remove();
-            session.save();
-        }
-    }
-
+    
 }

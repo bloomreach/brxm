@@ -14,65 +14,59 @@
  * limitations under the License.
  */
 
-import { Factory } from './factory';
+import { inject, injectable } from 'inversify';
+import { LinkFactory } from './link-factory';
 import { Link } from './link';
+import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionModel, MetaCollection } from './meta-collection';
+import { Reference } from './reference';
+
+export const ComponentChildrenToken = Symbol.for('ComponentChildrenToken');
+export const ComponentModelToken = Symbol.for('ComponentModelToken');
 
 /**
  * Generic component type.
  */
-export const TYPE_COMPONENT = 'COMPONENT';
+export const TYPE_COMPONENT = 'component';
 
 /**
  * Container item type.
  */
-export const TYPE_COMPONENT_CONTAINER_ITEM = 'CONTAINER_ITEM_COMPONENT';
+export const TYPE_COMPONENT_CONTAINER_ITEM = 'container-item';
 
 /**
  * Container type.
  */
-export const TYPE_COMPONENT_CONTAINER = 'CONTAINER_COMPONENT';
+export const TYPE_COMPONENT_CONTAINER = 'container';
 
 export type ComponentType = typeof TYPE_COMPONENT
   | typeof TYPE_COMPONENT_CONTAINER_ITEM
   | typeof TYPE_COMPONENT_CONTAINER;
 
 /**
- * Parameters of a component.
- * @hidden
- */
-export type ComponentParameters = Partial<Record<string, string>>;
-
-/**
  * Meta-data of a component.
- * @hidden
  */
 export interface ComponentMeta extends MetaCollectionModel {
   params?: ComponentParameters;
 }
 
-/**
- * @hidden
- */
-type ComponentLinks = 'componentRendering';
+type ComponentLinks = 'self';
 
-/**
- * @hidden
- */
 type ComponentModels = Record<string, any>;
+
+type ComponentParameters = Partial<Record<string, string>>;
 
 /**
  * Model of a component.
- * @hidden
  */
 export interface ComponentModel {
-  _links: Record<ComponentLinks, Link>;
-  _meta: ComponentMeta;
+  children?: Reference[];
   id: string;
+  links: Record<ComponentLinks, Link>;
+  meta: ComponentMeta;
   models?: ComponentModels;
   name?: string;
   type: ComponentType;
-  components?: ComponentModel[];
 }
 
 /**
@@ -128,16 +122,17 @@ export interface Component {
   getComponentById<U extends Component>(id: string): U | this | undefined;
 }
 
+@injectable()
 export class ComponentImpl implements Component {
   protected meta: MetaCollection;
 
   constructor(
-    protected model: ComponentModel,
-    protected children: Component[],
-    private linkFactory: Factory<[Link], string>,
-    metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
+    @inject(ComponentModelToken) protected model: ComponentModel,
+    @inject(ComponentChildrenToken) protected children: Component[],
+    @inject(LinkFactory) private linkFactory: LinkFactory,
+    @inject(MetaCollectionFactory) metaFactory: MetaCollectionFactory,
   ) {
-    this.meta = metaFactory.create(model._meta);
+    this.meta = metaFactory(this.model.meta);
   }
 
   getId() {
@@ -154,7 +149,7 @@ export class ComponentImpl implements Component {
   }
 
   getUrl() {
-    return this.linkFactory.create(this.model._links.componentRendering);
+    return this.linkFactory.create(this.model.links.self);
   }
 
   getName() {
@@ -162,7 +157,7 @@ export class ComponentImpl implements Component {
   }
 
   getParameters() {
-    return this.model._meta.params || {};
+    return this.model.meta.params || {};
   }
 
   getChildren() {

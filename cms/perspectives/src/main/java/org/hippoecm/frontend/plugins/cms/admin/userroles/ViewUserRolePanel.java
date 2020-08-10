@@ -57,6 +57,7 @@ import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.Panel
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.EventBusUtils;
 import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.cms7.event.HippoEventConstants;
 import org.onehippo.repository.security.SecurityConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +66,8 @@ import com.bloomreach.xm.repository.security.AuthRole;
 import com.bloomreach.xm.repository.security.DomainAuth;
 import com.bloomreach.xm.repository.security.UserRole;
 import com.bloomreach.xm.repository.security.UserRoleBean;
+
+import static org.onehippo.cms7.event.HippoEventConstants.CATEGORY_USERROLE_MANAGEMENT;
 
 /**
  * Panel showing information regarding the userrole.
@@ -167,7 +170,8 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
         if (userRole != null) {
             try {
                 SecurityManagerHelper.getUserRolesManager().deleteUserRole(userRole.getName());
-                EventBusUtils.post("delete-userrole", "userrole-management", "deleted userrole " + userRole.getName());
+                EventBusUtils.post("delete-userrole", CATEGORY_USERROLE_MANAGEMENT,
+                        String.format("deleted userrole '%s'",userRole.getName()));
                 activateParentAndDisplayInfo(getString("userrole-deleted", userRoleModel));
             } catch (AccessDeniedException e) {
                 error(getString("userrole-delete-denied", userRoleModel));
@@ -195,6 +199,8 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
                 userRoleBean.getRoles().remove(userRoleToRemove);
                 userRoleModel.setObject(SecurityManagerHelper.getUserRolesManager().updateUserRole(userRoleBean));
                 info(getString("userrole-removed", nameModel));
+                EventBusUtils.post("remove-userrole", CATEGORY_USERROLE_MANAGEMENT,
+                        String.format("removed userrole '%s' from userrole '%s'", userRoleToRemove, userRole.getName()));
             }
             addUserRolePanel.updateUserRoleChoice();
             userRolesListView.updateUserRoles();
@@ -232,6 +238,8 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
                             userRoleBean.getRoles().add(selectedUserRole);
                             userRoleModel.setObject(SecurityManagerHelper.getUserRolesManager().updateUserRole(userRoleBean));
                             info(getString("userrole-added", nameModel));
+                            EventBusUtils.post("add-userrole", CATEGORY_USERROLE_MANAGEMENT,
+                                    String.format("added userrole '%s' to userrole '%s'", selectedUserRole, userRole.getName()));
                         }
                         userRolesListView.updateUserRoles();
                         addUserRolePanel.updateUserRoleChoice();

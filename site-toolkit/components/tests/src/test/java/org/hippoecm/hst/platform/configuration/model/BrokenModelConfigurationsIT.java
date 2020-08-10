@@ -18,11 +18,7 @@ package org.hippoecm.hst.platform.configuration.model;
 
 import javax.jcr.Session;
 
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.api.model.InternalHstModel;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +27,6 @@ import org.junit.Before;
 public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
-    private EventPathsInvalidator invalidator;
     private Session session;
 
     @Override
@@ -41,8 +36,6 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         session = createSession();
         createHstConfigBackup(session);
         hstManager = getComponent(HstManager.class.getName());
-        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
     }
 
     @Override
