@@ -20,9 +20,8 @@ import 'angular-mocks';
 describe('XPageMenuService', () => {
   let $q;
   let $rootScope;
-  let $translate;
-  let DialogService;
   let DocumentWorkflowService;
+  let FeedbackService;
   let PageService;
   let XPageMenuService;
 
@@ -43,17 +42,15 @@ describe('XPageMenuService', () => {
     inject((
       _$q_,
       _$rootScope_,
-      _$translate_,
-      _DialogService_,
       _DocumentWorkflowService_,
+      _FeedbackService_,
       _PageService_,
       _XPageMenuService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
-      $translate = _$translate_;
-      DialogService = _DialogService_;
       DocumentWorkflowService = _DocumentWorkflowService_;
+      FeedbackService = _FeedbackService_;
       PageService = _PageService_;
       XPageMenuService = _XPageMenuService_;
     });
@@ -69,8 +66,8 @@ describe('XPageMenuService', () => {
 
     spyOn(PageService, 'load');
 
-    spyOn(DialogService, 'alert').and.callThrough();
-    spyOn(DialogService, 'show');
+    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showNotification');
   });
 
   function getAction(name) {
@@ -93,8 +90,6 @@ describe('XPageMenuService', () => {
   }
 
   beforeEach(() => {
-    spyOn($translate, 'instant');
-
     PageService.actions = null;
     PageService.states = {
       xpage: { id: 'xpage-document-id' },
@@ -140,6 +135,8 @@ describe('XPageMenuService', () => {
   });
 
   function expectWorkflowSuccess(actionId, spy) {
+    const result = `Workflow[${actionId}] resolved`;
+    spy.and.returnValue($q.resolve(result));
     const action = addAction(actionId);
 
     action.onClick();
@@ -147,10 +144,15 @@ describe('XPageMenuService', () => {
 
     expect(spy).toHaveBeenCalledWith('xpage-document-id');
     expect(PageService.load).toHaveBeenCalled();
+    expect(FeedbackService.showNotification).toHaveBeenCalledWith(
+      `${action.translationKey}_SUCCESS`,
+      { msg: result },
+    );
   }
 
   function expectWorkflowFailed(actionId, spy) {
-    spy.and.returnValue($q.reject('workflow failed'));
+    const result = `Workflow[${actionId}] rejected`;
+    spy.and.returnValue($q.reject(result));
     const action = addAction(actionId);
 
     action.onClick();
@@ -158,8 +160,10 @@ describe('XPageMenuService', () => {
 
     expect(spy).toHaveBeenCalledWith('xpage-document-id');
     expect(PageService.load).toHaveBeenCalled();
-    expect(DialogService.alert).toHaveBeenCalled();
-    expect(DialogService.show).toHaveBeenCalled();
+    expect(FeedbackService.showError).toHaveBeenCalledWith(
+      `${action.translationKey}_ERROR`,
+      { msg: result },
+    );
   }
 
   function expectWorkflow(actionId, spy) {
