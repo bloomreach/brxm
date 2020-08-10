@@ -328,6 +328,13 @@
     <property name="actionProviders" ref="actionProviders" />
   </bean>
 
+  <bean id="stateProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.state.HstStateProviderImpl" />
+      </list>
+    </property>
+  </bean>
   <bean id="org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateServiceImpl">
     <constructor-arg>
       <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateProviderContextFactory">
@@ -336,6 +343,7 @@
         </constructor-arg>
       </bean>
     </constructor-arg>
+    <property name="stateProviders" ref="stateProviders" />
   </bean>
 
   <!-- Pipelining -->

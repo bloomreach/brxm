@@ -15,34 +15,40 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.state;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import javax.jcr.RepositoryException;
+
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toSet;
 
 public class StateServiceImpl implements StateService {
 
     private final StateProviderContextFactory contextFactory;
+    private List<StateProvider> stateProviders;
 
     public StateServiceImpl(final StateProviderContextFactory contextFactory) {
         this.contextFactory = contextFactory;
     }
 
+    public void setStateProviders(final List<StateProvider> stateProviders) {
+        this.stateProviders = stateProviders;
+    }
+
     @Override
-    public XPageState getXPageState(final StateContext stateContext) throws RepositoryException {
+    public Map<String, Set<State>> getStatesByCategory(StateContext stateContext) throws RepositoryException {
         final StateProviderContext context = contextFactory.make(stateContext);
-
         if (!context.isExperiencePageRequest()) {
-            return null;
+            return emptyMap();
         }
-
-        final XPageStateContext xPageStateContext = context.getXPageStateContext();
-
-        final XPageState xPageState = new XPageState();
-        xPageState.setBranchId(xPageStateContext.getBranchId());
-        xPageState.setId(xPageStateContext.getXPageId());
-        xPageState.setName(xPageStateContext.getXPageName());
-        xPageState.setState(xPageStateContext.getXPageState());
-        xPageState.setWorkflowRequest(xPageStateContext.getWorkflowRequest());
-        xPageState.setScheduledRequest(xPageStateContext.getScheduledRequest());
-
-        return xPageState;
+        return stateProviders.stream()
+                .map(stateProvider -> Optional.ofNullable(stateProvider.getStates(context)).orElse(emptySet()))
+                .flatMap(Set::stream)
+                .collect(groupingBy(State::getCategory, toSet()));
     }
 }
