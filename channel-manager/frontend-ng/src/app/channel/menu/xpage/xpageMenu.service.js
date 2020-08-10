@@ -19,9 +19,8 @@ import MenuService from '../menu.service';
 class XPageMenuService extends MenuService {
   constructor(
     $state,
-    $translate,
-    DialogService,
     DocumentWorkflowService,
+    FeedbackService,
     PageService,
     PageStructureService,
   ) {
@@ -31,14 +30,6 @@ class XPageMenuService extends MenuService {
 
     this.$state = $state;
     this.PageStructureService = PageStructureService;
-
-    function alert(msg) {
-      const dialog = DialogService.alert()
-        .textContent(msg)
-        .ok($translate.instant('OK'));
-
-      return DialogService.show(dialog);
-    }
 
     function isEnabled(action) {
       return PageService.isActionEnabled('xpage', action);
@@ -57,17 +48,19 @@ class XPageMenuService extends MenuService {
       translationKey: 'TOOLBAR_BUTTON_XPAGE',
     });
 
-    function addAction(id, onClick, config = {}) {
+    function invokeWorkflow(onClick, translationKey) {
+      return () => onClick(getDocumentId())
+        .then(msg => FeedbackService.showNotification(`${translationKey}_SUCCESS`, { msg }))
+        .catch(msg => FeedbackService.showError(`${translationKey}_ERROR`, { msg }))
+        .finally(() => PageService.load());
+    }
+
+    function addWorkflowAction(id, onClick, config = {}) {
       const translationKey = `TOOLBAR_MENU_XPAGE_${id.replace(/-/g, '_').toUpperCase()}`;
       menu.addAction(id, {
         isEnabled: () => isEnabled(id),
         isVisible: () => isVisible(id),
-        onClick: () => onClick(getDocumentId())
-          .then(() => PageService.load())
-          .catch((msg) => {
-            PageService.load();
-            alert(msg);
-          }),
+        onClick: invokeWorkflow(onClick, translationKey),
         translationKey,
         ...config,
       });
@@ -79,15 +72,15 @@ class XPageMenuService extends MenuService {
     });
     menu.addDivider();
 
-    addAction('unpublish', id => DocumentWorkflowService.unpublish(id), { iconSvg: 'unpublish-document' });
-    addAction('schedule-unpublish', id => DocumentWorkflowService.scheduleUnpublication(id));
-    addAction('request-unpublish', id => DocumentWorkflowService.requestUnpublication(id));
-    addAction('request-schedule-unpublish', id => DocumentWorkflowService.requestScheduleUnpublication(id));
+    addWorkflowAction('unpublish', id => DocumentWorkflowService.unpublish(id), { iconSvg: 'unpublish-document' });
+    addWorkflowAction('schedule-unpublish', id => DocumentWorkflowService.scheduleUnpublication(id));
+    addWorkflowAction('request-unpublish', id => DocumentWorkflowService.requestUnpublication(id));
+    addWorkflowAction('request-schedule-unpublish', id => DocumentWorkflowService.requestScheduleUnpublication(id));
 
-    addAction('publish', id => DocumentWorkflowService.publish(id), { iconSvg: 'publish-document' });
-    addAction('schedule-publish', id => DocumentWorkflowService.schedulePublication(id));
-    addAction('request-publish', id => DocumentWorkflowService.requestPublication(id));
-    addAction('request-schedule-publish', id => DocumentWorkflowService.requestSchedulePublication(id));
+    addWorkflowAction('publish', id => DocumentWorkflowService.publish(id), { iconSvg: 'publish-document' });
+    addWorkflowAction('schedule-publish', id => DocumentWorkflowService.schedulePublication(id));
+    addWorkflowAction('request-publish', id => DocumentWorkflowService.requestPublication(id));
+    addWorkflowAction('request-schedule-publish', id => DocumentWorkflowService.requestSchedulePublication(id));
   }
 
   _showVersions() {
