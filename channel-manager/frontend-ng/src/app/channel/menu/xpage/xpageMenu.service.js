@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,10 @@ import MenuService from '../menu.service';
 
 class XPageMenuService extends MenuService {
   constructor(
-    $translate,
     $state,
+    $translate,
     DialogService,
+    DocumentWorkflowService,
     PageService,
     PageStructureService,
   ) {
@@ -28,10 +29,16 @@ class XPageMenuService extends MenuService {
 
     super();
 
-    this.$translate = $translate;
     this.$state = $state;
-    this.DialogService = DialogService;
     this.PageStructureService = PageStructureService;
+
+    function alert(msg) {
+      const dialog = DialogService.alert()
+        .textContent(msg)
+        .ok($translate.instant('OK'));
+
+      return DialogService.show(dialog);
+    }
 
     function isEnabled(action) {
       return PageService.isActionEnabled('xpage', action);
@@ -41,43 +48,45 @@ class XPageMenuService extends MenuService {
       return PageService.hasAction('xpage', action);
     }
 
+    function getDocumentId() {
+      return PageService.getState('xpage').id;
+    }
+
     const menu = this.defineMenu('xpage', {
       isVisible: () => PageService.hasActions('xpage'),
       translationKey: 'TOOLBAR_BUTTON_XPAGE',
     });
 
-    menu
-      .addAction('versions', {
-        onClick: () => this._showVersions(),
-        translationKey: 'TOOLBAR_MENU_XPAGE_VERSIONS',
-      })
-      .addAction('new', {
-        isEnabled: () => isEnabled('new'),
-        isVisible: () => isVisible('new'),
-        onClick: () => this._showDialog('new'),
-        translationKey: 'TOOLBAR_MENU_XPAGE_NEW',
-      })
-      .addAction('move', {
-        isEnabled: () => isEnabled('move'),
-        isVisible: () => isVisible('move'),
-        onClick: () => this._showDialog('move'),
-        translationKey: 'TOOLBAR_MENU_XPAGE_MOVE',
-      })
-      .addAction('delete', {
-        isEnabled: () => isEnabled('delete'),
-        isVisible: () => isVisible('delete'),
-        onClick: () => this._showDialog('delete'),
-        translationKey: 'TOOLBAR_MENU_XPAGE_DELETE',
+    function addAction(id, onClick, config = {}) {
+      const translationKey = `TOOLBAR_MENU_XPAGE_${id.replace(/-/g, '_').toUpperCase()}`;
+      menu.addAction(id, {
+        isEnabled: () => isEnabled(id),
+        isVisible: () => isVisible(id),
+        onClick: () => onClick(getDocumentId())
+          .then(() => PageService.load())
+          .catch((msg) => {
+            PageService.load();
+            alert(msg);
+          }),
+        translationKey,
+        ...config,
       });
-  }
+    }
 
-  _showDialog(msg) {
-    const confirm = this.DialogService.confirm()
-      .textContent(msg)
-      .ok(this.$translate.instant('OK'))
-      .cancel(this.$translate.instant('CANCEL'));
+    menu.addAction('versions', {
+      onClick: () => this._showVersions(),
+      translationKey: 'TOOLBAR_MENU_XPAGE_VERSIONS',
+    });
 
-    return this.DialogService.show(confirm);
+    addAction('unpublish', id => DocumentWorkflowService.unpublish(id), { iconSvg: 'unpublish-document' });
+    addAction('schedule-unpublish', id => DocumentWorkflowService.scheduleUnpublication(id));
+    addAction('request-unpublish', id => DocumentWorkflowService.requestUnpublication(id));
+    addAction('request-schedule-unpublish', id => DocumentWorkflowService.requestScheduleUnpublication(id));
+
+    addAction('publish', id => DocumentWorkflowService.publish(id), { iconSvg: 'publish-document' });
+    addAction('schedule-publish', id => DocumentWorkflowService.schedulePublication(id));
+    addAction('request-publish', id => DocumentWorkflowService.requestPublication(id));
+    addAction('request-schedule-publish', id => DocumentWorkflowService.requestSchedulePublication(id));
   }
 
   _showVersions() {
