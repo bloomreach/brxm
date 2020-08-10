@@ -77,6 +77,7 @@ class XPageMenuService extends MenuService {
       onClick: () => this._showVersions(),
       translationKey: 'TOOLBAR_MENU_XPAGE_VERSIONS',
     });
+    menu.addDivider();
 
     addAction('unpublish', id => DocumentWorkflowService.unpublish(id), { iconSvg: 'unpublish-document' });
     addAction('schedule-unpublish', id => DocumentWorkflowService.scheduleUnpublication(id));
