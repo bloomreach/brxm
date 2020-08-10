@@ -147,6 +147,17 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
     }
 
     @NotNull
+    protected Node getFrozenBannerNewStyleComponent() throws Exception {
+        final Node masterVersion = versionMasterByBranching();
+
+        final Node frozenBannerNewStyleComponent = masterVersion.getNode("hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner-new-style");
+
+        assertTrue(frozenBannerNewStyleComponent.isNodeType(NT_FROZENNODE));
+        return frozenBannerNewStyleComponent;
+    }
+
+
+    @NotNull
     protected Node doVersionAndgetFrozenContainer() throws Exception {
         final Node masterVersion = versionMasterByBranching();
 

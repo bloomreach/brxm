@@ -223,6 +223,7 @@
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
                 <exclude>coverage/**</exclude>
                 <exclude>dist/**</exclude>
+                <exclude>node/**</exclude>
               </excludes>
             </configuration>
           </plugin>

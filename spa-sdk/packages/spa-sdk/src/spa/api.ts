@@ -14,14 +14,31 @@
  * limitations under the License.
  */
 
+import { inject, injectable } from 'inversify';
 import { PageModel, Visitor } from '../page';
-import { UrlBuilder } from '../url';
-import { HttpClientConfig, HttpClient, HttpRequest } from './http';
+import { UrlBuilderService, UrlBuilder } from '../url';
+import { HttpClientConfig, HttpClient, HttpHeaders, HttpRequest } from './http';
 
+const DEFAULT_API_VERSION_HEADER = 'Accept-Version';
 const DEFAULT_AUTHORIZATION_HEADER = 'Authorization';
 const DEFAULT_SERVER_ID_HEADER = 'Server-Id';
 
+export const ApiOptionsToken = Symbol.for('ApiOptionsToken');
+export const ApiService = Symbol.for('ApiService');
+
 export interface ApiOptions {
+  /**
+   * API version header.
+   * By default, `Accept-Version` will be used.
+   */
+  apiVersionHeader?: string;
+
+  /**
+   * Current API version.
+   * By default, the compatible with the current setup version will be chosen.
+   */
+  apiVersion?: string;
+
   /**
    * Authorization header.
    * By default, `Authorization` will be used.
@@ -72,15 +89,49 @@ export interface Api {
   getPage(path: string): Promise<PageModel>;
 
   /**
-   * @param path Source path to generate the Page Model API URL.
+   * @param url Component Model API URL.
    * @param payload Payload with the component properties.
    * @return The Page Model.
    */
-  getComponent(path: string, payload: object): Promise<PageModel>;
+  getComponent(url: string, payload: object): Promise<PageModel>;
 }
 
+@injectable()
 export class ApiImpl implements Api {
-  constructor(private urlBuilder: UrlBuilder, private options: ApiOptions) {}
+  private static getHeaders(options: ApiOptions) {
+    const { remoteAddress: ip } = options.request.connection || {};
+    const { host, ...headers } = options.request.headers || {};
+    const {
+      apiVersionHeader = DEFAULT_API_VERSION_HEADER,
+      apiVersion,
+      authorizationHeader = DEFAULT_AUTHORIZATION_HEADER,
+      authorizationToken,
+      serverIdHeader = DEFAULT_SERVER_ID_HEADER,
+      serverId,
+      visitor,
+    } = options;
+
+    return {
+      ...ip && { 'x-forwarded-for': ip },
+      ...apiVersion && { [apiVersionHeader]: apiVersion },
+      ...authorizationToken && { [authorizationHeader]: `Bearer ${authorizationToken}` },
+      ...serverId && { [serverIdHeader]: serverId },
+      ...visitor && { [visitor.header]: visitor.id },
+      ...headers,
+    };
+  }
+
+  private headers: HttpHeaders;
+
+  private httpClient: HttpClient<PageModel>;
+
+  constructor(
+    @inject(UrlBuilderService) private urlBuilder: UrlBuilder,
+    @inject(ApiOptionsToken) options: ApiOptions,
+  ) {
+    this.headers = ApiImpl.getHeaders(options);
+    this.httpClient = options.httpClient;
+  }
 
   getPage(path: string) {
     const url = this.urlBuilder.getApiUrl(path);
@@ -88,8 +139,7 @@ export class ApiImpl implements Api {
     return this.send({ url, method: 'GET' });
   }
 
-  getComponent(path: string, payload: object) {
-    const url = this.urlBuilder.getApiUrl(path);
+  getComponent(url: string, payload: object) {
     const data = new URLSearchParams(payload as Record<string, string>);
 
     return this.send({
@@ -103,24 +153,10 @@ export class ApiImpl implements Api {
   }
 
   private async send(config: HttpClientConfig) {
-    const { remoteAddress: ip } = this.options.request.connection || {};
-    const { host, ...headers } = this.options.request.headers || {};
-    const {
-      authorizationHeader = DEFAULT_AUTHORIZATION_HEADER,
-      authorizationToken,
-      serverIdHeader = DEFAULT_SERVER_ID_HEADER,
-      serverId,
-      visitor,
-    } = this.options;
-
-    const response = await this.options.httpClient({...config, headers: {
-      ...ip && { 'x-forwarded-for': ip },
-      ...authorizationToken && { [authorizationHeader]: `Bearer ${authorizationToken}` },
-      ...serverId && { [serverIdHeader]: serverId },
-      ...visitor && { [visitor.header]: visitor.id },
-      ...headers,
-      ...config.headers,
-    }});
+    const response = await this.httpClient({
+      ...config,
+      headers: { ...this.headers, ...config.headers },
+    });
 
     return response.data;
   }

@@ -15,6 +15,9 @@
  */
 package org.onehippo.cms7.services.eventbus;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.Test;
 
 import static junit.framework.Assert.assertTrue;
@@ -23,14 +26,20 @@ import static org.junit.Assert.assertFalse;
 public class GuavaHippoEventBusTest {
 
     public class Listener {
-        boolean fired = false;
+
+        volatile boolean fired = false;
+
+        CountDownLatch latch = new CountDownLatch(1);
 
         @Subscribe
         public void eventFired(Object payload) {
             fired = true;
-            synchronized (GuavaHippoEventBusTest.this) {
-                GuavaHippoEventBusTest.this.notify();
-            }
+            latch.countDown();
+        }
+
+        public void reset() {
+            fired = false;
+            latch = new CountDownLatch(1);
         }
     }
 
@@ -38,19 +47,20 @@ public class GuavaHippoEventBusTest {
     public void testEventBusWithWhiteboardServiceTracker() throws InterruptedException {
         HippoEventBus eventBus = new GuavaHippoEventBus();
         Listener listener = new Listener();
+
         HippoEventListenerRegistry.get().register(listener);
         eventBus.post(new Object());
-        synchronized (this) {
-            wait(500);
-        }
+
+        listener.latch.await(10, TimeUnit.MILLISECONDS);
+
         assertTrue(listener.fired);
 
-        listener.fired = false;
+        listener.reset();
+
         HippoEventListenerRegistry.get().unregister(listener);
         eventBus.post(new Object());
-        synchronized (this) {
-            wait(500);
-        }
+
+        listener.latch.await(10, TimeUnit.MILLISECONDS);
         assertFalse(listener.fired);
     }
 
@@ -63,31 +73,33 @@ public class GuavaHippoEventBusTest {
         HippoEventListenerRegistry.get().register(listener);
         HippoEventListenerRegistry.get().register(listener2);
         eventBus.post(new Object());
-        synchronized (this) {
-            wait(500);
-        }
+
+        assertTrue(listener.latch.await(10, TimeUnit.MILLISECONDS));
+        assertTrue(listener2.latch.await(10, TimeUnit.MILLISECONDS));
 
         // verify both work
         assertTrue(listener.fired);
         assertTrue(listener2.fired);
 
         //reset
-        listener.fired = false;
-        listener2.fired = false;
+        listener.reset();
+        listener2.reset();
 
         // unregister one
         HippoEventListenerRegistry.get().unregister(listener);
         eventBus.post(new Object());
-        synchronized (this) {
-            wait(500);
-        }
+
+        assertFalse(listener.latch.await(10, TimeUnit.MILLISECONDS));
+        assertTrue(listener2.latch.await(10, TimeUnit.MILLISECONDS));
+
         // verify the unregistered one didn't fire, but the other did
         assertFalse(listener.fired);
         assertTrue(listener2.fired);
 
         //reset
-        listener2.fired = false;
+        listener2.reset();
         HippoEventListenerRegistry.get().unregister(listener2);
+
     }
 
 }

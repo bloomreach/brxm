@@ -11,5 +11,6 @@ definitions:
           /testcatalogiteminstance:
             jcr:primaryType: hst:containeritemcomponent
             hst:componentdefinition: hst:components/default-catalog/testcatalogitem
-            hst:parameternames: [document, param1, param2, paramWithDefaultValue, integerParam, decimalParam, booleanParam, dateParam, dropdownParam]
-            hst:parametervalues: [News/News1, value 1 in container item, value 2 in container item, "", "15", "20.5", "true", "2020-03-19T11:09:27", value1]
+            hst:parameternameprefixes: ['', '', '', '', '', '', '', '', '', '', '', targeting]
+            hst:parameternames: [document, param1, param2, paramWithDefaultValue, integerParam, decimalParam, booleanParam, dateParam, dropdownParam, truly-residual, com.onehippo.cms7.targeting.TargetingParameterUtil.hide, targeting]
+            hst:parametervalues: [News/News1, value 1 in container item, value 2 in container item, "", "15", "20.5", "true", "2020-03-19T11:09:27", value1, residual-value, 'on', targeting-value]

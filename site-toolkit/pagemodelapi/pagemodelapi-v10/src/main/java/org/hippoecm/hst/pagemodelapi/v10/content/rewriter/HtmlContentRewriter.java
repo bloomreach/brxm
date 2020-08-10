@@ -85,6 +85,9 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
                             anchorTag.getParent().insertChildAfter(anchorTag, textContent);
                             anchorTag.getParent().removeChild(anchorTag);
                         } else {
+                            // remove the 'href' and include data-type='unknown'
+                            anchorTag.removeAttribute("href");
+                            anchorTag.addAttribute("data-type", LinkModel.LinkType.UNKNOWN.getType());
                             log.info("Could not create a link for '{}'.", documentPath);
                         }
                         continue;

@@ -25,14 +25,13 @@ import javax.jcr.ValueFormatException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.request.resource.CssResourceReference;
+import org.hippoecm.frontend.ajax.BrLink;
+import org.hippoecm.frontend.ajax.NoDoubleClickAjaxLink;
 import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogLink;
@@ -103,7 +102,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     private void addOpenLink() {
-        final AjaxLink<Void> openLink = new AjaxLink<Void>("openLink") {
+        final AjaxLink<Void> openLink = new NoDoubleClickAjaxLink<Void>("openLink") {
             @Override
             public boolean isVisible() {
                 return hasLink();
@@ -121,7 +120,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     private void addOpenButton() {
-        final AjaxLink<Void> openButton = new AjaxLink<Void>("open") {
+        final AjaxLink<Void> openButton = new BrLink<Void>("open") {
             @Override
             public boolean isVisible() {
                 return hasLink();
@@ -137,7 +136,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     private void addSelectButton() {
-        fragment.add(new AjaxLink<Void>("select") {
+        fragment.add(new BrLink<Void>("select") {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 final Dialog<String> linkPickerDialog = createLinkPickerDialog();
@@ -147,7 +146,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     private void addClearButton() {
-        final AjaxLink<Void> clearButton = new AjaxLink<Void>("clear") {
+        final AjaxLink<Void> clearButton = new BrLink<Void>("clear") {
             @Override
             public boolean isVisible() {
                 return hasLink();
