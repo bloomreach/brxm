@@ -20,23 +20,29 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Action;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.state.XPageState;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.state.State;
 
 import static java.util.stream.Collectors.toMap;
 
 public final class ActionsAndStatesRepresentation {
 
     private Map<String, CategoryRepresentation> actions;
-    private StatesRepresentation states;
+    private Map<String, Map<String, Object>> states;
 
-    public static ActionsAndStatesRepresentation represent(final Map<String, Set<Action>> actionsByCategory,
-                                                           final XPageState xPageState) {
+    public static ActionsAndStatesRepresentation represent(
+            final Map<String, Set<Action>> actionsByCategory,
+            final Map<String, Set<State>> statesByCategory
+    ) {
         final ActionsAndStatesRepresentation representation = new ActionsAndStatesRepresentation();
         representation.setActions(actionsByCategory.entrySet().stream()
                 .collect(toMap(
                         Map.Entry::getKey,
                         e -> CategoryRepresentation.represent(e.getValue()))));
-        representation.setStates(StatesRepresentation.represent(xPageState));
+        representation.setStates(statesByCategory.entrySet().stream()
+                .collect(toMap(
+                        Map.Entry::getKey,
+                        e -> e.getValue().stream().collect(toMap(State::getName, State::getValue))
+                )));
         return representation;
     }
 
@@ -48,11 +54,11 @@ public final class ActionsAndStatesRepresentation {
         this.actions = actions;
     }
 
-    public StatesRepresentation getStates() {
+    public Map<String, Map<String, Object>> getStates() {
         return states;
     }
 
-    public void setStates(final StatesRepresentation states) {
+    public void setStates(final Map<String, Map<String, Object>> states) {
         this.states = states;
     }
 }

@@ -15,8 +15,11 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.state;
 
+import java.util.Map;
+import java.util.Set;
+
 import javax.jcr.RepositoryException;
 
 public interface StateService {
-    XPageState getXPageState(StateContext stateContext) throws RepositoryException;
+    Map<String, Set<State>> getStatesByCategory(StateContext context) throws RepositoryException;
 }
