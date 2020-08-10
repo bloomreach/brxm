@@ -287,14 +287,20 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
             final Session jcrSession = requestContext.getSession();
 
             final boolean isChannelAdmin;
+            final boolean isWebmaster;
 
             final String liveConfigPath = getPageComposerContextService().getEditingLiveConfigurationPath();
             if (getPageComposerContextService().hasPreviewConfiguration()) {
+
+                isWebmaster = isInRole(jcrSession, liveConfigPath, CHANNEL_WEBMASTER_PRIVILEGE_NAME) &&
+                        isInRole(jcrSession, getPreviewConfigurationPath(), CHANNEL_WEBMASTER_PRIVILEGE_NAME);
 
                 isChannelAdmin = isInRole(jcrSession, liveConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME) &&
                         isInRole(jcrSession, getPreviewConfigurationPath(), CHANNEL_ADMIN_PRIVILEGE_NAME);
 
             } else {
+                isWebmaster = isInRole(jcrSession, liveConfigPath, CHANNEL_WEBMASTER_PRIVILEGE_NAME);
+
                 isChannelAdmin = isInRole(jcrSession, liveConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME);
             }
 
@@ -302,6 +308,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
             final boolean canManageChanges = isChannelAdmin && !isConfigurationLocked;
 
             HandshakeResponse response = new HandshakeResponse();
+            response.setCanWriteHstConfig(isWebmaster);
             response.setCanManageChanges(canManageChanges);
             response.setCanDeleteChannel(canDeleteChannel);
             response.setCrossChannelPageCopySupported(isCrossChannelPageCopySupported);
@@ -374,18 +381,18 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
 
     private static class HandshakeResponse {
 
-        private boolean canWrite;
+        private boolean canWriteHstConfig;
         private boolean canManageChanges;
         private boolean canDeleteChannel;
         private boolean isCrossChannelPageCopySupported;
         private String sessionId;
 
-        public boolean isCanWrite() {
-            return canWrite;
+        public boolean isCanWriteHstConfig() {
+            return canWriteHstConfig;
         }
 
-        public void setCanWrite(final boolean canWrite) {
-            this.canWrite = canWrite;
+        public void setCanWriteHstConfig(final boolean canWriteHstConfig) {
+            this.canWriteHstConfig = canWriteHstConfig;
         }
 
         public boolean isCanManageChanges() {
