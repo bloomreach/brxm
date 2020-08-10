@@ -63,6 +63,7 @@ const webpackConfig = merge.strategy({ plugins: 'replace' })(config, {
 
   output: {
     publicPath: '',
+    jsonpFunction: 'hippoCmAngularJSwebpackJsonp',
   },
 
   optimization: {
