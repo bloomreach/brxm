@@ -17,7 +17,6 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,32 +32,28 @@ import javax.ws.rs.core.MediaType;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ActionsAndStatesRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Action;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.Action;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.state.State;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.State;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfo;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoService;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toSet;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
 
 @Path("/hst:component/")
 public class ComponentResource extends AbstractConfigResource {
 
-    private ActionService actionService;
-    private StateService stateService;
+    private ComponentInfoService componentInfoService;
 
-    public void setActionService(final ActionService actionService) {
-        this.actionService = actionService;
-    }
-
-    public void setStateService(final StateService stateService) {
-        this.stateService = stateService;
+    public void setComponentInfoService(final ComponentInfoService componentInfoService) {
+        this.componentInfoService = componentInfoService;
     }
 
     @GET
@@ -83,19 +78,17 @@ public class ComponentResource extends AbstractConfigResource {
             if (cmsSessionContext == null) {
                 throw new IllegalStateException("CmsSessionContext should never be null here");
             }
-            final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
-            final PageComposerContextService pageComposerContextService = getPageComposerContextService();
-            final ActionContext actionContext = new ActionContext(
-                    pageComposerContextService,
+            final ComponentInfoContext context = new ComponentInfoContext(
+                    getPageComposerContextService(),
+                    cmsSessionContext,
                     siteMapItemUuid,
-                    contextPayload,
                     hostGroup
             );
-            final Map<String, Set<Action>> actionsByCategory = actionService.getActionsByCategory(actionContext);
-
-            final StateContext stateContext = new StateContext(pageComposerContextService);
-            final Map<String, Set<State>> statesByCategory = stateService.getStatesByCategory(stateContext);
-
+            final ComponentInfo componentInfo = componentInfoService.getComponentInfo(context);
+            final Map<String, Set<Action>> actionsByCategory = componentInfo.getActions().stream()
+                    .collect(groupingBy(Action::getCategory, toSet()));
+            final Map<String, Set<State>> statesByCategory = componentInfo.getStates().stream()
+                    .collect(groupingBy(State::getCategory, toSet()));
             return ok("", ActionsAndStatesRepresentation.represent(actionsByCategory, statesByCategory), false);
         });
     }
