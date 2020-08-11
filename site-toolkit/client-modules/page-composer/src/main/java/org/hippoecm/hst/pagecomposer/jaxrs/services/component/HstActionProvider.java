@@ -33,7 +33,7 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.X
 
 public final class HstActionProvider {
 
-    public Set<Action> getActions(final ComponentInfoProviderContext context) {
+    public Set<Action> getActions(final ActionStateProviderContext context) {
         return Stream.of(
                 channelActions(context),
                 pageActions(context),
@@ -41,7 +41,7 @@ public final class HstActionProvider {
         ).flatMap(Set::stream).collect(toSet());
     }
 
-    private Set<Action> channelActions(ComponentInfoProviderContext actionProviderContext) {
+    private Set<Action> channelActions(ActionStateProviderContext actionProviderContext) {
 
         final ChannelContext context = actionProviderContext.getChannelContext();
         final Set<Action> channelAction = new HashSet<>();
@@ -72,7 +72,7 @@ public final class HstActionProvider {
         return channelAction;
     }
 
-    private Set<Action> xPageActions(ComponentInfoProviderContext context) {
+    private Set<Action> xPageActions(ActionStateProviderContext context) {
         return context.isExperiencePageRequest()
                 ? getXPageActions()
                 : Collections.emptySet();
@@ -85,14 +85,14 @@ public final class HstActionProvider {
                 .collect(toSet());
     }
 
-    private Set<Action> pageActions(ComponentInfoProviderContext context) {
+    private Set<Action> pageActions(ActionStateProviderContext context) {
         return context.getChannelContext().isConfigurationLocked()
                 || context.isExperiencePageRequest()
                 ? Collections.emptySet()
                 : getPageActions(context);
     }
 
-    private Set<Action> getPageActions(ComponentInfoProviderContext context) {
+    private Set<Action> getPageActions(ActionStateProviderContext context) {
 
         final Set<Action> actions = new HashSet<>();
         final PageContext pageContext = context.getPageContext();

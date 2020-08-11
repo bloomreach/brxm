@@ -21,30 +21,30 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public final class ComponentInfo {
+public final class ActionState {
 
     private final Set<Action> actions;
     private final Set<State> states;
 
-    private static final ComponentInfo EMPTY = new ComponentInfo(Collections.emptySet(), Collections.emptySet());
+    private static final ActionState EMPTY = new ActionState(Collections.emptySet(), Collections.emptySet());
 
-    public ComponentInfo(final Set<Action> actions, final Set<State> states) {
+    public ActionState(final Set<Action> actions, final Set<State> states) {
         Objects.requireNonNull(actions);
         Objects.requireNonNull(states);
         this.actions = actions;
         this.states = states;
     }
 
-    public static ComponentInfo empty() {
+    public static ActionState empty() {
         return EMPTY;
     }
 
-    static ComponentInfo merge(final ComponentInfo si1, final ComponentInfo si2) {
+    static ActionState merge(final ActionState si1, final ActionState si2) {
         final Set<Action> actions = new HashSet<>(si1.actions);
         actions.addAll(si2.getActions());
         final Set<State> states = new HashSet<>(si1.states);
         states.addAll(si2.getStates());
-        return new ComponentInfo(actions, states);
+        return new ActionState(actions, states);
     }
 
     public Set<Action> getActions() {
