@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,8 @@ class MenuAction extends Panel implements IContextMenu {
             public void onClick() {
                 if (wf instanceof StdWorkflow) {
                     final StdWorkflow stdWorkflow = (StdWorkflow) wf;
-                    if (form != null && form.hasError() && !stdWorkflow.invokeOnFormError()) {
+                    Form f = getForm();
+                    if (f != null && f.hasError() && !stdWorkflow.invokeOnFormError()) {
                         return;
                     }
                     wf.invoke();

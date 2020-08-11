@@ -1,0 +1,45 @@
+<!--
+  Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div *ngIf="config"
+     [@fadeIn]="configChange$ | async"
+     (clickOutside)="onClickedOutside()"
+     class="content-wrapper">
+  <brna-menu-scroll [height]="availableHeightForScrollableArea">
+    <div (click)="onMenuItemsWrapperClick()">
+      <h1 class="header">{{ config?.caption }}</h1>
+
+      <div *ngFor="let item of config.children">
+        <brna-menu-item-link
+          *ngIf="!isContainer(item)"
+          [caption]="item.caption"
+          [navItem]="item.navItem"
+          [highlighted]="isHighlighted(item)"
+          [ngClass]="getQaClass(item)">
+        </brna-menu-item-link>
+        <brna-expandable-menu-item
+          *ngIf="isContainer(item)"
+          #expandableMenuItem
+          [config]="item"
+          [highlighted]="isHighlighted(item)"
+          [ngClass]="getQaClass(item)"
+          (click)="onExpandableMenuItemClick(expandableMenuItem)">
+        </brna-expandable-menu-item>
+      </div>
+    </div>
+  </brna-menu-scroll>
+</div>
+<div class="window-content-cover"></div>

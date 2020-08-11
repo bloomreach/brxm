@@ -1,0 +1,10 @@
+*.iml
+*.log
+*.tmp
+/.idea/
+.classpath
+.project
+.settings
+.DS_Store
+target/
+/engine/workspaces/

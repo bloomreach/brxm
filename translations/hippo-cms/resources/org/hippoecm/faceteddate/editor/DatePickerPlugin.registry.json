@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "close-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "week-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "weekday-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "yearday-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

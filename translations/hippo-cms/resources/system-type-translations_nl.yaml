@@ -1,0 +1,34 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:String:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Korte tekst
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Date:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Datum
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:CalendarDate:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: KalenderDatum
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Long:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Geheel getal
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Text:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Tekst
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Boolean:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Boolean
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Double:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Getal met decimalen
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:OpenUiString:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: UI-string openen

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.editor.plugins.openui;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -22,6 +24,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.model.IModel;
@@ -29,6 +32,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
@@ -59,6 +63,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
     private final IEditor.Mode documentEditorMode;
     private final String compareValue;
     private final AutoSaveBehavior autoSaveBehavior;
+    private final DocumentFieldsBehavior documentFieldsBehavior;
     private final OpenUiBehavior openUiBehavior;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -71,6 +76,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
         };
         value.setOutputMarkupId(true);
         value.add(autoSaveBehavior = new AutoSaveBehavior());
+        value.add(documentFieldsBehavior = new DocumentFieldsBehavior());
         queue(value);
         hiddenValueId = value.getMarkupId();
 
@@ -104,6 +110,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
         parameters.put("autoSaveUrl", autoSaveBehavior.getCallbackUrl().toString());
         parameters.put("compareValue", compareValue);
         parameters.put("documentEditorMode", documentEditorMode.toString());
+        parameters.put("documentFieldsUrl", documentFieldsBehavior.getCallbackUrl().toString());
         parameters.put("hiddenValueId", hiddenValueId);
         parameters.put("initialHeightInPixels", openUiBehavior.getUiExtension().getInitialHeightInPixels());
 
@@ -119,6 +126,24 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
         }
         log.warn("Cannot find parent plugin to retrieve document meta data.");
         return Optional.empty();
+    }
+
+    private Optional<Node> getCompareNode() {
+        if (documentEditorMode != IEditor.Mode.COMPARE) {
+            return Optional.empty();
+        }
+
+        final ComparePlugin comparePlugin = findParent(ComparePlugin.class);
+        if (comparePlugin == null) {
+            return Optional.empty();
+        }
+
+        final IModel<Node> model = comparePlugin.getCompareNodeModel();
+        if (model == null || model.getObject() == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(model.getObject());
     }
 
     /**
@@ -175,6 +200,49 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
             }
         }
 
+    }
+
+    private static final FieldSerializerService fieldSerializerService = new FieldSerializerService(Optional.empty());
+
+    private static final FieldLookupService fieldLookupService = new FieldLookupService(
+        fieldSerializerService,
+        Optional.empty(),
+        Optional.of(log)
+    );
+
+    private class DocumentFieldsBehavior extends AbstractDefaultAjaxBehavior {
+        private static final String QUERY_PARAM_PATH = "fieldpath";
+        private static final String QUERY_PARAM_COMPARE = "compare";
+
+        @Override
+        protected void respond(final AjaxRequestTarget target) {
+            final RequestCycle requestCycle = RequestCycle.get();
+            final Request request = requestCycle.getRequest();
+            final IRequestParameters queryParameters = request.getQueryParameters();
+            final List<StringValue> path = queryParameters.getParameterValues(QUERY_PARAM_PATH);
+            final StringValue compare = queryParameters.getParameterValue(QUERY_PARAM_COMPARE);
+            final JSONObject result = new JSONObject();
+
+            result.put("data", JSONObject.NULL);
+
+            if (!Objects.isNull(path) && !path.isEmpty()) {
+                getNode(compare).ifPresent(node -> result.put("data", getValue(path, node)));
+            }
+
+            requestCycle.replaceAllRequestHandlers(new TextRequestHandler("application/json", "UTF-8", result.toString()));
+        }
+
+        private Optional<Node> getNode(final StringValue compare) {
+            return compare.toString("false").equalsIgnoreCase("true")
+                    ? getCompareNode()
+                    : getVariantNode();
+        }
+
+        private Object getValue(final List<StringValue> path, final Node node) {
+            return fieldLookupService.lookup(node, path.stream()
+                    .map(StringValue::toString)
+                    .toArray(String[]::new));
+        }
     }
 
 }

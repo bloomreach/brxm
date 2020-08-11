@@ -1,0 +1,37 @@
+{
+  "id": "videoComponentPlugin",
+  "name": "Videos",
+  "icon": "/essentials/feature/images/videos-plugin-icon.svg",
+  "introduction": "The Video feature adds a new drag-and-drop component to the component library of the Channel Manager, enabling you to add video to your project.",
+  "description": "The feature adds the new document type 'Video' to the project. You can choose to install a sample video document. The feature is based on linking to external video, e.g. hosted on youtube, rather than serving the video itself by the CMS.",
+  "imageUrls": [
+    "/essentials/feature/images/screenshots/video01.png",
+    "/essentials/feature/images/screenshots/video02.png",
+    "/essentials/feature/images/screenshots/video03.png"
+  ],
+  "documentationLink": "https://documentation.bloomreach.com/library/setup/hst-components/video-component.html",
+  "packageFile": "/META-INF/videoComponentPlugin_instructions.xml",
+  "type": "feature",
+  "vendor" : {
+    "name" : "Bloomreach",
+    "url" : "https://www.bloomreach.com"
+  },
+  "categories": {
+    "application": [
+      "media",
+      "video",
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "pluginDependencies": [
+    {
+      "pluginId": "skeleton"
+    }
+  ]
+}

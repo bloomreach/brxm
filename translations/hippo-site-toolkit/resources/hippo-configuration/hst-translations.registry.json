@@ -1,0 +1,195 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.MenuDynamicComponentInfo/menu" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/scope.hint" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/sorting.group" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/sortOrder#desc" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/hideFutureItems" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/list.group" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/pageSize" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/dateField" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/includeSubtypes" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/sortField.hint" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/dateField.hint" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/documentTypes" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/scope" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/sortOrder" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/sortField" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/sortOrder#asc" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/hidePastItems" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/filter.group" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.hippoecm.hst.component.support.bean.info.dynamic.DocumentQueryDynamicComponentInfo/documentTypes.hint" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "RESOLVED",
+        "fr" : "RESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "RESOLVED",
+        "es" : "RESOLVED"
+      }
+    }
+  }
+}

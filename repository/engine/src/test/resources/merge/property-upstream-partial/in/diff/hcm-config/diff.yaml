@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /topmost:
+      /subnode:
+        topmostvalue: upstreamvalue
+        dummy: value

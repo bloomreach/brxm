@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    relateddocs:
+      uri: http://forge.onehippo.org/relateddocs/nt/1.1
+      cnd: relateddocs-types.cnd

@@ -1,0 +1,12 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:groups/author:
+      hipposys:members:
+        operation: add
+        type: string
+        value: [author]
+    /hippo:configuration/hippo:groups/editor:
+      hipposys:members:
+        operation: add
+        type: string
+        value: [editor]

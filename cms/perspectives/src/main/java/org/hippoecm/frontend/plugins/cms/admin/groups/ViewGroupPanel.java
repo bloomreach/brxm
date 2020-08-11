@@ -218,6 +218,8 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             group.removeUserRole(userRoleToRemove);
             userRolesListView.updateUserRoles();
             addUserRolePanel.updateUserRoleChoice();
+            EventBusUtils.post("remove-userrole", HippoEventConstants.CATEGORY_GROUP_MANAGEMENT,
+                    String.format("removed user role '%s' from group '%s'", userRoleToRemove, group.getGroupname()));
             info(getString("userrole-removed", nameModel));
         } catch (RepositoryException e) {
             error(getString("userrole-remove-failed"));
@@ -345,6 +347,8 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                     try {
                         if (group != null && !group.getUserRoles().contains(selectedUserRole)) {
                             group.addUserRole(selectedUserRole);
+                            EventBusUtils.post("add-userrole", HippoEventConstants.CATEGORY_GROUP_MANAGEMENT,
+                                    String.format("added user role '%s' to group '%s'", selectedUserRole, group.getGroupname()));
                             info(getString("userrole-added", nameModel));
                         }
                         userRolesListView.updateUserRoles();

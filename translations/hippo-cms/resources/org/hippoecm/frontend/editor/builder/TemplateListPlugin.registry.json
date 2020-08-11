@@ -1,0 +1,25 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "mixins" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "primitive" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "inherited" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "custom" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "compound" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

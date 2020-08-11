@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    selection:
+      uri: http://forge.onehippo.org/selection/nt/1.0
+      cnd: selection-types.cnd

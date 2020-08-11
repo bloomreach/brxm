@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:pages/newspage:
+      jcr:primaryType: hst:component
+      hst:referencecomponent: hst:abstractpages/base
+      /main:
+        jcr:primaryType: hst:component
+        /content:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/content
+          hst:template: news.main.content

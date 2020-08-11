@@ -1,0 +1,13 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestcommon/hst:abstractpages:
+      jcr:primaryType: hst:pages
+      /basepage:
+        jcr:primaryType: hst:component
+        hst:template: webpage
+        /header:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/header
+        /leftmenu:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/leftmenu

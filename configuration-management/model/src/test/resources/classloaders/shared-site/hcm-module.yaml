@@ -1,0 +1,5 @@
+# This file is used by ClasspathConfigurationModelReaderTest and
+site: mainsite
+group: test-group
+project: test-project
+module: site-dev-module

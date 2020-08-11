@@ -1,0 +1,25 @@
+{
+  "id" : "documentWizardPluginDemo",
+  "name" : "Documents Wizard Demo",
+  "icon" : "/essentials/feature/images/documentWizardDemoPlugin.png",
+  "introduction" : "This demo feature installs demo components of document wizard plugin",
+  "description" : "It extends the default document wizard plugin, adding a new field to the dialog.",
+  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/dashboard-document-wizard/about.html",
+  "hasConfiguration" : false,
+  "rebuildAfterInstallation" : true,
+  "installWithParameters" : true,
+  "packageFile" : "/META-INF/documentWizardDemoPlugin_instructions.xml",
+  "type" : "feature",
+  "vendor": {
+    "name": "BloomReach",
+    "url": "https://www.bloomreach.com"
+  },
+  "categories" : {
+    "license" : [ "community" ],
+    "application" : [ "content" ],
+    "type" : [ "feature" ]
+  },
+  "pluginDependencies" : [ {
+    "pluginId" : "documentWizardPlugin"
+  } ]
+}

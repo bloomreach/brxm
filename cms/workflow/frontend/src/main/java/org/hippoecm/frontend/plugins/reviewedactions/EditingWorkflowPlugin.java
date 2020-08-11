@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,11 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.buttons.ButtonStyle;
-import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -41,6 +39,9 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Workflow;
 
 public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
+
+    public static final String SERVICE_EDIT = "service.edit";
+    private final StdWorkflow saveDraftAction;
 
     public EditingWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -74,12 +75,45 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
                 IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
                 editor.save();
                 return null;
             }
         });
+
+        saveDraftAction = new StdWorkflow("saveDraft",
+                new StringResourceModel("save-draft", this).setDefaultValue("Keep draft"), getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.FLOPPY);
+            }
+
+            @Override
+            protected IModel<String> getTooltip() {
+                return new StringResourceModel("save-draft-hint", this);
+            }
+
+            @Override
+            public String getCssClass() {
+                return ButtonStyle.SECONDARY.getCssClass();
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
+                IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
+                editor.saveDraft();
+                return null;
+            }
+        };
+        add(saveDraftAction);
 
         add(new StdWorkflow("done", new StringResourceModel("done", this).setDefaultValue("Done"), context, getModel()) {
 
@@ -110,7 +144,7 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String execute(Workflow wf) throws Exception {
-                final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
                 IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
                 editor.done();
                 return null;
@@ -148,7 +182,7 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected IDialogService.Dialog createRequestDialog() {
                 try {
-                    final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                    final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
                     IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
 
                     if (editor.isModified() || !editor.isValid()) {
@@ -180,32 +214,18 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String execute(Workflow wf) throws Exception {
-                final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
                 IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
                 editor.discard();
                 return null;
             }
         });
+
+        hideOrDisable(getHints(),"saveDraft",saveDraftAction);
     }
 
     public WorkflowDescriptorModel getModel() {
         return (WorkflowDescriptorModel) getDefaultModel();
     }
 
-    private static class CancelDialog extends ConfirmDialog {
-        private StdWorkflow workflow;
-
-        CancelDialog(final IModel<String> title, final IModel<String> question, final IModel<String> okLabel,
-                     final StdWorkflow workflow) {
-            super(title, question);
-            setSize(DialogConstants.SMALL_AUTO);
-            setOkLabel(okLabel);
-            this.workflow = workflow;
-        }
-
-        @Override
-        public void invokeWorkflow() throws Exception {
-            workflow.invokeWorkflow();
-        }
-    }
 }

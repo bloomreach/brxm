@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/global/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /search:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/searchpage

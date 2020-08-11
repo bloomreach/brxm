@@ -1,0 +1,29 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:roles:
+      /readonly:
+        jcr:primaryType: hipposys:role
+        hipposys:system: true
+        hipposys:privileges: ['jcr:read']
+      /modify:
+        jcr:primaryType: hipposys:role
+        hipposys:system: true
+        hipposys:privileges: ['jcr:read', 'jcr:modifyProperties', 'jcr:addChildNodes', 'jcr:removeChildNodes']
+      /readwrite:
+        jcr:primaryType: hipposys:role
+        hipposys:system: true
+        hipposys:privileges: ['jcr:read', 'jcr:write']
+      /author:
+        jcr:primaryType: hipposys:role
+        hipposys:system: true
+        hipposys:privileges: ['jcr:read', 'hippo:author']
+      /editor:
+        jcr:primaryType: hipposys:role
+        hipposys:system: true
+        hipposys:privileges: ['hippo:editor']
+        hipposys:roles: [author]
+      /admin:
+        jcr:primaryType: hipposys:role
+        hipposys:system: true
+        hipposys:privileges: ['jcr:all', 'hippo:admin']
+        hipposys:roles: [editor]

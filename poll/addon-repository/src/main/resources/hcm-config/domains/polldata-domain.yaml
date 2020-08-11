@@ -1,0 +1,46 @@
+definitions:
+  config:
+    /polldata/poll:domains:
+      jcr:primaryType: hipposys:federateddomainfolder
+      /polldata:
+        jcr:primaryType: hipposys:domain
+        /readwrite:
+          jcr:primaryType: hipposys:authrole
+          hipposys:role: readwrite
+          hipposys:userrole:
+            .meta:category: system
+          hipposys:groups:
+            .meta:category: system
+            .meta:add-new-system-values: true
+            value: []
+          hipposys:users:
+            .meta:category: system
+            .meta:add-new-system-values: true
+            value: [sitewriter]
+        /readonly:
+          jcr:primaryType: hipposys:authrole
+          hipposys:role: readonly
+          hipposys:userrole:
+            .meta:category: system
+          hipposys:groups:
+            .meta:category: system
+            .meta:add-new-system-values: true
+            value: []
+          hipposys:users:
+            .meta:category: system
+            .meta:add-new-system-values: true
+            value: [liveuser, previewuser]
+        /polldata:
+          jcr:primaryType: hipposys:domainrule
+          /polldata-and-descendants:
+            jcr:primaryType: hipposys:facetrule
+            hipposys:equals: true
+            hipposys:facet: jcr:path
+            hipposys:type: Reference
+            hipposys:value: /
+          /exclude-poll-domains-and-descendants:
+            jcr:primaryType: hipposys:facetrule
+            hipposys:equals: false
+            hipposys:facet: jcr:path
+            hipposys:type: Reference
+            hipposys:value: /poll:domains

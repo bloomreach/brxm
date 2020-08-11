@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ public class LatestBundledJQueryResourceReference extends JQueryResourceReferenc
     private static final String RESOURCE_PATH = "org/apache/wicket/resource/";
     private static final String JQUERY_FOLDER = "jquery/";
 
-    private static final String VERSION_3 = "jquery/jquery-3.3.1.js";
+    private static final String VERSION_3 = "jquery/jquery-3.5.1.js";
 
     private String latestJQueryVersion;
 

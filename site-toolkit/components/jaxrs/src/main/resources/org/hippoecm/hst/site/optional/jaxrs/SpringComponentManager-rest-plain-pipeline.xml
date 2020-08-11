@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+  <bean id="jaxrsRestPlainServiceQueryStringReplacingInterceptor" class="org.hippoecm.hst.jaxrs.cxf.QueryStringReplacingInterceptor">
+    <property name="paramNameReplaces">
+      <map>
+        <!-- The following will replace '_format' parameter name with '_type' parameter name before JAX-RS processing.
+        <entry key="_format" value="_type" />
+        -->
+      </map>
+    </property>
+    <property name="additionalQueryString">
+      <value></value>
+      <!-- The following will append additional query string before JAX-RS processing
+      <value>addparam1=value1&amp;addparam2=value2</value>
+      -->
+    </property>
+  </bean>
+
+  <bean id="jaxrsRestPlainServiceInvoker" class="org.hippoecm.hst.jaxrs.cxf.AroundProcessableJAXRSInvoker">
+    <property name="invokerPreprocessors">
+      <list>
+        <bean class="org.hippoecm.hst.jaxrs.cxf.SecurityAnnotationInvokerPreprocessor">
+        </bean>
+        <bean class="org.hippoecm.hst.jaxrs.cxf.PersistableAnnotationInvokerPreprocessor">
+        </bean>
+      </list>
+    </property>
+    <property name="invokerPostprocessors">
+      <list>
+        <bean class="org.hippoecm.hst.jaxrs.cxf.PersistableAnnotationInvokerPostprocessor">
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="jaxrsRestPlainServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve"
+        init-method="initialize" destroy-method="destroy"> 
+    <constructor-arg>
+      <bean class="org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService">
+        <constructor-arg value="jaxrsPlainService"/>
+        <property name="servletPath" value=""/>
+        <property name="jaxrsServerFactoryBean">
+          <bean class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
+            <property name="address" value="/" />
+            <property name="providers" ref="jaxrsRestAllEntityProviders" />
+            <property name="resourceProviders" ref="jaxrsRestPlainResourceProviders" />
+            <property name="invoker" ref="jaxrsRestPlainServiceInvoker" />
+          </bean>
+        </property>
+        <property name="inInterceptors">
+          <list>
+            <ref bean="jaxrsRestPlainServiceQueryStringReplacingInterceptor" />
+          </list>
+        </property>
+      </bean>
+    </constructor-arg>
+    <property name="valveName" value="jaxrsRestPlainServiceValve" />
+  </bean>
+ 
+  <bean id="jaxrsRestPlainResourceProviders" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
+    <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
+    <property name="targetMethod" value="union" />
+    <property name="arguments">
+      <list>
+        <ref bean="customRestPlainResourceProviders" />
+        <ref bean="defaultRestPlainResourceProviders" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="org.hippoecm.hst.jaxrs.swagger.HstApiListingResource" class="org.hippoecm.hst.jaxrs.swagger.HstApiListingResource" />
+
+  <bean id="defaultRestPlainResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <ref bean="org.hippoecm.hst.jaxrs.swagger.HstApiListingResource" />
+          </constructor-arg>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <!-- Default empty list of custom plain resource providers to be overriden. -->
+  <bean id="customRestPlainResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
+  
+  <!-- Pipelining -->
+  
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="org.hippoecm.hst.core.container.Pipeline" />
+    <property name="targetObject">
+      <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+        <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" />
+        <property name="propertyPath" value="pipelines"/>
+      </bean>
+    </property>
+    <property name="targetMethod" value="put" />
+    <property name="arguments">
+      <list>
+        <value>JaxrsRestPlainPipeline</value>
+        <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+          <property name="initializationValves">
+            <list>
+              <ref bean="initializationValve" />
+              <ref bean="cmsSecurityValve"/>
+            </list>
+          </property>
+          <property name="processingValves">
+            <list>
+              <ref bean="securityValve" />
+              <ref bean="subjectBasedSessionValve" />
+              <ref bean="pageInfoRenderingValve" />
+              <ref bean="pageCachingValve" />
+              <ref bean="jaxrsRestPlainServiceValve" />
+            </list>
+          </property>
+          <property name="cleanupValves">
+            <list>
+              <ref bean="diagnosticReportingValve" />
+              <ref bean="cleanupValve" />
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+  
+</beans>
+

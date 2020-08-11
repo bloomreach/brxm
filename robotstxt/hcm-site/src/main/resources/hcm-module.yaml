@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-plugin-robotstxt
+    after: hippo-site-toolkit
+module: hippo-plugin-robotstxt-addon-hcm-site

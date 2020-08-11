@@ -1,0 +1,34 @@
+definitions:
+  config:
+    /hippo:namespaces/contentbeanstest/aggregateddocument:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+          hipposysedit:node: true
+          hipposysedit:supertype: ['hippo:document', 'hippostd:relaxed', 'extranamespace:extraType']
+          hipposysedit:uri: http://www.onehippo.org/contentbeanstest/nt/1.0
+          /stringField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:stringField
+            hipposysedit:primary: false
+            hipposysedit:type: String
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: contentbeanstest:aggregateddocument
+          jcr:mixinTypes: ['extranamespace:extraType', 'mix:referenceable']
+          hippostd:holder: holder
+          hippostd:state: draft
+          hippostdpubwf:createdBy: ''
+          hippostdpubwf:creationDate: 2013-09-16T18:03:51.692+02:00
+          hippostdpubwf:lastModificationDate: 2013-09-16T18:03:51.691+02:00
+          hippostdpubwf:lastModifiedBy: ''
+          contentbeanstest:stringField: ''

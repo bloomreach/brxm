@@ -1,0 +1,41 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "type-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "middle" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "dialog-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "top" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "left" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "bottom" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "align-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "alt-text-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "right" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

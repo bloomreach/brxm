@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "location-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "affected-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "done-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

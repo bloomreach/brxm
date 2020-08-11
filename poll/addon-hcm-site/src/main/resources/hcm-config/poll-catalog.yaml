@@ -1,0 +1,14 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:catalog/poll-catalog:
+      jcr:primaryType: hst:containeritempackage
+      /poll:
+        jcr:primaryType: hst:containeritemcomponent
+        hst:componentclassname: org.onehippo.forge.poll.component.PollDocumentComponent
+        hst:iconpath: resources/poll/catalog-poll.svg
+        hst:label: Poll
+        hst:parameternames: [poll-pollCompoundName, poll-docsPath, poll-dataPath,
+          poll-docsClass]
+        hst:parametervalues: ['poll:poll', /, polldata, org.onehippo.forge.poll.contentbean.PollDocument]
+        hst:template: poll.component.ftl
+        hst:xtype: HST.Item

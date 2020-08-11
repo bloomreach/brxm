@@ -1,0 +1,30 @@
+{
+  "hippo:types": {
+    "{{namespace}}:video":   {
+      "en":     {
+        "{{namespace}}:description": "Description",
+        "jcr:name": "Video",
+        "{{namespace}}:title": "Title",
+        "{{namespace}}:link": "Video URL"
+      },
+      "nl":     {
+        "{{namespace}}:description": "Beschrijving",
+        "jcr:name": "Video",
+        "{{namespace}}:title": "Titel",
+        "{{namespace}}:link": "Video URL"
+      },
+      "fr":     {
+        "{{namespace}}:description": "Description",
+        "jcr:name": "Vidéo",
+        "{{namespace}}:title": "Titre",
+        "{{namespace}}:link": "URL vidéo"
+      },
+      "de":     {
+        "{{namespace}}:description": "Beschreibung",
+        "jcr:name": "Video",
+        "{{namespace}}:title": "Titel",
+        "{{namespace}}:link": "Video-URL"
+      }
+    }
+  }
+}

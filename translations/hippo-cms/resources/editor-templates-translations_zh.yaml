@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /zh:
+        new-namespace: 新命名空间
+        jcr:primaryType: hipposys:resourcebundle
+        new-type: 新类型

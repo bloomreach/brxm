@@ -1,0 +1,113 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "field.type" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.lockedOn" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "channelexception.channel.locked" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "channelexception.unknown" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "channelexception.mount.not.found" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "error.cannot.create.channel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.lockedBy" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "channelexception.cannot.create.content" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.hstMountPoint" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.contentRoot" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.channelNodeLockedBy" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.id" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.locale" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.contextPath" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "error.blueprint.cannot.create.channel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.composerModeEnabled" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.region" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.mountPath" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.hstConfigPath" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.url" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.hostname" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.mountId" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "channelexception.stopped.by.listener" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "channelexception.channel.out.of.sync" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "field.defaultDevice" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "channelexception.mount.exists" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

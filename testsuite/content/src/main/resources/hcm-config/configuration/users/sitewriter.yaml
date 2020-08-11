@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:users/sitewriter:
+      hipposys:userroles:
+        operation: add
+        value: [xm.content.editor]
