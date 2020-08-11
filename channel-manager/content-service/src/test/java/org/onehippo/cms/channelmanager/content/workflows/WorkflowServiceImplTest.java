@@ -24,6 +24,8 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Session;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.util.DocumentUtils;
@@ -37,11 +39,14 @@ import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.mock.MockNode;
+import org.onehippo.repository.mock.MockSession;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.apache.jackrabbit.JcrConstants.MIX_VERSIONABLE;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -292,6 +297,47 @@ public class WorkflowServiceImplTest {
         replayAll();
 
         workflowService.executeDocumentWorkflowAction(uuid, action, session, "master");
+
+        verifyAll();
+    }
+
+    @Test
+    public void restoreDocumentWorkflowAction() throws Exception {
+
+        final MockNode handle = new MockNode("myDoc", "hippo:handle");
+        final MockNode unpublished = handle.addNode("myDoc", "myproject:news");
+
+        unpublished.addMixin(MIX_VERSIONABLE);
+
+        final MockSession session = handle.getSession();
+        session.setUserId("john");
+
+        VersionManager versionManager = session.getWorkspace().getVersionManager();
+
+        final Version version = versionManager.checkin(unpublished.getPath());
+        final Node frozenUnpublished = version.getFrozenNode();
+
+        versionManager.checkout(unpublished.getPath());
+
+        final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(documentWorkflow.hints("master")).andStubReturn(hints);
+
+        expect(DocumentUtils.getHandle(handle.getIdentifier(), session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("hippo:handle"));
+
+        expect(EditingUtils.isActionAvailable(eq("restoreVersionToBranch"), eq(hints))).andReturn(true);
+
+        expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
+
+        final Document document = new Document();
+
+        expect(documentWorkflow.restoreVersionToBranch(eq(version), eq("master"))).andStubReturn(document);
+
+        replayAll();
+
+        workflowService.restoreDocumentWorkflowAction(handle.getIdentifier(), frozenUnpublished.getIdentifier(), session, "master");
 
         verifyAll();
     }

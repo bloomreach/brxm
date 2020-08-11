@@ -19,14 +19,18 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.version.Version;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.HintsUtils;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -37,8 +41,12 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.jackrabbit.JcrConstants.NT_FROZENNODE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getDocumentWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.DocumentHandleUtils.getHandle;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 public class WorkflowServiceImpl implements WorkflowService {
 
@@ -179,6 +187,76 @@ public class WorkflowServiceImpl implements WorkflowService {
             log.warn("Unexpected error when retrieving node identifier.", e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
+    }
+
+
+    @Override
+    public void restoreDocumentWorkflowAction(final String uuid, final String frozenNodeId, final Session session,
+                                              final String branchId)
+            throws ErrorWithPayloadException {
+        final Node handle = getHandle(uuid, session);
+        try {
+
+
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
+            final Map<String, Serializable> hints = documentWorkflow.hints(branchId);
+
+            if (!EditingUtils.isActionAvailable("restoreVersionToBranch", hints)) {
+                log.info("Workflow action '{}' is not available for document '{}' and frozen node id",
+                        "restoreVersionToBranch", uuid, frozenNodeId);
+                throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ACTION_NOT_AVAILABLE));
+            }
+
+            final Node frozenNode = session.getNodeByIdentifier(frozenNodeId);
+            if (!frozenNode.isNodeType(NT_FROZENNODE)) {
+                log.info("frozenNode '{}' does not belong to a node of type '{}'", frozenNode.getPath(), NT_FROZENNODE);
+                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.VERSION_DOES_NOT_EXIST));
+            }
+
+            // assert the 'frozenNode' is for the 'branchId'
+            final String frozenNodeBranchId = getStringProperty(frozenNode, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+
+            if (!frozenNodeBranchId.equals(branchId)) {
+                // can only restore versions for 'branchId'
+                log.info("frozenNode '{}' belongs to branch '{}' which is not the one from the current cms session context" +
+                                " '{}'",  frozenNode.getPath(), frozenNodeBranchId, branchId);
+                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
+            }
+
+            if (!frozenNode.getParent().isNodeType(JcrConstants.NT_VERSION)) {
+                // the frozenNodeId is always expected the unpublished variant below the Version node in version history
+                log.info("frozenNode '{}' expected to be a child of a version node",  frozenNode.getPath());
+                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
+            }
+
+            final Version version = (Version) frozenNode.getParent();
+            final String unpublishedWorkspaceVariantUUID = version.getContainingHistory().getVersionableIdentifier();
+            // if session cannot read the workspace node, just a ItemNotFoundException is caught below
+            final Node unpublishedWorkspaceVariant = session.getNodeByIdentifier(unpublishedWorkspaceVariantUUID);
+
+            if (!unpublishedWorkspaceVariant.getParent().getIdentifier().equals(uuid)) {
+                // the versionId does not belong to a versioned node of the unpublished variant below the handle 'uuid'
+                log.info("frozenNode '{}' cannot be restored for document '{}' since not part of the version history for " +
+                        "that document",  frozenNode.getPath(), handle.getPath());
+                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
+            }
+
+            documentWorkflow.restoreVersionToBranch(version, branchId);
+            log.debug("Succesfully restored frozenNode '{}' for branch '{}' to '{}'", frozenNodeId, branchId,
+                    unpublishedWorkspaceVariant.getPath());
+        } catch (ItemNotFoundException e) {
+            if (log.isDebugEnabled()) {
+                log.info("Could not find item", e);
+            } else {
+                log.info("Could not find item : {}", e.toString());
+            }
+            throw new NotFoundException(new ErrorInfo(ErrorInfo.Reason.VERSION_DOES_NOT_EXIST));
+        } catch (RepositoryException | RemoteException | WorkflowException e) {
+            log.warn("Failed to execute workflow action 'restoreVersionToBranch' on document '{}' for version id",
+                    uuid, frozenNodeId, e);
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+        }
+
     }
 
 }
