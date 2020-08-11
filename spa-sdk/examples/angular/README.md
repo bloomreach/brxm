@@ -12,7 +12,7 @@ docker run --net=host bloomreach/xm-spa-example
 Then, update `src/environments/environment.ts` and `src/environments/environment.prod.ts` files to specify the brXM instance to fetch the page model from:
 ```
 export const environment = {
-  cmsBaseUrl: 'http://localhost:8080/site',
+  endpoint: 'http://localhost:8080/site/resourceapi',
   // ...
 };
 ```
