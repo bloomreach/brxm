@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_FROZENUUID;
+import static org.apache.jackrabbit.JcrConstants.JCR_ROOTVERSION;
 import static org.apache.jackrabbit.JcrConstants.MIX_VERSIONABLE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
@@ -84,6 +85,10 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                 final VersionIterator allVersions = versionHistory.getAllVersions();
                 while (allVersions.hasNext()) {
                     final javax.jcr.version.Version version = allVersions.nextVersion();
+                    if (JCR_ROOTVERSION.equals(version.getName())) {
+                        // skip root version, is just a placeholder without the actual contents
+                        continue;
+                    }
                     final Node frozenNode = version.getFrozenNode();
                     final String versionBranchId = getStringProperty(frozenNode, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
                     if (versionBranchId.equals(branchId)) {
