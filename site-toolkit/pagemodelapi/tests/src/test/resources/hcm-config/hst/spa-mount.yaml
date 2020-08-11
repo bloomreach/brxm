@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hst:hst/hst:hosts/dev-localhost/localhost/hst:root:
+      hst:nochannelinfo: true
+      /spa:
+        jcr:primaryType: hst:mount
+        hst:mountpoint: /hst:hst/hst:sites/unittestproject
+        hst:namedpipeline: SpaSitePipeline
+        hst:pagemodelapi: resourceapi

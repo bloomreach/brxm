@@ -1,0 +1,25 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/scheduler/hippo:moduleconfig/system/FormDataCleanup:
+      jcr:primaryType: hipposched:repositoryjob
+      hipposched:attributeNames: [batchsize, minutestolive, excludepaths]
+      hipposched:attributeValues: ['100', '1440', /formdata/permanent/]
+      hipposched:enabled: true
+      hipposched:repositoryJobClass: org.onehippo.cms7.hst.toolkit.addon.formdata.FormDataCleanupJob
+      /hipposched:triggers:
+        jcr:primaryType: hipposched:triggers
+        /nightly:
+          jcr:primaryType: hipposched:crontrigger
+          jcr:mixinTypes: ['mix:lockable']
+          hipposched:cronExpression: 0 14 4 * * ?
+          hipposched:enabled:
+            .meta:category: system
+            value: true
+            type: boolean
+          hipposched:nextFireTime:
+            .meta:category: system
+          jcr:lockOwner:
+            .meta:category: system
+          jcr:lockIsDeep:
+            .meta:category: system
+

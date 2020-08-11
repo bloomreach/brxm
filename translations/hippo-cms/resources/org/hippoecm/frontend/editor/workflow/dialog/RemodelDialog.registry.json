@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "update-content" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

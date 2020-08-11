@@ -1,0 +1,51 @@
+/testcontent/images:
+  jcr:primaryType: hippogallery:stdImageGallery
+  jcr:mixinTypes: ['mix:referenceable']
+  jcr:uuid: d9d86d75-b184-472a-9eb1-bbc3f1c0ce3e
+  hippostd:foldertype: [new-image-folder]
+  hippostd:gallerytype: ['hippogallery:exampleImageSet']
+  /screenshot_cms_small.jpg:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: 2ae887e8-bbec-44da-82b4-c3b2c55a522b
+    /screenshot_cms_small.jpg:
+      jcr:primaryType: hippogallery:exampleImageSet
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 6e2e4788-14d6-45b1-b03b-5ba29e37621a
+      /hippogallery:thumbnail:
+        jcr:primaryType: hippo:resource
+        jcr:data:
+          type: binary
+          resource: /testcontent/images/screenshot_cms_small.jpg/screenshot_cms_small.jpg/thumbnail/data.jpg
+        jcr:lastModified: 2009-06-12T10:40:15.724+02:00
+        jcr:mimeType: image/jpeg
+      /hippogallery:picture:
+        jcr:primaryType: hippo:resource
+        jcr:data:
+          type: binary
+          resource: /testcontent/images/screenshot_cms_small.jpg/screenshot_cms_small.jpg/picture/data.jpg
+        jcr:lastModified: 2009-06-12T10:40:15.724+02:00
+        jcr:mimeType: image/jpeg
+  /nopic.gif:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: 07464293-3c92-4ebe-8f01-89bd3e92a0bf
+    /nopic.gif:
+      jcr:primaryType: hippogallery:exampleImageSet
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 2d480980-bfc9-4a4f-9cf1-3a850885a38a
+      hippo:availability: [live, preview]
+      /hippogallery:thumbnail:
+        jcr:primaryType: hippo:resource
+        jcr:data:
+          type: binary
+          resource: /testcontent/images/nopic.gif/nopic.gif/thumbnail/data.gif
+        jcr:lastModified: 2010-11-02T17:11:13.606-04:00
+        jcr:mimeType: image/gif
+      /hippogallery:picture:
+        jcr:primaryType: hippo:resource
+        jcr:data:
+          type: binary
+          resource: /testcontent/images/nopic.gif/nopic.gif/picture/data.gif
+        jcr:lastModified: 2010-11-02T17:11:13.606-04:00
+        jcr:mimeType: image/gif

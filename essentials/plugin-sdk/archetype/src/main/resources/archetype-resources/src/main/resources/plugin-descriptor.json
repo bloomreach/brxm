@@ -1,0 +1,14 @@
+{
+  "type": "feature",
+  "id": "${pluginId}",
+  "name": "${pluginName}",
+  "icon": "/essentials/feature/${pluginId}/icon.png",
+  "introduction": "[Provide short introduction, describing the purpose of this plugin]",
+  "vendor": {
+    "name": "Vendor Name",
+    "url": ""
+  },
+  "packageFile": "/${pluginId}_instructions.xml",
+  "restClasses": [],
+  "rebuildAfterInstallation": false
+}

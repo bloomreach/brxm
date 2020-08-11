@@ -1,0 +1,68 @@
+definitions:
+  config:
+    /hippo:namespaces/poll/polldocument:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+          hipposysedit:node: true
+          hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document', 'hippostd:publishableSummary']
+          hipposysedit:uri: http://forge.onehippo.org/poll/nt/1.2
+          /poll:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: poll:poll
+            hipposysedit:primary: false
+            hipposysedit:type: poll:poll
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: poll:polldocument
+          jcr:mixinTypes: ['mix:referenceable']
+          hippostd:state: unpublished
+          hippostdpubwf:createdBy: ''
+          hippostdpubwf:creationDate: 2010-05-17T06:00:00+01:00
+          hippostdpubwf:lastModificationDate: 2010-05-17T06:00:00+01:00
+          hippostdpubwf:lastModifiedBy: ''
+          /poll:poll:
+            jcr:primaryType: poll:poll
+            poll:introduction: ''
+            poll:text: ''
+            /poll:option:
+              jcr:primaryType: poll:option
+              poll:label: ''
+              poll:value: ''
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          frontend:properties: [mode]
+          frontend:references: [model.compareTo, wicket.model, engine]
+          frontend:services: [wicket.id]
+          type: poll:polldocument
+          /root:
+            jcr:primaryType: frontend:plugin
+            item: ${cluster.id}.field
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+            wicket.id: ${wicket.id}
+          /poll:
+            jcr:primaryType: frontend:plugin
+            engine: ${engine}
+            field: poll
+            mode: ${mode}
+            model.compareTo: ${model.compareTo}
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+            wicket.id: ${cluster.id}.field
+            wicket.model: ${wicket.model}
+          /poll-results:
+            jcr:primaryType: frontend:plugin
+            engine: ${engine}
+            plugin.class: org.onehippo.forge.poll.cms.PollResultsPlugin
+            wicket.id: ${cluster.id}.field
+            wicket.model: ${wicket.model}

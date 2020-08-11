@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-tree-views/configuration/configurationBrowser/filters:
+      /hideResourceBundleNamespace:
+        .meta:order-before: showOtherNamespaces
+        jcr:primaryType: frontend:pluginconfig
+        display: false
+        path: /hippo:namespaces/resourcebundle

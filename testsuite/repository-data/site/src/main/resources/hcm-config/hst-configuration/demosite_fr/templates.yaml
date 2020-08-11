@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite_fr/hst:templates:
+      jcr:primaryType: hst:templates
+      /footer:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/footer/fr_footer.jsp

@@ -22,6 +22,7 @@ public abstract class PluginApplication extends WebApplication {
 
     public static final String PLUGIN_APPLICATION_VALUE_CMS = "cms";
     public static final String PLUGIN_APPLICATION_VALUE_CONSOLE = "console";
+    public static final String PLUGIN_APPLICATION_VALUE_NAVAPP = "navapp";
 
     public static PluginApplication get() {
         return (PluginApplication) WebApplication.get();

@@ -1,0 +1,26 @@
+{
+  "id": "beanwriter",
+  "name": "Bean Writer",
+  "icon": "/essentials/tool/images/bean-writer-icon.svg",
+  "introduction": "Generate HST Content beans.",
+  "restClasses": [
+    "org.onehippo.cms7.essentials.beanwriter.rest.BeanWriterResource"
+  ],
+  "categories": {
+    "application": [
+      "developer-tool",
+      "code generator"
+    ],
+    "type": [
+      "tool"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "type": "tool",
+  "vendor": {
+    "name": "Bloomreach",
+    "url": "https://www.bloomreach.com"
+  }
+}

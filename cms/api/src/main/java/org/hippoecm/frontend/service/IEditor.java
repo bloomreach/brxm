@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -92,6 +92,13 @@ public interface IEditor<T> extends IClusterable {
     boolean isValid() throws EditorException;
 
     /**
+     * If a document has been saved as draft the document is marked as "transferable".
+     * @return true if the document has been saved as draft, otherwise false
+     * @throws EditorException
+     */
+    boolean isTransferable() throws EditorException;
+
+    /**
      * The {@link Form} that wraps the editor.
      */
     Form getForm();
@@ -103,6 +110,8 @@ public interface IEditor<T> extends IClusterable {
      *                         the document is not in Edit mode.
      */
     void save() throws EditorException;
+
+    void saveDraft() throws EditorException;
 
     /**
      * Saves the document, and switches the editor to VIEW mode.

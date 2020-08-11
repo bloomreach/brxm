@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /test/inject-and-override/config:
+      jcr:primaryType: nt:unstructured

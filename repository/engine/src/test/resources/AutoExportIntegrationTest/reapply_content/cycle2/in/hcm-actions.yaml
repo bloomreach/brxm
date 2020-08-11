@@ -1,0 +1,5 @@
+action-lists:
+- 1.0:
+    /content-test/node1: reload
+    /content-test/node2: reload
+    /content-test/node4: delete

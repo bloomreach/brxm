@@ -1,0 +1,25 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "message-single" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "message-many" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "message-thousands" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "message-empty" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

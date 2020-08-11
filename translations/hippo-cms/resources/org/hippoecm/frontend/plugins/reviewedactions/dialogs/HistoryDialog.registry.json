@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "open-revision" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "revision-help" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "history" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "close" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,114 @@
+<!--
+  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
+<div id="container-vbox" class="hst-container">
+  <div id="componentA" class="hst-container-item">
+    <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+    <p id="test">Some markup in component A</p>
+    <p id="edit-menu-in-component-a">
+      <!-- { "HST-Type": "EDIT_MENU_LINK", "uuid": "menu-in-component-a" } -->
+    </p>
+    <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+  </div>
+  <p id="manage-content-in-container-vbox">
+    <!-- { "HST-Type": "MANAGE_CONTENT_LINK", "documentTemplateQuery": "manage-content-in-container-vbox" } -->
+  </p>
+  <div id="componentB" class="hst-container-item">
+    <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component B", "uuid": "bbbb" } -->
+    <p>Some markup in component B</p>
+    <!-- { "HST-End": "true", "uuid": "bbbb" } -->
+  </div>
+</div>
+<!-- { "HST-End": "true", "uuid": "container-vbox" } -->
+
+<!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox-empty" } -->
+<div id="container-vbox-empty" class="hst-container">
+  <!-- some placeholder HTML -->
+  <div></div>
+</div>
+<!-- { "HST-End": "true", "uuid": "container-vbox-empty" } -->
+
+<div id="container-no-markup">
+  <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "NoMarkup container", "HST-XType": "HST.NoMarkup", "uuid": "container-no-markup" } -->
+  <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "Empty component in NoMarkup container", "uuid": "empty-component-no-markup" } -->
+  <!-- Component is empty -->
+  <!-- { "HST-End": "true", "uuid": "empty-component-no-markup" } -->
+  <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "Component in NoMarkup container", "uuid": "component-no-markup" } -->
+  <div id="component-no-markup">
+    <p>Some markup in component D</p>
+    <p id="manage-content-in-component-no-markup">
+      <!-- { "HST-Type": "MANAGE_CONTENT_LINK", "documentTemplateQuery": "manage-content-in-component-no-markup" } -->
+    </p>
+  </div>
+  <!-- { "HST-End": "true", "uuid": "component-no-markup" } -->
+  <!-- { "HST-End": "true", "uuid": "container-no-markup" } -->
+</div>
+
+<div id="container-no-markup-empty">
+  <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty NoMarkup container", "HST-XType": "HST.NoMarkup", "uuid": "container-no-markup-empty" } -->
+  <!-- { "HST-End": "true", "uuid": "container-no-markup-empty" } -->
+</div>
+
+<div id="container-no-markup-lowercase">
+  <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "NoMarkup container with lowercase xtype", "HST-XType": "hst.nomarkup", "uuid": "container-no-markup-lowercase" } -->
+  <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "Component in NoMarkup container with lowercase xtype", "uuid": "component-no-markup-lowercase" } -->
+  <div id="component-no-markup-lowercase">
+    <p>Some markup in lowercase nomarkup component</p>
+  </div>
+  <!-- { "HST-End": "true", "uuid": "component-no-markup-lowercase" } -->
+  <!-- { "HST-End": "true", "uuid": "container-no-markup-lowercase" } -->
+</div>
+
+<div id="container-no-markup-lowercase-empty">
+  <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty NoMarkup container with lowercase xtype", "HST-XType": "hst.nomarkup", "uuid": "container-no-markup-lowercase-empty" } -->
+  <!-- { "HST-End": "true", "uuid": "container-no-markup-lowercase-empty" } -->
+</div>
+
+<div id="container-no-markup-without-text-nodes-after-end-comment">
+  <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty NoMarkup container without text nodes after the end comment", "HST-XType": "HST.NoMarkup", "uuid": "container-no-markup-without-text-nodes-after-end-comment" } -->
+  <!-- { "HST-End": "true", "uuid": "container-no-markup-without-text-nodes-after-end-comment" } --></div>
+
+<div id="edit-menu-in-page">
+  <!-- { "HST-Type": "EDIT_MENU_LINK", "uuid": "menu-in-page" } -->
+</div>
+<div id="manage-content-in-page">
+  <!-- {
+    "HST-Type": "MANAGE_CONTENT_LINK",
+    "documentTemplateQuery": "new-test-document"
+  } -->
+</div>
+<div id="processed-head-contributions">
+  <!--{"HST-Type":"HST_PROCESSED_HEAD_CONTRIBUTIONS","headElements":["<title>processed</title>", "<script>window.processed = true</script>"]}-->
+</div>
+<div id="unprocessed-head-contributions">
+  <!--{"HST-Type":"HST_UNPROCESSED_HEAD_CONTRIBUTIONS","headElements":["<link href=\"unprocessed.css\">"]}-->
+</div>
+<div id="page-meta">
+  <!-- {
+    "HST-Type":"PAGE-META-DATA",
+    "HST-Channel-Id":"channel-id",
+    "HST-Site-Id":"site-id",
+    "HST-Mount-Id":"mount-id",
+    "HST-Page-Id":"page-id",
+    "HST-Sitemap-Id":"sitemap-id",
+    "HST-SitemapItem-Id":"sitemap-item-id",
+    "HST-Path-Info":"path-info",
+    "HST-Context-Path":"context-path",
+    "HST-Site-HasPreviewConfig":"true",
+    "HST-Render-Variant":"render-variant"
+  } -->
+</div>

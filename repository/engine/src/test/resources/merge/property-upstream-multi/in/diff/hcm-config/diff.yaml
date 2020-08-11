@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /topmost:
+      /node1:
+        multiproperty:
+          operation: replace
+          value: [topmostValue, upstreamValue]
+      /node2:
+        multiproperty:
+          operation: add
+          value: [upstreamValue]

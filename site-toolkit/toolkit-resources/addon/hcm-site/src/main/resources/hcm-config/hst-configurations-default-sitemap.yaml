@@ -1,0 +1,94 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /_any_.css:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.CSS:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.gif:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.GIF:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.ico:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.ICO:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.jpeg:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.JPEG:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.jpg:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.JPG:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.js:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.JS:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.pdf:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.PDF:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.png:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.PNG:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.svg:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.SVG:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.jsp:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /_any_.JSP:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+      /webfiles:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+        hst:namedpipeline: WebFilePipeline
+        hst:refId: WEB-FILES-ID
+        /_default_:
+          jcr:primaryType: hst:sitemapitem
+          /_any_:
+            jcr:primaryType: hst:sitemapitem
+            hst:parameternames: [version]
+            hst:parametervalues: ['${1}']
+            hst:relativecontentpath: ${2}
+      /login:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+        hst:namedpipeline: PlainFilterChainInvokingPipeline
+        hst:scheme: https
+        hst:schemeagnostic: false
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+      /binaries:
+        jcr:primaryType: hst:sitemapitem
+        hst:containerresource: true
+        hst:refId: BINARIES-PIPELINE-ID
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+      /favicon.ico:
+        jcr:primaryType: hst:sitemapitem
+        hst:authenticated: false
+        hst:containerresource: true

@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "discard-all" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "save-all" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

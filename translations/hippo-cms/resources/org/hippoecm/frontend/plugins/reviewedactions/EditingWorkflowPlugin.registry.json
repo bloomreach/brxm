@@ -1,0 +1,71 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "saved" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "save" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "done" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "cancel-dialog-message" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "cancel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "save-hint" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "cancel-hint" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "cancel-dialog-title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "cancel-dialog-ok-button" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "done-hint" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "save-draft" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "save-draft-hint" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    }
+  }
+}

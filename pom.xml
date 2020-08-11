@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2020 Bloomreach
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-project</artifactId>
+    <version>14.3.0-SNAPSHOT</version>
+    <relativePath>project/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>bloomreach-xm-community</artifactId>
+  <name>Bloomreach XM Community</name>
+  <description>Bloomreach Experience Manager community modules</description>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>channel-manager</module>
+    <module>cms</module>
+    <module>commons</module>
+    <module>configuration-management</module>
+    <module>content-blocks</module>
+    <module>content-tagging</module>
+    <module>crisp</module>
+    <module>dashboard-document-wizard</module>
+    <module>essentials-components</module>
+    <module>essentials</module>
+    <module>gallerypicker</module>
+    <module>l10n-tooling</module>
+    <module>navigation-application</module>
+    <module>packages</module>
+    <module>poll</module>
+    <module>relateddocs</module>
+    <module>release</module>
+    <module>repository</module>
+    <module>resourcebundle-editor</module>
+    <module>robotstxt</module>
+    <module>search-service</module>
+    <module>selections</module>
+    <module>seo-support</module>
+    <module>services-api</module>
+    <module>services-autoreload</module>
+    <module>services-contenttype</module>
+    <module>services-eventbus</module>
+    <module>services-htmlprocessor</module>
+    <module>services-validation</module>
+    <module>services-webfiles</module>
+    <module>site-toolkit</module>
+    <module>sitemap</module>
+    <module>taxonomy</module>
+    <module>testsuite</module>
+    <module>testutils</module>
+    <module>translations</module>
+    <module>ui-extension</module>
+    <module>utilities</module>
+  </modules>
+
+  <profiles>
+    <profile>
+      <id>projects</id>
+      <activation>
+        <property>
+          <name>!no-projects</name>
+        </property>
+      </activation>
+      <modules>
+        <module>project</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>archetype</id>
+      <activation>
+        <property>
+          <name>!no-archetype</name>
+        </property>
+      </activation>
+      <modules>
+        <module>archetype</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>spa.sdk</id>
+      <activation>
+        <property>
+          <name>!no-spa-sdk</name>
+        </property>
+      </activation>
+      <modules>
+        <module>spa-sdk</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <exclude>**</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

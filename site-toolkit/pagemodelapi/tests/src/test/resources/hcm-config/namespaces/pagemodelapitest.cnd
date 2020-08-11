@@ -1,0 +1,17 @@
+<'pagemodelapitest'='http://www.onehippo.org/pagemodelapitest/nt/1.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+<'hippotranslation'='http://www.onehippo.org/jcr/hippotranslation/nt/1.0'>
+
+[pagemodelapitest:dynamiccompound] > hippo:compound, hippostd:relaxed
+  orderable
+
+[pagemodelapitest:dynamicinnercompound] > hippo:compound, hippostd:relaxed
+  orderable
+
+[pagemodelapitest:htmlblock] > hippo:compound, hippostd:relaxed
+
+[pagemodelapitest:htmlblock2] > hippo:compound, hippostd:relaxed
+
+[pagemodelapitest:dynamiccontent] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document, hippostd:relaxed
