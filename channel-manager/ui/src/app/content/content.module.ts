@@ -18,7 +18,7 @@ import { NgModule } from '@angular/core';
 
 import { SharedModule } from '../shared/shared.module';
 
-import { NG1_CONTENT_SERVICE } from './services/ng1/content.ng1service';
+import { NG1_CONTENT_SERVICE } from './services/ng1/content.ng1.service';
 
 @NgModule({
   imports: [

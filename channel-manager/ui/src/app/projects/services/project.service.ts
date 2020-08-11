@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
-import { SharedModule } from '../shared/shared.module';
+import { Ng1ProjectService, NG1_PROJECT_SERVICE } from './ng1/project.ng1.service';
 
-import { NG1_PAGESTRUCTURE_SERVICE } from './services/ng1/page-structure.ng1service';
-
-@NgModule({
-  imports: [
-    SharedModule,
-  ],
-  providers: [
-    { provide: NG1_PAGESTRUCTURE_SERVICE, useValue: window.angular.element(document.body).injector().get('PageStructureService') },
-  ],
+@Injectable({
+  providedIn: 'root',
 })
-export class PageStructureModule {
+export class ProjectService {
+  constructor(
+    @Inject(NG1_PROJECT_SERVICE) private readonly ng1ProjectService: Ng1ProjectService,
+  ) { }
+
+  getSelectedProjectId(): string {
+    return this.ng1ProjectService.getSelectedProjectId();
+  }
 }
