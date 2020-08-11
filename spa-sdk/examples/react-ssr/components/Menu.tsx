@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,30 +15,30 @@
  */
 
 import React from 'react';
-import { TYPE_LINK_EXTERNAL } from '@bloomreach/spa-sdk';
+import { MenuItem, Menu as BrMenu, TYPE_LINK_EXTERNAL, isMenu } from '@bloomreach/spa-sdk';
 import { BrComponentContext, BrManageMenuButton, BrPageContext } from '@bloomreach/react-sdk';
 import routes from '../routes';
 
 const { Link } = routes;
 
 interface MenuLinkProps {
-  item: MenuModels['menu']['siteMenuItems'][0];
+  item: MenuItem;
 }
 
 function MenuLink({ item }: MenuLinkProps) {
-  const page = React.useContext(BrPageContext)!;
+  const url = item.getUrl();
 
-  if (!item._links.site) {
-    return <span className="nav-link text-capitalize disabled">{item.name}</span>;
+  if (!url) {
+    return <span className="nav-link text-capitalize disabled">{item.getName()}</span>;
   }
 
-  if (item._links.site.type === TYPE_LINK_EXTERNAL) {
-    return <a className="nav-link text-capitalize" href={item._links.site.href}>{item.name}</a>;
+  if (item.getLink()?.type === TYPE_LINK_EXTERNAL) {
+    return <a className="nav-link text-capitalize" href={url}>{item.getName()}</a>;
   }
 
   return (
-    <Link route={page.getUrl(item._links.site)}>
-      <a className="nav-link text-capitalize">{item.name}</a>
+    <Link route={url}>
+      <a className="nav-link text-capitalize">{item.getName()}</a>
     </Link>
   );
 }
@@ -46,17 +46,18 @@ function MenuLink({ item }: MenuLinkProps) {
 export function Menu() {
   const component = React.useContext(BrComponentContext);
   const page = React.useContext(BrPageContext);
-  if (!component || !page) {
+  const menuRef = component?.getModels<MenuModels>()?.menu;
+  const menu = menuRef && page?.getContent<BrMenu>(menuRef);
+
+  if (!isMenu(menu)) {
     return null;
   }
 
-  const { menu } = component.getModels<MenuModels>();
-
   return (
-    <ul className={`navbar-nav col-12 ${page.isPreview() ? 'has-edit-button' : ''}`}>
+    <ul className={`navbar-nav col-12 ${page!.isPreview() ? 'has-edit-button' : ''}`}>
       <BrManageMenuButton menu={menu} />
-      { menu.siteMenuItems.map((item, index) => (
-        <li key={index} className={`nav-item ${item.selected ? 'active' : ''}`}>
+      { menu.getItems().map((item, index) => (
+        <li key={index} className={`nav-item ${item.isSelected() ? 'active' : ''}`}>
           <MenuLink item={item} />
         </li>
       )) }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -214,6 +214,8 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
             model.getObject().removeUserRole(userRoleToRemove);
             userRolesListView.updateUserRoles();
             addUserRolePanel.updateUserRoleChoice();
+            EventBusUtils.post("remove-userrole", HippoEventConstants.CATEGORY_USER_MANAGEMENT,
+                    String.format("removed userrole '%s' from user '%s'", userRoleToRemove, model.getObject().getDisplayName()));
             info(getString("userrole-removed", nameModel));
         } catch (RepositoryException e) {
             error(getString("userrole-remove-failed"));
@@ -306,6 +308,8 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
                         final User user = model.getObject();
                         if ( user != null && !user.getUserRoles().contains(selectedUserRole)) {
                             user.addUserRole(selectedUserRole);
+                            EventBusUtils.post("add-userrole", HippoEventConstants.CATEGORY_USER_MANAGEMENT,
+                                    String.format("added userrole '%s' to user '%s'", selectedUserRole, user.getDisplayName()));
                             info(getString("userrole-added", nameModel));
                         }
                         userRolesListView.updateUserRoles();
