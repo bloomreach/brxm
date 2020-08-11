@@ -16,7 +16,7 @@
 
 import { Inject, Injectable } from '@angular/core';
 
-import { Ng1PageStructureService, NG1_PAGESTRUCTURE_SERVICE } from './ng1/page-structure.ng1service';
+import { Ng1PageStructureService, NG1_PAGESTRUCTURE_SERVICE } from './ng1/page-structure.ng1.service';
 
 @Injectable({
   providedIn: 'root',
@@ -28,5 +28,12 @@ export class PageStructureService {
 
   getPage(): any {
     return this.ng1PageStructureService.getPage();
+  }
+
+  getUnpublishedVariantId(): string {
+    return this.ng1PageStructureService
+      .getPage()
+      .getMeta()
+      .getUnpublishedVariantId();
   }
 }

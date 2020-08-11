@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
+import { NgModule } from '@angular/core';
 
-import { XPageState } from '../../models/xpage-state.model';
+import { SharedModule } from '../shared/shared.module';
 
-export interface Ng1PageService {
-  states: { xpage?: XPageState };
+import { NG1_PROJECT_SERVICE } from './services/ng1/project.ng1.service';
+
+@NgModule({
+  imports: [
+    SharedModule,
+  ],
+  providers: [
+    { provide: NG1_PROJECT_SERVICE, useValue: window.angular.element(document.body).injector().get('ProjectService') },
+  ],
+})
+export class ProjectsModule {
 }
-
-export const NG1_PAGE_SERVICE = new InjectionToken<Ng1PageService>('NG1_PAGE_SERVICE');

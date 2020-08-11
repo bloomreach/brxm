@@ -16,11 +16,11 @@
 
 import { Inject, Injectable } from '@angular/core';
 
-import { DocumentState } from '../models/document-state.enum';
-import { ScheduledRequestType } from '../models/scheduled-request-type.enum';
-import { WorkflowRequestType } from '../models/workflow-request-type.enum';
-import { XPageState } from '../models/xpage-state.model';
-import { XPageStatus } from '../models/xpage-status.enum';
+import { DocumentState } from '../../models/document-state.enum';
+import { ScheduledRequestType } from '../../models/scheduled-request-type.enum';
+import { WorkflowRequestType } from '../../models/workflow-request-type.enum';
+import { XPageState } from '../../models/xpage-state.model';
+import { XPageStatus } from '../../models/xpage-status.enum';
 
 import { Ng1PageService, NG1_PAGE_SERVICE } from './ng1/page.ng1.service';
 
@@ -28,7 +28,13 @@ import { Ng1PageService, NG1_PAGE_SERVICE } from './ng1/page.ng1.service';
   providedIn: 'root',
 })
 export class PageService {
-  constructor(@Inject(NG1_PAGE_SERVICE) private readonly ng1PageService: Ng1PageService) { }
+  constructor(
+    @Inject(NG1_PAGE_SERVICE) private readonly ng1PageService: Ng1PageService,
+  ) { }
+
+  getXPageState(): XPageState | undefined {
+    return this.ng1PageService.states.xpage;
+  }
 
   getXPageStatus(xPageState: XPageState): XPageStatus | undefined {
     const xPageWorkflowRequest = xPageState.workflowRequest;
