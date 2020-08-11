@@ -283,16 +283,14 @@
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ComponentResource" parent="abstractConfigResource">
-              <property name="actionService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService" />
-              <property name="stateService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateService" />
+              <property name="componentInfoService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoService" />
             </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageResource" parent="abstractConfigResource">
-              <property name="actionService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService" />
-              <property name="stateService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateService" />
+              <property name="componentInfoService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoService" />
             </bean>
           </constructor-arg>
         </bean>
@@ -300,50 +298,40 @@
     </property>
     <property name="invoker" ref="jaxrsHstConfigServiceInvoker" />
   </bean>
-  <bean id="actionProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
-    <property name="sourceList">
-      <list>
-        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstActionProviderImpl" />
-      </list>
-    </property>
-  </bean>
-  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionServiceImpl">
+  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoServiceImpl">
     <constructor-arg>
-      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ActionProviderContextFactory">
+      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoProviderContextFactory">
         <constructor-arg>
-          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.ChannelActionContextFactory">
+          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ChannelContextFactory">
             <constructor-arg ref="channelService" />
           </bean>
         </constructor-arg>
         <constructor-arg>
-          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.PageActionContextFactory">
+          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.PageContextFactory">
             <constructor-arg ref="siteMapHelper" />
           </bean>
         </constructor-arg>
         <constructor-arg>
-          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.action.XPageActionContextFactory" />
+          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.XPageContextFactory"/>
         </constructor-arg>
       </bean>
     </constructor-arg>
-    <property name="actionProviders" ref="actionProviders" />
+    <property name="componentInfoProviders" ref="componentInfoProviders" />
   </bean>
 
-  <bean id="stateProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+  <bean id="componentInfoProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
-        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.state.HstStateProviderImpl" />
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstComponentInfoProvider" >
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstActionProvider"/>
+          </constructor-arg>
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstStateProvider"/>
+          </constructor-arg>
+        </bean>
       </list>
     </property>
-  </bean>
-  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateServiceImpl">
-    <constructor-arg>
-      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.state.StateProviderContextFactory">
-        <constructor-arg>
-          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.state.XPageStateContextFactory" />
-        </constructor-arg>
-      </bean>
-    </constructor-arg>
-    <property name="stateProviders" ref="stateProviders" />
   </bean>
 
   <!-- Pipelining -->

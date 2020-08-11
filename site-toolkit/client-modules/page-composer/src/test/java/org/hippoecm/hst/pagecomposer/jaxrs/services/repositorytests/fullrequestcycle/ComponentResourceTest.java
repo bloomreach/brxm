@@ -18,9 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequest
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -35,10 +32,9 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ActionsAndStatesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.CategoryRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Category;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.state.HstState;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.state.HstStateCategories;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.Category;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstState;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -54,27 +50,23 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableMap;
 
 import static java.util.stream.Collectors.toMap;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_CLOSE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_DELETE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_DISCARD_CHANGES;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_MANAGE_CHANGES;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_PUBLISH;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.CHANNEL_SETTINGS;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.PAGE_COPY;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.PAGE_DELETE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.PAGE_MOVE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.PAGE_NEW;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.PAGE_PROPERTIES;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_DELETE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_MOVE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_COPY;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_PUBLISH;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_SCHEDULE_PUBLICATION;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_SCHEDULE_UNPUBLICATION;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstAction.XPAGE_UNPUBLISH;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.channel;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.page;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.action.HstCategories.xpage;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.CHANNEL;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.PAGE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.XPAGE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_CLOSE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_DELETE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_DISCARD_CHANGES;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_MANAGE_CHANGES;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_PUBLISH;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_SETTINGS;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.PAGE_COPY;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.PAGE_DELETE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.PAGE_MOVE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.PAGE_NEW;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.PAGE_PROPERTIES;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_DELETE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_MOVE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_NEW;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 
@@ -92,17 +84,17 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
 
         final Map<String, Boolean> actions = flattenActions(actionsAndStates.getActions());
         final Map<String, Boolean> expectedActionItems = ImmutableMap.<String, Boolean>builder()
-                .put(key(channel(), CHANNEL_CLOSE), true)
-                .put(key(channel(), CHANNEL_DELETE), false)
-                .put(key(channel(), CHANNEL_DISCARD_CHANGES), false)
-                .put(key(channel(), CHANNEL_MANAGE_CHANGES), false)
-                .put(key(channel(), CHANNEL_PUBLISH), false)
-                .put(key(channel(), CHANNEL_SETTINGS), true)
-                .put(key(page(), PAGE_COPY), true)
-                .put(key(page(), PAGE_DELETE), false)
-                .put(key(page(), PAGE_MOVE), false)
-                .put(key(page(), PAGE_NEW), true)
-                .put(key(page(), PAGE_PROPERTIES), false)
+                .put(key(CHANNEL, CHANNEL_CLOSE), true)
+                .put(key(CHANNEL, CHANNEL_DELETE), false)
+                .put(key(CHANNEL, CHANNEL_DISCARD_CHANGES), false)
+                .put(key(CHANNEL, CHANNEL_MANAGE_CHANGES), false)
+                .put(key(CHANNEL, CHANNEL_PUBLISH), false)
+                .put(key(CHANNEL, CHANNEL_SETTINGS), true)
+                .put(key(PAGE, PAGE_COPY), true)
+                .put(key(PAGE, PAGE_DELETE), false)
+                .put(key(PAGE, PAGE_MOVE), false)
+                .put(key(PAGE, PAGE_NEW), true)
+                .put(key(PAGE, PAGE_PROPERTIES), false)
                 .build();
         Assertions.assertThat(actions)
                 .describedAs("A page component request contains all channel and page actions")
@@ -130,12 +122,12 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         final Map<String, Boolean> actions = flattenActions(actionsAndStates.getActions());
 
         final Map<String, Boolean> expectedActionItems = ImmutableMap.<String, Boolean>builder()
-                .put(key(channel(), CHANNEL_CLOSE), true)
-                .put(key(channel(), CHANNEL_DELETE), false)
-                .put(key(channel(), CHANNEL_DISCARD_CHANGES), false)
-                .put(key(channel(), CHANNEL_MANAGE_CHANGES), false)
-                .put(key(channel(), CHANNEL_PUBLISH), false)
-                .put(key(channel(), CHANNEL_SETTINGS), true)
+                .put(key(CHANNEL, CHANNEL_CLOSE), true)
+                .put(key(CHANNEL, CHANNEL_DELETE), false)
+                .put(key(CHANNEL, CHANNEL_DISCARD_CHANGES), false)
+                .put(key(CHANNEL, CHANNEL_MANAGE_CHANGES), false)
+                .put(key(CHANNEL, CHANNEL_PUBLISH), false)
+                .put(key(CHANNEL, CHANNEL_SETTINGS), true)
                 .build();
         Assertions.assertThat(actions)
                 .describedAs("A page component request contains all channel and page actions")
@@ -169,19 +161,15 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         final Map<String, Boolean> actions = flattenActions(actionsAndStates.getActions());
 
         final Map<String, Boolean> expectedActionItems = ImmutableMap.<String, Boolean>builder()
-                .put(key(channel(), CHANNEL_CLOSE), true)
-                .put(key(channel(), CHANNEL_DELETE), false)
-                .put(key(channel(), CHANNEL_DISCARD_CHANGES), false)
-                .put(key(channel(), CHANNEL_MANAGE_CHANGES), false)
-                .put(key(channel(), CHANNEL_PUBLISH), false)
-                .put(key(channel(), CHANNEL_SETTINGS), true)
-                .put(key(xpage(), XPAGE_DELETE), false)
-                .put(key(xpage(), XPAGE_MOVE), false)
-                .put(key(xpage(), XPAGE_COPY), true)
-                .put(key(xpage(), XPAGE_PUBLISH), false)
-                .put(key(xpage(), XPAGE_SCHEDULE_PUBLICATION), false)
-                .put(key(xpage(), XPAGE_SCHEDULE_UNPUBLICATION), true)
-                .put(key(xpage(), XPAGE_UNPUBLISH), true)
+                .put(key(CHANNEL, CHANNEL_CLOSE), true)
+                .put(key(CHANNEL, CHANNEL_DELETE), false)
+                .put(key(CHANNEL, CHANNEL_DISCARD_CHANGES), false)
+                .put(key(CHANNEL, CHANNEL_MANAGE_CHANGES), false)
+                .put(key(CHANNEL, CHANNEL_PUBLISH), false)
+                .put(key(CHANNEL, CHANNEL_SETTINGS), true)
+                .put(key(XPAGE, XPAGE_DELETE), false)
+                .put(key(XPAGE, XPAGE_MOVE), false)
+                .put(key(XPAGE, XPAGE_NEW), false)
                 .build();
         Assertions.assertThat(actions)
                 .describedAs("An xpage request contains all channel and xpage actions")
@@ -190,10 +178,10 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         final Map<String, Object> states = flattenStates(actionsAndStates.getStates());
 
         final Map<String, ?> expectedStates = ImmutableMap.<String, String>builder()
-                .put(key(HstStateCategories.xpage(), HstState.XPAGE_BRANCH_ID), BranchConstants.MASTER_BRANCH_ID)
-                .put(key(HstStateCategories.xpage(), HstState.XPAGE_ID), handleId)
-                .put(key(HstStateCategories.xpage(), HstState.XPAGE_NAME), name)
-                .put(key(HstStateCategories.xpage(), HstState.XPAGE_STATE), "live")
+                .put(key(XPAGE, HstState.XPAGE_BRANCH_ID), BranchConstants.MASTER_BRANCH_ID)
+                .put(key(XPAGE, HstState.XPAGE_ID), handleId)
+                .put(key(XPAGE, HstState.XPAGE_NAME), name)
+                .put(key(XPAGE, HstState.XPAGE_STATE), "live")
                 .build();
         Assertions.assertThat(states)
                 .describedAs("A published xpage request contains only xpage states")
