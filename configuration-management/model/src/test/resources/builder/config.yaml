@@ -1,0 +1,19 @@
+definitions:
+  config:
+    /a:
+      jcr:primaryType: foo
+      /b:
+        jcr:primaryType: foo
+        /c:
+          jcr:primaryType: foo
+          d: configuration
+          e:
+            .meta:category: system
+        /c-content:
+          .meta:category: content
+        /c-residual-content:
+          .meta:residual-child-node-category: content
+          jcr:primaryType: foo
+          d: configuration
+        /c-system:
+          .meta:category: system

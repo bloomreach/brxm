@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<!--
+  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/j2ee/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.1"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  >
+
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>1.2</jsp-version>
+  <short-name>google-analytics-tags</short-name>
+  <uri>http://www.onehippo.org/jsp/google-analytics</uri>
+  <description>Hippo Google Analytics Tag Library</description>
+    
+  <tag>
+    <name>accountId</name>
+    <tag-class>org.onehippo.cms7.hst.ga.tags.GoogleAnalyticsAccountIdTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>
+        A custom Google Analytics account ID.
+        If this attribute is set, this custom Google Analytics account ID will be used in the current page.
+        Otherwise, the default Google Analytics account ID will be used as configured in
+        /hippo:configuration/hippo:modules/googleAnalyticsConfiguration/hippo:moduleconfig/@hippogoogleanalytics:accountId.
+      </description>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+  </tag>
+  
+  <tag>
+    <name>trackDocument</name>
+    <tag-class>org.onehippo.cms7.hst.ga.tags.GoogleAnalyticsTrackDocumentTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <name>hippoDocumentBean</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.content.beans.standard.HippoDocumentBean</type>
+      <description>A HippoDocumentBean object.</description>
+    </attribute>
+  </tag>
+
+</taglib>

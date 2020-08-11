@@ -1,0 +1,14 @@
+{
+  "id": "crisp",
+  "type": "feature",
+  "name": "CRISP Add-on",
+  "icon": "/essentials/feature/crisp/generic-package.svg",
+  "introduction": "Installs the Common Resource model Interface and Service Provider (CRISP) dependencies for the use case of installing the Bloomreach commerce features.",
+  "documentationLink": "https://documentation.bloomreach.com/library/concepts/crisp-api/introduction.html",
+  "vendor": {
+    "name": "Bloomreach",
+    "url": "https://www.bloomreach.com"
+  },
+  "packageFile" : "/META-INF/crisp_instructions.xml",
+  "installWithParameters": false
+}

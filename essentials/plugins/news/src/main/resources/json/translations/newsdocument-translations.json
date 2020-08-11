@@ -1,0 +1,50 @@
+{
+  "hippo:types" : {
+    "{{namespace}}:newsdocument" : {
+      "en" : {
+        "jcr:name" : "News Item",
+        "{{namespace}}:title" : "Title",
+        "{{namespace}}:introduction" : "Introduction",
+        "{{namespace}}:content" : "Content",
+        "{{namespace}}:date" : "Date",
+        "{{namespace}}:image" : "Image",
+        "{{namespace}}:author" : "Author",
+        "{{namespace}}:source" : "Source",
+        "{{namespace}}:location" : "Location"
+      },
+      "nl" : {
+        "jcr:name" : "Nieuwsbericht",
+        "{{namespace}}:title" : "Titel",
+        "{{namespace}}:introduction" : "Introductie",
+        "{{namespace}}:content" : "Inhoud",
+        "{{namespace}}:date" : "Datum",
+        "{{namespace}}:image" : "Afbeelding",
+        "{{namespace}}:author" : "Auteur",
+        "{{namespace}}:source" : "Bron",
+        "{{namespace}}:location" : "Locatie"
+      },
+      "de" : {
+        "jcr:name" : "News",
+        "{{namespace}}:title" : "Titel",
+        "{{namespace}}:introduction" : "Einführung",
+        "{{namespace}}:content" : "Inhalt",
+        "{{namespace}}:date" : "Datum",
+        "{{namespace}}:image" : "Abbildung",
+        "{{namespace}}:author" : "Verfasser",
+        "{{namespace}}:source" : "Quelle",
+        "{{namespace}}:location" : "Standort"
+      },
+      "fr" : {
+        "jcr:name" : "Message d'info",
+        "{{namespace}}:title" : "Titre",
+        "{{namespace}}:introduction" : "Introduction",
+        "{{namespace}}:content" : "Contenu",
+        "{{namespace}}:date" : "Date",
+        "{{namespace}}:image" : "Image",
+        "{{namespace}}:author" : "Auteur",
+        "{{namespace}}:source" : "Source",
+        "{{namespace}}:location" : "Lieu"
+      }
+    }
+  }
+}

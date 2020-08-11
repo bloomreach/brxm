@@ -46,6 +46,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IOUtils;
+import org.hippoecm.frontend.ajax.BrSubmit;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -190,7 +191,7 @@ public class UpdaterPanel extends SystemPanel {
         this.context = context;
 
         form = new HippoForm("new-form");
-        final AjaxButton newButton = new AjaxButton("new-button") {
+        final AjaxButton newButton = new BrSubmit("new-button") {
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
                 newUpdater();

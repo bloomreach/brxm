@@ -1,0 +1,23 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "extends": [
+    "@nuxtjs/eslint-config-typescript",
+    "prettier",
+    "prettier/vue",
+    "plugin:prettier/recommended",
+    "plugin:nuxt/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
+  "plugins": [
+    "prettier"
+  ],
+  "rules": {
+    "nuxt/no-cjs-in-config": "off"
+  }
+}

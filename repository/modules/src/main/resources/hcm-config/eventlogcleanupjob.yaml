@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/scheduler/hippo:moduleconfig/system/EventLogCleanup:
+      jcr:primaryType: hipposched:repositoryjob
+      hipposched:attributeNames: [maxitems, minutestolive]
+      hipposched:attributeValues: ['50000', '-1']
+      hipposched:enabled: true
+      hipposched:repositoryJobClass: org.hippoecm.repository.logging.EventLogCleanupJob
+      /hipposched:triggers:
+        jcr:primaryType: hipposched:triggers
+        /nightly:
+          jcr:primaryType: hipposched:crontrigger
+          jcr:mixinTypes: ['mix:lockable']
+          hipposched:cronExpression: 0 0 3 * * ?
+          hipposched:enabled:
+            .meta:category: system
+            value: true
+            type: boolean
+          hipposched:nextFireTime:
+            .meta:category: system
+          jcr:lockOwner:
+            .meta:category: system
+          jcr:lockIsDeep:
+            .meta:category: system

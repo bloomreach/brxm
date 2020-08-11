@@ -1,0 +1,10 @@
+definitions:
+  namespace:
+    test:
+      uri: http://www.onehippo.org/jcr/hippo/test/nt/1.1
+    test-repository-test:
+      uri: http://www.onehippo.org/test-repository-test-unused
+      cnd: repository-test.cnd
+    sample:
+      uri: http://www.hippoecm.org/sample/nt/1.1
+      cnd: sample.cnd

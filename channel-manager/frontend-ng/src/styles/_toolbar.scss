@@ -1,0 +1,141 @@
+/*
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@import 'variables';
+
+md-toolbar.hippo-toolbar {
+  background: $toolbar-bg;
+  border-bottom: $toolbar-border-bottom;
+  box-sizing: content-box;
+  color: $text-dark;
+  height: $toolbar-height;
+  min-height: $toolbar-height;
+
+  &.ng-hide {
+    height: 0;
+    min-height: 0;
+    opacity: 0;
+  }
+
+  &.ng-hide-add {
+    transition: all $full-screen-ease-in;
+  }
+
+  &.ng-hide-remove {
+    transition: all $full-screen-ease-out;
+  }
+
+  &.ng-hide-add-active,
+  &.ng-hide-remove-active {
+    // Ensure that the toolbar buttons don't bleed during the animation
+    overflow: hidden;
+  }
+
+  .md-container {
+    background-color: $grey-200;
+  }
+
+  .md-bar {
+    background-color: $grey-400;
+  }
+
+  .md-button {
+    margin-right: 0;
+    text-transform: none;
+  }
+
+  md-menu-bar {
+    padding-left: 2px;
+
+    .md-open > .md-button {
+      background-color: $grey-300;
+    }
+
+    md-menu > .md-button {
+      border-radius: 4px;
+      height: $toolbar-button-height;
+      margin-right: 0;
+      min-width: initial;
+    }
+  }
+
+  .channel-menu-button md-icon {
+    fill: $toolbar-channel-changes-color;
+    margin-bottom: 5px; // visually align the icon with the text left of it
+  }
+
+  .md-icon-button {
+    color: $text-dark;
+    height: $toolbar-round-button-size;
+    margin: 0;
+    padding: 0;
+    width: $toolbar-round-button-size;
+  }
+
+  md-icon {
+    color: $text-dim;
+  }
+
+  .md-toolbar-tools {
+    font-size: $font-normal;
+    height: $toolbar-height;
+    padding: 0 24px;
+  }
+
+  .button-group {
+    .md-button {
+      margin-right: 0;
+
+      &:not(:first-child) {
+        margin-left: 0;
+      }
+    }
+  }
+
+  md-select {
+    margin: 0;
+
+    &[disabled] md-select-value md-icon {
+      color: $grey-500;
+    }
+  }
+
+  md-select-value {
+    background: none !important;
+    font-weight: bold;
+    margin-left: 4px;
+    position: relative;
+
+    .normal-font-weight {
+      font-weight: normal;
+    }
+  }
+
+  &.md-bloomreach-theme {
+    h1 {
+      font-size: $font-large;
+    }
+  }
+}
+
+md-toolbar > md-progress-linear {
+  height: 1px;
+  position: absolute;
+  top: $toolbar-height;
+
+  .md-container {
+    height: 1px;
+  }
+}

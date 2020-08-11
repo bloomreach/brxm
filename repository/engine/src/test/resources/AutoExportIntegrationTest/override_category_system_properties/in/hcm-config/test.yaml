@@ -1,0 +1,17 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:users/test-user:
+      jcr:primaryType: hipposys:user
+      hipposys:securityprovider: internal
+      hipposys:userroles: [a, b]
+    /hippo:configuration/hippo:groups/test-group:
+      jcr:primaryType: hipposys:group
+      hipposys:securityprovider: internal
+      hipposys:userroles: [a, b]
+    /hippo:configuration/hippo:domains/defaultread:
+      /test-authrole:
+        jcr:primaryType: hipposys:authrole
+        hipposys:role: readonly
+        hipposys:groups: [test-group]
+        hipposys:userrole: a
+

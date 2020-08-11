@@ -1,0 +1,24 @@
+definitions:
+  namespace:
+    demosite:
+      uri: http://www.hippoecm.org/hst/nt/demosite/1.0
+      cnd: demosite-types.cnd
+  config:
+    /hippo:configuration/hippo:translations:
+      /hippo:types:
+        jcr:primaryType: hipposys:resourcebundles
+    /hippo:configuration/hippo:groups/author:
+      hipposys:members:
+        operation: add
+        type: string
+        value: [author]
+    /hippo:configuration/hippo:groups/editor:
+      hipposys:members:
+        operation: add
+        type: string
+        value: [editor]
+    /hippo:configuration/hippo:groups/webmaster:
+      hipposys:members:
+        operation: add
+        type: string
+        value: [editor]

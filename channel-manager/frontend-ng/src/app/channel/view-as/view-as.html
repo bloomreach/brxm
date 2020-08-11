@@ -1,0 +1,33 @@
+<!--
+  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div ng-if="$ctrl.selectedVariant" layout="row" layout-align="start center" class="select-in-toolbar qa-view-as">
+  <label flex="none">{{ ::'TOOLBAR_VIEW_AS_LABEL' | translate }}</label>
+  <md-select aria-label="{{ ::'TOOLBAR_VIEW_AS_LABEL' | translate }}"
+             class="md-no-underline"
+             ng-model="$ctrl.selectedVariant"
+             ng-model-options="{trackBy: '$value.id'}"
+             md-selected-text="$ctrl.makeDisplayName($ctrl.selectedVariant)">
+    <md-option ng-repeat="variant in $ctrl.globalVariants track by variant.id"
+               ng-value="variant"
+               ng-click="$ctrl.editVariant(variant)">
+      {{ ::$ctrl.makeSelectableDisplayName(variant) }}
+    </md-option>
+  </md-select>
+  <span>
+    {{ ::'TOOLBAR_VIEW_ON_LABEL' | translate }}
+  </span>
+</div>

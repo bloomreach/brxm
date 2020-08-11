@@ -1,0 +1,266 @@
+// Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+.md-bloomreach-theme {
+  md-input-container {
+    margin: 12px 0;
+
+    /* stylelint-disable-next-line max-line-length */
+    &:not(.field-type-radio_group):not(.field-type-boolean_radio_group):not(.field-type-open_ui):not(.field-type_search) {
+      $input: 'input.md-input';
+      $textarea: 'textarea.md-input';
+      $select: 'md-select';
+      $ckeditor: 'ckeditor .cke[class*=\'cke_editor_input_\']:not(.cke_shared)';
+      $datepicker: 'md-datepicker';
+
+      #{$input},
+      #{$textarea},
+      #{$select},
+      #{$ckeditor} {
+        --color: #{$bloomreach-black};
+        --background-color: #{$bloomreach-white};
+        --border-color: #{$bloomreach-gray-38};
+        --hover-color: var(--color);
+        --hover-background-color: var(--background-color);
+        --hover-border-color: #{$bloomreach-gray-87};
+        --focus-color: var(--color);
+        --focus-background-color: var(--background-color);
+        --focus-border-color: #{$bloomreach-blue-primary};
+        --disabled-color: #{$bloomreach-gray-12};
+        --disabled-background-color: var(--background-color);
+        --disabled-border-color: var(--disabled-color);
+        --invalid-color: var(--color);
+        --invalid-background-color: var(--background-color);
+        --invalid-border-color: #{$bloomreach-red};
+
+        background: var(--background-color);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        box-sizing: border-box;
+        color: var(--color);
+        font-size: 14px;
+        padding: 0 16px;
+        transition: $swift-ease-in;
+        transition-property: border-color, box-shadow;
+
+        &:not([disabled]) {
+          &:hover {
+            background-color: var(--hover-background-color);
+            border-color: var(--hover-border-color);
+            color: var(--hover-color);
+          }
+        }
+      }
+
+      &.md-input-invalid {
+        & > #{$input},
+        & > #{$textarea},
+        & > #{$select} {
+          &:not([disabled]) {
+            --focus-border-color: var(--invalid-border-color);
+
+            background-color: var(--invalid-background-color);
+            border-color: var(--invalid-border-color);
+            color: var(--invalid-color);
+          }
+        }
+      }
+
+      &.md-input-focused > #{$input},
+      &.md-input-focused > #{$textarea},
+      &.md-input-focused > #{$select},
+      #{$input}:focus,
+      #{$textarea}:focus,
+      #{$select}:focus,
+      #{$input}.has-focus,
+      #{$textarea}.has-focus,
+      #{$select}.has-focus,
+      .md-datepicker-focused > .md-input {
+        &:not([disabled]) {
+          background-color: var(--focus-background-color);
+          border-color: var(--focus-border-color) !important;
+          box-shadow: 0 0 0 1px var(--focus-border-color);
+          color: var(--focus-color);
+        }
+      }
+
+      label:not(.md-no-float):not(.md-container-ignore),
+      .md-placeholder {
+        box-sizing: border-box;
+        font-size: 14px;
+        padding: 0 5px 0 18px;
+        transform: translate3d(0, $input-label-default-offset, 0) scale($input-label-default-scale);
+
+        md-icon[md-font-icon] {
+          font-size: 14px;
+          height: 19px;
+          line-height: 19px;
+          min-height: auto;
+          min-width: auto;
+          width: 19px;
+        }
+      }
+
+      &.md-input-focused,
+      &.md-input-has-placeholder,
+      &.md-input-has-value {
+        label:not(.md-no-float) {
+          background: $bloomreach-white;
+          border-left: 5px solid $bloomreach-white;
+          border-right: 5px solid $bloomreach-white;
+          max-width: calc(100% - 28px);
+          padding: 0;
+          transform: translate3d(14px, $input-label-float-offset, 0) scale($input-label-float-scale);
+          width: auto;
+        }
+
+        &:not([md-no-float]) {
+          #{$select} .md-select-placeholder {
+            justify-content: space-between;
+
+            span:first-child {
+              background: $bloomreach-white;
+              flex: none;
+              line-height: 1;
+              padding: 0 5px;
+              transform: translate3d(-5px, -17px, 0) scale($input-label-float-scale);
+            }
+          }
+        }
+      }
+
+      &.md-input-focused #{$input},
+      &.md-input-focused #{$textarea},
+      &.md-input-resized #{$textarea},
+      #{$input}.ng-invalid.ng-dirty,
+      #{$textarea}.ng-invalid.ng-dirty {
+        border-width: 1px;
+      }
+
+      #{$input},
+      #{$select} {
+        height: 36px;
+        line-height: 34px;
+      }
+
+      #{$select} {
+        margin: 0;
+
+        .md-select-value {
+          background-image: none !important;
+          border: none !important;
+          padding: 0 !important;
+
+          .md-select-icon {
+            margin-right: 0;
+          }
+        }
+
+        &[disabled] .md-select-value {
+          margin-bottom: 0;
+        }
+      }
+
+      #{$textarea} {
+        line-height: 1.6em;
+        padding: 7px 16px !important;
+      }
+
+      #{$ckeditor} {
+        padding: 8px 16px;
+      }
+
+      #{$datepicker} {
+        position: relative;
+
+        .md-icon-button + .md-datepicker-input-container {
+          margin-left: 0;
+          padding: 0;
+        }
+
+        .md-datepicker-button {
+          height: 32px;
+          left: 4px;
+          min-height: auto;
+          padding: 0;
+          position: absolute;
+          top: 50%;
+          transform: translateY(-15px);
+          width: 32px;
+          z-index: 1;
+        }
+
+        .md-input {
+          padding-left: 48px;
+        }
+
+        .md-datepicker-triangle-button.md-button.md-icon-button {
+          bottom: 2px;
+          height: 32px;
+          min-height: auto;
+          min-width: auto;
+          padding: 0;
+          right: 16px;
+          width: 32px;
+          z-index: 1;
+        }
+      }
+
+      &._md-datepicker-floating-label._md-datepicker-has-calendar-icon {
+        > label:not(.md-no-float):not(.md-container-ignore) {
+          right: auto !important;
+          width: auto !important;
+
+          > span {
+            min-width: auto;
+            width: auto;
+          }
+        }
+
+        &:not(.md-input-focused):not(.md-input-has-placeholder):not(.md-input-has-value) {
+          > label:not(.md-no-float):not(.md-container-ignore) {
+            padding: 0;
+            transform: translate3d(48px, 31px, 0);
+            width: 116px !important;
+          }
+        }
+
+        .md-input-message-animation {
+          margin-left: 0;
+        }
+      }
+    }
+
+    &.md-input-invalid {
+      .md-char-counter,
+      .md-input-message-animation,
+      label {
+        color: $bloomreach-red;
+      }
+    }
+
+    .md-input-message-animation,
+    .md-input-messages-animation {
+      color: $bloomreach-red;
+    }
+
+    md-select.ng-invalid.ng-touched .md-select-value {
+      color: $bloomreach-red !important;
+    }
+
+    label.md-required::after {
+      color: $bloomreach-red;
+    }
+  }
+}

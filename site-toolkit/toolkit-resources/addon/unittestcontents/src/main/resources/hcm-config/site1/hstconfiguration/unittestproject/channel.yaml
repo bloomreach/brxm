@@ -1,0 +1,12 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestproject/hst:channel:
+      jcr:primaryType: hst:channel
+      hst:channelinfoclass: org.hippoecm.hst.test.WebsiteChannelInfo
+      hst:name: Test Channel
+      /hst:channelinfo:
+        jcr:primaryType: hst:channelinfo
+        headerName: Test HST Website
+        # See WebsiteChannelInfo, only 'headerName' is known
+        nonParameterProp: Foo
+

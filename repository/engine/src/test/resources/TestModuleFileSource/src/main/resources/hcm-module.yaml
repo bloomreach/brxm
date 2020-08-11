@@ -1,0 +1,4 @@
+# This file is used by FilesystemModuleTest and needs to be located at TestModuleFileSource/src/main/resources
+group: test-group
+project: test-project
+module: test-module

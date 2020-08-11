@@ -1,0 +1,5 @@
+group: hippo-cms
+project: hippo-repository
+module:
+    name: hippo-repository-workflow
+    after: hippo-repository-config

@@ -1,0 +1,28 @@
+definitions:
+  config:
+    /template-demo:
+      jcr:primaryType: hippostd:folder
+      jcr:mixinTypes: ['mix:versionable']
+      /myarticle:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: efea9983-4801-861b-a297-db7d4ca20985
+        /myarticle:
+          jcr:primaryType: sample:simpledocument
+          jcr:mixinTypes: ['mix:versionable']
+          hippostd:state: unpublished
+          sample:body: |-
+            <html><body>o what a
+                      night</body></html>
+          sample:subject: [onderwerp]
+          sample:title: |-
+            <html><body>demo
+                      titel</body></html>
+          /sample:image:
+            jcr:primaryType: sample:image
+            jcr:uuid: 86775ce3-34ff-4e29-8401-8ada5d0368a4
+            jcr:data:
+              type: binary
+              resource: /template-demo/myarticle/myarticle/image/data.gif
+            jcr:lastModified: 2008-02-04T16:43:01.618+01:00
+            jcr:mimeType: image/gif

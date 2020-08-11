@@ -344,6 +344,10 @@ public class TabsPlugin extends RenderPlugin {
             return;
         }
         try {
+            if (editor.isTransferable()) {
+                editor.close();
+                return;
+            }
             if (editor.isModified() || !editor.isValid()) {
 
                 final OnCloseDialog onCloseDialog = new OnCloseDialog(new OnCloseDialog.Actions() {

@@ -1,0 +1,220 @@
+definitions:
+  config:
+    /hippo:namespaces/pagemodelapitest/dynamiccontent:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          hipposysedit:node: true
+          hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document', 'hippostd:publishableSummary', 'hippostd:relaxed']
+          hipposysedit:uri: http://www.onehippo.org/pagemodelapitest/nt/1.0
+          /booleanTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:booleanTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Boolean
+          /multipleBooleanTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:multipleBooleanTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Boolean
+          /singleValueMultipleBooleanTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:singleValueMultipleBooleanTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Boolean
+          /multipleValueSingleBooleanTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:multipleValueSingleBooleanTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Boolean
+          /doubleTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:doubleTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Double
+          /multipleDoubleTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:multipleDoubleTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Double
+          /singleValueMultipleDoubleTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:singleValueMultipleDoubleTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Double
+          /multipleValueSingleDoubleTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:multipleValueSingleDoubleTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Double
+          /longTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:longTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Long
+          /multipleLongTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:multipleLongTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Long
+          /singleValueMultipleLongTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:singleValueMultipleLongTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Long
+          /multipleValueSingleLongTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:multipleValueSingleLongTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Long
+          /dateTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:dateTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Date
+          /multipleDateTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:multipleDateTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Date
+          /singleValueMultipleDateTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:singleValueMultipleDateTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Date
+          /multipleValueSingleDateTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:multipleValueSingleDateTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Date
+          /richTextEditorCompoundType:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:richTextEditorCompoundType
+            hipposysedit:primary: false
+            hipposysedit:type: hippostd:html
+          /mirrorCompoundType:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:mirrorCompoundType
+            hipposysedit:primary: false
+            hipposysedit:type: hippo:mirror
+          /resourceCompoundType:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:resourceCompoundType
+            hipposysedit:primary: false
+            hipposysedit:type: hippo:resource
+          /standardCompoundType:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:standardCompoundType
+            hipposysedit:primary: false
+            hipposysedit:type: pagemodelapitest:dynamiccompound
+          /longTypeField2:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: pagemodelapitest:longTypeField2
+            hipposysedit:primary: false
+            hipposysedit:type: Long
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: pagemodelapitest:dynamiccontent
+          hippostd:holder: holder
+          hippostd:state: draft
+          hippostdpubwf:createdBy: ''
+          hippostdpubwf:lastModifiedBy: ''
+          hippotranslation:id: document-type-locale-id
+          hippotranslation:locale: document-type-locale
+          jcr:mixinTypes: ['mix:referenceable']
+          pagemodelapitest:stringTypeField: ''
+          pagemodelapitest:booleanTypeField: false
+          pagemodelapitest:doubleTypeField: 0.0
+          pagemodelapitest:longTypeField: 0
+          pagemodelapitest:dateTypeField: 0001-01-01T13:00:00+01:00
+          pagemodelapitest:calendardateTypeField: 0001-01-01T13:00:00+01:00
+          pagemodelapitest:htmlTypeField: ''
+          hippostdpubwf:lastModificationDate: 2019-03-25T13:53:32.511+01:00
+          hippostdpubwf:creationDate: 2019-03-25T13:53:32.511+01:00
+          pagemodelapitest:radioGroupTypeField: ''
+          pagemodelapitest:booleanRadioGroupTypeField: false
+          pagemodelapitest:textTypeField: ''
+          pagemodelapitest:docbaseTypeField: ''
+          pagemodelapitest:dynamicdropdownTypeField: ''
+          pagemodelapitest:longTypeField2: 0
+          /pagemodelapitest:standardCompoundType:
+            jcr:primaryType: pagemodelapitest:dynamiccompound
+            pagemodelapitest:stringTypeField: alexanderkade
+            /pagemodelapitest:dynamicinnercompound:
+              jcr:primaryType: pagemodelapitest:dynamicinnercompound
+              pagemodelapitest:stringTypeField: http://test.com
+          /pagemodelapitest:richTextEditorCompoundType:
+            jcr:primaryType: hippostd:html
+            hippostd:content: ''
+          /pagemodelapitest:mirrorCompoundType:
+            jcr:primaryType: hippo:mirror
+            hippo:docbase: 64ab4648-0c20-40d2-9f18-d7a394f0334b

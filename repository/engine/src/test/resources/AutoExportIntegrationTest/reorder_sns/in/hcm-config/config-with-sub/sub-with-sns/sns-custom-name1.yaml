@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /config-with-sub/sub-with-sns/sns:
+      jcr:primaryType: nt:unstructured
+      property: value1

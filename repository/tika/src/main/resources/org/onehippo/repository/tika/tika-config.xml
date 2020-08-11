@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<properties>
+  <parsers>
+    <!-- Instead of using the DefaultParser, which tries to load all the parsers configured in
+            tika-parsers.jar/META-INF/services/org.apache.tika.parser.Parsers
+         only load those actually useful/supported, e.g. text, html or office document based -->
+    <parser class="org.apache.tika.parser.CompositeParser">
+      <parser class="org.apache.tika.parser.chm.ChmParser"/>
+      <parser class="org.apache.tika.parser.epub.EpubParser"/>
+      <parser class="org.apache.tika.parser.html.HtmlParser"/>
+      <parser class="org.apache.tika.parser.iwork.IWorkPackageParser"/>
+      <parser class="org.apache.tika.parser.microsoft.OfficeParser"/>
+      <parser class="org.apache.tika.parser.microsoft.OldExcelParser"/>
+      <parser class="org.apache.tika.parser.microsoft.ooxml.OOXMLParser"/>
+      <parser class="org.apache.tika.parser.microsoft.ooxml.xwpf.ml2006.Word2006MLParser"/>
+      <parser class="org.apache.tika.parser.microsoft.xml.SpreadsheetMLParser"/>
+      <parser class="org.apache.tika.parser.microsoft.xml.WordMLParser"/>
+      <parser class="org.apache.tika.parser.odf.OpenDocumentParser"/>
+      <parser class="org.apache.tika.parser.pdf.PDFParser"/>
+      <parser class="org.apache.tika.parser.rtf.RTFParser"/>
+      <parser class="org.apache.tika.parser.txt.TXTParser"/>
+      <parser class="org.apache.tika.parser.wordperfect.QuattroProParser"/>
+      <parser class="org.apache.tika.parser.wordperfect.WordPerfectParser"/>
+      <parser class="org.apache.tika.parser.xml.DcXMLParser"/>
+      <parser class="org.apache.tika.parser.xml.FictionBookParser"/>
+    </parser>
+    <!-- below exclusions derived/inherited from default Jackrabbit tika-config.xml -->
+    <parser class="org.apache.tika.parser.EmptyParser">
+      <!-- Disable package extraction as it's too resource-intensive -->
+      <mime>application/x-archive</mime>
+      <mime>application/x-bzip</mime>
+      <mime>application/x-bzip2</mime>
+      <mime>application/x-cpio</mime>
+      <mime>application/x-gtar</mime>
+      <mime>application/x-gzip</mime>
+      <mime>application/x-tar</mime>
+      <mime>application/zip</mime>
+      <!-- Disable image extraction as there's no text to be found -->
+      <mime>image/bmp</mime>
+      <mime>image/gif</mime>
+      <mime>image/jpeg</mime>
+      <mime>image/png</mime>
+      <mime>image/vnd.wap.wbmp</mime>
+      <mime>image/x-icon</mime>
+      <mime>image/x-psd</mime>
+      <mime>image/x-xcf</mime>
+    </parser>
+  </parsers>
+  <!-- ignore Tika Parsers warnings for missing *optional* libraries -->
+  <service-loader initializableProblemHandler="ignore"/>
+</properties>

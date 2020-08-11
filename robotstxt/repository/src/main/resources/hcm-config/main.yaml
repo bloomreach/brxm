@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    robotstxt:
+      uri: http://www.onehippo.org/robotstxt/nt/1.1
+      cnd: robotstxt.cnd

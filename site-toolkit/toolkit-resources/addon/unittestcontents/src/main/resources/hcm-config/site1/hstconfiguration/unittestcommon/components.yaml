@@ -1,0 +1,83 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestcommon/hst:components:
+      jcr:primaryType: hst:components
+      /header:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.test.HeaderComponent
+        hst:template: header
+        /title:
+          jcr:primaryType: hst:component
+          hst:template: title
+        /container:
+          jcr:primaryType: hst:containercomponent
+          /banner-old-style:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentclassname: org.hippoecm.hst.test.BannerComponent
+            hst:template: header
+            hst:parameternames: [path]
+            hst:parametervalues: [banners/banner100]
+          /banner-old-style-2:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentclassname: org.hippoecm.hst.test.BannerComponent
+            hst:template: header
+            hst:parameternames: [path]
+            hst:parametervalues: [banners/banner101]
+          /banner-new-style:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentdefinition: hst:components/unittestpackage/banner-new-style
+            hst:parameternames: [path]
+            hst:parametervalues: [banners/banner102]
+          /banner-new-style-2:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentdefinition: hst:components/unittestpackage/banner-new-style
+            hst:parameternames: [document]
+            hst:parametervalues: [banners/banner103]
+      /overview:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:template: overview
+      /detail:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:template: detail
+      /leftmenu:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:template: leftmenu
+      /contactform:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:template: contact
+      /simplesearch:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:template: simplesearch
+      /contactspringform:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:parameternames: [spring-delegated-bean]
+        hst:parametervalues: [contactBean]
+        hst:template: contactspring
+      /contactdispatchform:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:parameternames: [dispatch-path]
+        hst:parametervalues: [jsp/components/contactdispatch.jsp]
+      /contactspringmvcform:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+        hst:parameternames: [action-path]
+        hst:parametervalues: [spring/contactspringmvc.do]
+        hst:template: contactspringmvc
+      /twopaneoverview:
+        jcr:primaryType: hst:component
+        hst:template: twopaneoverview
+        /top:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+          hst:template: overview
+        /bottom:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+          hst:template: overview

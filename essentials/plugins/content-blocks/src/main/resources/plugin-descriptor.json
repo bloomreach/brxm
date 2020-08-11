@@ -1,0 +1,35 @@
+{
+  "id": "contentBlocks",
+  "name": "Content Blocks",
+  "icon": "/essentials/feature/images/content-blocks-plugin-icon.svg",
+  "introduction": "With Content Blocks, the content- and document editor can add multiple pre-configured compound type blocks to a document.",
+  "description": "<p>The CMS administrator can configure the available content blocks on per document type basis.</p><p>This feature wraps the 'Content Blocks' Standard Plugin.</p>",
+  "imageUrls": [
+    "/essentials/feature/images/screenshots/contentblocks01.png"
+  ],
+  "documentationLink": "https://documentation.bloomreach.com/library/concepts/plugins/content-blocks/about.html",
+  "type": "feature",
+  "hasConfiguration": true,
+  "installWithParameters": false,
+  "packageFile": "/META-INF/content_blocks_plugin_instructions.xml",
+  "restClasses": [
+    "org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksResource"
+  ],
+  "vendor": {
+    "name": "Bloomreach",
+    "url": "https://www.bloomreach.com"
+  },
+  "categories": {
+    "application": [
+      "productivity",
+      "integration",
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippotaxonomy:taxonomy:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Taxonomía
+    /hippo:configuration/hippo:translations/hippo:types/hippotaxonomy:classifiable:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Puede ser clasificado
+    /hippo:configuration/hippo:translations/hippo:types/hippotaxonomy:canonised:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Canonizado

@@ -1,0 +1,20 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/editing:
+      jcr:primaryType: hipposys:workflowcategory
+      /handle:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.onehippo.repository.documentworkflow.DocumentWorkflowImpl
+        hipposys:display: Handle workflow
+        hipposys:nodetype: hippo:handle
+        hipposys:privileges: ['hippo:author']
+        hipposys:subtype: hippostdpubwf:document
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          scxml-definition: documentworkflow
+      /default:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.NullWorkflowImpl
+        hipposys:display: Default edit workflow
+        hipposys:nodetype: hippo:document
+        hipposys:privileges: ['hippo:author']

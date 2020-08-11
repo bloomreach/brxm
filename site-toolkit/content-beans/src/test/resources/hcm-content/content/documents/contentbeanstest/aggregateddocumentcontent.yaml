@@ -1,0 +1,10 @@
+/content/documents/contentbeanstest/content/dynamicaggregatedcontent:
+  jcr:primaryType: hippo:handle
+  jcr:mixinTypes: ['hippo:named', 'hippo:versionInfo', 'mix:referenceable']
+  hippo:name: AggregatedContent
+  /aggregateddocumentcontent:
+    jcr:primaryType: contentbeanstest:aggregateddocument
+    jcr:mixinTypes: ['extranamespace:extraType', 'mix:referenceable']
+    hippo:availability: []
+    contentbeanstest:stringField: Aggregated Type String
+    extranamespace:extraTypeText: Extra Type String
