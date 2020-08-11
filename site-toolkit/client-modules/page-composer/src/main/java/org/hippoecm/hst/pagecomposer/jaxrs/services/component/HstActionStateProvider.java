@@ -18,19 +18,19 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
 import java.util.Optional;
 
-final class HstComponentInfoProvider implements ComponentInfoProvider {
+final class HstActionStateProvider implements ActionStateProvider {
 
     private final HstActionProvider actionProvider;
     private final HstStateProvider stateProvider;
 
-    HstComponentInfoProvider(final HstActionProvider actionProvider, final HstStateProvider stateProvider) {
+    HstActionStateProvider(final HstActionProvider actionProvider, final HstStateProvider stateProvider) {
         this.actionProvider = actionProvider;
         this.stateProvider = stateProvider;
     }
 
     @Override
-    public Optional<ComponentInfo> getComponentInfo(final ComponentInfoProviderContext context) {
-        return Optional.of(new ComponentInfo(actionProvider.getActions(context), stateProvider.getStates(context)));
+    public Optional<ActionState> getActionState(final ActionStateProviderContext context) {
+        return Optional.of(new ActionState(actionProvider.getActions(context), stateProvider.getStates(context)));
     }
 
 }
