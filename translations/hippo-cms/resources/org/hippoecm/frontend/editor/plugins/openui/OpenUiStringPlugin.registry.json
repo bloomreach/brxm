@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "load-error" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

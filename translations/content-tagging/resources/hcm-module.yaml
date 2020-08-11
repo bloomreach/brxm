@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-plugin-content-tagging-translations
+    after: hippo-plugin-content-tagging
+module: hippo-plugin-content-tagging-l10n-${locale}

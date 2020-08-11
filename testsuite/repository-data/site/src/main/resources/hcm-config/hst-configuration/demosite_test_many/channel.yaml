@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite-test-many/hst:channel:
+      jcr:primaryType: hst:channel
+      hst:channelinfoclass: org.hippoecm.hst.demo.channel.DemoChannelInfo
+      hst:name: Test Many Site
+      hst:type: website
+      /hst:channelinfo:
+        jcr:primaryType: hst:channelinfo
+        exampleValue: example

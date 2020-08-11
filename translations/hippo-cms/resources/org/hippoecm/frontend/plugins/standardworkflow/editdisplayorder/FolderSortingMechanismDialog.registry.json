@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "manually" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "alphabetically" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "order-folder-content" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

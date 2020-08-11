@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:html:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Editor de texto enriquecido

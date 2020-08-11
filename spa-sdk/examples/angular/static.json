@@ -1,0 +1,6 @@
+{
+  "root": "examples/angular/dist/browser/",
+  "routes": {
+    "/**": "index.html"
+  }
+}

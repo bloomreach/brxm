@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,21 +22,27 @@ import java.util.Optional;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.util.DocumentUtils;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.util.WorkflowUtils;
@@ -122,11 +128,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         if (parent.isNodeType(NT_FOLDER)) {
             return true;
         }
-        if (parent.isNodeType(NT_DIRECTORY)) {
-            return true;
-        }
-
-        return false;
+        return parent.isNodeType(NT_DIRECTORY);
     }
 
     protected Node getVariant(final Node handle, final WorkflowUtils.Variant variant) throws RepositoryException {
@@ -196,6 +198,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
                 return result;
             }
         } catch (RepositoryException ignored) {
+            log.warn("Something went wrong while getting the document name", ignored);
         }
         return new StringResourceModel("unknown", this);
     }
@@ -216,5 +219,40 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
 
     protected String getBranchId() {
         return branchIdModel == null ? BranchConstants.MASTER_BRANCH_ID : branchIdModel.getBranchId();
+    }
+
+    protected String openEditor(final Document docRef) throws RepositoryException, ServiceException {
+        Session session = UserSession.get().getJcrSession();
+        session.refresh(true);
+        Node docNode = session.getNodeByIdentifier(docRef.getIdentity());
+        IEditorManager editorMgr = getPluginContext().getService(
+                getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
+        if (editorMgr != null) {
+            JcrNodeModel docModel = new JcrNodeModel(docNode);
+            IEditor editor = editorMgr.getEditor(docModel);
+            if (editor == null) {
+                editorMgr.openEditor(docModel);
+            }
+        } else {
+            log.warn("No editor found to edit {}", docNode.getPath());
+        }
+        return null;
+    }
+
+    final static class CancelDialog extends ConfirmDialog {
+        private StdWorkflow workflow;
+
+        CancelDialog(final IModel<String> title, final IModel<String> question, final IModel<String> okLabel,
+                     final StdWorkflow workflow) {
+            super(title, question);
+            setSize(DialogConstants.SMALL_AUTO);
+            setOkLabel(okLabel);
+            this.workflow = workflow;
+        }
+
+        @Override
+        public void invokeWorkflow() throws Exception {
+            workflow.invokeWorkflow();
+        }
     }
 }

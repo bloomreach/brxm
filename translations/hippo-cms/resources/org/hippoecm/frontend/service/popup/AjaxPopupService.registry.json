@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "popup.blocker.detected" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

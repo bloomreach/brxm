@@ -1,0 +1,53 @@
+<'frontend'='http://www.onehippo.org/jcr/frontend/nt/2.0'>
+<'hipposys'='http://www.onehippo.org/jcr/hipposys/nt/1.0'>
+<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+
+[frontend:pluginconfig] > nt:base
+  orderable
+  - * (boolean)
+  - * (string) multiple
+  - * (long)
+  - * (date)
+  - * (string)
+  - * (double)
+  + * (frontend:pluginconfig) multiple
+
+[frontend:plugin] > frontend:pluginconfig
+  orderable
+
+[frontend:plugincluster] > nt:base
+  orderable
+  - frontend:references (string) multiple
+  - * (date)
+  - * (string)
+  - * (long)
+  - * (string) multiple
+  - * (double)
+  - frontend:properties (string) multiple
+  - * (boolean)
+  - frontend:services (string) multiple
+  + * (frontend:plugin) = frontend:plugin
+
+[frontend:clusterfolder] > nt:base
+  orderable
+  + * (frontend:plugincluster) = frontend:plugincluster
+
+[frontend:application] > nt:base
+  orderable
+  - frontend:saveonexit (boolean)
+  + * (frontend:clusterfolder) multiple
+  + * (frontend:plugincluster) multiple
+  + * (nt:unstructured) multiple
+
+[frontend:listener] > nt:base
+  - frontend:uuids (string) multiple
+  - frontend:path (string) mandatory
+  - frontend:deep (boolean) = 'false'
+  - frontend:events (long) mandatory
+  - frontend:nodetypes (string) multiple
+
+[frontend:workflow] > hipposys:workflow
+  - * (string)
+  - frontend:renderer (string)
+  + frontend:renderer (nt:base)
+

@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/scxmlregistry:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.repository.scxml.SCXMLRegistryModule
+      /hippo:moduleconfig:
+        jcr:primaryType: nt:unstructured

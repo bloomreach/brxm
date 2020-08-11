@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /topmost/upstream/exportFirst:
+      /childNode2:
+        jcr:primaryType: nt:unstructured
+    /topmost/upstream/exportSecond:
+      jcr:primaryType: nt:unstructured

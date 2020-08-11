@@ -1,0 +1,49 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "exception" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=javax.jcr.ValueFormatException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "cancel" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=java.rmi.RemoteException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "fullscreen" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.MappingException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete-message-extended" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exit-fullscreen" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ok" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=javax.jcr.InvalidItemStateException" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

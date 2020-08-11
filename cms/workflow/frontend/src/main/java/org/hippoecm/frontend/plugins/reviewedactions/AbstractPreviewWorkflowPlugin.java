@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,25 +20,17 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.migrate.StringResourceModelMigration;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.buttons.ButtonStyle;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.service.IEditor;
-import org.hippoecm.frontend.service.IEditorManager;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
@@ -47,17 +39,26 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
+    /**
+     * Workflow action that edits the unpublished variant of a document.
+     */
     private final StdWorkflow editAction;
+    /**
+     * Workflow action that edits the current draft if it has been saved as draft.
+     */
+    private final StdWorkflow editDraftAction;
     private final Map<String, Serializable> info;
+    private final boolean transferable;
 
     @SuppressWarnings({"unused", "FieldCanBeLocal"}) // used by a PropertyModel
     private String inUseBy;
 
-    protected AbstractPreviewWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
+    protected AbstractPreviewWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         info = getHints();
         inUseBy = getHint("inUseBy");
+        transferable = isActionAllowed(getHints(), "editDraft");
         add(new StdWorkflow("infoEdit", "infoEdit") {
 
             /**
@@ -81,8 +82,10 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
             @Override
             protected IModel getTitle() {
-                return StringResourceModelMigration.of("in-use-by", this, null,
-                        new PropertyModel(AbstractPreviewWorkflowPlugin.this, "inUseBy"));
+                final StringResourceModel inUseBy =
+                        new StringResourceModel("in-use-by", this).setModel(null).setParameters(
+                                new PropertyModel(AbstractPreviewWorkflowPlugin.this, "inUseBy"));
+                return inUseBy;
             }
 
             @Override
@@ -93,16 +96,11 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         });
 
 
-        editAction = new StdWorkflow("edit", new StringResourceModel("edit-label", this), getModel()) {
+        editDraftAction = new StdWorkflow("editDraftAction", new StringResourceModel("edit-draft-label", this), getModel()) {
 
             @Override
             public String getSubMenu() {
                 return "top";
-            }
-
-            @Override
-            protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.PENCIL_SQUARE);
             }
 
             @Override
@@ -111,28 +109,67 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
+            protected IModel<String> getTooltip() {
+                return new StringResourceModel("edit-draft-hint", this);
+            }
+
+            @Override
+            protected String execute(final Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                String branchId = getBranchIdModel().getBranchId();
-                Document docRef = workflow.obtainEditableInstance(branchId);
-                Session session = UserSession.get().getJcrSession();
-                session.refresh(true);
-                Node docNode = session.getNodeByIdentifier(docRef.getIdentity());
-                IEditorManager editorMgr = getPluginContext().getService(
-                        getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
-                if (editorMgr != null) {
-                    JcrNodeModel docModel = new JcrNodeModel(docNode);
-                    IEditor editor = editorMgr.getEditor(docModel);
-                    if (editor == null) {
-                        editorMgr.openEditor(docModel);
-                    }
-                } else {
-                    log.warn("No editor found to edit {}", docNode.getPath());
-                }
-                return null;
+                Document docRef = workflow.editDraft();
+                return openEditor(docRef);
             }
 
         };
+        final StringResourceModel editDraftResourceModel =
+                new StringResourceModel("edit-label", this);
+        final boolean isTransferable = isActionAllowed(info, "editDraft");
+
+        editAction = new StdWorkflow("edit", editDraftResourceModel, getPluginContext(), getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
+            @Override
+            public String getCssClass() {
+                return isTransferable ? super.getCssClass() : ButtonStyle.SECONDARY.getCssClass();
+            }
+
+            @Override
+            protected IModel<String> getTooltip() {
+                final StringResourceModel model =
+                        new StringResourceModel("edit-discard-changes-hint"
+                                , AbstractPreviewWorkflowPlugin.this);
+                return isTransferable ? model : super.getTooltip();
+            }
+
+            @Override
+            protected IDialogService.Dialog createRequestDialog() {
+                final StringResourceModel title =
+                        new StringResourceModel("edit-discard-changes-confirmation-title"
+                                , AbstractPreviewWorkflowPlugin.this);
+                final StringResourceModel question =
+                        new StringResourceModel("edit-discard-changes-confirmation-body"
+                                , AbstractPreviewWorkflowPlugin.this)
+                                .setParameters(getDocumentName());
+                final StringResourceModel okLabel = new StringResourceModel("edit-discard-changes-confirmation-ok-button"
+                        , AbstractPreviewWorkflowPlugin.this);
+                return isTransferable ? new CancelDialog(title, question, okLabel, this) : super.createRequestDialog();
+            }
+
+            @Override
+            protected String execute(final Workflow wf) throws Exception {
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+                String branchId = getBranchIdModel().getBranchId();
+                Document docRef = workflow.obtainEditableInstance(branchId);
+                return openEditor(docRef);
+            }
+
+        };
+
+        add(editDraftAction);
         add(editAction);
         hideInvalidActions();
     }
@@ -155,6 +192,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
     private void hideInvalidActions() {
         hideIfNotAllowed(info, "obtainEditableInstance", editAction);
+        hideIfNotAllowed(info, "editDraft", editDraftAction);
     }
 
     protected final String getHint(final String key) {
@@ -164,5 +202,4 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         }
         return StringUtils.EMPTY;
     }
-
 }

@@ -1,0 +1,157 @@
+definitions:
+  config:
+    /hippo:namespaces/robotstxt:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      /section:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:compound']
+            hipposysedit:uri: http://www.onehippo.org/robotstxt/nt/1.1
+            /useragent:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: robotstxt:useragent
+              hipposysedit:primary: false
+              hipposysedit:type: String
+            /disallow:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: true
+              hipposysedit:ordered: false
+              hipposysedit:path: robotstxt:disallow
+              hipposysedit:primary: false
+              hipposysedit:type: String
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: robotstxt:section
+            robotstxt:disallow: ['']
+            robotstxt:useragent: '*'
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [wicket.model, engine]
+            frontend:services: [wicket.id]
+            type: robotstxt:section
+            /twocolumn:
+              jcr:primaryType: frontend:plugin
+              extension.left: ${cluster.id}.left
+              extension.right: ${cluster.id}.right
+              plugin.class: org.hippoecm.frontend.editor.layout.TwoColumn
+              wicket.extensions: [extension.left, extension.right]
+              wicket.id: ${wicket.id}
+            /left:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.left.item
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+              wicket.id: ${cluster.id}.left
+            /right:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.right.item
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+              wicket.id: ${cluster.id}.right
+            /useragent:
+              jcr:primaryType: frontend:plugin
+              engine: ${engine}
+              field: useragent
+              mode: ${mode}
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              wicket.id: ${cluster.id}.left.item
+              wicket.model: ${wicket.model}
+              /cluster.options:
+                jcr:primaryType: frontend:pluginconfig
+            /disallow:
+              jcr:primaryType: frontend:plugin
+              engine: ${engine}
+              field: disallow
+              mode: ${mode}
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              wicket.id: ${cluster.id}.right.item
+              wicket.model: ${wicket.model}
+              /cluster.options:
+                jcr:primaryType: frontend:pluginconfig
+      /robotstxt:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document', 'hippostd:publishableSummary']
+            hipposysedit:uri: http://www.onehippo.org/robotstxt/nt/1.1
+            /section:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: true
+              hipposysedit:ordered: false
+              hipposysedit:path: robotstxt:section
+              hipposysedit:primary: false
+              hipposysedit:type: robotstxt:section
+            /sitemap:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: true
+              hipposysedit:ordered: true
+              hipposysedit:path: robotstxt:sitemap
+              hipposysedit:primary: false
+              hipposysedit:type: String
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: robotstxt:robotstxt
+            jcr:mixinTypes: ['mix:referenceable']
+            hippostd:state: unpublished
+            hippostdpubwf:createdBy: admin
+            hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
+            hippostdpubwf:lastModificationDate: 2010-02-04T16:32:28.068+02:00
+            hippostdpubwf:lastModifiedBy: admin
+            /robotstxt:section:
+              jcr:primaryType: robotstxt:section
+              robotstxt:disallow: ['']
+              robotstxt:useragent: '*'
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [wicket.model, engine]
+            frontend:services: [wicket.id]
+            type: robotstxt:robotstxt
+            /list:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+              wicket.id: ${wicket.id}
+            /section:
+              jcr:primaryType: frontend:plugin
+              engine: ${engine}
+              field: section
+              mode: ${mode}
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              wicket.id: ${cluster.id}.field
+              wicket.model: ${wicket.model}
+              /cluster.options:
+                jcr:primaryType: frontend:pluginconfig
+            /sitemap:
+              jcr:primaryType: frontend:plugin
+              field: sitemap
+              hint: sitemap.hint
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              wicket.id: ${cluster.id}.field
+              /cluster.options:
+                jcr:primaryType: frontend:pluginconfig

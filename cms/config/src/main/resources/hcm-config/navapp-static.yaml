@@ -1,0 +1,12 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/navapp/navapp-static:
+      /servicesLoader:
+        jcr:primaryType: frontend:plugin
+        cluster.name: navapp-services
+        plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
+      jcr:primaryType: frontend:plugincluster
+      /root:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugin.navapp.NavAppPlugin
+        wicket.id: service.root

@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /config:
+      jcr:primaryType: nt:unstructured

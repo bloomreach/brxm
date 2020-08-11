@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /export-second/parent/node1:
+      jcr:primaryType: nt:unstructured

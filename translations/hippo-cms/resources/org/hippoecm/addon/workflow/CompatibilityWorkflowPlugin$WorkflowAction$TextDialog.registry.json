@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "text.hint" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

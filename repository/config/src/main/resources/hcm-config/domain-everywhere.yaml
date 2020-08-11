@@ -1,0 +1,41 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains:
+      /everywhere:
+        jcr:primaryType: hipposys:domain
+        /all-nodes:
+          jcr:primaryType: hipposys:domainrule
+          /match-all-types:
+            jcr:primaryType: hipposys:facetrule
+            hipposys:equals: true
+            hipposys:facet: jcr:primaryType
+            hipposys:type: Name
+            hipposys:value: '*'
+        /admin:
+          jcr:primaryType: hipposys:authrole
+          hipposys:role: admin
+          hipposys:userrole:
+            .meta:category: system
+            value: xm.repository.admin
+          hipposys:groups:
+            .meta:category: system
+            .meta:add-new-system-values: true
+            value: []
+          hipposys:users:
+            .meta:category: system
+            .meta:add-new-system-values: true
+            value: []
+        /readonly:
+          jcr:primaryType: hipposys:authrole
+          hipposys:role: readonly
+          hipposys:userrole:
+            .meta:category: system
+            value: xm.repository.reader
+          hipposys:groups:
+            .meta:category: system
+            .meta:add-new-system-values: true
+            value: []
+          hipposys:users:
+            .meta:category: system
+            .meta:add-new-system-values: true
+            value: []

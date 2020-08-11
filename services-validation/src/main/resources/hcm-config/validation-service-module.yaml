@@ -1,0 +1,35 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/validation:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.cms.services.validation.ValidationServiceModule
+      /hippo:moduleconfig:
+        jcr:primaryType: hipposys:moduleconfig
+        /email:
+          jcr:primaryType: hipposys:moduleconfig
+          hipposys:className: org.onehippo.cms.services.validation.validator.RegExpValidator
+          regexp.pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$'
+        /escaped:
+          jcr:primaryType: hipposys:moduleconfig
+          hipposys:className: org.onehippo.cms.services.validation.validator.EscapedHtmlValidator
+        /non-empty:
+          jcr:primaryType: hipposys:moduleconfig
+          hipposys:className: org.onehippo.cms.services.validation.validator.NonEmptyValidator
+        /references:
+          jcr:primaryType: hipposys:moduleconfig
+          hipposys:className: org.onehippo.cms.services.validation.validator.NodeReferenceValidator
+        /required:
+          jcr:primaryType: hipposys:moduleconfig
+          hipposys:className: org.onehippo.cms.services.validation.validator.RequiredValidator
+          /Date:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.RequiredDateValidator
+          /hippo:mirror:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.RequiredHippoMirrorValidator
+          /hippo:resource:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.RequiredResourceValidator
+          /String:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.RequiredStringValidator

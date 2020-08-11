@@ -1,0 +1,58 @@
+<'contentbeanstest'='http://www.onehippo.org/contentbeanstest/nt/1.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+<'hippotranslation'='http://www.onehippo.org/jcr/hippotranslation/nt/1.0'>
+
+[contentbeanstest:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document
+  orderable
+
+[contentbeanstest:contentdocument] > contentbeanstest:basedocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[contentbeanstest:deeperlink] > hippo:compound, hippostd:relaxed
+  orderable
+
+[contentbeanstest:deepestlink] > hippo:compound, hippostd:relaxed
+  orderable
+
+[contentbeanstest:deeplink] > hippo:compound, hippostd:relaxed
+  orderable
+
+[contentbeanstest:linkdepthtestdocument] > contentbeanstest:contentdocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[contentbeanstest:subcontentdocument] > contentbeanstest:contentdocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[contentbeanstest:toodeeplink] > hippo:compound, hippostd:relaxed
+  orderable
+
+[contentbeanstest:dynamicbeanpage] > contentbeanstest:basedocument, hippostd:relaxed
+
+[contentbeanstest:dynamiccompound] > hippo:compound, hippostd:relaxed
+  orderable
+
+[contentbeanstest:dynamicinnercompound] > hippo:compound, hippostd:relaxed
+  orderable
+
+[contentbeanstest:dynamicsubcompound] > contentbeanstest:dynamiccompound, hippostd:relaxed
+  orderable
+
+[contentbeanstest:dynamicdocument] > hippostd:relaxed, hippotranslation:translated, contentbeanstest:basedocument
+  orderable
+
+[contentbeanstest:dynamicsubdocument] > hippostd:relaxed, hippotranslation:translated, contentbeanstest:dynamicdocument
+  orderable
+
+[contentbeanstest:htmlblock] > hippo:compound, hippostd:relaxed
+
+[contentbeanstest:htmlblock2] > hippo:compound, hippostd:relaxed
+
+[contentbeanstest:contentblocks] > hippo:compound, hippostd:relaxed
+  orderable
+
+[contentbeanstest:emptycompound] > hippo:compound
+
+[contentbeanstest:aggregateddocument] > hippostd:relaxed, hippo:document
+  orderable

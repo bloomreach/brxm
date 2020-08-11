@@ -1,0 +1,35 @@
+@startuml
+skinparam packageBorderThickness 0.1
+' ---------------------
+' Authorization Model
+' ---------------------
+
+note "Authorization Model Domain POV" as Info
+
+
+package Domain {
+}
+
+package "Authorization Role" {
+ Domain  o-- "1..*" "Authorization Role"
+}
+
+package Where #DDDDDD {
+   Domain o-- "1..*" "Domain Rule"
+  "Domain Rule" o-- "1..*" "Facet Rule"
+}
+
+package Who #DDDDDD {
+  Group "1..*" o-- Group
+  Group "0..*" o-- "0..*" User
+  "Authorization Role" "0..*" o-- "0..*" Group
+  "Authorization Role" "0..*" o-- "0..*" User
+}
+
+package What #DDDDDD {
+  Role "0..*" o-- Role
+  Role o-- "1..*" Privilege
+  "Authorization Role" "1..*" o-- "1" Role
+}
+
+@enduml

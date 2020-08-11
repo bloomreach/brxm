@@ -1,0 +1,22 @@
+definitions:
+  config:
+#    /config:
+#      jcr:primaryType: nt:unstructured
+#    /content:
+#      .meta:category: content
+
+    /config:
+      jcr:primaryType: nt:unstructured
+      /deep:
+        jcr:primaryType: nt:unstructured
+        /tree:
+          jcr:primaryType: nt:unstructured
+          /sns[1]:
+            jcr:primaryType: nt:unstructured
+            existing: existing1
+          /sns[2]:
+            jcr:primaryType: nt:unstructured
+            existing: existing2
+          /sns[3]:
+            jcr:primaryType: nt:unstructured
+            existing: existing3

@@ -1,0 +1,13 @@
+*.log
+*.iml
+.settings
+.idea/
+.project/
+target/
+coverage/
+cache/
+dll/
+.awcache/
+/frontend-ng/node/
+/ui/node/
+/frontend-ng/node_modules/

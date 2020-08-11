@@ -1,0 +1,5 @@
+# This file is used by ModuleDescriptorTest and needs to be at the root of test-classes during test
+group: test-group
+project: test-project
+project: test-project2
+module: test-module

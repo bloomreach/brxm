@@ -1,0 +1,93 @@
+definitions:
+  config:
+    /hst:hst:
+      jcr:primaryType: hst:hst
+      /hst:configurations:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: hst:configurations
+        /hst:default:
+          jcr:primaryType: hst:configuration
+          /hst:pages:
+            jcr:primaryType: hst:pages
+          /hst:components:
+            .meta:ignore-reordered-children: true
+            jcr:primaryType: hst:components
+          /hst:templates:
+            jcr:primaryType: hst:templates
+          /hst:sitemenus:
+            jcr:primaryType: hst:sitemenus
+          /hst:sitemapitemhandlers:
+            jcr:primaryType: hst:sitemapitemhandlers
+          /hst:catalog:
+            jcr:primaryType: hst:catalog
+      /hst:blueprints:
+        jcr:primaryType: hst:blueprints
+      /hst:hosts:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: hst:virtualhosts
+      /hst:sites:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: hst:sites
+      /hst:domains:
+        jcr:primaryType: hipposys:federateddomainfolder
+        .meta:residual-child-node-category: system
+        /hstconfig:
+          jcr:primaryType: hipposys:domain
+          /channel-admin:
+            jcr:primaryType: hipposys:authrole
+            hipposys:role: channel-admin
+            hipposys:userrole:
+              .meta:category: system
+              value: xm.channel.admin
+            hipposys:groups:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+            hipposys:users:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+          /channel-webmaster:
+            hipposys:role: channel-webmaster
+            jcr:primaryType: hipposys:authrole
+            hipposys:userrole:
+              .meta:category: system
+              value: xm.channel.webmaster
+            hipposys:groups:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+            hipposys:users:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+          /channel-viewer:
+            hipposys:role: channel-viewer
+            jcr:primaryType: hipposys:authrole
+            hipposys:userrole:
+              .meta:category: system
+              value: xm.channel.viewer
+            hipposys:groups:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+            hipposys:users:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+          /hstconfig:
+            jcr:primaryType: hipposys:domainrule
+            /hstconfig-and-descendants:
+              jcr:primaryType: hipposys:facetrule
+              hipposys:equals: true
+              hipposys:facet: jcr:path
+              hipposys:type: Reference
+              hipposys:value: /
+            /exclude-hst-domains-and-descendants:
+              jcr:primaryType: hipposys:facetrule
+              hipposys:equals: false
+              hipposys:facet: jcr:path
+              hipposys:type: Reference
+              hipposys:value: /hst:domains
+
+

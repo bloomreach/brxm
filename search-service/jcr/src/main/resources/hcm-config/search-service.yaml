@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/search-service:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.cms7.services.search.jcr.service.SearchServiceModule
+      hipposys:cmsonly: true
+      /hippo:moduleconfig:
+        jcr:primaryType: hipposys:moduleconfig
+        wildcard.postfix.enabled: true
+        wildcard.postfix.minlength: 3

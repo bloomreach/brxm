@@ -1,0 +1,358 @@
+<!--
+  ~ Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~  http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<html>
+  <head>
+    <title>Iframe title</title>
+    <style type="text/css">
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      main {
+        width: 200px;
+      }
+
+      #container-vbox {
+        height: 400px;
+        padding-left: 2px;
+        padding-top: 4px;
+      }
+
+      #componentA {
+        height: 100px;
+      }
+
+      #markup-in-component-a {
+        height: 30px;
+      }
+
+      #edit-menu-in-component-a {
+        position: relative;
+      }
+
+      #content-in-container-vbox {
+        height: 60px;
+        position: relative;
+      }
+
+      #componentB {
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <!-- {
+        "HST-Type": "CONTAINER_COMPONENT",
+        "HST-Label": "vBox container",
+        "HST-XType": "HST.vBox",
+        "uuid": "container-vbox"
+      } -->
+      <div id="container-vbox" class="hst-container">
+        <div id="componentA" class="hst-container-item">
+        <!-- {
+          "HST-Type": "CONTAINER_ITEM_COMPONENT",
+          "HST-Label": "component A",
+          "uuid": "aaaa"
+        } -->
+          <p id="markup-in-component-a">Some markup in component A</p>
+          <p id="edit-menu-in-component-a">
+          <!-- {
+            "HST-Type": "EDIT_MENU_LINK",
+            "uuid": "menu-in-component-a"
+          } -->
+          </p>
+        <!-- {
+          "HST-End": "true",
+          "uuid": "aaaa"
+        } -->
+        </div>
+
+        <div id="componentB" class="hst-container-item">
+        <!-- {
+          "HST-Type": "CONTAINER_ITEM_COMPONENT",
+          "HST-Label": "component B",
+          "uuid": "bbbb"
+        } -->
+          <p>Some markup in component B</p>
+
+          <!--
+            Manage Content
+            --------------
+            All 6 possible scenarios
+          -->
+          <p id="manage-content-scenario-1">
+            <!-- {
+              "HST-Type": "MANAGE_CONTENT_LINK",
+              "uuid": "manage-content-uuid"
+            } -->
+          </p>
+
+          <p id="manage-content-scenario-2">
+            <!-- {
+              "HST-Type": "MANAGE_CONTENT_LINK",
+              "documentTemplateQuery": "manage-content-document-template-query"
+            } -->
+          </p>
+
+          <p id="manage-content-scenario-3">
+            <!-- {
+              "HST-Type": "MANAGE_CONTENT_LINK",
+              "uuid": "manage-content-uuid",
+              "documentTemplateQuery": "manage-content-document-template-query"
+            } -->
+          </p>
+
+          <p id="manage-content-scenario-4">
+            <!-- {
+              "HST-Type": "MANAGE_CONTENT_LINK",
+              "uuid": "manage-content-uuid",
+              "parameterName": "manage-content-component-parameter"
+            } -->
+          </p>
+
+          <p id="manage-content-scenario-5">
+            <!-- {
+              "HST-Type": "MANAGE_CONTENT_LINK",
+              "documentTemplateQuery": "manage-content-document-template-query",
+              "parameterName": "manage-content-component-parameter"
+            } -->
+          </p>
+
+          <p id="manage-content-scenario-6">
+            <!-- {
+              "HST-Type": "MANAGE_CONTENT_LINK",
+              "uuid": "manage-content-uuid",
+              "documentTemplateQuery": "manage-content-document-template-query",
+              "parameterName": "manage-content-component-parameter"
+            } -->
+          </p>
+        <!-- {
+          "HST-End": "true",
+          "uuid": "bbbb"
+        } -->
+        </div>
+      </div>
+      <!-- {
+        "HST-End": "true",
+        "uuid": "container-vbox"
+      } -->
+
+      <div id="container-nomarkup">
+      <!-- {
+        "HST-Type": "CONTAINER_COMPONENT",
+        "HST-Label": "NoMarkup container",
+        "HST-XType": "HST.NoMarkup",
+        "uuid": "container-nomarkup"
+      } -->
+        <!-- {
+          "HST-Type": "CONTAINER_ITEM_COMPONENT",
+          "HST-Label": "component C",
+          "uuid": "cccc"
+        } -->
+        <div id="componentC">
+        </div>
+        <!-- {
+          "HST-End": "true",
+          "uuid": "cccc"
+        } -->
+      <!-- {
+        "HST-End": "true",
+        "uuid": "container-nomarkup"
+      } -->
+      </div>
+
+      <!-- {
+        "HST-Type": "CONTAINER_COMPONENT",
+        "HST-Label": "Empty container",
+        "HST-XType": "HST.vBox",
+        "uuid": "container-empty"
+      } -->
+      <div id="container-empty" class="hst-container">
+      </div>
+      <!-- {
+        "HST-End": "true",
+        "uuid": "container-empty"
+      } -->
+
+      <!-- {
+        "HST-Type": "CONTAINER_COMPONENT",
+        "HST-Label": "Inherited container",
+        "HST-XType": "HST.vBox",
+        "uuid": "container-inherited",
+        "HST-Inherited": "true"
+      } -->
+      <div id="container-inherited" class="hst-container">
+        <!-- {
+          "HST-Type": "CONTAINER_ITEM_COMPONENT",
+          "HST-Label": "Component with experiment",
+          "HST-Render-Variant": "@1517391925$[\"and\",{\"country\":\"thenetherlands-1440145311193\"}]",
+          "uuid": "component-with-experiment",
+          "Targeting-experiment-id": "1234",
+          "Targeting-experiment-state": "RUNNING"
+        } -->
+        <p class="hst-container-item">Some markup in component with experiment</p>
+
+        <p id="manage-content-scenario-7">
+          <!-- {
+            "HST-Type": "MANAGE_CONTENT_LINK",
+            "parameterName": "manage-content-component-parameter"
+          } -->
+        </p>
+        <!-- {
+          "HST-End": "true",
+          "uuid": "component-with-experiment"
+        } -->
+      </div>
+      <!-- {
+        "HST-End": "true",
+        "uuid": "container-inherited"
+      } -->
+
+      <!-- Locked container (by other user) -->
+      <!-- {
+        "HST-Type": "CONTAINER_COMPONENT",
+        "HST-Label": "vBox locked container",
+        "HST-XType": "HST.vBox",
+        "uuid": "container-vbox-locked",
+        "HST-LockedBy": "other user"
+      } -->
+      <div id="container-vbox-locked" class="hst-container">
+        <p id="manage-content-scenario-8">
+        <!-- {
+          "HST-Type": "MANAGE_CONTENT_LINK",
+          "uuid": "manage-content-uuid",
+          "documentTemplateQuery": "manage-content-document-template-query",
+          "parameterName": "manage-content-component-parameter"
+        } -->
+        </p>
+        <p id="manage-content-scenario-9">
+        <!-- {
+          "HST-Type": "MANAGE_CONTENT_LINK",
+          "documentTemplateQuery": "manage-content-document-template-query",
+          "parameterName": "manage-content-component-parameter"
+        } -->
+        </p>
+
+        <p id="manage-content-scenario-10">
+          <!-- {
+            "HST-Type": "MANAGE_CONTENT_LINK",
+            "uuid": "manage-content-uuid",
+            "rootPath": "content",
+            "parameterName": "foo",
+            "parameterValueIsRelativePath": "false"
+          } -->
+        </p>
+
+        <p id="manage-content-scenario-11">
+          <!-- {
+            "HST-Type": "MANAGE_CONTENT_LINK",
+            "documentTemplateQuery": "new-content-document",
+            "rootPath": "content",
+            "parameterName": "foo",
+            "parameterValueIsRelativePath": "false"
+          } -->
+        </p>
+
+        <p id="manage-content-scenario-12">
+          <!-- {
+            "HST-Type": "MANAGE_CONTENT_LINK",
+            "uuid": "manage-content-uuid",
+            "documentTemplateQuery": "new-content-document",
+            "rootPath": "content",
+            "parameterName": "foo",
+            "parameterValueIsRelativePath": "false"
+          } -->
+        </p>
+        <p id="manage-content-scenario-13">
+          <!-- {
+            "HST-Type": "MANAGE_CONTENT_LINK",
+            "parameterName": "foo",
+            "parameterValueIsRelativePath": "false"
+          } -->
+        </p>
+
+      </div>
+      <!-- {
+        "HST-End": "true",
+        "uuid": "container-vbox-locked"
+      } -->
+
+      <!-- Locked container (by current user) -->
+      <!-- {
+        "HST-Type": "CONTAINER_COMPONENT",
+        "HST-Label": "vBox locked-self container",
+        "HST-XType": "HST.vBox",
+        "uuid": "container-vbox-locked-self",
+        "HST-LockedBy": "user",
+        "HST-LockedBy-Current-User": "true",
+      } -->
+      <div id="container-vbox-locked-self" class="hst-container">
+        <p id="manage-content-scenario-14">
+        <!-- {
+          "HST-Type": "MANAGE_CONTENT_LINK",
+          "documentTemplateQuery": "manage-content-document-template-query",
+          "parameterName": "manage-content-component-parameter"
+        } -->
+        </p>
+      </div>
+      <!-- {
+        "HST-End": "true",
+        "uuid": "container-vbox-locked-self"
+      } -->
+      <!-- Template part that is not a container item inside a container -->
+      <div id="not-in-a-container" class="has-edit-button">
+        <p id="manage-content-scenario-15">
+          <!-- the parameterName is a mistake because there should not be parameterName in this use case -->
+          <!-- {
+            "HST-Type":"MANAGE_CONTENT_LINK",
+            "documentTemplateQuery":"new-content-document",
+            "rootPath":"content",
+            "parameterName": "manage-content-component-parameter"
+          } -->
+        </p>
+      </div>
+
+      <!-- {
+        "HST-Type": "CONTAINER_COMPONENT",
+        "HST-Label": "vBox shared container",
+        "HST-XType": "HST.vBox",
+        "HST-Shared": "true",
+        "uuid": "container-shared"
+      } -->
+      <div id="container-shared" class="hst-container">
+        <div id="component-in-shared-container" class="hst-container-item">
+        <!-- {
+          "HST-Type": "CONTAINER_ITEM_COMPONENT",
+          "HST-Label": "component A",
+          "uuid": "component-in-shared-container"
+        } -->
+        <p>Shared text</p>
+        <!-- {
+          "HST-End": "true",
+          "uuid": "component-in-shared-container"
+        } -->
+      </div>
+    </div>
+    <!-- {
+      "HST-End": "true",
+      "uuid": "container-shared"
+    } -->
+
+    </main>
+  </body>
+</html>

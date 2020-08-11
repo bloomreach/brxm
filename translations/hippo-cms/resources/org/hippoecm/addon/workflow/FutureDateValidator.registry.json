@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "date.empty" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "date.in.past" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

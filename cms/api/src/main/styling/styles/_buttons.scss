@@ -96,6 +96,10 @@
     box-shadow: 0 0 0 2px $button-focus-color;
   }
 
+  &[disabled] svg {
+    pointer-events: none !important;
+  }
+
   a {
     color: inherit;
 

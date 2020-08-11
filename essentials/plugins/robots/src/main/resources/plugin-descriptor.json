@@ -1,0 +1,36 @@
+{
+  "id": "robotsPlugin",
+  "name": "Robots.txt",
+  "icon": "/essentials/feature/images/robots-plugin-icon.svg",
+  "introduction": "With the Robots.txt feature, you can control the content of your robots.txt file. The feature installs a special document type that can be used to read and write robots.txt.",
+  "description": "This feature adds the 'Robots.txt' Standard Plugin. Also the robots.txt sitemap item is added and an example document.",
+  "imageUrls": [
+    "/essentials/feature/images/screenshots/robots01.png",
+    "/essentials/feature/images/screenshots/robots02.png"
+  ],
+  "documentationLink": "https://documentation.bloomreach.com/library/concepts/plugins/robots.txt/about.html",
+  "packageFile": "/META-INF/robots_plugin_instructions.xml",
+  "type": "feature",
+  "vendor" : {
+    "name" : "Bloomreach",
+    "url" : "https://www.bloomreach.com"
+  },
+  "categories": {
+    "application": [
+      "search",
+      "SEO",
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "pluginDependencies": [
+    {
+      "pluginId": "skeleton"
+    }
+  ]
+}
