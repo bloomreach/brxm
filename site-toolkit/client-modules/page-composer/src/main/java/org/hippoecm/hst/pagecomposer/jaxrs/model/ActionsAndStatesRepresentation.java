@@ -19,8 +19,8 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 import java.util.Map;
 import java.util.Set;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Action;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.state.State;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.Action;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.State;
 
 import static java.util.stream.Collectors.toMap;
 
