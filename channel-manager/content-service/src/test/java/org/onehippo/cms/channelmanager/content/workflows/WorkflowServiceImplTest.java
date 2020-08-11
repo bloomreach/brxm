@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.onehippo.cms.channelmanager.content.workflows;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -24,8 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Session;
 
-import org.easymock.Mock;
-import org.easymock.MockType;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Before;
@@ -42,7 +42,6 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static java.util.Collections.emptyMap;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -262,6 +261,33 @@ public class WorkflowServiceImplTest {
         expect(nodeIterator.hasNext()).andReturn(false);
 
         documentWorkflow.cancelRequest(eq(requestUUID));
+
+        replayAll();
+
+        workflowService.executeDocumentWorkflowAction(uuid, action, session, "master");
+
+        verifyAll();
+    }
+
+    @Test
+    public void executeDocumentWorkflowVersionAction() throws Exception {
+        final String uuid = "uuid";
+        final String action = "version";
+
+        final Node handle = createMock(Node.class);
+        final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(documentWorkflow.hints("master")).andStubReturn(hints);
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
+        expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
+        expect(EditingUtils.isActionAvailable(eq(action), eq(hints))).andReturn(true);
+
+        final Document document = new Document();
+
+        expect(documentWorkflow.version()).andStubReturn(document);
+        expect(documentWorkflow.listBranches()).andStubReturn(Collections.singleton("master"));
 
         replayAll();
 
