@@ -14,5 +14,16 @@
  * limitations under the License.
  */
 
-export * from './api';
-export * from './spa';
+import { ContainerModule } from 'inversify';
+import { ApiImpl, ApiService } from './api';
+import { SpaService, Spa } from './spa';
+
+export function SpaModule() {
+  return new ContainerModule((bind) => {
+    bind(ApiService).to(ApiImpl).inSingletonScope();
+    bind(SpaService).to(Spa).inSingletonScope();
+  });
+}
+
+export { ApiOptionsToken, ApiOptions, ApiService, Api } from './api';
+export { SpaService, Spa } from './spa';

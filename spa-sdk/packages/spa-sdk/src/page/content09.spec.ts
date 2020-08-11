@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { ContentImpl, ContentModel } from './content';
-import { Factory } from './factory';
-import { Link } from './link';
-import { MetaCollectionModel, MetaCollection } from './meta-collection';
+import { ContentImpl, ContentModel, isContent } from './content09';
+import { LinkFactory } from './link-factory';
+import { MetaCollectionFactory } from './meta-collection-factory';
+import { MetaCollection } from './meta-collection';
 
-let linkFactory: jest.Mocked<Factory<[Link], string>>;
-let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], MetaCollection>>;
+let linkFactory: jest.Mocked<LinkFactory>;
+let metaFactory: jest.MockedFunction<MetaCollectionFactory>;
 
 const model = {
   _links: { site: { href: 'url' } },
@@ -33,8 +33,8 @@ function createContent(contentModel = model) {
 }
 
 beforeEach(() => {
-  linkFactory = { create: jest.fn() };
-  metaFactory = { create: jest.fn() };
+  linkFactory = { create: jest.fn() } as unknown as typeof linkFactory;
+  metaFactory = jest.fn();
 });
 
 describe('ContentImpl', () => {
@@ -64,18 +64,18 @@ describe('ContentImpl', () => {
     it('should return a meta-data array', () => {
       const metaModel = {};
       const meta = {} as MetaCollection;
-      metaFactory.create.mockReturnValueOnce(meta);
+      metaFactory.mockReturnValueOnce(meta);
 
       const content = createContent({ ...model, _meta: metaModel });
 
-      expect(metaFactory.create).toBeCalledWith(metaModel);
+      expect(metaFactory).toBeCalledWith(metaModel);
       expect(content.getMeta()).toEqual(meta);
     });
 
     it('should pass an empty object if there is no meta-data', () => {
       createContent();
 
-      expect(metaFactory.create).toBeCalledWith({});
+      expect(metaFactory).toBeCalledWith({});
     });
   });
 
@@ -103,5 +103,18 @@ describe('ContentImpl', () => {
       expect(content.getUrl()).toBe('url');
       expect(linkFactory.create).toBeCalledWith({ href: 'url' });
     });
+  });
+});
+
+describe('isContent', () => {
+  it('should return true', () => {
+    const content = createContent();
+
+    expect(isContent(content)).toBe(true);
+  });
+
+  it('should return false', () => {
+    expect(isContent(undefined)).toBe(false);
+    expect(isContent({})).toBe(false);
   });
 });
