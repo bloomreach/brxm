@@ -23,14 +23,10 @@ class XPageMenuService extends MenuService {
     DocumentWorkflowService,
     FeedbackService,
     PageService,
-    PageStructureService,
   ) {
     'ngInject';
 
     super();
-
-    this.$state = $state;
-    this.PageStructureService = PageStructureService;
 
     function isEnabled(action) {
       return PageService.isActionEnabled('xpage', action);
@@ -43,6 +39,15 @@ class XPageMenuService extends MenuService {
     function getDocumentId() {
       return PageService.getState('xpage').id;
     }
+
+    function showVersions() {
+      $state.go('hippo-cm.channel.edit-content', {
+        documentId: getDocumentId(),
+        showVersionsInfo: true,
+      });
+    }
+
+    this._getDocumentId = getDocumentId;
 
     function getDocumentName() {
       return PageService.getState('xpage').name;
@@ -88,7 +93,7 @@ class XPageMenuService extends MenuService {
     }
 
     menu.addAction('versions', {
-      onClick: () => this._showVersions(),
+      onClick: () => showVersions(),
       translationKey: 'TOOLBAR_MENU_XPAGE_VERSIONS',
     });
     menu.addDivider();
@@ -102,18 +107,6 @@ class XPageMenuService extends MenuService {
     addWorkflowAction('schedule-publish', id => DocumentWorkflowService.schedulePublication(id));
     addWorkflowAction('request-publish', id => DocumentWorkflowService.requestPublication(id));
     addWorkflowAction('request-schedule-publish', id => DocumentWorkflowService.requestSchedulePublication(id));
-  }
-
-  _showVersions() {
-    const documentId = this.PageStructureService
-      .getPage()
-      .getMeta()
-      .getUnpublishedVariantId();
-
-    this.$state.go('hippo-cm.channel.edit-content', {
-      documentId,
-      showVersionsInfo: true,
-    });
   }
 }
 

@@ -16,27 +16,19 @@
 
 import { NgModule } from '@angular/core';
 
-import { ContentModule } from './content/content.module';
-import { NotificationBarModule } from './notification-bar/notification-bar.module';
-import { PagesModule } from './pages/pages.module';
-import { ProjectsModule } from './projects/projects.module';
-import { NG1_CONFIG_SERVICE } from './services/ng1/config.ng1.service';
-import { SharedModule } from './shared/shared.module';
-import { VersionsModule } from './versions/versions.module';
+import { SharedModule } from '../shared/shared.module';
+
+import { NG1_PAGESTRUCTURE_SERVICE } from './services/ng1/page-structure.ng1.service';
+import { NG1_PAGE_SERVICE } from './services/ng1/page.ng1.service';
 
 @NgModule({
   imports: [
     SharedModule,
-    ContentModule,
-    NotificationBarModule,
-    VersionsModule,
-    PagesModule,
-    ProjectsModule,
   ],
   providers: [
-    { provide: NG1_CONFIG_SERVICE, useValue: window.angular.element(document.body).injector().get('ConfigService') },
+    { provide: NG1_PAGESTRUCTURE_SERVICE, useValue: window.angular.element(document.body).injector().get('PageStructureService') },
+    { provide: NG1_PAGE_SERVICE, useValue: window.angular.element(document.body).injector().get('PageService') },
   ],
 })
-export class AppModule {
-  ngDoBootstrap(): void { }
+export class PagesModule {
 }

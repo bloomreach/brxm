@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable } from '@angular/core';
+import { InjectionToken } from '@angular/core';
 
-import { VersionsInfo } from '../../versions/models/versions-info.model';
-
-import { Ng1ContentService, NG1_CONTENT_SERVICE } from './ng1/content.ng1.service';
-
-@Injectable({
-  providedIn: 'root',
-})
-export class ContentService {
-  constructor(
-    @Inject(NG1_CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
-  ) { }
-
-  getDocumentVersionsInfo(documentId: string, branchId: string): Promise<VersionsInfo> {
-    return this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId);
-  }
+export interface Ng1ProjectService {
+  getSelectedProjectId(): string;
 }
+
+export const NG1_PROJECT_SERVICE = new InjectionToken<Ng1ProjectService>('NG1_PROJECT_SERVICE');
