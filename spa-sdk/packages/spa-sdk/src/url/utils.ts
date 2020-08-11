@@ -54,6 +54,12 @@ export function extractSearchParams(url: string, params: string[]) {
   };
 }
 
+export function isAbsoluteUrl(url: string): boolean {
+  const { origin, pathname } = parseUrl(url);
+
+  return !!origin || pathname.startsWith('/');
+}
+
 function isMatchedOrigin(origin: string, baseOrigin: string) {
   const [schema, host = ''] = origin.split('//', 2);
   const [baseSchema, baseHost = ''] = baseOrigin.split('//', 2);
@@ -108,4 +114,19 @@ export function parseUrl(url: string): Url {
   origin = origin.substring(0, origin.length - pathname.length);
 
   return { hash, origin, pathname, search, searchParams, path: `${pathname}${search}${hash}` };
+}
+
+export function resolveUrl(url: string, base: string) {
+  const baseUrl = parseUrl(base);
+  const sourceUrl = parseUrl(url);
+  const pathname = sourceUrl.pathname.startsWith('/')
+    ? sourceUrl.pathname
+    : `${baseUrl.pathname}${baseUrl.pathname.endsWith('/') || !sourceUrl.pathname ? '' : '/'}${sourceUrl.pathname}`;
+
+  return buildUrl({
+    pathname,
+    hash: sourceUrl.hash || baseUrl.hash,
+    origin: sourceUrl.origin || baseUrl.origin,
+    searchParams: mergeSearchParams(baseUrl.searchParams, sourceUrl.searchParams),
+  });
 }
