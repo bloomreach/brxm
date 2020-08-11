@@ -15,20 +15,15 @@
 @import 'variables';
 
 .xpage-menu {
-  .xpage-menu-publish-item md-icon {
-    fill: $hippo-green;
-  }
-
   .xpage-menu-unpublish-item md-icon {
-    fill: $hippo-red;
+    color: $bloomreach-red;
   }
 
   md-icon {
-    color: $white;
-    top: 3px !important;
+    top: 4px !important;
 
     &.disabled {
-      fill: $bloomreach-gray-38;
+      color: $bloomreach-gray-38;
       opacity: 1 !important;
     }
   }
