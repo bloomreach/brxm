@@ -144,10 +144,6 @@ describe('XPageMenuService', () => {
 
     expect(spy).toHaveBeenCalledWith('xpage-document-id');
     expect(PageService.load).toHaveBeenCalled();
-    expect(FeedbackService.showNotification).toHaveBeenCalledWith(
-      `${action.translationKey}_SUCCESS`,
-      { msg: result },
-    );
   }
 
   function expectWorkflowFailed(actionId, spy) {
