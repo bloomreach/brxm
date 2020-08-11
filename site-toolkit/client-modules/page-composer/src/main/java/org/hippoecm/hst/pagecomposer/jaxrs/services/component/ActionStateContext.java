@@ -26,14 +26,14 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
-public class ComponentInfoContext {
+public class ActionStateContext {
 
     private final PageComposerContextService contextService;
     private final CmsSessionContext cmsSessionContext;
     private final String siteMapItemUuid;
     private final String hostGroup;
 
-    public ComponentInfoContext(
+    public ActionStateContext(
             final PageComposerContextService contextService,
             final CmsSessionContext cmsSessionContext,
             final String siteMapItemUuid,

@@ -28,7 +28,7 @@ import static java.util.stream.Collectors.toSet;
 
 final class HstStateProvider {
 
-    Set<State> getStates(final ComponentInfoProviderContext context) {
+    Set<State> getStates(final ActionStateProviderContext context) {
         if (!context.isExperiencePageRequest()) {
             return Collections.emptySet();
         }

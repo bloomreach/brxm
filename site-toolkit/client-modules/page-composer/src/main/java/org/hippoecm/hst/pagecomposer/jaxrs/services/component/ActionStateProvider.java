@@ -18,6 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
 import java.util.Optional;
 
-public interface ComponentInfoProvider {
-    Optional<ComponentInfo> getComponentInfo(ComponentInfoProviderContext context);
+public interface ActionStateProvider {
+    Optional<ActionState> getActionState(ActionStateProviderContext context);
 }

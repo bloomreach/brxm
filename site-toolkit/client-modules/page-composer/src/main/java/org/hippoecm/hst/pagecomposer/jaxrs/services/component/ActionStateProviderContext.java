@@ -16,7 +16,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
-public class ComponentInfoProviderContext {
+public class ActionStateProviderContext {
 
     private boolean experiencePageRequest;
     private boolean masterBranchSelected;
@@ -56,37 +56,37 @@ public class ComponentInfoProviderContext {
         return xPageContext;
     }
 
-    ComponentInfoProviderContext setMasterBranchSelected(final boolean masterBranchSelected) {
+    ActionStateProviderContext setMasterBranchSelected(final boolean masterBranchSelected) {
         this.masterBranchSelected = masterBranchSelected;
         return this;
     }
 
-    ComponentInfoProviderContext setExperiencePageRequest(final boolean experiencePageRequest) {
+    ActionStateProviderContext setExperiencePageRequest(final boolean experiencePageRequest) {
         this.experiencePageRequest = experiencePageRequest;
         return this;
     }
 
-    ComponentInfoProviderContext setUserId(final String userId) {
+    ActionStateProviderContext setUserId(final String userId) {
         this.userId = userId;
         return this;
     }
 
-    ComponentInfoProviderContext setBranchId(final String branchId) {
+    ActionStateProviderContext setBranchId(final String branchId) {
         this.branchId = branchId;
         return this;
     }
 
-    ComponentInfoProviderContext setChannelContext(ChannelContext channelContext) {
+    ActionStateProviderContext setChannelContext(ChannelContext channelContext) {
         this.channelContext = channelContext;
         return this;
     }
 
-    ComponentInfoProviderContext setPageContext(final PageContext pageContext) {
+    ActionStateProviderContext setPageContext(final PageContext pageContext) {
         this.pageContext = pageContext;
         return this;
     }
 
-    ComponentInfoProviderContext setXPageContext(final XPageContext xPageContext) {
+    ActionStateProviderContext setXPageContext(final XPageContext xPageContext) {
         this.xPageContext = xPageContext;
         return this;
     }

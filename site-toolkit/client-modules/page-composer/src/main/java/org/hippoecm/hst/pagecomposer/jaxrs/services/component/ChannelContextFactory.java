@@ -42,7 +42,7 @@ final class ChannelContextFactory implements ComponentManagerAware {
                 .getBoolean("cross.channel.page.copy.supported", false);
     }
 
-    ChannelContext make(ComponentInfoContext actionContext) {
+    ChannelContext make(ActionStateContext actionContext) {
         final PageComposerContextService contextService = actionContext.getContextService();
         final ChannelContext channelContext = new ChannelContext()
                 .setChannelAdmin(isChannelAdmin(contextService))
