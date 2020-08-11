@@ -18,6 +18,7 @@ import MenuService from '../menu.service';
 
 class XPageMenuService extends MenuService {
   constructor(
+    $log,
     $state,
     DocumentWorkflowService,
     FeedbackService,
@@ -43,14 +44,14 @@ class XPageMenuService extends MenuService {
       return PageService.getState('xpage').id;
     }
 
+    function getDocumentName() {
+      return PageService.getState('xpage').name;
+    }
+
     const menu = this.defineMenu('xpage', {
       isVisible: () => PageService.hasActions('xpage'),
       translationKey: 'TOOLBAR_BUTTON_XPAGE',
     });
-
-    function success(key, msg) {
-      FeedbackService.showNotification(`${key}_SUCCESS`, { msg });
-    }
 
     function failure(key, msg) {
       try {
@@ -62,12 +63,15 @@ class XPageMenuService extends MenuService {
         return;
       }
 
-      FeedbackService.showError(`${key}_ERROR`, { msg });
+      $log.error(`Failed to execute workflow "${key}" on document[${getDocumentId()}]: ${msg}`);
+      FeedbackService.showError(`${key}_ERROR`, {
+        msg,
+        documentName: getDocumentName(),
+      });
     }
 
     function invokeWorkflow(onClick, translationKey) {
       return () => onClick(getDocumentId())
-        .then(msg => success(translationKey, msg))
         .catch(msg => failure(translationKey, msg))
         .finally(() => PageService.load());
     }
