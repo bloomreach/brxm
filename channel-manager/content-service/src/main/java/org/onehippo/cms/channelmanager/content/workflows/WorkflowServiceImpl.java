@@ -57,17 +57,17 @@ public class WorkflowServiceImpl implements WorkflowService {
                 log.info("Workflow request action '{}' is not available for document '{}'", action, uuid);
                 throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ACTION_NOT_AVAILABLE));
             }
-            executeDocumentWorkflowAction(uuid, getIdentifier(requestNode), documentWorkflow, action);
+            executeDocumentWorkflowAction(uuid, branchId, getIdentifier(requestNode), documentWorkflow, action);
         } else {
             if (!EditingUtils.isActionAvailable(action, hints)) {
                 log.info("Workflow action '{}' is not available for document '{}'", action, uuid);
                 throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ACTION_NOT_AVAILABLE));
             }
-            executeDocumentWorkflowAction(uuid, null, documentWorkflow, action);
+            executeDocumentWorkflowAction(uuid, branchId, null, documentWorkflow, action);
         }
     }
 
-    private static void executeDocumentWorkflowAction(final String uuid, final String requestIdentifier, final DocumentWorkflow documentWorkflow, final String action) throws ErrorWithPayloadException {
+    private static void executeDocumentWorkflowAction(final String uuid, final String branchId, final String requestIdentifier, final DocumentWorkflow documentWorkflow, final String action) throws ErrorWithPayloadException {
         try {
             switch (action) {
                 case "publish":
@@ -82,6 +82,9 @@ public class WorkflowServiceImpl implements WorkflowService {
                     documentWorkflow.cancelRequest(requestIdentifier);
                     break;
 
+                case "version":
+                    version(branchId, documentWorkflow);
+                    break;
                 default:
                     log.warn("Document workflow action '{}' is not implemented", action);
                     throw new InternalServerErrorException(new ErrorInfo(Reason.WORKFLOW_ACTION_NOT_IMPLEMENTED));
@@ -90,6 +93,36 @@ public class WorkflowServiceImpl implements WorkflowService {
             log.warn("Failed to execute workflow action '{}' on document '{}'", action, uuid, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
+    }
+
+    /**
+     * <p>
+     *     TODO since this feature needs to be backported to a minor version, it is not allowed to modify scxml :
+     *     otherwise, we would better have added support for:
+     *     <pre>
+     *     documentWorkflow.version(branchId)
+     *     </pre>
+     *     which does *everything* below in one workflow action AND also 'fixes' a potential but very small concurrency
+     *     issue: A single workflow action uses a single lock. However, between multiple workflow actions, potentially
+     *     another workflow invocation by someone else on the same document can happen, for example replacing the
+     *     checked out branch with another one just before calling documentWorkflow.version(). Supporting this in a minor
+     *     however is too much of a hassle and odds that it fails are very low and worst case scenario is not even so
+     *     problematic : a version of a different branch is made (pointless)
+     *     We can improve this in release/saas or 15.0 by introducing 'documentWorkflow.version(branchId)'
+     * </p>
+     */
+    private static void version(final String branchId, final DocumentWorkflow documentWorkflow) throws WorkflowException, RemoteException, RepositoryException {
+        if (!documentWorkflow.listBranches().contains(branchId)) {
+            throw new ForbiddenException(new ErrorInfo(Reason.BRANCH_DOES_NOT_EXIST));
+        }
+        // first make sure the correct branch is checked out before creating a new version: if the workspace
+        // variant is already for 'branchId' the #checkoutBranch doesn't do anything
+        // checkoutBranch is unfortunately only available if there are branches next to master, hence we need
+        // to check this separately instead of just invoking documentWorkflow.checkoutBranch(branchId);
+        if (Boolean.TRUE.equals(documentWorkflow.hints(branchId).get("checkoutBranch"))) {
+            documentWorkflow.checkoutBranch(branchId);
+        }
+        documentWorkflow.version();
     }
 
     /**
