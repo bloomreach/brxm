@@ -96,6 +96,7 @@ public class ErrorInfo {
         NOT_BRANCHEABLE,
         BRANCH_DOES_NOT_EXIST,
         BRANCH_ALREADY_EXISTS,
+        VERSION_DOES_NOT_EXIST,
         NOT_EDITABLE,
         NOT_A_FOLDER,
         OTHER_HOLDER,
