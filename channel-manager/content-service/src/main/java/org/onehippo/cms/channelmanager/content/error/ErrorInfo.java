@@ -94,6 +94,7 @@ public class ErrorInfo {
         NO_REQUEST_PENDING,
         NOT_A_DOCUMENT,
         NOT_BRANCHEABLE,
+        BRANCH_DOES_NOT_EXIST,
         BRANCH_ALREADY_EXISTS,
         NOT_EDITABLE,
         NOT_A_FOLDER,
