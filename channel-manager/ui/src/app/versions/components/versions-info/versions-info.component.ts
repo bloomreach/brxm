@@ -18,7 +18,9 @@ import { Component, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { ContentService } from '../../../content/services/content.service';
-import { PageStructureService } from '../../../page-structure/services/page-structure.service';
+import { PageStructureService } from '../../../pages/services/page-structure.service';
+import { PageService } from '../../../pages/services/page.service';
+import { ProjectService } from '../../../projects/services/project.service';
 import { VersionsInfo } from '../../models/versions-info.model';
 
 @Component({
@@ -28,27 +30,27 @@ import { VersionsInfo } from '../../models/versions-info.model';
 })
 export class VersionsInfoComponent implements OnInit {
   versionsInfo$ = new Subject<VersionsInfo>();
+  currentDocumentVersionUUID?: string;
 
   constructor(
-    private readonly pageStructureService: PageStructureService,
     private readonly contentService: ContentService,
+    private readonly projectService: ProjectService,
+    private readonly pageService: PageService,
+    private readonly pageStructureService: PageStructureService,
   ) { }
 
   ngOnInit(): void {
     this.getVersionsInfo();
+
+    this.currentDocumentVersionUUID = this.pageStructureService.getUnpublishedVariantId();
   }
 
   async getVersionsInfo(): Promise<void> {
-    const pageMeta = this.pageStructureService
-      .getPage()
-      .getMeta();
+    const state = this.pageService.getXPageState();
+    const documentId = state?.id || '';
+    const branchId = this.projectService.getSelectedProjectId();
 
-    const documentId = pageMeta.getUnpublishedVariantId();
-    const branchId = pageMeta.getBranchId();
-
-    if (documentId && branchId) {
-      const versionHistory = await this.contentService.getDocumentVersionsInfo(documentId, branchId);
-      this.versionsInfo$.next(versionHistory);
-    }
+    const versionHistory = await this.contentService.getDocumentVersionsInfo(documentId, branchId);
+    this.versionsInfo$.next(versionHistory);
   }
 }

@@ -19,7 +19,11 @@ import { MatListModule } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ContentService } from '../../../content/services/content.service';
-import { PageStructureService } from '../../../page-structure/services/page-structure.service';
+import { XPageState } from '../../../models/xpage-state.model';
+import { PageStructureService } from '../../../pages/services/page-structure.service';
+import { PageService } from '../../../pages/services/page.service';
+import { ProjectService } from '../../../projects/services/project.service';
+import { VersionsInfo } from '../../models/versions-info.model';
 
 import { VersionsInfoComponent } from './versions-info.component';
 
@@ -28,15 +32,32 @@ describe('VersionsTabComponent', () => {
   let componentEl: HTMLElement;
   let fixture: ComponentFixture<VersionsInfoComponent>;
 
+  const testDate = Date.parse('11/08/2020 16:03');
+
   beforeEach(() => {
-    const contentServiceMock = {};
+    const contentServiceMock = {
+      getDocumentVersionsInfo: jest.fn(() => Promise.resolve({
+        versions: [
+          {
+            jcrUUID: 'testId',
+            comment: 'testComment',
+            userName: 'testUserName',
+            timestamp: testDate,
+          },
+        ],
+      } as VersionsInfo)),
+    };
+
+    const projectServiceMock = {
+      getSelectedProjectId: jest.fn(() => ({ id: 'projectId'})),
+    };
+
+    const pageServiceMock = {
+      getXPageState: jest.fn(() => ({ id: 'documentId' } as XPageState)),
+    };
+
     const pageStructureServiceMock = {
-      getPage: () => ({
-        getMeta: () => ({
-          getBranchId: jest.fn(() => 'testBranchId'),
-          getUnpublishedVariantId: jest.fn(() => 'testUnpublishedVariantId'),
-        }),
-      }),
+      getUnpublishedVariantId: jest.fn(() => 'unpublishedVariantId'),
     };
 
     TestBed.configureTestingModule({
@@ -47,6 +68,8 @@ describe('VersionsTabComponent', () => {
       ],
       providers: [
         { provide: ContentService, useValue: contentServiceMock },
+        { provide: ProjectService, useValue: projectServiceMock },
+        { provide: PageService, useValue: pageServiceMock },
         { provide: PageStructureService, useValue: pageStructureServiceMock },
       ],
     });
@@ -60,6 +83,14 @@ describe('VersionsTabComponent', () => {
   });
 
   it('should create', () => {
+    expect(componentEl).toMatchSnapshot();
+  });
+
+  it('should show versions', () => {
+    component.ngOnInit();
+
+    fixture.detectChanges();
+
     expect(componentEl).toMatchSnapshot();
   });
 });

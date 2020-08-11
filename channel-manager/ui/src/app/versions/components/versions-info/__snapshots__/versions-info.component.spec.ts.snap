@@ -12,3 +12,65 @@ exports[`VersionsTabComponent should create 1`] = `
   </div>
 </div>
 `;
+
+exports[`VersionsTabComponent should show versions 1`] = `
+<div
+  id="root1"
+>
+  <div
+    class="mat-typography"
+  >
+    
+    
+    <mat-selection-list
+      aria-disabled="false"
+      aria-multiselectable="false"
+      class="mat-selection-list mat-list-base"
+      color="primary"
+      role="listbox"
+      tabindex="0"
+    >
+      <h3
+        class="mat-subheader"
+        matsubheader=""
+      >
+        Date & time, user
+      </h3>
+      
+      <mat-list-option
+        aria-disabled="false"
+        aria-selected="false"
+        class="mat-list-item mat-list-option mat-focus-indicator mat-2-line mat-primary"
+        role="option"
+        tabindex="-1"
+      >
+        <div
+          class="mat-list-item-content mat-list-item-content-reverse"
+        >
+          <div
+            class="mat-list-item-ripple mat-ripple"
+            mat-ripple=""
+          />
+          
+          <div
+            class="mat-list-text"
+          >
+            <p
+              class="mat-line"
+              matline=""
+            >
+              Nov 8, 2020 04:03
+            </p>
+            <p
+              class="mat-line"
+              matline=""
+            >
+              testUserName
+            </p>
+          </div>
+        </div>
+      </mat-list-option>
+    </mat-selection-list>
+  </div>
+</div>
+`;

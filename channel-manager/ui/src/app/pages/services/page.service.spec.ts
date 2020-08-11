@@ -16,11 +16,11 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { DocumentState } from '../models/document-state.enum';
-import { ScheduledRequestType } from '../models/scheduled-request-type.enum';
-import { WorkflowRequestType } from '../models/workflow-request-type.enum';
-import { XPageState } from '../models/xpage-state.model';
-import { XPageStatus } from '../models/xpage-status.enum';
+import { DocumentState } from '../../models/document-state.enum';
+import { ScheduledRequestType } from '../../models/scheduled-request-type.enum';
+import { WorkflowRequestType } from '../../models/workflow-request-type.enum';
+import { XPageState } from '../../models/xpage-state.model';
+import { XPageStatus } from '../../models/xpage-status.enum';
 
 import { NG1_PAGE_SERVICE } from './ng1/page.ng1.service';
 import { PageService } from './page.service';
