@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,11 @@ import { UrlBuilderImpl } from './builder';
 
 describe('UrlBuilderImpl', () => {
   describe('getApiUrl', () => {
-    const options1 = { cmsBaseUrl: 'http://localhost:8080/site/spa' };
-    const options2 = { ...options1, apiBaseUrl: 'http://127.0.0.1/resourceapi' };
-    const options3 = { ...options1, apiBaseUrl: 'http://localhost:8080/site/spa/resourceapi?param=value' };
-    const options4 = { ...options1, spaBaseUrl: '/news' };
-    const options5 = { ...options1, spaBaseUrl: '//example.com/news' };
-    const options6 = { ...options1, spaBaseUrl: 'https://example.com/news' };
+    const options1 = { endpoint: 'http://localhost:8080/site/spa/resourceapi' };
+    const options2 = { endpoint: 'http://localhost:8080/site/spa/resourceapi?param=value' };
+    const options3 = { ...options1, baseUrl: '/news' };
+    const options4 = { ...options1, baseUrl: '//example.com/news' };
+    const options5 = { ...options1, baseUrl: 'https://example.com/news' };
 
     it.each`
       options     | path                      | expected
@@ -33,19 +32,14 @@ describe('UrlBuilderImpl', () => {
       ${options1} | ${'/news/2019/foo.html'}  | ${'http://localhost:8080/site/spa/resourceapi/news/2019/foo.html'}
       ${options1} | ${'/?a=b'}                | ${'http://localhost:8080/site/spa/resourceapi/?a=b'}
       ${options1} | ${'/news?a=b'}            | ${'http://localhost:8080/site/spa/resourceapi/news?a=b'}
-      ${options2} | ${'/'}                    | ${'http://127.0.0.1/resourceapi/'}
-      ${options2} | ${'/news'}                | ${'http://127.0.0.1/resourceapi/news'}
-      ${options3} | ${'/news'}                | ${'http://localhost:8080/site/spa/resourceapi/news?param=value'}
-      ${options3} | ${'/news?a=b'}            | ${'http://localhost:8080/site/spa/resourceapi/news?a=b&param=value'}
-      ${options3} | ${'/site/spa/resourceapi/news?a=b'}     | ${'http://localhost:8080/site/spa/resourceapi/news?param=value&a=b'}
-      ${options3} | ${'/site/spa/resourceapi/news?param=b'} | ${'http://localhost:8080/site/spa/resourceapi/news?param=b'}
-      ${options4} | ${'/news'}                | ${'http://localhost:8080/site/spa/resourceapi'}
-      ${options4} | ${'/news/'}               | ${'http://localhost:8080/site/spa/resourceapi/'}
-      ${options4} | ${'/news?a=b'}            | ${'http://localhost:8080/site/spa/resourceapi?a=b'}
+      ${options2} | ${'/news'}                | ${'http://localhost:8080/site/spa/resourceapi/news?param=value'}
+      ${options2} | ${'/news?a=b'}            | ${'http://localhost:8080/site/spa/resourceapi/news?a=b&param=value'}
+      ${options3} | ${'/news'}                | ${'http://localhost:8080/site/spa/resourceapi'}
+      ${options3} | ${'/news/'}               | ${'http://localhost:8080/site/spa/resourceapi/'}
+      ${options3} | ${'/news?a=b'}            | ${'http://localhost:8080/site/spa/resourceapi?a=b'}
+      ${options3} | ${'/news/2019/?a=b'}      | ${'http://localhost:8080/site/spa/resourceapi/2019/?a=b'}
       ${options4} | ${'/news/2019/?a=b'}      | ${'http://localhost:8080/site/spa/resourceapi/2019/?a=b'}
       ${options5} | ${'/news/2019/?a=b'}      | ${'http://localhost:8080/site/spa/resourceapi/2019/?a=b'}
-      ${options6} | ${'/news/2019/?a=b'}      | ${'http://localhost:8080/site/spa/resourceapi/2019/?a=b'}
-      ${{}}       | ${'/news/2019/?a=b'}      | ${'/resourceapi/news/2019/?a=b'}
     `('should create the Page Model API URL for "$path" using options "$options"', ({ options, path, expected }) => {
       const builder = new UrlBuilderImpl(options);
 
@@ -54,8 +48,8 @@ describe('UrlBuilderImpl', () => {
 
     it.each`
       options     | path                      | message
-      ${options4} | ${'/'}                    | ${'The path "/" does not start with the base path "/news".'}
-      ${options6} | ${'/something'}           | ${'The path "/something" does not start with the base path "/news".'}
+      ${options3} | ${'/'}                    | ${'The path "/" does not start with the base path "/news".'}
+      ${options5} | ${'/something'}           | ${'The path "/something" does not start with the base path "/news".'}
     `('should throw an error for the path "$path" with message "$message"', ({ options, path, message }) => {
       const builder = new UrlBuilderImpl(options);
 
@@ -64,25 +58,23 @@ describe('UrlBuilderImpl', () => {
   });
 
   describe('getSpaUrl', () => {
-    const options1 = { cmsBaseUrl: 'http://localhost:8080/site/spa' };
-    const options2 = { ...options1, spaBaseUrl: '//example.com/something' };
-    const options3 = { ...options1, spaBaseUrl: '' };
-    const options4 = { ...options1, spaBaseUrl: '/something?param=value#header' };
+    const options1 = {};
+    const options2 = { baseUrl: '//example.com/something' };
+    const options3 = { baseUrl: '' };
+    const options4 = { baseUrl: '/something?param=value#header' };
 
     it.each`
       options     | path                      | expected
       ${options1} | ${'/'}                    | ${'/'}
       ${options1} | ${'news'}                 | ${'/news'}
       ${options1} | ${'/news'}                | ${'/news'}
-      ${options1} | ${'/site/spa/news/'}      | ${'/news/'}
-      ${options1} | ${'/site/spa/news?a=b'}   | ${'/news?a=b'}
-      ${options1} | ${'/site/spa/news?a=b#h'} | ${'/news?a=b#h'}
-      ${options2} | ${'/site/spa/about'}      | ${'//example.com/something/about'}
-      ${options2} | ${'//host/site/spa/news'} | ${'//example.com/something/news'}
-      ${options3} | ${'//host/site/spa'}      | ${'/'}
-      ${options4} | ${'/site/spa/news?a=b'}   | ${'/something/news?a=b&param=value#header'}
-      ${options4} | ${'/site/spa/news#hash'}  | ${'/something/news?param=value#hash'}
-      ${{}}       | ${'/site/spa/news'}       | ${'/site/spa/news'}
+      ${options1} | ${'/news?a=b'}            | ${'/news?a=b'}
+      ${options1} | ${'/news?a=b#h'}          | ${'/news?a=b#h'}
+      ${options2} | ${'/about'}               | ${'//example.com/something/about'}
+      ${options2} | ${'//host/news'}          | ${'//example.com/something/news'}
+      ${options3} | ${'//host/'}              | ${'/'}
+      ${options4} | ${'/news?a=b'}            | ${'/something/news?a=b&param=value#header'}
+      ${options4} | ${'/news#hash'}           | ${'/something/news?param=value#hash'}
     `('should create an SPA URL for "$path" using options "$options"', ({ options, path, expected }) => {
       const builder = new UrlBuilderImpl(options);
 

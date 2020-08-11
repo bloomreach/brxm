@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { Factory } from './factory';
-import { MetaModel, Meta, META_POSITION_BEGIN, META_POSITION_END, MetaPosition } from './meta';
+import { inject, injectable } from 'inversify';
+import { MetaFactory } from './meta-factory';
+import { MetaModel, Meta, META_POSITION_BEGIN, META_POSITION_END } from './meta';
 import { isMetaComment } from './meta-comment';
 
-/**
- * @hidden
- */
+export const MetaCollectionModelToken = Symbol.for('MetaCollectionModelToken');
+
 export interface MetaCollectionModel {
   beginNodeSpan?: MetaModel[];
   endNodeSpan?: MetaModel[];
@@ -44,18 +44,22 @@ export interface MetaCollection extends Array<Meta> {
   render(head: Node, tail: Node): void;
 }
 
+@injectable()
 export class MetaCollectionImpl extends Array<Meta> implements MetaCollection {
   private comments: Comment[] = [];
 
-  constructor(model: MetaCollectionModel, factory: Factory<[MetaModel, MetaPosition], Meta>) {
+  constructor(
+    @inject(MetaCollectionModelToken) model: MetaCollectionModel,
+    @inject(MetaFactory) metaFactory: MetaFactory,
+  ) {
     super(
-      ...(model.beginNodeSpan || []).map(model => factory.create(model, META_POSITION_BEGIN)),
-      ...(model.endNodeSpan || []).map(model => factory.create(model, META_POSITION_END)),
+      ...(model.beginNodeSpan || []).map(model => metaFactory.create(model, META_POSITION_BEGIN)),
+      ...(model.endNodeSpan || []).map(model => metaFactory.create(model, META_POSITION_END)),
     );
 
     const prototype = Object.create(MetaCollectionImpl.prototype);
-    prototype.constructor = Array.prototype.constructor;
 
+    prototype.constructor = Array.prototype.constructor;
     Object.setPrototypeOf(this, prototype);
     Object.freeze(this);
   }

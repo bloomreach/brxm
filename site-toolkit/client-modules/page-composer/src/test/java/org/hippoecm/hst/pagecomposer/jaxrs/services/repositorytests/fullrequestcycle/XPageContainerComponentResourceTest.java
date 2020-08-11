@@ -338,43 +338,6 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
     }
 
     @Test
-    public void allowed_to_modify_xpage_if_draft_is_saved_by_other_user() throws Exception {
-        // after 'saveDraft' a document becomes transferable and as a result, someone else can obtain editable instance
-        // or continue editing, hence (s)he should also be able to modify the XPage
-
-        final HippoSession author = (HippoSession) createSession(AUTHOR_CREDENTIALS);
-        try {
-
-            // make sure document is being edited
-            final DocumentWorkflow authorWorkflow = (DocumentWorkflow) author.getWorkspace().getWorkflowManager().getWorkflow("default", author.getNode(EXPERIENCE_PAGE_HANDLE_PATH));
-            authorWorkflow.obtainEditableInstance();
-
-            // after save draft, document becomes transferrable
-            authorWorkflow.saveDraft();
-
-            final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
-
-            final String containerId = getNodeId(admin,unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
-            final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
-
-            final RequestResponseMock createRequestResponse = mockGetRequestResponse(
-                    "http", "localhost", "/_rp/" + containerId + "./" + catalogId, null,
-                    "POST");
-
-
-            final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, ADMIN_CREDENTIALS);
-            final Map<String, String> createResponseMap = mapper.readerFor(Map.class).readValue(createResponse.getContentAsString());
-
-            assertEquals(CREATED.getStatusCode(), createResponse.getStatus());
-
-
-        } finally {
-            author.logout();
-        }
-    }
-
-
-    @Test
     public void create_item_before() throws Exception {
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");

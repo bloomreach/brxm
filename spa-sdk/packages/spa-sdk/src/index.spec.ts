@@ -36,9 +36,9 @@ describe('initialize', () => {
     page = await initialize({
       httpClient,
       window,
-      cmsBaseUrl: 'http://localhost:8080/site/my-spa',
+      baseUrl: '//example.com',
+      endpoint: 'http://localhost:8080/site/my-spa/resourceapi',
       request: { path: '/?token=something' },
-      spaBaseUrl: '//example.com',
     });
   });
 
@@ -46,32 +46,12 @@ describe('initialize', () => {
     destroy(page);
   });
 
-  it('should initialize a reverse proxy-based setup', async () => {
-    page = await initialize({
-      httpClient,
-      window,
-      request: { path: '/?bloomreach-preview=true' },
-      options: {
-        live: {
-          cmsBaseUrl: 'http://localhost:8080/site/my-spa',
-        },
-        preview: {
-          cmsBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
-          spaBaseUrl: '//example.com?bloomreach-preview=true',
-        },
-      },
-    });
-
-    expect(page.getTitle()).toBe('Homepage');
-  });
-
   it('should initialize using endpoint from the query string', async () => {
     httpClient.mockClear();
     page = await initialize({
       httpClient,
-      apiBaseUrl: '/api',
       endpointQueryParameter: 'brxm',
-      request: { path: '/?brxm=http://example.com' },
+      request: { path: '/?brxm=http://example.com/api' },
     });
 
     expect(httpClient).toBeCalled();
@@ -103,7 +83,7 @@ describe('initialize', () => {
   it.each`
     link                   | expected
     ${''}                  | ${'//example.com/?token=something'}
-    ${'/site/my-spa/news'} | ${'//example.com/news?token=something'}
+    ${'/news'} | ${'//example.com/news?token=something'}
     ${{ href: 'http://127.0.0.1/news?a=b', type: TYPE_LINK_EXTERNAL }}     | ${'http://127.0.0.1/news?a=b'}
     ${{ href: '/news?a=b', type: TYPE_LINK_INTERNAL }}                     | ${'//example.com/news?a=b&token=something'}
     ${{ href: 'news#hash', type: TYPE_LINK_INTERNAL }}                     | ${'//example.com/news?token=something#hash'}
@@ -201,6 +181,7 @@ describe('initialize', () => {
     const banner1 = page.getComponent('main', 'banner1') as ContainerItem;
     const listener0 = jest.fn();
     const listener1 = jest.fn();
+    const [[id, containerItemModel]] = Object.entries(model.page).filter(([, { id }]: any) => id === 'r1_r1_r1');
 
     httpClient.mockClear();
     banner0.on('update', listener0);
@@ -209,8 +190,9 @@ describe('initialize', () => {
     httpClient.mockImplementationOnce(async () => ({
       data: {
         ...model,
-        page: model.page.components[0].components[0],
-      } as PageModel,
+        page: { [id]: containerItemModel },
+        root: { $ref: `/page/${id}` },
+      } as unknown as PageModel,
     }));
 
     window.postMessage(
