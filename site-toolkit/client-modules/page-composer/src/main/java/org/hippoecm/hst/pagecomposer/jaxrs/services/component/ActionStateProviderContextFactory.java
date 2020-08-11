@@ -21,13 +21,13 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.onehippo.repository.branch.BranchConstants;
 
-final class ComponentInfoProviderContextFactory {
+final class ActionStateProviderContextFactory {
 
     private final ChannelContextFactory channelContextFactory;
     private final PageContextFactory pageContextFactory;
     private final XPageContextFactory xPageContextFactory;
 
-    ComponentInfoProviderContextFactory(
+    ActionStateProviderContextFactory(
             final ChannelContextFactory channelContextFactory,
             final PageContextFactory pageContextFactory,
             final XPageContextFactory xPageContextFactory
@@ -38,9 +38,9 @@ final class ComponentInfoProviderContextFactory {
     }
 
 
-    ComponentInfoProviderContext make(final ComponentInfoContext context) throws RepositoryException {
+    ActionStateProviderContext make(final ActionStateContext context) throws RepositoryException {
         final PageComposerContextService contextService = context.getContextService();
-        return new ComponentInfoProviderContext()
+        return new ActionStateProviderContext()
                 .setExperiencePageRequest(contextService.isExperiencePageRequest())
                 .setMasterBranchSelected(BranchConstants.MASTER_BRANCH_ID.equals(contextService.getSelectedBranchId()))
                 .setUserId(context.getUserId())

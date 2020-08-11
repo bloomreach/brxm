@@ -35,7 +35,7 @@ final class PageContextFactory {
         this.siteMapHelper = siteMapHelper;
     }
 
-    PageContext make(ComponentInfoContext context) throws RepositoryException {
+    PageContext make(ActionStateContext context) throws RepositoryException {
         final PageComposerContextService contextService = context.getContextService();
         final String siteMapItemUuid = context.getSiteMapItemUuid();
         final String userId = context.getUserId();
