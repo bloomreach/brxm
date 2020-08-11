@@ -92,7 +92,10 @@ describe('XPageMenuService', () => {
   beforeEach(() => {
     PageService.actions = null;
     PageService.states = {
-      xpage: { id: 'xpage-document-id' },
+      xpage: {
+        id: 'xpage-document-id',
+        name: 'xpage-document-name',
+      },
     };
   });
 
@@ -158,7 +161,10 @@ describe('XPageMenuService', () => {
     expect(PageService.load).toHaveBeenCalled();
     expect(FeedbackService.showError).toHaveBeenCalledWith(
       `${action.translationKey}_ERROR`,
-      { msg: result },
+      {
+        msg: result,
+        documentName: 'xpage-document-name',
+      },
     );
   }
 
@@ -172,11 +178,11 @@ describe('XPageMenuService', () => {
   }
 
   describe('publish', () => {
-    it('should show the "publish" action with an SVG icon', () => {
+    it('should show the "publish" action with an icon', () => {
       const action = addAction('publish');
 
       expect(action.isIconVisible()).toBe(true);
-      expect(action.hasIconSvg()).toBe(true);
+      expect(action.hasIconName()).toBe(true);
     });
 
     it('should call DocumentWorkflowService.publish()', () => {
@@ -203,11 +209,11 @@ describe('XPageMenuService', () => {
   });
 
   describe('unpublish', () => {
-    it('should show the "unpublish" action with an SVG icon', () => {
+    it('should show the "unpublish" action with an icon', () => {
       const action = addAction('unpublish');
 
       expect(action.isIconVisible()).toBe(true);
-      expect(action.hasIconSvg()).toBe(true);
+      expect(action.hasIconName()).toBe(true);
     });
 
     it('should call DocumentWorkflowService.unpublish()', () => {
