@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-plugin-content-blocks
+    after: hippo-cms
+module: hippo-plugin-content-blocks

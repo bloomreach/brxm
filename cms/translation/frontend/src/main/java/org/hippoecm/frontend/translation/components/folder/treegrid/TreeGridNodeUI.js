@@ -33,7 +33,7 @@ Ext.ux.tree.TreeGridNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
                         '</span>',
                         '<a hidefocus="on" class="x-tree-node-anchor" href="', a.href ? a.href : '#', '" tabIndex="1" ',
                             a.hrefTarget ? ' target="'+a.hrefTarget+'"' : '', '>',
-                        '<span unselectable="on">', (c.tpl ? c.tpl.apply(a) : a[c.dataIndex] || c.text), '</span></a>',
+                        '<span unselectable="on">', Ext.util.Format.htmlEncode(c.tpl ? c.tpl.apply(a) : a[c.dataIndex] || c.text), '</span></a>',
                     '</td>'
         ];
 
@@ -42,7 +42,7 @@ Ext.ux.tree.TreeGridNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
             buf.push(
                     '<td class="x-treegrid-col ', (c.cls ? c.cls : ''), '">',
                         '<div unselectable="on" class="x-treegrid-text"', (c.align ? ' style="text-align: ' + c.align + ';"' : ''), '>',
-                            (c.tpl ? c.tpl.apply(a) : a[c.dataIndex]),
+                            Ext.util.Format.htmlEncode(c.tpl ? c.tpl.apply(a) : a[c.dataIndex]),
                         '</div>',
                     '</td>'
             );

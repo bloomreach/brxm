@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -71,7 +71,6 @@
         <includes>
           <include>**/*.png</include>
           <include>**/*.js</include>
-          <include>META-INF/ADDITIONAL-LICENSES.yml</include>
         </includes>
       </resource>
       <!-- package resources fetched via NPM -->
@@ -116,6 +115,16 @@
             </goals>
             <configuration>
               <arguments>run build</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm generate license files</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run license</arguments>
             </configuration>
           </execution>
         </executions>

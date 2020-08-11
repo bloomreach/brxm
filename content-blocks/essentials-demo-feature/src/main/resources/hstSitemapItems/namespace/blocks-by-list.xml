@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="blocks-by-list">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:sitemapitem</sv:value>
+  </sv:property>
+  
+  <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+    <sv:value>hst:pages/blocks-list</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:pagetitle" sv:type="String">
+    <sv:value>List of Blocks Documents</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+    <sv:value>common/content-blocks-by-list</sv:value>
+  </sv:property>
+</sv:node>

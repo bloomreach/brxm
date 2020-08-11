@@ -1,0 +1,97 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "cms-version-intro-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "repository.error" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "password-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "page.title" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "access.denied" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "locale-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "invalid.login" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "terms-and-conditions-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "edition.label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "password" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "repository-version-intro-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "submit-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "password.expired" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "account.expired" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "browser.unsupported.warning" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "cms-version-mitro-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "repository-version-outro-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "username" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "username-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NotAuthorizedError" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SessionExpired" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "UserLoggedOut" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SilentLoginFailed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

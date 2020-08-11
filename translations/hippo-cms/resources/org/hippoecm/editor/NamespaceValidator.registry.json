@@ -1,0 +1,21 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "namespace.url.empty" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "namespace.name.empty" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "namespace.url.invalid" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "namespace.name.invalid" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

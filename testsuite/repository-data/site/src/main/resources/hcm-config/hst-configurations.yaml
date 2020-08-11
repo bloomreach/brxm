@@ -1,0 +1,23 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations:
+      /demosite:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../democommon]
+      /democommon:
+        jcr:primaryType: hst:configuration
+      /demosite_fr:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../democommon]
+      /demosite_it:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../democommon]
+      /demosite_de:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../democommon]
+      /demosite_nl:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../democommon]
+      /demosite-test-many:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../democommon]

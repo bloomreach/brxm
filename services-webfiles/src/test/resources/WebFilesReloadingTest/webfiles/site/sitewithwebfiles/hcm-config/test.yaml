@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /withwebfiles-extension:
+      jcr:primaryType: nt:unstructured
+      property: value1

@@ -1,0 +1,27 @@
+definitions:
+  config:
+    /hippo:namespaces/contentbeanstest/dynamicsubcompound:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          hipposysedit:node: true
+          hipposysedit:supertype: ['contentbeanstest:dynamiccompound', 'hippostd:relaxed']
+          hipposysedit:uri: http://www.contentbeanstest.com/contentbeanstest/nt/1.0
+          /stringTypeField2:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:stringTypeField2
+            hipposysedit:primary: false
+            hipposysedit:type: String
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: contentbeanstest:dynamicsubcompound
+          contentbeanstest:stringTypeField2: ''

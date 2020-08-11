@@ -1,0 +1,30 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates/de:
+      new-resource-bundle: Neues Resource-Bundle
+      new-untranslated-folder: Neuer nicht übersetzter Ordner
+      new-banner-folder: Neuer Banner-Ordner
+      new-banner-document: Neues Banner
+      new-news-document: Neue News
+      new-news-folder: Neuer News-Ordner
+    /hippo:configuration/hippo:translations/hippo:templates/en:
+      new-resource-bundle: new resource bundle
+      new-untranslated-folder: new untranslated folder
+      new-banner-folder: new banner folder
+      new-banner-document: new banner document
+      new-news-document: new news item
+      new-news-folder: new news item folder
+    /hippo:configuration/hippo:translations/hippo:templates/fr:
+      new-resource-bundle: nouveau resource bundle
+      new-untranslated-folder: nouveau dossier non traduit
+      new-banner-folder: nouveau dossier bannière
+      new-banner-document: nouvelle bannière
+      new-news-document: nouveau message d'info
+      new-news-folder: nouveau dossier messages d'info
+    /hippo:configuration/hippo:translations/hippo:templates/nl:
+      new-resource-bundle: nieuwe resource bundle
+      new-untranslated-folder: nieuwe onvertaalde map
+      new-banner-folder: nieuwe banner map
+      new-banner-document: nieuwe banner
+      new-news-document: nieuw nieuwsbericht
+      new-news-folder: nieuwe nieuwsmap

@@ -1,0 +1,46 @@
+<'demosite'='http://www.hippoecm.org/hst/nt/demosite/1.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+<'hippotranslation'='http://www.onehippo.org/jcr/hippotranslation/nt/1.0'>
+<'relateddocs'='http://forge.onehippo.org/relateddocs/nt/1.1'>
+<'hippogallery'='http://www.onehippo.org/jcr/hippogallery/nt/2.0'>
+
+[demosite:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document
+  orderable
+
+[demosite:commentdocument] > demosite:basedocument, hippostd:relaxed
+  orderable
+
+[demosite:commentlink] > hippo:facetselect
+
+[demosite:contentblockcompound] > hippo:compound, hippostd:relaxed
+  orderable
+
+[demosite:imagecompound] > hippo:compound, hippostd:relaxed
+  orderable
+
+[demosite:newsdocument] > demosite:basedocument, hippostd:relaxed
+  orderable
+
+[demosite:placecompound] > hippo:compound, hippostd:relaxed
+  orderable
+
+[demosite:placetimecompound] > hippo:compound, hippostd:relaxed
+  orderable
+
+[demosite:productdocument] > demosite:basedocument, hippostd:relaxed
+  orderable
+
+[demosite:validationdocument] > demosite:basedocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[demosite:wikidocument] > demosite:basedocument, hippostd:relaxed, hippotranslation:translated, relateddocs:relatabledocs
+  orderable
+
+[demosite:textdocument] > demosite:basedocument, hippostd:relaxed
+  orderable
+
+[demosite:secure] mixin
+
+[demosite:qaimageset] > hippogallery:imageset, hippogallery:relaxed

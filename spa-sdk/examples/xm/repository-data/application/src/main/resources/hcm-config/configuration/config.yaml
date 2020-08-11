@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig:
+      watchedModules: [repository-data/webfiles]

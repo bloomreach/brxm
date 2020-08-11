@@ -1,0 +1,33 @@
+{
+  "private": true,
+  "workspaces": [
+    "packages/spa-sdk",
+    "packages/*",
+    "examples/*"
+  ],
+  "description": "Bloomreach SPA SDK",
+  "keywords": [
+    "bloomreach",
+    "spa",
+    "sdk"
+  ],
+  "author": "Bloomreach B.V.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk"
+  },
+  "bugs": {
+    "url": "https://issues.onehippo.com/projects/CMS/issues"
+  },
+  "homepage": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
+  "scripts": {
+    "build": "SKIP_PREFLIGHT_CHECK=true yarn workspaces run build",
+    "docs": "yarn workspaces run docs",
+    "lint": "yarn workspaces run lint",
+    "test": "yarn workspaces run test"
+  },
+  "resolutions": {
+    "typescript": "~3.8"
+  }
+}

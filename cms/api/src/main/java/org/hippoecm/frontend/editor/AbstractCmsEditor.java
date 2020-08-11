@@ -240,6 +240,11 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         //INTENTIONALLY LEFT BLANK
     }
 
+
+    public void saveDraft() throws EditorException{
+        //INTENTIONALLY LEFT BLANK
+    }
+
     /**
      * Default implementation that does nothing. Subclasses are expected to override this behaviour.
      *
@@ -465,6 +470,11 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         if (modelService != null) {
             modelService.detach();
         }
+    }
+
+    @Override
+    public boolean isTransferable() throws EditorException {
+        return false;
     }
 
     private class EditorActivatedHeaderItem extends HeaderItem {

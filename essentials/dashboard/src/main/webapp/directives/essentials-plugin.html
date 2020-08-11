@@ -1,0 +1,87 @@
+<!--
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="feature-block">
+  <div class="well">
+    <div class="feature-heading">
+      <div class="row">
+        <div class="col-xs-6">
+          <div class="media">
+            <span class="pull-left">
+              <img class="media-object" ng-src="{{plugin.icon}}" alt="{{plugin.name}}" width="76" height="76" style="margin-bottom: 5px;">
+            </span>
+            <div class="media-body">
+              <h4>{{plugin.name}}</h4>
+              <p>{{plugin.type}}, developed by
+                <a href="{{plugin.vendor.url}}" target="_blank">{{plugin.vendor.name}}</a></p>
+            </div>
+          </div>
+        </div>
+        <div ng-switch="plugin.installState" class="col-xs-6 text-right">
+          <button ng-switch-when="discovered" class="btn btn-primary"
+                  ng-disabled="installButtonDisabled"
+                  ng-click="installPlugin()">Install feature
+          </button>
+          <a ng-switch-when="installationPending" class="btn btn-default">Installation Pending</a>
+          <a ng-switch-when="awaitingUserInput" class="btn btn-danger" href="#/features/{{plugin.id}}">Control Installation</a>
+          <a ng-switch-when="installing" class="btn btn-danger" href="#/build">Needs a rebuild</a>
+          <a ng-switch-default class="btn btn-default" href="{{plugin.type === 'tool' ? '#/tools' : '#/installed-features'}}">Installed</a>
+        </div>
+      </div>
+    </div>
+    <div class="feature-description">
+      <div class="row">
+        <div class="col-sm-12 col-md-10 col-lg-8" ng-if="plugin.dependencySummary">
+          <p>{{plugin.dependencySummary}}</p>
+        </div>
+        <div class="col-sm-12 col-md-10 col-lg-8 feature-description-short">
+          <p ng-bind-html="plugin.introduction"></p>
+          <p ng-show="plugin.description || plugin.imageUrls.length" data-ng-click="toggleDescription($event)">
+            <hippo-icon name="{{showDescription ? 'chevron-down' : 'chevron-right'}}" size="m"></hippo-icon>
+            <a href="#">Read more</a>
+          </p>
+        </div>
+        <div class="col-sm-12 col-md-10 col-lg-8 feature-description-long" ng-if="showDescription && plugin.description">
+          <p ng-bind-html="plugin.description"></p>
+        </div>
+      </div>
+      <div class="panel panel-default" ng-if="showDescription && plugin.imageUrls.length">
+        <div class="panel-body">
+          <!--
+            the carousel indicators are white by default and most screenshots have a white
+            background. This is a quick fix for that.
+          -->
+          <style>
+            .carousel-indicators li {
+              border-color: #39434c;
+            }
+
+            .carousel-indicators li.active {
+              background-color: #39424c;
+            }
+          </style>
+          <div uib-carousel interval="interval" active="active">
+            <div uib-slide ng-repeat="slide in slides track by $index" index="$index">
+              <img ng-src="{{slide.image}}">
+              <div class="carousel-caption"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <essentials-feature-footer plugin="plugin"></essentials-feature-footer>
+  </div>
+</div>

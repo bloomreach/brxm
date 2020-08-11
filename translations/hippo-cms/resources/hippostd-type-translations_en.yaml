@@ -1,0 +1,32 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:taggable:
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Taggable
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:date:
+      /en:
+        hippostd:dayofweek=1: monday
+        hippostd:dayofweek=2: tuesday
+        hippostd:dayofweek=5: friday
+        hippostd:dayofweek=6: saturday
+        jcr:primaryType: hipposys:resourcebundle
+        hippostd:dayofweek=3: wednesday
+        hippostd:dayofweek=4: thursday
+        jcr:name: Faceted Date
+        hippostd:dayofweek=7: sunday
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:directory:
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: unordered folder
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:folder:
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: folder
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:publishable:
+      /en:
+        hippostd:state=unpublished: Offline
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Publishable
+        hippostd:state=published: Live
+        hippostd:state=draft: Draft

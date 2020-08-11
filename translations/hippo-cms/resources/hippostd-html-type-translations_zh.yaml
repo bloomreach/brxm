@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:html:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 富文本编辑器

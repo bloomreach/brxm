@@ -1,0 +1,57 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "assetgallery-name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "gallery-mimetype" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "gallery-height" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "gallery-name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "gallery-filename" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "assetgallery-lastmodified" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "assetgallery-type" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "gallery-lastmodified" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "gallery-width" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "gallery-image" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "assetgallery-size" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "assetgallery-mimetype" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "gallery-size" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

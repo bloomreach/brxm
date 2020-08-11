@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "subAppConnectionTimeoutMessage" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "ListViewPlugin_row" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "ListViewPlugin" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

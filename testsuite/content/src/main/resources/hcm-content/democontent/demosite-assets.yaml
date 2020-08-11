@@ -1,0 +1,25 @@
+/content/assets/assets:
+  jcr:primaryType: hippogallery:stdAssetGallery
+  jcr:mixinTypes: ['mix:referenceable']
+  jcr:uuid: 165a1c56-d4b5-4794-91e1-31d853e1a09d
+  hippostd:foldertype: [new-file-folder]
+  hippostd:gallerytype: ['hippogallery:exampleAssetSet']
+  /testpdf.pdf:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: 25e52cf5-5dc7-41b0-8be3-f393d8f535ae
+    hippo:discriminator: []
+    /testpdf.pdf:
+      jcr:primaryType: hippogallery:exampleAssetSet
+      jcr:mixinTypes: ['mix:referenceable']
+      hippo:availability: [live, preview]
+      /hippogallery:asset:
+        jcr:primaryType: hippo:resource
+        hippo:text:
+          type: binary
+          resource: /content/assets/assets/testpdf.pdf/testpdf.pdf/asset/text.pdf
+        jcr:data:
+          type: binary
+          resource: /content/assets/assets/testpdf.pdf/testpdf.pdf/asset/data.pdf
+        jcr:lastModified: 2012-12-21T13:03:16.544+01:00
+        jcr:mimeType: application/pdf

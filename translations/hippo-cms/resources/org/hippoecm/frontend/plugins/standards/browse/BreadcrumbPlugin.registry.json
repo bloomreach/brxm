@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "dialog-breadcrumb-up" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

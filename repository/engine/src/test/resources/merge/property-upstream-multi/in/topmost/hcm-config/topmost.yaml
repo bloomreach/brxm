@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /topmost:
+      jcr:primaryType: nt:unstructured
+      /node1:
+        jcr:primaryType: nt:unstructured
+        multiproperty: [topmostValue]
+      /node2:
+        jcr:primaryType: nt:unstructured
+        multiproperty: [topmostValue]

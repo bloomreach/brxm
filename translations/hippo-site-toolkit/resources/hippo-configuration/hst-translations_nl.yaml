@@ -1,0 +1,27 @@
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/component/support/bean/info/dynamic/MenuDynamicComponentInfo
+    : /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        menu: Menu naam
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/component/support/bean/info/dynamic/DocumentQueryDynamicComponentInfo
+    : /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        scope.hint: Het pad in de repository
+        sorting.group: Sortering
+        sortOrder#desc: Aflopend
+        hideFutureItems: Verberg toekomstige documenten
+        list.group: Contentselectie
+        pageSize: Pagina grootte
+        dateField: Veld met document datum (voor verbergen)
+        includeSubtypes: Inclusief document sub-types
+        sortField.hint: Gebruik de technische naam
+        dateField.hint: Gebruik de technische naam
+        documentTypes: Documenttypen
+        scope: Document pad
+        sortOrder: Sorteer volgorde
+        sortField: Veld voor sortering
+        sortOrder#asc: Oplopend
+        hidePastItems: Verberg afgelopen documenten
+        filter.group: Paginering
+        documentTypes.hint: Gebruik de technische namen met een komma als scheidingsteken

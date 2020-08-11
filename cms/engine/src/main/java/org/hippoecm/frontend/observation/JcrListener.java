@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,9 +57,9 @@ import org.slf4j.LoggerFactory;
 
 class JcrListener extends WeakReference<EventListener> implements SynchronousEventListener, Comparable<JcrListener> {
     
-    private final static Logger log = LoggerFactory.getLogger(JcrListener.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrListener.class);
     
-    private final static int MAX_EVENTS = Integer.getInteger("hippoecm.observation.maxevents", 10000);
+    private static final int MAX_EVENTS = Integer.getInteger("hippoecm.observation.maxevents", 10000);
 
     private final Map<String, NodeState> stateCache;
     
@@ -109,11 +109,11 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         // This in turn causes wicket to send a page expired response
         // to the browser on the next request that comes in.
         if (this.jcrEvents.size() > MAX_EVENTS) {
-            PluginUserSession session = ((PluginUserSession)getSession());
-            if (session != null) {
-                String userID = session.getJcrSession().getUserID();
-                log.warn("The event queue is full. Flushing session of user " + userID);
-                session.flush();
+            PluginUserSession userSession = ((PluginUserSession)getSession());
+            if (userSession != null) {
+                String userID = userSession.getJcrSession().getUserID();
+                log.warn("The event queue is full. Flushing session of user {}", userID);
+                userSession.flush();
             }
         }
     }
@@ -211,12 +211,12 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     void dispose() {
         if (session != null) {
             if (log.isDebugEnabled()) {
-                log.debug("disposing listener " + this);
+                log.debug("disposing listener {}", this);
             }
             try {
                 unsubscribe();
             } catch (RepositoryException ex) {
-                log.error("Unable to unregister event listener, " + ex.getMessage());
+                log.error("Unable to unregister event listener, {}", ex.getMessage());
             }
             session = null;
         }
@@ -266,7 +266,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             listenerPath = root.getPath();
             cmsEventDispatcherService.subscribe(listenerPath, this);
         } catch (PathNotFoundException pnfe) {
-            log.warn("Path no longer exists, stopping observation; " + pnfe.getMessage());
+            log.warn("Path no longer exists, stopping observation; {}", pnfe.getMessage());
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -289,21 +289,51 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     }
 
     private Node getRoot() throws PathNotFoundException, RepositoryException {
-        final Session session = getSession().getJcrSession();
+        final Session jcrSession = getSession().getJcrSession();
         if (uuids != null && uuids.size() == 1) {
-            return session.getNodeByIdentifier(uuids.get(0));
+            try {
+                return jcrSession.getNodeByIdentifier(uuids.get(0));
+            } catch (ItemNotFoundException e) {
+                //The node doesn't exist with the uuid, try to get the node by absolute path.
+                if (parents != null && parents.size() == 1) {
+                    return jcrSession.getNode(parents.get(0));
+                }
+            }
         }
-        return session.getNode(path);
+        return jcrSession.getNode(path);
+    }
+
+    /**
+     * @return nodes with absolute paths and if the node finds update the uuid list.
+     */
+    private List<Node> checkReferencedNodesWithAbsolutePath() {
+        final List<Node> nodes = new ArrayList<Node>();
+        if (parents != null) {
+            final List<String> ids = new ArrayList<>();
+            for (final String absPath : parents) {
+                try {
+                    final Node node = session.getNode(absPath);
+                    ids.add(node.getIdentifier());
+                    nodes.add(node);
+                } catch (RepositoryException e) {
+                    log.info("Could not find reference node by absolute path {} : {}", absPath, e.getMessage());
+                }
+            }
+            if (!ids.isEmpty()) {
+                uuids = ids;
+            }
+        }
+        return nodes;
     }
 
     private List<Node> getReferencedNodes() {
         if (uuids != null) {
-            Session session = getSession().getJcrSession();
+            Session jcrSession = getSession().getJcrSession();
             List<Node> list = new ArrayList<Node>(uuids.size());
             List<String> validUuids = new ArrayList<String>(uuids.size());
             for (String id : uuids) {
                 try {
-                    list.add(session.getNodeByIdentifier(id));
+                    list.add(jcrSession.getNodeByIdentifier(id));
                     validUuids.add(id);
                 } catch (ItemNotFoundException e) {
                     log.info("Could not dereference uuid {} : {}", id, e.getMessage());
@@ -320,8 +350,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
 
     private boolean isVisible(Node node) {
         try {
-            String path = node.getPath();
-            if ((isDeep && path.startsWith(this.path)) || path.equals(this.path)) {
+            String nodePath = node.getPath();
+            if ((isDeep && nodePath.startsWith(this.path)) || nodePath.equals(this.path)) {
                 if (uuids != null) {
                     if (uuids.contains(node.getIdentifier())) {
                         return true;
@@ -331,7 +361,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 }
             }
         } catch (RepositoryException e) {
-            log.warn("Unable to determine if node is visible, defaulting to false: " + e.getMessage());
+            log.warn("Unable to determine if node is visible, defaulting to false: {}", e.getMessage());
         }
         return false;
     }
@@ -353,6 +383,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         for (Node node : new ArrayList<Node>(nodes)) {
             if (node.isNew()) {
                 ItemVisitor visitor = new TraversingItemVisitor() {
+                    @Override
                     public void visit(Node node) throws RepositoryException {
                         // do not traverse into virtual paths
                         if(!JcrHelper.isVirtualNode(node)) {
@@ -457,7 +488,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         if (session == null) {
             throw new ObservationException("Listener " + this + " is no longer registerd");
         } else if (!session.isLive()) {
-            log.info("resubscribing listener " + this);
+            log.info("resubscribing listener {}", this);
 
             // events have references to the session, so they are useless now
             jcrEvents.clear();
@@ -500,7 +531,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 public Event nextEvent() {
                     Event event = upstream.next();
                     if (log.isDebugEnabled()) {
-                        log.debug("processing " + event.toString() + ", session " + sessionRef.get().getId());
+                        log.debug("processing {}, session {}", event, sessionRef.get().getId());
                     }
                     return event;
                 }
@@ -525,6 +556,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                     return nextEvent();
                 }
 
+                @Override
                 public void remove() {
                     throw new UnsupportedOperationException("remove() is not implemented yet");
                 }
@@ -567,12 +599,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         Set<Node> locallyModified;
         try {
             locallyModified = getLocallyModifiedNodes();
-        } catch (PathNotFoundException e) {
-            log.info("Root node no longer exists: " + e.getMessage());
-            dispose();
-            return events;
-        } catch (ItemNotFoundException e) {
-            log.info("Root node no longer exists: " + e.getMessage());
+        } catch (PathNotFoundException | ItemNotFoundException e) {
+            log.info("Root node no longer exists: {}", e.getMessage());
             dispose();
             return events;
         } catch (RepositoryException e) {
@@ -595,7 +623,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 Node parentNode = session.getNode(eventPath);
                 nodes.add(parentNode);
             } catch (RepositoryException re) {
-                log.info("Unable to retrieve event's parent node identifier: " + re.getMessage());
+                log.info("Unable to retrieve event's parent node identifier: {}", re.getMessage());
             }
         }
         return nodes;
@@ -658,8 +686,12 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 }
             }
         }
-
-        for (Node node : getReferencedNodes()) {
+        List<Node> nodes = getReferencedNodes();
+        if (nodes.isEmpty()) {
+            //The nodes not found, try to get the referenced nodes by absolute path.
+            nodes = checkReferencedNodesWithAbsolutePath();
+        }
+        for (Node node : nodes) {
             if (node.isModified() || node.isNew()) {
                 if (nodeTypes == null) {
                     locallyModifiedNodes.add(node);

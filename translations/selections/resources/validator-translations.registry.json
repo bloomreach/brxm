@@ -1,0 +1,21 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:cms.validators/required#selection-RadioGroup" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/required#StaticDropdown" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/required#RadioGroup" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:cms.validators/required#DynamicDropdown" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,144 @@
+definitions:
+  config:
+    /hst:hst/hst:hosts/prod-env:
+      jcr:primaryType: hst:virtualhostgroup
+      hst:cmslocation: http://cms.example.com
+      /com:
+        jcr:primaryType: hst:virtualhost
+        hst:contextpath: /intranet
+        hst:homepage: root
+        hst:showcontextpath: false
+        hst:showport: false
+        /example:
+          jcr:primaryType: hst:virtualhost
+          /www:
+            jcr:primaryType: hst:virtualhost
+            /hst:root:
+              jcr:primaryType: hst:mount
+              hst:mountpoint: /hst:hst/hst:sites/intranet
+      /org:
+        jcr:primaryType: hst:virtualhost
+        hst:defaultresourcebundleid: org.onehippo.hst.demo.resources.ProductResources,
+          org.onehippo.hst.demo.resources.GeneralTranslationsBundle
+        hst:showcontextpath: false
+        hst:showport: false
+        /example:
+          jcr:primaryType: hst:virtualhost
+          /www:
+            jcr:primaryType: hst:virtualhost
+            /hst:root:
+              jcr:primaryType: hst:mount
+              hst:alias: site
+              hst:cacheable: false
+              hst:mountpoint: /hst:hst/hst:sites/demosite
+              hst:mountrest: restapi
+              hst:parameternames: [exampleMountParam]
+              hst:parametervalues: [testValue]
+              /demosite_fr:
+                jcr:primaryType: hst:mount
+                hst:alias: fr_site
+                hst:homepage: accueil
+                hst:locale: fr_FR
+                hst:mountpoint: /hst:hst/hst:sites/demosite_fr
+                hst:pagenotfound: error
+              /demosite_it:
+                jcr:primaryType: hst:mount
+                hst:homepage: wikipedia
+                hst:locale: it_IT
+                hst:mountpoint: /hst:hst/hst:sites/demosite_it
+                hst:pagenotfound: error
+              /demosite_de:
+                jcr:primaryType: hst:mount
+                hst:homepage: wikipedia
+                hst:locale: de_DE
+                hst:mountpoint: /hst:hst/hst:sites/demosite_de
+                hst:pagenotfound: error
+              /demosite_nl:
+                jcr:primaryType: hst:mount
+                hst:homepage: wikipedia
+                hst:locale: nl_NL
+                hst:mountpoint: /hst:hst/hst:sites/demosite_nl
+                hst:pagenotfound: error
+              /restapi:
+                jcr:primaryType: hst:mount
+                hst:alias: restapi
+                hst:authenticated: false
+                hst:mountassets: restapi-assets
+                hst:mountgallery: restapi-gallery
+                hst:mountsite: site
+                hst:namedpipeline: JaxrsRestContentPipeline
+                hst:roles: [everybody]
+                hst:subjectbasedsession: true
+                hst:nochannelinfo: true
+                hst:types: rest
+                /gallery:
+                  jcr:primaryType: hst:mount
+                  hst:alias: restapi-gallery
+                  hst:ismapped: false
+                  hst:mountassets: restapi-assets
+                  hst:mountpoint: /content/gallery
+                  hst:mountrest: restapi
+                  hst:mountsite: site
+                  hst:nochannelinfo: true
+                  hst:types: rest
+                /assets:
+                  jcr:primaryType: hst:mount
+                  hst:alias: restapi-assets
+                  hst:ismapped: false
+                  hst:mountpoint: /content/assets
+                  hst:nochannelinfo: true
+                  hst:types: rest
+              /restservices:
+                jcr:primaryType: hst:mount
+                hst:alias: restservices
+                hst:ismapped: true
+                hst:namedpipeline: JaxrsRestPlainPipeline
+                hst:nochannelinfo: true
+                hst:types: rest
+              /preview:
+                jcr:primaryType: hst:mount
+                hst:alias: site
+                hst:authenticated: true
+                hst:mountpoint: /hst:hst/hst:sites/demosite
+                hst:mountrest: restapi
+                hst:roles: [everybody]
+                hst:type: preview
+                /demosite_fr:
+                  jcr:primaryType: hst:mount
+                  hst:alias: fr_site
+                  hst:homepage: accueil
+                  hst:locale: fr_FR
+                  hst:mountpoint: /hst:hst/hst:sites/demosite_fr
+                  hst:pagenotfound: erreur
+                /restapi:
+                  jcr:primaryType: hst:mount
+                  hst:alias: restapi
+                  hst:authenticated: false
+                  hst:mountassets: restapi-assets
+                  hst:mountgallery: restapi-gallery
+                  hst:mountsite: site
+                  hst:namedpipeline: JaxrsRestContentPipeline
+                  hst:roles: [everybody]
+                  hst:subjectbasedsession: true
+                  hst:types: [preview-rest]
+                  /gallery:
+                    jcr:primaryType: hst:mount
+                    hst:alias: restapi-gallery
+                    hst:ismapped: false
+                    hst:mountassets: restapi-assets
+                    hst:mountpoint: /content/gallery
+                    hst:mountrest: restapi
+                    hst:mountsite: site
+                    hst:types: [preview-rest]
+                  /assets:
+                    jcr:primaryType: hst:mount
+                    hst:alias: restapi-assets
+                    hst:ismapped: false
+                    hst:mountpoint: /content/assets
+                    hst:types: [preview-rest]
+                /restservices:
+                  jcr:primaryType: hst:mount
+                  hst:alias: restservices
+                  hst:ismapped: true
+                  hst:namedpipeline: JaxrsRestPlainPipeline
+                  hst:types: [preview-rest]

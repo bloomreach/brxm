@@ -1,0 +1,231 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot depublish document when not published" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "commitEditableInstance" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=request has already been rejected" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=no draft version of publication" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "versionRestoreTo" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot rename document with pending depublication request" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=unsupported" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "disposeEditableInstance" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot publish document when no changes present" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=document already being edited" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "delete" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=unable to edit document with pending operation" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=request deletion failure" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "requestDeletion" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot publish document with pending publication request" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rejectRequest" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "restoreVersion" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot depublish document with pending depublication request" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "cancelRequest" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot delete document which is being edited" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=Document has already been published" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "copy" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=Versioning of published document failed" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "move" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot depublish document with pending publication request" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "unlock" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "acceptRequest" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "depublish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot delete document when still published" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=document is not a publishable document" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot delete published document" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot rename published document" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot rename document with pending publication request" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot delete document with pending depublication request" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "version" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot delete document with pending publication request" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "requestDepublication" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=No unpublished version of document available for publication" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot delete document being edited" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=cannot publish document with pending depublication request" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "rename" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "publish" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "obtainEditableInstance" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "retrieveVersion" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "requestPublication" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "exception,type=org.hippoecm.repository.api.WorkflowException,message=publication request already pending" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "branch" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "removeBranch" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "restoreVersionToBranch" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "saveDraft" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "editDraft" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "saveUnpublished" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    }
+  }
+}

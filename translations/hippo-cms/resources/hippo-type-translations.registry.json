@@ -1,0 +1,21 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:types.hippo:query/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippo:resource/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippo:facetselect/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:types.hippo:mirror/jcr:name" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

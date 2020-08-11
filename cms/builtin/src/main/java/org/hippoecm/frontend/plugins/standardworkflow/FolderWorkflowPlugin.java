@@ -40,6 +40,7 @@ import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.util.ListModel;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -59,6 +60,7 @@ import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
 import org.hippoecm.frontend.plugins.standardworkflow.editdisplayorder.FolderSortingMechanism;
 import org.hippoecm.frontend.plugins.standardworkflow.editdisplayorder.FolderSortingMechanismDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.xpagelayout.HstXPageLayoutProvider;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
@@ -85,6 +87,7 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -296,6 +299,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 Collections.addAll(translated, getPluginConfig().getStringArray("workflow.translated"));
             }
 
+
             if (isActionAvailable("add", hints) && hints.containsKey("prototypes")) {
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                 for (final String category : prototypes.keySet()) {
@@ -313,7 +317,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                     category,
                                     prototypes.get(category),
                                     translated.contains(category),
-                                    this
+                                    this,
+                                    (String) hints.get("channelId")
                             );
                         }
 
@@ -377,12 +382,14 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                 }
 
                                 TreeMap<String, String> arguments = new TreeMap<>();
+                                final XPageLayout xPageLayout = addDocumentModel.getXPageLayout();
                                 arguments.put("name", nodeName);
                                 arguments.put("localName", localName);
                                 if (StringUtils.isNotBlank(addDocumentModel.getLanguage())) {
                                     arguments.put(HippoTranslationNodeType.LOCALE, addDocumentModel.getLanguage());
                                 }
-                                String path = workflow.add(category, addDocumentModel.getPrototype(), arguments);
+                                String path = workflow.add(category, addDocumentModel.getPrototype(), arguments,
+                                        xPageLayout == null ? null : xPageLayout.getJcrTemplateNode());
                                 onWorkflowAdded(path);
                                 JcrNodeModel nodeModel = new JcrNodeModel(path);
                                 if (!nodeName.equals(localName)) {
@@ -456,17 +463,27 @@ public class FolderWorkflowPlugin extends RenderPlugin {
         return false;
     }
 
+    /**
+     * @param channelId in case this is an XPage folder, the channel Id for which the folder is. It can be null
+     */
     protected AddDocumentDialog createAddDocumentDialog(AddDocumentArguments addDocumentModel,
                                                         String category, Set<String> prototypes, boolean translated,
-                                                        IWorkflowInvoker invoker) {
+                                                        IWorkflowInvoker invoker, String channelId) {
         String locale = getCodecLocale();
         IModel<StringCodec> codecModel = CodecUtils.getNodeNameCodecModel(getPluginContext(), locale);
+        final List<XPageLayout> xPageLayouts;
+        if (channelId == null) {
+            xPageLayouts = Collections.emptyList();
+        } else {
+            xPageLayouts = new HstXPageLayoutProvider(channelId).getXPageLayouts();
+        }
 
         AddDocumentDialog dialog = new AddDocumentDialog(
                 addDocumentModel,
                 ResourceBundleModel.of(HIPPO_TEMPLATES_BUNDLE_NAME, category),
                 category,
                 prototypes,
+                new ListModel(xPageLayouts),
                 translated && !isLanguageKnown(),
                 invoker,
                 codecModel,
@@ -476,6 +493,12 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
         if (locale != null) {
             dialog.getLanguageField().setVisible(false);
+        }
+
+        if (channelId != null && xPageLayouts.isEmpty()) {
+            log.info("There are no xPageLayouts for channel with id '{}'. Skip 'add document' menu item since folder " +
+                    "is an experience page folder", channelId);
+            dialog.setVisible(false);
         }
 
         return dialog;

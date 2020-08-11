@@ -1,0 +1,17 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "picker.open" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "picker.remove" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "picker.select" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:publishableSummary:
+      /de:
+        hippostd:stateSummary=review: Wartet auf Genehmigung
+        hippostd:stateSummary=changed: Frühere Version wurde veröffentlicht
+        jcr:primaryType: hipposys:resourcebundle
+        hippostd:stateSummary=new: Nicht veröffentlicht
+        hippostd:stateSummary=live: Veröffentlicht
