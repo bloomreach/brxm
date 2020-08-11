@@ -161,13 +161,11 @@ function config(
     .icon('left-side-panel-arrow-right', `images/left-side-panel-arrow-right.svg${antiCache}`)
     .icon('maximize-sidepanel', `images/maximize-sidepanel.svg${antiCache}`)
     .icon('publish', `images/publish.svg${antiCache}`)
-    .icon('publish-document', `images/publish-document.svg${antiCache}`)
     .icon('resize-handle', `images/resize-handle.svg${antiCache}`)
     .icon('switch-to-content-editor', `images/switch-to-content-editor.svg${antiCache}`)
     .icon('toggle-components-overlay', `images/toggle-components-overlay.svg${antiCache}`)
     .icon('toggle-editing-overlay', `images/toggle-editing-overlay.svg${antiCache}`)
     .icon('un-maximize-sidepanel', `images/un-maximize-sidepanel.svg${antiCache}`)
-    .icon('unpublish-document', `images/unpublish-document.svg${antiCache}`)
     .icon('xpage', `images/xpage.svg${antiCache}`);
 
   // only enable Angular debug information during development
