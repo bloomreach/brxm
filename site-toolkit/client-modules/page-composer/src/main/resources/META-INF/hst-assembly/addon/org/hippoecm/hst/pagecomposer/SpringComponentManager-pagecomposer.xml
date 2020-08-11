@@ -283,14 +283,14 @@
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ComponentResource" parent="abstractConfigResource">
-              <property name="componentInfoService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoService" />
+              <property name="actionStateService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoService" />
             </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageResource" parent="abstractConfigResource">
-              <property name="componentInfoService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoService" />
+              <property name="actionStateService" ref="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoService" />
             </bean>
           </constructor-arg>
         </bean>
@@ -298,9 +298,9 @@
     </property>
     <property name="invoker" ref="jaxrsHstConfigServiceInvoker" />
   </bean>
-  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoServiceImpl">
+  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ActionStateServiceImpl">
     <constructor-arg>
-      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoProviderContextFactory">
+      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ActionStateProviderContextFactory">
         <constructor-arg>
           <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.ChannelContextFactory">
             <constructor-arg ref="channelService" />
@@ -316,13 +316,13 @@
         </constructor-arg>
       </bean>
     </constructor-arg>
-    <property name="componentInfoProviders" ref="componentInfoProviders" />
+    <property name="actionStateProviders" ref="actionStateProviders" />
   </bean>
 
-  <bean id="componentInfoProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+  <bean id="actionStateProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
-        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstComponentInfoProvider" >
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstActionStateProvider" >
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstActionProvider"/>
           </constructor-arg>

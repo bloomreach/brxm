@@ -33,12 +33,12 @@ import javax.ws.rs.core.MediaType;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ActionsAndStatesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.Action;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ActionState;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ActionStateContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ActionStateService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.State;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.component.State;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfo;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ComponentInfoService;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
@@ -50,10 +50,10 @@ import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivilege
 @Path("/hst:component/")
 public class ComponentResource extends AbstractConfigResource {
 
-    private ComponentInfoService componentInfoService;
+    private ActionStateService actionStateService;
 
-    public void setComponentInfoService(final ComponentInfoService componentInfoService) {
-        this.componentInfoService = componentInfoService;
+    public void setActionStateService(final ActionStateService actionStateService) {
+        this.actionStateService = actionStateService;
     }
 
     @GET
@@ -78,16 +78,16 @@ public class ComponentResource extends AbstractConfigResource {
             if (cmsSessionContext == null) {
                 throw new IllegalStateException("CmsSessionContext should never be null here");
             }
-            final ComponentInfoContext context = new ComponentInfoContext(
+            final ActionStateContext context = new ActionStateContext(
                     getPageComposerContextService(),
                     cmsSessionContext,
                     siteMapItemUuid,
                     hostGroup
             );
-            final ComponentInfo componentInfo = componentInfoService.getComponentInfo(context);
-            final Map<String, Set<Action>> actionsByCategory = componentInfo.getActions().stream()
+            final ActionState actionState = actionStateService.getActionState(context);
+            final Map<String, Set<Action>> actionsByCategory = actionState.getActions().stream()
                     .collect(groupingBy(Action::getCategory, toSet()));
-            final Map<String, Set<State>> statesByCategory = componentInfo.getStates().stream()
+            final Map<String, Set<State>> statesByCategory = actionState.getStates().stream()
                     .collect(groupingBy(State::getCategory, toSet()));
             return ok("", ActionsAndStatesRepresentation.represent(actionsByCategory, statesByCategory), false);
         });

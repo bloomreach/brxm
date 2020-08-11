@@ -18,7 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
 import javax.jcr.RepositoryException;
 
-public interface ComponentInfoService {
+public interface ActionStateService {
 
-    ComponentInfo getComponentInfo(ComponentInfoContext context) throws RepositoryException;
+    ActionState getActionState(ActionStateContext context) throws RepositoryException;
 }
