@@ -155,7 +155,6 @@
   "CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT": "Request publication of '{{documentName}}'?",
   "EDIT_MENU": "Edit menu",
   "TOOLBAR_MENU_XPAGE_REQUEST_SCHEDULE_UNPUBLISH": "Schedule to take offline (request)...",
-  "PLACEHOLDER_EXPERIENCE_PAGE": "Experience Page",
   "NONE_OPTION": "None",
   "SELECT_DOCUMENT_LOCKED": "Cannot select document (component is locked)",
   "SELECT_DOCUMENT": "Select document",

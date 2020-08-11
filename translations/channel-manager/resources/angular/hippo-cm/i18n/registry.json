@@ -1213,16 +1213,6 @@
         "es" : "UNRESOLVED"
       }
     },
-    "PLACEHOLDER_EXPERIENCE_PAGE" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
     "TOOLBAR_MENU_XPAGE_MOVE" : {
       "status" : "ADDED",
       "locales" : {
