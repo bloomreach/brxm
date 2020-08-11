@@ -93,12 +93,12 @@ class XPageMenuService extends MenuService {
     });
     menu.addDivider();
 
-    addWorkflowAction('unpublish', id => DocumentWorkflowService.unpublish(id), { iconSvg: 'unpublish-document' });
+    addWorkflowAction('unpublish', id => DocumentWorkflowService.unpublish(id), { iconName: 'mdi-minus-circle' });
     addWorkflowAction('schedule-unpublish', id => DocumentWorkflowService.scheduleUnpublication(id));
     addWorkflowAction('request-unpublish', id => DocumentWorkflowService.requestUnpublication(id));
     addWorkflowAction('request-schedule-unpublish', id => DocumentWorkflowService.requestScheduleUnpublication(id));
 
-    addWorkflowAction('publish', id => DocumentWorkflowService.publish(id), { iconSvg: 'publish-document' });
+    addWorkflowAction('publish', id => DocumentWorkflowService.publish(id), { iconName: 'mdi-check-circle' });
     addWorkflowAction('schedule-publish', id => DocumentWorkflowService.schedulePublication(id));
     addWorkflowAction('request-publish', id => DocumentWorkflowService.requestPublication(id));
     addWorkflowAction('request-schedule-publish', id => DocumentWorkflowService.requestSchedulePublication(id));
