@@ -15,8 +15,11 @@
  */
 
 import { Component, OnInit } from '@angular/core';
+import { MatSelectionListChange } from '@angular/material/list';
 import { Subject } from 'rxjs';
 
+import { ChannelService } from '../../../channels/services/channel.service';
+import { IframeService } from '../../../channels/services/iframe.service';
 import { ContentService } from '../../../content/services/content.service';
 import { PageStructureService } from '../../../pages/services/page-structure.service';
 import { PageService } from '../../../pages/services/page.service';
@@ -37,6 +40,8 @@ export class VersionsInfoComponent implements OnInit {
     private readonly projectService: ProjectService,
     private readonly pageService: PageService,
     private readonly pageStructureService: PageStructureService,
+    private readonly iframeService: IframeService,
+    private readonly channelService: ChannelService,
   ) { }
 
   ngOnInit(): void {
@@ -47,10 +52,33 @@ export class VersionsInfoComponent implements OnInit {
 
   async getVersionsInfo(): Promise<void> {
     const state = this.pageService.getXPageState();
-    const documentId = state?.id || '';
+    const documentId = state?.id;
     const branchId = this.projectService.getSelectedProjectId();
 
-    const versionHistory = await this.contentService.getDocumentVersionsInfo(documentId, branchId);
-    this.versionsInfo$.next(versionHistory);
+    if (documentId && branchId) {
+      const versionHistory = await this.contentService.getDocumentVersionsInfo(documentId, branchId);
+      this.versionsInfo$.next(versionHistory);
+    }
+
+    this.currentDocumentVersionUUID = this.pageStructureService.getUnpublishedVariantId();
   }
+
+  async selectVersion(event: MatSelectionListChange): Promise<void> {
+    const currentPath = this.iframeService.getCurrentRenderPathInfo();
+    const renderPath = this.channelService.makeRenderPath(currentPath);
+    const newPath = this.createVersionPath(renderPath, event.option.value);
+
+    await this.iframeService.load(newPath);
+  }
+
+  private createVersionPath(path: string, selectedVersionUUID: string): string {
+    const versionParam = `br_version_uuid=${selectedVersionUUID}`;
+
+    if (path.includes('?')) {
+      return `${path}&${versionParam}`;
+    }
+
+    return `${path}?${versionParam}`;
+  }
+
 }

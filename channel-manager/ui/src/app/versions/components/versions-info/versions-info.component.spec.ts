@@ -15,9 +15,11 @@
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatListModule } from '@angular/material/list';
+import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { ChannelService } from '../../../channels/services/channel.service';
+import { IframeService } from '../../../channels/services/iframe.service';
 import { ContentService } from '../../../content/services/content.service';
 import { XPageState } from '../../../models/xpage-state.model';
 import { PageStructureService } from '../../../pages/services/page-structure.service';
@@ -27,12 +29,22 @@ import { VersionsInfo } from '../../models/versions-info.model';
 
 import { VersionsInfoComponent } from './versions-info.component';
 
-describe('VersionsTabComponent', () => {
+describe('VersionsInfoComponent', () => {
   let component: VersionsInfoComponent;
   let componentEl: HTMLElement;
   let fixture: ComponentFixture<VersionsInfoComponent>;
+  let iframeService: IframeService;
+  let channelService: ChannelService;
 
-  const testDate = Date.parse('11/08/2020 16:03');
+  const date = Date.parse('11/08/2020 16:03');
+  const path = '/some/test/path';
+  const renderPath = `${path}?withParam=test`;
+  const selectedVersionUUID = 'testVariantId';
+  const selectEvent = {
+    option: {
+      value: selectedVersionUUID,
+    },
+  } as MatSelectionListChange;
 
   beforeEach(() => {
     const contentServiceMock = {
@@ -42,7 +54,7 @@ describe('VersionsTabComponent', () => {
             jcrUUID: 'testId',
             comment: 'testComment',
             userName: 'testUserName',
-            timestamp: testDate,
+            timestamp: date,
           },
         ],
       } as VersionsInfo)),
@@ -60,6 +72,15 @@ describe('VersionsTabComponent', () => {
       getUnpublishedVariantId: jest.fn(() => 'unpublishedVariantId'),
     };
 
+    const channelServiceMock = {
+      makeRenderPath: () => path,
+    };
+
+    const iframeServiceMock = {
+      getCurrentRenderPathInfo: () => path,
+      load: jest.fn(() => Promise.resolve()),
+    };
+
     TestBed.configureTestingModule({
       declarations: [VersionsInfoComponent],
       imports: [
@@ -67,12 +88,17 @@ describe('VersionsTabComponent', () => {
         TranslateModule.forRoot(),
       ],
       providers: [
+        { provide: ChannelService, useValue: channelServiceMock },
+        { provide: IframeService, useValue: iframeServiceMock },
         { provide: ContentService, useValue: contentServiceMock },
         { provide: ProjectService, useValue: projectServiceMock },
         { provide: PageService, useValue: pageServiceMock },
         { provide: PageStructureService, useValue: pageStructureServiceMock },
       ],
     });
+
+    iframeService = TestBed.inject(IframeService);
+    channelService = TestBed.inject(ChannelService);
   });
 
   beforeEach(() => {
@@ -86,11 +112,30 @@ describe('VersionsTabComponent', () => {
     expect(componentEl).toMatchSnapshot();
   });
 
-  it('should show versions', () => {
-    component.ngOnInit();
+  describe('showing versions', () => {
+    it('should show list of versions', () => {
+      component.ngOnInit();
 
-    fixture.detectChanges();
+      fixture.detectChanges();
 
-    expect(componentEl).toMatchSnapshot();
+      expect(componentEl).toMatchSnapshot();
+    });
+  });
+
+  describe('selecting version', () => {
+    it('should add the version param to the url and load that url', async () => {
+      jest.spyOn(iframeService, 'load');
+      await component.selectVersion(selectEvent);
+
+      expect(iframeService.load).toHaveBeenCalledWith(`${path}?br_version_uuid=${selectedVersionUUID}`);
+    });
+
+    it('should append the version param to the url if params are already present and load that url', async () => {
+      jest.spyOn(iframeService, 'load');
+      jest.spyOn(channelService, 'makeRenderPath').mockReturnValueOnce(renderPath);
+      await component.selectVersion(selectEvent);
+
+      expect(iframeService.load).toHaveBeenCalledWith(`${renderPath}&br_version_uuid=${selectedVersionUUID}`);
+    });
   });
 });
