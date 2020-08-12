@@ -16,6 +16,7 @@
 
 import { NgModule } from '@angular/core';
 
+import { ChannelsModule } from './channels/channels.module';
 import { ContentModule } from './content/content.module';
 import { NotificationBarModule } from './notification-bar/notification-bar.module';
 import { PagesModule } from './pages/pages.module';
@@ -32,6 +33,7 @@ import { VersionsModule } from './versions/versions.module';
     VersionsModule,
     PagesModule,
     ProjectsModule,
+    ChannelsModule,
   ],
   providers: [
     { provide: NG1_CONFIG_SERVICE, useValue: window.angular.element(document.body).injector().get('ConfigService') },
