@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<md-toolbar flex="none" 
+<md-toolbar flex="none"
             class="hippo-toolbar qa-toolbar md-bloomreach-theme">
   <div class="md-toolbar-tools">
     <h1>{{ ::$ctrl.subpageTitle }}</h1>
@@ -52,7 +52,7 @@
                    focus-if
                    ng-model="$ctrl.location"
                    ng-model-options="{trackBy: '$value.location'}">
-          <md-option ng-repeat="location in $ctrl.locations track by location.location" ng-value="{{::location}}">
+          <md-option ng-repeat="location in $ctrl.locations track by location.location" ng-value="location">
             {{ ::location.location }}
           </md-option>
         </md-select>
