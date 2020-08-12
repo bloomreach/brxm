@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`VersionsTabComponent should create 1`] = `
+exports[`VersionsInfoComponent should create 1`] = `
 <div
   id="root0"
 >
@@ -13,7 +13,7 @@ exports[`VersionsTabComponent should create 1`] = `
 </div>
 `;
 
-exports[`VersionsTabComponent should show versions 1`] = `
+exports[`VersionsInfoComponent showing versions should show list of versions 1`] = `
 <div
   id="root1"
 >
