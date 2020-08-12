@@ -21,7 +21,8 @@
 
   <mat-selection-list *ngIf="versionsInfo$ | async as versionsInfo"
                       color="primary"
-                      [multiple]="false">
+                      [multiple]="false"
+                      (selectionChange)="selectVersion($event)">
     <h3 matSubheader>Date & time, user</h3>
 
     <mat-list-option *ngFor="let version of versionsInfo.versions"
