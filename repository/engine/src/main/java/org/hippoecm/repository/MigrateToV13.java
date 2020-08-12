@@ -30,11 +30,13 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeDefinitionTemplate;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeDefinition;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.nodetype.PropertyDefinitionTemplate;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -67,6 +69,12 @@ public class MigrateToV13 {
     public static final String NT_HST_SITE = "hst:site";
     public static final String NT_HST_SITES = "hst:sites";
     public static final String NT_HST_VIRTUALHOSTS = "hst:virtualhosts";
+
+    private static final String[] VERSIONABLE_NODE_TYPES = {
+            NT_HST_HST, NT_HST_BLUEPRINT, NT_HST_BLUEPRINTS, NT_HST_CHANNEL, NT_HST_CONFIGURATION,
+            NT_HST_CONFIGURATIONS, NT_HST_SITE, NT_HST_SITES, NT_HST_VIRTUALHOSTS
+    };
+
     public static final String NT_MAJOR_RELEASE_MARKER = "hipposys:ntd_v13b";
 
     private static final String MIGRATION_LOCK_KEY = "org.hippoecm.repository.migration";
@@ -103,11 +111,18 @@ public class MigrateToV13 {
     }
 
     private void doMigrateIfNeeded() throws RepositoryException {
-        if (ntm.hasNodeType(NT_MAJOR_RELEASE_MARKER)) {
+        final boolean hasMigrationMarker = ntm.hasNodeType(NT_MAJOR_RELEASE_MARKER);
+        final boolean migrate = !hasMigrationMarker || isMigrationStillNeeded();
+
+        if (!migrate) {
             log.info("No migration needed");
             return;
         }
-        log.info("Start MigrateToV13");
+        if (hasMigrationMarker) {
+            log.warn ("Restart MigrateToV13");
+        } else {
+            log.info ("Start MigrateToV13");
+        }
 
         final List<Node> extraNodes = new ArrayList<>();
         if (ntm.hasNodeType("targeting:dataflow") && session.nodeExists("/targeting:targeting/targeting:dataflow")) {
@@ -122,7 +137,7 @@ public class MigrateToV13 {
         ensureNodeTypeNotInUse("hippo:initializeitem", false, null, extraNodes);
         ensureNodeTypeNotInUse("hst:channels", false, null, extraNodes);
 
-        removeVersionableMixinFromNodeTypes();
+        removeVersionableMixinFromNodeTypes(VERSIONABLE_NODE_TYPES);
 
         removePropertiesFromType("hst:containeritemcomponent", new String[] {"hst:referencecomponent", "hst:dummycontent"});
         removePropertiesFromType("hst:sitemapitem", new String[] {"hst:portletcomponentconfigurationid"});
@@ -146,7 +161,11 @@ public class MigrateToV13 {
             removeNodeType("hipposys:initializeitem", false);
             removeNodeType("hippo:initializeitem", false);
             registerMajorReleaseMarkerNodeType();
-            log.info("MigrateToV13 completed.");
+            if (hasMigrationMarker) {
+                log.warn("MigrateToV13 completed.");
+            } else {
+                log.info("MigrateToV13 completed.");
+            }
         }
     }
 
@@ -158,6 +177,74 @@ public class MigrateToV13 {
             ntt.setAbstract(true);
             ntm.registerNodeType(ntt, false);
         }
+    }
+
+    private boolean isMigrationStillNeeded() throws RepositoryException {
+        return obsoletePropertyExists("hst:containeritemcomponent", "hst:referencecomponent", "hst:dummycontent")
+                    || obsoletePropertyExists("hst:sitemapitem", "hst:portletcomponentconfigurationid")
+                    || obsoletePropertyExists("hst:sitemenuitem", "hst:refidsitemapitem")
+                    || obsoletePropertyExists("hst:configuration", "hst:lockedby", "hst:lockedon")
+                    || obsoletePropertyExists("hst:site", "hst:portalconfigurationenabled")
+                    || obsoletePropertyExists("hst:mount", "hst:onlyforcontextpath", "hst:embeddedmountpath", "hst:isSite", "hst:channelpath")
+                    || obsoletePropertyExists("hst:virtualhost", "hst:onlyforcontextpath")
+                    || obsoletePropertyExists("hst:virtualhosts", "hst:channelmanagerhostgroup", "hst:prefixexclusions", "hst:suffixexclusions")
+                    || obsoleteNodeTypeExists("hst:channels", "hippo:initializefolder", "hipposys:initializeitem", "hippo:initializeitem")
+                    || obsoleteChildNodeTypeExists("hst:hst", "hst:channels")
+                    || obsoleteChildNodeTypeExists("hippo:initializefolder", "hippo:initializeitem")
+                    || obsoleteChildNodeTypeExists(NT_CONFIGURATION, "hippo:initializefolder")
+                    || obsoleteChildNodeTypeExists(NT_HCM_ROOT, "hippo:lock")
+                    || obsoleteVersionableNodeTypeExists(VERSIONABLE_NODE_TYPES);
+    }
+
+    private boolean obsoletePropertyExists(final String nodeTypeName, final String ... propertyNames) throws RepositoryException {
+        if (ntm.hasNodeType(nodeTypeName)) {
+            final NodeType nodeType = ntm.getNodeType(nodeTypeName);
+            for (final PropertyDefinition propDef : nodeType.getPropertyDefinitions()) {
+                for (final String propertyName : propertyNames) {
+                    if (propertyName.equals(propDef.getName())) {
+                        log.warn("Found obsolete property {}/{}, re-running MigrateToV13", nodeTypeName, propertyName);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean obsoleteNodeTypeExists(final String ... nodeTypeNames) throws RepositoryException {
+        for (String nodeTypeName : nodeTypeNames) {
+            if (ntm.hasNodeType(nodeTypeName)) {
+                log.warn("Found obsolete nodetype {}, re-running MigrateToV13", nodeTypeName);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean obsoleteChildNodeTypeExists(final String nodeTypeName, final String childNodeTypeName) throws RepositoryException {
+        if (ntm.hasNodeType(nodeTypeName)) {
+            final NodeType nt = ntm.getNodeType(nodeTypeName);
+            for (NodeDefinition nd : nt.getChildNodeDefinitions()) {
+                if (Arrays.asList(nd.getRequiredPrimaryTypeNames()).contains(childNodeTypeName)) {
+                    log.warn("Found obsolete child node type {}/{}, re-running MigrateToV13", nodeTypeName, childNodeTypeName);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean obsoleteVersionableNodeTypeExists(final String ... nodeTypeNames) throws RepositoryException {
+        for (final String nodeTypeName : nodeTypeNames) {
+            if (ntm.hasNodeType(nodeTypeName)) {
+                final NodeType nt = ntm.getNodeType(nodeTypeName);
+                if (Arrays.asList(nt.getDeclaredSupertypeNames()).contains(MIX_VERSIONABLE)) {
+                    log.warn("Found obsolete mixin {} defined for NodeType {}, re-running MigrateToV13", MIX_VERSIONABLE, nodeTypeName);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void ensureHippoSysVersionableMixinType() throws RepositoryException {
@@ -173,11 +260,7 @@ public class MigrateToV13 {
         }
     }
 
-    private void removeVersionableMixinFromNodeTypes() throws RepositoryException {
-        final String[] candidateVersionableNodeTypes = {
-                NT_HST_HST, NT_HST_BLUEPRINT, NT_HST_BLUEPRINTS, NT_HST_CHANNEL, NT_HST_CONFIGURATION,
-                NT_HST_CONFIGURATIONS, NT_HST_SITE, NT_HST_SITES, NT_HST_VIRTUALHOSTS
-        };
+    private void removeVersionableMixinFromNodeTypes(final String ... candidateVersionableNodeTypes) throws RepositoryException {
         final Set<NodeTypeDefinition> versionableNodeTypes = new LinkedHashSet<>();
         final Set<String> versionableNodeTypesUsed = new LinkedHashSet<>();
         boolean hasHippoSysVersionableMixinType = false;
