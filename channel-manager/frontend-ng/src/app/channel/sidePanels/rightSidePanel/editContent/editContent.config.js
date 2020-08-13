@@ -39,6 +39,24 @@ function config($stateProvider) {
     name: 'hippo-cm.channel.edit-content',
     params: {
       documentId: '',
+    },
+    views: {
+      main: {
+        component: 'editContentMain',
+      },
+      tools: {
+        component: 'editContentTools',
+      },
+      icon: {
+        component: 'editContentIcon',
+      },
+    },
+  });
+
+  $stateProvider.state({
+    name: 'hippo-cm.channel.edit-page',
+    params: {
+      documentId: '',
       showVersionsInfo: false,
     },
     views: {
