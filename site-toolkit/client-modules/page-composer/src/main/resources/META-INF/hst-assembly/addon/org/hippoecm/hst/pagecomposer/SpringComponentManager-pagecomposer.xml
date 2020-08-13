@@ -248,6 +248,7 @@
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource" parent="abstractConfigResource">
               <property name="siteMapHelper" ref="siteMapHelper"/>
               <property name="validatorFactory" ref="validatorFactory"/>
+              <property name="hideXPages" value="${channelmanager.sitemap.hide.xpages:false}"/>
             </bean>
           </constructor-arg>
         </bean>
