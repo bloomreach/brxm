@@ -59,7 +59,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COM
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.checkoutCorrectBranch;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getDocumentWorkflow;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getObtainEditableInstanceWorkflow;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getInternalWorkflowSession;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getWorkspaceNode;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.findNewName;
@@ -109,7 +109,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             final PageComposerContextService pageComposerContextService = getPageComposerContextService();
 
-            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession(), pageComposerContextService);
+            final DocumentWorkflow documentWorkflow = getObtainEditableInstanceWorkflow(getSession(), pageComposerContextService);
 
             final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
@@ -181,7 +181,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             final PageComposerContextService pageComposerContextService = getPageComposerContextService();
 
-            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession(), pageComposerContextService);
+            final DocumentWorkflow documentWorkflow = getObtainEditableInstanceWorkflow(getSession(), pageComposerContextService);
 
             final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
@@ -254,7 +254,7 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
                 final PageComposerContextService pageComposerContextService = getPageComposerContextService();
 
-                final DocumentWorkflow documentWorkflow = getDocumentWorkflow(getSession(), pageComposerContextService);
+                final DocumentWorkflow documentWorkflow = getObtainEditableInstanceWorkflow(getSession(), pageComposerContextService);
 
                 final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 

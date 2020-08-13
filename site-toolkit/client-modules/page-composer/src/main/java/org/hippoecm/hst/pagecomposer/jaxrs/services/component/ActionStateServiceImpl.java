@@ -16,9 +16,12 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
+
+import org.hippoecm.repository.api.WorkflowException;
 
 final class ActionStateServiceImpl implements ActionStateService {
 
@@ -34,7 +37,7 @@ final class ActionStateServiceImpl implements ActionStateService {
     }
 
     @Override
-    public ActionState getActionState(ActionStateContext actionStateContext) throws RepositoryException {
+    public ActionState getActionState(ActionStateContext actionStateContext) throws RepositoryException, WorkflowException, RemoteException {
         final ActionStateProviderContext context = contextFactory.make(actionStateContext);
         return actionStateProviders.stream()
                 .map(actionStateProvider -> actionStateProvider
