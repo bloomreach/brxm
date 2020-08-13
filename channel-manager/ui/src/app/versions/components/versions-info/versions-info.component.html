@@ -14,16 +14,16 @@
   limitations under the License.
   -->
 
-<div class="mat-typography">
-  <div *ngIf="(versionsInfo$ | async) === undefined">
-    {{ 'NO_VERSIONS_AVAILABLE' | translate }}
-  </div>
+<div class="mat-typography" *ngIf="versionsInfo$ | async as versionsInfo">
+  <mat-selection-list *ngIf="versionsInfo.versions.length === 0">
+    <h3 matSubheader>{{ 'NO_VERSIONS_AVAILABLE' | translate }}</h3>
+  </mat-selection-list>
 
-  <mat-selection-list *ngIf="versionsInfo$ | async as versionsInfo"
+  <mat-selection-list *ngIf="versionsInfo.versions.length > 0"
                       color="primary"
                       [multiple]="false"
                       (selectionChange)="selectVersion($event)">
-    <h3 matSubheader>Date & time, user</h3>
+    <h3 matSubheader>{{ 'VERSIONS_LIST_HEADER' | translate }}</h3>
 
     <mat-list-option *ngFor="let version of versionsInfo.versions"
                      [value]="version.jcrUUID"
