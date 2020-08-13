@@ -20,12 +20,13 @@ import 'angular-mocks';
 describe('XPageMenuService', () => {
   let $q;
   let $rootScope;
+  let $state;
   let DocumentWorkflowService;
   let FeedbackService;
   let PageService;
   let XPageMenuService;
 
-  const allActions = [
+  const allWorkflowActions = [
     'publish',
     'schedule-publish',
     'request-publish',
@@ -42,6 +43,7 @@ describe('XPageMenuService', () => {
     inject((
       _$q_,
       _$rootScope_,
+      _$state_,
       _DocumentWorkflowService_,
       _FeedbackService_,
       _PageService_,
@@ -49,6 +51,7 @@ describe('XPageMenuService', () => {
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $state = _$state_;
       DocumentWorkflowService = _DocumentWorkflowService_;
       FeedbackService = _FeedbackService_;
       PageService = _PageService_;
@@ -112,14 +115,31 @@ describe('XPageMenuService', () => {
       expect(XPageMenuService.menu.isVisible()).toBe(true);
     });
 
-    it('should hide known actions', () => {
-      allActions.forEach((action) => {
+    it('should open the content editor', () => {
+      spyOn($state, 'go');
+      getAction('content').onClick();
+
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page', { documentId: 'xpage-document-id' });
+    });
+
+    it('should open the versions panel', () => {
+      spyOn($state, 'go');
+      getAction('versions').onClick();
+
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page', {
+        documentId: 'xpage-document-id',
+        showVersionsInfo: true,
+      });
+    });
+
+    it('should hide workflow actions', () => {
+      allWorkflowActions.forEach((action) => {
         expect(getAction(action).isVisible()).toBe(false);
       });
     });
 
-    it('should show known actions', () => {
-      allActions.forEach((actionId) => {
+    it('should show workflow actions', () => {
+      allWorkflowActions.forEach((actionId) => {
         const action = addAction(actionId);
 
         expect(action.isVisible()).toBe(true);
@@ -127,8 +147,8 @@ describe('XPageMenuService', () => {
       });
     });
 
-    it('should show disabled known actions', () => {
-      allActions.forEach((actionId) => {
+    it('should show disabled workflow actions', () => {
+      allWorkflowActions.forEach((actionId) => {
         const action = addAction(actionId, false);
 
         expect(action.isVisible()).toBe(true);
