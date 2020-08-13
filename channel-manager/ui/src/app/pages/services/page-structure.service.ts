@@ -35,7 +35,7 @@ export class PageStructureService {
   getUnpublishedVariantId(): string {
     return this.ng1PageStructureService
       .getPage()
-      .getMeta()
-      .getUnpublishedVariantId();
+      ?.getMeta()
+      ?.getUnpublishedVariantId();
   }
 }
