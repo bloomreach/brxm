@@ -58,6 +58,10 @@ import static org.junit.Assert.assertTrue;
 public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
 
 
+    protected static final SimpleCredentials ADMIN_CREDENTIALS = new SimpleCredentials("admin", "admin".toCharArray());
+    protected static final SimpleCredentials EDITOR_CREDENTIALS = new SimpleCredentials("editor", "editor".toCharArray());
+    protected static final SimpleCredentials AUTHOR_CREDENTIALS = new SimpleCredentials("author", "author".toCharArray());
+
     private final static Logger log = LoggerFactory.getLogger(AbstractFullRequestCycleTest.class);
 
     public static final String TEST_BRANCH_ID_PAYLOAD_NAME = "testBranchId";
