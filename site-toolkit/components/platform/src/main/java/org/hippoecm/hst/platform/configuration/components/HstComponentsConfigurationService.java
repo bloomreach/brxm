@@ -215,23 +215,26 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             ((HstComponentConfigurationService) child).setServeResourcePath(templateResourceMap);
         }
 
+
         // adding parameters from parent components to child components and override them in a child when they already are present
         for (HstComponentConfiguration child : childComponents) {
             ((HstComponentConfigurationService) child).inheritParameters();
         }
 
-        for (HstComponentConfiguration child : childComponents) {
-            ((HstComponentConfigurationService) child).populateVariants();
-        }
+        if (hstConfigModel) {
+            for (HstComponentConfiguration child : childComponents) {
+                ((HstComponentConfigurationService) child).populateVariants();
+            }
 
-        Set<String> allMountVariants = new HashSet<String>();
-        for (HstComponentConfiguration child : childComponents) {
-            allMountVariants.addAll(child.getVariants());
-        }
+            Set<String> allMountVariants = new HashSet<String>();
+            for (HstComponentConfiguration child : childComponents) {
+                allMountVariants.addAll(child.getVariants());
+            }
 
-        for (HstComponentConfiguration child : childComponents) {
-            List<String> allVariants = new ArrayList<String>(allMountVariants);
-            ((HstComponentConfigurationService) child).setMountVariants(Collections.unmodifiableList(allVariants));
+            for (HstComponentConfiguration child : childComponents) {
+                List<String> allVariants = new ArrayList<String>(allMountVariants);
+                ((HstComponentConfigurationService) child).setMountVariants(Collections.unmodifiableList(allVariants));
+            }
         }
 
 
