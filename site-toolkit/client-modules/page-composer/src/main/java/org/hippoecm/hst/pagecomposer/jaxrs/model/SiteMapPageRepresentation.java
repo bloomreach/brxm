@@ -15,9 +15,16 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.util.HstSiteMapUtils;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.NodeNameCodec;
 
 public class SiteMapPageRepresentation {
@@ -35,6 +42,8 @@ public class SiteMapPageRepresentation {
     private boolean workspaceConfiguration;
     private boolean inherited;
     private String relativeContentPath;
+    // flag to indicate whether this 'sitemap page' (not a real sitemap page) is the result of an experience page or not
+    private boolean experiencePage;
 
     public SiteMapPageRepresentation represent(final HstSiteMapItem item,
                                                final String parentId,
@@ -63,6 +72,24 @@ public class SiteMapPageRepresentation {
         workspaceConfiguration = ((CanonicalInfo) item).isWorkspaceConfiguration();
         inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
         relativeContentPath = item.getRelativeContentPath();
+        return this;
+    }
+
+    public SiteMapPageRepresentation represent(final HstLink hstLink, final Node handleNode) throws RepositoryException {
+        id = handleNode.getIdentifier();
+        parentId = handleNode.getParent().getIdentifier();
+        name = handleNode.getName();
+
+        pageTitle = ((HippoNode)handleNode).getDisplayName();
+        // from the pathInfo, remove the 'Mount path part' just like SiteMapPageRepresentation for a sitemap item above
+        final Mount mount = hstLink.getMount();
+        if (mount == null) {
+            pathInfo = "/" + hstLink.getPath();
+        } else {
+            pathInfo = StringUtils.substringAfter("/" + hstLink.getPath(), mount.getMountPath());
+        }
+        renderPathInfo =  "/" + hstLink.getPath();
+        experiencePage = true;
         return this;
     }
 
@@ -144,5 +171,13 @@ public class SiteMapPageRepresentation {
 
     public void setRelativeContentPath(final String relativeContentPath) {
         this.relativeContentPath = relativeContentPath;
+    }
+
+    public boolean isExperiencePage() {
+        return experiencePage;
+    }
+
+    public void setExperiencePage(final boolean experiencePage) {
+        this.experiencePage = experiencePage;
     }
 }
