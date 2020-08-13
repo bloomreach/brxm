@@ -21,6 +21,12 @@ import template from './editContentMain.html';
 const editContentMainComponent = {
   controller,
   template,
+  bindings: {
+    // trick to render 'flex' and 'layout' attributes on the edit-component-main
+    // element so Angular Material applies the right layout
+    flex: '@',
+    layout: '@',
+  },
 };
 
 export default editContentMainComponent;
