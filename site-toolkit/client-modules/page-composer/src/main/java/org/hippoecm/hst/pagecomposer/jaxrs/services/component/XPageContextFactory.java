@@ -16,6 +16,10 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -24,29 +28,56 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.Documen
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.DocumentStateUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequest;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.DocumentUtils;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+
+import static java.lang.Boolean.TRUE;
 
 final class XPageContextFactory {
 
-    XPageContext make(final PageComposerContextService contextService) throws RepositoryException {
+    XPageContext make(final PageComposerContextService contextService) throws RepositoryException, WorkflowException, RemoteException {
 
         if (!contextService.isExperiencePageRequest()) {
             return null;
         }
+
         final String experiencePageHandleUUID = contextService.getExperiencePageHandleUUID();
-        final Node handle = contextService.getRequestContext().getSession().getNodeByIdentifier(experiencePageHandleUUID);
+        final HippoSession userSession = (HippoSession) contextService.getRequestContext().getSession();
+        final Node handle = userSession.getNodeByIdentifier(experiencePageHandleUUID);
         final DocumentState documentState = DocumentStateUtils.getPublicationStateFromHandle(handle);
         final String name = DocumentUtils.getDisplayName(handle).orElse(handle.getName());
         final ScheduledRequest scheduledRequest = DocumentStateUtils.getScheduledRequest(handle);
         final WorkflowRequest workflowRequest = DocumentStateUtils.getWorkflowRequest(handle);
+        final DocumentWorkflow workflow = XPageUtils.getDocumentWorkflow(userSession, contextService);
+        final Map<String, Serializable> hints = workflow.hints();
 
-        return new XPageContext()
+        final XPageContext xPageContext = new XPageContext()
                 .setBranchId(contextService.getSelectedBranchId())
                 .setXPageId(experiencePageHandleUUID)
                 .setXPageName(name)
                 .setXPageState(documentState.name().toLowerCase())
                 .setScheduledRequest(scheduledRequest)
-                .setWorkflowRequest(workflowRequest);
+                .setWorkflowRequest(workflowRequest)
+                .setCopyAllowed(TRUE.equals(hints.get("copy")))
+                .setMoveAllowed(TRUE.equals(hints.get("move")))
+                .setDeleteAllowed(TRUE.equals(hints.get("delete")));
 
+        if (hints.containsKey("publish")) {
+            xPageContext.setPublishable(TRUE.equals(hints.get("publish")));
+        }
+        if (hints.containsKey("depublish")) {
+            xPageContext.setUnpublishable(TRUE.equals(hints.get("depublish")));
+        }
+        if (hints.containsKey("requestPublication")) {
+            xPageContext.setRequestPublication(TRUE.equals(hints.get("requestPublication")));
+        }
+        if (hints.containsKey("requestDepublication")) {
+            xPageContext.setRequestDepublication(TRUE.equals(hints.get("requestDepublication")));
+        }
+
+        return xPageContext;
     }
 }

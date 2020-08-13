@@ -16,9 +16,12 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.rmi.RemoteException;
+
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.branch.BranchConstants;
 
 final class ActionStateProviderContextFactory {
@@ -38,7 +41,7 @@ final class ActionStateProviderContextFactory {
     }
 
 
-    ActionStateProviderContext make(final ActionStateContext context) throws RepositoryException {
+    ActionStateProviderContext make(final ActionStateContext context) throws RepositoryException, WorkflowException, RemoteException {
         final PageComposerContextService contextService = context.getContextService();
         return new ActionStateProviderContext()
                 .setExperiencePageRequest(contextService.isExperiencePageRequest())
