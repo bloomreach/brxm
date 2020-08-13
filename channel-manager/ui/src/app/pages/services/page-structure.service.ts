@@ -22,6 +22,8 @@ import { Ng1PageStructureService, NG1_PAGESTRUCTURE_SERVICE } from './ng1/page-s
   providedIn: 'root',
 })
 export class PageStructureService {
+  pageParsed$ = this.ng1PageStructureService.pageParsed$;
+
   constructor(
     @Inject(NG1_PAGESTRUCTURE_SERVICE) private readonly ng1PageStructureService: Ng1PageStructureService,
   ) { }
