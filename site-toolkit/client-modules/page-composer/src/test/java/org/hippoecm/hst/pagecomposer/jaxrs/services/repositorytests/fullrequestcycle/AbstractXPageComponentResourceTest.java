@@ -21,7 +21,6 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.core.internal.BranchSelectionService;
@@ -46,10 +45,6 @@ import static org.junit.Assert.fail;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
 public abstract class AbstractXPageComponentResourceTest extends AbstractFullRequestCycleTest {
-
-    protected final static SimpleCredentials ADMIN_CREDENTIALS = new SimpleCredentials("admin", "admin".toCharArray());
-    protected final static SimpleCredentials EDITOR_CREDENTIALS = new SimpleCredentials("editor", "editor".toCharArray());
-    protected final static SimpleCredentials AUTHOR_CREDENTIALS = new SimpleCredentials("author", "author".toCharArray());
 
     protected final static String EXPERIENCE_PAGE_HANDLE_PATH = "/unittestcontent/documents/unittestproject/experiences/expPage1";
     protected final static String EXPERIENCE_PAGE_2_HANDLE_PATH = "/unittestcontent/documents/unittestproject/experiences/expPage2";
