@@ -325,6 +325,7 @@
   "VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT": "'/', ' ' and ':'",
   "VALIDATION_REQUIRED": "Enter a value",
   "VERSIONS": "Versions",
+  "VERSIONS_LIST_HEADER": "Date & time, user",
   "NO_VERSIONS_AVAILABLE": "No versions available",
   "VIEWPORT_ANY_DEVICE": "Any device",
   "VIEWPORT_DESKTOP": "Desktop",
