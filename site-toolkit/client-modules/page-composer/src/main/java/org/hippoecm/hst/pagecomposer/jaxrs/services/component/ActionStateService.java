@@ -16,9 +16,13 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.rmi.RemoteException;
+
 import javax.jcr.RepositoryException;
+
+import org.hippoecm.repository.api.WorkflowException;
 
 public interface ActionStateService {
 
-    ActionState getActionState(ActionStateContext context) throws RepositoryException;
+    ActionState getActionState(ActionStateContext context) throws RepositoryException, WorkflowException, RemoteException;
 }

@@ -50,9 +50,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableMap;
 
 import static java.util.stream.Collectors.toMap;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.CHANNEL;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.PAGE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.XPAGE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_CLOSE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_DELETE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_DISCARD_CHANGES;
@@ -64,9 +61,16 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.P
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.PAGE_MOVE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.PAGE_NEW;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.PAGE_PROPERTIES;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_COPY;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_DELETE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_MOVE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_NEW;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_PUBLISH;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_SCHEDULE_PUBLICATION;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_SCHEDULE_UNPUBLICATION;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_UNPUBLISH;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.CHANNEL;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.PAGE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.XPAGE;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 
@@ -167,9 +171,13 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(CHANNEL, CHANNEL_MANAGE_CHANGES), false)
                 .put(key(CHANNEL, CHANNEL_PUBLISH), false)
                 .put(key(CHANNEL, CHANNEL_SETTINGS), true)
+                .put(key(XPAGE, XPAGE_COPY), true)
                 .put(key(XPAGE, XPAGE_DELETE), false)
                 .put(key(XPAGE, XPAGE_MOVE), false)
-                .put(key(XPAGE, XPAGE_NEW), false)
+                .put(key(XPAGE, XPAGE_PUBLISH), false)
+                .put(key(XPAGE, XPAGE_SCHEDULE_PUBLICATION), false)
+                .put(key(XPAGE, XPAGE_SCHEDULE_UNPUBLICATION), true)
+                .put(key(XPAGE, XPAGE_UNPUBLISH), true)
                 .build();
         Assertions.assertThat(actions)
                 .describedAs("An xpage request contains all channel and xpage actions")

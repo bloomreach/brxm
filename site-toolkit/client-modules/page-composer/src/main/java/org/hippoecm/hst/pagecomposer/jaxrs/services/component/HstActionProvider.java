@@ -28,8 +28,6 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.C
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_MANAGE_CHANGES;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_PUBLISH;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_SETTINGS;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_MOVE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_NEW;
 
 public final class HstActionProvider {
 
@@ -74,15 +72,35 @@ public final class HstActionProvider {
 
     private Set<Action> xPageActions(ActionStateProviderContext context) {
         return context.isExperiencePageRequest()
-                ? getXPageActions()
+                ? getXPageActions(context)
                 : Collections.emptySet();
     }
 
-    private Set<Action> getXPageActions() {
-        // TODO (meggermont): decide which actions we really need
-        return Stream.of(HstAction.XPAGE_DELETE, XPAGE_MOVE, XPAGE_NEW)
-                .map(action -> action.toAction(false))
-                .collect(toSet());
+    private Set<Action> getXPageActions(final ActionStateProviderContext context) {
+        final Set<Action> actions = new HashSet<>();
+        final XPageContext xPageContext = context.getXPageContext();
+
+        if (xPageContext.isPublishable() != null) {
+            actions.add(HstAction.XPAGE_PUBLISH.toAction(xPageContext.isPublishable()));
+            actions.add(HstAction.XPAGE_SCHEDULE_PUBLICATION.toAction(xPageContext.isPublishable()));
+        } else if (xPageContext.isRequestPublication() != null) {
+            actions.add(HstAction.XPAGE_REQUEST_PUBLICATION.toAction(xPageContext.isRequestPublication()));
+            actions.add(HstAction.XPAGE_REQUEST_SCHEDULE_PUBLICATION.toAction(xPageContext.isRequestPublication()));
+        }
+
+        if (xPageContext.isUnpublishable() != null) {
+            actions.add(HstAction.XPAGE_UNPUBLISH.toAction(xPageContext.isUnpublishable()));
+            actions.add(HstAction.XPAGE_SCHEDULE_UNPUBLICATION.toAction(xPageContext.isUnpublishable()));
+        } else if (xPageContext.isRequestDepublication() != null) {
+            actions.add(HstAction.XPAGE_REQUEST_UNPUBLICATION.toAction(xPageContext.isRequestDepublication()));
+            actions.add(HstAction.XPAGE_REQUEST_SCHEDULE_UNPUBLICATION.toAction(xPageContext.isRequestDepublication()));
+        }
+
+        actions.add(HstAction.XPAGE_COPY.toAction(xPageContext.isCopyAllowed()));
+        actions.add(HstAction.XPAGE_MOVE.toAction(xPageContext.isMoveAllowed()));
+        actions.add(HstAction.XPAGE_DELETE.toAction(xPageContext.isDeleteAllowed()));
+
+        return actions;
     }
 
     private Set<Action> pageActions(ActionStateProviderContext context) {
