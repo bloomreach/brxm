@@ -40,6 +40,10 @@ class XPageMenuService extends MenuService {
       return PageService.getState('xpage').id;
     }
 
+    function getDocumentName() {
+      return PageService.getState('xpage').name;
+    }
+
     function showVersions() {
       $state.go('hippo-cm.channel.edit-page', {
         documentId: getDocumentId(),
@@ -47,10 +51,10 @@ class XPageMenuService extends MenuService {
       });
     }
 
-    this._getDocumentId = getDocumentId;
-
-    function getDocumentName() {
-      return PageService.getState('xpage').name;
+    function showContent() {
+      $state.go('hippo-cm.channel.edit-page', {
+        documentId: getDocumentId(),
+      });
     }
 
     const menu = this.defineMenu('xpage', {
@@ -92,11 +96,16 @@ class XPageMenuService extends MenuService {
       });
     }
 
-    menu.addAction('versions', {
-      onClick: () => showVersions(),
-      translationKey: 'TOOLBAR_MENU_XPAGE_VERSIONS',
-    });
-    menu.addDivider();
+    menu
+      .addAction('content', {
+        onClick: () => showContent(),
+        translationKey: 'TOOLBAR_MENU_XPAGE_CONTENT',
+      })
+      .addAction('versions', {
+        onClick: () => showVersions(),
+        translationKey: 'TOOLBAR_MENU_XPAGE_VERSIONS',
+      })
+      .addDivider();
 
     addWorkflowAction('unpublish', id => DocumentWorkflowService.unpublish(id), { iconName: 'mdi-minus-circle' });
     addWorkflowAction('schedule-unpublish', id => DocumentWorkflowService.scheduleUnpublication(id));
