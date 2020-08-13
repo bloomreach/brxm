@@ -14,7 +14,7 @@
   },
   "scripts": {
     "ng": "ng",
-    "start": "ng build --watch --delete-output-path=false",
+    "start": "ng build --watch",
     "build": "ng build",
     "build:prod": "ng build --prod",
     "test": "ng test --watch",
