@@ -15,8 +15,10 @@
  */
 
 import { InjectionToken } from '@angular/core';
+import { Observable } from 'rxjs';
 
 export interface Ng1PageStructureService {
+  pageParsed$: Observable<void>;
   getPage(): any;
 }
 
