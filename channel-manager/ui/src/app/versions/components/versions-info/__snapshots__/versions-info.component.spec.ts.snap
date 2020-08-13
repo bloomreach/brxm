@@ -4,12 +4,7 @@ exports[`VersionsInfoComponent should create 1`] = `
 <div
   id="root0"
 >
-  <div
-    class="mat-typography"
-  >
-    
-    
-  </div>
+  
 </div>
 `;
 
@@ -17,6 +12,7 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
 <div
   id="root1"
 >
+  
   <div
     class="mat-typography"
   >
@@ -34,7 +30,7 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
         class="mat-subheader"
         matsubheader=""
       >
-        Date & time, user
+        VERSIONS_LIST_HEADER
       </h3>
       
       <mat-list-option
