@@ -41,7 +41,7 @@ class XPageMenuService extends MenuService {
     }
 
     function showVersions() {
-      $state.go('hippo-cm.channel.edit-content', {
+      $state.go('hippo-cm.channel.edit-page', {
         documentId: getDocumentId(),
         showVersionsInfo: true,
       });
