@@ -4,7 +4,31 @@ exports[`VersionsInfoComponent should create 1`] = `
 <div
   id="root0"
 >
-  
+  <div
+    class="mat-typography"
+  >
+    
+    <mat-selection-list
+      aria-disabled="false"
+      aria-multiselectable="true"
+      class="mat-selection-list mat-list-base"
+      role="listbox"
+      tabindex="-1"
+    >
+      <h3
+        class="mat-subheader"
+        matsubheader=""
+      >
+        NO_VERSIONS_AVAILABLE
+      </h3>
+      <mat-divider
+        aria-orientation="horizontal"
+        class="mat-divider mat-divider-horizontal"
+        role="separator"
+      />
+    </mat-selection-list>
+    
+  </div>
 </div>
 `;
 
@@ -12,7 +36,6 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
 <div
   id="root1"
 >
-  
   <div
     class="mat-typography"
   >
@@ -32,6 +55,11 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
       >
         VERSIONS_LIST_HEADER
       </h3>
+      <mat-divider
+        aria-orientation="horizontal"
+        class="mat-divider mat-divider-horizontal"
+        role="separator"
+      />
       
       <mat-list-option
         aria-disabled="false"
@@ -63,6 +91,12 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
             >
               testUserName
             </p>
+            
+            <mat-divider
+              aria-orientation="horizontal"
+              class="mat-divider mat-divider-horizontal"
+              role="separator"
+            />
           </div>
         </div>
       </mat-list-option>

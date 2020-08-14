@@ -17,6 +17,5 @@
 import { Version } from './version.model';
 
 export interface VersionsInfo {
-  currentVersionUUID: string;
   versions: Version[];
 }
