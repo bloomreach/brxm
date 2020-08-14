@@ -15,14 +15,27 @@
  */
 
 
+.mat-line {
+  font-size: 14px !important;
+}
+
+// .mat-line.version-actions {
+//   display: none;
+// }
+
 .mat-list-single-selected-option {
-  background-color: #E7F1F9;
+  background-color: #e7f1f9;
 
   .mat-line:first-child {
     font-weight: bold !important;
   }
-}
 
-.mat-line {
-  font-size: 14px !important;
+  .version-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    button:not(:first-child) {
+      margin-left: 8px;
+    }
+  }
 }

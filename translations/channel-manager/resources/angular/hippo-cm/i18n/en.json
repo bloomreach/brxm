@@ -62,6 +62,7 @@
   "VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT": "'/', ' ' and ':'",
   "NEW_CONTENT": "Create new content",
   "FULL_SIZE": "Full size",
+  "RESTORE": "Restore",
   "SEARCH_MULTIPLE": "{{total}} {{itemsName}}",
   "DISCARD_ALL": "Discard all",
   "CONFIRM_DISCARD_ALL_CHANGES_MESSAGE": "Discard all channel changes?",
