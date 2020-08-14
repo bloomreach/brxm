@@ -58,7 +58,7 @@
       }
     },
     "save-draft-hint" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
