@@ -33,6 +33,7 @@ const page = new class implements Page {
   getMeta = jest.fn();
   getTitle = jest.fn();
   getUrl = jest.fn();
+  getVersion = jest.fn();
   getVisitor = jest.fn();
   getVisit = jest.fn();
   isPreview = jest.fn();

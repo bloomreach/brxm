@@ -266,11 +266,21 @@ $overlay-link-shadow-color: rgba(0, 0, 0, .3);
 $overlay-link-shadow-active: 1px 3px 8px 2px $overlay-link-shadow-color;
 $overlay-link-shadow-hover: 1px 3px 8px 1px $overlay-link-shadow-color;
 
+$overlay-menu-link-bgcolor: $bloomreach-blue-primary;
+$overlay-menu-link-hover-bgcolor: $bloomreach-blue-dark;
+$overlay-menu-link-clicked-bgcolor: $bloomreach-blue-dark;
+
 $overlay-icon-fill: $grey-600;
 $overlay-icon-size: 24px;
 
 $overlay-drop-area-shadow-color: $bloomreach-blue-primary;
 $overlay-drop-area-shadow-size: 3px;
+
+// Notification banner
+$notification-banner-bgcolor: #e7f1f9;
+$notification-banner-fontsize: $font-normal;
+$notification-banner-height: 36px;
+$notification-banner-shadow: 0 0 4px 2px rgba(0, 0, 0, .12);
 
 // Layout breakpoints
 $layout-breakpoint-xs: 600px !default;

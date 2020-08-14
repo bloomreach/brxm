@@ -15,8 +15,7 @@
  */
 
 export const environment = {
-  apiBaseUrl: undefined,
-  cmsBaseUrl: undefined,
-  spaBaseUrl: undefined,
+  baseUrl: undefined,
+  endpoint: undefined,
   production: true,
 };
