@@ -13,14 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="mat-typography"
-     *ngIf="versionsInfo$ | async as versionsInfo">
-  <mat-selection-list *ngIf="versionsInfo.versions.length === 0">
+<div class="mat-typography">
+  <mat-selection-list *ngIf="!(versionsInfo?.versions.length > 0)">
     <h3 matSubheader>{{ 'NO_VERSIONS_AVAILABLE' | translate }}</h3>
     <mat-divider></mat-divider>
   </mat-selection-list>
 
-  <mat-selection-list *ngIf="versionsInfo.versions.length > 0"
+  <mat-selection-list *ngIf="versionsInfo?.versions.length > 0"
                       color="primary"
                       [multiple]="false"
                       (selectionChange)="selectVersion($event)">
@@ -28,18 +27,18 @@
 
     <mat-divider></mat-divider>
 
-    <mat-list-option *ngFor="let version of versionsInfo.versions; index as i"
+    <mat-list-option *ngFor="let version of versionsInfo?.versions; index as i"
                      [value]="version.jcrUUID"
-                     [selected]="(currentDocumentVersionUUID$ | async) === version.jcrUUID">
+                     [selected]="unpublishedVariantId === version.jcrUUID">
       <p matLine>{{ version.timestamp | date:'MMM d, y hh:mm' }}</p>
 
       <p matLine>{{ version.userName || ('SYSTEM' | translate) }}</p>
 
       <div matLine
            class="version-actions"
-           *ngIf="(currentDocumentVersionUUID$ | async) === version.jcrUUID && i > 0">
+           *ngIf="unpublishedVariantId === version.jcrUUID && i > 0">
         <button mat-stroked-button
-                (click)="restoreVersion(xpageId!, version.jcrUUID)">
+                (click)="restoreVersion(version.jcrUUID)">
           {{ 'RESTORE' | translate }}
         </button>
       </div>
