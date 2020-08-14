@@ -19,7 +19,7 @@ import addToProjectComponent from './addToProject/addToProject.component';
 import editContentService from './editContent.service';
 import editContentMainComponent from './editContentMain/editContentMain.component';
 import editContentIconComponent from './editContentIcon/editContentIcon.component';
-import editContentToolsComponent from './editContentTools/editContentMain.component';
+import editContentToolsComponent from './editContentTools/editContentTools.component';
 import contentTabsComponent from './contentTabs/contentTabs.component';
 import versionsInfoWrapperComponent from './versionsInfoWrapper/versionsInfoWrapper.component';
 
