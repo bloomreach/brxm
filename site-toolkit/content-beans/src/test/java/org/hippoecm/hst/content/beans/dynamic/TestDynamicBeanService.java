@@ -63,6 +63,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
     private static final String HTML_TYPE_METHOD_NAME = "getHtmlTypeField";
     private static final String STRING_TYPE_METHOD_NAME = "getStringTypeField";
     private static final String UNKNOWN_STRING_TYPE_METHOD_NAME = "getUnknownStringTypeField";
+    private static final String UNKNOWN_BOOLEAN_TYPE_METHOD_NAME = "getUnknownBooleanTypeField";
     private static final String TEXT_TYPE_METHOD_NAME = "getTextTypeField";
 
     private static final String LINK_COMPOUND_TYPE_METHOD_NAME = "getMirrorCompoundType";
@@ -432,6 +433,16 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
 
         assertEquals("Welcome Home with Essentials and lazy loaded types!", contentBlocksText.getContent());
     }
+    
+    @Test
+    public void testGetValueOfUnknownBooleanTypeFieldWithoutContentBean() throws Exception {
 
+        Object generatedBean = getContentBean();
+
+        Boolean value = callContentBeanMethod(generatedBean, UNKNOWN_BOOLEAN_TYPE_METHOD_NAME, Boolean.class);
+
+        assertNotNull("The method '" + UNKNOWN_BOOLEAN_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertEquals(true, value);
+    }
 
 }
