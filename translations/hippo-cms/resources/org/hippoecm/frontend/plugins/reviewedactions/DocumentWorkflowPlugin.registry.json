@@ -2,7 +2,7 @@
   "bundleType" : "WICKET",
   "keyData" : {
     "draft-changes" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
