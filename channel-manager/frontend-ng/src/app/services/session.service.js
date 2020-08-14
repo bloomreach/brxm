@@ -22,7 +22,7 @@ class SessionService {
     this.HstService = HstService;
     this.PathService = PathService;
 
-    this._canWrite = false; // TODO: remove completely as part of CMS-13416
+    this._canWriteHstConfig = false;
     this._canManageChanges = false;
     this._isCrossChannelPageCopySupported = false;
     this._initCallbacks = {};
@@ -37,7 +37,7 @@ class SessionService {
     return this.HstService.initializeSession(channel)
       .then((privileges) => {
         if (privileges) {
-          this._canWrite = true; // TODO: remove completely as part of CMS-13416
+          this._canWriteHstConfig = privileges.canWriteHstConfig;
           this._canManageChanges = privileges.canManageChanges;
           this._isCrossChannelPageCopySupported = privileges.crossChannelPageCopySupported;
         }
@@ -45,8 +45,8 @@ class SessionService {
       });
   }
 
-  hasWriteAccess() {
-    return this._canWrite;
+  canWriteHstConfig() {
+    return this._canWriteHstConfig;
   }
 
   canManageChanges() {

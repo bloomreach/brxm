@@ -95,7 +95,7 @@ class ChannelService {
   }
 
   async _ensurePreviewHstConfigExists(channel) {
-    if (!this.SessionService.hasWriteAccess() || channel.previewHstConfigExists) {
+    if (!this.SessionService.canWriteHstConfig() || channel.previewHstConfigExists) {
       // channel is already editable or the user is not allowed to edit it
       return channel;
     }
@@ -229,7 +229,7 @@ class ChannelService {
   }
 
   isEditable() {
-    return this.SessionService.hasWriteAccess() && this.hasChannel() && this.channel.previewHstConfigExists;
+    return this.SessionService.canWriteHstConfig() && this.hasChannel() && this.channel.previewHstConfigExists;
   }
 
   isConfigurationLocked() {

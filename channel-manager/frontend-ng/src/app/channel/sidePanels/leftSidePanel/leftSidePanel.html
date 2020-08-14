@@ -35,7 +35,7 @@
                         layout="column">
       </site-map-listing>
     </md-tab>
-    <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_COMPONENTS' | translate }}" ng-if="$ctrl.isEditable()" ng-disabled="$ctrl.isConfigurationLocked">
+    <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_COMPONENTS' | translate }}" ng-disabled="$ctrl.isConfigurationLocked">
       <component-catalog components="$ctrl.getCatalog()"
                          state="$ctrl.componentsVisible"
                          flex
