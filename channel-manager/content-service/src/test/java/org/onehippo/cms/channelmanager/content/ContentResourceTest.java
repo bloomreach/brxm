@@ -437,15 +437,15 @@ public class ContentResourceTest extends CXFTest {
 
     @Test
     public void getVersions() {
-        final String documentId = "uuid";
+        final String handleId = "uuid";
         final String branchId = BranchConstants.MASTER_BRANCH_ID;
 
-        expect(documentVersionService.getVersionInfo(eq(documentId), eq(branchId), anyObject()))
-                .andReturn(new DocumentVersionInfo(emptyList(), null));
+        expect(documentVersionService.getVersionInfo(eq(handleId), eq(branchId), anyObject()))
+                .andReturn(new DocumentVersionInfo(emptyList()));
         replayAll();
 
         when()
-                .get("documents/{documentId}/{branchId}/versions", documentId, branchId)
+                .get("documents/{handleId}/{branchId}/versions", handleId, branchId)
         .then()
                 .statusCode(HttpStatus.SC_OK);
     }
