@@ -137,7 +137,11 @@ public class FieldPluginHelper implements IDetachable {
     }
 
     public String getFieldName() {
-        return field != null ? field.getName() : "<unknown>";
+        if (field != null) {
+            return field.getName();
+        }
+        final String configName = config.getString(AbstractFieldPlugin.FIELD);
+        return (configName != null) ? configName : "<unknown>";
     }
 
     protected IPluginConfig getPluginConfig() {
