@@ -63,7 +63,6 @@ import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.jetbrains.annotations.NotNull;
 import org.onehippo.repository.util.DateMathParser;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -129,12 +128,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     private static final Logger log = LoggerFactory.getLogger(FolderWorkflowImpl.class);
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATES_PATH = "/hippo:configuration/hippo:queries/hippo:templates";
-    /* Key of argument that contains the uuid of the selected sub prototype for the xpage. */
-    public static final String SUB_PROTO_TYPE_UUID = "subProtoTypeUUID";
-    /* Mixin to indicate that the draft variant is an xpage ( and allows an hst:page as subnode ). */
-    public static final String MIXIN_HST_XPAGE = "hst:xpage";
-    /* Name of the sub prototype sub node of the draft variant */
-    public static final String HST_PAGE = "hst:page";
+
     private final Session userSession;
     private final Session rootSession;
     private final WorkflowContext workflowContext;
@@ -511,7 +505,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         } catch (RepositoryException ex) {
             log.error("error while deleting document variants from attic", ex);
         }
-        rootSession.save();
+
     }
 
     private void clear(final Node node) throws RepositoryException {
@@ -556,7 +550,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
     }
 
-    @NotNull
     private String getAtticPath() throws WorkflowException {
         String atticPath = null;
         RepositoryMap config = workflowContext.getWorkflowConfiguration();
@@ -815,7 +808,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         return copyFrom(new Document(source), new Document(target), absPath.substring(absPath.lastIndexOf('/') + 1), arguments);
     }
 
-    @NotNull
     private Node validateSourceAndDestination(final String absPath,
                                               final Node source) throws RepositoryException {
         if (!source.isNodeType(HippoNodeType.NT_DOCUMENT) && !source.isNodeType(NT_HANDLE)) {

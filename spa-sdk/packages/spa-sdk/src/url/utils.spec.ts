@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
-import { appendSearchParams, buildUrl, extractSearchParams, isMatched, mergeSearchParams, parseUrl } from './utils';
+import {
+  appendSearchParams,
+  buildUrl,
+  extractSearchParams,
+  isAbsoluteUrl,
+  isMatched,
+  mergeSearchParams,
+  parseUrl,
+  resolveUrl,
+} from './utils';
 
 describe('appendSearchParams', () => {
   it.each`
@@ -53,6 +62,27 @@ describe('extractSearchParams', () => {
       url: result,
       searchParams: new URLSearchParams(search),
     });
+  });
+});
+
+describe('isAbsoluteUrl', () => {
+  it.each`
+    url
+    ${'http://example.com'}
+    ${'//example.com/news'}
+    ${'/news'}
+  `('should return true for "$url"', ({ url }) => {
+    expect(isAbsoluteUrl(url)).toBe(true);
+  });
+
+  it.each`
+    url
+    ${'example.com'}
+    ${'news/something'}
+    ${'?param=something'}
+    ${'#hash'}
+  `('should return false for "$url"', ({ url }) => {
+    expect(isAbsoluteUrl(url)).toBe(false);
   });
 });
 
@@ -115,5 +145,26 @@ describe('parseUrl', () => {
 
     expect(parsedParts).toEqual(parts);
     expect(Array.from(parsedSearchParams.entries())).toEqual(Array.from(searchParams.entries()));
+  });
+});
+
+describe('resolveUrl', () => {
+  it.each`
+    source                | base                    | expected
+    ${'something'}        | ${'/news'}              | ${'/news/something'}
+    ${'something'}        | ${'/news/'}             | ${'/news/something'}
+    ${'/something'}       | ${'/news'}              | ${'/something'}
+    ${'/'}                | ${'/news'}              | ${'/'}
+    ${''}                 | ${'/news'}              | ${'/news'}
+    ${'something'}        | ${''}                   | ${'/something'}
+    ${'something'}        | ${'//example.com'}      | ${'//example.com/something'}
+    ${'/something'}       | ${'//example.com/news'} | ${'//example.com/something'}
+    ${'something'}        | ${'/news#param1'}       | ${'/news/something#param1'}
+    ${'something#param2'} | ${'/news#param1'}       | ${'/news/something#param2'}
+    ${'?a=c'}             | ${'/news?a=b'}          | ${'/news?a=c'}
+    ${'?a=b'}             | ${'/news?b=c'}          | ${'/news?b=c&a=b'}
+    ${'something?a=b'}    | ${'/news'}              | ${'/news/something?a=b'}
+  `('should resolve "$source" to "$expected" relative to "$base"', ({ source, base, expected }) => {
+    expect(resolveUrl(source, base)).toBe(expected);
   });
 });

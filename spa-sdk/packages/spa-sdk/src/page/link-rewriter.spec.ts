@@ -15,19 +15,19 @@
  */
 
 import { DOMParser, XMLSerializer } from 'xmldom';
-import { Factory } from './factory';
+import { LinkFactory } from './link-factory';
 import { LinkRewriterImpl, LinkRewriter } from './link-rewriter';
-import { Link, TYPE_LINK_INTERNAL, TYPE_LINK_RESOURCE } from './link';
+import { TYPE_LINK_INTERNAL, TYPE_LINK_RESOURCE } from './link';
 
 describe('LinkRewriterImpl', () => {
   let domParser: DOMParser;
-  let linkFactory: jest.Mocked<Factory<[Link], string>>;
+  let linkFactory: jest.Mocked<LinkFactory>;
   let linkRewriter: LinkRewriter;
   let xmlSerializer: XMLSerializer;
 
   beforeEach(() => {
     domParser = new DOMParser();
-    linkFactory = { create: jest.fn() };
+    linkFactory = { create: jest.fn() } as unknown as typeof linkFactory;
     xmlSerializer = new XMLSerializer();
 
     linkRewriter = new LinkRewriterImpl(linkFactory, domParser, xmlSerializer);

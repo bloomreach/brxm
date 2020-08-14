@@ -14,27 +14,30 @@
  * limitations under the License.
  */
 
-import { Typed } from 'emittery';
+import { inject, injectable } from 'inversify';
+import { ComponentFactory } from './component-factory';
 import { ComponentMeta, ComponentModel, Component } from './component';
 import { ContainerItemModel } from './container-item';
 import { ContainerModel } from './container';
-import { ContentModel, Content } from './content';
-import { Factory } from './factory';
-import { LinkRewriter } from './link-rewriter';
-import { Link, TYPE_LINK_INTERNAL } from './link';
-import { Events, PageUpdateEvent } from '../events';
+import { ContentFactory } from './content-factory';
+import { ContentModel } from './content';
+import { Content } from './content09';
+import { EventBusService, EventBus, PageUpdateEvent } from '../events';
+import { LinkFactory } from './link-factory';
+import { LinkRewriter, LinkRewriterService } from './link-rewriter';
+import { Link, isLink } from './link';
+import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionModel, MetaCollection } from './meta-collection';
-import { Reference, isReference } from './reference';
+import { Reference, isReference, resolve } from './reference';
 import { Visitor, Visit } from './relevance';
+import { isAbsoluteUrl, resolveUrl } from '../url';
 
-/**
- * @hidden
- */
+export const PageModelToken = Symbol.for('PageModelToken');
+
 type PageLinks = 'self' | 'site';
 
 /**
  * Meta-data of a page root component.
- * @hidden
  */
 interface PageRootMeta extends ComponentMeta {
   pageTitle?: string;
@@ -42,17 +45,20 @@ interface PageRootMeta extends ComponentMeta {
 
 /**
  * Model of a page root component.
- * @hidden
  */
 interface PageRootModel {
-  _meta: PageRootMeta;
+  meta: PageRootMeta;
 }
 
 /**
  * Meta-data of a page.
- * @hidden
  */
 interface PageMeta {
+  /**
+   * The current Page Model version.
+   */
+  version?: string;
+
   /**
    * Meta-data about the current visitor. Available when the Relevance Module is enabled.
    * @see https://documentation.bloomreach.com/library/enterprise/enterprise-features/targeting/targeting.html
@@ -73,13 +79,12 @@ interface PageMeta {
 
 /**
  * Model of a page.
- * @hidden
  */
 export interface PageModel {
-  _links: Record<PageLinks, Link>;
-  _meta: PageMeta;
-  content?: { [reference: string]: ContentModel };
-  page: (ComponentModel | ContainerItemModel | ContainerModel) & PageRootModel;
+  links: Record<PageLinks, Link>;
+  meta: PageMeta;
+  page: Record<string,  (ComponentModel | ContainerItemModel | ContainerModel) & PageRootModel | ContentModel>;
+  root: Reference;
 }
 
 /**
@@ -107,6 +112,13 @@ export interface Page {
   getContent(reference: Reference | string): Content | undefined;
 
   /**
+   * Gets a custom content item used on the page.
+   * @param reference The reference to the content. It can be an object containing
+   * an [RFC-6901](https://tools.ietf.org/html/rfc6901) JSON Pointer.
+   */
+  getContent<T>(reference: Reference | string): T | undefined;
+
+  /**
    * Generates a meta-data collection from the provided meta-data model.
    * @param meta The meta-data collection model as returned by the page-model-api.
    */
@@ -119,7 +131,7 @@ export interface Page {
 
   /**
    * Generates a URL for a link object.
-   * - If the link object type is internal, then it will prepend `spaBaseUrl`.
+   * - If the link object type is internal, then it will prepend `spaBaseUrl` or `baseUrl`.
    *   In case when the link starts with the same path as in `cmsBaseUrl`, this part will be removed.
    *   For example, for link `/site/_cmsinternal/spa/about` with configuration options
    *   `cmsBaseUrl = "http://localhost:8080/site/_cmsinternal/spa"` and `spaBaseUrl = "http://example.com"`
@@ -132,11 +144,21 @@ export interface Page {
 
   /**
    * Generates an SPA URL for the path.
-   * - If it is a relative path, then it will prepend `spaBaseUrl`.
-   * - If it is an absolute path, then the behavior will be similar to internal link generation.
+   * - If it is a relative path and `cmsBaseUrl` is present, then it will prepend `spaBaseUrl`.
+   * - If it is an absolute path and `cmsBaseUrl` is present,
+   *   then the behavior will be similar to internal link generation.
+   * - If it is a relative path and `endpoint` is present,
+   *   then it will resolve this link relative to the current page URL.
+   * - If it is an absolute path and `endpoint` is present,
+   *   then it will resolve this link relative to the `baseUrl` option.
    * @param path The path to generate URL.
    */
   getUrl(path: string): string;
+
+  /**
+   * @return The Page Model version.
+   */
+  getVersion(): string | undefined;
 
   /**
    * @return The current visitor data.
@@ -170,76 +192,87 @@ export interface Page {
   /**
    * @return A plain JavaScript object of the page model.
    */
-  toJSON(): PageModel;
+  toJSON(): object;
 }
 
+@injectable()
 export class PageImpl implements Page {
-  protected content: Map<string, Content>;
+  protected content = new WeakMap<object, unknown>();
+
+  protected root?: Component;
 
   constructor(
-    protected model: PageModel,
-    protected root: Component,
-    private contentFactory: Factory<[ContentModel], Content>,
-    private eventBus: Typed<Events>,
-    private linkFactory: Factory<[Link | string], string>,
-    private linkRewriter: LinkRewriter,
-    private metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
+    @inject(PageModelToken) protected model: PageModel,
+    @inject(ComponentFactory) componentFactory: ComponentFactory,
+    @inject(ContentFactory) private contentFactory: ContentFactory,
+    @inject(EventBusService) private eventBus: EventBus,
+    @inject(LinkFactory) private linkFactory: LinkFactory,
+    @inject(LinkRewriterService) private linkRewriter: LinkRewriter,
+    @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
   ) {
-    eventBus.on('page.update', this.onPageUpdate.bind(this));
+    this.eventBus.on('page.update', this.onPageUpdate.bind(this));
 
-    this.content = new Map(
-      Object.entries(model.content || {}).map(
-        ([alias, model]) => [alias, contentFactory.create(model)],
-      ),
-    );
+    this.root = componentFactory.create(model);
   }
 
   protected onPageUpdate(event: PageUpdateEvent) {
-    Object.entries(event.page.content || {}).forEach(
-      ([alias, model]) => this.content.set(alias, this.contentFactory.create(model)),
-    );
-  }
-
-  private static getContentReference(reference: Reference) {
-    return  reference.$ref.split('/', 3)[2] || '';
+    Object.assign(this.model.page, event.page.page);
   }
 
   getComponent<T extends Component>(): T;
   getComponent<T extends Component>(...componentNames: string[]): T | undefined;
   getComponent(...componentNames: string[]) {
-    return this.root.getComponent(...componentNames);
+    return this.root?.getComponent(...componentNames);
   }
 
-  getContent(reference: Reference | string) {
-    const contentReference = isReference(reference)
-      ? PageImpl.getContentReference(reference)
-      : reference;
+  getContent<T>(reference: Reference | string): T | undefined;
+  getContent(reference: Reference | string): unknown | undefined {
+    const model = resolve<ContentModel>(
+      this.model,
+      isReference(reference) ? reference : { $ref: `/page/${reference}` },
+    );
 
-    return this.content.get(contentReference);
+    if (!model) {
+      return undefined;
+    }
+
+    if (!this.content.has(model)) {
+      this.content.set(model, this.contentFactory.create(model));
+    }
+
+    return this.content.get(model);
   }
 
   getMeta(meta: MetaCollectionModel) {
-    return this.metaFactory.create(meta);
+    return this.metaFactory(meta);
   }
 
   getTitle() {
-    return this.model.page._meta.pageTitle;
+    return resolve<PageRootModel>(this.model, this.model.root)?.meta?.pageTitle;
   }
 
   getUrl(link?: Link | string) {
-    return this.linkFactory.create(link || { ...this.model._links.site, type: TYPE_LINK_INTERNAL });
+    if (!link || isLink(link) || isAbsoluteUrl(link)) {
+      return this.linkFactory.create(link as any || this.model.links.site || '');
+    }
+
+    return resolveUrl(link, this.linkFactory.create(this.model.links.site) || '');
+  }
+
+  getVersion() {
+    return this.model.meta.version;
   }
 
   getVisitor() {
-    return this.model._meta.visitor;
+    return this.model.meta.visitor;
   }
 
   getVisit() {
-    return this.model._meta.visit;
+    return this.model.meta.visit;
   }
 
   isPreview() {
-    return !!this.model._meta.preview;
+    return !!this.model.meta.preview;
   }
 
   rewriteLinks(content: string, type: SupportedType = 'text/html') {

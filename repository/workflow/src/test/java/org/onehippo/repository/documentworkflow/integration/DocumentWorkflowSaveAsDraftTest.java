@@ -49,6 +49,7 @@ public class DocumentWorkflowSaveAsDraftTest extends AbstractDocumentWorkflowInt
     @Test
     public void saveAsDraftReturnsDraft() throws Exception {
         final Document document = saveDraft();
+
         final Node node = document.getNode(session);
         final boolean transferable = node.getProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE).getBoolean();
         assertTrue("After saving a draft the transferable property should be set to true", transferable);
@@ -65,20 +66,8 @@ public class DocumentWorkflowSaveAsDraftTest extends AbstractDocumentWorkflowInt
         assertFalse(transferable);
     }
 
-    @Test
-    public void obtainEditableInstanceReturnsCopyOfUnpublishedVariant() throws Exception {
-        final Document draftBeforeObtainEditableInstance = saveDraft();
-        final Node draftBeforeNode = draftBeforeObtainEditableInstance.getNode(session);
-        assertTrue(draftBeforeNode.hasProperty("foo"));
-        final Document document = getDocumentWorkflow(handle).obtainEditableInstance();
-        session.save();
-        final Node draftBasedOnUnpublishedVariant = document.getNode(session);
-        assertFalse("Draft should not contain property that was only present on 'saved draft'"
-                , draftBasedOnUnpublishedVariant.hasProperty("foo"));
-    }
-
-
     private Document saveDraft() throws RepositoryException, WorkflowException, RemoteException {
+        handle.getNode(handle.getName()).remove();
         Node draft = handle.addNode(handle.getName(), "hippo:document");
         draft.addMixin(HIPPOSTDPUBWF_DOCUMENT);
         draft.addMixin(MIX_VERSIONABLE);

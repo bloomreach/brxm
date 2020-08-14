@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Document, ImageSet } from '@bloomreach/spa-sdk';
 import { BrManageContentButton, BrProps } from '@bloomreach/react-sdk';
 
 export function Banner(props: BrProps) {
@@ -27,14 +28,14 @@ export function Banner(props: BrProps) {
   }
 
   const { content, image: imageRef, link: linkRef, title } = document.getData<DocumentData>();
-  const image = imageRef && props.page.getContent(imageRef);
-  const link = linkRef && props.page.getContent(linkRef);
+  const image = imageRef && props.page.getContent<ImageSet>(imageRef);
+  const link = linkRef && props.page.getContent<Document>(linkRef);
 
   return (
     <div className={`jumbotron mb-3 ${props.page.isPreview() ? 'has-edit-button' : ''}`}>
       <BrManageContentButton content={document} />
       { title && <h1>{title}</h1> }
-      { image && <img className="img-fluid" src={image.getUrl()} alt={title} /> }
+      { image && <img className="img-fluid" src={image.getOriginal()?.getUrl()} alt={title} /> }
       { content && <div dangerouslySetInnerHTML={{ __html: props.page.rewriteLinks(content.value) }} /> }
       { link && (
         <p className="lead">
