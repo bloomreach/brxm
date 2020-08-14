@@ -14,30 +14,46 @@
   limitations under the License.
   -->
 <div class="mat-typography">
-  <mat-selection-list *ngIf="!(versionsInfo?.versions.length > 0)">
-    <h3 matSubheader>{{ 'NO_VERSIONS_AVAILABLE' | translate }}</h3>
+  <mat-selection-list class="qa-version-list"
+                      *ngIf="!(versionsInfo?.versions.length > 0)">
+    <h3 matSubheader
+        class="qa-version-list-header">
+      {{ 'NO_VERSIONS_AVAILABLE' | translate }}
+    </h3>
     <mat-divider></mat-divider>
   </mat-selection-list>
 
   <mat-selection-list *ngIf="versionsInfo?.versions.length > 0"
                       color="primary"
+                      class="qa-version-list"
                       [multiple]="false"
-                      (selectionChange)="selectVersion($event)">
-    <h3 matSubheader>{{ 'VERSIONS_LIST_HEADER' | translate }}</h3>
+                      (selectionChange)="selectVersion($event.option.value)">
+    <h3 matSubheader
+        class="qa-version-list-header">
+      {{ 'VERSIONS_LIST_HEADER' | translate }}
+    </h3>
 
     <mat-divider></mat-divider>
 
     <mat-list-option *ngFor="let version of versionsInfo?.versions; index as i"
+                     [class]="'qa-version-' + version.jcrUUID"
                      [value]="version.jcrUUID"
                      [selected]="unpublishedVariantId === version.jcrUUID">
-      <p matLine>{{ version.timestamp | date:'MMM d, y hh:mm' }}</p>
+      <p matLine
+         class="qa-version-timestamp">
+        {{ version.timestamp | date:'MMM d, y hh:mm' }}
+      </p>
 
-      <p matLine>{{ version.userName || ('SYSTEM' | translate) }}</p>
+      <p matLine
+         class="qa-version-username">
+        {{ version.userName || ('SYSTEM' | translate) }}
+      </p>
 
       <div matLine
            class="version-actions"
            *ngIf="unpublishedVariantId === version.jcrUUID && i > 0">
         <button mat-stroked-button
+                class="qa-restore-version-action"
                 (click)="restoreVersion(version.jcrUUID)">
           {{ 'RESTORE' | translate }}
         </button>
