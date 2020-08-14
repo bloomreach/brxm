@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { MultipleTypeFactory } from './factory';
+import { injectable } from 'inversify';
+import { SimpleFactory } from './factory';
 import { MetaModel, MetaPosition, MetaType, Meta } from './meta';
 
 type MetaBuilder = (model: MetaModel, position: MetaPosition) => Meta;
@@ -22,7 +23,8 @@ type MetaBuilder = (model: MetaModel, position: MetaPosition) => Meta;
 /**
  * The factory to produce meta-data collection from the page model meta-data.
  */
-export class MetaFactory extends MultipleTypeFactory<MetaType, MetaBuilder> {
+@injectable()
+export class MetaFactory extends SimpleFactory<MetaType, MetaBuilder> {
   create(meta: MetaModel, position: MetaPosition) {
     const builder = this.mapping.get(meta.type);
     if (!builder) {

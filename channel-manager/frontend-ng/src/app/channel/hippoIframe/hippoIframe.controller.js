@@ -250,6 +250,11 @@ class HippoIframeCtrl {
     return this.HippoIframeService.isIframeLifted;
   }
 
+  isXPage() {
+    const page = this.PageStructureService.getPage();
+    return page && page.getMeta().isXPage();
+  }
+
   _onDocumentCreate(event, config) {
     const data = this._getButtonData(config);
 

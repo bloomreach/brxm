@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,9 +14,14 @@
   limitations under the License.
   -->
 
+<notification-banner ng-if="$ctrl.isXPage()"></notification-banner>
+
 <!-- The gray background behind the channel. Visible when the viewport is constrained. -->
 <div class="channel-iframe-canvas"
-     ng-class="{'iframe-lifted': $ctrl.isIframeLifted()}">
+     ng-class="{
+       'iframe-lifted': $ctrl.isIframeLifted(),
+       'notification-banner-visible': $ctrl.isXPage(),
+      }">
 
   <!-- Glues the iframe and Dragula mirror container on top of each other. Needed to position the mirror correctly. -->
   <div class="channel-iframe-sheet">

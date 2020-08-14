@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-type Builder<T extends any[], U> = (...args: T) => U;
+export type Builder<T extends any[], U> = (...args: T) => U;
 
 export interface Factory<T extends any[], U> {
   /**
@@ -23,15 +23,7 @@ export interface Factory<T extends any[], U> {
   create(...args: T): U;
 }
 
-export class SingleTypeFactory<T extends Builder<any[], any>> implements Factory<Parameters<T>, ReturnType<T>> {
-  constructor(private builder: T) {}
-
-  create(...args: Parameters<T>) {
-    return this.builder(...args);
-  }
-}
-
-export abstract class MultipleTypeFactory<T, U extends Builder<any, any>> implements Factory<any, any> {
+export abstract class SimpleFactory<T, U extends Builder<any, any>> implements Factory<any, any> {
   protected mapping = new Map<T, U>();
 
   /**
