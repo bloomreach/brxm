@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -328,11 +328,28 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             } else if (comparingController != null) {
                 oldProvider = getProvider(compareTo);
                 newProvider = getProvider(getModel());
-                comparingController.start(oldProvider, newProvider);
+                if ((oldProvider != null) && (newProvider != null)) {
+                    comparingController.start(oldProvider, newProvider);
+                }
+                else {
+                    log.warn("Hiding field {} of type {} because of a misconfiguration: cannot find provider(s)" +
+                                    " for compareTo or current field model. Current document: {}",
+                            getFieldHelper().getFieldName(), getFieldHelper().getDocumentType().getName(), getModelPath());
+                    setVisible(false);
+                }
             }
             restartTemplates = false;
         }
         super.onBeforeRender();
+    }
+
+    protected String getModelPath() {
+        try {
+            return (getModel() != null) ? getModel().getObject().getPath() : null;
+        } catch (RepositoryException e) {
+            log.error("Cannot get node model path", e);
+        }
+        return null;
     }
 
     private AbstractProvider<P, C> getProvider(final IModel<Node> model) {

@@ -65,6 +65,7 @@ hippo-iframe {
   // ensure a horizontal scrollbar for constrained viewport widths
   height: 100%;
   overflow-y: hidden;
+  transition: .3s transform ease-out, .3s height ease-out;
   user-select: none;
 
   &.hippo-dragging {
@@ -73,6 +74,11 @@ hippo-iframe {
 
   &.iframe-lifted {
     z-index: $z-index-iframe-lifted;
+  }
+
+  &.notification-banner-visible {
+    height: calc(100% - #{$notification-banner-height});
+    transform: translateY($notification-banner-height);
   }
 }
 

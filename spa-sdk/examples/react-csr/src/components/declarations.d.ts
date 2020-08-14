@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ interface DocumentData {
   author: string;
   content: DocumentContent;
   date: number;
+  publicationDate: number;
   image: import('@bloomreach/spa-sdk').Reference;
   introduction: string;
   title: string;
@@ -34,7 +35,7 @@ interface DocumentContent {
 }
 
 interface MenuModels {
-  menu: import('@bloomreach/spa-sdk').Menu;
+  menu: import('@bloomreach/spa-sdk').Reference;
 }
 
 interface PageableModels {

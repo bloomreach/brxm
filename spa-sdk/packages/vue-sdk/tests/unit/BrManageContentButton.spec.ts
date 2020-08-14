@@ -16,7 +16,7 @@
 
 import { shallowMount } from '@vue/test-utils';
 import { Component, Prop, Provide, Vue } from 'vue-property-decorator';
-import { Content, MetaCollection, Page } from '@bloomreach/spa-sdk';
+import { Document, MetaCollection, Page } from '@bloomreach/spa-sdk';
 import BrManageContentButton from '@/BrManageContentButton.vue';
 import BrMeta from '@/BrMeta.vue';
 
@@ -31,7 +31,7 @@ class BrPage extends Vue {
 
 describe('BrManageContentButton', () => {
   const meta = {} as MetaCollection;
-  let content: jest.Mocked<Content>;
+  let content: jest.Mocked<Document>;
   let page: jest.Mocked<Page>;
   let provide: Function;
 
