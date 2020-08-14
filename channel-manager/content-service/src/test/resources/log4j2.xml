@@ -22,6 +22,9 @@
     </Console>
   </Appenders>
   <Loggers>
+    <Logger name="org.onehippo.cms.channelmanager.content.document.AbstractSaveDraftDocumentService" level="error">
+      <AppenderRef ref="console"/>
+    </Logger>
     <Root level="warn">
       <AppenderRef ref="console"/>
     </Root>

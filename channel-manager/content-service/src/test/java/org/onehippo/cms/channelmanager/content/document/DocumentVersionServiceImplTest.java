@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Version;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockSession;
 import org.onehippo.repository.mock.MockVersion;
@@ -52,7 +53,8 @@ public class DocumentVersionServiceImplTest {
     // System Under Test
     private DocumentVersionService sut;
 
-    private MockNode mockNode;
+    private MockNode mockHandle;
+    private MockNode mockPreview;
     private MockVersionManager versionManager ;
     private UserContext userContext;
 
@@ -64,12 +66,15 @@ public class DocumentVersionServiceImplTest {
 
         mockNodeLastModified = Calendar.getInstance();
 
-        mockNode = MockNode.root().addNode("test", HippoNodeType.NT_DOCUMENT);
-        mockNode.addMixin(MIX_VERSIONABLE);
-        mockNode.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, mockNodeLastModified);
-        mockNode.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY, userId);
+        mockHandle = MockNode.root().addNode("test", HippoNodeType.NT_HANDLE);
 
-        final MockSession session = mockNode.getSession();
+        mockPreview = mockHandle.addNode("test", HippoNodeType.NT_DOCUMENT);
+        mockPreview.addMixin(MIX_VERSIONABLE);
+        mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, mockNodeLastModified);
+        mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY, userId);
+        mockPreview.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"preview"});
+
+        final MockSession session = mockHandle.getSession();
         session.setUserId(userId);
 
         versionManager = session.getWorkspace().getVersionManager();
@@ -83,23 +88,19 @@ public class DocumentVersionServiceImplTest {
     @Test
     public void workspace_only_master() {
 
-        final List<Version> versions = sut.getVersionInfo(mockNode.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
+        final List<Version> versions = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
 
         assertThat("Expected workspace version to be present", versions.size(), is(1));
 
         assertThat(versions.get(0).getTimestamp().getTimeInMillis(), is(mockNodeLastModified.getTimeInMillis()));
         assertThat(versions.get(0).getUserName(), is(userId));
-        assertThat(versions.get(0).getJcrUUID(), is(mockNode.getIdentifier()));
+        assertThat(versions.get(0).getJcrUUID(), is(mockPreview.getIdentifier()));
         assertThat(versions.get(0).getBranchId(), is(MASTER_BRANCH_ID));
     }
 
-    @Test
+    @Test(expected = BadRequestException.class)
     public void non_existing_branch() {
-
-        final List<Version> versions = sut.getVersionInfo(mockNode.getIdentifier(), "non-existing", userContext).getVersions();
-
-        assertThat(versions.size(), is(0));
-
+        sut.getVersionInfo(mockPreview.getIdentifier(), "non-existing", userContext).getVersions();
     }
 
     @Test
@@ -108,19 +109,19 @@ public class DocumentVersionServiceImplTest {
 
         // make sure version node has a different creation time
         Thread.sleep(1);
-        versionManager.checkin(mockNode.getPath());
-        versionManager.checkout(mockNode.getPath());
+        versionManager.checkin(mockPreview.getPath());
+        versionManager.checkout(mockPreview.getPath());
 
         final Calendar newDate = Calendar.getInstance();
-        mockNode.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
+        mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
 
-        final List<Version> versions = sut.getVersionInfo(mockNode.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
+        final List<Version> versions = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
 
         assertThat(versions.size(), is(2));
 
         assertThat(versions.get(0).getTimestamp().getTimeInMillis(), is(newDate.getTimeInMillis()));
         assertThat(versions.get(0).getUserName(), is(userId));
-        assertThat(versions.get(0).getJcrUUID(), is(mockNode.getIdentifier()));
+        assertThat(versions.get(0).getJcrUUID(), is(mockPreview.getIdentifier()));
         assertThat(versions.get(0).getBranchId(), is(MASTER_BRANCH_ID));
 
         assertFalse("versioned node expected different creation time" ,
@@ -128,62 +129,34 @@ public class DocumentVersionServiceImplTest {
 
         assertThat(versions.get(1).getUserName(), is(userId));
         assertFalse("versioned node expected different uuid" ,
-                versions.get(1).getJcrUUID().equals(mockNode.getIdentifier()));
+                versions.get(1).getJcrUUID().equals(mockPreview.getIdentifier()));
         assertThat(versions.get(1).getBranchId(), is(MASTER_BRANCH_ID));
-    }
-
-    @Test
-    public void fetch_MASTER_versions_via_frozen_nodeid() throws Exception {
-
-
-        // make sure version node has a different creation time
-        Thread.sleep(1);
-        final MockVersion versioned = versionManager.checkin(mockNode.getPath());
-        versionManager.checkout(mockNode.getPath());
-
-        // make the workspace version for 'mybranch', the versioned node is for 'master'
-
-        mockNode.setProperty(HIPPO_PROPERTY_BRANCH_ID, "mybranch");
-
-        // fetch via the versioned node the master versions
-        final List<Version> masterVersions = sut.getVersionInfo(versioned.getFrozenNode().getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
-
-        assertThat(masterVersions.size(), is(1));
-
-        assertThat(masterVersions.get(0).getUserName(), is(userId));
-        assertThat(masterVersions.get(0).getJcrUUID(), is(versioned.getFrozenNode().getIdentifier()));
-        assertThat(masterVersions.get(0).getBranchId(), is(MASTER_BRANCH_ID));
-
-        final List<Version> branchVersions = sut.getVersionInfo(mockNode.getIdentifier(), "mybranch", userContext).getVersions();
-
-        assertThat(branchVersions.size(), is(1));
-
     }
 
     @Test
     public void branch_with_version_in_history_and_workspace() throws Exception {
 
-        mockNode.setProperty(HIPPO_PROPERTY_BRANCH_ID, "mybranch");
+        mockPreview.setProperty(HIPPO_PROPERTY_BRANCH_ID, "mybranch");
 
         // make sure version node has a different creation time
         Thread.sleep(1);
-        versionManager.checkin(mockNode.getPath());
-        versionManager.checkout(mockNode.getPath());
+        versionManager.checkin(mockPreview.getPath());
+        versionManager.checkout(mockPreview.getPath());
 
         final Calendar newDate = Calendar.getInstance();
-        mockNode.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
+        mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
 
-        final List<Version> masterVersions = sut.getVersionInfo(mockNode.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
+        final List<Version> masterVersions = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
 
         assertThat(masterVersions.size(), is(0));
 
-        final List<Version> branchVersions = sut.getVersionInfo(mockNode.getIdentifier(), "mybranch", userContext).getVersions();
+        final List<Version> branchVersions = sut.getVersionInfo(mockHandle.getIdentifier(), "mybranch", userContext).getVersions();
 
         assertThat(branchVersions.size(), is(2));
 
         assertThat(branchVersions.get(0).getTimestamp().getTimeInMillis(), is(newDate.getTimeInMillis()));
         assertThat(branchVersions.get(0).getUserName(), is(userId));
-        assertThat(branchVersions.get(0).getJcrUUID(), is(mockNode.getIdentifier()));
+        assertThat(branchVersions.get(0).getJcrUUID(), is(mockPreview.getIdentifier()));
         assertThat(branchVersions.get(0).getBranchId(), is("mybranch"));
 
         assertFalse("versioned node expected different creation time" ,
@@ -191,35 +164,35 @@ public class DocumentVersionServiceImplTest {
 
         assertThat(branchVersions.get(1).getUserName(), is(userId));
         assertFalse("versioned node expected different uuid" ,
-                branchVersions.get(1).getJcrUUID().equals(mockNode.getIdentifier()));
+                branchVersions.get(1).getJcrUUID().equals(mockPreview.getIdentifier()));
         assertThat(branchVersions.get(1).getBranchId(), is("mybranch"));
     }
 
     @Test
     public void branch_with_version_in_history_and_workspace_version_is_for_master() throws Exception {
-        mockNode.setProperty(HIPPO_PROPERTY_BRANCH_ID, "mybranch");
+        mockPreview.setProperty(HIPPO_PROPERTY_BRANCH_ID, "mybranch");
 
         // make sure version node has a different creation time
         Thread.sleep(1);
-        versionManager.checkin(mockNode.getPath());
-        versionManager.checkout(mockNode.getPath());
+        versionManager.checkin(mockPreview.getPath());
+        versionManager.checkout(mockPreview.getPath());
 
-        mockNode.setProperty(HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+        mockPreview.setProperty(HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
 
         final Calendar newDate = Calendar.getInstance();
-        mockNode.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
+        mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
 
-        final List<Version> masterVersions = sut.getVersionInfo(mockNode.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
+        final List<Version> masterVersions = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
 
         assertThat(masterVersions.size(), is(1));
 
-        final List<Version> branchVersions = sut.getVersionInfo(mockNode.getIdentifier(), "mybranch", userContext).getVersions();
+        final List<Version> branchVersions = sut.getVersionInfo(mockHandle.getIdentifier(), "mybranch", userContext).getVersions();
 
         assertThat(branchVersions.size(), is(1));
 
         assertThat(masterVersions.get(0).getTimestamp().getTimeInMillis(), is(newDate.getTimeInMillis()));
         assertThat(masterVersions.get(0).getUserName(), is(userId));
-        assertThat(masterVersions.get(0).getJcrUUID(), is(mockNode.getIdentifier()));
+        assertThat(masterVersions.get(0).getJcrUUID(), is(mockPreview.getIdentifier()));
         assertThat(masterVersions.get(0).getBranchId(), is(MASTER_BRANCH_ID));
 
         assertFalse("versioned node expected different creation time" ,
@@ -227,7 +200,7 @@ public class DocumentVersionServiceImplTest {
 
         assertThat(branchVersions.get(0).getUserName(), is(userId));
         assertFalse("versioned node expected different uuid" ,
-                branchVersions.get(0).getJcrUUID().equals(mockNode.getIdentifier()));
+                branchVersions.get(0).getJcrUUID().equals(mockPreview.getIdentifier()));
         assertThat(branchVersions.get(0).getBranchId(), is("mybranch"));
     }
 
@@ -241,17 +214,17 @@ public class DocumentVersionServiceImplTest {
         while(i < 10) {
             i++;
             Thread.sleep(1);
-            MockVersion next = versionManager.checkin(mockNode.getPath());
+            MockVersion next = versionManager.checkin(mockPreview.getPath());
             if (firstCheckin == null) {
                 firstCheckin = next;
             }
-            versionManager.checkout(mockNode.getPath());
+            versionManager.checkout(mockPreview.getPath());
         }
 
         // reset the first one, overriding a version node created property...works for versioned mock nodes
         firstCheckin.setCreated(Calendar.getInstance());
 
-        final List<Version> masterVersions = sut.getVersionInfo(mockNode.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
+        final List<Version> masterVersions = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
 
         assertThat(masterVersions.size(), is(11));
 
