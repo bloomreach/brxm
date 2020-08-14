@@ -230,12 +230,12 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
 
     @Override
     protected void addBeanMethodDocbase(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder) {
-       builder.addBeanMethodDocbase(methodName, propertyName, multiple);
+        builder.addBeanMethodDocbase(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addCustomPropertyType(String propertyName, String methodName, boolean multiple, String documentType,
-            String type, String cmsType, DynamicBeanBuilder builder) {
+    protected void addCustomPropertyType(String propertyName, String methodName, boolean multiple, String documentType, String type,
+            String cmsType, DynamicBeanBuilder builder) {
 
         final Class<? extends DynamicBeanInterceptor> interceptorDefinition = objectConverter.getInterceptorDefinition(cmsType);
         if (interceptorDefinition == null) {
@@ -243,8 +243,11 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             // then generate the field as a string value
             if (CmsFieldType.STRING == CmsFieldType.getCmsFieldType(type)) {
                 builder.addBeanMethodString(methodName, propertyName, multiple);
+            }
+            if (CmsFieldType.BOOLEAN == CmsFieldType.getCmsFieldType(type)) {
+                builder.addBeanMethodBoolean(methodName, propertyName, multiple);
             } else {
-                log.warn("Failed to create getter for property: {} of type: {}", propertyName, cmsType);                
+                log.warn("Failed to create getter for property: {} of type: {}", propertyName, cmsType);
             }
             return;
         }
