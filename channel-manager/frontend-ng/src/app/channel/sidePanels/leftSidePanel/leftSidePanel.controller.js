@@ -23,7 +23,6 @@ class LeftSidePanelCtrl {
     $scope,
     localStorageService,
     CatalogService,
-    ChannelService,
     LeftSidePanelService,
     SidePanelService,
     SiteMapService,
@@ -34,7 +33,6 @@ class LeftSidePanelCtrl {
     this.$scope = $scope;
     this.localStorageService = localStorageService;
     this.CatalogService = CatalogService;
-    this.ChannelService = ChannelService;
     this.LeftSidePanelService = LeftSidePanelService;
     this.SidePanelService = SidePanelService;
     this.SiteMapService = SiteMapService;
@@ -98,10 +96,6 @@ class LeftSidePanelCtrl {
 
   isSidePanelLifted() {
     return this.SidePanelService.isSidePanelLifted;
-  }
-
-  isEditable() {
-    return this.ChannelService.isEditable();
   }
 }
 
