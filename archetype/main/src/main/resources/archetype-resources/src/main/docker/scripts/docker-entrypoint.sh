@@ -32,5 +32,12 @@ cp /usr/local/tomcat/conf/context-$profile.xml /usr/local/tomcat/conf/context.xm
 # copy setting environment variables script to the related tomcat folder 
 cp /brxm/bin/tomcat/setenv.sh /usr/local/tomcat/bin/setenv.sh
 
+# Unzip the lucene index export if it exists
+if [[ -e "${LUCENE_INDEX_FILE_PATH}" ]]; then
+  echo "Extracting the lucene index export zip..."
+  mkdir -p ${REPO_PATH}/workspaces/default/index/
+  unzip ${LUCENE_INDEX_FILE_PATH} -d ${REPO_PATH}/workspaces/default/index/
+fi
+
 # run tomcat
 exec /usr/local/tomcat/bin/catalina.sh run

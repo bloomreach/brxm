@@ -23,11 +23,10 @@ public interface DocumentVersionService {
     /**
      * Returns a {@link DocumentVersionInfo} instance for the document with the given id.
      *
-     * @param unpublishedDocumentVariantId  UUID of the unpublished document variant for which to get version info, which
-     *                                      can be a UUID from version history (a frozen node)
+     * @param handleId  UUID of the document handle for which to get version infocan be a UUID from version history (a frozen node)
      * @param branchId    Id of the requested document branch
      * @param userContext Properties of the user that executes the request
      * @return list of version info
      */
-    DocumentVersionInfo getVersionInfo(String unpublishedDocumentVariantId, final String branchId, UserContext userContext);
+    DocumentVersionInfo getVersionInfo(String handleId, final String branchId, UserContext userContext);
 }

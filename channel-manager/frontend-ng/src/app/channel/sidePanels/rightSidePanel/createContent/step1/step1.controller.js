@@ -79,14 +79,6 @@ class Step1Controller {
     this.Step1Service.url = url;
   }
 
-  get experiencePage() {
-    return this.Step1Service.experiencePage;
-  }
-
-  set experiencePage(experiencePage) {
-    this.Step1Service.experiencePage = experiencePage;
-  }
-
   submit() {
     this.Step1Service.createDocument()
       .then(document => this.CreateContentService.next(document, this.url, this.locale));

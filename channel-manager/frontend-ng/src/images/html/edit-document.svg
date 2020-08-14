@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -13,19 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
-	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
-<g>
-	<path d="M14,17c0,0.472-0.561,1-1.031,1 M13,15V8H9C8.529,8,8,7.471,8,7V3H3L2.998,17.049L11,17.01L10.002,18H2.854
-		C2.383,18,2,17.617,2,17.146V2.913c0-0.472,0.383-0.854,0.854-0.854h5.97c0.473,0,1.131,0.275,1.461,0.605l3.111,2.877
-		C13.725,5.871,14,6.528,14,7v7L13,15z M13,17 M5.284,10h5.431C10.875,10,11,10.125,11,10.285v0.431C11,10.875,10.875,11,10.715,11
-		H5.284C5.125,11,5,10.875,5,10.715v-0.431C5,10.125,5.125,10,5.284,10z M5.284,12h5.431C10.875,12,11,12.124,11,12.284v0.431
-		C11,12.875,10.875,13,10.715,13H5.284C5.125,13,5,12.875,5,12.715v-0.431C5,12.124,5.125,12,5.284,12z M5.284,14h5.431
-		C10.875,14,11,14.124,11,14.284v0.431C11,14.875,10.875,15,10.715,15H5.284C5.125,15,5,14.875,5,14.715v-0.431
-		C5,14.124,5.125,14,5.284,14z M9,7h4c-0.053-0.151-0.135-0.302-0.197-0.365L9.365,3.196C9.303,3.134,9.152,3.054,9,3V7z"/>
-</g>
-<g>
-	<rect x="19.793" y="11.086" transform="matrix(-0.7071 0.7071 -0.7071 -0.7071 43.8345 6.8431)" width="1.414" height="2.828"/>
-	<polygon points="18,13 11,20 11,22 13,22 20,15 	"/>
-</g>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g fill="currentColor" fill-rule="nonzero">
+      <path d="M14,2 L20,8 L20,20 C20,21.1045695 19.1045695,22 18,22 L18,22 L6,22 C4.8954305,22 4,21.1045695 4,20 L4,20 L4,4 C4,2.8954305 4.8954305,2 6,2 L6,2 L14,2 Z M13,4 L6,4 L6,20 L18,20 L18,9 L13,9 L13,4 Z M15,17 L15,18 L8,18 L8,17 L15,17 Z M16,14 L16,15 L8,15 L8,14 L16,14 Z M16,11 L16,12 L8,12 L8,11 L16,11 Z"></path>
+    </g>
+  </g>
 </svg>
