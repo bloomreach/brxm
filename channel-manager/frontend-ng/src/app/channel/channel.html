@@ -51,8 +51,7 @@
                         on-state-change="$ctrl.isComponentsOverlayDisplayed = state"
                         icon-svg="toggle-components-overlay"
                         tooltip="{{ $ctrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
-                        class="qa-toggle-components"
-                        ng-if="$ctrl.isEditable()">
+                        class="qa-toggle-components">
         </overlay-toggle>
 
         <overlay-toggle name="content"
