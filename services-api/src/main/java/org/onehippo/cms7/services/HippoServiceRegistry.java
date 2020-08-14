@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2020 Bloomreach
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
  *  limitations under the License.
  */
 package org.onehippo.cms7.services;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -73,6 +76,8 @@ public final class HippoServiceRegistry {
     private static final ConcurrentHashMap<Class<?>, ProxiedServiceHolder> services = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<Class<?>, List<ServiceHolder<ProxiedServiceTracker>>> trackers = new ConcurrentHashMap<>();
 
+    private static final Logger log = LoggerFactory.getLogger(HippoServiceRegistry.class);
+
     private HippoServiceRegistry() {
     }
 
@@ -108,8 +113,14 @@ public final class HippoServiceRegistry {
             final ClassLoader cl = Thread.currentThread().getContextClassLoader();
             try {
                 for (final ServiceHolder<ProxiedServiceTracker> trackerHolder : trackersList) {
-                    Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
-                    trackerHolder.getServiceObject().serviceRegistered(serviceHolder);
+                    try {
+                        Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
+                        trackerHolder.getServiceObject().serviceRegistered(serviceHolder);
+                    } catch (Exception e) {
+                        String logMessage = String.format("There was an error when executing the tracker %s for the " +
+                            "service %s", trackerHolder.getServiceObject().getClass().getName(), serviceInterface);
+                        log.error(logMessage, e);
+                    }
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(cl);
@@ -142,8 +153,14 @@ public final class HippoServiceRegistry {
                 final ClassLoader cl = Thread.currentThread().getContextClassLoader();
                 try {
                     for (final ServiceHolder<ProxiedServiceTracker> trackerHolder : trackersList) {
-                        Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
-                        trackerHolder.getServiceObject().serviceUnregistered(serviceHolder);
+                        try {
+                            Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
+                            trackerHolder.getServiceObject().serviceUnregistered(serviceHolder);
+                        } catch (Exception e) {
+                            String logMessage = String.format("There was an error when executing the tracker %s for the " +
+                                    "service %s", trackerHolder.getServiceObject().getClass().getName(), serviceInterface);
+                            log.error(logMessage, e);
+                        }
                     }
                 } finally {
                     Thread.currentThread().setContextClassLoader(cl);
@@ -221,6 +238,10 @@ public final class HippoServiceRegistry {
             try {
                 Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
                 tracker.serviceRegistered(serviceHolder);
+            } catch (Exception e) {
+                String logMessage = String.format("There was an error when executing the tracker %s for the " +
+                        "service %s", trackerHolder.getServiceObject().getClass().getName(), serviceInterface);
+                log.error(logMessage, e);
             } finally {
                 Thread.currentThread().setContextClassLoader(cl);
             }

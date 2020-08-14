@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2020 Bloomreach
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,6 +35,18 @@ public class HippoServiceRegistryTest {
 
     private static class ValueObject {
         ProxiedServiceHolder value;
+    }
+
+    private static class Counter {
+        int counter;
+
+        public void increment() {
+            counter++;
+        }
+    }
+
+    private static class MutableInteger {
+        int value;
     }
 
     @Test
@@ -218,6 +230,57 @@ public class HippoServiceRegistryTest {
             assertNotNull(valueObject.value);
         } finally {
             HippoServiceRegistry.removeTracker(tracker, TestService.class);
+            HippoServiceRegistry.unregister(testService, TestService.class);
+        }
+    }
+
+    @Test
+    public void testServiceTrackerResilience() {
+
+        final Counter counter = new Counter();
+        final MutableInteger currentIteration = new MutableInteger();
+        final ProxiedServiceTracker<TestService> failingTracker = new ProxiedServiceTracker<TestService>() {
+            public void serviceRegistered(final ProxiedServiceHolder<TestService> serviceHolder) {
+                counter.increment();
+                throw new RuntimeException("This tracker is failing");
+            }
+            public void serviceUnregistered(final ProxiedServiceHolder<TestService> serviceHolder) {
+                counter.increment();
+                throw new RuntimeException("This tracker is failing");
+            }
+        };
+        final ProxiedServiceTracker<TestService> tracker = new ProxiedServiceTracker<TestService>() {
+            public void serviceRegistered(final ProxiedServiceHolder<TestService> serviceHolder) {
+                currentIteration.value = counter.counter;
+            }
+            public void serviceUnregistered(final ProxiedServiceHolder<TestService> serviceHolder) {
+                currentIteration.value = counter.counter;
+            }
+        };
+        TestService testService = new TestService(){};
+        try {
+            // Always verify that currentIteration and counter have the same value, which means that the failingTracker was executed first, and even if it failed, the other tracker was executed as well.
+            HippoServiceRegistry.register(testService, TestService.class);
+            assertEquals(0, counter.counter);
+            assertEquals(0, currentIteration.value);
+            HippoServiceRegistry.addTracker(failingTracker, TestService.class);
+            HippoServiceRegistry.addTracker(tracker, TestService.class);
+            assertEquals(1, counter.counter);
+            assertEquals(1, currentIteration.value);
+            HippoServiceRegistry.unregister(testService, TestService.class);
+            assertEquals(2, counter.counter);
+            assertEquals(2, currentIteration.value);
+            HippoServiceRegistry.register(testService, TestService.class);
+            assertEquals(3, counter.counter);
+            assertEquals(3, currentIteration.value);
+            HippoServiceRegistry.removeTracker(tracker, TestService.class);
+            HippoServiceRegistry.unregister(testService, TestService.class);
+            // In this case currentIteration doesn't increment, as the tracker was removed
+            assertEquals(4, counter.counter);
+            assertEquals(3, currentIteration.value);
+        } finally {
+            HippoServiceRegistry.removeTracker(tracker, TestService.class);
+            HippoServiceRegistry.removeTracker(failingTracker, TestService.class);
             HippoServiceRegistry.unregister(testService, TestService.class);
         }
     }
