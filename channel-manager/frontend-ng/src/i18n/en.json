@@ -214,6 +214,7 @@
   "REJECT_CHANNEL_TITLE": "Reject channel '{{ channelName }}'?",
   "REMOVE": "Remove",
   "REQUEST_PUBLICATION": "Request publication",
+  "RESTORE": "Restore",
   "RIGHT_SIDE_PANEL_TAB_COMPONENT_PROPERTIES": "Properties",
   "SAVE": "Save",
   "SAVE_AND_PUBLISH": "Save and publish",
