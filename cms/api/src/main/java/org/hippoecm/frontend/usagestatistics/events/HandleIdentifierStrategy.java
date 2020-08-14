@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,13 @@
 package org.hippoecm.frontend.usagestatistics.events;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +33,7 @@ import org.slf4j.LoggerFactory;
  * <ul>
  *     <li>The node is the handle</li>
  *     <li>The node is a descendant of a handle</li>
+ *     <li>The node is revision</li>
  * </ul>
  * In all other cases {@code null} is returned.
  * </p>
@@ -39,32 +44,69 @@ public class HandleIdentifierStrategy implements IdentifierStrategy {
 
     /**
      * <p>Traverses up the tree until a node of the type {@link HippoNodeType#NT_HANDLE} is found
-     * and returns the identifier of that node.
-     * If such a node is not found {@code null} is returned.</p>
+     * and returns the identifier of that node.</p>
+     * <p>If the node is a revision, the handle is found and the identifier of the handle is returned.</p>
+     * <p>Otherwise {@code null} is returned.</p>
      *
-     * @param descendant Descendant of handle
+     * @param node Node that is related to a handle
      * @return the identifier of the handle or {@code null}
-     * @throws RepositoryException if an identifier or parent cannot be obtained
+     * @throws RepositoryException if an identifier of the handle cannot be obtained
      */
-    public String getIdentifier(Node descendant) throws RepositoryException {
-        if (descendant != null) {
-            Node node = descendant;
-            while (isLeaf(node)) {
-                if (isHandle(node)) {
-                    log.debug("Return handle { path: {} } as ascendant of descendant { path: {} }",
-                            node.getPath(), descendant.getPath());
-                    return node.getIdentifier();
-                }
-                node = node.getParent();
+    public String getIdentifier(Node node) throws RepositoryException {
+        String identifier = null;
+        if (node != null){
+            identifier = isRevision(node) ? getHandleIdentifierAssociatedWithRevision(node) :
+                    getHandleIndentifierAssociatedWithDescendant(node);
+            if (identifier == null){
+                log.warn("Node { path: {} } is not a handle, descendant of a handle or revision, " +
+                        "please provide a path to a handle, document or revision", node.getPath());
             }
-            log.warn("Node { path: {} } is not a handle or descendant of a handle, " +
-                    "please provide a path to a handle or document", descendant.getPath());
+        }
+        return identifier;
+    }
+
+    private boolean isRevision(final Node node) throws RepositoryException {
+        return node.isNodeType(JcrConstants.NT_VERSION) || node.isNodeType(JcrConstants.NT_FROZEN_NODE);
+    }
+
+    private Node ascentToHandleOrNode(final Node node) throws RepositoryException{
+        return (isHandle(node) || isRoot(node)) ? node : ascentToHandleOrNode(node.getParent());
+    }
+
+    private boolean isRoot(final Node node) throws RepositoryException {
+        return node.getDepth() == 0;
+    }
+
+    private String getHandleIndentifierAssociatedWithDescendant(final Node node) throws RepositoryException {
+        Node ascendant = ascentToHandleOrNode(node);
+        if (ascendant != null && !isRoot(ascendant)){
+                log.debug("Return handle { path: {} } as ascendant of descendant { path: {} }",
+                        ascendant.getPath(), node.getPath());
+            return ascendant.getIdentifier();
         }
         return null;
     }
 
-    private boolean isLeaf(final Node handle) throws RepositoryException {
-        return !handle.getSession().getRootNode().isSame(handle);
+    private String getHandleIdentifierAssociatedWithRevision(final Node node) throws RepositoryException {
+        Node jcrFrozenNode = null;
+        if (node.isNodeType(JcrConstants.NT_VERSION)) {
+            final NodeIterator nodes = node.getNodes();
+            if (nodes.hasNext()) {
+                jcrFrozenNode = nodes.nextNode();
+            }
+        } else if (node.isNodeType(JcrConstants.NT_FROZEN_NODE)) {
+            jcrFrozenNode = node;
+        }
+        if (jcrFrozenNode != null) {
+            final Property property = jcrFrozenNode.getProperty(HippoNodeType.HIPPO_RELATED);
+            if (property != null) {
+                final Value[] values = property.getValues();
+                if (values.length > 0) {
+                    return values[0].getString();
+                }
+            }
+        }
+        return null;
     }
 
     private boolean isHandle(final Node handle) throws RepositoryException {
