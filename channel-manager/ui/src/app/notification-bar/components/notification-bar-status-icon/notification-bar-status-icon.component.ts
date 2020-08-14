@@ -23,6 +23,7 @@ import { PageService } from '../../../pages/services/page.service';
 @Component({
   selector: 'em-notification-bar-status-icon',
   templateUrl: 'notification-bar-status-icon.component.html',
+  styleUrls: ['notification-bar-status-icon.component.scss'],
 })
 export class NotificationBarStatusIconComponent {
   @Input()
