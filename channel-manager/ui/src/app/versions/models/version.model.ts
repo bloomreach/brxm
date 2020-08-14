@@ -18,5 +18,4 @@ export interface Version {
   jcrUUID: string;
   timestamp: number;
   userName: string;
-  comment: string;
 }

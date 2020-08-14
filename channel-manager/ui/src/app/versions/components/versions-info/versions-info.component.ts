@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatSelectionListChange } from '@angular/material/list';
-import { merge, Subject } from 'rxjs';
-import { map, startWith, tap } from 'rxjs/operators';
 
 import { ChannelService } from '../../../channels/services/channel.service';
 import { IframeService } from '../../../channels/services/iframe.service';
 import { ContentService } from '../../../content/services/content.service';
 import { WorkflowService } from '../../../content/services/workflow.service';
-import { PageStructureService } from '../../../pages/services/page-structure.service';
-import { PageService } from '../../../pages/services/page.service';
-import { ProjectService } from '../../../projects/services/project.service';
 import { VersionsInfo } from '../../models/versions-info.model';
 
 @Component({
@@ -34,45 +29,33 @@ import { VersionsInfo } from '../../models/versions-info.model';
   styleUrls: ['./versions-info.component.scss'],
 })
 export class VersionsInfoComponent implements OnInit {
-  xpageId?: string;
+  @Input()
+  documentId!: string;
+
+  @Input()
   branchId!: string;
-  versionsInfo$ = new Subject<VersionsInfo>();
-  currentDocumentVersionUUID$ = merge(
-    this.pageStructureService.pageParsed$,
-    this.versionsInfo$,
-  ).pipe(
-    startWith(1),
-    map(() => this.zone.run(() => this.pageStructureService.getUnpublishedVariantId())),
-    tap(value => console.log('recieved value', value)),
-  );
+
+  @Input()
+  unpublishedVariantId!: string;
+
+  versionsInfo?: VersionsInfo;
 
   constructor(
     private readonly contentService: ContentService,
-    private readonly projectService: ProjectService,
-    private readonly pageService: PageService,
-    private readonly pageStructureService: PageStructureService,
     private readonly iframeService: IframeService,
     private readonly channelService: ChannelService,
     private readonly workflowService: WorkflowService,
-    private readonly zone: NgZone,
   ) { }
 
   ngOnInit(): void {
-    this.xpageId = this.pageService.getXPageState()?.id;
-    // projectService selected project is always set, in project.service.js
-    // and by default with id 'master';
-    this.branchId = this.projectService.getSelectedProjectId();
-
-    if (!this.xpageId || !this.branchId) {
-      return;
-    }
-
-    this.getVersionsInfo(this.xpageId, this.branchId);
+    setTimeout(() => {
+      // Angular Element inputs are not yet initialized onInit
+      this.getVersionsInfo();
+    });
   }
 
-  async getVersionsInfo(documentId: string, branchId: string): Promise<void> {
-    const versionHistory = await this.contentService.getDocumentVersionsInfo(documentId, branchId);
-    this.versionsInfo$.next(versionHistory);
+  async getVersionsInfo(): Promise<void> {
+    this.versionsInfo = await this.contentService.getDocumentVersionsInfo(this.documentId, this.branchId);
   }
 
   async selectVersion(event: MatSelectionListChange): Promise<void> {
@@ -82,12 +65,12 @@ export class VersionsInfoComponent implements OnInit {
     await this.iframeService.load(newPath);
   }
 
-  async restoreVersion(xpageId: string, versionUUID: string): Promise<void> {
-    await this.workflowService.createWorkflowAction(xpageId, 'restore', versionUUID);
+  async restoreVersion(versionUUID: string): Promise<void> {
+    await this.workflowService.createWorkflowAction(this.documentId, 'restore', versionUUID);
     const currentPath = this.iframeService.getCurrentRenderPathInfo();
     const renderPath = this.channelService.makeRenderPath(currentPath);
     await this.iframeService.load(renderPath);
-    await this.getVersionsInfo(xpageId, this.branchId);
+    this.getVersionsInfo();
   }
 
   private createVersionPath(path: string, selectedVersionUUID: string): string {
