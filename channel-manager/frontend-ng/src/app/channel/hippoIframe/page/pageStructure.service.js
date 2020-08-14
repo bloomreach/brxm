@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Subject } from 'rxjs';
 
 import * as HstConstants from '../../../model/constants';
 import { HeadContributions } from '../../../model/entities';
@@ -51,9 +50,6 @@ class PageStructureService {
     this.ModelFactoryService
       .register(HstConstants.TYPE_PROCESSED_HEAD_CONTRIBUTIONS, this._createHeadContributions.bind(this))
       .register(HstConstants.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS, this._createHeadContributions.bind(this));
-
-    this._pageParsed$ = new Subject();
-    this.pageParsed$ = this._pageParsed$.asObservable();
   }
 
   _createHeadContributions(json) {
@@ -74,7 +70,6 @@ class PageStructureService {
     this._page = this.ModelFactoryService.createPage(comments);
     this._notifyChangeListeners({ initial });
     this._updateChannel();
-    this._pageParsed$.next();
   }
 
   _updateChannel() {
