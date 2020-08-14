@@ -98,7 +98,7 @@ describe('ChannelService', () => {
     spyOn(HstService, 'getChannel').and.returnValue($q.when(channelMock));
     spyOn(SessionService, 'initializeContext').and.returnValue($q.when());
     spyOn(SessionService, 'initializeState').and.returnValue($q.when());
-    spyOn(SessionService, 'hasWriteAccess').and.returnValue(true);
+    spyOn(SessionService, 'canWriteHstConfig').and.returnValue(true);
     spyOn(SiteMapService, 'load');
     ProjectService.selectedProject = projectMock;
   });
@@ -176,7 +176,7 @@ describe('ChannelService', () => {
     };
 
     HstService.getChannel.and.returnValue($q.resolve(testChannel));
-    SessionService.hasWriteAccess.and.returnValue(false);
+    SessionService.canWriteHstConfig.and.returnValue(false);
 
     const { id, contextPath, hostGroup } = testChannel;
     ChannelService.initializeChannel(id, contextPath, hostGroup, '/testPath');
@@ -226,10 +226,10 @@ describe('ChannelService', () => {
     loadChannel();
     expect(ChannelService.isEditable()).toBe(true);
 
-    SessionService.hasWriteAccess.and.returnValue(false);
+    SessionService.canWriteHstConfig.and.returnValue(false);
     expect(ChannelService.isEditable()).toBe(false);
 
-    SessionService.hasWriteAccess.and.returnValue(true);
+    SessionService.canWriteHstConfig.and.returnValue(true);
     ChannelService.channel.previewHstConfigExists = false;
     expect(ChannelService.isEditable()).toBe(false);
   });
@@ -263,7 +263,7 @@ describe('ChannelService', () => {
   });
 
   it('should not fetch pagemodel when session does not have write permission', () => {
-    SessionService.hasWriteAccess.and.returnValue(false);
+    SessionService.canWriteHstConfig.and.returnValue(false);
     loadChannel();
     expect(HstService.doGetWithParams).not.toHaveBeenCalledWith(channelMock.mountId, undefined, 'newpagemodel');
   });
