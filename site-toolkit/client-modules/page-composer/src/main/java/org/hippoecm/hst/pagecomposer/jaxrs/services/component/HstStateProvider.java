@@ -56,7 +56,9 @@ final class HstStateProvider {
         }
         final Set<State> states = new HashSet<>();
         states.add(HstState.WORKFLOWREQUEST_CREATION_DATE.toState(workflowRequest.getCreationDate()));
-        states.add(HstState.WORKFLOWREQUEST_REQUEST_DATE.toState(workflowRequest.getRequestDate()));
+        if (workflowRequest.getRequestDate() != null) {
+            states.add(HstState.WORKFLOWREQUEST_REQUEST_DATE.toState(workflowRequest.getRequestDate()));
+        }
         states.add(HstState.WORKFLOWREQUEST_TYPE.toState(workflowRequest.getType()));
         states.add(HstState.WORKFLOWREQUEST_USERNAME.toState(workflowRequest.getUsername()));
         if (workflowRequest.getReason() != null) {
