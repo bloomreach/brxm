@@ -22,8 +22,8 @@ class WorkflowService {
     this.baseUrl = PathService.concatPaths(ConfigService.getCmsContextPath(), '/ws/content/workflows/documents');
   }
 
-  createWorkflowAction(documentId, actionId) {
-    const url = encodeURI(`${this.baseUrl}/${documentId}/${actionId}`);
+  createWorkflowAction(documentId, ...pathElements) {
+    const url = encodeURI(`${this.baseUrl}/${documentId}/${pathElements.join('/')}`);
     return this.$http
       .post(url)
       .then(response => response.data);
