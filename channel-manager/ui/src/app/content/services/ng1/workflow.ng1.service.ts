@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+import { InjectionToken } from '@angular/core';
 
-import { SharedModule } from '../shared/shared.module';
-
-import { NG1_CONTENT_SERVICE } from './services/ng1/content.ng1.service';
-import { NG1_WORKFLOW_SERVICE } from './services/ng1/workflow.ng1.service';
-
-@NgModule({
-  imports: [
-    SharedModule,
-  ],
-  providers: [
-    { provide: NG1_CONTENT_SERVICE, useValue: window.angular.element(document.body).injector().get('ContentService') },
-    { provide: NG1_WORKFLOW_SERVICE, useValue: window.angular.element(document.body).injector().get('WorkflowService') },
-  ],
-})
-export class ContentModule {
+export interface Ng1WorkflowService {
+  createWorkflowAction<T>(documentId: string, ...pathElements: string[]): Promise<T>;
 }
+
+export const NG1_WORKFLOW_SERVICE = new InjectionToken<Ng1WorkflowService>('NG1_WORKFLOW_SERVICE');
