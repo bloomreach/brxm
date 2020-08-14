@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,11 @@
  */
 
 class WorkflowService {
-  constructor($http, ConfigService, PathService) {
+  constructor($http, $rootScope, ConfigService, PathService) {
     'ngInject';
 
     this.$http = $http;
+    this.$rootScope = $rootScope;
     this.baseUrl = PathService.concatPaths(ConfigService.getCmsContextPath(), '/ws/content/workflows/documents');
   }
 
@@ -26,7 +27,10 @@ class WorkflowService {
     const url = encodeURI(`${this.baseUrl}/${documentId}/${pathElements.join('/')}`);
     return this.$http
       .post(url)
-      .then(response => response.data);
+      .then((response) => {
+        this.$rootScope.$emit('page:check-changes');
+        return response.data;
+      });
   }
 }
 

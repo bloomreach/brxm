@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 describe('WorkflowService', () => {
   let $httpBackend;
+  let $rootScope;
   let ConfigService;
   let WorkflowService;
 
@@ -25,10 +26,12 @@ describe('WorkflowService', () => {
 
     inject((
       _$httpBackend_,
+      _$rootScope_,
       _ConfigService_,
       _WorkflowService_,
     ) => {
       $httpBackend = _$httpBackend_;
+      $rootScope = _$rootScope_;
       ConfigService = _ConfigService_;
       WorkflowService = _WorkflowService_;
     });
@@ -53,5 +56,16 @@ describe('WorkflowService', () => {
 
     WorkflowService.createWorkflowAction('document Id', 'workflow Action Id');
     $httpBackend.flush();
+  });
+
+  it('emits a "page:check-changes" event after a workflow action is resolved', () => {
+    const listener = jasmine.createSpy('page-check-changes');
+    $rootScope.$on('page:check-changes', listener);
+    $httpBackend.expectPOST('/test/ws/content/workflows/documents/documentId/workflowActionId').respond(200);
+
+    WorkflowService.createWorkflowAction('documentId', 'workflowActionId');
+    $httpBackend.flush();
+
+    expect(listener).toHaveBeenCalled();
   });
 });
