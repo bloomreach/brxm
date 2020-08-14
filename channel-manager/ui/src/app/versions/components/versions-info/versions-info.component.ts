@@ -58,10 +58,10 @@ export class VersionsInfoComponent implements OnInit {
     this.versionsInfo = await this.contentService.getDocumentVersionsInfo(this.documentId, this.branchId);
   }
 
-  async selectVersion(event: MatSelectionListChange): Promise<void> {
+  async selectVersion(versionUUID: string): Promise<void> {
     const currentPath = this.iframeService.getCurrentRenderPathInfo();
     const renderPath = this.channelService.makeRenderPath(currentPath);
-    const newPath = this.createVersionPath(renderPath, event.option.value);
+    const newPath = this.createVersionPath(renderPath, versionUUID);
     await this.iframeService.load(newPath);
   }
 
@@ -70,7 +70,7 @@ export class VersionsInfoComponent implements OnInit {
     const currentPath = this.iframeService.getCurrentRenderPathInfo();
     const renderPath = this.channelService.makeRenderPath(currentPath);
     await this.iframeService.load(renderPath);
-    this.getVersionsInfo();
+    await this.getVersionsInfo();
   }
 
   private createVersionPath(path: string, selectedVersionUUID: string): string {
