@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
+import controller from './versionsInfoWrapper.controller';
+import template from './versionsInfoWrapper.html';
+
 const versionsInfoWrapperComponent = {
-  template: '<em-versions-info></em-versions-info>',
+  controller,
+  template,
 };
 
 export default versionsInfoWrapperComponent;

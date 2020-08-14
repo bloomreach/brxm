@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ChannelService } from '../../../channels/services/channel.service';
 import { IframeService } from '../../../channels/services/iframe.service';
 import { ContentService } from '../../../content/services/content.service';
-import { XPageState } from '../../../models/xpage-state.model';
-import { PageStructureService } from '../../../pages/services/page-structure.service';
-import { PageService } from '../../../pages/services/page.service';
-import { ProjectService } from '../../../projects/services/project.service';
+import { WorkflowService } from '../../../content/services/workflow.service';
 import { VersionsInfo } from '../../models/versions-info.model';
 
 import { VersionsInfoComponent } from './versions-info.component';
@@ -52,24 +49,11 @@ describe('VersionsInfoComponent', () => {
         versions: [
           {
             jcrUUID: 'testId',
-            comment: 'testComment',
             userName: 'testUserName',
             timestamp: date,
           },
         ],
       } as VersionsInfo)),
-    };
-
-    const projectServiceMock = {
-      getSelectedProjectId: jest.fn(() => ({ id: 'projectId'})),
-    };
-
-    const pageServiceMock = {
-      getXPageState: jest.fn(() => ({ id: 'documentId' } as XPageState)),
-    };
-
-    const pageStructureServiceMock = {
-      getUnpublishedVariantId: jest.fn(() => 'unpublishedVariantId'),
     };
 
     const channelServiceMock = {
@@ -81,6 +65,8 @@ describe('VersionsInfoComponent', () => {
       load: jest.fn(() => Promise.resolve()),
     };
 
+    const workflowServiceMock = {};
+
     TestBed.configureTestingModule({
       declarations: [VersionsInfoComponent],
       imports: [
@@ -88,12 +74,10 @@ describe('VersionsInfoComponent', () => {
         TranslateModule.forRoot(),
       ],
       providers: [
+        { provide: ContentService, useValue: contentServiceMock },
         { provide: ChannelService, useValue: channelServiceMock },
         { provide: IframeService, useValue: iframeServiceMock },
-        { provide: ContentService, useValue: contentServiceMock },
-        { provide: ProjectService, useValue: projectServiceMock },
-        { provide: PageService, useValue: pageServiceMock },
-        { provide: PageStructureService, useValue: pageStructureServiceMock },
+        { provide: WorkflowService, useValue: workflowServiceMock },
       ],
     });
 
@@ -105,6 +89,10 @@ describe('VersionsInfoComponent', () => {
     fixture = TestBed.createComponent(VersionsInfoComponent);
     component = fixture.componentInstance;
     componentEl = fixture.nativeElement;
+
+    component.documentId = 'testDocumentId';
+    component.branchId = 'projectId';
+    component.unpublishedVariantId = 'unpublishedVariantId';
     fixture.detectChanges();
   });
 
@@ -113,13 +101,15 @@ describe('VersionsInfoComponent', () => {
   });
 
   describe('showing versions', () => {
-    it('should show list of versions', () => {
+    it('should show list of versions', fakeAsync(() => {
       component.ngOnInit();
+
+      tick();
 
       fixture.detectChanges();
 
       expect(componentEl).toMatchSnapshot();
-    });
+    }));
   });
 
   describe('selecting version', () => {
