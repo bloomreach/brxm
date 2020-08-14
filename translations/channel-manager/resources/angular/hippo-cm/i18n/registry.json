@@ -1464,7 +1464,7 @@
       }
     },
     "NOTIFICATION_BAR_XPAGE_LABEL_LIVE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1474,7 +1474,7 @@
       }
     },
     "NOTIFICATION_BAR_XPAGE_LABEL_LIVE_UNPUBLISHED_CHANGES" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1484,7 +1484,7 @@
       }
     },
     "NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1494,7 +1494,7 @@
       }
     },
     "NOTIFICATION_BAR_XPAGE_LABEL_PUBLICATION_REQUESTED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1504,7 +1504,7 @@
       }
     },
     "NOTIFICATION_BAR_XPAGE_LABEL_TAKE_OFFLINE_REQUESTED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1514,7 +1514,7 @@
       }
     },
     "NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1524,7 +1524,7 @@
       }
     },
     "NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1534,7 +1534,7 @@
       }
     },
     "NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1544,7 +1544,7 @@
       }
     },
     "NOTIFICATION_BAR_XPAGE_LABEL_REQUEST_REJECTED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1554,6 +1554,16 @@
       }
     },
     "NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTED" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "PLACEHOLDER_EXPERIENCE_PAGE" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
