@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@
     <notice.project.name>Hippo CMS7 Services</notice.project.name>
 
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
+    <hippo.testutils.version>${hippo.release.version}</hippo.testutils.version>
     <junit.version>4.12</junit.version>
     <easymock.version>3.0</easymock.version>
   </properties>
@@ -61,6 +62,11 @@
       <version>${hippo.commons.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-testutils</artifactId>
+      <version>${hippo.testutils.version}</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
