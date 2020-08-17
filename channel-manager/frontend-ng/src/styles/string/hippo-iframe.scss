@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+@import '~@bloomreach/frontend-theme/palettes';
+
 @mixin disabled-fab {
-  background-color: $grey-300;
+  background-color: map-get($grey, '300');
   cursor: not-allowed;
 
   svg {
-    fill: $grey-500;
+    fill: map-get($grey, '500');
   }
 }
 
@@ -653,11 +655,16 @@
 }
 
 %overlay-interaction-blocked {
-  background-color: rgba($red-400, .3);
   cursor: not-allowed;
   pointer-events: all;
 
   .hippo-overlay-shared {
     display: none;
+  }
+
+  // Because the rgba function demands a color and map could return null
+  // we need to wrap this in an if statement
+  @if map-has-key($red, 400) {
+    background-color: rgba(map-get($red, 400), .3);
   }
 }

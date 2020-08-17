@@ -120,14 +120,6 @@ describe('ChannelController', () => {
     expect($ctrl.isControlsDisabled()).toBe(false);
   });
 
-  it('checks whether a channel is editable', () => {
-    ChannelService.isEditable.and.returnValue(false);
-    expect($ctrl.isEditable()).toBe(false);
-
-    ChannelService.isEditable.and.returnValue(true);
-    expect($ctrl.isEditable()).toBe(true);
-  });
-
   it('gets the render variant from the page meta', () => {
     const page = jasmine.createSpyObj('page', ['getMeta']);
     const pageMeta = jasmine.createSpyObj('pageMeta', ['getRenderVariant']);
