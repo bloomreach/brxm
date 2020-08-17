@@ -16,6 +16,7 @@
 package org.onehippo.cms7.services;
 
 import org.junit.Test;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -258,7 +259,8 @@ public class HippoServiceRegistryTest {
             }
         };
         TestService testService = new TestService(){};
-        try {
+        // suppress expected exception logging from HippoServiceRegistry
+        try (Log4jInterceptor ignored = Log4jInterceptor.onError().deny(HippoServiceRegistry.class).build()) {
             // Always verify that currentIteration and counter have the same value, which means that the failingTracker was executed first, and even if it failed, the other tracker was executed as well.
             HippoServiceRegistry.register(testService, TestService.class);
             assertEquals(0, counter.counter);
