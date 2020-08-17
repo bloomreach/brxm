@@ -104,10 +104,6 @@ class ChannelCtrl {
     return this.HippoIframeService.isPageLoaded();
   }
 
-  isEditable() {
-    return this.ChannelService.isEditable();
-  }
-
   editMenu(menuUuid) {
     this.menuUuid = menuUuid;
     this.showSubpage('site-menu-editor');
