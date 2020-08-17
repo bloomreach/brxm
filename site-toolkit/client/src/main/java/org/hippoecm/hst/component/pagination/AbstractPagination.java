@@ -118,8 +118,8 @@ public abstract class AbstractPagination<T> implements Pagination<T> {
     public List<Page> getPages() {
         final List<Page> pages = new ArrayList<>();
         final int startPage = current - (current % limit) + 1;
-        final int endPage = startPage + limit - 1; 
-        IntStream.rangeClosed(startPage, endPage).forEach(pageNumber -> pages.add(new Page(pageNumber)));
+        final int endPage = startPage + limit - 1;
+        IntStream.rangeClosed(startPage, Math.min(endPage, getCount())).forEach(pageNumber -> pages.add(new Page(pageNumber)));
         return pages;
     }
 
