@@ -60,8 +60,14 @@ public class PageModelApiMount implements ContextualizableMount {
         MountSiteMapConfiguration mountSiteMapConfiguration = new MountSiteMapConfiguration(this);
         HstNode hstSiteNodeForMount = hstNodeLoadingCache.getNode(getMountPoint());
 
-        hstSite = new HstSiteFactory(hstNodeLoadingCache, hstConfigurationLoadingCache).createLiveSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration);
-        previewHstSite = new HstSiteFactory(hstNodeLoadingCache, hstConfigurationLoadingCache).createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration);
+        if (Mount.PREVIEW_NAME.equals(parent.getType())) {
+            previewHstSite = new HstSiteFactory(hstNodeLoadingCache, hstConfigurationLoadingCache).createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration);
+            hstSite = previewHstSite;
+        } else {
+            hstSite = new HstSiteFactory(hstNodeLoadingCache, hstConfigurationLoadingCache).createLiveSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration);
+            previewHstSite = new HstSiteFactory(hstNodeLoadingCache, hstConfigurationLoadingCache).createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration);
+
+        }
 
     }
 
