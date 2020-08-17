@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -74,7 +75,7 @@ public final class HippoServiceRegistry {
     // HippoServiceRegistry public methods are synchronized but the underlying maps also must be concurrent to ensure
     // newly registered services and trackers are immediately visible to other threads. (see: CMS-8998)
     private static final ConcurrentHashMap<Class<?>, ProxiedServiceHolder> services = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<Class<?>, List<ServiceHolder<ProxiedServiceTracker>>> trackers = new ConcurrentHashMap<>();
+    private static final HashMap<Class<?>, List<ServiceHolder<ProxiedServiceTracker>>> trackers = new HashMap<>();
 
     private static final Logger log = LoggerFactory.getLogger(HippoServiceRegistry.class);
 
@@ -117,7 +118,7 @@ public final class HippoServiceRegistry {
                         Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
                         trackerHolder.getServiceObject().serviceRegistered(serviceHolder);
                     } catch (Exception e) {
-                        String logMessage = String.format("There was an error when executing the tracker %s for the " +
+                        String logMessage = String.format("There was an error notifying the ProxiedServiceTracker %s for registering " +
                             "service %s", trackerHolder.getServiceObject().getClass().getName(), serviceInterface);
                         log.error(logMessage, e);
                     }
@@ -157,7 +158,7 @@ public final class HippoServiceRegistry {
                             Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
                             trackerHolder.getServiceObject().serviceUnregistered(serviceHolder);
                         } catch (Exception e) {
-                            String logMessage = String.format("There was an error when executing the tracker %s for the " +
+                            String logMessage = String.format("There was an error notifying the ProxiedServerTracker %s for unregistering " +
                                     "service %s", trackerHolder.getServiceObject().getClass().getName(), serviceInterface);
                             log.error(logMessage, e);
                         }
@@ -239,8 +240,8 @@ public final class HippoServiceRegistry {
                 Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
                 tracker.serviceRegistered(serviceHolder);
             } catch (Exception e) {
-                String logMessage = String.format("There was an error when executing the tracker %s for the " +
-                        "service %s", trackerHolder.getServiceObject().getClass().getName(), serviceInterface);
+                String logMessage = String.format("There was an error notifying the ProxiedServiceTracker %s for registering " +
+                        "service %s", tracker.getClass().getName(), serviceInterface);
                 log.error(logMessage, e);
             } finally {
                 Thread.currentThread().setContextClassLoader(cl);
