@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,21 +70,21 @@ describe('SessionService', () => {
     });
 
     it('should not allow anything before initializing', () => {
-      expect(SessionService.hasWriteAccess()).toEqual(false);
       expect(SessionService.canManageChanges()).toEqual(false);
       expect(SessionService.isCrossChannelPageCopySupported()).toEqual(false);
+      expect(SessionService.canWriteHstConfig()).toEqual(false);
     });
 
     it('should set privileges after initializing', () => {
       HstService.initializeSession.and.returnValue($q.when({
-        canWrite: true,
+        canWriteHstConfig: true,
         canManageChanges: true,
         crossChannelPageCopySupported: true,
       }));
       SessionService.initializeState();
       $rootScope.$apply();
 
-      expect(SessionService.hasWriteAccess()).toEqual(true);
+      expect(SessionService.canWriteHstConfig()).toEqual(true);
       expect(SessionService.canManageChanges()).toEqual(true);
       expect(SessionService.isCrossChannelPageCopySupported()).toEqual(true);
     });
@@ -93,7 +93,7 @@ describe('SessionService', () => {
       SessionService.initializeState();
       $rootScope.$apply();
 
-      expect(SessionService.hasWriteAccess()).toEqual(false);
+      expect(SessionService.canWriteHstConfig()).toEqual(false);
       expect(SessionService.canManageChanges()).toEqual(false);
       expect(SessionService.isCrossChannelPageCopySupported()).toEqual(false);
     });

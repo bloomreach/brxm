@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@import '~@bloomreach/frontend-theme/palettes';
+
 .input-container-picker {
   img {
     max-width: 100%;
@@ -49,7 +51,7 @@
   }
 
   &[disabled] > md-icon {
-    color: $grey-500 !important;
+    color: map-get($grey, '500') !important;
   }
 }
 
