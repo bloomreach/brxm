@@ -15,7 +15,6 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
-import { MatSelectionListChange } from '@angular/material/list';
 
 import { ChannelService } from '../../../channels/services/channel.service';
 import { IframeService } from '../../../channels/services/iframe.service';
@@ -38,7 +37,7 @@ export class VersionsInfoComponent implements OnInit {
   @Input()
   unpublishedVariantId!: string;
 
-  versionsInfo?: VersionsInfo;
+  versionsInfo: VersionsInfo = { versions: [] };
 
   constructor(
     private readonly contentService: ContentService,
@@ -59,9 +58,7 @@ export class VersionsInfoComponent implements OnInit {
   }
 
   async selectVersion(versionUUID: string): Promise<void> {
-    const currentPath = this.iframeService.getCurrentRenderPathInfo();
-    const renderPath = this.channelService.makeRenderPath(currentPath);
-    const newPath = this.createVersionPath(renderPath, versionUUID);
+    const newPath = this.createVersionPath(versionUUID);
     await this.iframeService.load(newPath);
   }
 
@@ -73,14 +70,21 @@ export class VersionsInfoComponent implements OnInit {
     await this.getVersionsInfo();
   }
 
-  private createVersionPath(path: string, selectedVersionUUID: string): string {
+  private createVersionPath(selectedVersionUUID: string): string {
+    const currentPath = this.iframeService.getCurrentRenderPathInfo();
+    const renderPath = this.channelService.makeRenderPath(currentPath);
     const versionParam = `br_version_uuid=${selectedVersionUUID}`;
+    const index = this.versionsInfo.versions.findIndex(v => v.jcrUUID === selectedVersionUUID);
 
-    if (path.includes('?')) {
-      return `${path}&${versionParam}`;
+    if (index === 0) {
+      return renderPath;
     }
 
-    return `${path}?${versionParam}`;
+    if (renderPath.includes('?')) {
+      return `${renderPath}&${versionParam}`;
+    }
+
+    return `${renderPath}?${versionParam}`;
   }
 
 }
