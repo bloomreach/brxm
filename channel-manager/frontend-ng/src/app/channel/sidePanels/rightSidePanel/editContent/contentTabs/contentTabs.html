@@ -18,7 +18,8 @@
          md-no-pagination
          flex
          layout="column">
-  <md-tab label="{{ ::'CONTENT' | translate }}">
+  <md-tab md-active="!$ctrl.showVersionsInfo"
+          label="{{ ::'CONTENT' | translate }}">
     <edit-content-main flex
                        layout="column"
                        layout-fill>
