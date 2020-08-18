@@ -19,26 +19,31 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequest;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toMap;
 
 final class HstStateProvider {
 
     Set<State> getStates(final ActionStateProviderContext context) {
-        if (!context.isExperiencePageRequest()) {
-            return Collections.emptySet();
+        final Set<State> states = new HashSet<>();
+        final ChannelContext channelContext = context.getChannelContext();
+        states.add(HstState.CHANNEL_XPAGE_LAYOUTS.toState(channelContext.getXPageLayouts().stream()
+                .collect(toMap(XPageLayout::getKey, XPageLayout::getLabel))));
+        states.add(HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES.toState(channelContext.getXPageTemplateQueries()));
+
+        if (context.isExperiencePageRequest()) {
+            final XPageContext xPageContext = context.getXPageContext();
+            states.addAll(xPageStates(xPageContext));
+            states.addAll(workflowRequestStates(xPageContext));
+            states.addAll(scheduledRequestStates(xPageContext));
         }
-        final XPageContext xPageContext = context.getXPageContext();
-        return Stream.of(
-                xPageStates(xPageContext),
-                workflowRequestStates(xPageContext),
-                scheduledRequestStates(xPageContext)
-        ).flatMap(Set::stream).collect(toSet());
+
+        return states;
     }
 
     private Set<State> xPageStates(XPageContext xPageContext) {

@@ -42,29 +42,13 @@ public class XPageContext {
         return xPageId;
     }
 
-    public String getXPageName() {
-        return xPageName;
-    }
-
-    public String getXPageState() {
-        return xPageState;
-    }
-
-    public WorkflowRequest getWorkflowRequest() {
-        return workflowRequest;
-    }
-
-    public ScheduledRequest getScheduledRequest() {
-        return scheduledRequest;
-    }
-
-    public String getBranchId() {
-        return branchId;
-    }
-
     XPageContext setXPageId(final String xPageId) {
         this.xPageId = xPageId;
         return this;
+    }
+
+    public String getXPageName() {
+        return xPageName;
     }
 
     XPageContext setXPageName(final String xPageName) {
@@ -72,9 +56,17 @@ public class XPageContext {
         return this;
     }
 
+    public String getXPageState() {
+        return xPageState;
+    }
+
     XPageContext setXPageState(final String xPageState) {
         this.xPageState = xPageState;
         return this;
+    }
+
+    public WorkflowRequest getWorkflowRequest() {
+        return workflowRequest;
     }
 
     XPageContext setWorkflowRequest(final WorkflowRequest workflowRequest) {
@@ -82,13 +74,30 @@ public class XPageContext {
         return this;
     }
 
+    public ScheduledRequest getScheduledRequest() {
+        return scheduledRequest;
+    }
+
     XPageContext setScheduledRequest(final ScheduledRequest scheduledRequest) {
         this.scheduledRequest = scheduledRequest;
         return this;
     }
 
+    public String getBranchId() {
+        return branchId;
+    }
+
     XPageContext setBranchId(final String branchId) {
         this.branchId = branchId;
+        return this;
+    }
+
+    public String getLockedBy() {
+        return xPageLockedBy;
+    }
+
+    public XPageContext setLockedBy(final String lockedBy) {
+        this.xPageLockedBy = lockedBy;
         return this;
     }
 
@@ -110,17 +119,12 @@ public class XPageContext {
         return this;
     }
 
-    public XPageContext setRequestPublication(final Boolean requestPublication) {
-        this.requestPublication = requestPublication;
-        return this;
-    }
-
     public Optional<Boolean> isRequestPublication() {
         return Optional.ofNullable(requestPublication);
     }
 
-    public XPageContext setRequestDepublication(final Boolean requestDepublication) {
-        this.requestDepublication = requestDepublication;
+    public XPageContext setRequestPublication(final Boolean requestPublication) {
+        this.requestPublication = requestPublication;
         return this;
     }
 
@@ -128,8 +132,8 @@ public class XPageContext {
         return Optional.ofNullable(requestDepublication);
     }
 
-    public XPageContext setCopyAllowed(final Boolean copyAllowed) {
-        this.copyAllowed = copyAllowed;
+    public XPageContext setRequestDepublication(final Boolean requestDepublication) {
+        this.requestDepublication = requestDepublication;
         return this;
     }
 
@@ -137,8 +141,8 @@ public class XPageContext {
         return copyAllowed;
     }
 
-    public XPageContext setMoveAllowed(final Boolean moveAllowed) {
-        this.moveAllowed = moveAllowed;
+    public XPageContext setCopyAllowed(final Boolean copyAllowed) {
+        this.copyAllowed = copyAllowed;
         return this;
     }
 
@@ -146,8 +150,8 @@ public class XPageContext {
         return moveAllowed;
     }
 
-    public XPageContext setDeleteAllowed(final Boolean deleteAllowed) {
-        this.deleteAllowed = deleteAllowed;
+    public XPageContext setMoveAllowed(final Boolean moveAllowed) {
+        this.moveAllowed = moveAllowed;
         return this;
     }
 
@@ -155,13 +159,9 @@ public class XPageContext {
         return deleteAllowed;
     }
 
-    public XPageContext setLockedBy(final String lockedBy) {
-        this.xPageLockedBy = lockedBy;
+    public XPageContext setDeleteAllowed(final Boolean deleteAllowed) {
+        this.deleteAllowed = deleteAllowed;
         return this;
-    }
-
-    public String getLockedBy() {
-        return xPageLockedBy;
     }
 
 }
