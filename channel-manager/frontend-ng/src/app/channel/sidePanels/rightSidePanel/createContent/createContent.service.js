@@ -142,7 +142,7 @@ class CreateContentService {
       this.componentInfo = {};
     }
 
-    this._showStep1Title();
+    this._showStep1Title(Object.keys(config.layouts || {}).length > 0 ? 'CREATE_XPAGE' : 'CREATE_CONTENT');
     this.RightSidePanelService.startLoading();
 
     return this.Step1Service.open(
@@ -156,9 +156,9 @@ class CreateContentService {
     });
   }
 
-  _showStep1Title() {
+  _showStep1Title(key) {
     this.RightSidePanelService.clearContext();
-    const title = this.$translate.instant('CREATE_CONTENT');
+    const title = this.$translate.instant(key);
     this.RightSidePanelService.setTitle(title);
   }
 

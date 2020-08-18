@@ -91,6 +91,10 @@ class Step1Controller {
     this.Step1Service.url = url;
   }
 
+  isXPage() {
+    return this.Step1Service.isXPage();
+  }
+
   submit() {
     this.Step1Service.createDocument()
       .then(document => this.CreateContentService.next(document, this.url, this.locale));
