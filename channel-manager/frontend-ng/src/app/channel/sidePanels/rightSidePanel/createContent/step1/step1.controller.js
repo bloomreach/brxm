@@ -47,6 +47,18 @@ class Step1Controller {
     return this.Step1Service.documentTypes;
   }
 
+  get layout() {
+    return this.Step1Service.layout;
+  }
+
+  set layout(layout) {
+    this.Step1Service.layout = layout;
+  }
+
+  get layouts() {
+    return this.Step1Service.layouts;
+  }
+
   get locale() {
     return this.Step1Service.locale;
   }
