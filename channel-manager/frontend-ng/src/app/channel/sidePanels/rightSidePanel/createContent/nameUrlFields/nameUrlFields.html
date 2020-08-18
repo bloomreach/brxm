@@ -1,5 +1,5 @@
 <!--
-  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License")
   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
   <md-input-container class="create-content-field qa-name-field">
     <input class="name-input-element"
            name="nameField"
-           placeholder="{{ ::'PLACEHOLDER_DOCUMENT_NAME' | translate }}"
+           placeholder="{{ ::$ctrl.namePlaceholder | translate }}"
            ng-model="$ctrl.nameField"
            ng-change="$ctrl.onNameChange($event)"
            type="text"
