@@ -1004,6 +1004,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         // localParameters have no merging, but for copy, the localParameters are copied
         copy.localParameters = new LinkedHashMap<String, String>(child.localParameters);
         copy.usedChildReferenceNames = new ArrayList<String>(child.usedChildReferenceNames);
+        copy.variants = new ArrayList<>(variants);
+        copy.mountVariants = new ArrayList<>(mountVariants);
         copy.lockedBy = child.lockedBy;
         copy.lockedOn = child.lockedOn;
         copy.lastModified = child.lastModified;
@@ -1645,7 +1647,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * get all the unique variants for this component + its descendants and set this to variants instance variable if
      * not empty
      */
-    protected void populateVariants() {
+    public void populateVariants() {
         // first traverse the children
         Set<String> variantsSet = new HashSet<String>();
         for (HstComponentConfigurationService child : orderedListConfigs) {

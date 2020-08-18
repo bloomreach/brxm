@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@import 'variables';
+
+@import '~@bloomreach/frontend-theme/palettes';
 
 md-toolbar.hippo-toolbar {
   background: $toolbar-bg;
@@ -44,11 +45,11 @@ md-toolbar.hippo-toolbar {
   }
 
   .md-container {
-    background-color: $grey-200;
+    background-color: map-get($grey, '200');
   }
 
   .md-bar {
-    background-color: $grey-400;
+    background-color: map-get($grey, '400');
   }
 
   .md-button {
@@ -60,7 +61,7 @@ md-toolbar.hippo-toolbar {
     padding-left: 2px;
 
     .md-open > .md-button {
-      background-color: $grey-300;
+      background-color: map-get($grey, '300');
     }
 
     md-menu > .md-button {
@@ -108,7 +109,7 @@ md-toolbar.hippo-toolbar {
     margin: 0;
 
     &[disabled] md-select-value md-icon {
-      color: $grey-500;
+      color: map-get($grey, '500');
     }
   }
 
