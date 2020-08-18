@@ -96,6 +96,7 @@ import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR;
 import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
+import static org.hippoecm.hst.core.container.ContainerConstants.RENDERING_HOST;
 import static org.hippoecm.hst.util.HstRequestUtils.createURLWithExplicitSchemeForRequest;
 import static org.hippoecm.hst.util.HstRequestUtils.getClusterNodeAffinityId;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRemoteAddr;
@@ -452,7 +453,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     if (isNotBlank((String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME))) {
 
                         final String previewURL = (String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME);
-                        doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), previewURL);
+                        doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), hstContainerUrl.getParameterMap(), previewURL);
                         return;
                     }
                 }
@@ -614,6 +615,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     void doRedirectPreviewURL(final HttpServletRequest req,
                               final HttpServletResponse res,
                               final String pathInfo,
+                              final Map<String, String[]> queryParameters,
                               final String previewURL) throws IOException {
 
         try {
@@ -630,10 +632,23 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             final JwtTokenService jwtTokenService = HippoServiceRegistry.getService(JwtTokenService.class);
             final String clusterNodeAffinityId = getClusterNodeAffinityId(req, clusterNodeAffinityCookieName, clusterNodeAffinityHeaderName);
-            final String location = redirect + "?" +
+            String location = redirect + "?" +
                     (uri.getQuery() == null ? "" :  uri.getQuery() + "&")
                     + jwtTokenParam + "=" + jwtTokenService.createToken(req, emptyMap()) +
                     (isNotBlank(clusterNodeAffinityId) ? "&" + clusterNodeAffinityQueryParam + "=" + clusterNodeAffinityId : "");
+            // include queryString from hst container url to the SPA redirect link
+            for (Map.Entry<String, String[]> queryParam : queryParameters.entrySet()) {
+                if (RENDERING_HOST.equals(queryParam.getKey())) {
+                    // this parameter never needs to be propagated to the SPA redirect since really an internal CMS host param
+                    continue;
+                }
+                for (String value : queryParam.getValue()) {
+                    if (StringUtils.isBlank(value)) {
+                        continue;
+                    }
+                    location = location +"&" + queryParam.getKey() + "=" + value;
+                }
+            }
             res.sendRedirect(location);
         } catch (URISyntaxException e) {
             res.sendError(HttpServletResponse.SC_FORBIDDEN);
@@ -711,7 +726,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             }
             final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
             contextPayload.put(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, requestContext.getResolvedMount().getMount().getIdentifier());
-            contextPayload.put(ContainerConstants.RENDERING_HOST, renderingHost);
+            contextPayload.put(RENDERING_HOST, renderingHost);
         }
     }
 
