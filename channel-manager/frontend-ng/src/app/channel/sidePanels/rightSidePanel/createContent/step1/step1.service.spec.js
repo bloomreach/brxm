@@ -54,7 +54,11 @@ describe('Step1Service', () => {
     expect(Step1Service.url).toBeUndefined();
     expect(Step1Service.locale).toBeUndefined();
     expect(Step1Service.rootPath).toBeUndefined();
+    expect(Step1Service.defaultPath).toBeUndefined();
     expect(Step1Service.documentTemplateQuery).toBeUndefined();
+    expect(Step1Service.folderTemplateQuery).toBeUndefined();
+    expect(Step1Service.layouts).toBeUndefined();
+    expect(Step1Service.layout).toBeUndefined();
   }
 
   beforeEach(() => {
@@ -99,6 +103,9 @@ describe('Step1Service', () => {
     Step1Service.rootPath = 'rootPath';
     Step1Service.defaultPath = 'defaultPath';
     Step1Service.documentTemplateQuery = 'documentTemplateQuery';
+    Step1Service.folderTemplateQuery = 'folderTemplateQuery';
+    Step1Service.layouts = ['layouts'];
+    Step1Service.layout = 'layout';
     Step1Service.stop();
     expectReset();
   });
@@ -110,6 +117,7 @@ describe('Step1Service', () => {
       expect(Step1Service.rootPath).toBe('/root/path');
       expect(Step1Service.documentTemplateQuery).toBe('dcmt-tpl-query');
       expect(Step1Service.folderTemplateQuery).toBe('fldr-tpl-query');
+      expect(Step1Service.layouts).toEqual([]);
     });
 
     it('resets the values before storing new values', () => {
@@ -122,6 +130,16 @@ describe('Step1Service', () => {
       expect(Step1Service.rootPath).toBe('/root/path2');
       expect(Step1Service.defaultPath).toBeUndefined();
       expect(Step1Service.name).toBeUndefined();
+    });
+
+    it('stores the optional layouts', () => {
+      Step1Service.open('', '', '', '', ['layout1']);
+      expect(Step1Service.layouts).toEqual(['layout1']);
+    });
+
+    it('pre-selects the layout if there is only a single one', () => {
+      Step1Service.open('', '', '', '', [{ id: 'layout1' }]);
+      expect(Step1Service.layout).toBe('layout1');
     });
 
     describe('loading document types by document-template-query', () => {
@@ -193,6 +211,7 @@ describe('Step1Service', () => {
       Step1Service.documentType = 'test-doctype';
       Step1Service.rootPath = 'test-rootpath';
       Step1Service.defaultPath = 'test-defaultpath';
+      Step1Service.layout = 'test-layout';
 
       Step1Service.createDocument().then(done);
       expect(ContentService.createDocument).toHaveBeenCalledWith({
@@ -203,6 +222,7 @@ describe('Step1Service', () => {
         documentTypeId: 'test-doctype',
         rootPath: 'test-rootpath',
         defaultPath: 'test-defaultpath',
+        layout: 'test-layout',
       });
     });
 
