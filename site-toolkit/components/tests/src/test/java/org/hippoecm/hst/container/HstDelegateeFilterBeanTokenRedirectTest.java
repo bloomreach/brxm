@@ -16,6 +16,7 @@
 package org.hippoecm.hst.container;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.SimpleCredentials;
@@ -74,7 +75,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
     @Test
     public void plain_redirect_URL() throws Exception {
 
-        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, null, "https://spa.example.com");
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, null, new HashMap<>(), "https://spa.example.com");
 
         final String redirectedUrl = response.getRedirectedUrl();
 
@@ -92,7 +93,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
 
     @Test
     public void invalid_redirect_URL() throws Exception {
-        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, null, "12spa:example&com");
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, null, new HashMap<>(), "12spa:example&com");
         assertEquals(SC_FORBIDDEN, response.getStatus());
     }
 
@@ -101,7 +102,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
     public void redirect_URL_with_cluster_node_affinity() throws Exception {
         request.addHeader("Server-Id", "my-server");
 
-        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, null, "https://spa.example.com");
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, null, new HashMap<>(), "https://spa.example.com");
 
         final String redirectedUrl = response.getRedirectedUrl();
 
@@ -122,7 +123,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
     public void redirect_URL_with_cluster_node_affinity_with_pathInfo() throws Exception {
         request.addHeader("Server-Id", "my-server");
 
-        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", "https://spa.example.com");
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", new HashMap<>(), "https://spa.example.com");
 
         final String redirectedUrl = response.getRedirectedUrl();
 
@@ -143,7 +144,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
     public void redirect_URL_with_queryString_with_cluster_node_affinity_with_pathInfo() throws Exception {
         request.addHeader("Server-Id", "my-server");
 
-        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", "https://spa.example.com?pmaURL=https://brx.example.com/api/resourceapi");
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", new HashMap<>(), "https://spa.example.com?pmaURL=https://brx.example.com/api/resourceapi");
 
         final String redirectedUrl = response.getRedirectedUrl();
 
@@ -164,7 +165,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
     public void redirect_URL_with_port_queryString_with_cluster_node_affinity_with_pathInfo() throws Exception {
         request.addHeader("Server-Id", "my-server");
 
-        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", "https://spa.example.com:3000?pmaURL=https://brx.example.com/api/resourceapi");
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", new HashMap<>(), "https://spa.example.com:3000?pmaURL=https://brx.example.com/api/resourceapi");
 
         final String redirectedUrl = response.getRedirectedUrl();
 
@@ -175,7 +176,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
     @Test
     public void redirect_fails_without_valid_cms_session_context() throws Exception {
         request.getSession().invalidate();
-        hstDelegateeFilterBean.doRedirectPreviewURL(request, response,"", "https://spa.example.com");
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response,"", new HashMap<>(), "https://spa.example.com");
         assertEquals(SC_FORBIDDEN, response.getStatus());
     }
 
