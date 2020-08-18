@@ -17,10 +17,9 @@ package org.hippoecm.hst.component.pagination;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.junit.Test;
 
@@ -28,22 +27,20 @@ public class TestPagination {
 
     @Test
     public void testCurrentPageIsCorrectWhenItemCountFewerThanPageNumber() {
-        final List<String> items = IntStream.rangeClosed(1, 50).boxed().map(i -> new String()).collect(Collectors.toList());
-        final Pagination<String> pagination = new SimplePagination<String>(items, 16);
+        final Pagination<?> pagination = new SimplePagination<>(Arrays.asList(new Object[50]), 16);
         assertEquals(1, pagination.getCurrent().getNumber());
     }
 
     @Test
     public void testLastPageIsCorrectWhenPageCountFewerThanDefaultPageLimit() {
-        final List<String> items = IntStream.rangeClosed(1, 50).boxed().map(i -> new String()).collect(Collectors.toList());
-        final Pagination<String> pagination = new SimplePagination<String>(items, 16);
+        final Pagination<?> pagination = new SimplePagination<>(Arrays.asList(new Object[50]), 16);
         assertEquals(6, pagination.getPages().size());
+        assertEquals(6, pagination.getLast().getNumber());
     }
 
     @Test
     public void testCurrentAndNextAndPreviousPagesAreCorrect() {
-        final List<String> items = IntStream.rangeClosed(1, 50).boxed().map(i -> new String()).collect(Collectors.toList());
-        final Pagination<String> pagination = new SimplePagination<String>(items, 3);
+        final Pagination<?> pagination = new SimplePagination<>(Arrays.asList(new Object[50]), 3);
         assertEquals(3, pagination.getCurrent().getNumber());
         assertEquals(4, pagination.getNext().getNumber());
         assertEquals(2, pagination.getPrevious().getNumber());
@@ -57,8 +54,7 @@ public class TestPagination {
 
     @Test
     public void testPageRangeIsCorrectWhenPageCountFewerThanDefaultPageLimit() {
-        final List<String> items = IntStream.rangeClosed(1, 50).boxed().map(i -> new String()).collect(Collectors.toList());
-        final Pagination<String> pagination = new SimplePagination<String>(items, 6);
+        final Pagination<?> pagination = new SimplePagination<>(Arrays.asList(new Object[50]), 6);
         assertEquals(6, pagination.getPages().size());
         assertEquals(1, pagination.getPages().get(0).getNumber());
         assertEquals(2, pagination.getPages().get(1).getNumber());
@@ -70,8 +66,7 @@ public class TestPagination {
 
     @Test
     public void testPageRangeIsCorrectWhenPageCountHigherThanDefaultPageLimit() {
-        final List<String> items = IntStream.rangeClosed(1, 250).boxed().map(i -> new String()).collect(Collectors.toList());
-        final Pagination<String> pagination = new SimplePagination<String>(items, 16);
+        final Pagination<?> pagination = new SimplePagination<>(Arrays.asList(new Object[250]), 16);
         assertEquals(10, pagination.getPages().size());
         assertEquals(11, pagination.getPages().get(0).getNumber());
         assertEquals(12, pagination.getPages().get(1).getNumber());
