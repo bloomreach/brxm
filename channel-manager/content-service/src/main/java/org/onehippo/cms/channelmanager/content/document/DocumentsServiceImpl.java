@@ -30,9 +30,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.platform.api.ChannelService;
+import org.hippoecm.hst.platform.api.PlatformServices;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
@@ -65,6 +70,7 @@ import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
@@ -401,7 +407,8 @@ public class DocumentsServiceImpl implements DocumentsService {
         final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);
 
         try {
-            final String documentPath = folderWorkflow.add(documentTemplateQuery, documentTypeId, encodedSlug);
+            final JcrTemplateNode xPageLayoutNode = getXPageLayoutTemplateNode(newDocumentInfo.getLayout(), folder);
+            final String documentPath = folderWorkflow.add(documentTemplateQuery, documentTypeId, encodedSlug, xPageLayoutNode);
             log.debug("Created document {}", documentPath);
 
             final Node document = session.getNode(documentPath);
@@ -418,6 +425,29 @@ public class DocumentsServiceImpl implements DocumentsService {
                     encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), documentTemplateQuery, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
+    }
+
+    private JcrTemplateNode getXPageLayoutTemplateNode(final String layoutId, final Node folder) throws RepositoryException {
+        if (StringUtils.isEmpty(layoutId)) {
+            return null;
+        }
+
+        final String channelId = JcrUtils.getStringProperty(folder, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, null);
+        if (StringUtils.isEmpty(channelId)) {
+            log.warn("Failed to retrieve XPageLayout[{}]. Could not read property {} on node {}",
+                    layoutId, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, JcrUtils.getNodePathQuietly(folder));
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+        }
+
+        final ChannelService channelService = HippoServiceRegistry.getService(PlatformServices.class).getChannelService();
+        final Map<String, XPageLayout> xPageLayouts = channelService.getXPageLayouts(channelId);
+        if (!xPageLayouts.containsKey(layoutId)) {
+            log.warn("Failed to retrieve XPageLayout[{}]. Available id's are {}",
+                    layoutId, String.join(",", xPageLayouts.keySet()));
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+        }
+
+        return xPageLayouts.get(layoutId).getJcrTemplateNode();
     }
 
     private static Document getCreatedDocument(final Node handle, final DocumentType documentType) throws RepositoryException {
