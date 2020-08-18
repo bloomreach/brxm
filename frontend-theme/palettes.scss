@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 
+$text-color: (
+  dark: rgba(black, .87),
+  light: rgba(white, .87),
+  dim: rgba(black, .6),
+  disabled: rgba(black, .38),
+);
+
+$functional-colors: (
+  green: #3DCC3D,
+);
+
 $blue: (
   50: #E7F1F9,
   100: #A6CCEA,
@@ -144,15 +155,4 @@ $grey: (
     A400: white,
     A700: white,
   )
-);
-
-$functional-colors: (
-  $green: #3DCC3D,
-);
-
-$text-color: (
-  dark: rgba(black, .87),
-  light: rgba(white, .87),
-  dim: rgba(black, .6),
-  disabled: rgba(black, .38),
 );
