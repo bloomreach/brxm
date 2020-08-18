@@ -19,13 +19,12 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.AbstractHstComponentParameters;
 
 public class XPageComponentParameters extends AbstractHstComponentParameters {
 
-    public XPageComponentParameters(final Node node, final ContainerItemHelper containerItemHelper) throws RepositoryException {
-        super(node, containerItemHelper);
+    public XPageComponentParameters(final Node node) throws RepositoryException {
+        super(node);
     }
 
     public void setNodeChanges() throws RepositoryException {
