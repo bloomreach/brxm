@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@ class Step2Service {
     this.$q = $q;
     this.$translate = $translate;
     this.CmsService = CmsService;
-    this.ContentService = ContentService;
     this.ContentEditor = ContentEditor;
+    this.ContentService = ContentService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HstComponentService = HstComponentService;
