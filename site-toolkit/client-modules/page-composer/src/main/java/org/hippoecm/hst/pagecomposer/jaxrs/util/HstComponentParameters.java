@@ -24,8 +24,12 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 
 public class HstComponentParameters extends AbstractHstComponentParameters {
 
+    private ContainerItemHelper containerItemHelper;
+
     public HstComponentParameters(final Node node, final ContainerItemHelper containerItemHelper) throws RepositoryException {
-        super(node, containerItemHelper);
+
+        super(node);
+        this.containerItemHelper = containerItemHelper;
     }
 
     public void save(long versionStamp) throws RepositoryException, IllegalStateException {
