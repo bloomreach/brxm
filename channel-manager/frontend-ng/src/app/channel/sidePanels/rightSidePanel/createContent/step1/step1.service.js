@@ -129,6 +129,10 @@ class Step1Service {
     }
     return this.$q.reject();
   }
+
+  isXPage() {
+    return this.layouts && this.layouts.length > 0;
+  }
 }
 
 export default Step1Service;

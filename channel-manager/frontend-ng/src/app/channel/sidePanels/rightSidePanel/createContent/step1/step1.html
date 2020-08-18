@@ -23,12 +23,13 @@
                      url-field="$ctrl.url"
                      is-url-updating="$ctrl.isUrlUpdating"
                      locale="$ctrl.locale"
-                     md-autofocus="true">
+                     md-autofocus="true"
+                     name-placeholder="$ctrl.isXPage() ? 'PLACEHOLDER_XPAGE_NAME' : 'PLACEHOLDER_DOCUMENT_NAME'">
     </name-url-fields>
 
     <!-- Document type field -->
     <md-input-container class="create-content-field qa-doctype-field">
-      <label>{{ ::'PLACEHOLDER_DOCUMENT_TYPE' | translate }}</label>
+      <label>{{ ::$ctrl.isXPage() ? 'PLACEHOLDER_XPAGE_TYPE' : 'PLACEHOLDER_DOCUMENT_TYPE' | translate }}</label>
       <md-select ng-model="$ctrl.documentType"
                  name="documentType"
                  required
@@ -43,7 +44,7 @@
 
     <!-- XPage Layout field-->
     <md-input-container class="create-content-field qa-layout-field" ng-if="$ctrl.layouts.length > 0">
-      <label>{{ ::'PLACEHOLDER_LAYOUT' | translate }}</label>
+      <label>{{ ::'PLACEHOLDER_XPAGE_LAYOUT' | translate }}</label>
       <md-select ng-model="$ctrl.layout"
                  name="layout"
                  required
