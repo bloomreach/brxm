@@ -24,6 +24,7 @@ public class NewDocumentInfo {
     private String folderTemplateQuery;
     private String rootPath;
     private String defaultPath;
+    private String layout;
 
     public String getName() {
         return name;
@@ -81,4 +82,11 @@ public class NewDocumentInfo {
         this.defaultPath = defaultPath;
     }
 
+    public String getLayout() {
+        return layout;
+    }
+
+    public void setLayout(final String layout) {
+        this.layout = layout;
+    }
 }
