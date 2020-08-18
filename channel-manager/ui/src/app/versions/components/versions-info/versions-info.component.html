@@ -53,6 +53,7 @@
            class="version-actions">
         <button *ngIf="unpublishedVariantId === version.jcrUUID && i === 0"
                 mat-stroked-button
+                color="primary"
                 class="qa-new-version-action"
                 (click)="createVersion()">
           <mat-icon svgIcon="plus"></mat-icon>
@@ -61,6 +62,7 @@
 
         <button *ngIf="unpublishedVariantId === version.jcrUUID && i > 0"
                 mat-stroked-button
+                color="primary"
                 class="qa-restore-version-action"
                 (click)="restoreVersion(version.jcrUUID)">
           {{ 'RESTORE' | translate }}
