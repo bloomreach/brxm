@@ -85,38 +85,6 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        saveDraftAction = new StdWorkflow("saveDraft",
-                new StringResourceModel("save-draft", this).setDefaultValue("Keep draft"), getModel()) {
-
-            @Override
-            public String getSubMenu() {
-                return "top";
-            }
-
-            @Override
-            protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.FLOPPY);
-            }
-
-            @Override
-            protected IModel<String> getTooltip() {
-                return new StringResourceModel("save-draft-hint", this);
-            }
-
-            @Override
-            public String getCssClass() {
-                return ButtonStyle.SECONDARY.getCssClass();
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
-                IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
-                editor.saveDraft();
-                return null;
-            }
-        };
-        add(saveDraftAction);
 
         add(new StdWorkflow("done", new StringResourceModel("done", this).setDefaultValue("Done"), context, getModel()) {
 
@@ -153,6 +121,39 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 return null;
             }
         });
+
+        saveDraftAction = new StdWorkflow("saveDraft",
+                new StringResourceModel("save-draft", this).setDefaultValue("Keep draft"), getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.FLOPPY);
+            }
+
+            @Override
+            protected IModel<String> getTooltip() {
+                return new StringResourceModel("save-draft-hint", this);
+            }
+
+            @Override
+            public String getCssClass() {
+                return ButtonStyle.PRIMARY.getCssClass();
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
+                IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
+                editor.saveDraft();
+                return null;
+            }
+        };
+        add(saveDraftAction);
 
         add(new StdWorkflow("cancel", new StringResourceModel("cancel", this).setDefaultValue("Cancel"), context, getModel()) {
             final StdWorkflow cancelAction = this;
