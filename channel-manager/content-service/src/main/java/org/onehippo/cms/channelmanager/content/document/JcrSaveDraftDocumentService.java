@@ -78,7 +78,6 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
         }
 
         final DocumentWorkflow workflow = getWorkflow(identifier, userContext);
-        refreshInternalWorkflowSession(workflow);
         try {
             workflow.saveDraft();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
@@ -140,7 +139,6 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
     @Override
     protected Map<String, Serializable> getHints() {
         final DocumentWorkflow workflow = getWorkflow(getIdentifier(), getUserContext());
-        refreshInternalWorkflowSession(workflow);
         return HintsUtils.getHints(workflow, getBranchId());
     }
 
@@ -150,24 +148,12 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
         return getDocumentWorkflow(handle);
     }
 
-    private void refreshInternalWorkflowSession(DocumentWorkflow documentWorkflow){
-        try {
-            final WorkflowContext workflowContext = documentWorkflow.getWorkflowContext();
-                workflowContext.getInternalWorkflowSession().refresh(false);
-        } catch (RepositoryException e) {
-            log.warn("Could not refresh internal workflow session", e);
-            throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
-        }
-    }
-
-
     @Override
     Document getDraft() {
         String identifier = getIdentifier();
         UserContext userContext = getUserContext();
         final Node handle = getHandle(identifier, userContext.getSession());
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
-        refreshInternalWorkflowSession(documentWorkflow);
         final Node draftNode = EditingUtils.getDraftNode(documentWorkflow, userContext.getSession())
                 .orElseThrow(() -> new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR)));
         final DocumentType documentType = getDocumentType();
