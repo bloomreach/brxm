@@ -174,6 +174,39 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
     }
 
     @Test
+    public void redirect_URL_with_port_queryString_with_cluster_node_affinity_with_pathInfo_with_queryParameters() throws Exception {
+
+        final HashMap<String, String[]> queryParameters = new HashMap<>();
+        queryParameters.put("foo", new String[]{"bar"});
+        queryParameters.put("lux", new String[]{"flux", "crux"});
+
+        request.addHeader("Server-Id", "my-server");
+
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", queryParameters, "https://spa.example.com:3000?pmaURL=https://brx.example.com/api/resourceapi");
+
+        final String redirectedUrl = response.getRedirectedUrl();
+
+        assertEquals("https://spa.example.com:3000/my/path", StringUtils.substringBefore(redirectedUrl, "?"));
+
+        final URI uri = new URI(redirectedUrl);
+
+        assertEquals("spa.example.com", uri.getHost());
+        assertEquals("/my/path", uri.getPath());
+
+        final Map<String, String[]> parameters = HstRequestUtils.parseQueryString(uri, "UTF-8");
+
+        assertEquals("Expect also 'foo' and 'lux'",5L, parameters.size());
+        assertTrue(parameters.containsKey("token"));
+        assertEquals("my-server", parameters.get("server-id-param")[0]);
+        assertEquals("https://brx.example.com/api/resourceapi", parameters.get("pmaURL")[0]);
+        assertEquals("bar", parameters.get("foo")[0]);
+        assertEquals("flux", parameters.get("lux")[0]);
+        assertEquals("crux", parameters.get("lux")[1]);
+
+        assertTrue(redirectedUrl.contains("lux=flux&lux=crux"));
+    }
+
+    @Test
     public void redirect_fails_without_valid_cms_session_context() throws Exception {
         request.getSession().invalidate();
         hstDelegateeFilterBean.doRedirectPreviewURL(request, response,"", new HashMap<>(), "https://spa.example.com");
