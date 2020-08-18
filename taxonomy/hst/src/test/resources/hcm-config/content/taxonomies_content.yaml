@@ -1,0 +1,219 @@
+definitions:
+  config:
+    /unittestcontent/taxonomies:
+      jcr:primaryType: hippotaxonomy:container
+      /Taxxa:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:versionInfo', 'mix:referenceable']
+        hippo:versionHistory: ab5d16ad-a652-438e-9cae-9a2424f1fe6d
+        /Taxxa[1]:
+          jcr:primaryType: hippotaxonomy:taxonomy
+          jcr:mixinTypes: ['hippostd:publishableSummary', 'mix:referenceable']
+          hippo:availability: []
+          hippostd:state: draft
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2020-02-20T12:40:23.210+01:00
+          hippostdpubwf:lastModificationDate: 2020-02-20T12:40:23.210+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippotaxonomy:locales: [en]
+          /stats:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: stats
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Stats
+          /tasks:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: tasks
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Tasks
+            /tasklevel1:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: tasklevel1
+              /hippotaxonomy:categoryinfos:
+                jcr:primaryType: hippotaxonomy:categoryinfos
+                /en:
+                  jcr:primaryType: hippotaxonomy:categoryinfo
+                  hippotaxonomy:name: Task Level 1
+              /tasklevel2:
+                jcr:primaryType: hippotaxonomy:category
+                hippotaxonomy:key: tasklevel2
+                /hippotaxonomy:categoryinfos:
+                  jcr:primaryType: hippotaxonomy:categoryinfos
+                  /en:
+                    jcr:primaryType: hippotaxonomy:categoryinfo
+                    hippotaxonomy:name: Task Level 2
+        /Taxxa[2]:
+          jcr:primaryType: hippotaxonomy:taxonomy
+          jcr:mixinTypes: ['hippostd:publishableSummary', 'mix:referenceable', 'mix:versionable']
+          hippo:availability: [preview]
+          hippostd:state: unpublished
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2020-02-20T12:40:23.210+01:00
+          hippostdpubwf:lastModificationDate: 2020-02-20T12:40:36.461+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippotaxonomy:locales: [en]
+          /stats:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: stats
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Stats
+          /tasks:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: tasks
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Tasks
+            /tasklevel1:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: tasklevel1
+              /hippotaxonomy:categoryinfos:
+                jcr:primaryType: hippotaxonomy:categoryinfos
+                /en:
+                  jcr:primaryType: hippotaxonomy:categoryinfo
+                  hippotaxonomy:name: Task Level 1
+              /tasklevel2:
+                jcr:primaryType: hippotaxonomy:category
+                hippotaxonomy:key: tasklevel2
+                /hippotaxonomy:categoryinfos:
+                  jcr:primaryType: hippotaxonomy:categoryinfos
+                  /en:
+                    jcr:primaryType: hippotaxonomy:categoryinfo
+                    hippotaxonomy:name: Task Level 2
+        /Taxxa[3]:
+          jcr:primaryType: hippotaxonomy:taxonomy
+          jcr:mixinTypes: ['hippostd:publishableSummary', 'mix:referenceable']
+          hippo:availability: [live]
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2020-02-20T12:40:23.210+01:00
+          hippostdpubwf:lastModificationDate: 2020-02-20T12:40:36.461+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2020-02-20T12:40:40.546+01:00
+          hippotaxonomy:locales: [en]
+          /stats:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: stats
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Stats
+          /tasks:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: tasks
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Tasks
+            /tasklevel1:
+              jcr:primaryType: hippotaxonomy:category
+              hippotaxonomy:key: tasklevel1
+              /hippotaxonomy:categoryinfos:
+                jcr:primaryType: hippotaxonomy:categoryinfos
+                /en:
+                  jcr:primaryType: hippotaxonomy:categoryinfo
+                  hippotaxonomy:name: Task Level 1
+              /tasklevel2:
+                jcr:primaryType: hippotaxonomy:category
+                hippotaxonomy:key: tasklevel2
+                /hippotaxonomy:categoryinfos:
+                  jcr:primaryType: hippotaxonomy:categoryinfos
+                  /en:
+                    jcr:primaryType: hippotaxonomy:categoryinfo
+                    hippotaxonomy:name: Task Level 2
+      /Taxxa2:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:versionInfo', 'mix:referenceable']
+        hippo:versionHistory: ab5d16ad-a652-438e-9cae-9a2424f1fe6d
+        /Taxxa2[1]:
+          jcr:primaryType: hippotaxonomy:taxonomy
+          jcr:mixinTypes: ['hippostd:publishableSummary', 'mix:referenceable']
+          hippo:availability: []
+          hippostd:state: draft
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2020-02-20T12:40:23.210+01:00
+          hippostdpubwf:lastModificationDate: 2020-02-20T12:40:23.210+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippotaxonomy:locales: [en]
+          /stats2:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: stats2
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Stats2
+          /tasks2:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: tasks2
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Tasks2
+        /Taxxa2[2]:
+          jcr:primaryType: hippotaxonomy:taxonomy
+          jcr:mixinTypes: ['hippostd:publishableSummary', 'mix:referenceable', 'mix:versionable']
+          hippo:availability: [preview]
+          hippostd:state: unpublished
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2020-02-20T12:40:23.210+01:00
+          hippostdpubwf:lastModificationDate: 2020-02-20T12:40:36.461+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippotaxonomy:locales: [en]
+          /stats2:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: stats2
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Stats2
+          /tasks2:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: tasks2
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Tasks2
+        /Taxxa2[3]:
+          jcr:primaryType: hippotaxonomy:taxonomy
+          jcr:mixinTypes: ['hippostd:publishableSummary', 'mix:referenceable']
+          hippo:availability: [live]
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2020-02-20T12:40:23.210+01:00
+          hippostdpubwf:lastModificationDate: 2020-02-20T12:40:36.461+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2020-02-20T12:40:40.546+01:00
+          hippotaxonomy:locales: [en]
+          /stats2:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: stats2
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Stats2
+          /tasks2:
+            jcr:primaryType: hippotaxonomy:category
+            hippotaxonomy:key: tasks2
+            /hippotaxonomy:categoryinfos:
+              jcr:primaryType: hippotaxonomy:categoryinfos
+              /en:
+                jcr:primaryType: hippotaxonomy:categoryinfo
+                hippotaxonomy:name: Tasks2
+      
