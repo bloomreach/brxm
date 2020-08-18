@@ -1,6 +1,70 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`VersionsInfoComponent restoring a version should not show restore button for first version in the list 1`] = `
+exports[`VersionsInfoComponent create version should not show version button for other versions when selected 1`] = `
+<div
+  id="root9"
+>
+  <div
+    class="mat-typography"
+  >
+    
+    <mat-selection-list
+      aria-disabled="false"
+      aria-multiselectable="true"
+      class="qa-version-list mat-selection-list mat-list-base"
+      role="listbox"
+      tabindex="-1"
+    >
+      <h3
+        class="qa-version-list-header mat-subheader"
+        matsubheader=""
+      >
+         NO_VERSIONS_AVAILABLE 
+      </h3>
+      <mat-divider
+        aria-orientation="horizontal"
+        class="mat-divider mat-divider-horizontal"
+        role="separator"
+      />
+    </mat-selection-list>
+    
+  </div>
+</div>
+`;
+
+exports[`VersionsInfoComponent create version should show version button for first version when selected 1`] = `
+<div
+  id="root8"
+>
+  <div
+    class="mat-typography"
+  >
+    
+    <mat-selection-list
+      aria-disabled="false"
+      aria-multiselectable="true"
+      class="qa-version-list mat-selection-list mat-list-base"
+      role="listbox"
+      tabindex="-1"
+    >
+      <h3
+        class="qa-version-list-header mat-subheader"
+        matsubheader=""
+      >
+         NO_VERSIONS_AVAILABLE 
+      </h3>
+      <mat-divider
+        aria-orientation="horizontal"
+        class="mat-divider mat-divider-horizontal"
+        role="separator"
+      />
+    </mat-selection-list>
+    
+  </div>
+</div>
+`;
+
+exports[`VersionsInfoComponent restoring a version should not show restore button for first version when selected 1`] = `
 <div
   id="root6"
 >
@@ -59,7 +123,19 @@ exports[`VersionsInfoComponent restoring a version should not show restore butto
             >
                testUserName 
             </p>
-            
+            <div
+              class="version-actions mat-line"
+              matline=""
+            >
+              
+              <button
+                class="qa-new-version-action"
+                mat-stroked-button=""
+              >
+                 VERSION 
+              </button>
+              
+            </div>
             <mat-divider
               aria-orientation="horizontal"
               class="mat-divider mat-divider-horizontal"
@@ -98,7 +174,13 @@ exports[`VersionsInfoComponent restoring a version should not show restore butto
             >
                testUserName2 
             </p>
-            
+            <div
+              class="version-actions mat-line"
+              matline=""
+            >
+              
+              
+            </div>
             <mat-divider
               aria-orientation="horizontal"
               class="mat-divider mat-divider-horizontal"
@@ -112,7 +194,7 @@ exports[`VersionsInfoComponent restoring a version should not show restore butto
 </div>
 `;
 
-exports[`VersionsInfoComponent restoring a version should show restore button for selected version 1`] = `
+exports[`VersionsInfoComponent restoring a version should show restore button for other versions when selected 1`] = `
 <div
   id="root5"
 >
@@ -171,7 +253,13 @@ exports[`VersionsInfoComponent restoring a version should show restore button fo
             >
                testUserName 
             </p>
-            
+            <div
+              class="version-actions mat-line"
+              matline=""
+            >
+              
+              
+            </div>
             <mat-divider
               aria-orientation="horizontal"
               class="mat-divider mat-divider-horizontal"
@@ -183,7 +271,7 @@ exports[`VersionsInfoComponent restoring a version should show restore button fo
       <mat-list-option
         aria-disabled="false"
         aria-selected="true"
-        class="qa-version-testVariantId mat-primary mat-3-line mat-list-single-selected-option"
+        class="qa-version-testVariantId mat-primary mat-list-single-selected-option"
         role="option"
         tabindex="-1"
       >
@@ -210,11 +298,12 @@ exports[`VersionsInfoComponent restoring a version should show restore button fo
             >
                testUserName2 
             </p>
-            
             <div
               class="version-actions mat-line"
               matline=""
             >
+              
+              
               <button
                 class="qa-restore-version-action"
                 mat-stroked-button=""
@@ -286,7 +375,13 @@ exports[`VersionsInfoComponent selecting version should show the selected versio
         >
            testUserName 
         </p>
-        
+        <div
+          class="version-actions mat-line"
+          matline=""
+        >
+          
+          
+        </div>
         <mat-divider
           aria-orientation="horizontal"
           class="mat-divider mat-divider-horizontal"
@@ -298,7 +393,7 @@ exports[`VersionsInfoComponent selecting version should show the selected versio
   <mat-list-option
     aria-disabled="false"
     aria-selected="true"
-    class="qa-version-testVariantId mat-primary mat-3-line mat-list-single-selected-option"
+    class="qa-version-testVariantId mat-primary mat-list-single-selected-option"
     role="option"
     tabindex="-1"
   >
@@ -325,11 +420,12 @@ exports[`VersionsInfoComponent selecting version should show the selected versio
         >
            testUserName2 
         </p>
-        
         <div
           class="version-actions mat-line"
           matline=""
         >
+          
+          
           <button
             class="qa-restore-version-action"
             mat-stroked-button=""
@@ -439,7 +535,19 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
             >
                testUserName 
             </p>
-            
+            <div
+              class="version-actions mat-line"
+              matline=""
+            >
+              
+              <button
+                class="qa-new-version-action"
+                mat-stroked-button=""
+              >
+                 VERSION 
+              </button>
+              
+            </div>
             <mat-divider
               aria-orientation="horizontal"
               class="mat-divider mat-divider-horizontal"
@@ -478,7 +586,13 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
             >
                testUserName2 
             </p>
-            
+            <div
+              class="version-actions mat-line"
+              matline=""
+            >
+              
+              
+            </div>
             <mat-divider
               aria-orientation="horizontal"
               class="mat-divider mat-divider-horizontal"

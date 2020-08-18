@@ -50,9 +50,16 @@
       </p>
 
       <div matLine
-           class="version-actions"
-           *ngIf="unpublishedVariantId === version.jcrUUID && i > 0">
-        <button mat-stroked-button
+           class="version-actions">
+        <button *ngIf="unpublishedVariantId === version.jcrUUID && i === 0"
+                mat-stroked-button
+                class="qa-new-version-action"
+                (click)="createVersion()">
+          {{ 'VERSION' | translate }}
+        </button>
+
+        <button *ngIf="unpublishedVariantId === version.jcrUUID && i > 0"
+                mat-stroked-button
                 class="qa-restore-version-action"
                 (click)="restoreVersion(version.jcrUUID)">
           {{ 'RESTORE' | translate }}
