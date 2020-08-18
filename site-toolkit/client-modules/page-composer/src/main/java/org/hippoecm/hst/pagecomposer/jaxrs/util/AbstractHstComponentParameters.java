@@ -28,7 +28,6 @@ import javax.jcr.Value;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.slf4j.Logger;
@@ -43,12 +42,12 @@ public abstract class AbstractHstComponentParameters {
     private static final Logger log = LoggerFactory.getLogger(AbstractHstComponentParameters.class);
 
     protected final Node node;
-    protected final ContainerItemHelper containerItemHelper;
+    // containerItemHelper can be null
+    protected ContainerItemHelper containerItemHelper;
     private final Map<String, Map<String, String>> prefixedParameters;
 
-    public AbstractHstComponentParameters(final Node node, final ContainerItemHelper containerItemHelper) throws RepositoryException {
+    public AbstractHstComponentParameters(final Node node) throws RepositoryException {
         this.node = node;
-        this.containerItemHelper = containerItemHelper;
         prefixedParameters = new HashMap<>();
         initialize();
     }

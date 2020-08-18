@@ -220,7 +220,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
             Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession);
 
-            final XPageComponentParameters componentParameters = new XPageComponentParameters(containerItem, containerItemHelper);
+            final XPageComponentParameters componentParameters = new XPageComponentParameters(containerItem);
             componentParameters.removePrefix(oldVariantId);
             componentParameters.removePrefix(newVariantId);
             setParameters(componentParameters, newVariantId, params);
@@ -245,7 +245,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
 
 
     private XPageComponentParameters getCurrentHstComponentParameters(final Node containerItem) throws RepositoryException {
-        return new XPageComponentParameters(containerItem, containerItemHelper);
+        return new XPageComponentParameters(containerItem);
     }
 
     /**
@@ -351,7 +351,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
         final Set<String> keepVariants = new HashSet<>();
         keepVariants.addAll(variants);
 
-        final XPageComponentParameters componentParameters = new XPageComponentParameters(containerItem, containerItemHelper);
+        final XPageComponentParameters componentParameters = new XPageComponentParameters(containerItem);
         final Set<String> removed = new HashSet<>();
 
         for (String variant : componentParameters.getPrefixes()) {
