@@ -240,6 +240,7 @@
   "SUBPAGE_CHANGEMANAGEMENT_TITLE_PROJECT": "Manage changes to channel '{{ channelName }} - {{ projectName }}'",
   "PICKER_EMPTY_TREE": "No documents are available",
   "LEFT_SIDE_PANEL_TAB_SITEMAP": "Sitemap",
+  "VERSION": "Version",
   "ERROR_PAGE_MODEL_RETRIEVAL_FAILED": "Failed to retrieve list of available templates",
   "ERROR_DOCUMENT_LOCATION_NOT_ALLOWED": "Selected folder {{path}} is not allowed, please select folder {{root}} or any of it's sub-folders",
   "ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED": "Cannot update component: the container is locked by '{{lockedBy}}'",
