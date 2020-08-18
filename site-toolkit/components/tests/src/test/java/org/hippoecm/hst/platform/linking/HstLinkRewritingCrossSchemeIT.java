@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -259,7 +260,9 @@ public class HstLinkRewritingCrossSchemeIT extends AbstractHstLinkRewritingIT {
                 }
                 jcrNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME, "https");
             }
+            String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             session.save();
+            invalidator.eventPaths(pathsToBeChanged);
         } finally {
             if (session != null) {
                 session.logout();
@@ -281,7 +284,9 @@ public class HstLinkRewritingCrossSchemeIT extends AbstractHstLinkRewritingIT {
                     jcrNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME, siteMapItemReference.originalScheme);
                 }
             }
+            String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             session.save();
+            invalidator.eventPaths(pathsToBeChanged);
         } finally {
             if (session != null) {
                 session.logout();
