@@ -18,6 +18,9 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
 public enum HstState {
 
+    CHANNEL_XPAGE_LAYOUTS("xPageLayouts", HstCategory.CHANNEL),
+    CHANNEL_XPAGE_TEMPLATE_QUERIES("xPageTemplateQueries", HstCategory.CHANNEL),
+
     XPAGE_BRANCH_ID("branchId", HstCategory.XPAGE),
     XPAGE_ID("id", HstCategory.XPAGE),
     XPAGE_LOCKED_BY("lockedBy", HstCategory.XPAGE),
