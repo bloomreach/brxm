@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ class CreateContentService {
     EditContentService,
     FeedbackService,
     HippoIframeService,
+    HstService,
+    PageStructureService,
     ProjectService,
     RightSidePanelService,
     Step1Service,
@@ -40,6 +42,8 @@ class CreateContentService {
     this.EditContentService = EditContentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.HstService = HstService;
+    this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
     this.Step1Service = Step1Service;
@@ -86,8 +90,22 @@ class CreateContentService {
     });
   }
 
-  finish(documentId) {
-    this.HippoIframeService.reload();
+  async finish(documentId) {
+    try {
+      const { data: { renderPathInfo, experiencePage } } = await this.HstService.doGet(documentId, 'representation');
+      const pageMeta = this.PageStructureService
+        .getPage()
+        .getMeta();
+
+      if (experiencePage && pageMeta.getPathInfo() !== renderPathInfo) {
+        this.HippoIframeService.load(renderPathInfo);
+      } else {
+        this.HippoIframeService.reload();
+      }
+    } catch (ignore) {
+      this.HippoIframeService.reload();
+    }
+
     this.EditContentService.startEditing(documentId);
   }
 
@@ -126,11 +144,13 @@ class CreateContentService {
 
     this._showStep1Title();
     this.RightSidePanelService.startLoading();
+
     return this.Step1Service.open(
       config.documentTemplateQuery,
       config.folderTemplateQuery,
       config.rootPath,
       config.defaultPath,
+      config.layouts,
     ).then(() => {
       this.RightSidePanelService.stopLoading();
     });

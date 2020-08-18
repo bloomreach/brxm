@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ describe('CreateContentService', () => {
   let EditContentService;
   let FeedbackService;
   let HippoIframeService;
+  let HstService;
+  let PageStructureService;
   let RightSidePanelService;
   let Step1Service;
   let Step2Service;
@@ -54,6 +56,8 @@ describe('CreateContentService', () => {
       _EditContentService_,
       _FeedbackService_,
       _HippoIframeService_,
+      _HstService_,
+      _PageStructureService_,
       _Step1Service_,
       _Step2Service_,
     ) => {
@@ -66,6 +70,8 @@ describe('CreateContentService', () => {
       EditContentService = _EditContentService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
+      HstService = _HstService_;
+      PageStructureService = _PageStructureService_;
       Step1Service = _Step1Service_;
       Step2Service = _Step2Service_;
     });
@@ -102,7 +108,7 @@ describe('CreateContentService', () => {
     expect(RightSidePanelService.clearContext).toHaveBeenCalled();
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('CREATE_CONTENT');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
-    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined, undefined);
+    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined, undefined, undefined);
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
     expect(CreateContentService.componentInfo).toEqual({});
   });
@@ -127,7 +133,7 @@ describe('CreateContentService', () => {
     expect(RightSidePanelService.clearContext).toHaveBeenCalled();
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('CREATE_CONTENT');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
-    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', 'fldr-tpl-query', undefined, undefined);
+    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', 'fldr-tpl-query', undefined, undefined, undefined);
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
     expect(CreateContentService.componentInfo).toEqual({
       id: '1234',
@@ -175,15 +181,54 @@ describe('CreateContentService', () => {
   });
 
   describe('finish', () => {
-    it('reloads the iframe', () => {
-      spyOn(HippoIframeService, 'reload');
+    let representation;
+
+    beforeEach(() => {
+      representation = {
+        experiencePage: false,
+        renderPathInfo: 'new-render-path',
+      };
+      spyOn(HstService, 'doGet').and.returnValue($q.resolve({ data: representation }));
+    });
+
+    it('request a SiteMapPageRepresentation', () => {
       CreateContentService.finish('document-id');
+      $rootScope.$digest();
+
+      expect(HstService.doGet).toHaveBeenCalledWith('document-id', 'representation');
+    });
+
+    it('reloads the iframe for documents', () => {
+      spyOn(HippoIframeService, 'reload');
+
+      CreateContentService.finish('document-id');
+      $rootScope.$digest();
+
       expect(HippoIframeService.reload).toHaveBeenCalled();
+    });
+
+    it('should load the renderPath of a new XPage document', () => {
+      spyOn(HippoIframeService, 'load');
+      representation.experiencePage = true;
+
+      const page = jasmine.createSpyObj('page', ['getMeta']);
+      const pageMeta = jasmine.createSpyObj('pageMeta', ['getPathInfo']);
+      spyOn(PageStructureService, 'getPage').and.returnValue(page);
+      page.getMeta.and.returnValue(pageMeta);
+      pageMeta.getPathInfo.and.returnValue('old-render-path');
+
+      CreateContentService.finish('document-id');
+      $rootScope.$digest();
+
+      expect(HippoIframeService.load).toHaveBeenCalled();
     });
 
     it('switches to edit-content', () => {
       spyOn(EditContentService, 'startEditing');
+
       CreateContentService.finish('document-id');
+      $rootScope.$digest();
+
       expect(EditContentService.startEditing).toHaveBeenCalledWith('document-id');
     });
   });
