@@ -42,4 +42,8 @@ $theme: mat-light-theme((
   color: map-get($text-color, dark);
 }
 
+.mat-stroked-button:not(.mat-button-disabled) {
+  border-color: map-get($blue, 500);
+}
+
 @import 'mdi-styles-fix';
