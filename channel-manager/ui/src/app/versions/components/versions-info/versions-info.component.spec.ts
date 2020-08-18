@@ -37,16 +37,17 @@ describe('VersionsInfoComponent', () => {
   const date = Date.parse('11/08/2020 16:03');
   const path = '/some/test/path';
   const renderPath = `${path}?withParam=test`;
-  const selectedVersionUUID = 'testVariantId';
+  const firstVersionUUID = 'testId';
+  const secondVersionUUID = 'testVariantId';
   const mockVersionsInfo = {
     versions: [
       {
-        jcrUUID: 'testId',
+        jcrUUID: firstVersionUUID,
         userName: 'testUserName',
         timestamp: date,
       },
       {
-        jcrUUID: selectedVersionUUID,
+        jcrUUID: secondVersionUUID,
         userName: 'testUserName2',
         timestamp: date,
       },
@@ -125,29 +126,29 @@ describe('VersionsInfoComponent', () => {
     it('should add the version param to the url and load that url', () => {
       jest.spyOn(iframeService, 'load');
 
-      const versionItem = componentEl.querySelector<HTMLElement>(`.qa-version-${selectedVersionUUID}`);
+      const versionItem = componentEl.querySelector<HTMLElement>(`.qa-version-${secondVersionUUID}`);
       versionItem?.click();
 
-      expect(iframeService.load).toHaveBeenCalledWith(`${path}?br_version_uuid=${selectedVersionUUID}`);
+      expect(iframeService.load).toHaveBeenCalledWith(`${path}?br_version_uuid=${secondVersionUUID}`);
     });
 
     it('should append the version param to the url if params are already present and load that url', () => {
       jest.spyOn(iframeService, 'load');
       jest.spyOn(channelService, 'makeRenderPath').mockReturnValueOnce(renderPath);
 
-      const versionItem = componentEl.querySelector<HTMLElement>(`.qa-version-${selectedVersionUUID}`);
+      const versionItem = componentEl.querySelector<HTMLElement>(`.qa-version-${secondVersionUUID}`);
       versionItem?.click();
 
-      expect(iframeService.load).toHaveBeenCalledWith(`${renderPath}&br_version_uuid=${selectedVersionUUID}`);
+      expect(iframeService.load).toHaveBeenCalledWith(`${renderPath}&br_version_uuid=${secondVersionUUID}`);
     });
 
     it('should show the selected version', () => {
       jest.spyOn(iframeService, 'load').mockImplementationOnce(() => {
-        component.unpublishedVariantId = selectedVersionUUID;
+        component.unpublishedVariantId = secondVersionUUID;
         return Promise.resolve();
       });
 
-      const versionItem = componentEl.querySelector<HTMLElement>(`.qa-version-${selectedVersionUUID}`);
+      const versionItem = componentEl.querySelector<HTMLElement>(`.qa-version-${secondVersionUUID}`);
       versionItem?.click();
       fixture.detectChanges();
 
@@ -163,27 +164,25 @@ describe('VersionsInfoComponent', () => {
       fixture.detectChanges();
     }));
 
-    it('should show restore button for selected version', async () => {
+    it('should show restore button for other versions when selected', async () => {
       jest.spyOn(iframeService, 'load').mockImplementationOnce(() => {
-        component.unpublishedVariantId = selectedVersionUUID;
+        component.unpublishedVariantId = secondVersionUUID;
         return Promise.resolve();
       });
 
-      await component.selectVersion(selectedVersionUUID);
+      await component.selectVersion(secondVersionUUID);
       fixture.detectChanges();
 
       expect(componentEl).toMatchSnapshot();
     });
 
-    it('should not show restore button for first version in the list', async () => {
-      const firstVersionId = mockVersionsInfo.versions[0].jcrUUID;
-
+    it('should not show restore button for first version when selected', async () => {
       jest.spyOn(iframeService, 'load').mockImplementationOnce(() => {
-        component.unpublishedVariantId =  firstVersionId;
+        component.unpublishedVariantId =  firstVersionUUID;
         return Promise.resolve();
       });
 
-      await component.selectVersion(firstVersionId);
+      await component.selectVersion(firstVersionUUID);
       fixture.detectChanges();
 
       expect(componentEl).toMatchSnapshot();
@@ -191,17 +190,55 @@ describe('VersionsInfoComponent', () => {
 
     it('should call to restore', async () => {
       jest.spyOn(iframeService, 'load').mockImplementationOnce(() => {
-        component.unpublishedVariantId = selectedVersionUUID;
+        component.unpublishedVariantId = secondVersionUUID;
         return Promise.resolve();
       });
 
-      await component.selectVersion(selectedVersionUUID);
+      await component.selectVersion(secondVersionUUID);
       fixture.detectChanges();
 
       const restoreButton = componentEl.querySelector<HTMLButtonElement>('.qa-restore-version-action');
       restoreButton?.click();
 
-      expect(workflowService.createWorkflowAction).toHaveBeenCalledWith(component.documentId, 'restore', selectedVersionUUID);
+      expect(workflowService.createWorkflowAction).toHaveBeenCalledWith(component.documentId, 'restore', secondVersionUUID);
     });
+  });
+
+  describe('create version', () => {
+    it('should show version button for first version when selected', async () => {
+      jest.spyOn(iframeService, 'load').mockImplementationOnce(() => {
+        component.unpublishedVariantId = firstVersionUUID;
+        return Promise.resolve();
+      });
+
+      await component.selectVersion(firstVersionUUID);
+      fixture.detectChanges();
+
+      expect(componentEl).toMatchSnapshot();
+    });
+
+    it('should not show version button for other versions when selected', async () => {
+      jest.spyOn(iframeService, 'load').mockImplementationOnce(() => {
+        component.unpublishedVariantId = secondVersionUUID;
+        return Promise.resolve();
+      });
+
+      await component.selectVersion(secondVersionUUID);
+      fixture.detectChanges();
+
+      expect(componentEl).toMatchSnapshot();
+    });
+
+    it('should call to create version', fakeAsync(() => {
+      component.ngOnInit();
+      tick();
+      fixture.detectChanges();
+
+      const newVersionButton = componentEl.querySelector<HTMLButtonElement>(`.qa-new-version-action`);
+      newVersionButton?.click();
+      fixture.detectChanges();
+
+      expect(workflowService.createWorkflowAction).toHaveBeenCalledWith(component.documentId, 'version');
+    }));
   });
 });
