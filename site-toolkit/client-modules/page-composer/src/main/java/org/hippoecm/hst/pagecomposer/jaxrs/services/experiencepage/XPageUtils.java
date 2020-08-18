@@ -173,6 +173,12 @@ public class XPageUtils {
 
 
     static void validateTimestamp(final long versionStamp, final Node container) throws RepositoryException {
+        if (true) {
+            // temporarily ignore validating timestamp for xpages since IF a 'hst:lastmodified' ends up on the
+            // container in an xpage, this timestamp is not taking into the HST Model timestamp (since container from
+            // XPageLayout is used!! and then this validation always fails
+            return;
+        }
         if (versionStamp != 0 && container.hasProperty(GENERAL_PROPERTY_LAST_MODIFIED)) {
             long existingStamp = container.getProperty(GENERAL_PROPERTY_LAST_MODIFIED).getLong();
             if (existingStamp != versionStamp) {
