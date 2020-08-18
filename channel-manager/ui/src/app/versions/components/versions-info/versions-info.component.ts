@@ -62,6 +62,11 @@ export class VersionsInfoComponent implements OnInit {
     await this.iframeService.load(newPath);
   }
 
+  async createVersion(): Promise<void> {
+    await this.workflowService.createWorkflowAction(this.documentId, 'version');
+    await this.getVersionsInfo();
+  }
+
   async restoreVersion(versionUUID: string): Promise<void> {
     await this.workflowService.createWorkflowAction(this.documentId, 'restore', versionUUID);
     const currentPath = this.iframeService.getCurrentRenderPathInfo();
