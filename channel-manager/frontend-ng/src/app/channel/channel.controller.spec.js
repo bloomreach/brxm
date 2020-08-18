@@ -20,12 +20,14 @@ import 'angular-mocks';
 describe('ChannelController', () => {
   let $ctrl;
   let $q;
+  let $state;
   let $timeout;
   let $window;
   let ChannelService;
   let ComponentsService;
   let FeedbackService;
   let HippoIframeService;
+  let PageService;
   let PageStructureService;
   let SidePanelService;
 
@@ -35,19 +37,23 @@ describe('ChannelController', () => {
     inject((
       $componentController,
       _$q_,
+      _$state_,
       _$timeout_,
       _$window_,
       _ChannelService_,
       _CmsService_,
       _FeedbackService_,
+      _PageService_,
     ) => {
       const resolvedPromise = _$q_.when();
 
       $q = _$q_;
+      $state = _$state_;
       $timeout = _$timeout_;
       $window = _$window_;
       ChannelService = _ChannelService_;
       FeedbackService = _FeedbackService_;
+      PageService = _PageService_;
 
       spyOn(ChannelService, 'clearChannel');
       spyOn(ChannelService, 'hasChannel');
@@ -218,6 +224,65 @@ describe('ChannelController', () => {
       $window.CMS_TO_APP.publish('reload-page', { error: '' });
       expect(FeedbackService.showError).not.toHaveBeenCalled();
       expect(HippoIframeService.reload).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('add new XPage', () => {
+    beforeEach(() => {
+      PageService.states = {
+        channel: {
+          xPageLayouts: {
+            layout1: 'Layout 1',
+            layout2: 'Layout 2',
+          },
+          xPageTemplateQueries: {
+            query1: 'query1-path',
+            query2: 'query2-path',
+          },
+        },
+      };
+    });
+
+    describe('canAddXPage', () => {
+      it('should return true', () => {
+        expect($ctrl.canAddXPage()).toBe(true);
+      });
+
+      it('should return false', () => {
+        delete PageService.states;
+        expect($ctrl.canAddXPage()).toBe(false);
+
+        PageService.states = { channel: {} };
+        expect($ctrl.canAddXPage()).toBe(false);
+
+        PageService.states.channel.xPageLayouts = {};
+        expect($ctrl.canAddXPage()).toBe(false);
+
+        PageService.states.channel.xPageLayouts = { layout1: 'Layout 1' };
+        expect($ctrl.canAddXPage()).toBe(false);
+
+        PageService.states.channel.xPageTemplateQueries = {};
+        expect($ctrl.canAddXPage()).toBe(false);
+      });
+    });
+
+    describe('add', () => {
+      it('should go to the "create-content" state', () => {
+        spyOn($state, 'go');
+
+        $ctrl.add();
+
+        expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.create-content-step-1', {
+          config: {
+            layouts: [
+              { id: 'layout1', displayName: 'Layout 1' },
+              { id: 'layout2', displayName: 'Layout 2' },
+            ],
+            documentTemplateQuery: 'query1',
+            rootPath: 'query1-path',
+          },
+        });
+      });
     });
   });
 });
