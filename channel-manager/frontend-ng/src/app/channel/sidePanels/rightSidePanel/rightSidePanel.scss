@@ -57,20 +57,25 @@ right-side-panel {
 .right-side-panel {
   mat-toolbar,
   md-toolbar {
-    background: $grey-50;
+    background: map-get($grey, '50');
     box-sizing: border-box;
     color: $text-dark;
 
     &:first-child {
-      border-bottom: 1px solid $grey-200;
+      border-bottom: 1px solid map-get($grey, '200');
     }
 
     &:last-child {
-      border-top: 1px solid $grey-200;
+      border-top: 1px solid map-get($grey, '200');
     }
 
     md-icon {
       color: $text-dim;
+    }
+
+    md-icon[md-svg-icon] {
+      color: map-get($grey, '900');
+      opacity: .87;
     }
 
     .md-button {
@@ -97,6 +102,6 @@ right-side-panel {
   }
 
   .md-subheader a {
-    color: $blue-600;
+    color: map-get($blue, '600');
   }
 }

@@ -251,6 +251,9 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      *
      * @return the List of all unique variants for this  {@link org.hippoecm.hst.configuration.hosting.Mount}. If no
      * variants are present, an empty list is returned.
+     *
+     * For XPage document based {@link HstComponentConfiguration} instances, this returns all the 'mount variants' PLUS
+     * possibly the variants for the XPage Document container items if they are present
      */
     List<String> getMountVariants();
 
