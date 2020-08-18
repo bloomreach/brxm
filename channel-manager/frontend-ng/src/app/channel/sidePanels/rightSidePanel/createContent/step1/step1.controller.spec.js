@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,8 @@ describe('Create content step 1 controller', () => {
     Step1Service.rootPath = 'test-rootPath';
     Step1Service.url = 'test-url';
     Step1Service.locale = 'test-locale';
+    Step1Service.layouts = ['test-layout'];
+    Step1Service.layout = 'test-layout';
 
     expect($ctrl.defaultPath).toBe('test-defaultPath');
     expect($ctrl.documentType).toBe('test-documentType');
@@ -60,6 +62,8 @@ describe('Create content step 1 controller', () => {
     expect($ctrl.name).toBe('test-name');
     expect($ctrl.rootPath).toBe('test-rootPath');
     expect($ctrl.url).toBe('test-url');
+    expect($ctrl.layouts).toEqual(['test-layout']);
+    expect($ctrl.layout).toBe('test-layout');
   });
 
   it('sets values on the service', () => {
@@ -69,12 +73,14 @@ describe('Create content step 1 controller', () => {
     $ctrl.name = 'test-name';
     $ctrl.url = 'test-url';
     $ctrl.rootPath = 'test-rootPath';
+    $ctrl.layout = 'test-layout';
 
     expect(Step1Service.defaultPath).toBe('test-defaultPath');
     expect(Step1Service.documentType).toBe('test-documentType');
     expect(Step1Service.name).toBe('test-name');
     expect(Step1Service.url).toBe('test-url');
     expect(Step1Service.rootPath).toBe('test-rootPath');
+    expect(Step1Service.layout).toBe('test-layout');
   });
 
   it('gets an editable document and passes it on to the next step together with url and locale', () => {

@@ -41,6 +41,21 @@
       </md-select>
     </md-input-container>
 
+    <!-- XPage Layout field-->
+    <md-input-container class="create-content-field qa-layout-field" ng-if="$ctrl.layouts.length > 0">
+      <label>{{ ::'PLACEHOLDER_LAYOUT' | translate }}</label>
+      <md-select ng-model="$ctrl.layout"
+                 name="layout"
+                 required
+                 ng-disabled="$ctrl.layouts.length === 1"
+                 class="input-layout create-content-field qa-layout-select"
+                 ng-class="{ 'hide-select-arrow': $ctrl.layouts.length === 1 }">
+        <md-option ng-repeat="layout in $ctrl.layouts"
+                   value="{{ layout.id }}">{{ layout.displayName }}
+        </md-option>
+      </md-select>
+    </md-input-container>
+
     <!-- Document location field -->
     <document-location-field root-path="$ctrl.rootPath"
                              default-path="$ctrl.defaultPath"
