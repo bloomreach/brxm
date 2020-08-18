@@ -15,6 +15,15 @@
  */
 
 export const palettes = {
+  textColor: {
+    dark: 'rgba(black, .87)',
+    light: 'rgba(white, .87)',
+    dim: 'rgba(black, .6)',
+    disabled: 'rgba(black, .38)',
+  },
+  functionalColors: {
+    green: '#3DCC3D'
+  },
   blue: {
     '50': '#e7f1f9',
     '100': '#a6ccea',
@@ -78,14 +87,5 @@ export const palettes = {
     'A200': '#e8e8ea',
     'A400': '#bcbcbc',
     'A700': '#494a4b',
-  },
-  functionalColors: {
-    green: '#3DCC3D'
-  },
-  textColor: {
-    dark: 'rgba(black, .87)',
-    light: 'rgba(white, .87)',
-    dim: 'rgba(black, .6)',
-    disabled: 'rgba(black, .38)',
   },
 };

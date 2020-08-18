@@ -15,6 +15,13 @@
  */
 
 .bloomreach-theme {
+  --text-color-dark: rgba(0, 0, 0, .87);
+  --text-color-light: rgba(255, 255, 255, .87);
+  --text-color-dim: rgba(0, 0, 0, .6);
+  --text-color-disabled: rgba(0, 0, 0, .38);
+
+  --functional-green: #3DCC3D;
+
   --blue-50: #E7F1F9;
   --blue-100: #A6CCEA;
   --blue-200: #79B6E6;
@@ -74,11 +81,4 @@
   --grey-A200: #E8E8EA;
   --grey-A400: #BCBCBC;
   --grey-A700: #494A4B;
-
-  --functional-green: #3DCC3D;
-
-  --text-color-dark: rgba(0, 0, 0, .87);
-  --text-color-light: rgba(255, 255, 255, .87);
-  --text-color-dim: rgba(0, 0, 0, .6);
-  --text-color-disabled: rgba(0, 0, 0, .38)
 }
