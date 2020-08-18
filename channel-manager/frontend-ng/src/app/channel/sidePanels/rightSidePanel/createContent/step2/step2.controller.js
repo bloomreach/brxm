@@ -76,7 +76,24 @@ class Step2Controller {
   }
 
   save() {
-    return this.performAction(() => this.ContentEditor.save(true));
+    const stopLoading = this.startLoading();
+
+    return this.ContentEditor.save(true)
+      .then(() => {
+        this.form.$setPristine();
+        this.documentIsSaved = true;
+        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
+        return this.ContentEditor.discardChanges()
+          .then(() => this.Step2Service.saveComponentParameter())
+          .then(() => {
+            this.CreateContentService.finish(this.ContentEditor.getDocumentId());
+          })
+          .finally(() => {
+            this.CmsService.reportUsageStatistic('CreateContent2Done');
+          });
+      })
+      .catch(() => this._focusFirstInvalidField())
+      .finally(stopLoading);
   }
 
   startLoading() {
@@ -160,18 +177,14 @@ class Step2Controller {
   }
 
   keepDraft() {
-    return this.performAction(() => this.ContentEditor.keepDraft());
-  }
-
-  performAction(actionPromise) {
     const stopLoading = this.startLoading();
 
-    return actionPromise()
+    return this.ContentEditor.keepDraft()
       .then(() => {
         this.form.$setPristine();
         this.documentIsSaved = true;
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
-        return this.ContentEditor.discardChanges()
+        return this.$q.resolve()
           .then(() => this.Step2Service.saveComponentParameter())
           .then(() => {
             this.CreateContentService.finish(this.ContentEditor.getDocumentId());
