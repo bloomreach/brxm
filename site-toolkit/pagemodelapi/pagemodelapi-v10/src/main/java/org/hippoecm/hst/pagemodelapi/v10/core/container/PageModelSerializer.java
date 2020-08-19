@@ -67,7 +67,6 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
     private static Logger log = LoggerFactory.getLogger(PageModelSerializer.class);
 
     private static final String PAGINATION_QUERY_PAGE_PARAM = "%s:page";
-    private static final String PAGINATION_QUERY_SIZE_PARAM = "%s:size";
     private static final String PAGINATION_QUERY_LIMIT_PARAM = "%s:limit";
 
     private static class SerializerContext {
@@ -334,7 +333,6 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
         private String addOrReplaceQueryParams(final String uri, final int pageNumber) {
             final UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(uri);
             uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_PAGE_PARAM, componentNamespace), pageNumber);
-            uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_SIZE_PARAM, componentNamespace), pagination.getSize());
             uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_LIMIT_PARAM, componentNamespace), pagination.getLimit());
             return uriBuilder.build().toUriString();
         }
