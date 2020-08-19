@@ -24,7 +24,7 @@ module.exports = {
     "default",
     ["jest-junit", {
       outputDirectory: './target/surefire-reports',
-      outputName: 'em-angular-unit-tests.xml'
+      outputName: 'TEST-em-angular-unit-tests.xml'
     }],
   ]
 };
