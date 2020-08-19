@@ -64,6 +64,61 @@ exports[`VersionsInfoComponent create version should show version button for fir
 </div>
 `;
 
+exports[`VersionsInfoComponent progress indicator should show when action is being performed that takes a while to complete 1`] = `
+<h3
+  class="qa-version-list-header mat-subheader"
+  matsubheader=""
+>
+   VERSIONS_LIST_HEADER 
+  
+  <mat-progress-bar
+    aria-valuemax="100"
+    aria-valuemin="0"
+    class="mat-progress-bar mat-primary"
+    mode="indeterminate"
+    role="progressbar"
+  >
+    <svg
+      class="mat-progress-bar-background mat-progress-bar-element"
+      focusable="false"
+      height="4"
+      width="100%"
+    >
+      <defs>
+        <pattern
+          height="4"
+          patternUnits="userSpaceOnUse"
+          width="8"
+          x="4"
+          y="0"
+        >
+          <circle
+            cx="2"
+            cy="2"
+            r="2"
+          />
+        </pattern>
+      </defs>
+      <rect
+        fill="url('/@angular-cli-builders#mat-progress-bar-1')"
+        height="100%"
+        width="100%"
+      />
+    </svg>
+    <div
+      class="mat-progress-bar-buffer mat-progress-bar-element"
+    />
+    <div
+      class="mat-progress-bar-primary mat-progress-bar-fill mat-progress-bar-element"
+      style="transform: scaleX(0);"
+    />
+    <div
+      class="mat-progress-bar-secondary mat-progress-bar-fill mat-progress-bar-element"
+    />
+  </mat-progress-bar>
+</h3>
+`;
+
 exports[`VersionsInfoComponent restoring a version should not show restore button for first version when selected 1`] = `
 <div
   id="root6"
@@ -86,6 +141,7 @@ exports[`VersionsInfoComponent restoring a version should not show restore butto
         matsubheader=""
       >
          VERSIONS_LIST_HEADER 
+        
       </h3>
       <mat-divider
         aria-orientation="horizontal"
@@ -232,6 +288,7 @@ exports[`VersionsInfoComponent restoring a version should show restore button fo
         matsubheader=""
       >
          VERSIONS_LIST_HEADER 
+        
       </h3>
       <mat-divider
         aria-orientation="horizontal"
@@ -355,6 +412,7 @@ exports[`VersionsInfoComponent selecting version should show the selected versio
     matsubheader=""
   >
      VERSIONS_LIST_HEADER 
+    
   </h3>
   <mat-divider
     aria-orientation="horizontal"
@@ -516,6 +574,7 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
         matsubheader=""
       >
          VERSIONS_LIST_HEADER 
+        
       </h3>
       <mat-divider
         aria-orientation="horizontal"
