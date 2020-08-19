@@ -763,3 +763,7 @@
 .channel-editor-mask-removing {
   animation: hideMask 400ms;
 }
+
+.channel-manager-workflow {
+  display: none;
+}

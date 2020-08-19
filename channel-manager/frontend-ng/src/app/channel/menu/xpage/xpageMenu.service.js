@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,15 @@ import MenuService from '../menu.service';
 
 class XPageMenuService extends MenuService {
   constructor(
-    $translate,
-    DialogService,
+    $log,
+    $state,
+    DocumentWorkflowService,
+    FeedbackService,
     PageService,
   ) {
     'ngInject';
 
     super();
-
-    this.$translate = $translate;
-    this.DialogService = DialogService;
 
     function isEnabled(action) {
       return PageService.isActionEnabled('xpage', action);
@@ -37,39 +36,77 @@ class XPageMenuService extends MenuService {
       return PageService.hasAction('xpage', action);
     }
 
+    function getDocumentId() {
+      return PageService.getState('xpage').id;
+    }
+
+    function showVersions() {
+      $state.go('hippo-cm.channel.edit-page', {
+        documentId: getDocumentId(),
+        showVersionsInfo: true,
+      });
+    }
+
+    this._getDocumentId = getDocumentId;
+
+    function getDocumentName() {
+      return PageService.getState('xpage').name;
+    }
+
     const menu = this.defineMenu('xpage', {
       isVisible: () => PageService.hasActions('xpage'),
       translationKey: 'TOOLBAR_BUTTON_XPAGE',
     });
 
-    menu
-      .addAction('new', {
-        isEnabled: () => isEnabled('new'),
-        isVisible: () => isVisible('new'),
-        onClick: () => this._showDialog('new'),
-        translationKey: 'TOOLBAR_MENU_XPAGE_NEW',
-      })
-      .addAction('move', {
-        isEnabled: () => isEnabled('move'),
-        isVisible: () => isVisible('move'),
-        onClick: () => this._showDialog('move'),
-        translationKey: 'TOOLBAR_MENU_XPAGE_MOVE',
-      })
-      .addAction('delete', {
-        isEnabled: () => isEnabled('delete'),
-        isVisible: () => isVisible('delete'),
-        onClick: () => this._showDialog('delete'),
-        translationKey: 'TOOLBAR_MENU_XPAGE_DELETE',
+    function failure(key, msg) {
+      try {
+        msg = JSON.parse(msg);
+      // eslint-disable-next-line no-empty
+      } catch (error) {}
+
+      if (msg && msg.cancelled === true) {
+        return;
+      }
+
+      $log.error(`Failed to execute workflow "${key}" on document[${getDocumentId()}]: ${msg}`);
+      FeedbackService.showError(`${key}_ERROR`, {
+        msg,
+        documentName: getDocumentName(),
       });
-  }
+    }
 
-  _showDialog(msg) {
-    const confirm = this.DialogService.confirm()
-      .textContent(msg)
-      .ok(this.$translate.instant('OK'))
-      .cancel(this.$translate.instant('CANCEL'));
+    function invokeWorkflow(onClick, translationKey) {
+      return () => onClick(getDocumentId())
+        .catch(msg => failure(translationKey, msg))
+        .finally(() => PageService.load());
+    }
 
-    return this.DialogService.show(confirm);
+    function addWorkflowAction(id, onClick, config = {}) {
+      const translationKey = `TOOLBAR_MENU_XPAGE_${id.replace(/-/g, '_').toUpperCase()}`;
+      menu.addAction(id, {
+        isEnabled: () => isEnabled(id),
+        isVisible: () => isVisible(id),
+        onClick: invokeWorkflow(onClick, translationKey),
+        translationKey,
+        ...config,
+      });
+    }
+
+    menu.addAction('versions', {
+      onClick: () => showVersions(),
+      translationKey: 'TOOLBAR_MENU_XPAGE_VERSIONS',
+    });
+    menu.addDivider();
+
+    addWorkflowAction('unpublish', id => DocumentWorkflowService.unpublish(id), { iconName: 'mdi-minus-circle' });
+    addWorkflowAction('schedule-unpublish', id => DocumentWorkflowService.scheduleUnpublication(id));
+    addWorkflowAction('request-unpublish', id => DocumentWorkflowService.requestUnpublication(id));
+    addWorkflowAction('request-schedule-unpublish', id => DocumentWorkflowService.requestScheduleUnpublication(id));
+
+    addWorkflowAction('publish', id => DocumentWorkflowService.publish(id), { iconName: 'mdi-check-circle' });
+    addWorkflowAction('schedule-publish', id => DocumentWorkflowService.schedulePublication(id));
+    addWorkflowAction('request-publish', id => DocumentWorkflowService.requestPublication(id));
+    addWorkflowAction('request-schedule-publish', id => DocumentWorkflowService.requestSchedulePublication(id));
   }
 }
 

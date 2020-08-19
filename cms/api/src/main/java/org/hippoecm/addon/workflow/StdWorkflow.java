@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -206,17 +206,20 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
 
     @Override
     protected void invoke() {
-        Dialog dialog = createRequestDialog();
+        final Dialog dialog = createRequestDialog();
         if (dialog != null) {
             pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(dialog);
         } else {
             Exception exception = null;
             try {
                 execute();
+                resolve(null);
             } catch (Exception ex) {
                 log.info("Workflow call failed", ex);
                 exception = ex;
+                reject(exception.getMessage());
             }
+
             if (exception != null && pluginContext != null) {
                 pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(
                         createResponseDialog(exception));
@@ -254,7 +257,13 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
 
     @Override
     public void invokeWorkflow() throws Exception {
-        execute();
+        try {
+            execute();
+            resolve(null);
+        } catch (final Exception e) {
+            reject(e.getMessage());
+            throw e;
+        }
     }
 
     @Override

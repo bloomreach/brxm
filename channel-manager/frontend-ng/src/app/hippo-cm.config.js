@@ -165,7 +165,8 @@ function config(
     .icon('switch-to-content-editor', `images/switch-to-content-editor.svg${antiCache}`)
     .icon('toggle-components-overlay', `images/toggle-components-overlay.svg${antiCache}`)
     .icon('toggle-editing-overlay', `images/toggle-editing-overlay.svg${antiCache}`)
-    .icon('un-maximize-sidepanel', `images/un-maximize-sidepanel.svg${antiCache}`);
+    .icon('un-maximize-sidepanel', `images/un-maximize-sidepanel.svg${antiCache}`)
+    .icon('xpage', `images/xpage.svg${antiCache}`);
 
   // only enable Angular debug information during development
   $compileProvider.debugInfoEnabled(isDevMode());

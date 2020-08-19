@@ -216,6 +216,18 @@ public class ContentResource {
         });
     }
 
+    @POST
+    @Path("workflows/documents/{documentId}/restore/{frozenNodeId}")
+    public Response restoreDocumentWorkflowAction(@PathParam("documentId") final String documentId,
+                                                  @PathParam("frozenNodeId") final String frozenNodeId,
+                                                  @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.NO_CONTENT, (userContext) -> {
+            workflowService.restoreDocumentWorkflowAction(documentId, frozenNodeId, userContext.getSession(),
+                    getBranchId(servletRequest));
+            return null;
+        });
+    }
+
     private Response executeTask(final HttpServletRequest servletRequest,
                                  final Status successStatus,
                                  final EndPointTask task) {
