@@ -31,6 +31,10 @@
     <h3 matSubheader
         class="qa-version-list-header">
       {{ 'VERSIONS_LIST_HEADER' | translate }}
+
+      <mat-progress-bar *ngIf="actionInProgress"
+                        mode="indeterminate">
+      </mat-progress-bar>
     </h3>
 
     <mat-divider></mat-divider>
@@ -62,6 +66,7 @@
         <button *ngIf="unpublishedVariantId === version.jcrUUID && isFirst"
                 mat-stroked-button
                 color="primary"
+                [disabled]="actionInProgress"
                 class="qa-new-version-action"
                 (click)="createVersion()">
           <mat-icon svgIcon="plus"></mat-icon>
@@ -71,6 +76,7 @@
         <button *ngIf="unpublishedVariantId === version.jcrUUID && !isFirst"
                 mat-stroked-button
                 color="primary"
+                [disabled]="actionInProgress"
                 class="qa-restore-version-action"
                 (click)="restoreVersion(version.jcrUUID)">
           {{ 'RESTORE' | translate }}
