@@ -39,6 +39,8 @@ export class VersionsInfoComponent implements OnInit {
 
   versionsInfo: VersionsInfo = { versions: [] };
 
+  actionInProgress = false;
+
   constructor(
     private readonly contentService: ContentService,
     private readonly iframeService: IframeService,
@@ -55,21 +57,27 @@ export class VersionsInfoComponent implements OnInit {
   }
 
   async getVersionsInfo(): Promise<void> {
+    this.actionInProgress = true;
     this.versionsInfo = await this.contentService.getDocumentVersionsInfo(this.documentId, this.branchId);
     this.changeDetector.markForCheck();
+    this.actionInProgress = false;
   }
 
   async selectVersion(versionUUID: string): Promise<void> {
+    this.actionInProgress = true;
     const newPath = this.createVersionPath(versionUUID);
     await this.iframeService.load(newPath);
+    this.actionInProgress = false;
   }
 
   async createVersion(): Promise<void> {
+    this.actionInProgress = true;
     await this.workflowService.createWorkflowAction(this.documentId, 'version');
     await this.getVersionsInfo();
   }
 
   async restoreVersion(versionUUID: string): Promise<void> {
+    this.actionInProgress = true;
     await this.workflowService.createWorkflowAction(this.documentId, 'restore', versionUUID);
     const currentPath = this.iframeService.getCurrentRenderPathInfo();
     const renderPath = this.channelService.makeRenderPath(currentPath);

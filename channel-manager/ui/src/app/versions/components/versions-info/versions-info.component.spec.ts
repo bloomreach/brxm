@@ -18,6 +18,7 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatListModule } from '@angular/material/list';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ChannelService } from '../../../channels/services/channel.service';
@@ -80,6 +81,7 @@ describe('VersionsInfoComponent', () => {
         MatListModule,
         MatIconModule,
         MatIconTestingModule,
+        MatProgressBarModule,
         TranslateModule.forRoot(),
       ],
       providers: [
@@ -243,6 +245,20 @@ describe('VersionsInfoComponent', () => {
       fixture.detectChanges();
 
       expect(workflowService.createWorkflowAction).toHaveBeenCalledWith(component.documentId, 'version');
+    }));
+  });
+
+  describe('progress indicator', () => {
+    it('should show when action is being performed that takes a while to complete', fakeAsync(() => {
+      component.ngOnInit();
+      tick();
+      fixture.detectChanges();
+
+      component.restoreVersion(secondVersionUUID);
+      fixture.detectChanges();
+
+      const header = componentEl.querySelector<HTMLElement>('.qa-version-list-header');
+      expect(header).toMatchSnapshot();
     }));
   });
 });
