@@ -35,7 +35,7 @@
 
     <mat-divider></mat-divider>
 
-    <mat-list-option *ngFor="let version of versionsInfo.versions; index as i"
+    <mat-list-option *ngFor="let version of versionsInfo.versions; first as isFirst"
                      [class]="'qa-version-' + version.jcrUUID"
                      [value]="version.jcrUUID"
                      [selected]="unpublishedVariantId === version.jcrUUID">
@@ -51,7 +51,7 @@
 
       <div matLine
            class="version-actions">
-        <button *ngIf="unpublishedVariantId === version.jcrUUID && i === 0"
+        <button *ngIf="unpublishedVariantId === version.jcrUUID && isFirst"
                 mat-stroked-button
                 color="primary"
                 class="qa-new-version-action"
@@ -60,7 +60,7 @@
           {{ 'VERSION' | translate }}
         </button>
 
-        <button *ngIf="unpublishedVariantId === version.jcrUUID && i > 0"
+        <button *ngIf="unpublishedVariantId === version.jcrUUID && !isFirst"
                 mat-stroked-button
                 color="primary"
                 class="qa-restore-version-action"

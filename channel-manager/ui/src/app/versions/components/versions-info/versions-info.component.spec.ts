@@ -15,7 +15,9 @@
  */
 
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { MatListModule, MatSelectionListChange } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatIconTestingModule } from '@angular/material/icon/testing';
+import { MatListModule } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ChannelService } from '../../../channels/services/channel.service';
@@ -76,6 +78,8 @@ describe('VersionsInfoComponent', () => {
       declarations: [VersionsInfoComponent],
       imports: [
         MatListModule,
+        MatIconModule,
+        MatIconTestingModule,
         TranslateModule.forRoot(),
       ],
       providers: [
