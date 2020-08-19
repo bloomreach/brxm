@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 
 import { ChannelService } from '../../../channels/services/channel.service';
 import { IframeService } from '../../../channels/services/iframe.service';
@@ -44,6 +44,7 @@ export class VersionsInfoComponent implements OnInit {
     private readonly iframeService: IframeService,
     private readonly channelService: ChannelService,
     private readonly workflowService: WorkflowService,
+    private readonly changeDetector: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
@@ -55,6 +56,7 @@ export class VersionsInfoComponent implements OnInit {
 
   async getVersionsInfo(): Promise<void> {
     this.versionsInfo = await this.contentService.getDocumentVersionsInfo(this.documentId, this.branchId);
+    this.changeDetector.markForCheck();
   }
 
   async selectVersion(versionUUID: string): Promise<void> {
