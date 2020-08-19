@@ -51,4 +51,12 @@
         class="org.hippoecm.hst.core.container.DefaultRequestInfoCacheKeyFragmentCreator">
     <property name="ignoreAntiCacheValue" value="true"/>
   </bean>
+
+  <bean id="jcrObservationEventListenerItems" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
+  
 </beans>
