@@ -234,6 +234,8 @@ export class MenuStructureService {
             this.translate('MENU_ITEM_SETUP_ALGORITHM_SETTINGS_GLOBAL_RANKING_RULES')),
           new MenuItemLink('setup/algorithm-settings/global-facet-management',
             this.translate('MENU_ITEM_SETUP_ALGORITHM_SETTINGS_GLOBAL_FACET_MANAGEMENT')),
+          new MenuItemLink('setup/algorithm-settings/api-modifier',
+            this.translate('MENU_ITEM_SETUP_ALGORITHM_SETTINGS_API_MODIFIER')),
         ]),
         new MenuItemLink('setup/user-management/merchandising-user/user-management',
           this.translate('MENU_ITEM_SETUP_USER_MANAGEMENT_MERCHANDISING_USER_USER_MANAGEMENT')),
@@ -259,11 +261,19 @@ export class MenuStructureService {
           ]),
           new MenuItemLink('setup/devstudio/attribute-configuration', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_ATTRIBUTE_CONFIGURATION')),
           new MenuItemLink('setup/devstudio/api-explorer', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_API_EXPLORER')),
+          new MenuItemContainer(this.translate('MENU_CONTAINER_DATA_CONNECT'), [
+            new MenuItemLink('setup/devstudio/data-connect/catalog-management',
+              this.translate('MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_CATALOG_MANAGEMENT')),
+            new MenuItemLink('setup/devstudio/data-connect/key-management',
+              this.translate('MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_KEY_MANAGEMENT')),
+          ]),
         ]),
 
         new MenuItemContainer(this.translate('MENU_CONTAINER_INTERNAL_ADMIN'), [
           new MenuItemLink('setup/user-management/merchandising-user/internal-user-management',
             this.translate('MENU_ITEM_SETUP_USER_MANAGEMENT_MERCHANDISING_USER_INTERNAL_USER_MANAGEMENT')),
+          new MenuItemLink('setup/internal-admin/brx-integration-configs',
+            this.translate('MENU_ITEM_SETUP_INTERNAL_ADMIN_BRX_INTEGRATION_CONFIGS')),
           new MenuItemLink('setup/internal-admin/api-details', this.translate('MENU_ITEM_SETUP_INTERNAL_ADMIN_API_DETAILS')),
           new MenuItemLink('setup/internal-admin/debug-tools', this.translate('MENU_ITEM_SETUP_INTERNAL_ADMIN_DEBUG_TOOLS')),
           new MenuItemLink('setup/internal-admin/purge-cache', this.translate('MENU_ITEM_SETUP_INTERNAL_ADMIN_PURGE_CACHE')),
