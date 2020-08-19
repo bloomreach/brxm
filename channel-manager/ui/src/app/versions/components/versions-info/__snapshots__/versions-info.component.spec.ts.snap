@@ -1,0 +1,616 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VersionsInfoComponent restoring a version should call to restore 1`] = `
+<div
+  id="root7"
+>
+  <div
+    class="mat-typography"
+  >
+    
+    
+    <mat-selection-list
+      aria-disabled="false"
+      aria-multiselectable="false"
+      class="qa-version-list mat-selection-list mat-list-base"
+      color="primary"
+      role="listbox"
+      tabindex="0"
+    >
+      <h3
+        class="qa-version-list-header mat-subheader"
+        matsubheader=""
+      >
+         VERSIONS_LIST_HEADER 
+      </h3>
+      <mat-divider
+        aria-orientation="horizontal"
+        class="mat-divider mat-divider-horizontal"
+        role="separator"
+      />
+      
+      <mat-list-option
+        aria-disabled="false"
+        aria-selected="false"
+        class="qa-version-testId mat-primary"
+        role="option"
+        tabindex="-1"
+      >
+        <div
+          class="mat-list-item-content mat-list-item-content-reverse"
+        >
+          <div
+            class="mat-list-item-ripple mat-ripple"
+            mat-ripple=""
+          />
+          
+          <div
+            class="mat-list-text"
+          >
+            <p
+              class="qa-version-timestamp mat-line"
+              matline=""
+            >
+               Nov 8, 2020 04:03 
+            </p>
+            <p
+              class="qa-version-username mat-line"
+              matline=""
+            >
+               testUserName 
+            </p>
+            
+            <mat-divider
+              aria-orientation="horizontal"
+              class="mat-divider mat-divider-horizontal"
+              role="separator"
+            />
+          </div>
+        </div>
+      </mat-list-option>
+      <mat-list-option
+        aria-disabled="false"
+        aria-selected="true"
+        class="qa-version-testVariantId mat-primary mat-3-line mat-list-single-selected-option"
+        role="option"
+        tabindex="-1"
+      >
+        <div
+          class="mat-list-item-content mat-list-item-content-reverse"
+        >
+          <div
+            class="mat-list-item-ripple mat-ripple"
+            mat-ripple=""
+          />
+          
+          <div
+            class="mat-list-text"
+          >
+            <p
+              class="qa-version-timestamp mat-line"
+              matline=""
+            >
+               Nov 8, 2020 04:03 
+            </p>
+            <p
+              class="qa-version-username mat-line"
+              matline=""
+            >
+               testUserName2 
+            </p>
+            
+            <div
+              class="version-actions mat-line"
+              matline=""
+            >
+              <button
+                class="qa-restore-version-action"
+                mat-stroked-button=""
+              >
+                 RESTORE 
+              </button>
+            </div>
+            <mat-divider
+              aria-orientation="horizontal"
+              class="mat-divider mat-divider-horizontal"
+              role="separator"
+            />
+          </div>
+        </div>
+      </mat-list-option>
+    </mat-selection-list>
+  </div>
+</div>
+`;
+
+exports[`VersionsInfoComponent restoring a version should not show restore button for first version in the list 1`] = `
+<div
+  id="root6"
+>
+  <div
+    class="mat-typography"
+  >
+    
+    
+    <mat-selection-list
+      aria-disabled="false"
+      aria-multiselectable="false"
+      class="qa-version-list mat-selection-list mat-list-base"
+      color="primary"
+      role="listbox"
+      tabindex="0"
+    >
+      <h3
+        class="qa-version-list-header mat-subheader"
+        matsubheader=""
+      >
+         VERSIONS_LIST_HEADER 
+      </h3>
+      <mat-divider
+        aria-orientation="horizontal"
+        class="mat-divider mat-divider-horizontal"
+        role="separator"
+      />
+      
+      <mat-list-option
+        aria-disabled="false"
+        aria-selected="true"
+        class="qa-version-testId mat-primary mat-list-single-selected-option"
+        role="option"
+        tabindex="-1"
+      >
+        <div
+          class="mat-list-item-content mat-list-item-content-reverse"
+        >
+          <div
+            class="mat-list-item-ripple mat-ripple"
+            mat-ripple=""
+          />
+          
+          <div
+            class="mat-list-text"
+          >
+            <p
+              class="qa-version-timestamp mat-line"
+              matline=""
+            >
+               Nov 8, 2020 04:03 
+            </p>
+            <p
+              class="qa-version-username mat-line"
+              matline=""
+            >
+               testUserName 
+            </p>
+            
+            <mat-divider
+              aria-orientation="horizontal"
+              class="mat-divider mat-divider-horizontal"
+              role="separator"
+            />
+          </div>
+        </div>
+      </mat-list-option>
+      <mat-list-option
+        aria-disabled="false"
+        aria-selected="false"
+        class="qa-version-testVariantId mat-primary"
+        role="option"
+        tabindex="-1"
+      >
+        <div
+          class="mat-list-item-content mat-list-item-content-reverse"
+        >
+          <div
+            class="mat-list-item-ripple mat-ripple"
+            mat-ripple=""
+          />
+          
+          <div
+            class="mat-list-text"
+          >
+            <p
+              class="qa-version-timestamp mat-line"
+              matline=""
+            >
+               Nov 8, 2020 04:03 
+            </p>
+            <p
+              class="qa-version-username mat-line"
+              matline=""
+            >
+               testUserName2 
+            </p>
+            
+            <mat-divider
+              aria-orientation="horizontal"
+              class="mat-divider mat-divider-horizontal"
+              role="separator"
+            />
+          </div>
+        </div>
+      </mat-list-option>
+    </mat-selection-list>
+  </div>
+</div>
+`;
+
+exports[`VersionsInfoComponent restoring a version should show restore button for selected version 1`] = `
+<div
+  id="root5"
+>
+  <div
+    class="mat-typography"
+  >
+    
+    
+    <mat-selection-list
+      aria-disabled="false"
+      aria-multiselectable="false"
+      class="qa-version-list mat-selection-list mat-list-base"
+      color="primary"
+      role="listbox"
+      tabindex="0"
+    >
+      <h3
+        class="qa-version-list-header mat-subheader"
+        matsubheader=""
+      >
+         VERSIONS_LIST_HEADER 
+      </h3>
+      <mat-divider
+        aria-orientation="horizontal"
+        class="mat-divider mat-divider-horizontal"
+        role="separator"
+      />
+      
+      <mat-list-option
+        aria-disabled="false"
+        aria-selected="false"
+        class="qa-version-testId mat-primary"
+        role="option"
+        tabindex="-1"
+      >
+        <div
+          class="mat-list-item-content mat-list-item-content-reverse"
+        >
+          <div
+            class="mat-list-item-ripple mat-ripple"
+            mat-ripple=""
+          />
+          
+          <div
+            class="mat-list-text"
+          >
+            <p
+              class="qa-version-timestamp mat-line"
+              matline=""
+            >
+               Nov 8, 2020 04:03 
+            </p>
+            <p
+              class="qa-version-username mat-line"
+              matline=""
+            >
+               testUserName 
+            </p>
+            
+            <mat-divider
+              aria-orientation="horizontal"
+              class="mat-divider mat-divider-horizontal"
+              role="separator"
+            />
+          </div>
+        </div>
+      </mat-list-option>
+      <mat-list-option
+        aria-disabled="false"
+        aria-selected="true"
+        class="qa-version-testVariantId mat-primary mat-3-line mat-list-single-selected-option"
+        role="option"
+        tabindex="-1"
+      >
+        <div
+          class="mat-list-item-content mat-list-item-content-reverse"
+        >
+          <div
+            class="mat-list-item-ripple mat-ripple"
+            mat-ripple=""
+          />
+          
+          <div
+            class="mat-list-text"
+          >
+            <p
+              class="qa-version-timestamp mat-line"
+              matline=""
+            >
+               Nov 8, 2020 04:03 
+            </p>
+            <p
+              class="qa-version-username mat-line"
+              matline=""
+            >
+               testUserName2 
+            </p>
+            
+            <div
+              class="version-actions mat-line"
+              matline=""
+            >
+              <button
+                class="qa-restore-version-action"
+                mat-stroked-button=""
+              >
+                 RESTORE 
+              </button>
+            </div>
+            <mat-divider
+              aria-orientation="horizontal"
+              class="mat-divider mat-divider-horizontal"
+              role="separator"
+            />
+          </div>
+        </div>
+      </mat-list-option>
+    </mat-selection-list>
+  </div>
+</div>
+`;
+
+exports[`VersionsInfoComponent selecting version should show the selected version 1`] = `
+<mat-selection-list
+  aria-disabled="false"
+  aria-multiselectable="false"
+  class="qa-version-list mat-selection-list mat-list-base"
+  color="primary"
+  role="listbox"
+  tabindex="0"
+>
+  <h3
+    class="qa-version-list-header mat-subheader"
+    matsubheader=""
+  >
+     VERSIONS_LIST_HEADER 
+  </h3>
+  <mat-divider
+    aria-orientation="horizontal"
+    class="mat-divider mat-divider-horizontal"
+    role="separator"
+  />
+  
+  <mat-list-option
+    aria-disabled="false"
+    aria-selected="false"
+    class="qa-version-testId mat-primary"
+    role="option"
+    tabindex="-1"
+  >
+    <div
+      class="mat-list-item-content mat-list-item-content-reverse"
+    >
+      <div
+        class="mat-list-item-ripple mat-ripple"
+        mat-ripple=""
+      />
+      
+      <div
+        class="mat-list-text"
+      >
+        <p
+          class="qa-version-timestamp mat-line"
+          matline=""
+        >
+           Nov 8, 2020 04:03 
+        </p>
+        <p
+          class="qa-version-username mat-line"
+          matline=""
+        >
+           testUserName 
+        </p>
+        
+        <mat-divider
+          aria-orientation="horizontal"
+          class="mat-divider mat-divider-horizontal"
+          role="separator"
+        />
+      </div>
+    </div>
+  </mat-list-option>
+  <mat-list-option
+    aria-disabled="false"
+    aria-selected="true"
+    class="qa-version-testVariantId mat-primary mat-3-line mat-list-single-selected-option"
+    role="option"
+    tabindex="-1"
+  >
+    <div
+      class="mat-list-item-content mat-list-item-content-reverse"
+    >
+      <div
+        class="mat-list-item-ripple mat-ripple"
+        mat-ripple=""
+      />
+      
+      <div
+        class="mat-list-text"
+      >
+        <p
+          class="qa-version-timestamp mat-line"
+          matline=""
+        >
+           Nov 8, 2020 04:03 
+        </p>
+        <p
+          class="qa-version-username mat-line"
+          matline=""
+        >
+           testUserName2 
+        </p>
+        
+        <div
+          class="version-actions mat-line"
+          matline=""
+        >
+          <button
+            class="qa-restore-version-action"
+            mat-stroked-button=""
+          >
+             RESTORE 
+          </button>
+        </div>
+        <mat-divider
+          aria-orientation="horizontal"
+          class="mat-divider mat-divider-horizontal"
+          role="separator"
+        />
+      </div>
+    </div>
+  </mat-list-option>
+</mat-selection-list>
+`;
+
+exports[`VersionsInfoComponent showing versions should show header indicating no versions are available 1`] = `
+<div
+  id="root0"
+>
+  <div
+    class="mat-typography"
+  >
+    
+    <mat-selection-list
+      aria-disabled="false"
+      aria-multiselectable="true"
+      class="qa-version-list mat-selection-list mat-list-base"
+      role="listbox"
+      tabindex="-1"
+    >
+      <h3
+        class="qa-version-list-header mat-subheader"
+        matsubheader=""
+      >
+         NO_VERSIONS_AVAILABLE 
+      </h3>
+      <mat-divider
+        aria-orientation="horizontal"
+        class="mat-divider mat-divider-horizontal"
+        role="separator"
+      />
+    </mat-selection-list>
+    
+  </div>
+</div>
+`;
+
+exports[`VersionsInfoComponent showing versions should show list of versions 1`] = `
+<div
+  id="root1"
+>
+  <div
+    class="mat-typography"
+  >
+    
+    
+    <mat-selection-list
+      aria-disabled="false"
+      aria-multiselectable="false"
+      class="qa-version-list mat-selection-list mat-list-base"
+      color="primary"
+      role="listbox"
+      tabindex="0"
+    >
+      <h3
+        class="qa-version-list-header mat-subheader"
+        matsubheader=""
+      >
+         VERSIONS_LIST_HEADER 
+      </h3>
+      <mat-divider
+        aria-orientation="horizontal"
+        class="mat-divider mat-divider-horizontal"
+        role="separator"
+      />
+      
+      <mat-list-option
+        aria-disabled="false"
+        aria-selected="true"
+        class="qa-version-testId mat-primary mat-list-single-selected-option"
+        role="option"
+        tabindex="-1"
+      >
+        <div
+          class="mat-list-item-content mat-list-item-content-reverse"
+        >
+          <div
+            class="mat-list-item-ripple mat-ripple"
+            mat-ripple=""
+          />
+          
+          <div
+            class="mat-list-text"
+          >
+            <p
+              class="qa-version-timestamp mat-line"
+              matline=""
+            >
+               Nov 8, 2020 04:03 
+            </p>
+            <p
+              class="qa-version-username mat-line"
+              matline=""
+            >
+               testUserName 
+            </p>
+            
+            <mat-divider
+              aria-orientation="horizontal"
+              class="mat-divider mat-divider-horizontal"
+              role="separator"
+            />
+          </div>
+        </div>
+      </mat-list-option>
+      <mat-list-option
+        aria-disabled="false"
+        aria-selected="false"
+        class="qa-version-testVariantId mat-primary"
+        role="option"
+        tabindex="-1"
+      >
+        <div
+          class="mat-list-item-content mat-list-item-content-reverse"
+        >
+          <div
+            class="mat-list-item-ripple mat-ripple"
+            mat-ripple=""
+          />
+          
+          <div
+            class="mat-list-text"
+          >
+            <p
+              class="qa-version-timestamp mat-line"
+              matline=""
+            >
+               Nov 8, 2020 04:03 
+            </p>
+            <p
+              class="qa-version-username mat-line"
+              matline=""
+            >
+               testUserName2 
+            </p>
+            
+            <mat-divider
+              aria-orientation="horizontal"
+              class="mat-divider mat-divider-horizontal"
+              role="separator"
+            />
+          </div>
+        </div>
+      </mat-list-option>
+    </mat-selection-list>
+  </div>
+</div>
+`;

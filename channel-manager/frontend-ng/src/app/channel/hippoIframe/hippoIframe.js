@@ -23,10 +23,12 @@ import RpcService from './spa/rpc.service';
 import ScrollService from './scrolling/scroll.service';
 import SpaService from './spa/spa.service';
 import ViewportService from './viewport/viewport.service';
+import servicesModule from '../../services/services.module';
 
 const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [
     PageModule.name,
+    servicesModule,
   ])
   .component('hippoIframe', hippoIframeComponent)
   .service('CommunicationService', CommunicationService)

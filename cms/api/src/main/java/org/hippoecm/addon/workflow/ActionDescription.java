@@ -20,12 +20,16 @@ import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.repository.api.WorkflowException;
 
 public abstract class ActionDescription extends Panel implements IWorkflowInvoker {
+
+    private boolean promise;
 
     public abstract class ActionDisplay extends Fragment {
 
@@ -98,5 +102,34 @@ public abstract class ActionDescription extends Panel implements IWorkflowInvoke
     @Override
     public void invokeWorkflow() throws Exception {
         throw new WorkflowException("unsupported operation");
+    }
+
+    public void invokeAsPromise() {
+        promise = true;
+        invoke();
+    }
+
+    @Override
+    public void resolve(final String result) {
+        if (promise) {
+            promise = false;
+
+            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+            if (target != null) {
+                target.appendJavaScript(String.format("Hippo.Workflow.resolve('%s');", result));
+            }
+        }
+    }
+
+    @Override
+    public void reject(final String reason) {
+        if (promise) {
+            promise = false;
+
+            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+            if (target != null) {
+                target.appendJavaScript(String.format("Hippo.Workflow.reject('%s');", reason));
+            }
+        }
     }
 }

@@ -66,7 +66,7 @@ compound-field {
 
 .field {
   &--bordered {
-    border-left: 3px solid map-get($grey, '500');
+    border-left: 3px solid map-get($grey, 500);
     margin-bottom: $form-dense-distance;
 
     & & {
@@ -79,7 +79,7 @@ compound-field {
   }
 
   &--invalid {
-    border-color: map-get($red, '500');
+    border-color: map-get($red, 500);
   }
 
   &__title {
@@ -97,7 +97,7 @@ compound-field {
 
     &--invalid,
     &--invalid &-icon {
-      color: map-get($red, '500');
+      color: map-get($red, 500);
     }
   }
 
