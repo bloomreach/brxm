@@ -119,7 +119,10 @@ describe('XPageMenuService', () => {
       spyOn($state, 'go');
       getAction('content').onClick();
 
-      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page', { documentId: 'xpage-document-id' });
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page', {
+        documentId: 'xpage-document-id',
+        showVersionsInfo: false,
+      });
     });
 
     it('should open the versions panel', () => {
