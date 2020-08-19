@@ -641,6 +641,26 @@
       "status" : "CLEAN",
       "locales" : null
     },
+    "MENU_ITEM_SETUP_INTERNAL_ADMIN_BRX_INTEGRATION_CONFIGS" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "MENU_CONTAINER_DATA_CONNECT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_CATALOG_MANAGEMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_KEY_MANAGEMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "MENU_ITEM_SETUP_ALGORITHM_SETTINGS_API_MODIFIER" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
     "ERROR_UNABLE_TO_LOG_OUT" : {
       "status" : "CLEAN",
       "locales" : null
