@@ -18,7 +18,7 @@
 <instructions xmlns="http://www.onehippo.org/essentials/instructions">
   <instructionSet>
     <mavenDependency targetPom="cms-dependencies" groupId="com.onehippo.cms7" artifactId="hippo-addon-content-feed-dependencies-cms" type="pom" />
-    <mavenDependency targetPom="site-webapp" groupId="com.onehippo.cms7" artifactId="hippo-addon-content-feed-dependencies-site" type="pom" />
+    <mavenDependency targetPom="site-components" groupId="com.onehippo.cms7" artifactId="hippo-addon-content-feed-dependencies-site" type="pom" />
     <execute class="org.onehippo.cms7.essentials.plugin.contentfeed.ContentFeedInstruction"/>
   </instructionSet>
 </instructions>
