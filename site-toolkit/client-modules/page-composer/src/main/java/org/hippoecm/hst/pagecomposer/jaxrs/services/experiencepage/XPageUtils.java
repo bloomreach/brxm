@@ -31,7 +31,9 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -47,7 +49,7 @@ import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
-class XPageUtils {
+public class XPageUtils {
 
     private static final Logger log = LoggerFactory.getLogger(XPageUtils.class);
 
@@ -64,14 +66,10 @@ class XPageUtils {
      * someone else is already editing it
      *
      */
-    static DocumentWorkflow getDocumentWorkflow(final HippoSession userSession,
-                                                final PageComposerContextService contextService) throws RepositoryException, WorkflowException {
+    public static DocumentWorkflow getObtainEditableInstanceWorkflow(final HippoSession userSession,
+                                                                     final PageComposerContextService contextService) throws RepositoryException, WorkflowException {
 
-        // userSession is allowed to read the node since has XPAGE_REQUIRED_PRIVILEGE_NAME on the node
-        final Node handle = userSession.getNodeByIdentifier(contextService.getExperiencePageHandleUUID());
-
-        final DocumentWorkflow documentWorkflow = (DocumentWorkflow) userSession.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
-
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(userSession, contextService);
         try {
             if (Boolean.FALSE.equals(documentWorkflow.hints().get(DocumentWorkflowAction.obtainEditableInstance().getAction()))) {
                 throw new ClientException("Document not editable", ClientError.ITEM_ALREADY_LOCKED);
@@ -84,6 +82,17 @@ class XPageUtils {
         return documentWorkflow;
     }
 
+    /**
+     * Returns the {@link DocumentWorkflow} for the current Experience Page document
+     */
+    public static DocumentWorkflow getDocumentWorkflow(final HippoSession userSession,
+                                                       final PageComposerContextService contextService) throws RepositoryException {
+        // userSession is allowed to read the node since has XPAGE_REQUIRED_PRIVILEGE_NAME on the node
+        final Node handle = userSession.getNodeByIdentifier(contextService.getExperiencePageHandleUUID());
+        final HippoWorkspace workspace = userSession.getWorkspace();
+        final WorkflowManager workflowManager = workspace.getWorkflowManager();
+        return (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
+    }
 
     /**
      * we need to write with the workflowSession. Make sure to use this workflowSession and not impersonate to a

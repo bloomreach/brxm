@@ -51,7 +51,7 @@
   }
 
   &[disabled] > md-icon {
-    color: map-get($grey, '500') !important;
+    color: map-get($grey, 500) !important;
   }
 }
 

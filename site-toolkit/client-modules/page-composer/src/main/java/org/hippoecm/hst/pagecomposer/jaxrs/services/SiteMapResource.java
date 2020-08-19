@@ -15,18 +15,25 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -39,7 +46,9 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
+import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEventImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCreateContext;
@@ -50,6 +59,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.PageMoveContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageMoveEventImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageUpdateContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageUpdateEventImpl;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
@@ -63,15 +73,22 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
+import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.String.format;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.findAvailableDocumentRepresentations;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.getDocumentRepresentationHstConfigUser;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMAP + "/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -81,6 +98,7 @@ public class SiteMapResource extends AbstractConfigResource {
 
     private SiteMapHelper siteMapHelper;
     private ValidatorFactory validatorFactory;
+    private boolean hideXPages;
 
     public void setSiteMapHelper(final SiteMapHelper siteMapHelper) {
         this.siteMapHelper = siteMapHelper;
@@ -88,6 +106,10 @@ public class SiteMapResource extends AbstractConfigResource {
 
     public void setValidatorFactory(final ValidatorFactory validatorFactory) {
         this.validatorFactory = validatorFactory;
+    }
+
+    public void setHideXPages(final boolean hideXPages) {
+        this.hideXPages = hideXPages;
     }
 
     @GET
@@ -108,18 +130,105 @@ public class SiteMapResource extends AbstractConfigResource {
     @GET
     @Path("/pages")
     @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
-    public Response getSiteMapPages() {
+    public Response getSiteMapPages(@Context HttpServletRequest servletRequest) {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final HstSite site = getPageComposerContextService().getEditingPreviewSite();
                 final HstSiteMap siteMap = site.getSiteMap();
-                final Mount mount = getPageComposerContextService().getEditingMount();
+                final Mount editingMount = getPageComposerContextService().getEditingMount();
                 final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(siteMap,
-                        mount, getPreviewConfigurationPath());
+                        editingMount, getPreviewConfigurationPath());
+
+                if (hideXPages) {
+                    return ok("Sitemap loaded successfully", pages);
+                }
+
+                if (servletRequest == null) {
+                    // unit testing
+                    return ok("Sitemap loaded successfully", pages);
+                }
+
+                // append the XPages for the current channel which are readable for the current CMS user. Note, no paging, just
+                // all the available XPages. Note that adding them is not allowed in SiteMapPagesRepresentation.represent()
+                // since that presentation is also used for creating a *new* hst configuration page (sitemap item)
+
+                // we need a preview security delegate to make sure that we get to see the PREVIEW XPages which are
+                // readable by the current cms user *or* by the HST preview user
+
+                try {
+                    final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(servletRequest.getSession());
+
+                    final SessionSecurityDelegation sessionSecurityDelegation = HstServices.getComponentManager().getComponent(SessionSecurityDelegation.class.getName());
+
+                    final Session previewSecurityDelegate = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsSessionContext.getRepositoryCredentials(), true);
+
+                    List<SiteMapPageRepresentation> xpages = getXPageRepresentations(editingMount, previewSecurityDelegate,
+                            getPageComposerContextService().getRequestContext());
+
+
+                    // from xpages, filter out the XPages that are already represented by an explicit sitemap item whic
+                    // can happen : We can filter them out on the 'renderPathInfo' since there is no point in including
+                    // to sitemap pages with the exact same link (and thus a duplicate)
+
+                    final List<SiteMapPageRepresentation> filteredDuplicates = xpages.stream().filter(xpage ->
+                        // only if there is NO hst config sitemap page representation for the XPage include the xpage
+                        !pages.getPages().stream().filter(page -> page.getRenderPathInfo().equals(xpage.getRenderPathInfo())).findFirst().isPresent()
+                    ).collect(Collectors.toList());
+
+                    pages.getPages().addAll(filteredDuplicates);
+
+                } catch (Exception e) {
+                    log.warn("Exception occured while trying to load XPage Documents for the sitemap. Only the SiteMap " +
+                            "Pages are returned" , e);
+                }
+
                 return ok("Sitemap loaded successfully", pages);
             }
         });
+    }
+
+    private List<SiteMapPageRepresentation> getXPageRepresentations(final Mount editingMount, final Session session,
+                                                                    final HstRequestContext requestContext) throws RepositoryException {
+
+        List<SiteMapPageRepresentation> xpages = new ArrayList();
+
+        final Node contentRoot = session.getNode(editingMount.getContentPath());
+
+        // do not use the content root path as scope since this results in *slow* queries *and* if the
+        // content root node name starts with a number, you need to escape it, which is unhandy
+        final String statement = format("//element(*,%s)[@hippo:paths = '%s' and @hippo:availability = 'preview']",
+                MIXINTYPE_HST_XPAGE_MIXIN, contentRoot.getIdentifier());
+
+        final Query xPagesQuery = session.getWorkspace().getQueryManager().createQuery(statement, "xpath");
+
+        for (Node unpublishedVariant : new NodeIterable(xPagesQuery.execute().getNodes())) {
+            final Node handle = unpublishedVariant.getParent();
+            if (!unpublishedVariant.isNodeType(NT_DOCUMENT) || !handle.isNodeType(NT_HANDLE)) {
+                log.info("Skipping unexpected node '{}' with mixin '{}' : only document variants are expected",
+                        MIXINTYPE_HST_XPAGE_MIXIN, unpublishedVariant.getPath());
+                continue;
+            }
+
+            // use the link creator to get hold of URLs for the XPages
+            // Note this is very delecate: we only try to resolve the XPages *WITHIN* the current channel (editingMount),
+            // hence we use create(Node node, Mount editingMount) : if no link can be found, we just skip (for now?)
+            // the XPage!
+
+            final HstLink hstLink = requestContext.getHstLinkCreator().create(handle, editingMount);
+            if (hstLink.isNotFound()) {
+                log.info("Skipping XPage '{}' since cannot be represented in channel '{}'", handle.getPath(),
+                        editingMount.getChannel().getName());
+                continue;
+            }
+
+            final SiteMapPageRepresentation xPageRepresentation = new SiteMapPageRepresentation().represent(hstLink, handle);
+
+            xpages.add(xPageRepresentation);
+
+        }
+
+        return xpages;
     }
 
     @GET

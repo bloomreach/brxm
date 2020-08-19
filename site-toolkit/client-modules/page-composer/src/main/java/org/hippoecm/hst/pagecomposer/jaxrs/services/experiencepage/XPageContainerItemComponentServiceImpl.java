@@ -60,8 +60,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.checkoutCorrectBranch;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getDocumentWorkflow;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getInternalWorkflowSession;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getObtainEditableInstanceWorkflow;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getWorkspaceNode;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.validateTimestamp;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.MissingParametersInfo.defaultMissingParametersInfo;
@@ -107,7 +107,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
         try {
             // use workflow session to write to preview
             final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
-            DocumentWorkflow documentWorkflow = getDocumentWorkflow(userSession, pageComposerContextService);
+            DocumentWorkflow documentWorkflow = getObtainEditableInstanceWorkflow(userSession, pageComposerContextService);
 
             final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
@@ -143,7 +143,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
         try {
             // use workflow session to write to preview
             final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
-            DocumentWorkflow documentWorkflow = getDocumentWorkflow(userSession, pageComposerContextService);
+            DocumentWorkflow documentWorkflow = getObtainEditableInstanceWorkflow(userSession, pageComposerContextService);
 
             final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
@@ -180,7 +180,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
         try {
             // use workflow session to write to preview
             final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
-            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(userSession, pageComposerContextService);
+            final DocumentWorkflow documentWorkflow = getObtainEditableInstanceWorkflow(userSession, pageComposerContextService);
 
             final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
@@ -213,7 +213,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             // use workflow session to write to preview
             final HippoSession userSession = (HippoSession) pageComposerContextService.getRequestContext().getSession();
 
-            DocumentWorkflow documentWorkflow = getDocumentWorkflow(userSession, pageComposerContextService);
+            DocumentWorkflow documentWorkflow = getObtainEditableInstanceWorkflow(userSession, pageComposerContextService);
 
             final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 

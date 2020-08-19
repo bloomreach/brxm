@@ -51,4 +51,12 @@ export class PageMeta extends Entity {
   isXPage() {
     return this._meta[HstConstants.EXPERIENCE_PAGE] === 'true';
   }
+
+  getBranchId() {
+    return this._meta[HstConstants.BRANCH_ID];
+  }
+
+  getUnpublishedVariantId() {
+    return this._meta[HstConstants.UNPUBLISHED_VARIANT_ID];
+  }
 }
