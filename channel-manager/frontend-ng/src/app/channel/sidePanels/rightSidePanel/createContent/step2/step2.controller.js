@@ -184,8 +184,7 @@ class Step2Controller {
         this.form.$setPristine();
         this.documentIsSaved = true;
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
-        return this.$q.resolve()
-          .then(() => this.Step2Service.saveComponentParameter())
+        return this.Step2Service.saveComponentParameter()
           .then(() => {
             this.CreateContentService.finish(this.ContentEditor.getDocumentId());
           })
