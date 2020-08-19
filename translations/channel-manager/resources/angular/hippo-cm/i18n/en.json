@@ -265,6 +265,7 @@
   "ERROR_DOCUMENT_SELECTED_FOR_COMPONENT": "Couldn't select document for '{{componentName}}'",
   "CONTAINER_INHERITED": "Cannot be edited in this channel",
   "ERROR_PAGE_COPY_TARGET_EXISTS": "Failed to copy page, the destination URL already exists",
+  "LATEST_VERSION": "Latest version",
   "CONFIRM_PUBLISH_ALL_CHANGES_MESSAGE": "Publish all changes?",
   "DONE": "Done",
   "SUBPAGE_PAGE_LABEL_LAST_PATHINFO_ELEMENT": "Last element",

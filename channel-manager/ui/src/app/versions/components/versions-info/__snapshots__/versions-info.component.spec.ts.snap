@@ -111,18 +111,15 @@ exports[`VersionsInfoComponent restoring a version should not show restore butto
           <div
             class="mat-list-text"
           >
+            
             <p
-              class="qa-version-timestamp mat-line"
+              class="qa-latest-version mat-line"
               matline=""
             >
-               Nov 8, 2020 04:03 
+               LATEST_VERSION 
             </p>
-            <p
-              class="qa-version-username mat-line"
-              matline=""
-            >
-               testUserName 
-            </p>
+            
+            
             <div
               class="version-actions mat-line"
               matline=""
@@ -178,12 +175,15 @@ exports[`VersionsInfoComponent restoring a version should not show restore butto
           <div
             class="mat-list-text"
           >
+            
+            
             <p
               class="qa-version-timestamp mat-line"
               matline=""
             >
                Nov 8, 2020 04:03 
             </p>
+            
             <p
               class="qa-version-username mat-line"
               matline=""
@@ -257,18 +257,15 @@ exports[`VersionsInfoComponent restoring a version should show restore button fo
           <div
             class="mat-list-text"
           >
+            
             <p
-              class="qa-version-timestamp mat-line"
+              class="qa-latest-version mat-line"
               matline=""
             >
-               Nov 8, 2020 04:03 
+               LATEST_VERSION 
             </p>
-            <p
-              class="qa-version-username mat-line"
-              matline=""
-            >
-               testUserName 
-            </p>
+            
+            
             <div
               class="version-actions mat-line"
               matline=""
@@ -302,12 +299,15 @@ exports[`VersionsInfoComponent restoring a version should show restore button fo
           <div
             class="mat-list-text"
           >
+            
+            
             <p
               class="qa-version-timestamp mat-line"
               matline=""
             >
                Nov 8, 2020 04:03 
             </p>
+            
             <p
               class="qa-version-username mat-line"
               matline=""
@@ -380,18 +380,15 @@ exports[`VersionsInfoComponent selecting version should show the selected versio
       <div
         class="mat-list-text"
       >
+        
         <p
-          class="qa-version-timestamp mat-line"
+          class="qa-latest-version mat-line"
           matline=""
         >
-           Nov 8, 2020 04:03 
+           LATEST_VERSION 
         </p>
-        <p
-          class="qa-version-username mat-line"
-          matline=""
-        >
-           testUserName 
-        </p>
+        
+        
         <div
           class="version-actions mat-line"
           matline=""
@@ -425,12 +422,15 @@ exports[`VersionsInfoComponent selecting version should show the selected versio
       <div
         class="mat-list-text"
       >
+        
+        
         <p
           class="qa-version-timestamp mat-line"
           matline=""
         >
            Nov 8, 2020 04:03 
         </p>
+        
         <p
           class="qa-version-username mat-line"
           matline=""
@@ -541,18 +541,15 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
           <div
             class="mat-list-text"
           >
+            
             <p
-              class="qa-version-timestamp mat-line"
+              class="qa-latest-version mat-line"
               matline=""
             >
-               Nov 8, 2020 04:03 
+               LATEST_VERSION 
             </p>
-            <p
-              class="qa-version-username mat-line"
-              matline=""
-            >
-               testUserName 
-            </p>
+            
+            
             <div
               class="version-actions mat-line"
               matline=""
@@ -608,12 +605,15 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
           <div
             class="mat-list-text"
           >
+            
+            
             <p
               class="qa-version-timestamp mat-line"
               matline=""
             >
                Nov 8, 2020 04:03 
             </p>
+            
             <p
               class="qa-version-username mat-line"
               matline=""
