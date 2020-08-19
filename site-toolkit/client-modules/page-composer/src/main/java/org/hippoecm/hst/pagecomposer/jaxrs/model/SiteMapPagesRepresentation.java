@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -48,7 +49,7 @@ public class SiteMapPagesRepresentation {
         for (HstSiteMapItem child : siteMap.getSiteMapItems()) {
             addPages(child, null, homePagePathInfo, previewConfigurationPath);
         }
-        Collections.sort(pages, (o1, o2) -> o1.getPathInfo().compareTo(o2.getPathInfo()));
+        Collections.sort(pages, Comparator.comparing(SiteMapPageRepresentation::getPathInfo));
         // move homepage to first location
         return this;
     }

@@ -22,12 +22,14 @@ class PageService {
     this.$rootScope = $rootScope;
     this.HstService = HstService;
     this.PageStructureService = PageStructureService;
+    this.actions = null;
+    this.states = null;
 
     this.$rootScope.$on('page:change', () => this.load());
     this.$rootScope.$on('page:check-changes', () => this.load());
   }
 
-  load() {
+  async load() {
     const page = this.PageStructureService.getPage();
     if (!page) {
       this.actions = null;
@@ -37,15 +39,20 @@ class PageService {
     }
 
     const meta = page.getMeta();
-    this.HstService.doGet(`${meta.getPageId()}`, 'item', `${meta.getSiteMapItemId()}`)
-      .then(({ data: { actions, states } }) => {
-        this.actions = actions;
-        this.states = states;
-      })
-      .catch(() => {
-        this.actions = null;
-        this.states = null;
-      });
+
+    try {
+      const { data: { actions, states } } = await this.HstService.doGet(
+        `${meta.getPageId()}`,
+        'item',
+        `${meta.getSiteMapItemId()}`,
+      );
+
+      this.actions = actions;
+      this.states = states;
+    } catch (e) {
+      this.actions = null;
+      this.states = null;
+    }
   }
 
   hasActions(category) {
@@ -67,6 +74,16 @@ class PageService {
   isActionEnabled(category, name) {
     const action = this.getAction(category, name);
     return !!(action && action.enabled);
+  }
+
+  hasState(category) {
+    return !!(this.states && this.states[category]);
+  }
+
+  getState(category) {
+    return this.hasState(category)
+      ? this.states[category]
+      : null;
   }
 }
 

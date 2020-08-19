@@ -94,6 +94,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private String renderHost;
     private boolean channelMngrPreviewRequest;
     private boolean pageModelApiRequest;
+    private boolean renderingHistory;
     private ContentBeansTool contentBeansTool;
     private boolean cachingObjectConverterEnabled;
     private HippoBean contentBean;
@@ -526,6 +527,16 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     @Override
     public boolean isPageModelApiRequest() {
         return pageModelApiRequest;
+    }
+
+    @Override
+    public boolean isRenderingHistory() {
+        return renderingHistory;
+    }
+
+    @Override
+    public void setRenderingHistory(final boolean renderingHistory) {
+        this.renderingHistory = renderingHistory;
     }
 
     @Deprecated

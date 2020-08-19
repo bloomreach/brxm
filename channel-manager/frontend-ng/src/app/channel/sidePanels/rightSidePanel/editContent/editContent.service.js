@@ -47,6 +47,16 @@ class EditContentService {
       () => this._onCloseChannel(),
     );
 
+    $transitions.onEnter(
+      { entering: '**.edit-page' },
+      transition => this._loadDocument(transition.params().documentId),
+    );
+
+    $transitions.onBefore(
+      { from: '**.edit-page', to: 'hippo-cm' },
+      () => this._onCloseChannel(),
+    );
+
     CmsService.subscribe('kill-editor', (documentId) => {
       this._stopEditingDocument(documentId);
     });

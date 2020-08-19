@@ -45,6 +45,10 @@ class ProjectService {
     return this._setupProjects(projectId);
   }
 
+  getSelectedProjectId() {
+    return this.selectedProject.id;
+  }
+
   isBranch() {
     return this.selectedProject.id !== this.masterId;
   }

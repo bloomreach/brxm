@@ -358,6 +358,17 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
         return context.isPageModelApiRequest();
     }
 
+
+    @Override
+    public void setRenderingHistory(final boolean renderingHistory) {
+        context.setPageModelApiRequest(renderingHistory);
+    }
+
+    @Override
+    public boolean isRenderingHistory() {
+        return context.isRenderingHistory();
+    }
+
     @Deprecated
     @Override
     public boolean isCmsRequest() {

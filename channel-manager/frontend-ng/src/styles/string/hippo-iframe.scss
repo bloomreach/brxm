@@ -17,11 +17,11 @@
 @import '~@bloomreach/frontend-theme/palettes';
 
 @mixin disabled-fab {
-  background-color: map-get($grey, '300');
+  background-color: map-get($grey, 300);
   cursor: not-allowed;
 
   svg {
-    fill: map-get($grey, '500');
+    fill: map-get($grey, 500);
   }
 }
 

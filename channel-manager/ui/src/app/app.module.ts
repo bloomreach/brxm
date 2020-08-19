@@ -15,18 +15,30 @@
  */
 
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 
-import { AppComponent } from './app.component';
+import { ChannelsModule } from './channels/channels.module';
+import { ContentModule } from './content/content.module';
+import { NotificationBarModule } from './notification-bar/notification-bar.module';
+import { PagesModule } from './pages/pages.module';
+import { ProjectsModule } from './projects/projects.module';
+import { NG1_CONFIG_SERVICE } from './services/ng1/config.ng1.service';
+import { SharedModule } from './shared/shared.module';
+import { VersionsModule } from './versions/versions.module';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-  ],
   imports: [
-    BrowserModule,
+    SharedModule,
+    ContentModule,
+    NotificationBarModule,
+    VersionsModule,
+    PagesModule,
+    ProjectsModule,
+    ChannelsModule,
   ],
-  providers: [],
-  bootstrap: [AppComponent],
+  providers: [
+    { provide: NG1_CONFIG_SERVICE, useValue: window.angular.element(document.body).injector().get('ConfigService') },
+  ],
 })
-export class AppModule { }
+export class AppModule {
+  ngDoBootstrap(): void { }
+}
