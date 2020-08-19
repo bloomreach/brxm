@@ -40,11 +40,19 @@
                      [value]="version.jcrUUID"
                      [selected]="unpublishedVariantId === version.jcrUUID">
       <p matLine
+         *ngIf="isFirst"
+         class="qa-latest-version">
+        {{ 'LATEST_VERSION' | translate }}
+      </p>
+
+      <p matLine
+         *ngIf="!isFirst"
          class="qa-version-timestamp">
         {{ version.timestamp | date:'MMM d, y hh:mm' }}
       </p>
 
       <p matLine
+         *ngIf="!isFirst"
          class="qa-version-username">
         {{ version.userName || ('SYSTEM' | translate) }}
       </p>
