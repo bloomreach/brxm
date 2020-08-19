@@ -99,7 +99,7 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>run test:once</arguments>
+              <arguments>run test:single-run</arguments>
             </configuration>
           </execution>
         </executions>

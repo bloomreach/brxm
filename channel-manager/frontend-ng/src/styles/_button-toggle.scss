@@ -18,7 +18,7 @@
   margin: 0 8px;
 
   .md-button {
-    background-color: map-get($grey, '50');
+    background-color: map-get($grey, 50);
     color: $text-dark;
     line-height: 24px;
     margin: 0;
@@ -35,7 +35,7 @@
     }
 
     &.button-active {
-      background-color: map-get($grey, '600');
+      background-color: map-get($grey, 600);
       color: $text-light;
     }
   }

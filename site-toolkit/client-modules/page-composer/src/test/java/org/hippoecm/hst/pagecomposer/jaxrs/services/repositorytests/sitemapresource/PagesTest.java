@@ -59,7 +59,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     public void pages_sorted_by_pathInfo() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
-        final Response response = siteMapResource.getSiteMapPages();
+        final Response response = siteMapResource.getSiteMapPages(null);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         SiteMapPagesRepresentation siteMapPagesRepresentation =
                 (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
@@ -79,7 +79,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     public void homepage_is_first_and_pathInfo_equals_slash() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
-        final Response response = siteMapResource.getSiteMapPages();
+        final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
                 (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
 
@@ -95,7 +95,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         session.save();
         initContext();
         final SiteMapResource siteMapResource = createResource();
-        final Response response = siteMapResource.getSiteMapPages();
+        final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
                 (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
         assertFalse("home".equals(siteMapPagesRepresentation.getPages().get(0).getName()));
@@ -105,7 +105,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     public void skip_page_for_webfiles_because_container_resource_is_true() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
-        final Response response = siteMapResource.getSiteMapPages();
+        final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
                 (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
 
@@ -123,7 +123,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         Thread.sleep(200);
         initContext();
         final SiteMapResource siteMapResource = createResource();
-        final Response response = siteMapResource.getSiteMapPages();
+        final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
                 (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
 
@@ -142,7 +142,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     public void skip_pages_for_sitemap_items_that_are_index_items() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
-        final Response response = siteMapResource.getSiteMapPages();
+        final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
                 (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
 
@@ -168,7 +168,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         Thread.sleep(200);
         initContext();
         final SiteMapResource siteMapResource = createResource();
-        final Response response = siteMapResource.getSiteMapPages();
+        final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
                 (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
 
@@ -181,7 +181,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     public void sitemap_contains_host_and_mountPath() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
-        final Response response = siteMapResource.getSiteMapPages();
+        final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
                 (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
         assertEquals("localhost", siteMapPagesRepresentation.getHost());

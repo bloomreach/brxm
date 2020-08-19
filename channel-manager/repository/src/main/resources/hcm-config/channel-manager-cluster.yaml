@@ -7,6 +7,8 @@ definitions:
         jcr:mixinTypes: ['frontend:navigationitem']
         plugin.class: org.onehippo.cms7.channelmanager.ChannelManagerPerspective
         wicket.id: service.tab
+        wicket.extensions: extension.workflow
+        extension.workflow: ${cluster.id}.workflows
         frontend:appPath: experience-manager
         hipposys:userrole: xm.channel.user
         /channel-list:
@@ -37,3 +39,8 @@ definitions:
       /templatecomposer-variant-adder:
         jcr:primaryType: frontend:plugin
         plugin.class: org.onehippo.cms7.channelmanager.channeleditor.PlainComponentVariantAdder
+      /document-workflow:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.addon.workflow.DocumentWorkflowInvokerPlugin
+        wicket.id: ${cluster.id}.workflows
+        workflow.categories: default

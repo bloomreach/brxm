@@ -65,6 +65,7 @@ hippo-iframe {
   // ensure a horizontal scrollbar for constrained viewport widths
   height: 100%;
   overflow-y: hidden;
+  transition: .3s transform ease-out, .3s height ease-out;
   user-select: none;
 
   &.hippo-dragging {
@@ -74,10 +75,15 @@ hippo-iframe {
   &.iframe-lifted {
     z-index: $z-index-iframe-lifted;
   }
+
+  &.notification-banner-visible {
+    height: calc(100% - #{$notification-banner-height});
+    transform: translateY($notification-banner-height);
+  }
 }
 
 .channel-iframe-sheet {
-  background-color: map-get($grey, '50');
+  background-color: map-get($grey, 50);
   box-shadow: 0 0 20px $black-shadow;
   height: 100%;
   margin-left: auto;
