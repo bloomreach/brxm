@@ -130,8 +130,24 @@ exports[`VersionsInfoComponent restoring a version should not show restore butto
               
               <button
                 class="qa-new-version-action"
+                color="primary"
                 mat-stroked-button=""
               >
+                <mat-icon
+                  aria-hidden="true"
+                  class="mat-icon notranslate mat-icon-no-color"
+                  role="img"
+                  svgicon="plus"
+                >
+                  <svg
+                    class="fake-testing-svg"
+                    fit=""
+                    focusable="false"
+                    height="100%"
+                    preserveAspectRatio="xMidYMid meet"
+                    width="100%"
+                  />
+                </mat-icon>
                  VERSION 
               </button>
               
@@ -306,6 +322,7 @@ exports[`VersionsInfoComponent restoring a version should show restore button fo
               
               <button
                 class="qa-restore-version-action"
+                color="primary"
                 mat-stroked-button=""
               >
                  RESTORE 
@@ -428,6 +445,7 @@ exports[`VersionsInfoComponent selecting version should show the selected versio
           
           <button
             class="qa-restore-version-action"
+            color="primary"
             mat-stroked-button=""
           >
              RESTORE 
@@ -542,8 +560,24 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
               
               <button
                 class="qa-new-version-action"
+                color="primary"
                 mat-stroked-button=""
               >
+                <mat-icon
+                  aria-hidden="true"
+                  class="mat-icon notranslate mat-icon-no-color"
+                  role="img"
+                  svgicon="plus"
+                >
+                  <svg
+                    class="fake-testing-svg"
+                    fit=""
+                    focusable="false"
+                    height="100%"
+                    preserveAspectRatio="xMidYMid meet"
+                    width="100%"
+                  />
+                </mat-icon>
                  VERSION 
               </button>
               

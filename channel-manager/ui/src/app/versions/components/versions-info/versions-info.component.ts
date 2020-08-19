@@ -81,7 +81,7 @@ export class VersionsInfoComponent implements OnInit {
     const versionParam = `br_version_uuid=${selectedVersionUUID}`;
     const index = this.versionsInfo.versions.findIndex(v => v.jcrUUID === selectedVersionUUID);
 
-    if (index === 0) {
+    if (index <= 0) {
       return renderPath;
     }
 
