@@ -91,13 +91,10 @@ public class SiteIntegrationTest {
 
                 //Register site that bootstraps content at same content path
                 HippoWebappContext siteContext = createSiteApplicationContext(fixtureName, "sitewithcontent");
-                try {
+                try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ConfigurationServiceImpl.class).build()) {
                     hippoWebappContextRegistry.register(siteContext);
-                    fail("Failure is expected since site contains duplicate paths");
-                } catch (Exception e) {
-                    assertTrue(e instanceof IllegalStateException);
                     assertEquals("Duplicate definition root paths '/content/sitewithexistingcontent/contentnode' in module 'site-with-content' in source files 'withcontent/hippo-cms-test/site-with-content-project/site-with-content [content: contentnode2.yaml]' and 'withcontent/hippo-cms-test/site-with-content-project/site-with-content [content: contentnode.yaml]'.",
-                            e.getMessage());
+                            interceptor.getEvents().get(0).getThrown().getMessage());
                 }
                 hippoWebappContextRegistry.unregister(siteContext);
                 session.logout();
@@ -208,14 +205,10 @@ public class SiteIntegrationTest {
 
                 hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m2"));
                 try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-                    try {
-                        hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m3"));
-                        fail("Failure is expected since node from site 'A' cannot override node from site 'B'");
-                    } catch (Exception ignore) {
-                        assertTrue(interceptor.messages()
-                                .anyMatch(m->m.startsWith("Cannot merge config definitions with the same path '/m2-extension' " +
-                                        "defined in different sites or in both core and a site")));
-                    }
+                    hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m3"));
+                    assertTrue(interceptor.messages()
+                            .anyMatch(m->m.startsWith("Cannot merge config definitions with the same path '/m2-extension' " +
+                                    "defined in different sites or in both core and a site")));
                 }
             });
         } finally {
@@ -236,13 +229,9 @@ public class SiteIntegrationTest {
 
                 hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m2"));
                 try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-                    try {
-                        hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m4"));
-                        fail("Failure is expected since site's node cannot belong to node from different site");
-                    } catch (Exception ignore) {
-                        assertTrue(interceptor.messages()
-                                .anyMatch(m->m.startsWith("Cannot add child config definition '/m2-extension/extension4node' to parent node definition")));
-                    }
+                    hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m4"));
+                    assertTrue(interceptor.messages()
+                            .anyMatch(m->m.startsWith("Cannot add child config definition '/m2-extension/extension4node' to parent node definition")));
                 }
             });
         } finally {
@@ -263,15 +252,11 @@ public class SiteIntegrationTest {
             fixture.test(session -> {
 
                 hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m2"));
-                try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
-                    try {
-                        hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m5"));
-                        fail("Failure is expected since site cannot delete node which belongs to another site or core");
-                    } catch (Exception ignore) {
-                        assertTrue(interceptor.messages()
-                                .anyMatch(m->m.startsWith("Cannot merge config definitions with the same path '/corenode/subcorenode' " +
-                                        "defined in different sites or in both core and a site")));
-                    }
+                try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ConfigurationTreeBuilder.class).build()) {
+                    hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m5"));
+                    assertTrue(interceptor.messages()
+                            .anyMatch(m->m.startsWith("Cannot merge config definitions with the same path '/corenode/subcorenode' " +
+                                    "defined in different sites or in both core and a site")));
                 }
             });
         } finally {
@@ -330,13 +315,10 @@ public class SiteIntegrationTest {
             fixture.test(session -> {
 
                 hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m2"));
-                try {
-                    try (Log4jInterceptor ignored = Log4jInterceptor.onError().deny(ConfigurationServiceImpl.class).build()) {
-                        hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "namespace"));
-                    }
-                    fail("Namespace definitions from site modules are not supported");
-                } catch(Exception ex) {
-                    assertTrue(ex.getCause().getMessage().contains("Namespace definition can not be a part of site module"));
+                try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ConfigurationServiceImpl.class).build()) {
+                    hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "namespace"));
+                    final String expectedErrorMessage = "Namespace definition can not be a part of site module";
+                    assertTrue(interceptor.getEvents().get(0).getThrown().getMessage().contains(expectedErrorMessage));
                 }
             });
         } finally {
