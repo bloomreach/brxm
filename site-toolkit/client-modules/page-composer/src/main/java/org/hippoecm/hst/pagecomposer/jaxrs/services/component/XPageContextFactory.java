@@ -44,6 +44,7 @@ final class XPageContextFactory {
             return null;
         }
 
+
         final String experiencePageHandleUUID = contextService.getExperiencePageHandleUUID();
         final HippoSession userSession = (HippoSession) contextService.getRequestContext().getSession();
         final Node handle = userSession.getNodeByIdentifier(experiencePageHandleUUID);
@@ -52,7 +53,8 @@ final class XPageContextFactory {
         final ScheduledRequest scheduledRequest = DocumentStateUtils.getScheduledRequest(handle);
         final WorkflowRequest workflowRequest = DocumentStateUtils.getWorkflowRequest(handle);
         final DocumentWorkflow workflow = XPageUtils.getDocumentWorkflow(userSession, contextService);
-        final Map<String, Serializable> hints = workflow.hints();
+
+        final Map<String, Serializable> hints = workflow.hints(contextService.getSelectedBranchId());
 
         final XPageContext xPageContext = new XPageContext()
                 .setBranchId(contextService.getSelectedBranchId())
