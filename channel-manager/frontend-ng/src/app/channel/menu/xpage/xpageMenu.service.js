@@ -105,7 +105,16 @@ class XPageMenuService extends MenuService {
         onClick: () => showVersions(),
         translationKey: 'TOOLBAR_MENU_XPAGE_VERSIONS',
       })
-      .addDivider();
+      .addDivider({
+        isVisible: () => PageService.hasSomeAction('xpage',
+          'unpublish',
+          'schedule-unpublish',
+          'request-unpublish',
+          'publish',
+          'schedule-publish',
+          'request-publish',
+          'request-schedule-publish'),
+      });
 
     addWorkflowAction('unpublish', id => DocumentWorkflowService.unpublish(id), { iconName: 'mdi-minus-circle' });
     addWorkflowAction('schedule-unpublish', id => DocumentWorkflowService.scheduleUnpublication(id));
