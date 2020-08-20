@@ -112,7 +112,7 @@ public abstract class WhiteboardServiceRegistry<T> {
                         Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
                         trackerHolder.getServiceObject().serviceRegistered(serviceHolder);
                     } catch (Exception e) {
-                        String logMessage = String.format("There was an error notifying the ProxiedServiceTracker %s for registering " +
+                        String logMessage = String.format("There was an error notifying the ServiceTracker %s for registering " +
                             "service %s", trackerHolder.getServiceObject().getClass().getName(), serviceObject.getClass().getName());
                         log.error(logMessage, e);
                     }
@@ -140,7 +140,7 @@ public abstract class WhiteboardServiceRegistry<T> {
                         Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
                         trackerHolder.getServiceObject().serviceUnregistered(serviceHolder);
                     } catch (Exception e) {
-                        String logMessage = String.format("There was an error notifying the ProxiedServiceTracker %s for registering " +
+                        String logMessage = String.format("There was an error notifying the ServiceTracker %s for registering " +
                                 "service %s", trackerHolder.getServiceObject().getClass().getName(), serviceObject.getClass().getName());
                         log.error(logMessage, e);
                     }
@@ -171,7 +171,7 @@ public abstract class WhiteboardServiceRegistry<T> {
             try {
                 tracker.serviceRegistered(serviceHolder);
             } catch (Exception e) {
-                String logMessage = String.format("There was an error notifying the ProxiedServiceTracker %s for registering " +
+                String logMessage = String.format("There was an error notifying the ServiceTracker %s for registering " +
                         "service %s", trackerHolder.getServiceObject().getClass().getName(),
                         serviceHolder.getServiceObject().getClass().getName());
                 log.error(logMessage, e);
