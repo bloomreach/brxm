@@ -171,6 +171,17 @@ describe('PageService', () => {
         expect(PageService.isActionEnabled('page', 'edit')).toBe(true);
       });
     });
+
+    describe('hasSomeAction', () => {
+      it('should return false', () => {
+        expect(PageService.hasSomeAction('unknown', 'copy', 'move')).toBe(false);
+        expect(PageService.hasSomeAction('page', 'copy', 'move')).toBe(false);
+      });
+
+      it('should return true', () => {
+        expect(PageService.hasSomeAction('page', 'copy', 'move', 'view')).toBe(true);
+      });
+    });
   });
 
   describe('states', () => {
