@@ -63,6 +63,15 @@ class PageService {
     return this.getAction(category, name) !== null;
   }
 
+  hasSomeAction(category, ...names) {
+    if (!this.hasActions(category)) {
+      return false;
+    }
+
+    const { items } = this.actions[category];
+    return names.some(name => items[name]);
+  }
+
   getAction(category, name) {
     if (!this.hasActions(category)) {
       return null;

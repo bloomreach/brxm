@@ -32,6 +32,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.DocumentUtils;
+import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 import static java.lang.Boolean.TRUE;
@@ -44,7 +45,6 @@ final class XPageContextFactory {
             return null;
         }
 
-
         final String experiencePageHandleUUID = contextService.getExperiencePageHandleUUID();
         final HippoSession userSession = (HippoSession) contextService.getRequestContext().getSession();
         final Node handle = userSession.getNodeByIdentifier(experiencePageHandleUUID);
@@ -53,11 +53,11 @@ final class XPageContextFactory {
         final ScheduledRequest scheduledRequest = DocumentStateUtils.getScheduledRequest(handle);
         final WorkflowRequest workflowRequest = DocumentStateUtils.getWorkflowRequest(handle);
         final DocumentWorkflow workflow = XPageUtils.getDocumentWorkflow(userSession, contextService);
-
-        final Map<String, Serializable> hints = workflow.hints(contextService.getSelectedBranchId());
+        final String selectedBranchId = contextService.getSelectedBranchId();
+        final Map<String, Serializable> hints = workflow.hints(selectedBranchId);
 
         final XPageContext xPageContext = new XPageContext()
-                .setBranchId(contextService.getSelectedBranchId())
+                .setBranchId(selectedBranchId)
                 .setXPageId(experiencePageHandleUUID)
                 .setXPageName(name)
                 .setXPageState(documentState.name().toLowerCase())
@@ -66,6 +66,10 @@ final class XPageContextFactory {
                 .setCopyAllowed(TRUE.equals(hints.get("copy")))
                 .setMoveAllowed(TRUE.equals(hints.get("move")))
                 .setDeleteAllowed(TRUE.equals(hints.get("delete")));
+
+        if (!BranchConstants.MASTER_BRANCH_ID.equals(selectedBranchId)) {
+            return xPageContext;
+        }
 
         if (hints.containsKey("publish")) {
             xPageContext.setPublishable(TRUE.equals(hints.get("publish")));
