@@ -42,6 +42,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.lock.LockManager;
 import org.onehippo.cms7.services.lock.LockManagerUtils;
 import org.onehippo.cms7.services.lock.LockResource;
+import org.onehippo.repository.documentworkflow.task.VersionVariantTask;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
@@ -233,9 +234,17 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public Document commitEditableInstance() throws WorkflowException, RepositoryException {
         final Document document = (Document) triggerAction(DocumentWorkflowAction.commitEditableInstance());
-        if(workflowExecutor.getData().isAuditTrace()) {
-            // Because documentworkflow.scxml can't be modified in a minor release this action is implemented in code only
-            triggerAction(DocumentWorkflowAction.version());
+        if (workflowExecutor.getData().isAuditTrace()) {
+            // Because documentworkflow.scxml can't be modified in a minor release this action is implemented in code.
+            // triggerAction(DocumentWorkflowAction.version()) will fail if the user has not at least editor privileges.
+            // But since a version must be created irrespective of privileges we skip scxml by invoking the task directly.
+            final VersionVariantTask task = new VersionVariantTask();
+            task.setWorkflowContext(context);
+            task.setDocumentHandle(workflowExecutor.getData());
+            task.setVariant(workflowExecutor.getData().getDocuments().get(UNPUBLISHED));
+            // Explicitly setting trigger to null because this is not a publication workflow action.
+            task.setTrigger(null);
+            task.execute();
         }
         return document;
     }
