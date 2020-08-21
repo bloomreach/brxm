@@ -55,9 +55,9 @@ function config($stateProvider) {
 
   $stateProvider.state({
     name: 'hippo-cm.channel.edit-page',
+    abstract: true,
     params: {
       documentId: '',
-      showVersionsInfo: false,
     },
     views: {
       main: {
@@ -70,6 +70,12 @@ function config($stateProvider) {
         component: 'editContentIcon',
       },
     },
+  }).state({
+    name: 'hippo-cm.channel.edit-page.content',
+    component: 'editContentMain',
+  }).state({
+    name: 'hippo-cm.channel.edit-page.versions',
+    component: 'versionsInfoWrapper',
   });
 }
 

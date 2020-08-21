@@ -46,16 +46,14 @@ class XPageMenuService extends MenuService {
     }
 
     function showVersions() {
-      $state.go('hippo-cm.channel.edit-page', {
+      $state.go('hippo-cm.channel.edit-page.versions', {
         documentId: getDocumentId(),
-        showVersionsInfo: true,
       });
     }
 
     function showContent() {
-      $state.go('hippo-cm.channel.edit-page', {
+      $state.go('hippo-cm.channel.edit-page.content', {
         documentId: getDocumentId(),
-        showVersionsInfo: false,
       });
     }
 

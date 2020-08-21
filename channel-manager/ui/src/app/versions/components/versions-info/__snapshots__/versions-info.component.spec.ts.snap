@@ -4,31 +4,7 @@ exports[`VersionsInfoComponent create version should not show version button for
 <div
   id="root9"
 >
-  <div
-    class="mat-typography"
-  >
-    
-    <mat-selection-list
-      aria-disabled="false"
-      aria-multiselectable="true"
-      class="qa-version-list mat-selection-list mat-list-base"
-      role="listbox"
-      tabindex="-1"
-    >
-      <h3
-        class="qa-version-list-header mat-subheader"
-        matsubheader=""
-      >
-         NO_VERSIONS_AVAILABLE 
-      </h3>
-      <mat-divider
-        aria-orientation="horizontal"
-        class="mat-divider mat-divider-horizontal"
-        role="separator"
-      />
-    </mat-selection-list>
-    
-  </div>
+  
 </div>
 `;
 
@@ -36,31 +12,7 @@ exports[`VersionsInfoComponent create version should show version button for fir
 <div
   id="root8"
 >
-  <div
-    class="mat-typography"
-  >
-    
-    <mat-selection-list
-      aria-disabled="false"
-      aria-multiselectable="true"
-      class="qa-version-list mat-selection-list mat-list-base"
-      role="listbox"
-      tabindex="-1"
-    >
-      <h3
-        class="qa-version-list-header mat-subheader"
-        matsubheader=""
-      >
-         NO_VERSIONS_AVAILABLE 
-      </h3>
-      <mat-divider
-        aria-orientation="horizontal"
-        class="mat-divider mat-divider-horizontal"
-        role="separator"
-      />
-    </mat-selection-list>
-    
-  </div>
+  
 </div>
 `;
 
@@ -123,6 +75,7 @@ exports[`VersionsInfoComponent restoring a version should not show restore butto
 <div
   id="root6"
 >
+  
   <div
     class="mat-typography"
   >
@@ -270,6 +223,7 @@ exports[`VersionsInfoComponent restoring a version should show restore button fo
 <div
   id="root5"
 >
+  
   <div
     class="mat-typography"
   >
@@ -524,31 +478,7 @@ exports[`VersionsInfoComponent showing versions should show header indicating no
 <div
   id="root0"
 >
-  <div
-    class="mat-typography"
-  >
-    
-    <mat-selection-list
-      aria-disabled="false"
-      aria-multiselectable="true"
-      class="qa-version-list mat-selection-list mat-list-base"
-      role="listbox"
-      tabindex="-1"
-    >
-      <h3
-        class="qa-version-list-header mat-subheader"
-        matsubheader=""
-      >
-         NO_VERSIONS_AVAILABLE 
-      </h3>
-      <mat-divider
-        aria-orientation="horizontal"
-        class="mat-divider mat-divider-horizontal"
-        role="separator"
-      />
-    </mat-selection-list>
-    
-  </div>
+  
 </div>
 `;
 
@@ -556,6 +486,7 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
 <div
   id="root1"
 >
+  
   <div
     class="mat-typography"
   >
