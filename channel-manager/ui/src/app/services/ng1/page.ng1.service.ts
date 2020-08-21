@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable } from '@angular/core';
+import { InjectionToken } from '@angular/core';
 
-import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from './ng1/workflow.ng1.service';
+import { XPageState } from '../../models/xpage-state.model';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class WorkflowService {
-  constructor(
-    @Inject(NG1_WORKFLOW_SERVICE) private readonly ng1WorkflowService: Ng1WorkflowService,
-  ) { }
-
-  createWorkflowAction<T>(documentId: string, ...pathElements: string[]): Promise<T> {
-    return this.ng1WorkflowService.createWorkflowAction(documentId, ...pathElements);
-  }
+export interface Ng1PageService {
+  states: { xpage?: XPageState };
 }
+
+export const NG1_PAGE_SERVICE = new InjectionToken<Ng1PageService>('NG1_PAGE_SERVICE');
