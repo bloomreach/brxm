@@ -1,111 +1,177 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`NotificationBarStatusTextComponent if xpage status is Offline should render NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE label 1`] = `
+exports[`NotificationBarStatusTextComponent if xpage status is EditingSharedContainers should render NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERS label 1`] = `
 <div
-  id="root4"
+  id="root31"
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_OFFLINEpage namelife1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERSsome pagelifeundefined
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is Offline should render NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE label 1`] = `
+<div
+  id="root3"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_OFFLINEsome pageofflineundefined
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is ProjectInProgress should render NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_PROGRESS label 1`] = `
+<div
+  id="root21"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_PROGRESSsome pagelifeundefined
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is ProjectInReview should render NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_REVIEW label 1`] = `
+<div
+  id="root23"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_REVIEWsome pagelifeundefined
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is ProjectPageApproved should render NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_APPROVED label 1`] = `
+<div
+  id="root25"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_APPROVEDsome pagelifeundefined
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is ProjectPageRejected should render NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_REJECTED label 1`] = `
+<div
+  id="root27"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_REJECTEDsome pagelifeundefined
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is ProjectRunning should render NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IS_RUNNING label 1`] = `
+<div
+  id="root29"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IS_RUNNINGsome pagelifeundefined
 
 </div>
 `;
 
 exports[`NotificationBarStatusTextComponent if xpage status is PublicationRequest should render NOTIFICATION_BAR_XPAGE_LABEL_PUBLICATION_REQUESTED label 1`] = `
 <div
-  id="root8"
+  id="root7"
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_PUBLICATION_REQUESTEDpage namelife1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_PUBLICATION_REQUESTEDsome pageunpublished changesundefined
 
 </div>
 `;
 
 exports[`NotificationBarStatusTextComponent if xpage status is Published should render NOTIFICATION_BAR_XPAGE_LABEL_LIVE label 1`] = `
 <div
-  id="root2"
+  id="root1"
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_LIVEpage namelife1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_LIVEsome pagelifeundefined
 
 </div>
 `;
 
 exports[`NotificationBarStatusTextComponent if xpage status is RejectedRequest should render NOTIFICATION_BAR_XPAGE_LABEL_REQUEST_REJECTED label 1`] = `
 <div
-  id="root10"
+  id="root9"
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_REQUEST_REJECTEDpage namelife1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_REQUEST_REJECTEDsome pageunpublished changesundefined
 
 </div>
 `;
 
 exports[`NotificationBarStatusTextComponent if xpage status is ScheduledPublication should render NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION label 1`] = `
 <div
-  id="root14"
+  id="root13"
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATIONpage namelife1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATIONsome pageunpublished changes1596811323
 
 </div>
 `;
 
 exports[`NotificationBarStatusTextComponent if xpage status is ScheduledPublicationRequest should render NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTED label 1`] = `
 <div
-  id="root18"
+  id="root17"
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTEDpage nameoffline1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTEDsome pageunpublished changes1596811323
 
 </div>
 `;
 
 exports[`NotificationBarStatusTextComponent if xpage status is ScheduledToTakeOffline should render NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE label 1`] = `
 <div
-  id="root16"
+  id="root15"
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINEpage namelife1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINEsome pagelife1596811323
 
 </div>
 `;
 
 exports[`NotificationBarStatusTextComponent if xpage status is ScheduledToTakeOfflineRequest should render NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTED label 1`] = `
 <div
-  id="root20"
+  id="root19"
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTEDpage nameunpublished changes1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTEDsome pagelife1596811323
 
 </div>
 `;
 
 exports[`NotificationBarStatusTextComponent if xpage status is TakeOfflineRequest should render NOTIFICATION_BAR_XPAGE_LABEL_TAKE_OFFLINE_REQUESTED label 1`] = `
 <div
-  id="root12"
+  id="root11"
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_TAKE_OFFLINE_REQUESTEDpage namelife1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_TAKE_OFFLINE_REQUESTEDsome pagelifeundefined
 
 </div>
 `;
 
 exports[`NotificationBarStatusTextComponent if xpage status is UnpublishedChanges should render NOTIFICATION_BAR_XPAGE_LABEL_LIVE_UNPUBLISHED_CHANGES label 1`] = `
 <div
-  id="root6"
+  id="root5"
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_LIVE_UNPUBLISHED_CHANGESpage namelife1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_LIVE_UNPUBLISHED_CHANGESsome pagechangedundefined
 
 </div>
 `;

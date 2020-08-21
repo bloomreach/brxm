@@ -28,6 +28,10 @@
   position: relative;
   z-index: 1;
 
+  &.danger {
+    background-color: $notification-banner-danger-bgcolor;
+  }
+
   .label {
     align-items: center;
     display: flex;
