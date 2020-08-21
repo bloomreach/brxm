@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnInit } from '@angular/core';
 
-import { ChannelService } from '../../../channels/services/channel.service';
-import { IframeService } from '../../../channels/services/iframe.service';
-import { ContentService } from '../../../content/services/content.service';
-import { WorkflowService } from '../../../content/services/workflow.service';
+import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1service';
+import { Ng1ContentService, NG1_CONTENT_SERVICE } from '../../../services/ng1/content.ng1.service';
+import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1service';
+import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
 import { VersionsInfo } from '../../models/versions-info.model';
 
 @Component({
@@ -42,10 +42,10 @@ export class VersionsInfoComponent implements OnInit {
   actionInProgress = false;
 
   constructor(
-    private readonly contentService: ContentService,
-    private readonly iframeService: IframeService,
-    private readonly channelService: ChannelService,
-    private readonly workflowService: WorkflowService,
+    @Inject(NG1_CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
+    @Inject(NG1_IFRAME_SERVICE) private readonly ng1IframeService: Ng1IframeService,
+    @Inject(NG1_CHANNEL_SERVICE) private readonly ng1ChannelService: Ng1ChannelService,
+    @Inject(NG1_WORKFLOW_SERVICE) private readonly ng1WorkflowService: Ng1WorkflowService,
     private readonly changeDetector: ChangeDetectorRef,
   ) { }
 
@@ -58,7 +58,7 @@ export class VersionsInfoComponent implements OnInit {
 
   async getVersionsInfo(): Promise<void> {
     this.actionInProgress = true;
-    this.versionsInfo = await this.contentService.getDocumentVersionsInfo(this.documentId, this.branchId);
+    this.versionsInfo = await this.ng1ContentService.getDocumentVersionsInfo(this.documentId, this.branchId);
     this.changeDetector.markForCheck();
     this.actionInProgress = false;
   }
@@ -66,31 +66,31 @@ export class VersionsInfoComponent implements OnInit {
   async selectVersion(versionUUID: string): Promise<void> {
     this.actionInProgress = true;
     const newPath = this.createVersionPath(versionUUID);
-    await this.iframeService.load(newPath);
+    await this.ng1IframeService.load(newPath);
     this.actionInProgress = false;
   }
 
   async createVersion(): Promise<void> {
     this.actionInProgress = true;
-    await this.workflowService.createWorkflowAction(this.documentId, 'version');
+    await this.ng1WorkflowService.createWorkflowAction(this.documentId, 'version');
     await this.getVersionsInfo();
   }
 
   async restoreVersion(versionUUID: string): Promise<void> {
     this.actionInProgress = true;
-    await this.workflowService.createWorkflowAction(this.documentId, 'restore', versionUUID);
-    const currentPath = this.iframeService.getCurrentRenderPathInfo();
-    const renderPath = this.channelService.makeRenderPath(currentPath);
-    await this.iframeService.load(renderPath);
+    await this.ng1WorkflowService.createWorkflowAction(this.documentId, 'restore', versionUUID);
+    const currentPath = this.ng1IframeService.getCurrentRenderPathInfo();
+    const renderPath = this.ng1ChannelService.makeRenderPath(currentPath);
+    await this.ng1IframeService.load(renderPath);
     await this.getVersionsInfo();
   }
 
   private createVersionPath(selectedVersionUUID: string): string {
-    const currentPath = this.iframeService.getCurrentRenderPathInfo();
+    const currentPath = this.ng1IframeService.getCurrentRenderPathInfo();
     const versionParam = `br_version_uuid=${selectedVersionUUID}`;
     const index = this.versionsInfo.versions.findIndex(v => v.jcrUUID === selectedVersionUUID);
-    const homePageRenderPath = this.channelService.getHomePageRenderPathInfo();
-    let renderPath = this.channelService.makeRenderPath(currentPath);
+    const homePageRenderPath = this.ng1ChannelService.getHomePageRenderPathInfo();
+    let renderPath = this.ng1ChannelService.makeRenderPath(currentPath);
 
     renderPath = renderPath.replace(homePageRenderPath, '');
 
