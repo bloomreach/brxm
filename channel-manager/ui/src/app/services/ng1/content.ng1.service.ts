@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable } from '@angular/core';
+import { InjectionToken } from '@angular/core';
 
-import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from './ng1/channel.ng1service';
+import { VersionsInfo } from '../../versions/models/versions-info.model';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class ChannelService {
-  constructor(
-    @Inject(NG1_CHANNEL_SERVICE) private readonly ng1ChannelService: Ng1ChannelService,
-  ) { }
-
-  makeRenderPath(path: string): string {
-    return this.ng1ChannelService.makeRenderPath(path);
-  }
-
-  getHomePageRenderPathInfo(): string {
-    return this.ng1ChannelService.getHomePageRenderPathInfo();
-  }
+export interface Ng1ContentService {
+  getDocumentVersionsInfo(documentId: string, branchId: string): Promise<VersionsInfo>;
 }
+
+export const NG1_CONTENT_SERVICE = new InjectionToken<Ng1ContentService>('NG1_CONTENT_SERVICE');

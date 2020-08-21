@@ -20,7 +20,7 @@ import { mocked } from 'ts-jest/utils';
 
 import { XPageState } from '../../../models/xpage-state.model';
 import { XPageStatus } from '../../../models/xpage-status.enum';
-import { PageService } from '../../../pages/services/page.service';
+import { PageService } from '../../../services/page.service';
 
 import { NotificationBarStatusIconComponent } from './notification-bar-status-icon.component';
 
