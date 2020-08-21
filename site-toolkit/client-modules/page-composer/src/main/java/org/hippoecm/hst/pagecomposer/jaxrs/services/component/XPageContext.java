@@ -16,6 +16,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.util.Optional;
+
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequest;
 
@@ -89,8 +91,8 @@ public class XPageContext {
         return this;
     }
 
-    public Boolean isPublishable() {
-        return publishable;
+    public Optional<Boolean> isPublishable() {
+        return Optional.ofNullable(publishable);
     }
 
     public XPageContext setPublishable(final Boolean publishable) {
@@ -98,8 +100,8 @@ public class XPageContext {
         return this;
     }
 
-    public Boolean isUnpublishable() {
-        return unpublishable;
+    public Optional<Boolean> isUnpublishable() {
+        return Optional.ofNullable(unpublishable);
     }
 
     public XPageContext setUnpublishable(final Boolean unpublishable) {
@@ -112,8 +114,8 @@ public class XPageContext {
         return this;
     }
 
-    public Boolean isRequestPublication() {
-        return requestPublication;
+    public Optional<Boolean> isRequestPublication() {
+        return Optional.ofNullable(requestPublication);
     }
 
     public XPageContext setRequestDepublication(final Boolean requestDepublication) {
@@ -121,8 +123,8 @@ public class XPageContext {
         return this;
     }
 
-    public Boolean isRequestDepublication() {
-        return requestDepublication;
+    public Optional<Boolean> isRequestDepublication() {
+        return Optional.ofNullable(requestDepublication);
     }
 
     public XPageContext setCopyAllowed(final Boolean copyAllowed) {
