@@ -17,12 +17,10 @@
 import { DatePipe } from '@angular/common';
 import { NO_ERRORS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { mocked } from 'ts-jest/utils';
 
 import { DocumentState } from '../../../models/document-state.enum';
-import { XPageState } from '../../../models/xpage-state.model';
+import { XPageStatusInfo } from '../../../models/page-status-info.model';
 import { XPageStatus } from '../../../models/xpage-status.enum';
-import { PageService } from '../../../services/page.service';
 
 import { NotificationBarStatusTextComponent } from './notification-bar-status-text.component';
 
@@ -39,13 +37,7 @@ describe('NotificationBarStatusTextComponent', () => {
   let component: NotificationBarStatusTextComponent;
   let fixture: ComponentFixture<NotificationBarStatusTextComponent>;
 
-  let pageServiceMock: PageService;
-
   beforeEach(() => {
-    pageServiceMock = {
-      getXPageStatus: jest.fn(),
-    } as unknown as typeof pageServiceMock;
-
     const datePipe = {
       transform: jest.fn(v => v),
     };
@@ -56,7 +48,6 @@ describe('NotificationBarStatusTextComponent', () => {
         TranslateMockPipe,
       ],
       providers: [
-        { provide: PageService, useValue: pageServiceMock },
         { provide: DatePipe, useValue: datePipe },
       ],
       schemas: [NO_ERRORS_SCHEMA],
@@ -65,46 +56,122 @@ describe('NotificationBarStatusTextComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should compute XPage status', () => {
-    const mockState = {} as XPageState;
-
-    component.state = mockState;
-
-    expect(pageServiceMock.getXPageStatus).toHaveBeenCalledWith(mockState);
-  });
-
   describe.each([
-    ['Published', XPageStatus.Published, 'NOTIFICATION_BAR_XPAGE_LABEL_LIVE'],
-    ['Offline', XPageStatus.Offline, 'NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE'],
-    ['UnpublishedChanges', XPageStatus.UnpublishedChanges, 'NOTIFICATION_BAR_XPAGE_LABEL_LIVE_UNPUBLISHED_CHANGES'],
-    ['PublicationRequest', XPageStatus.PublicationRequest, 'NOTIFICATION_BAR_XPAGE_LABEL_PUBLICATION_REQUESTED'],
-    ['RejectedRequest', XPageStatus.RejectedRequest, 'NOTIFICATION_BAR_XPAGE_LABEL_REQUEST_REJECTED'],
-    ['TakeOfflineRequest', XPageStatus.TakeOfflineRequest, 'NOTIFICATION_BAR_XPAGE_LABEL_TAKE_OFFLINE_REQUESTED'],
-    ['ScheduledPublication', XPageStatus.ScheduledPublication, 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION'],
-    ['ScheduledToTakeOffline', XPageStatus.ScheduledToTakeOffline, 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE'],
-    [
-      'ScheduledPublicationRequest',
-      XPageStatus.ScheduledPublicationRequest,
-      'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTED',
+    ['Published', new XPageStatusInfo(
+      XPageStatus.Published,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      undefined,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_LIVE'],
+    ['Offline', new XPageStatusInfo(
+      XPageStatus.Offline,
       DocumentState.New,
-    ],
-    [
-      'ScheduledToTakeOfflineRequest',
-      XPageStatus.ScheduledToTakeOfflineRequest,
-      'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTED',
+      'some page',
+      undefined,
+      undefined,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE'],
+    ['UnpublishedChanges', new XPageStatusInfo(
+      XPageStatus.UnpublishedChanges,
+      DocumentState.Changed,
+      'some page',
+      undefined,
+      undefined,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_LIVE_UNPUBLISHED_CHANGES'],
+    ['PublicationRequest', new XPageStatusInfo(
+      XPageStatus.PublicationRequest,
       DocumentState.Unpublished,
-    ],
-  ])('if xpage status is %s', (statusName, statusValue, expectedText, documentState?) => {
+      'some page',
+      undefined,
+      undefined,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PUBLICATION_REQUESTED'],
+    ['RejectedRequest', new XPageStatusInfo(
+      XPageStatus.RejectedRequest,
+      DocumentState.Unpublished,
+      'some page',
+      undefined,
+      undefined,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_REQUEST_REJECTED'],
+    ['TakeOfflineRequest', new XPageStatusInfo(
+      XPageStatus.TakeOfflineRequest,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      undefined,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_TAKE_OFFLINE_REQUESTED'],
+    ['ScheduledPublication', new XPageStatusInfo(
+      XPageStatus.ScheduledPublication,
+      DocumentState.Unpublished,
+      'some page',
+      1596811323,
+      undefined,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION'],
+    ['ScheduledToTakeOffline', new XPageStatusInfo(
+      XPageStatus.ScheduledToTakeOffline,
+      DocumentState.Live,
+      'some page',
+      1596811323,
+      undefined,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE'],
+    ['ScheduledPublicationRequest', new XPageStatusInfo(
+      XPageStatus.ScheduledPublicationRequest,
+      DocumentState.Unpublished,
+      'some page',
+      1596811323,
+      undefined,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTED'],
+    ['ScheduledToTakeOfflineRequest', new XPageStatusInfo(
+      XPageStatus.ScheduledToTakeOfflineRequest,
+      DocumentState.Live,
+      'some page',
+      1596811323,
+      undefined,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTED'],
+    ['ProjectInProgress', new XPageStatusInfo(
+      XPageStatus.ProjectInProgress,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      'project name',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_PROGRESS'],
+    ['ProjectInReview', new XPageStatusInfo(
+      XPageStatus.ProjectInReview,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      'project name',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_REVIEW'],
+    ['ProjectPageApproved', new XPageStatusInfo(
+      XPageStatus.ProjectPageApproved,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      'project name',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_APPROVED'],
+    ['ProjectPageRejected', new XPageStatusInfo(
+      XPageStatus.ProjectPageRejected,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      'project name',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_REJECTED'],
+    ['ProjectRunning', new XPageStatusInfo(
+      XPageStatus.ProjectRunning,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      'project name',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IS_RUNNING'],
+    ['EditingSharedContainers', new XPageStatusInfo(
+      XPageStatus.EditingSharedContainers,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      undefined,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERS'],
+  ])('if xpage status is %s', (statusName, statusInfo, expectedText) => {
     beforeEach(() => {
-      mocked(pageServiceMock.getXPageStatus).mockReturnValue(statusValue);
-
-      component.state = {
-        name: 'page name',
-        state: documentState || DocumentState.Live,
-        scheduledRequest: {
-          scheduledDate: 1596811323,
-        },
-      } as XPageState;
+      component.statusInfo = statusInfo;
 
       fixture.detectChanges();
     });

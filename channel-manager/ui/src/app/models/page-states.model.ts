@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
+import { ScheduledRequest } from './scheduled-request.model';
+import { WorkflowRequest } from './workflow-request.model';
+import { XPageState } from './xpage-state.model';
 
-import { PageStates } from '../../models/page-states.model';
-
-export interface Ng1PageService {
-  states: PageStates;
+export interface PageStates {
+  xpage?: XPageState;
+  scheduledRequest?: ScheduledRequest;
+  workflowRequest?: WorkflowRequest;
 }
-
-export const NG1_PAGE_SERVICE = new InjectionToken<Ng1PageService>('NG1_PAGE_SERVICE');

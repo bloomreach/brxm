@@ -19,6 +19,7 @@ import { InjectionToken } from '@angular/core';
 export interface Ng1IframeService {
   load(path: string): Promise<void>;
   getCurrentRenderPathInfo(): string;
+  isEditSharedContainers(): boolean;
 }
 
 export const NG1_IFRAME_SERVICE = new InjectionToken<Ng1IframeService>('NG1_IFRAME_SERVICE');
