@@ -16,42 +16,14 @@
 
 package org.hippoecm.frontend.plugins.standards.wizard;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.wizard.IWizard;
-import org.apache.wicket.extensions.wizard.IWizardModel;
-import org.apache.wicket.markup.html.form.Form;
-import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
-import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.apache.wicket.extensions.wizard.WizardButton;
+import org.apache.wicket.model.IModel;
 
-public abstract class AjaxWizardButton extends AjaxButton {
+public abstract class AjaxWizardButton extends WizardButton {
     private static final long serialVersionUID = 1L;
 
-
-    private final IWizard wizard;
-
-    public AjaxWizardButton(String id, IWizard wizard, final Form form, String labelResourceKey) {
-        super(id, new ClassResourceModel(labelResourceKey, AjaxWizardButton.class), form);
-        this.wizard = wizard;
-        add(ClassAttribute.append("btn btn-default"));
+    public AjaxWizardButton(String id, IWizard wizard, IModel<String> label) {
+        super(id, wizard, label);
     }
-
-    public AjaxWizardButton(String id, IWizard wizard, String labelResourceKey) {
-        this(id, wizard, null, labelResourceKey);
-    }
-
-    protected final IWizard getWizard() {
-        return wizard;
-    }
-
-    protected final IWizardModel getWizardModel() {
-        return getWizard().getWizardModel();
-    }
-
-    @Override
-    protected final void onSubmit(AjaxRequestTarget target) {
-        onClick(target);
-    }
-
-    protected abstract void onClick(AjaxRequestTarget target);
 }

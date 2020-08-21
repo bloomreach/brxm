@@ -120,7 +120,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     private final boolean editing;
     private final boolean useUrlKeyEncoding;
 
-    private final Form container;
+    private final Form<Void> container;
     private final MarkupContainer holder;
     private final MarkupContainer toolbarHolder;
     private final ITaxonomyService service;
