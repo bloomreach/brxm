@@ -77,6 +77,10 @@ final class XPageContextFactory {
             xPageContext.setRequestDepublication(TRUE.equals(hints.get("requestDepublication")));
         }
 
+        if (hints.containsKey("inUseBy")) {
+            xPageContext.setLockedBy((String) hints.get("inUseBy"));
+        }
+
         return xPageContext;
     }
 }

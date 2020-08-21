@@ -24,6 +24,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.Workflo
 public class XPageContext {
 
     private String xPageId;
+    private String xPageLockedBy;
     private String xPageName;
     private String xPageState;
     private WorkflowRequest workflowRequest;
@@ -153,4 +154,14 @@ public class XPageContext {
     public Boolean isDeleteAllowed() {
         return deleteAllowed;
     }
+
+    public XPageContext setLockedBy(final String lockedBy) {
+        this.xPageLockedBy = lockedBy;
+        return this;
+    }
+
+    public String getLockedBy() {
+        return xPageLockedBy;
+    }
+
 }
