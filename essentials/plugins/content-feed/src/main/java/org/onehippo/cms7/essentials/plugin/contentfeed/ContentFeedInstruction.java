@@ -26,6 +26,9 @@ import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.sdk.api.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenAssemblyService;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenCargoService;
 import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,8 +57,19 @@ public class ContentFeedInstruction implements Instruction {
     private static final String DEFAULT_BASEURL = "http://api-staging.connect.bloomreach.com/dataconnect/api/v1/";
     private static final String DEFAULT_HOST = "sftp-staging.connect.bloomreach.com";
 
+    private static final String GROUP_ONEHIPPO_CMS = "com.onehippo.cms7";
+    private static final String CONTENT_FEED_SEARCH_API = "hippo-addon-content-feed-search-api";
+
+    private static final MavenDependency DEPENDENCY_CONTENT_FEED_SEARCH_API
+            = new MavenDependency(GROUP_ONEHIPPO_CMS, CONTENT_FEED_SEARCH_API);
     @Inject
     private ProjectService projectService;
+
+    @Inject
+    private MavenAssemblyService mavenAssemblyService;
+
+    @Inject
+    private MavenCargoService mavenCargoService;
 
     @Override
     public Status execute(final Map<String, Object> parameters) {
@@ -91,6 +105,9 @@ public class ContentFeedInstruction implements Instruction {
             addProperty(cmsConfigContent, DATACONNECT_PRIVATEKEYPATH, "");
             addProperty(cmsConfigContent, DATACONNECT_SERVERHOSTKEY, "");
             Files.write(cmsConfig, cmsConfigContent.toString().getBytes());
+
+            mavenCargoService.addDependencyToCargoSharedClasspath(DEPENDENCY_CONTENT_FEED_SEARCH_API);
+            mavenAssemblyService.addIncludeToFirstDependencySet("shared-lib-component.xml", DEPENDENCY_CONTENT_FEED_SEARCH_API);
 
         } catch (IOException e) {
             log.warn("Failed to update configuration properties.", e);
