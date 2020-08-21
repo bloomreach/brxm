@@ -40,6 +40,7 @@ describe('VersionsInfoComponent', () => {
   const date = Date.parse('11/08/2020 16:03');
   const path = '/some/test/path';
   const renderPath = `${path}?withParam=test`;
+  const homePageRenderPath = '';
   const firstVersionUUID = 'testId';
   const secondVersionUUID = 'testVariantId';
   const mockVersionsInfo = {
@@ -64,6 +65,7 @@ describe('VersionsInfoComponent', () => {
 
     const channelServiceMock = {
       makeRenderPath: () => path,
+      getHomePageRenderPathInfo: () => homePageRenderPath,
     };
 
     const iframeServiceMock = {

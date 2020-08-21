@@ -87,9 +87,12 @@ export class VersionsInfoComponent implements OnInit {
 
   private createVersionPath(selectedVersionUUID: string): string {
     const currentPath = this.iframeService.getCurrentRenderPathInfo();
-    const renderPath = this.channelService.makeRenderPath(currentPath);
     const versionParam = `br_version_uuid=${selectedVersionUUID}`;
     const index = this.versionsInfo.versions.findIndex(v => v.jcrUUID === selectedVersionUUID);
+    const homePageRenderPath = this.channelService.getHomePageRenderPathInfo();
+    let renderPath = this.channelService.makeRenderPath(currentPath);
+
+    renderPath = renderPath.replace(homePageRenderPath, '');
 
     if (index <= 0) {
       return renderPath;
