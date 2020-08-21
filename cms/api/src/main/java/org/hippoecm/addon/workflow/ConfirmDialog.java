@@ -24,7 +24,7 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ConfirmDialog extends Dialog implements IWorkflowInvoker {
+public abstract class ConfirmDialog extends Dialog<Void> implements IWorkflowInvoker {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ConfirmDialog.class);
@@ -35,7 +35,7 @@ public abstract class ConfirmDialog extends Dialog implements IWorkflowInvoker {
 
     public ConfirmDialog(IModel<String> title, IModel<String> intro, IModel<String> text, IModel<String> question) {
         super();
-        setTitle(Model.of(title));
+        setTitle(title);
         setSize(DialogConstants.SMALL);
 
         if (intro == null) {

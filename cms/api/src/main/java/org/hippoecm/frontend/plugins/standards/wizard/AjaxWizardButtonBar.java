@@ -22,6 +22,7 @@ import org.apache.wicket.extensions.wizard.IWizardStep;
 import org.apache.wicket.extensions.wizard.Wizard;
 import org.apache.wicket.extensions.wizard.WizardButton;
 
+import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import wicket.contrib.input.events.EventType;
 import wicket.contrib.input.events.InputBehavior;
@@ -29,12 +30,8 @@ import wicket.contrib.input.events.key.KeyType;
 
 public class AjaxWizardButtonBar extends org.apache.wicket.extensions.wizard.AjaxWizardButtonBar {
 
-    private final Wizard wizard;
-
     public AjaxWizardButtonBar(String id, final Wizard wizard) {
         super(id, wizard);
-        this.wizard = wizard;
-
         setOutputMarkupId(true);
     }
 
@@ -63,10 +60,10 @@ public class AjaxWizardButtonBar extends org.apache.wicket.extensions.wizard.Aja
         return new CancelButton(id, wizard);
     }
 
-    private static class CancelButton extends WizardButton {
+    private static class CancelButton extends AjaxWizardButton {
 
         public CancelButton(final String id, final IWizard wizard) {
-            super(id, wizard, () -> "cancel");
+            super(id, wizard, new ResourceModel("cancel"));
             add(ClassAttribute.append("btn btn-default"));
             add(new InputBehavior(new KeyType[] {KeyType.Escape}, EventType.click));
 
@@ -86,14 +83,11 @@ public class AjaxWizardButtonBar extends org.apache.wicket.extensions.wizard.Aja
         }
     }
 
-    private static class NextButton extends WizardButton {
-
-        private final IWizard wizard;
+    private static class NextButton extends AjaxWizardButton {
 
         public NextButton(final String id, final IWizard wizard) {
-            super(id, wizard, () -> "next");
+            super(id, wizard, new ResourceModel("next"));
             add(ClassAttribute.append("btn btn-default"));
-            this.wizard = wizard;
         }
 
         @Override
@@ -119,14 +113,11 @@ public class AjaxWizardButtonBar extends org.apache.wicket.extensions.wizard.Aja
         }
     }
 
-    private static class PreviousButton extends WizardButton {
-
-        private final IWizard wizard;
+    private static class PreviousButton extends AjaxWizardButton {
 
         public PreviousButton(final String id, final IWizard wizard) {
-            super(id, wizard, () -> "prev");
+            super(id, wizard, new ResourceModel("prev"));
             add(ClassAttribute.append("btn btn-default"));
-            this.wizard = wizard;
 
             // Skip form validation on previous button
             setDefaultFormProcessing(false);
@@ -143,10 +134,10 @@ public class AjaxWizardButtonBar extends org.apache.wicket.extensions.wizard.Aja
         }
     }
 
-    private static class FinishButton extends WizardButton {
+    private static class FinishButton extends AjaxWizardButton {
 
         public FinishButton(final String id, final IWizard wizard) {
-            super(id, wizard, () -> "finish");
+            super(id, wizard, new ResourceModel("finish"));
             add(ClassAttribute.append("btn btn-default"));
         }
 
