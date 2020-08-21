@@ -29,4 +29,8 @@ export class ChannelService {
   makeRenderPath(path: string): string {
     return this.ng1ChannelService.makeRenderPath(path);
   }
+
+  getHomePageRenderPathInfo(): string {
+    return this.ng1ChannelService.getHomePageRenderPathInfo();
+  }
 }
