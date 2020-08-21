@@ -20,7 +20,7 @@ import { Component, Input } from '@angular/core';
 import { DocumentState } from '../../../models/document-state.enum';
 import { XPageState } from '../../../models/xpage-state.model';
 import { XPageStatus } from '../../../models/xpage-status.enum';
-import { PageService } from '../../../pages/services/page.service';
+import { PageService } from '../../../services/page.service';
 
 @Component({
   selector: 'em-notification-bar-status-text',

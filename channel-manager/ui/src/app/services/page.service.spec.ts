@@ -16,27 +16,39 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { DocumentState } from '../../models/document-state.enum';
-import { ScheduledRequestType } from '../../models/scheduled-request-type.enum';
-import { WorkflowRequestType } from '../../models/workflow-request-type.enum';
-import { XPageState } from '../../models/xpage-state.model';
-import { XPageStatus } from '../../models/xpage-status.enum';
+import { DocumentState } from '../models/document-state.enum';
+import { ScheduledRequestType } from '../models/scheduled-request-type.enum';
+import { WorkflowRequestType } from '../models/workflow-request-type.enum';
+import { XPageState } from '../models/xpage-state.model';
+import { XPageStatus } from '../models/xpage-status.enum';
 
-import { NG1_PAGE_SERVICE } from './ng1/page.ng1.service';
+import { Ng1PageService, NG1_PAGE_SERVICE } from './ng1/page.ng1.service';
 import { PageService } from './page.service';
 
 describe('PageService', () => {
   let service: PageService;
+  let ng1PageService: Ng1PageService;
+
+  const xPageState = { branchId: 'testPageState' } as XPageState;
 
   beforeEach(() => {
+    const ng1PageServiceMock = {
+      states: {
+        get xpage(): XPageState {
+          return xPageState;
+        },
+      },
+    } as Ng1PageService;
+
     TestBed.configureTestingModule({
       providers: [
         PageService,
-        { provide: NG1_PAGE_SERVICE, useValue: {} },
+        { provide: NG1_PAGE_SERVICE, useValue: ng1PageServiceMock },
       ],
     });
 
     service = TestBed.inject(PageService);
+    ng1PageService = TestBed.inject(NG1_PAGE_SERVICE);
   });
 
   describe.each([
@@ -81,6 +93,12 @@ describe('PageService', () => {
       } as XPageState;
 
       expect(service.getXPageStatus(xpageState)).toBe(expectedStatusValue);
+    });
+  });
+
+  describe('getXPageState', () => {
+    it('shoudl get xpage state', () => {
+      expect(service.getXPageState()).toEqual(xPageState);
     });
   });
 });
