@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequest;
 
@@ -46,6 +47,11 @@ final class HstStateProvider {
         states.add(HstState.XPAGE_ID.toState(xPageContext.getXPageId()));
         states.add(HstState.XPAGE_NAME.toState(xPageContext.getXPageName()));
         states.add(HstState.XPAGE_STATE.toState(xPageContext.getXPageState()));
+
+        if (!StringUtils.isEmpty(xPageContext.getLockedBy())) {
+            states.add(HstState.XPAGE_LOCKED_BY.toState(xPageContext.getLockedBy()));
+        }
+
         return states;
     }
 
