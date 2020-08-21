@@ -26,6 +26,7 @@ const contentTabsComponent = {
     // element so Angular Material applies the right layout
     flex: '@',
     layout: '@',
+    'layout-fill': '@',
   },
 };
 
