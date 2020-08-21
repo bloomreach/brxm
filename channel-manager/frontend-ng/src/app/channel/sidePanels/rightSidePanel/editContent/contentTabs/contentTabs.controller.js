@@ -17,45 +17,23 @@
 class ContentTabsCtrl {
   constructor(
     $uiRouterGlobals,
-    ContentEditor,
-    HippoIframeService,
+    $transitions,
   ) {
     'ngInject';
 
     this.$uiRouterGlobals = $uiRouterGlobals;
-
-    this.ContentEditor = ContentEditor;
-    this.HippoIframeService = HippoIframeService;
+    this.$transitions = $transitions;
   }
 
   $onInit() {
-    this.showVersionsInfo = this.$uiRouterGlobals.params.showVersionsInfo;
-  }
+    this.selectedNavItem = this.$uiRouterGlobals.current.name.split('.').pop();
 
-  uiCanExit() {
-    if (this.ContentEditor.isRetainable()) {
-      return this.ContentEditor.keepDraft()
-        .finally(() => this.ContentEditor.close());
-    }
-    return this._confirmExit()
-      .then(() => this.ContentEditor.discardChanges()
-        .catch(() => {
-          // ignore errors of discardChanges: if it fails (e.g. because an admin unlocked the document)
-          // the editor should still be closed.
-        })
-        .finally(() => this.ContentEditor.close()));
-  }
-
-  _confirmExit() {
-    const titleKey = this.ContentEditor.isDocumentXPage ? 'SAVE_XPAGE_CHANGES_TITLE' : 'SAVE_DOCUMENT_CHANGES_TITLE';
-    const messageKey = this.ContentEditor.isDocumentXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
-
-    return this.ContentEditor.confirmSaveOrDiscardChanges(messageKey, {}, titleKey)
-      .then((action) => {
-        if (action === 'SAVE') {
-          this.HippoIframeService.reload();
-        }
-      });
+    this.$transitions.onSuccess(
+      { to: '**.edit-page.**' },
+      () => {
+        this.selectedNavItem = this.$uiRouterGlobals.current.name.split('.').pop();
+      },
+    );
   }
 }
 
