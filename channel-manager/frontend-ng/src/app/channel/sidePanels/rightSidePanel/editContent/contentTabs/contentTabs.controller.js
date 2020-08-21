@@ -29,7 +29,7 @@ class ContentTabsCtrl {
     this.selectedNavItem = this.$uiRouterGlobals.current.name.split('.').pop();
 
     this.$transitions.onSuccess(
-      { to: '**.edit-page.**' },
+      { to: '**.edit-page.*' },
       () => {
         this.selectedNavItem = this.$uiRouterGlobals.current.name.split('.').pop();
       },

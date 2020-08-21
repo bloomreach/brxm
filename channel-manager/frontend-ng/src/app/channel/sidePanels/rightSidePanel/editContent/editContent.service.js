@@ -49,17 +49,17 @@ class EditContentService {
     );
 
     $transitions.onEnter(
-      { entering: '**.edit-page.**' },
+      { entering: '**.edit-page.content' },
       transition => this._loadDocument(transition.params().documentId),
     );
 
     $transitions.onBefore(
-      { from: '**.edit-page.**', to: 'hippo-cm' },
+      { from: '**.edit-page.*', to: 'hippo-cm' },
       () => this._onCloseChannel(),
     );
 
     $transitions.onExit(
-      { exiting: '**.edit-page.**' },
+      { exiting: '**.edit-page.*' },
       () => $rootScope.$emit('page:check-changes'),
     );
 
