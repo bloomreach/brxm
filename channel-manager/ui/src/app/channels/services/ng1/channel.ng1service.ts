@@ -18,6 +18,7 @@ import { InjectionToken } from '@angular/core';
 
 export interface Ng1ChannelService {
   makeRenderPath(path: string): string;
+  getHomePageRenderPathInfo(): string;
 }
 
 export const NG1_CHANNEL_SERVICE = new InjectionToken<Ng1ChannelService>('NG1_CHANNEL_SERVICE');
