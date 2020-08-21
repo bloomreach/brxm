@@ -14,12 +14,27 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
-import { PageStates } from '../../models/page-states.model';
+import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../services/ng1/iframe.ng1service';
 
-export interface Ng1PageService {
-  states: PageStates;
+@Injectable({
+  providedIn: 'root',
+})
+export class IframeService {
+  constructor(
+    @Inject(NG1_IFRAME_SERVICE) private readonly ng1IframeService: Ng1IframeService,
+  ) { }
+
+  async load(path: string): Promise<void> {
+    return this.ng1IframeService.load(path);
+  }
+
+  getCurrentRenderPathInfo(): string {
+    return this.ng1IframeService.getCurrentRenderPathInfo();
+  }
+
+  isEditSharedContainers(): boolean {
+    return this.ng1IframeService.isEditSharedContainers();
+  }
 }
-
-export const NG1_PAGE_SERVICE = new InjectionToken<Ng1PageService>('NG1_PAGE_SERVICE');

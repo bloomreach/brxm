@@ -14,7 +14,11 @@
   limitations under the License.
   -->
 
-<em-notification-bar ng-if="$ctrl.isXPage()" ng-prop-x_page_state="$ctrl.xPageState"></em-notification-bar>
+<em-notification-bar ng-if="$ctrl.isXPage()"
+                     ng-prop-page_states="$ctrl.pageStates"
+                     ng-prop-current_project="$ctrl.currentProject"
+                     ng-prop-is_editing_shared_containers="$ctrl.isEditingSharedContainers">
+</em-notification-bar>
 
 <!-- The gray background behind the channel. Visible when the viewport is constrained. -->
 <div class="channel-iframe-canvas"
