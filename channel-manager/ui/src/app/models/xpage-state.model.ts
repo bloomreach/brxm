@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
+import { AcceptanceState } from './acceptance-state.enum';
 import { DocumentState } from './document-state.enum';
-import { ScheduledRequest } from './scheduled-request.model';
-import { WorkflowRequest } from './workflow-request.model';
 
 export interface XPageState {
   branchId: string;
   id: string;
   name: string;
-  scheduledRequest: ScheduledRequest;
   state: DocumentState;
-  workflowRequest: WorkflowRequest;
+  acceptanceState?: AcceptanceState;
 }

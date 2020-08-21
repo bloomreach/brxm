@@ -16,7 +16,10 @@
 
 import { InjectionToken } from '@angular/core';
 
+import { Project } from '../../models/project.model';
+
 export interface Ng1ProjectService {
+  projects: Project[];
   getSelectedProjectId(): string;
 }
 

@@ -14,15 +14,40 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, HostBinding, Input, OnChanges } from '@angular/core';
 
-import { XPageState } from '../../../models/xpage-state.model';
+import { PageStates } from '../../../models/page-states.model';
+import { XPageStatusInfo } from '../../../models/page-status-info.model';
+import { Project } from '../../../models/project.model';
+import { XPageStatus } from '../../../models/xpage-status.enum';
+import { PageService } from '../../../services/page.service';
+
+const DANGER_XPAGE_STATUSES = [XPageStatus.RejectedRequest, XPageStatus.ProjectPageRejected];
 
 @Component({
   templateUrl: 'notification-bar.component.html',
   styleUrls: ['notification-bar.component.scss'],
 })
-export class NotificationBarComponent {
+export class NotificationBarComponent implements OnChanges {
   @Input()
-  xPageState!: XPageState;
+  pageStates!: PageStates;
+
+  @Input()
+  currentProject!: Project;
+
+  @Input()
+  isEditingSharedContainers = false;
+
+  @HostBinding('class.danger')
+  danger = false;
+
+  pageStatusInfo: XPageStatusInfo | undefined;
+
+  constructor(private readonly pageService: PageService) {}
+
+  ngOnChanges(): void {
+    // PageService extracts necessary data from appropriate services and use inputs for triggering change detection
+    this.pageStatusInfo = this.pageService.getPageStatusInfo();
+    this.danger = DANGER_XPAGE_STATUSES.some(x => x === this.pageStatusInfo?.status);
+  }
 }
