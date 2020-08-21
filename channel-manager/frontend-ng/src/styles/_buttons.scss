@@ -56,7 +56,7 @@
 }
 
 .md-bloomreach-theme {
-  .md-button:not(.md-icon-button):not(.md-no-style) {
+  .md-button:not(.md-icon-button):not(.md-no-style):not(._md-nav-button) {
     --color: #{$bloomreach-black};
     --background-color: transparent;
     --border-color: #{$bloomreach-gray-38};

@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="mat-typography">
+<div class="mat-typography" *ngIf="versionsInfo">
   <mat-selection-list class="qa-version-list"
-                      *ngIf="versionsInfo.versions.length === 0">
+                      *ngIf="versionsInfo?.versions.length === 0">
     <h3 matSubheader
         class="qa-version-list-header">
       {{ 'NO_VERSIONS_AVAILABLE' | translate }}
@@ -23,7 +23,7 @@
     <mat-divider></mat-divider>
   </mat-selection-list>
 
-  <mat-selection-list *ngIf="versionsInfo.versions.length > 0"
+  <mat-selection-list *ngIf="versionsInfo?.versions.length > 0"
                       color="primary"
                       class="qa-version-list"
                       [multiple]="false"
@@ -39,7 +39,7 @@
 
     <mat-divider></mat-divider>
 
-    <mat-list-option *ngFor="let version of versionsInfo.versions; first as isFirst"
+    <mat-list-option *ngFor="let version of versionsInfo?.versions; first as isFirst"
                      [class]="'qa-version-' + version.jcrUUID"
                      [value]="version.jcrUUID"
                      [selected]="unpublishedVariantId === version.jcrUUID">

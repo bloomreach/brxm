@@ -37,7 +37,7 @@ export class VersionsInfoComponent implements OnInit {
   @Input()
   unpublishedVariantId!: string;
 
-  versionsInfo: VersionsInfo = { versions: [], restoreEnabled: true };
+  versionsInfo?: VersionsInfo;
 
   actionInProgress = false;
 
@@ -89,12 +89,11 @@ export class VersionsInfoComponent implements OnInit {
   private createVersionPath(selectedVersionUUID: string): string {
     const currentPath = this.ng1IframeService.getCurrentRenderPathInfo();
     const versionParam = `br_version_uuid=${selectedVersionUUID}`;
-
-    const index = this.versionsInfo.versions.findIndex(v => v.jcrUUID === selectedVersionUUID);
+    const index = this.versionsInfo?.versions.findIndex(v => v.jcrUUID === selectedVersionUUID);
     const homePageRenderPath = this.ng1ChannelService.getHomePageRenderPathInfo();
     const renderPath = this.ng1ChannelService.makeRenderPath(currentPath.replace(homePageRenderPath, ''));
 
-    if (index <= 0) {
+    if (index && index <= 0) {
       return renderPath;
     }
 
