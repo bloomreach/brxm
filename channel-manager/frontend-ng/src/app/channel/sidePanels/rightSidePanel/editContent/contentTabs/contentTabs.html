@@ -14,22 +14,18 @@
   ~ limitations under the License.
   -->
 
-<md-tabs md-border-bottom
-         md-no-pagination
-         flex
-         layout="column">
-  <md-tab md-active="!$ctrl.showVersionsInfo"
-          label="{{ ::'CONTENT' | translate }}">
-    <edit-content-main flex
-                       layout="column"
-                       layout-fill>
-    </edit-content-main>
-  </md-tab>
+<md-nav-bar md-selected-nav-item="$ctrl.selectedNavItem">
+  <md-nav-item name="content"
+               md-nav-sref="hippo-cm.channel.edit-page.content">
+    {{ ::'CONTENT' | translate }}
+  </md-nav-item>
+  <md-nav-item name="versions"
+               md-nav-sref="hippo-cm.channel.edit-page.versions">
+    {{ ::'VERSIONS' | translate }}
+  </md-nav-item>
+</md-nav-bar>
 
-  <md-tab label="{{ ::'VERSIONS' | translate }}"
-          md-active="$ctrl.showVersionsInfo"
-          md-on-select="$ctrl.isVersionsTabActive = true"
-          md-on-deselect="$ctrl.isVersionsTabActive = false">
-    <versions-info-wrapper ng-if="$ctrl.isVersionsTabActive"></versions-info-wrapper>
-  </md-tab>
-</md-tabs>
+<ui-view flex
+         layout="column"
+         layout-fill>
+</ui-view>

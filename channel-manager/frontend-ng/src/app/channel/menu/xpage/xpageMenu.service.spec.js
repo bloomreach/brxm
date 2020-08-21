@@ -141,9 +141,8 @@ describe('XPageMenuService', () => {
       spyOn($state, 'go');
       getAction('content').onClick();
 
-      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page', {
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page.content', {
         documentId: 'xpage-document-id',
-        showVersionsInfo: false,
       });
     });
 
@@ -151,9 +150,8 @@ describe('XPageMenuService', () => {
       spyOn($state, 'go');
       getAction('versions').onClick();
 
-      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page', {
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page.versions', {
         documentId: 'xpage-document-id',
-        showVersionsInfo: true,
       });
     });
 

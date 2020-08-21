@@ -13,7 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@import "variables";
 
-content-tabs md-tab-content {
-  transition: none;
+content-tabs {
+  .md-nav-item .md-button {
+    color: $bloomreach-blue-primary;
+    text-transform: none;
+  }
+
+  md-nav-bar md-nav-ink-bar {
+    background-color: $bloomreach-blue-primary;
+    color: $bloomreach-blue-primary;
+  }
 }
