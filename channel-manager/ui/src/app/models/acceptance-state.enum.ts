@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
-
-import { PageStates } from '../../models/page-states.model';
-
-export interface Ng1PageService {
-  states: PageStates;
+export enum AcceptanceState {
+  InReview = 'in-review',
+  Approved = 'approved',
+  Rejected = 'rejected',
 }
-
-export const NG1_PAGE_SERVICE = new InjectionToken<Ng1PageService>('NG1_PAGE_SERVICE');

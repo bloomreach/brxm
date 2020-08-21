@@ -19,4 +19,5 @@ export enum DocumentState {
   Draft = 'draft',
   Unpublished = 'unpublished',
   Live = 'live',
+  Changed = 'changed',
 }

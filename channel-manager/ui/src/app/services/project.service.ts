@@ -16,6 +16,8 @@
 
 import { Inject, Injectable } from '@angular/core';
 
+import { Project } from '../models/project.model';
+
 import { Ng1ProjectService, NG1_PROJECT_SERVICE } from './ng1/project.ng1.service';
 
 @Injectable({
@@ -26,7 +28,15 @@ export class ProjectService {
     @Inject(NG1_PROJECT_SERVICE) private readonly ng1ProjectService: Ng1ProjectService,
   ) { }
 
+  get currentProject(): Project | undefined {
+    return this.ng1ProjectService.projects.find(x => x.id === this.ng1ProjectService.getSelectedProjectId());
+  }
+
   getSelectedProjectId(): string {
     return this.ng1ProjectService.getSelectedProjectId();
+  }
+
+  isCore(project: Project): boolean {
+    return project.id === 'master';
   }
 }

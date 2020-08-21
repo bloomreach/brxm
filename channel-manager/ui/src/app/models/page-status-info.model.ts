@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
+import { DocumentState } from './document-state.enum';
+import { XPageStatus } from './xpage-status.enum';
 
-import { PageStates } from '../../models/page-states.model';
-
-export interface Ng1PageService {
-  states: PageStates;
+export class XPageStatusInfo {
+  constructor(
+    readonly status: XPageStatus,
+    readonly xPageDocumentState: DocumentState,
+    readonly pageName: string,
+    readonly scheduledDateTime: number | undefined,
+    readonly projectName: string | undefined,
+  ) {}
 }
-
-export const NG1_PAGE_SERVICE = new InjectionToken<Ng1PageService>('NG1_PAGE_SERVICE');

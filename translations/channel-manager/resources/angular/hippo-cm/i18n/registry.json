@@ -1583,7 +1583,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "RESTORE" : {
+    "NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERS" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1593,7 +1593,47 @@
         "es" : "UNRESOLVED"
       }
     },
-    "TOOLBAR_MENU_XPAGE_CONTENT" : {
+    "NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_REJECTED" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_REVIEW" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IS_RUNNING" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_PROGRESS" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_APPROVED" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
