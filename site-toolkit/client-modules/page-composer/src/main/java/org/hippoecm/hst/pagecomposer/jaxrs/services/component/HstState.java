@@ -20,6 +20,7 @@ public enum HstState {
 
     XPAGE_BRANCH_ID("branchId", HstCategory.XPAGE),
     XPAGE_ID("id", HstCategory.XPAGE),
+    XPAGE_LOCKED_BY("lockedBy", HstCategory.XPAGE),
     XPAGE_NAME("name", HstCategory.XPAGE),
     XPAGE_STATE("state", HstCategory.XPAGE),
 
