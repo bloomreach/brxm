@@ -22,7 +22,11 @@ import { Project } from '../../../models/project.model';
 import { XPageStatus } from '../../../models/xpage-status.enum';
 import { PageService } from '../../../services/page.service';
 
-const DANGER_XPAGE_STATUSES = [XPageStatus.RejectedRequest, XPageStatus.ProjectPageRejected];
+const DANGER_XPAGE_STATUSES = [
+  XPageStatus.RejectedRequest,
+  XPageStatus.ProjectPageRejected,
+  XPageStatus.EditingSharedContainers,
+];
 
 @Component({
   templateUrl: 'notification-bar.component.html',
