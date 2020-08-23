@@ -223,4 +223,6 @@ public interface ContainerConstants {
     String PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE = "org.hippoecm.hst.container.access.preview_token";
 
     String PREVIEW_URL_PROPERTY_NAME = "org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo_url";
+
+    String BR_VERSION_UUID_REQUEST_PARAMETER = "br_version_uuid";
 }

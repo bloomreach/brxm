@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+import { inject, injectable } from 'inversify';
 import { buildUrl, mergeSearchParams, parseUrl } from './utils';
 
-const DEFAULT_API_BASE_URL = '/resourceapi';
-const DEFAULT_SPA_BASE_URL = '';
+export const UrlBuilderOptionsToken = Symbol.for('UrlBuilderOptionsToken');
+export const UrlBuilderService = Symbol.for('UrlBuilderService');
 
 /**
  * Mapping of the incoming HTTP request path to the URL of the page model API.
@@ -25,20 +26,14 @@ const DEFAULT_SPA_BASE_URL = '';
 export interface UrlBuilderOptions {
   /**
    * Base URL to fetch the page model from.
-   * The default URL is `cmsBaseUrl` + `/resourceapi`.
    */
-  apiBaseUrl?: string;
-
-  /**
-   * Base URL of the CMS.
-   */
-  cmsBaseUrl?: string;
+  endpoint?: string;
 
   /**
    * Base URL of the SPA. Everything after it will be interpreted as a route into the page model.
    * The default base url is an empty string.
    */
-  spaBaseUrl?: string;
+  baseUrl?: string;
 }
 
 export interface UrlBuilder {
@@ -55,57 +50,43 @@ export interface UrlBuilder {
   getSpaUrl(path: string): string;
 }
 
+@injectable()
 export class UrlBuilderImpl {
-  private apiBaseUrl: ReturnType<typeof parseUrl>;
-  private cmsBaseUrl: ReturnType<typeof parseUrl>;
-  private spaBaseUrl: ReturnType<typeof parseUrl>;
+  private endpoint: ReturnType<typeof parseUrl>;
+  private baseUrl: ReturnType<typeof parseUrl>;
 
-  constructor(options: UrlBuilderOptions) {
-    this.apiBaseUrl = parseUrl(options.apiBaseUrl ?? `${options.cmsBaseUrl ?? ''}${DEFAULT_API_BASE_URL}`);
-    this.cmsBaseUrl = parseUrl(options.cmsBaseUrl ?? '');
-    this.spaBaseUrl = parseUrl(options.spaBaseUrl ?? DEFAULT_SPA_BASE_URL);
+  constructor(@inject(UrlBuilderOptionsToken) options: UrlBuilderOptions) {
+    this.endpoint = parseUrl(options.endpoint ?? '');
+    this.baseUrl = parseUrl(options.baseUrl ?? '');
   }
 
   getApiUrl(link: string) {
     const { pathname, searchParams } = parseUrl(link);
 
-    // TODO: Remove when HSTTWO-4728 is resolved
-    if (this.apiBaseUrl.pathname && pathname.startsWith(this.apiBaseUrl.pathname)) {
-      return buildUrl({
-        pathname,
-        origin: this.apiBaseUrl.origin,
-        searchParams: mergeSearchParams(this.apiBaseUrl.searchParams, searchParams),
-      });
+    if (this.baseUrl.pathname && !pathname.startsWith(this.baseUrl.pathname)) {
+      throw new Error(`The path "${pathname}" does not start with the base path "${this.baseUrl.pathname}".`);
     }
 
-    if (this.spaBaseUrl.pathname && !pathname.startsWith(this.spaBaseUrl.pathname)) {
-      throw new Error(`The path "${pathname}" does not start with the base path "${this.spaBaseUrl.pathname}".`);
-    }
-
-    const route = pathname.substring(this.spaBaseUrl.pathname.length);
+    const route = pathname.substring(this.baseUrl.pathname.length);
 
     return buildUrl({
-      origin: this.apiBaseUrl.origin,
-      pathname: `${this.apiBaseUrl.pathname}${route}`,
-      searchParams: mergeSearchParams(searchParams, this.apiBaseUrl.searchParams),
+      origin: this.endpoint.origin,
+      pathname: `${this.endpoint.pathname}${route}`,
+      searchParams: mergeSearchParams(searchParams, this.endpoint.searchParams),
     });
   }
 
   getSpaUrl(link: string) {
     const { hash, pathname, searchParams } = parseUrl(link);
-    let route = pathname.startsWith(this.cmsBaseUrl.pathname)
-      ? pathname.substring(this.cmsBaseUrl.pathname.length)
+    const route = !pathname.startsWith('/') && !this.baseUrl.pathname
+      ? `/${pathname}`
       : pathname;
 
-    if (!route.startsWith('/') && !this.spaBaseUrl.pathname) {
-      route = `/${route}`;
-    }
-
     return buildUrl({
-      origin: this.spaBaseUrl.origin,
-      pathname: `${this.spaBaseUrl.pathname}${route}`,
-      searchParams: mergeSearchParams(searchParams, this.spaBaseUrl.searchParams),
-      hash: hash || this.spaBaseUrl.hash,
+      origin: this.baseUrl.origin,
+      pathname: `${this.baseUrl.pathname}${route}`,
+      searchParams: mergeSearchParams(searchParams, this.baseUrl.searchParams),
+      hash: hash || this.baseUrl.hash,
     });
   }
 }

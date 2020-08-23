@@ -192,7 +192,6 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .retrieveVersion()
                 .terminateable(false)
                 .copy()
-                .saveDraft()
                 .actions();
         assertExpectedActions(data, expectedActions);
     }
@@ -310,9 +309,9 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         assertExpectedActions(data, expectedActions);
     }
 
-   
 
-    
+
+
 
 
     /**

@@ -22,8 +22,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.jcr.PropertyType;
@@ -35,18 +33,20 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockValue;
 import org.onehippo.repository.scxml.MockAccessManagedSession;
 import org.onehippo.repository.scxml.MockWorkflowContext;
+import org.onehippo.repository.scxml.SCXMLWorkflowContext;
+import org.onehippo.repository.scxml.SCXMLWorkflowData;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.junit.Assert.assertEquals;
 
 public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
@@ -60,25 +60,11 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         destroyDocumentWorkflowSCXMLRegistry();
     }
 
-    @SuppressWarnings("unchecked")
-    protected static Map<?, ?> sortMap(Map<?, ?> map) {
-        if (!(map instanceof SortedMap)) {
-            SortedMap<Object, Object> sorted = new TreeMap<>(map);
-            for (Map.Entry<Object, Object> entry : sorted.entrySet()) {
-                if (entry.getValue() instanceof Map) {
-                    entry.setValue(sortMap((Map<Object, Object>) entry.getValue()));
-                }
-            }
-            return sorted;
-        }
-        return map;
-    }
-
     public DocumentWorkflowImpl getDocumentWorkflowImpl() throws RemoteException {
         return new DocumentWorkflowImpl();
     }
 
-    protected static Set<String> getSCXMLStatusStateIds(SCXMLWorkflowExecutor executor) {
+    protected static Set<String> getSCXMLStatusStateIds(SCXMLWorkflowExecutor<SCXMLWorkflowContext, SCXMLWorkflowData> executor) {
         Set<EnterableState> targets = executor.getSCXMLExecutor().getCurrentStatus().getStates();
 
         if (targets.isEmpty()) {
@@ -112,6 +98,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         addVariant(handleNode, HippoStdNodeType.DRAFT);
         wf.setNode(handleNode);
         wf.getWorkflowExecutor().start(null);
+        Assert.assertEquals("testuser", wf.getWorkflowContext().getUserIdentity());
     }
 
     @Test
@@ -119,7 +106,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        MockNode handleNode = (MockNode) session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
@@ -218,42 +205,6 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .states()
         );
 
-        // draft + unpublished + published + transferable ( other user )
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, true);
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"otheruser");
-
-        assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit().editable()
-                .editDraft()
-                .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
-                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .terminateable(false)
-                .saveUnpublished(false)
-                .hints());
-        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                .status().logEvent().noRequest().versionable().noTerminate().noBranchable()
-                .noPublish().noDepublish().editable().noCopy()
-                .noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().canDepublishBranch()
-                .states()
-        );
-
-        // draft + unpublished + published + transferable ( same user )
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"testuser");
-
-        assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit().editable().editDraft()
-                .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
-                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .terminateable(false)
-                .saveUnpublished(false)
-                .hints());
-        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                .status().logEvent().noRequest().versionable().noTerminate().noBranchable()
-                .noPublish().depublishable().editable().noCopy()
-                .noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().canDepublishBranch()
-                .states()
-        );
-
         publishedVariant.remove();
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, (String) null);
@@ -270,55 +221,6 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().copyable()
                 .branchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().canPublishBranch().noDepublishBranch()
-                .states()
-        );
-
-        // draft + unpublished + transferable ( otheruser )
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, true);
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"otheruser");
-        assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(false).previewAvailable(true).checkModified(true).noEdit().editable().editDraft()
-                .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
-                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .terminateable(false)
-                .saveUnpublished(false)
-                .hints());
-        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                .status().logEvent().editable().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
-                .noBranchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().noDepublishBranch()
-                .states()
-        );
-
-        // draft + unpublished + transferable ( same user )
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, true);
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"testuser");
-        assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(false).previewAvailable(true).checkModified(true).noEdit().editable().editDraft()
-                .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
-                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .terminateable(false)
-                .saveUnpublished(false)
-                .hints());
-        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                .status().logEvent().editable().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
-                .noBranchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().noDepublishBranch()
-                .states()
-        );
-
-        session.setPermissions(unpublishedVariant.getPath(), "hippo:editor", true);
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, true);
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"testuser");
-        assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(false).previewAvailable(true).checkModified(true).noEdit().editable().editDraft()
-                .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
-                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .depublish(false).depublishBranch(false).reintegrateBranch(false)
-                .versionable()
-                .saveUnpublished(false)
-                .hints());
-        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                .status().logEvent().editable().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
-                .noBranchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().noDepublishBranch()
                 .states()
         );
 
@@ -363,19 +265,36 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
 
 
-        // draft + transferable ( other user )
+        // draft transferable ( same user )
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, true);
+        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"testuser");
+
+        assertMatchingKeyValues(wf.hints(), HintsBuilder.build().copy()
+                .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit()
+                .editDraft().obtainEditableInstance(false)
+                .requestPublication(false).requestDepublication(false).listVersions()
+                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
+                .terminateable(true)
+                .saveUnpublished(false)
+                .hints());
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                .status().editable().logEvent().noRequest().noPublish().noDepublish().noVersioning().terminateable().copyable()
+                .noBranchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().noDepublishBranch()
+                .states()
+        );
+
+        // draft transferable ( other user )
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"otheruser");
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit()
                 .editDraft().obtainEditableInstance(false)
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .terminateable(false)
+                .terminateable(true).copy()
                 .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                .status().editable().logEvent().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
+                .status().editable().logEvent().noRequest().noPublish().noDepublish().noVersioning().terminateable().copyable()
                 .noBranchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().noDepublishBranch()
                 .states()
         );
@@ -398,37 +317,6 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().copyable()
                 .branchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().canDepublishBranch()
-                .states()
-        );
-
-        // draft + published + transferable ( other user )
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, true);
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"otheruser");
-        assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
-                .requestPublication(false).requestDepublication(false).listVersions()
-                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .terminateable(false).editDraft()
-                .saveUnpublished(false)
-                .hints());
-        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                .status().logEvent().editable().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
-                .noBranchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().canDepublishBranch()
-                .states()
-        );
-
-        // draft + published + transferable ( same user )
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"testuser");
-        assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable().editDraft()
-                .requestPublication(false).requestDepublication(false).listVersions()
-                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .terminateable(false)
-                .saveUnpublished(false)
-                .hints());
-        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                .status().logEvent().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().noCopy()
-                .noBranchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().canDepublishBranch()
                 .states()
         );
 
@@ -567,7 +455,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        MockNode handleNode = (MockNode) session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
@@ -696,7 +584,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        MockNode handleNode = (MockNode) session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
@@ -812,7 +700,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
     public void testRequestState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        MockNode handleNode = (MockNode) session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
         wf.setNode(handleNode);
@@ -1198,7 +1086,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         // author, no request, editing, modified (unpublished): requestPublication=false
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(false).previewAvailable(true).checkModified(true).editing().saveDraft()
+                .status(true).isLive(false).previewAvailable(true).checkModified(true).editing()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .terminateable(false).copy()
@@ -1215,7 +1103,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         // editor, no request, editing, modified (unpublished): requestPublication=false,publish=false
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(false).previewAvailable(true).checkModified(true).editing().saveDraft()
+                .status(true).isLive(false).previewAvailable(true).checkModified(true).editing()
                 .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
                 .listVersions().retrieveVersion().versionable().terminateable(false).copy()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
@@ -1406,7 +1294,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         // author, no request, editing, live: requestDepublication=false
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(true).editing().saveDraft()
+                .status(true).isLive(true).previewAvailable(true).checkModified(true).editing()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .terminateable(false).copy()
@@ -1424,7 +1312,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         // editor, no request, editing, live: requestDepublication=false,depublish=false
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(true).editing().saveDraft()
+                .status(true).isLive(true).previewAvailable(true).checkModified(true).editing()
                 .requestPublication(false).requestDepublication(false).depublish(false).publish(false)
                 .listVersions().retrieveVersion().copy().versionable().terminateable(false)
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
@@ -1595,9 +1483,9 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
     @Test
     public void testTerminateState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
-        MockNode folderNode = (MockNode) session.getRootNode().addNode("folder", HippoNodeType.NT_DOCUMENT);
+        MockNode folderNode = session.getRootNode().addNode("folder", HippoNodeType.NT_DOCUMENT);
         session.setPermissions(folderNode.getPath(), "jcr:write", false);
-        MockNode handleNode = (MockNode) folderNode.addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = folderNode.addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
@@ -1611,7 +1499,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         // author, editing, live: requestDelete=false
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(false).editing().saveDraft()
+                .status(true).isLive(true).previewAvailable(true).checkModified(false).editing()
                 .requestPublication(false).requestDepublication(false)
                 .listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
@@ -1629,7 +1517,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         // editor, editing, live: requestDelete=false
         final Map<String, Serializable> hintsNoJcrWriteOnFolder = wf.hints();
         assertMatchingKeyValues(hintsNoJcrWriteOnFolder, HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(false).editing().saveDraft()
+                .status(true).isLive(true).previewAvailable(true).checkModified(false).editing()
                 .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
                 .listVersions().terminateable(false).copy()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
@@ -1646,16 +1534,16 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         session.setPermissions(folderNode.getPath(), "jcr:write", true);
 
         Assertions.assertThat(wf.hints())
-                .isEqualTo(hintsNoJcrWriteOnFolder)
                 .as("Having jcr:write permissions on a folder should not in any way impact what an " +
                         "editor/author are allowed to do on that folder: The role hippo:editor or hippo:author defines " +
-                        "that");
+                        "that")
+                .isEqualTo(hintsNoJcrWriteOnFolder);
 
         session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
 
         // author + writable containing folder, editing, live: requestDelete=false
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(false).editing().saveDraft()
+                .status(true).isLive(true).previewAvailable(true).checkModified(false).editing()
                 .requestPublication(false).requestDepublication(false)
                 .listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
@@ -1728,7 +1616,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
     @Test
     public void testCopyState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
-        MockNode handleNode = (MockNode) session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         DocumentWorkflowImpl wf = getDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);

@@ -202,6 +202,18 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
 
             setReferenceNames(Collections.singletonList(copy));
 
+            // make sure that all variants are populated again since variants from the XPage Document container items
+            // have to be pushed to the root 'hst component' (allowed since on the 'copy')
+            copy.populateVariants();
+
+            // get all the existing mount variants from the hst configuration, and add any new variant from the XPage
+            // document to it to have a complete set (note this is not set on the in memory HST Model but just on this
+            // XPage configuration instance...also we only set it on the 'root component' since it is really only used
+            // from the root component
+
+            // the copy has a MUTABLE list so we can 'just' add any new variants to it
+            copy.getMountVariants().addAll(copy.getVariants());
+
             return copy;
         } finally {
             Thread.currentThread().setContextClassLoader(currentClassLoader);

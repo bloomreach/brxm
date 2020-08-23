@@ -18,25 +18,62 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('XPageMenuService', () => {
-  let $translate;
+  let $q;
+  let $rootScope;
+  let $state;
+  let DocumentWorkflowService;
+  let FeedbackService;
   let PageService;
   let XPageMenuService;
+
+  const allWorkflowActions = [
+    'publish',
+    'schedule-publish',
+    'request-publish',
+    'request-schedule-publish',
+    'unpublish',
+    'schedule-unpublish',
+    'request-unpublish',
+    'request-schedule-unpublish',
+  ];
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
     inject((
-      _$translate_,
+      _$q_,
+      _$rootScope_,
+      _$state_,
+      _DocumentWorkflowService_,
+      _FeedbackService_,
       _PageService_,
       _XPageMenuService_,
     ) => {
-      $translate = _$translate_;
+      $q = _$q_;
+      $rootScope = _$rootScope_;
+      $state = _$state_;
+      DocumentWorkflowService = _DocumentWorkflowService_;
+      FeedbackService = _FeedbackService_;
       PageService = _PageService_;
       XPageMenuService = _XPageMenuService_;
     });
+
+    spyOn(DocumentWorkflowService, 'publish').and.returnValue($q.resolve());
+    spyOn(DocumentWorkflowService, 'schedulePublication').and.returnValue($q.resolve());
+    spyOn(DocumentWorkflowService, 'requestPublication').and.returnValue($q.resolve());
+    spyOn(DocumentWorkflowService, 'requestSchedulePublication').and.returnValue($q.resolve());
+    spyOn(DocumentWorkflowService, 'unpublish').and.returnValue($q.resolve());
+    spyOn(DocumentWorkflowService, 'scheduleUnpublication').and.returnValue($q.resolve());
+    spyOn(DocumentWorkflowService, 'requestUnpublication').and.returnValue($q.resolve());
+    spyOn(DocumentWorkflowService, 'requestScheduleUnpublication').and.returnValue($q.resolve());
+
+    spyOn(PageService, 'load');
+
+    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showNotification');
   });
 
-  function getItem(name) {
+  function getAction(name) {
     return XPageMenuService.menu.items.find(item => item.name === name);
   }
 
@@ -51,12 +88,18 @@ describe('XPageMenuService', () => {
     PageService.actions.xpage.items[name] = {
       enabled,
     };
+
+    return getAction(name);
   }
 
   beforeEach(() => {
-    spyOn($translate, 'instant');
-
     PageService.actions = null;
+    PageService.states = {
+      xpage: {
+        id: 'xpage-document-id',
+        name: 'xpage-document-name',
+      },
+    };
   });
 
   describe('xpage menu', () => {
@@ -71,65 +114,161 @@ describe('XPageMenuService', () => {
 
       expect(XPageMenuService.menu.isVisible()).toBe(true);
     });
+
+    it('should open the content editor', () => {
+      spyOn($state, 'go');
+      getAction('content').onClick();
+
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page', { documentId: 'xpage-document-id' });
+    });
+
+    it('should open the versions panel', () => {
+      spyOn($state, 'go');
+      getAction('versions').onClick();
+
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page', {
+        documentId: 'xpage-document-id',
+        showVersionsInfo: true,
+      });
+    });
+
+    it('should hide workflow actions', () => {
+      allWorkflowActions.forEach((action) => {
+        expect(getAction(action).isVisible()).toBe(false);
+      });
+    });
+
+    it('should show workflow actions', () => {
+      allWorkflowActions.forEach((actionId) => {
+        const action = addAction(actionId);
+
+        expect(action.isVisible()).toBe(true);
+        expect(action.isEnabled()).toBe(true);
+      });
+    });
+
+    it('should show disabled workflow actions', () => {
+      allWorkflowActions.forEach((actionId) => {
+        const action = addAction(actionId, false);
+
+        expect(action.isVisible()).toBe(true);
+        expect(action.isEnabled()).toBe(false);
+      });
+    });
   });
 
-  describe('new', () => {
-    it('should hide the "new" action', () => {
-      expect(getItem('new').isVisible()).toBe(false);
+  function expectWorkflowSuccess(actionId, spy) {
+    const result = `Workflow[${actionId}] resolved`;
+    spy.and.returnValue($q.resolve(result));
+    const action = addAction(actionId);
+
+    action.onClick();
+    $rootScope.$digest();
+
+    expect(spy).toHaveBeenCalledWith('xpage-document-id');
+    expect(PageService.load).toHaveBeenCalled();
+  }
+
+  function expectWorkflowFailed(actionId, spy) {
+    const result = `Workflow[${actionId}] rejected`;
+    spy.and.returnValue($q.reject(result));
+    const action = addAction(actionId);
+
+    action.onClick();
+    $rootScope.$digest();
+
+    expect(spy).toHaveBeenCalledWith('xpage-document-id');
+    expect(PageService.load).toHaveBeenCalled();
+    expect(FeedbackService.showError).toHaveBeenCalledWith(
+      `${action.translationKey}_ERROR`,
+      {
+        msg: result,
+        documentName: 'xpage-document-name',
+      },
+    );
+  }
+
+  function expectWorkflow(actionId, spy) {
+    expectWorkflowSuccess(actionId, spy);
+
+    spy.calls.reset();
+    PageService.load.calls.reset();
+
+    expectWorkflowFailed(actionId, spy);
+  }
+
+  describe('publish', () => {
+    it('should show the "publish" action with an icon', () => {
+      const action = addAction('publish');
+
+      expect(action.isIconVisible()).toBe(true);
+      expect(action.hasIconName()).toBe(true);
     });
 
-    it('should show the "new" action', () => {
-      addAction('new');
-
-      expect(getItem('new').isVisible()).toBe(true);
-      expect(getItem('new').isEnabled()).toBe(true);
-    });
-
-    it('should show a disabled "new" action', () => {
-      addAction('new', false);
-
-      expect(getItem('new').isVisible()).toBe(true);
-      expect(getItem('new').isEnabled()).toBe(false);
+    it('should call DocumentWorkflowService.publish()', () => {
+      expectWorkflow('publish', DocumentWorkflowService.publish);
     });
   });
 
-  describe('move', () => {
-    it('should hide the "move" action', () => {
-      expect(getItem('move').isVisible()).toBe(false);
-    });
-
-    it('should show the "move" action', () => {
-      addAction('move');
-
-      expect(getItem('move').isVisible()).toBe(true);
-      expect(getItem('move').isEnabled()).toBe(true);
-    });
-
-    it('should show a disabled "move" action', () => {
-      addAction('move', false);
-
-      expect(getItem('move').isVisible()).toBe(true);
-      expect(getItem('move').isEnabled()).toBe(false);
+  describe('schedule-publish', () => {
+    it('should call DocumentWorkflowService.schedulePublication()', () => {
+      expectWorkflow('schedule-publish', DocumentWorkflowService.schedulePublication);
     });
   });
 
-  describe('delete', () => {
-    it('should hide the "delete" action', () => {
-      expect(getItem('delete').isVisible()).toBe(false);
+  describe('request-publish', () => {
+    it('should call DocumentWorkflowService.requestPublication()', () => {
+      expectWorkflow('request-publish', DocumentWorkflowService.requestPublication);
+    });
+  });
+
+  describe('request-schedule-publish', () => {
+    it('should call DocumentWorkflowService.requestSchedulePublication()', () => {
+      expectWorkflow('request-schedule-publish', DocumentWorkflowService.requestSchedulePublication);
+    });
+  });
+
+  describe('unpublish', () => {
+    it('should show the "unpublish" action with an icon', () => {
+      const action = addAction('unpublish');
+
+      expect(action.isIconVisible()).toBe(true);
+      expect(action.hasIconName()).toBe(true);
     });
 
-    it('should show the "delete" action', () => {
-      addAction('delete');
-
-      expect(getItem('delete').isVisible()).toBe(true);
-      expect(getItem('delete').isEnabled()).toBe(true);
+    it('should call DocumentWorkflowService.unpublish()', () => {
+      expectWorkflow('unpublish', DocumentWorkflowService.unpublish);
     });
+  });
 
-    it('should show a disabled "delete" action', () => {
-      addAction('delete', false);
+  describe('schedule-unpublish', () => {
+    it('should call DocumentWorkflowService.scheduleUnpublication()', () => {
+      expectWorkflow('schedule-unpublish', DocumentWorkflowService.scheduleUnpublication);
+    });
+  });
 
-      expect(getItem('delete').isVisible()).toBe(true);
-      expect(getItem('delete').isEnabled()).toBe(false);
+  describe('request-unpublish', () => {
+    it('should call DocumentWorkflowService.requestUnpublication()', () => {
+      expectWorkflow('request-unpublish', DocumentWorkflowService.requestUnpublication);
+    });
+  });
+
+  describe('request-schedule-unpublish', () => {
+    it('should call DocumentWorkflowService.requestScheduleUnpublication()', () => {
+      expectWorkflow('request-schedule-unpublish', DocumentWorkflowService.requestScheduleUnpublication);
+    });
+  });
+
+  describe('workflow cancelled by the user', () => {
+    it('should not show a toast when a workflow action is rejected with a "cancelled" flag', () => {
+      const action = addAction('publish');
+
+      DocumentWorkflowService.publish.and.returnValue($q.reject('{ "cancelled": true }'));
+
+      action.onClick();
+      $rootScope.$digest();
+
+      expect(FeedbackService.showError).not.toHaveBeenCalled();
     });
   });
 });

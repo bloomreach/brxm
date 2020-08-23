@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,13 +15,12 @@
   limitations under the License.
 -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
-<polygon fill="currentColor" points="4.008,8 8,12 4.008,16 "/>
-<g>
-	<path fill="currentColor" d="M22.938,21.469C22.938,20.734,23,2.547,23,2.547C23,1.74,22.269,1,21.5,1h-19C1.732,1,1,1.738,1,2.547V21.76
-		c0,0.807,0.646,1.234,1.415,1.234c0,0,18.272,0.006,18.991,0.006S22.938,22.203,22.938,21.469z M2.5,22C2.085,22,2,21.816,2,21.76
-		V2.5C2,2.244,2.314,2,2.531,2H21.5C21.707,2,22,2.236,22,2.5c0,0,0,18.781,0,19S21.859,22,21.5,22C20.625,22,2.5,22,2.5,22z"/>
-</g>
-<rect fill="currentColor" x="10" y="1" width="1" height="22"/>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g fill="currentColor" fill-rule="nonzero">
+      <path d="M22,1 C22.6750147,1 23,1.32498531 23,2 L23,22 C23,22.6750147 22.6750147,23 22,23 L2,23 C1.32498531,23 1,22.6750147 1,22 L1,2 C1,1.32498531 1.32498531,1 2,1 L22,1 Z M3,3 L3,21 L8,21 L8,3 L3,3 Z M21,21 L21,3 L9,3 L9,11 L13,11 L13,8 L17,12 L13,16 L13,13 L9,13 L9,21 L21,21 Z"></path>
+    </g>
+  </g>
 </svg>

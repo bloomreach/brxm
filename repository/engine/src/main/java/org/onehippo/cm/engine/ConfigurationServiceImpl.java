@@ -1153,7 +1153,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                 } finally {
                     lockManager.unlock();
                 }
-            } catch (IOException|ParserException|URISyntaxException|RepositoryException e) {
+            } catch (Exception e) {
                 final String message = "Failed to add hcm site: " + hcmSiteName + " for context path: " + servletContext.getContextPath();
                 log.error(message, e);
                 throw new RuntimeException(message, e);

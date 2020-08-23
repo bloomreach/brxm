@@ -28,6 +28,7 @@
     "build:dev": "febuild build:dev",
     "build:dll": "febuild build:dll",
     "build:profile": "febuild build:profile",
+    "buildangular:dev": "cd ../ui && npx ng build",
     "clean": "febuild clean",
     "clean:lint:css": "febuild clean:lint:css",
     "clean:lint:js": "febuild clean:lint:js",
@@ -53,6 +54,7 @@
   },
   "dependencies": {
     "@bloomreach/dragula": "3.7.2-br.3",
+    "@bloomreach/frontend-theme": "1.0.0-8",
     "@bloomreach/navapp-communication": "1.1.2",
     "@mdi/font": "5.0.45",
     "@uirouter/angularjs": "1.0.25",
@@ -76,6 +78,7 @@
     "ng-focus-if": "1.0.7",
     "open-sans-fontface": "github:FontFaceKit/open-sans#59493162b016dae6ef0d06693ccf3c93c1e96091",
     "penpal": "4.1.1",
+    "rxjs": "6.6.2",
     "throttle-debounce": "2.1.0"
   },
   "devDependencies": {

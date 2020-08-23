@@ -1,0 +1,9 @@
+group:
+  name: hippo-cms-test
+  after: hippo-cms
+project: hippo-site-toolkit
+module:
+  name: taxonomy-plugin-pagemodelapi-test
+  after: hippo-site-toolkit-pagemodelapi-test
+
+

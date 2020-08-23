@@ -1,4 +1,4 @@
-// Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@import '~@bloomreach/frontend-theme/palettes';
+
 .button-toggle {
   margin: 0 8px;
 
   .md-button {
-    background-color: $grey-50;
+    background-color: map-get($grey, 50);
     color: $text-dark;
     line-height: 24px;
     margin: 0;
@@ -33,7 +35,7 @@
     }
 
     &.button-active {
-      background-color: $grey-600;
+      background-color: map-get($grey, 600);
       color: $text-light;
     }
   }
