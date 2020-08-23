@@ -30,12 +30,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNode;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNodeUtils;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -49,6 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.collections4.MapUtils.isNotEmpty;
 import static org.apache.jackrabbit.JcrConstants.JCR_VERSIONLABELS;
+import static org.hippoecm.hst.core.container.ContainerConstants.BR_VERSION_UUID_REQUEST_PARAMETER;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_COMPOUND;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
@@ -297,17 +300,31 @@ public class ObjectConverterImpl implements ObjectConverter {
             return node;
         }
 
-        if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
-            // no version history information on handle, return
-            return node;
-        }
-
         final HstRequestContext requestContext = RequestContextProvider.get();
         if (requestContext == null) {
             return node;
         }
 
         final String branchId = HstRequestUtils.getBranchIdFromContext(requestContext);
+
+        final String renderVersionId = HstRequestUtils.getRenderFrozenNodeId(requestContext, canonicalNode, branchId);
+        if (renderVersionId != null) {
+
+            final Node renderVersion = node.getSession().getNodeByIdentifier(renderVersionId);
+            if (!renderVersion.isNodeType(JcrConstants.NT_FROZENNODE)) {
+                log.info("Explicit query param '{}={}' points to workspace jcr node and not a versioned node, just " +
+                        "render the workspace node", BR_VERSION_UUID_REQUEST_PARAMETER, renderVersionId);
+                return renderVersion;
+            }
+            return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(renderVersion,
+                    canonicalNode.getPath(), canonicalNode.getName());
+        }
+
+        if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
+            // no version history information on handle, return
+            return node;
+        }
+
         final String branchIdOfNode = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, BranchConstants.MASTER_BRANCH_ID);
         if (branchIdOfNode.equals(branchId)) {
             return node;

@@ -97,6 +97,48 @@ describe('ApiImpl', () => {
       }));
     });
 
+    it('should not include API version header when the API version is not set', async () => {
+      const api = new ApiImpl(urlBuilder, { httpClient: config.httpClient, request: { path: config.request.path } });
+      await api.getPage(config.request.path);
+
+      expect(config.httpClient).toBeCalledWith(expect.not.objectContaining({
+        headers: {
+          'Accept-Version': expect.anything(),
+        },
+      }));
+    });
+
+    it('should include a custom API version header', async () => {
+      const api = new ApiImpl(urlBuilder, {
+        apiVersionHeader: 'X-Version',
+        apiVersion: 'version',
+        httpClient: config.httpClient,
+        request: { path: config.request.path },
+      });
+      await api.getPage(config.request.path);
+
+      expect(config.httpClient).toBeCalledWith(expect.objectContaining({
+        headers: {
+          'X-Version': 'version',
+        },
+      }));
+    });
+
+    it('should fall back to the default API version header', async () => {
+      const api = new ApiImpl(urlBuilder, {
+        apiVersion: 'version',
+        httpClient: config.httpClient,
+        request: { path: config.request.path },
+      });
+      await api.getPage(config.request.path);
+
+      expect(config.httpClient).toBeCalledWith(expect.objectContaining({
+        headers: {
+          'Accept-Version': 'version',
+        },
+      }));
+    });
+
     it('should include a custom authorization header', async () => {
       const api = new ApiImpl(urlBuilder, {
         authorizationHeader: 'X-Auth',
@@ -161,11 +203,7 @@ describe('ApiImpl', () => {
   });
 
   describe('getComponent', () => {
-    beforeEach(async () => await api.getComponent('/component', { a: 'b' }));
-
-    it('should generate a URL', () => {
-      expect(urlBuilder.getApiUrl).toBeCalledWith('/component');
-    });
+    beforeEach(async () => await api.getComponent('http://example.com/component', { a: 'b' }));
 
     it('should request a component model', () => {
       expect(config.httpClient).toBeCalledWith(expect.objectContaining({

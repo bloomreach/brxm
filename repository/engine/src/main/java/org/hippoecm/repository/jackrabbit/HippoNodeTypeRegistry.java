@@ -15,9 +15,13 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.PropertyType;
@@ -44,6 +48,37 @@ import static org.apache.jackrabbit.spi.commons.name.NameConstants.NT_UNSTRUCTUR
 import static org.apache.jackrabbit.spi.commons.name.NameConstants.REP_ROOT;
 
 public class HippoNodeTypeRegistry extends NodeTypeRegistry {
+
+    /**
+     * Extended NodeTypeDefDiff implementation to allow more relaxed (or more 'smart') handling and marking of specific
+     * node type changes as being 'TRIVIAL' (or ignored), because they are validated and known to be compatible upfront.
+     */
+    private static class CustomNodeTypeDefDiff extends NodeTypeDefDiff {
+        protected CustomNodeTypeDefDiff(final QNodeTypeDefinition oldDef, final QNodeTypeDefinition newDef) {
+            super(oldDef, newDef);
+        }
+
+        @Override
+        public int supertypesDiff() {
+            Set<Name> oldSupertypes = new HashSet<>(Arrays.asList(getOldDef().getSupertypes()));
+            Set<Name> newSupertypes = new HashSet<>(Arrays.asList(getNewDef().getSupertypes()));
+
+            {
+                // ignore adding mixin hippo:identifiable to a nodetype, which is compatible
+                Optional<Name> hippoIdentifiable = newSupertypes.stream()
+                        .filter(s -> s.getLocalName().equals("identifiable")
+                                && s.getNamespaceURI().startsWith("http://www.onehippo.org/jcr/hippo/nt/"))
+                        .findFirst();
+                if (hippoIdentifiable.isPresent()) {
+                    // if mixin is present on the new list of supertypes, remove it from both new and old, to ignore it
+                    newSupertypes.remove(hippoIdentifiable.get());
+                    oldSupertypes.remove(hippoIdentifiable.get());
+                }
+            }
+
+            return !oldSupertypes.equals(newSupertypes) ? MAJOR : NONE;
+        }
+    }
 
     private final NamespaceRegistry registry;
 
@@ -144,6 +179,18 @@ public class HippoNodeTypeRegistry extends NodeTypeRegistry {
     public HippoNodeTypeRegistry(NamespaceRegistry registry, FileSystem fileSystem) throws RepositoryException {
         super(registry, fileSystem);
         this.registry = registry;
+    }
+
+    @Override
+    protected NodeTypeDefDiff createNodeTypeDefDiff(final QNodeTypeDefinition oldDef, final QNodeTypeDefinition newDef) {
+        if (oldDef == null || newDef == null) {
+            throw new IllegalArgumentException("arguments can not be null");
+        }
+        if (!oldDef.getName().equals(newDef.getName())) {
+            throw new IllegalArgumentException("at least node type names must be matching");
+        }
+        // use our custom NodeTypeDefDiff validator instead of the more limited/restricted one provided by Jackrabbit
+        return new CustomNodeTypeDefDiff(oldDef, newDef);
     }
 
     public void ignoreNextConflictingContent() {

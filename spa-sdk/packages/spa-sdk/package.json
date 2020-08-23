@@ -20,20 +20,23 @@
   "main": "dist/index.js",
   "browser": "dist/index.js",
   "module": "dist/index.mjs",
-  "es2015": "dist/index.es6.mjs",
+  "es2015": "dist/index.es6.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/"
   ],
   "scripts": {
     "build": "rollup -c rollup.config.js",
-    "docs": "tsc --emitDeclarationOnly && dts-bundle-generator --out-file dist/spa-sdk.d.ts dist/index.d.ts && typedoc dist/spa-sdk.d.ts && minicat src/docs/typedoc.css >> docs/assets/css/main.css && rm dist/spa-sdk.d.ts",
+    "docs": "typedoc",
     "lint": "tslint --project .",
     "prepare": "$npm_execpath run build",
     "test": "jest --coverage"
   },
   "jest": {
     "preset": "ts-jest",
+    "setupFiles": [
+      "reflect-metadata"
+    ],
     "testEnvironment": "jsdom"
   },
   "browserslist": [
@@ -52,22 +55,24 @@
     "@types/jest": "^25.2",
     "@types/xmldom": "^0.1",
     "babel-plugin-transform-async-to-promises": "^0.8",
-    "dts-bundle-generator": "^4.3",
     "jest": "^26.0",
     "js-beautify": "^1.11",
-    "minicat": "^1.0",
     "rollup": "^2.10",
     "rollup-plugin-babel": "^4.4",
+    "rollup-plugin-dts": "^1.4",
     "rollup-plugin-terser": "^5.3",
     "rollup-plugin-typescript2": "^0.27",
     "ts-jest": "^26.0",
     "tslint": "^6.1",
     "tslint-config-airbnb": "^5.11",
     "typedoc": "^0.17",
+    "typedoc-plugin-external-module-map": "^1.2",
     "typescript": "^3.8"
   },
   "dependencies": {
     "emittery": "^0.7",
+    "inversify": "^5.0",
+    "reflect-metadata": "^0.1",
     "xmldom": "^0.3"
   }
 }

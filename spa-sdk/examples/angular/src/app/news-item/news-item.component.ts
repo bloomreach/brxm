@@ -15,14 +15,14 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { Content } from '@bloomreach/spa-sdk';
+import { Document } from '@bloomreach/spa-sdk';
 
 @Component({
   selector: 'br-news-item',
   templateUrl: './news-item.component.html',
 })
 export class NewsItemComponent {
-  @Input() item!: Content;
+  @Input() item!: Document;
 
   get data() {
     return this.item.getData<DocumentData>();

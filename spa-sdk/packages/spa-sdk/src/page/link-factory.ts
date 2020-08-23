@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { MultipleTypeFactory } from './factory';
+import { injectable } from 'inversify';
 import { LinkType, Link, TYPE_LINK_INTERNAL, isLink } from './link';
+import { SimpleFactory } from './factory';
 
 type LinkBuilder = (link: string) => string;
 
-export class LinkFactory extends MultipleTypeFactory<LinkType, LinkBuilder> {
+@injectable()
+export class LinkFactory extends SimpleFactory<LinkType, LinkBuilder> {
   create(link: Link): string;
   create(path: string): string;
   create(link: Link | string) {

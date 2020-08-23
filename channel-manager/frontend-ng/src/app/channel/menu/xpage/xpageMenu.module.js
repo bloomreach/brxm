@@ -17,6 +17,7 @@
 import ngMessages from 'angular-messages';
 
 import xpageMenuService from './xpageMenu.service';
+import './xpageMenu.scss';
 
 const xpageMenuModule = angular
   .module('hippo-cm.channel.menu.xpage', [

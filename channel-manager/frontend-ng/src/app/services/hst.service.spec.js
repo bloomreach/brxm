@@ -95,9 +95,7 @@ describe('HstService', () => {
 
     it('resolves with a privileges object', () => {
       const promiseSpy = jasmine.createSpy('promiseSpy');
-      const privileges = {
-        canWrite: true,
-      };
+      const privileges = {};
       $httpBackend.expectGET(handshakeUrl).respond(200, { data: privileges });
       hstService.initializeSession(channel).then(promiseSpy);
       $httpBackend.flush();
