@@ -16,7 +16,7 @@
 
 import { ApiOptions } from './spa';
 import { CmsOptions } from './cms';
-import { UrlBuilderOptions } from './url';
+import { UrlBuilderOptions09, UrlBuilderOptions } from './url';
 
 /**
  * Configuration options for generating the page model URL.
@@ -25,12 +25,12 @@ export interface UrlOptions {
   /**
    * URL mapping for the live page model.
    */
-  live: UrlBuilderOptions;
+  live: UrlBuilderOptions09;
 
   /**
    * URL mapping for the preview page model.
    */
-  preview: UrlBuilderOptions;
+  preview: UrlBuilderOptions09;
 }
 
 /**
@@ -46,21 +46,12 @@ export interface ConfigurationWithProxy extends ApiOptions, CmsOptions {
 /**
  * Configuration of the SPA SDK using the JWT token-based setup.
  */
-export interface ConfigurationWithJwt extends ApiOptions, CmsOptions, UrlBuilderOptions {
+export interface ConfigurationWithJwt extends ApiOptions, CmsOptions {
   /**
    * The query string parameter used to pass authorization header value.
    * By default, `token` parameter is used.
    */
   authorizationQueryParameter?: string;
-
-  /**
-   * The query string parameter used as the brXM endpoint (`cmsBaseUrl`).
-   * The option will be ignored if the `cmsBaseUrl` option is not empty.
-   * In case when this option is used, the `apiBaseUrl` will be prepended with the value from the query parameter.
-   * This option should be used only for testing or debugging.
-   * By default, the option is disabled.
-   */
-  endpointQueryParameter?: string;
 
   /**
    * The query string parameter used to pass a cluster node identifier.
@@ -70,10 +61,33 @@ export interface ConfigurationWithJwt extends ApiOptions, CmsOptions, UrlBuilder
 }
 
 /**
+ * Configuration of the SPA SDK using the JWT token-based setup and the Page Model API v0.9.
+ */
+export interface ConfigurationWithJwt09 extends ConfigurationWithJwt, UrlBuilderOptions09 {}
+
+/**
+ * Configuration of the SPA SDK using the JWT token-based setup and the Page Model API v1.0.
+ */
+export interface ConfigurationWithJwt10 extends ConfigurationWithJwt, UrlBuilderOptions {
+  /**
+   * The query string parameter used as the brXM endpoint (`cmsBaseUrl`).
+   * The option will be ignored if the `cmsBaseUrl` option is not empty.
+   * In case when this option is used, the `apiBaseUrl` will be prepended with the value from the query parameter.
+   * This option should be used only for testing or debugging.
+   * By default, the option is disabled.
+   */
+  endpointQueryParameter?: string;
+}
+
+/**
  * Configuration of the SPA SDK.
  */
-export type Configuration = ConfigurationWithProxy | ConfigurationWithJwt;
+export type Configuration = ConfigurationWithProxy | ConfigurationWithJwt09 | ConfigurationWithJwt10;
 
 export function isConfigurationWithProxy(value: any): value is ConfigurationWithProxy {
   return !!(value?.options?.live && value?.options?.preview);
+}
+
+export function isConfigurationWithJwt09(value: any): value is ConfigurationWithJwt09 {
+  return !!(value?.cmsBaseUrl);
 }

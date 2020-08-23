@@ -91,6 +91,10 @@ class ContentService {
     });
   }
 
+  getDocumentVersionsInfo(id, branchId) {
+    return this._send(REST_API_CONTENT_PATH, 'GET', ['documents', id, branchId, 'versions']);
+  }
+
   _send(restPath, method, pathElements, data = null, async = false, params = {}) {
     const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), restPath, ...pathElements);
     const url = encodeURI(path);

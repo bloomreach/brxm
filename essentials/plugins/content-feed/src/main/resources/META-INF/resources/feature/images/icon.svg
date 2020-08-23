@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="76px" height="76px" viewBox="0 0 76 76" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard Copy</title>
+    <g id="Artboard-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ss-icon__article-facets-copy-2" transform="translate(8.000000, 5.000000)">
+            <polygon id="Path-2" fill="#FFFFFF" points="5.5 5 5.5 69 62.5 69 62.5 21 47 5.5"></polygon>
+            <path d="M63.5,70 L2.58,70 L2.54,3 L46.24,3 L63.46,20.05 L63.5,70 Z M4.5,67.9 L61.6,67.9 L61.5,20.5 L45.46,4.9 L4.46,4.9 L4.5,67.9 Z" id="Shape" fill="#0C3D6D" fill-rule="nonzero"></path>
+            <polygon id="Path-2" fill="#FFFFFF" points="0.5 0 0.5 64 57.5 64 57.5 16 42 0.5"></polygon>
+        </g>
+        <g id="ss-icon__article-facets-copy" transform="translate(6.000000, 4.000000)">
+            <polygon id="Path-2" fill="#FFFFFF" points="2.5 1 2.5 65 59.5 65 59.5 17 44 1.5"></polygon>
+            <path d="M61.5,67 L0.58,67 L0.54,0 L44.24,0 L61.46,17.05 L61.5,67 Z M2.5,64.9 L59.6,64.9 L59.5,18 L43.46,1.9 L2.46,1.9 L2.5,64.9 Z" id="Shape" fill="#0C3D6D" fill-rule="nonzero"></path>
+        </g>
+        <g id="ss-icon__article-facets" transform="translate(2.000000, 0.000000)">
+            <polygon id="Path-2" fill="#FFFFFF" points="2.5 1 2.5 65 59.5 65 59.5 17 44 1.5"></polygon>
+            <path d="M61.5,67 L0.58,67 L0.54,0 L44.24,0 L61.46,17.05 L61.5,67 Z M2.5,64.9 L59.6,64.9 L59.5,17.5 L43.46,1.9 L2.46,1.9 L2.5,64.9 Z" id="Shape" fill="#0C3D6D" fill-rule="nonzero"></path>
+            <polygon id="Path" fill="#0C3D6D" fill-rule="nonzero" points="59.56 18.88 42.42 18.88 42.42 1.27 44.33 1.27 44.33 16.98 59.56 16.98"></polygon>
+            <rect id="Rectangle" fill="#0C3D6D" fill-rule="nonzero" x="11.85" y="29" width="38" height="2"></rect>
+            <rect id="Rectangle-Copy" fill="#0C3D6D" fill-rule="nonzero" x="11.85" y="37" width="38" height="2"></rect>
+            <rect id="Rectangle-Copy-3" fill="#0C3D6D" fill-rule="nonzero" x="11.85" y="45" width="38" height="2"></rect>
+            <rect id="Rectangle-Copy-4" fill="#0C3D6D" fill-rule="nonzero" x="11.85" y="53" width="38" height="2"></rect>
+        </g>
+        <g id="Group" transform="translate(43.000000, 43.000000)" fill-rule="nonzero">
+            <circle id="Oval" fill="#00ACFB" cx="16.52" cy="16.54" r="16.52"></circle>
+            <path d="M16.52,1.94 C24.5615759,1.94553632 31.0781397,8.46510502 31.0799691,16.5066827 C31.0817978,24.5482603 24.5682004,31.0707926 16.5266278,31.0799968 C8.48505521,31.0891814 1.95655972,24.5815608 1.93999657,16.54 C1.93734693,12.6704911 3.4719594,8.95841345 6.20623999,6.22038213 C8.94052058,3.4823508 12.6504911,1.94265126 16.52,1.94 M16.52,7.10542736e-15 C7.3988609,7.10542736e-15 0.00368984012,7.39220304 1.20772029e-05,16.5133414 C-0.00366294321,25.6344798 7.38554667,33.0326352 16.5066828,33.0400001 C25.6278189,33.0473541 33.0289575,25.6611324 33.04,16.54 C33.04,12.1586236 31.299505,7.95669695 28.201404,4.85859597 C25.1033031,1.760495 20.9013764,0.02 16.52,0.02 L16.52,7.10542736e-15 Z" id="Shape" fill="#0C3D6D"></path>
+            <polygon id="Path" fill="#FFFFFF" points="22.15 17.04 17 11.9 11.86 17.04 10.49 15.67 17 9.15 23.52 15.67"></polygon>
+            <rect id="Rectangle" fill="#FFFFFF" x="15.99" y="10.77" width="1.94" height="13.72"></rect>
+        </g>
+    </g>
+</svg>

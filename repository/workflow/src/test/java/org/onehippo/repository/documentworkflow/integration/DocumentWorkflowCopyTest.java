@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import javax.jcr.Node;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
@@ -136,7 +137,7 @@ public class DocumentWorkflowCopyTest extends AbstractDocumentWorkflowIntegratio
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(oldDocUnpublished.getPath());
 
         final Version version = versionHistory.getVersionByLabel("foo-" + UNPUBLISHED);
-        assertThat(version.getFrozenNode().hasProperty("title"));
+        assertThat(version.getFrozenNode().hasProperty("title")).isTrue();
         assertThat(version.getFrozenNode().getProperty("title").getString()).isEqualTo("foo title");
     }
 
@@ -178,9 +179,9 @@ public class DocumentWorkflowCopyTest extends AbstractDocumentWorkflowIntegratio
                 .containsExactly("foo");
 
         final VersionHistory newDocVersionHistory = session.getWorkspace().getVersionManager().getVersionHistory(newDocUnpublished.getPath());
-        assertThat(newDocVersionHistory.getVersionLabels().length)
+        assertThat(newDocVersionHistory.getVersionLabels())
                 .as("There should not be any version history for the new document")
-                .isEqualTo(0);
+                .isEmpty();
 
         assertThat(newDocVersionHistory.getAllVersions().getSize())
                 .as("Only root version expected")
@@ -198,8 +199,32 @@ public class DocumentWorkflowCopyTest extends AbstractDocumentWorkflowIntegratio
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(oldDocUnpublished.getPath());
 
         final Version version = versionHistory.getVersionByLabel("foo-" + UNPUBLISHED);
-        assertThat(version.getFrozenNode().hasProperty("title"));
+        assertThat(version.getFrozenNode().hasProperty("title")).isTrue();
         assertThat(version.getFrozenNode().getProperty("title").getString()).isEqualTo("foo title");
 
     }
+
+    @Test
+    public void copy_document_only_transferable_draft_variant() throws Exception{
+        document.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, true);
+        document.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.DRAFT);
+        session.save();
+
+        final Node folder = handle.getParent();
+        getDocumentWorkflow(handle).copy(new Document(folder), "newDoc");
+        assertThat(folder.hasNode("newDoc")).isTrue();
+        assertThat(folder.getNode("newDoc").getNode("newDoc").getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString())
+                .as("Expected document to be a draft")
+                .isEqualTo(HippoStdNodeType.DRAFT);
+    }
+
+    @Test( expected=WorkflowException.class)
+    public void copy_document_only_not_transferable_draft_variant() throws Exception{
+        document.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.DRAFT);
+        session.save();
+
+        final Node folder = handle.getParent();
+        getDocumentWorkflow(handle).copy(new Document(folder), "newDoc");
+    }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import { isLink } from './link';
 describe('isLink', () => {
   it('should be a link', () => {
     expect(isLink({ href: 'something' })).toBe(true);
+    expect(isLink({ href: '' })).toBe(true);
   });
 
   it('should not be a link', () => {

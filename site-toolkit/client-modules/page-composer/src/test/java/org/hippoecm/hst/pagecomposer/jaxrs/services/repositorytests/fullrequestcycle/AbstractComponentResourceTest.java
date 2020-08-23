@@ -16,7 +16,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
 
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
@@ -25,10 +24,6 @@ import org.junit.Before;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 public abstract class AbstractComponentResourceTest extends AbstractFullRequestCycleTest {
-
-    protected static final SimpleCredentials ADMIN_CREDENTIALS = new SimpleCredentials("admin", "admin".toCharArray());
-    protected final SimpleCredentials EDITOR_CREDENTIALS = new SimpleCredentials("editor", "editor".toCharArray());
-    protected final SimpleCredentials AUTHOR_CREDENTIALS = new SimpleCredentials("author", "author".toCharArray());
 
     protected static final String PREVIEW_CONTAINER_TEST_PAGE_PATH = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/containertestpage";
 

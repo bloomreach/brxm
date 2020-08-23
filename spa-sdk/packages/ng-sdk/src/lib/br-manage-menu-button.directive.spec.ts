@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
+import { mocked } from 'ts-jest/utils';
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
-import { Menu, MetaCollection, Page } from '@bloomreach/spa-sdk';
+import { Menu, MetaCollection, Page, isMenu } from '@bloomreach/spa-sdk';
 import { BrManageMenuButtonDirective } from './br-manage-menu-button.directive';
 import { BrPageComponent } from './br-page/br-page.component';
+
+jest.mock('@bloomreach/spa-sdk');
 
 @Component({ template: '<a [brManageMenuButton]="menu"></a>' })
 class TestComponent {
@@ -60,6 +63,17 @@ describe('BrManageMenuButtonDirective', () => {
   describe('ngOnChanges', () => {
     it('should create a meta entity', () => {
       expect(page.getMeta).toBeCalledWith(menu._meta);
+    });
+
+    it('should use a menu meta entity', () => {
+      fixture.componentInstance.menu = { getMeta: jest.fn(() => meta) } as unknown as typeof menu;
+      mocked(isMenu).mockReturnValueOnce(true);
+      fixture.detectChanges();
+
+      expect(meta.render).toBeCalledWith(
+        fixture.nativeElement.querySelector('a'),
+        fixture.nativeElement.querySelector('a'),
+      );
     });
 
     it('should render a meta', () => {

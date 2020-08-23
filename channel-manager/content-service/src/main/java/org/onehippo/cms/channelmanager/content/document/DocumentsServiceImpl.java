@@ -30,7 +30,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
@@ -412,10 +411,6 @@ public class DocumentsServiceImpl implements DocumentsService {
                 DocumentNameUtils.setDisplayName(handle, encodedName);
             }
 
-            if (newDocumentInfo.isExperiencePage()) {
-                document.addMixin(HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN);
-            }
-
             session.save();
             return getCreatedDocument(handle, documentType);
         } catch (WorkflowException | RepositoryException | RemoteException e) {
@@ -432,9 +427,23 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     private static Document createDocument(final String uuid, final Node handle, final DocumentType docType, final Node unpublished) {
+
         final Document document = assembleDocument(uuid, handle, unpublished, docType);
+        document.getInfo().setCanKeepDraft(canKeepDraft(handle));
         FieldTypeUtils.readFieldValues(unpublished, docType.getFields(), document.getFields());
         return document;
+    }
+
+    private static boolean canKeepDraft(final Node handle){
+        try {
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
+            final Map<String, Serializable> hints = documentWorkflow.hints();
+            return Boolean.TRUE.equals(hints.get(AbstractSaveDraftDocumentService.SAVE_DRAFT));
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            log.warn("Failed to determine if save draft is allowed for document: { path : {}}"
+                    , JcrUtils.getNodePathQuietly(handle));
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+        }
     }
 
     @Override

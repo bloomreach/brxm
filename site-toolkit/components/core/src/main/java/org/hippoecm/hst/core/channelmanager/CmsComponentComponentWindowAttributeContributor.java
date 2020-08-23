@@ -64,6 +64,10 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
             }
 
             if (compConfig.isExperiencePageComponent()) {
+                if (requestContext.isRenderingHistory()) {
+                    log.debug("Experience Page Component is not editable since a historic version is rendered");
+                    return;
+                }
 
                 populatingAttributesMap.put(HST_EXPERIENCE_PAGE_COMPONENT, "true");
                 // Check if no-one else is editing the draft

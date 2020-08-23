@@ -17,4 +17,15 @@ definitions:
             hipposysedit:node: false
             hipposysedit:type: String
             hipposysedit:uri: internal
-      
+      /UnknownBoolean:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: false
+            hipposysedit:type: Boolean
+            hipposysedit:uri: internal

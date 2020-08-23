@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,35 +14,88 @@
  * limitations under the License.
  */
 
-import { Link } from './link';
-import { MetaCollectionModel } from './meta-collection';
+import { injectable, inject } from 'inversify';
+import { MenuItemFactory, MenuItemModel, MenuItem } from './menu-item';
+import { MetaCollectionFactory } from './meta-collection-factory';
+import { MetaCollectionModel, MetaCollection } from './meta-collection';
 
-/**
- * @hidden
- */
-type MenuItemLinks = 'site';
+export const MenuModelToken = Symbol.for('MenuModelToken');
 
-/**
- * Essentials component menu model.
- * @hidden
- */
-export interface Menu {
-  _meta?: MetaCollectionModel;
-  selectSiteMenuItem: MenuItem | null;
-  siteMenuItems: MenuItem[];
+export const TYPE_MENU = 'menu';
+
+interface MenuDataModel {
+  name: string;
+  selectSiteMenuItem: MenuItemModel | null;
+  siteMenuItems: MenuItemModel[];
 }
 
 /**
- * Essentials component menu item model.
- * @hidden
+ * Essentials component menu model.
  */
-export interface MenuItem {
-  childMenuItems: MenuItem[];
-  depth: number;
-  expanded: boolean;
-  name: string;
-  parameters: object;
-  repositoryBased: boolean;
-  selected: boolean;
-  _links: Partial<Record<MenuItemLinks, Link>>;
+export interface MenuModel {
+  data: MenuDataModel;
+  meta: MetaCollectionModel;
+  type: typeof TYPE_MENU;
+}
+
+export interface Menu {
+  /**
+   * @return The menu items.
+   */
+  getItems(): MenuItem[];
+
+  /**
+   * @return The menu meta-data collection.
+   */
+  getMeta(): MetaCollection;
+
+  /**
+   * @return The current menu item.
+   */
+  getSelected(): MenuItem | undefined;
+}
+
+@injectable()
+export class MenuImpl implements Menu {
+  private items: MenuItem[];
+
+  private meta: MetaCollection;
+
+  private selected?: MenuItem;
+
+  constructor(
+    @inject(MenuModelToken) protected model: MenuModel,
+    @inject(MetaCollectionFactory) metaFactory: MetaCollectionFactory,
+    @inject(MenuItemFactory) menuItemFactory: MenuItemFactory,
+  ) {
+    this.items = model.data.siteMenuItems.map(menuItemFactory);
+    this.meta = metaFactory(model.meta);
+    this.selected = model.data.selectSiteMenuItem
+      ? menuItemFactory(model.data.selectSiteMenuItem)
+      : undefined;
+  }
+
+  getItems(): MenuItem[] {
+    return this.items;
+  }
+
+  getMeta(): MetaCollection {
+    return this.meta;
+  }
+
+  getName(): string {
+    return this.model.data.name;
+  }
+
+  getSelected(): MenuItem | undefined {
+    return this.selected;
+  }
+}
+
+/**
+ * Checks whether a value is a menu.
+ * @param value The value to check.
+ */
+export function isMenu(value: unknown): value is Menu {
+  return value instanceof MenuImpl;
 }

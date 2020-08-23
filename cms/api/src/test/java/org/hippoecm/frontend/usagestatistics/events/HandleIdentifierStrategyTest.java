@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,15 @@
 package org.hippoecm.frontend.usagestatistics.events;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
+import org.apache.jackrabbit.value.StringValue;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
+import org.onehippo.repository.util.JcrConstants;
 
 public class HandleIdentifierStrategyTest {
 
@@ -30,6 +33,8 @@ public class HandleIdentifierStrategyTest {
     private MockNode handle;
     private MockNode descendantOfRootAscendantOfHandle;
     private IdentifierStrategy strategy;
+    private MockNode jcrFrozen;
+    private MockNode ntVersion;
 
     @Before
     public void setUp() throws Exception {
@@ -41,6 +46,10 @@ public class HandleIdentifierStrategyTest {
         root.addNode(descendantOfRootAscendantOfHandle);
         descendantOfRootAscendantOfHandle.addNode(handle);
         handle.addNode(childOfHandle);
+        ntVersion = new MockNode("nt:version", JcrConstants.NT_VERSION);
+        jcrFrozen = new MockNode("jcr:frozenNode", JcrConstants.NT_FROZEN_NODE);
+        jcrFrozen.setProperty(HippoNodeType.HIPPO_RELATED, new Value[]{new StringValue(handle.getIdentifier())} );
+        ntVersion.addNode(jcrFrozen);
     }
 
     @Test
@@ -67,5 +76,19 @@ public class HandleIdentifierStrategyTest {
     public void getIdentifierAscendantOfHandleDescendantOfRootReturnEmpty() throws RepositoryException{
         final String actual = strategy.getIdentifier(descendantOfRootAscendantOfHandle);
         Assert.assertNull(actual);
+    }
+
+    @Test
+    public void getIdentifierAssociatedWithVersionNodeReturnIdentifierOfHandle() throws RepositoryException {
+        final String expected = handle.getIdentifier();
+        final String actual = strategy.getIdentifier(ntVersion);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getIdentifierAssociatedWithFrozenNodeReturnIdentifierOfHandle() throws RepositoryException {
+        final String expected = handle.getIdentifier();
+        final String actual = strategy.getIdentifier(jcrFrozen);
+        Assert.assertEquals(expected, actual);
     }
 }

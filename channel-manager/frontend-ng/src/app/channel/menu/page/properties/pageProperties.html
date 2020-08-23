@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<md-toolbar flex="none" 
+<md-toolbar flex="none"
             class="hippo-toolbar qa-toolbar md-bloomreach-theme">
   <div class="md-toolbar-tools">
     <h1>{{ ::$ctrl.subpageTitle }}</h1>
@@ -62,7 +62,7 @@
                  ng-disabled="!$ctrl.isEditable"
                  ng-model="$ctrl.primaryDocument"
                  ng-model-options="{trackBy: '$value.path'}">
-        <md-option ng-repeat="document in $ctrl.availableDocuments track by document.path" ng-value="{{::document}}">
+        <md-option ng-repeat="document in $ctrl.availableDocuments track by document.path" ng-value="document">
           {{ ::document.displayName }}
         </md-option>
       </md-select>
@@ -79,7 +79,7 @@
                  ng-model="$ctrl.prototype"
                  ng-change="$ctrl.evaluatePrototype()"
                  ng-model-options="{trackBy: '$value.id'}">
-        <md-option ng-repeat="prototype in $ctrl.prototypes track by prototype.id" ng-value="{{::prototype}}">
+        <md-option ng-repeat="prototype in $ctrl.prototypes track by prototype.id" ng-value="prototype">
           {{ ::prototype.displayName }}
         </md-option>
       </md-select>
