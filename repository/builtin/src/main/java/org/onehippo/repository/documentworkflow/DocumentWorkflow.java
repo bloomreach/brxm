@@ -586,9 +586,14 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
     void removeBranch(String branchId) throws WorkflowException;
 
     /**
-     * Tries to restore from version history the version with label '${branchId}-preview' and throws a {@link WorkflowException}
-     * if no such version exists. Before a version from version history is restored, the preview gets versioned.
-     *
+     * <p>
+     *     Tries to restore from version history the version with label '${branchId}-preview' and throws a {@link WorkflowException}
+     *     if no such version exists. Before a version from version history is restored, the preview gets versioned.
+     * </p>
+     * <p>
+     *     In case the current JCR workspace document variant is already for {@code branchId} this operation is allowed
+     *     and will be a NOOP returning just the current JCR workspace document variant
+     * </p>
      *  @param branchId the {@code branchId} of the branch to checkout
      *  @return {@link Document} wrapping the workspace preview node variant
      *  @throws WorkflowException In case the {@code branchId} does not exist in version history or when checkoutBranch

@@ -1,4 +1,4 @@
-// Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 @import 'variables';
 
 right-side-panel {
@@ -56,16 +57,16 @@ right-side-panel {
 .right-side-panel {
   mat-toolbar,
   md-toolbar {
-    background: $grey-50;
+    background: map-get($grey, 50);
     box-sizing: border-box;
     color: $text-dark;
 
     &:first-child {
-      border-bottom: 1px solid $grey-200;
+      border-bottom: 1px solid map-get($grey, 200);
     }
 
     &:last-child {
-      border-top: 1px solid $grey-200;
+      border-top: 1px solid map-get($grey, 200);
     }
 
     md-icon {
@@ -73,7 +74,7 @@ right-side-panel {
     }
 
     md-icon[md-svg-icon] {
-      color: $grey-900;
+      color: map-get($grey, 900);
       opacity: .87;
     }
 
@@ -101,6 +102,6 @@ right-side-panel {
   }
 
   .md-subheader a {
-    color: $blue-600;
+    color: map-get($blue, 600);
   }
 }

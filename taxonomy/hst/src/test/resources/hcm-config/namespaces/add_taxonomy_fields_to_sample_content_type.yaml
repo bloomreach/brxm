@@ -1,0 +1,58 @@
+definitions:
+  config:
+    /hippo:namespaces/pagemodelapitest/dynamiccontent:
+      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      /hipposysedit:nodetype:
+        /hipposysedit:nodetype:
+          /taxonomyClassificationField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:path: pagemodelapitest:taxonomyClassificationField
+            hipposysedit:type: TaxonomyClassification
+          /taxonomyClassificationField2:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:multiple: true
+            hipposysedit:path: pagemodelapitest:taxonomyClassificationField2
+            hipposysedit:type: TaxonomyClassification
+          /taxonomyClassificationField3:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:multiple: true
+            hipposysedit:path: pagemodelapitest:taxonomyClassificationField3
+            hipposysedit:type: TaxonomyClassification
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          frontend:properties: [mode]
+          frontend:references: [wicket.model, model.compareTo, engine, validator.id]
+          frontend:services: [wicket.id, validator.id]
+          type: pagemodelapitest:dynamiccontent
+          /taxonomyClassificationField:
+            jcr:primaryType: frontend:plugin
+            caption: Taxonomy
+            field: taxonomyClassificationField
+            hint: ''
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.DelegatingPropertyFieldPlugin
+            wicket.id: ${cluster.id}.left.item
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+              taxonomy.name: Taxxa
+          /taxonomyClassificationField2:
+            jcr:primaryType: frontend:plugin
+            caption: Taxonomy2
+            field: taxonomyClassificationField2
+            hint: ''
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.DelegatingPropertyFieldPlugin
+            wicket.id: ${cluster.id}.left.item
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+              taxonomy.name: Taxxa          
+          /taxonomyClassificationField3:
+            jcr:primaryType: frontend:plugin
+            caption: Taxonomy3
+            field: taxonomyClassificationField3
+            hint: ''
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.DelegatingPropertyFieldPlugin
+            wicket.id: ${cluster.id}.left.item
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+              taxonomy.name: Taxxa2

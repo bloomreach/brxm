@@ -328,6 +328,7 @@
                 <exclude>frontend-ng/.cache/**</exclude>
                 <exclude>**/target/**/*</exclude>
                 <exclude>ui/dist/**</exclude>
+                <exclude>**/__snapshots__/*.snap</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
               </excludes>
             </configuration>

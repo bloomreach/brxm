@@ -43,6 +43,7 @@ import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_IS_PRIMARYDOCUMENT_VERSION_HISTORY;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
@@ -108,6 +109,8 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             // in the channel mgr, in case of a document bean, it will be the unpublished document variant
             pageMetaData.put(ChannelManagerConstants.HST_UNPUBLISHED_VARIANT_ID, primaryRequestBean.getValueProvider().getIdentifier());
         }
+
+        pageMetaData.put(HST_IS_PRIMARYDOCUMENT_VERSION_HISTORY, String.valueOf(requestContext.isRenderingHistory()));
 
         pageMetaData.put(ChannelManagerConstants.HST_BRANCH_ID, HstRequestUtils.getBranchIdFromContext(requestContext));
 

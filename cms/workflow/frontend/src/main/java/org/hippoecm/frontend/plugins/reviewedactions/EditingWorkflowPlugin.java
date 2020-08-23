@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.rmi.RemoteException;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -37,6 +39,7 @@ import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
 
 public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
@@ -82,38 +85,6 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        saveDraftAction = new StdWorkflow("saveDraft",
-                new StringResourceModel("save-draft", this).setDefaultValue("Keep draft"), getModel()) {
-
-            @Override
-            public String getSubMenu() {
-                return "top";
-            }
-
-            @Override
-            protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.FLOPPY);
-            }
-
-            @Override
-            protected IModel<String> getTooltip() {
-                return new StringResourceModel("save-draft-hint", this);
-            }
-
-            @Override
-            public String getCssClass() {
-                return ButtonStyle.SECONDARY.getCssClass();
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
-                IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
-                editor.saveDraft();
-                return null;
-            }
-        };
-        add(saveDraftAction);
 
         add(new StdWorkflow("done", new StringResourceModel("done", this).setDefaultValue("Done"), context, getModel()) {
 
@@ -151,6 +122,39 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
+        saveDraftAction = new StdWorkflow("saveDraft",
+                new StringResourceModel("save-draft", this).setDefaultValue("Keep draft"), getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.FLOPPY);
+            }
+
+            @Override
+            protected IModel<String> getTooltip() {
+                return new StringResourceModel("save-draft-hint", this);
+            }
+
+            @Override
+            public String getCssClass() {
+                return ButtonStyle.PRIMARY.getCssClass();
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
+                IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
+                editor.saveDraft();
+                return null;
+            }
+        };
+        add(saveDraftAction);
+
         add(new StdWorkflow("cancel", new StringResourceModel("cancel", this).setDefaultValue("Cancel"), context, getModel()) {
             final StdWorkflow cancelAction = this;
 
@@ -186,20 +190,27 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
 
                     if (editor.isModified() || !editor.isValid()) {
-                        return new CancelDialog(
-                                new StringResourceModel("cancel-dialog-title", EditingWorkflowPlugin.this),
-                                new StringResourceModel("cancel-dialog-message", EditingWorkflowPlugin.this)
-                                        .setParameters(getDocumentDisplayName()),
-                                new StringResourceModel("cancel-dialog-ok-button", EditingWorkflowPlugin.this),
-                                cancelAction);
+                        final boolean showAdditionalMessageForTransferableDraft =
+                                isActionAllowed(getWorkflow().hints(), "saveDraft");
+                        final IModel<String> additionalMessage =
+                                getResourceModel("cancel-dialog-additional-message-for-draft")
+                                        .setParameters(getDocumentDisplayName());
+                        final IModel<String> title = getResourceModel("cancel-dialog-title");
+                        final IModel<String> message = getResourceModel("cancel-dialog-message")
+                                .setParameters(getDocumentDisplayName());
+                        final IModel<String> okLabel = getResourceModel("cancel-dialog-ok-button");
+                        return showAdditionalMessageForTransferableDraft ?
+                                new CancelDialog(title, message, additionalMessage, okLabel, cancelAction) :
+                                new CancelDialog(title, message, okLabel, cancelAction);
                     }
-
-                } catch (RepositoryException e) {
-                    log.error("Could not retrieve workflow document", e);
-                } catch (EditorException e) {
-                    log.error("Could not retrieve document editor", e);
+                } catch (RepositoryException | EditorException | RemoteException | WorkflowException e) {
+                    log.error("Could not create cancel dialog for document: { displayName: {} }", getDocumentDisplayName(), e);
                 }
                 return null;
+            }
+
+            private StringResourceModel getResourceModel(final String resourceKey) {
+                return new StringResourceModel(resourceKey, EditingWorkflowPlugin.this);
             }
 
             private String getDocumentDisplayName() {
