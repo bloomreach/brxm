@@ -1684,6 +1684,10 @@ public class DocumentsServiceImplTest {
         expect(documentDraft.getIdentifier()).andReturn("draftUuid").anyTimes();
         expect(JcrUtils.getStringProperty(eq(documentDraft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(documentDraft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
+        final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        expect(WorkflowUtils.getWorkflow(eq(documentHandle), eq("default"), eq(DocumentWorkflow.class)))
+                .andReturn(Optional.of(documentWorkflow));
+        expect(documentWorkflow.hints()).andReturn(new HashMap<>());
         replayAll(documentDraft);
 
         final Document document = documentsService.createDocument(info, userContext);
@@ -1760,6 +1764,10 @@ public class DocumentsServiceImplTest {
         expect(documentDraft.getIdentifier()).andReturn("draftUuid").anyTimes();
         expect(JcrUtils.getStringProperty(eq(documentDraft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(documentDraft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
+        final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        expect(WorkflowUtils.getWorkflow(eq(documentHandle), eq("default"), eq(DocumentWorkflow.class)))
+                .andReturn(Optional.of(documentWorkflow));
+        expect(documentWorkflow.hints()).andReturn(new HashMap<>());
         replayAll(documentDraft);
 
 
