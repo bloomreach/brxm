@@ -157,7 +157,7 @@ class EditContentMainCtrl {
   }
 
   isSaveAllowed() {
-    return this.isEditing() && this.isDocumentDirty() && this.form.$valid;
+    return this.isEditing() && (this.isDocumentDirty() || this.isRetainable()) && this.form.$valid;
   }
 
   isKeepDraftShown() {
@@ -171,7 +171,7 @@ class EditContentMainCtrl {
   }
 
   isKeepDraftEnabled() {
-    return this.isEditing() && this.isDocumentDirty();
+    return this.isRetainable();
   }
 
   switchEditor() {
