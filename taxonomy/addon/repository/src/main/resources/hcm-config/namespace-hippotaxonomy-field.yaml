@@ -1,0 +1,26 @@
+definitions:
+  config:
+    /hippo:namespaces/system/TaxonomyClassification:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['hipposysedit:remodel']
+          hipposysedit:node: false
+          hipposysedit:type: String
+          hipposysedit:uri: internal
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          frontend:properties: [mode, taxonomy.name]
+          frontend:references: [wicket.model, model.compareTo, engine, validator.id]
+          frontend:services: [wicket.id, validator.id]
+          /root:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.onehippo.taxonomy.plugin.TaxonomyPickerPlugin
+            plugin: true
+            taxonomy.id: service.taxonomy

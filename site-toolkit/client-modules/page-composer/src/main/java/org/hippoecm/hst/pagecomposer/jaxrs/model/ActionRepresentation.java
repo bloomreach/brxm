@@ -16,7 +16,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.services.action.Action;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.Action;
 
 public final class ActionRepresentation {
 

@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
 
 import com.bloomreach.xm.repository.security.UserRoleBean;
 
+import static org.onehippo.cms7.event.HippoEventConstants.CATEGORY_USERROLE_MANAGEMENT;
+
 public class CreateUserRolePanel extends AdminBreadCrumbPanel {
     private static final Logger log = LoggerFactory.getLogger(CreateUserRolePanel.class);
 
@@ -74,7 +76,7 @@ public class CreateUserRolePanel extends AdminBreadCrumbPanel {
                 }
                 try {
                     SecurityManagerHelper.getUserRolesManager().addUserRole(new UserRoleBean(name, description));
-                    EventBusUtils.post("create-userrole", "userrole-management", "added userrole " + name);
+                    EventBusUtils.post("create-userrole", CATEGORY_USERROLE_MANAGEMENT, "added userrole " + name);
                     activateParentAndDisplayInfo(getString("userrole-created", nameModel));
                 } catch (AccessDeniedException e) {
                     target.add(CreateUserRolePanel.this);

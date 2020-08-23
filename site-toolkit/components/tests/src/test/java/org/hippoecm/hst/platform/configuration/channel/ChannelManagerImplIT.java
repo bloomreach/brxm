@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -169,6 +169,10 @@ public class ChannelManagerImplIT extends AbstractBeanTestCase {
     public void previews_add_channels_with_preview_id() throws Exception {
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject", "/hst:hst/hst:configurations/unittestproject-preview");
 
+        if (session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:xpages")) {
+            session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:xpages").remove();
+        }
+
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
         invalidator.eventPaths(pathsToBeChanged);
@@ -261,25 +265,34 @@ public class ChannelManagerImplIT extends AbstractBeanTestCase {
     }
 
     @Test
-    public void channel_caching_assertions_with_preview_that_inherits_channel_node_from_live() throws Exception {
+    public void channel_assertions_with_preview_that_inherits_channel_node_from_live() throws Exception {
         // test with non-workspace channel node
         Node previewConfig = session.getNode("/hst:hst/hst:configurations").addNode("unittestproject-preview");
         previewConfig.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../unittestproject"});
+
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
+        invalidator.eventPaths(pathsToBeChanged);
+
         final Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
 
-        assertFalse("Because there is no preview channel node, the channels only contain the 'live' channel id",
+        assertTrue("Even though the 'channel' node is only in live, there should still be a preview",
                 channels.containsKey("unittestproject-preview"));
+
+        final Channel prevChannel = channels.get("unittestproject-preview");
+        assertFalse(prevChannel.equals(channels.get("unittestproject")));
 
         Node workspace = session.getNode("/hst:hst/hst:configurations/unittestproject-preview").addNode("hst:workspace");
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:channel", workspace.getPath()  + "/hst:channel");
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+        pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
         invalidator.eventPaths(pathsToBeChanged);
         final Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels("dev-localhost");
         // now the preview channel should be loaded
-        assertTrue("There should be a preview channel since there is a node now in workspace",
+        assertTrue("There should still be a preview channel with an explicit node and it should be reloaded",
                 channelsAgain.containsKey("unittestproject-preview"));
+
+        assertFalse(channelsAgain.get("unittestproject-preview") == prevChannel);
     }
 
 

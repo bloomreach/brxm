@@ -20,7 +20,6 @@ import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import javax.jcr.Node;
@@ -40,7 +39,6 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.workflow.CopyNameHelper;
 import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
-import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.ReadOnlyModel;
@@ -61,7 +59,9 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.onehippo.repository.branch.BranchConstants;
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.documentworkflow.BranchHandleImpl;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
@@ -70,15 +70,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     public static final String DOCUMENT = "document";
     public static final String UNAVAILABLE_TIP = "unavailable-tip";
     public static final String DELETE = "delete";
-    /** workflow action key, that determines the visibility of the "Keep draft" button
-     * and if the documentInfo shows "draft changes" */
-    private static final String EDIT_DRAFT = "editDraft";
-    /** workflow action key, that determines the visibility of the "Publish" button
-     * and if the documentInfo show "unpublished changes"  */
-    private static final String PUBLISH = "publish";
-    /** workflow action key, that determinites if the visibility of the "Unpublish" button
-     * and if the documentInfo shows "offline" or "live"  */
-    private static final String DEPUBLISH = "depublish";
     /**
      * Id and name of the document Info.
      * The id should start with "info", see MenuHierarchy.
@@ -91,7 +82,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     private StdWorkflow moveAction;
     private StdWorkflow whereUsedAction;
     private StdWorkflow historyAction;
-    private BranchIdModel branchIdModel;
 
 
     public DocumentWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -415,11 +405,20 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected IModel<String> getTitle() {
                 final UnaryOperator<String> resolver = key ->
                         new StringResourceModel(key, DocumentWorkflowPlugin.this).getString();
-                final Map<String, Serializable> hints = getHints();
+                final Node node = getWorkflow().getNode();
+                DocumentHandle documentHandle = new DocumentHandle(node);
+                final BranchHandleImpl branchHandle = new BranchHandleImpl(getBranchId(), documentHandle);
+                boolean transferable = false;
+                try {
+                    transferable = documentHandle.isTransferable();
+                } catch (WorkflowException e) {
+                    log.warn("Unable to determine if document: { path: %s } is transferable"
+                            , JcrUtils.getNodePathQuietly(node));
+                }
                 final String info = new BranchInfoBuilder(resolver, getBranchInfo(resolver))
-                        .draftChanges(isActionAllowed(hints, EDIT_DRAFT))
-                        .unpublishedChanges(isActionAllowed(hints, PUBLISH))
-                        .live(isActionAllowed(hints, DEPUBLISH))
+                        .draftChanges(transferable)
+                        .unpublishedChanges(branchHandle.isModified())
+                        .live(branchHandle.isLiveAvailable())
                         .build();
                 return new Model<>(info);
             }

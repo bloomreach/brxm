@@ -39,6 +39,7 @@ module.exports = {
       'jquery',
       'mutation-summary',
       'moment-timezone',
+      'rxjs',
     ],
   },
 };

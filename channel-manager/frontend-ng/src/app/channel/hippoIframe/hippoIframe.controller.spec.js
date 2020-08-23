@@ -612,4 +612,27 @@ describe('hippoIframeCtrl', () => {
       expect(ScrollService.disable).toHaveBeenCalled();
     });
   });
+
+  describe('isXPage', () => {
+    let mockPageMeta;
+
+    beforeEach(() => {
+      mockPageMeta = jasmine.createSpyObj('pageMeta', ['isXPage']);
+      spyOn(PageStructureService, 'getPage').and.returnValue({
+        getMeta: () => mockPageMeta,
+      });
+    });
+
+    it('should return true', () => {
+      mockPageMeta.isXPage.and.returnValue(true);
+
+      expect($ctrl.isXPage()).toBe(true);
+    });
+
+    it('should return false', () => {
+      mockPageMeta.isXPage.and.returnValue(false);
+
+      expect($ctrl.isXPage()).toBe(false);
+    });
+  });
 });

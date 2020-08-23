@@ -218,7 +218,7 @@
       }
     },
     "edit-draft-label" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",

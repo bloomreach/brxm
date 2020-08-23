@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,12 +16,15 @@
 package org.onehippo.cms7.services;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import org.onehippo.cms7.util.ObjectIdentityKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * WhiteboardProxiedServiceRegistry&lt;T&gt; is an abstract base class for implementing and using the
@@ -86,7 +89,9 @@ public abstract class WhiteboardProxiedServiceRegistry<T> {
 
     private final Class<T> serviceInterface;
     private final ConcurrentHashMap<ObjectIdentityKey, ProxiedServiceHolder<T>> services = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<ObjectIdentityKey, ServiceHolder<ProxiedServiceTracker>> trackers = new ConcurrentHashMap<>();
+    private final LinkedHashMap<ObjectIdentityKey, ServiceHolder<ProxiedServiceTracker>> trackers = new LinkedHashMap<>();
+
+    private static final Logger log = LoggerFactory.getLogger(WhiteboardProxiedServiceRegistry.class);
 
     /**
      * @return a new copied List of current service entries to guard against potential concurrent service (un)registrations
@@ -129,8 +134,14 @@ public abstract class WhiteboardProxiedServiceRegistry<T> {
             final ClassLoader cl = Thread.currentThread().getContextClassLoader();
             try {
                 for (final ServiceHolder<ProxiedServiceTracker> trackerHolder : trackers.values()) {
-                    Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
-                    trackerHolder.getServiceObject().serviceRegistered(serviceHolder);
+                    try {
+                        Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
+                        trackerHolder.getServiceObject().serviceRegistered(serviceHolder);
+                    } catch (Exception e) {
+                        String logMessage = String.format("There was an error notifying the ProxiedServiceTracker %s for registering " +
+                                "service %s", trackerHolder.getServiceObject().getClass().getName(), serviceInterface);
+                        log.error(logMessage, e);
+                    }
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(cl);
@@ -151,8 +162,14 @@ public abstract class WhiteboardProxiedServiceRegistry<T> {
             final ClassLoader cl = Thread.currentThread().getContextClassLoader();
             try {
                 for (final ServiceHolder<ProxiedServiceTracker> trackerHolder : trackers.values()) {
-                    Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
-                    trackerHolder.getServiceObject().serviceUnregistered(serviceHolder);
+                    try {
+                        Thread.currentThread().setContextClassLoader(trackerHolder.getClassLoader());
+                        trackerHolder.getServiceObject().serviceUnregistered(serviceHolder);
+                    } catch (Exception e) {
+                        String logMessage = String.format("There was an error notifying the ProxiedServerTracker %s for unregistering " +
+                                "service %s", trackerHolder.getServiceObject().getClass().getName(), serviceInterface);
+                        log.error(logMessage, e);
+                    }
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(cl);
@@ -177,7 +194,13 @@ public abstract class WhiteboardProxiedServiceRegistry<T> {
         final ServiceHolder<ProxiedServiceTracker> trackerHolder = new ServiceHolder<>(tracker);
         trackers.put(key, trackerHolder);
         for (ProxiedServiceHolder<T> serviceHolder: services.values()) {
-            tracker.serviceRegistered(serviceHolder);
+            try {
+                tracker.serviceRegistered(serviceHolder);
+            } catch (Exception e) {
+                String logMessage = String.format("There was an error notifying the ProxiedServerTracker %s for registering " +
+                        "service %s", tracker.getClass().getName(), serviceInterface);
+                log.error(logMessage, e);
+            }
         }
     }
 
