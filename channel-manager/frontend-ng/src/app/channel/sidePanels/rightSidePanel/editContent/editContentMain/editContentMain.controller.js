@@ -116,8 +116,8 @@ class EditContentMainCtrl {
   }
 
   discard() {
-    let messageKey = this.isRetainable() ? 'CONFIRM_DISCARD_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE' :
-      'CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE';
+    const messageKey = this.isRetainable() ? 'CONFIRM_DISCARD_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE'
+      : 'CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE';
     return this._confirmDiscardChanges(messageKey)
       .then(() => {
         this.form.$setPristine();
