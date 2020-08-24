@@ -238,6 +238,7 @@
   "HIDE_CONTENT": "Hide content buttons",
   "NOT_ALL_FIELDS_SHOWN": "Not all fields of this document are shown.",
   "INVALID_URL": "This URL is invalid",
+  "TOOLBAR_MENU_XPAGE_TOOLS": "Tools",
   "SUBPAGE_CHANGEMANAGEMENT_TITLE_PROJECT": "Manage changes to channel '{{ channelName }} - {{ projectName }}'",
   "PICKER_EMPTY_TREE": "No documents are available",
   "LEFT_SIDE_PANEL_TAB_SITEMAP": "Sitemap",
