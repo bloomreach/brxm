@@ -63,8 +63,6 @@ public class ApiCompatibilityJsonAssertTest {
 
         String actual = new ObjectMapper().writeValueAsString(ferrari);
 
-        System.out.println(actual);
-
         final String expected = getSimpleJson("simple.json");
 
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.LENIENT);
@@ -79,8 +77,6 @@ public class ApiCompatibilityJsonAssertTest {
         final Ferrari ferrari = new Ferrari("convertible", new Owner("john"));
 
         String actual = new ObjectMapper().writeValueAsString(ferrari);
-
-        System.out.println(actual);
 
         final String expected = getSimpleJson("simple_different_value.json");
 
