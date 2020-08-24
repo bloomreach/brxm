@@ -65,6 +65,7 @@ import static org.junit.Assert.fail;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
 import static org.onehippo.cm.engine.autoexport.Validator.NOOP;
 
+@Ignore
 public class SiteIntegrationTest {
 
     static final String SITE_INTEGRATION_TEST = "SiteIntegrationTest";
