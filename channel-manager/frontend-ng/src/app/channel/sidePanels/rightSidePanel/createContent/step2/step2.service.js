@@ -45,9 +45,10 @@ class Step2Service {
   _reset() {
     delete this.documentLocale;
     delete this.documentUrl;
+    delete this.xpage;
   }
 
-  open(document, url, locale, componentInfo) {
+  open(document, url, locale, componentInfo, xpage) {
     this._reset();
 
     this.componentInfo = componentInfo;
@@ -56,6 +57,7 @@ class Step2Service {
       .then((documentType) => {
         this.documentLocale = locale;
         this.documentUrl = url;
+        this.xpage = xpage;
 
         this._reportUnsupportedRequiredFieldTypes(documentType);
 
@@ -144,6 +146,10 @@ class Step2Service {
       return true;
     }
     return false;
+  }
+
+  isXPage() {
+    return !!this.xpage;
   }
 }
 

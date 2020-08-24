@@ -61,7 +61,7 @@ class CreateContentService {
       { entering: '**.create-content-step-2' },
       (transition) => {
         const params = transition.params();
-        return this._step2(params.document, params.url, params.locale, params.componentInfo);
+        return this._step2(params.document, params.url, params.locale, params.componentInfo, params.xpage);
       },
     );
 
@@ -81,12 +81,13 @@ class CreateContentService {
     this.$state.go('hippo-cm.channel.create-content-step-1', { config });
   }
 
-  next(document, url, locale) {
+  next(document, url, locale, xpage) {
     this.$state.go('hippo-cm.channel.create-content-step-2', {
       componentInfo: this.componentInfo,
       document,
       locale,
       url,
+      xpage,
     });
   }
 
@@ -162,18 +163,19 @@ class CreateContentService {
     this.RightSidePanelService.setTitle(title);
   }
 
-  _step2(document, url, locale, componentInfo) {
+  _step2(document, url, locale, componentInfo, xpage) {
     this.RightSidePanelService.startLoading();
-    this.Step2Service.open(document, url, locale, componentInfo)
+    this.Step2Service.open(document, url, locale, componentInfo, xpage)
       .then((documentType) => {
-        this._showStep2Title(documentType);
+        const translationKey = xpage ? 'CREATE_XPAGE' : 'CREATE_NEW_DOCUMENT_TYPE';
+        this._showStep2Title(translationKey, documentType);
         this.RightSidePanelService.stopLoading();
       });
   }
 
-  _showStep2Title(documentType) {
+  _showStep2Title(key, documentType) {
     const documentTypeName = { documentType: documentType.displayName };
-    const documentTitle = this.$translate.instant('CREATE_NEW_DOCUMENT_TYPE', documentTypeName);
+    const documentTitle = this.$translate.instant(key, documentTypeName);
     this.RightSidePanelService.setTitle(documentTitle);
   }
 
