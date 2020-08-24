@@ -92,22 +92,28 @@ class CreateContentService {
   }
 
   async finish(documentId) {
-    try {
-      const { data: { renderPathInfo, experiencePage } } = await this.HstService.doGet(documentId, 'representation');
-      const pageMeta = this.PageStructureService
-        .getPage()
-        .getMeta();
+    let experiencePage;
+    let renderPathInfo;
 
-      if (experiencePage && pageMeta.getPathInfo() !== renderPathInfo) {
-        this.HippoIframeService.load(renderPathInfo);
-      } else {
-        this.HippoIframeService.reload();
-      }
+    try {
+      ({ data: { renderPathInfo, experiencePage } } = await this.HstService.doGet(documentId, 'representation'));
     } catch (ignore) {
+      this.FeedbackService.showError(`Failed to retrieve Sitemap representation for document[${documentId}]`);
       this.HippoIframeService.reload();
+      return;
     }
 
-    this.EditContentService.startEditing(documentId);
+    if (!experiencePage) {
+      this.HippoIframeService.reload();
+      this.EditContentService.startEditing(documentId);
+      return;
+    }
+
+    const pageMeta = this.PageStructureService.getPage().getMeta();
+    if (pageMeta.getPathInfo() !== renderPathInfo) {
+      this.HippoIframeService.load(renderPathInfo);
+    }
+    this.$state.go('hippo-cm.channel.edit-page', { documentId });
   }
 
   stop() {
