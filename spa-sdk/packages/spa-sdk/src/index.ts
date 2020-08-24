@@ -93,7 +93,11 @@ function initializeWithJwt09(scope: Container, configuration: ConfigurationWithJ
   );
   const authorizationToken = searchParams.get(authorizationParameter) ?? undefined;
   const serverId = searchParams.get(serverIdParameter) ?? undefined;
-  const config = { ...configuration, spaBaseUrl: appendSearchParams(configuration.spaBaseUrl ?? '', searchParams) };
+  const config = {
+    ...configuration,
+    origin: configuration.origin ?? parseUrl(configuration.apiBaseUrl ?? configuration.cmsBaseUrl ?? '').origin,
+    spaBaseUrl: appendSearchParams(configuration.spaBaseUrl ?? '', searchParams),
+  };
 
   scope.load(PageModule09(), SpaModule(), UrlModule09());
   scope.bind(ApiOptionsToken).toConstantValue({ authorizationToken, serverId, ...config });
@@ -103,8 +107,7 @@ function initializeWithJwt09(scope: Container, configuration: ConfigurationWithJ
     scope.get<Spa>(SpaService).initialize(model ?? path),
     (page) => {
       if (page.isPreview() && config.cmsBaseUrl) {
-        const { origin } = parseUrl(config.cmsBaseUrl);
-        scope.get<PostMessage>(PostMessageService).initialize({ ...config, origin });
+        scope.get<PostMessage>(PostMessageService).initialize(config);
         scope.get<Cms>(CmsService).initialize(config);
       }
 
@@ -130,6 +133,7 @@ function initializeWithJwt10(scope: Container, configuration: ConfigurationWithJ
     apiVersion: '1.0',
     endpoint: configuration.endpoint ?? endpoint,
     baseUrl: appendSearchParams(configuration.baseUrl ?? '', searchParams),
+    origin: configuration.origin ?? parseUrl(configuration.endpoint ?? endpoint ?? '').origin,
   };
 
   scope.load(PageModule(), SpaModule(), UrlModule());
@@ -140,8 +144,7 @@ function initializeWithJwt10(scope: Container, configuration: ConfigurationWithJ
     scope.get<Spa>(SpaService).initialize(model ?? path),
     (page) => {
       if (page.isPreview() && config.endpoint) {
-        const { origin } = parseUrl(config.endpoint);
-        scope.get<PostMessage>(PostMessageService).initialize({ ...config, origin });
+        scope.get<PostMessage>(PostMessageService).initialize(config);
         scope.get<Cms>(CmsService).initialize(config);
       }
 

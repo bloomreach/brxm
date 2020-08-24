@@ -31,5 +31,5 @@ export function CmsModule() {
 }
 
 export { CmsOptions, CmsService, Cms } from './cms';
-export { PostMessageService, PostMessage } from './post-message';
+export { PostMessageOptions, PostMessageService, PostMessage } from './post-message';
 export { RpcClientService, RpcClient, RpcServerService, RpcServer } from './rpc';
