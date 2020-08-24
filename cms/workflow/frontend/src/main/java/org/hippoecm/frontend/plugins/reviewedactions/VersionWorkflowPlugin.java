@@ -15,8 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.io.Serializable;
 import java.time.format.FormatStyle;
 import java.util.Calendar;
+import java.util.Map;
 import java.util.function.Function;
 
 import javax.jcr.Node;
@@ -57,6 +59,8 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.DocumentWorkflowAction.restoreVersionToBranch;
 
 public class VersionWorkflowPlugin extends RenderPlugin {
 
@@ -124,6 +128,12 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
             @Override
             public boolean isVisible() {
+                final Map<String, Serializable> hints = getModel().getHints(restoreToBranchId);
+                final Serializable canRestore = hints.get(restoreVersionToBranch().getAction());
+                if (Boolean.FALSE.equals(canRestore)) {
+                    return false;
+                }
+
                 Node frozenNode;
                 try {
                     frozenNode = ((WorkflowDescriptorModel) getDefaultModel()).getNode();

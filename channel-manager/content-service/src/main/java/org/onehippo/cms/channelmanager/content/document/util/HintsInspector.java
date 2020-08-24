@@ -64,6 +64,15 @@ public interface HintsInspector {
     boolean canDisposeEditableDocument(String branchId, Map<String, Serializable> hints);
 
     /**
+     * Check if a version of a document can be restored, given its workflow hints and branchId.
+     *
+     * @param branchId branch id for which to perform the check
+     * @param hints workflow hints
+     * @return true if document can be updated, false otherwise
+     */
+    boolean canRestoreVersion(String branchId, Map<String, Serializable> hints);
+
+    /**
      * Determine the reason why editing failed for the present workflow hints and branchId.
      *
      * @param branchId branch id
