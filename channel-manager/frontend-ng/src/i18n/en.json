@@ -185,6 +185,8 @@
   "NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE": "Page '{{pageName}}': {{status}}, scheduled to take offline on {{dateTime}}",
   "NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTED": "Page '{{pageName}}': {{status}}, publication requested on {{dateTime}}",
   "NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTED": "Page '{{pageName}}': {{status}}, take offline requested on {{dateTime}}",
+  "NOTIFICATION_BAR_XPAGE_LABEL_PREVIOUS_VERSION": "Page '{{pageName}}': version {{versionNumber}} (previous version)",
+  "NOTIFICATION_BAR_XPAGE_LABEL_LOCKED_BY_USER": "Page '{{pageName}}': locked by {{userName}}",
   "NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_PROGRESS": "Page '{{pageName}}' for project '{{projectName}}'",
   "NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_REVIEW": "Page '{{pageName}}' for project '{{projectName}}': in review",
   "NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_APPROVED": "Page '{{pageName}}' for project '{{projectName}}': approved",
