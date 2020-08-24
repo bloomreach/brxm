@@ -139,11 +139,14 @@ describe('Step2Service', () => {
   });
 
   describe('openEditNameUrlDialog', () => {
-    it('shows the edit-name-url dialog', () => {
-      spyOn(DialogService, 'show').and.returnValue($q.reject());
-      ContentEditor.document = { displayName: 'test-display-name' };
+    beforeEach(() => {
+      ContentEditor.document = { displayName: 'test-display-name', id: 'test-document-id' };
       Step2Service.documentLocale = 'test-locale';
       Step2Service.documentUrl = 'test-url';
+    });
+
+    it('shows the edit-name-url dialog', () => {
+      spyOn(DialogService, 'show').and.returnValue($q.reject());
 
       Step2Service.openEditNameUrlDialog();
       $rootScope.$digest();
@@ -153,12 +156,29 @@ describe('Step2Service', () => {
         nameField: 'test-display-name',
         urlField: 'test-url',
         locale: 'test-locale',
+        xpage: undefined,
+      };
+      expect(DialogService.show).toHaveBeenCalledWith(jasmine.objectContaining({ locals }));
+    });
+
+    it('shows the edit-name-url dialog for xpages', () => {
+      spyOn(DialogService, 'show').and.returnValue($q.reject());
+      Step2Service.xpage = true;
+
+      Step2Service.openEditNameUrlDialog();
+      $rootScope.$digest();
+
+      const locals = {
+        title: 'CHANGE_XPAGE_NAME',
+        nameField: 'test-display-name',
+        urlField: 'test-url',
+        locale: 'test-locale',
+        xpage: true,
       };
       expect(DialogService.show).toHaveBeenCalledWith(jasmine.objectContaining({ locals }));
     });
 
     it('sets the document name/url after closing', () => {
-      ContentEditor.document = { displayName: 'test-display-name', id: 'test-document-id' };
       const dialogData = { name: 'new-display-name', url: 'new-url' };
       spyOn(DialogService, 'show').and.returnValue($q.resolve(dialogData));
       const responseData = { displayName: dialogData.name, urlName: dialogData.url };
@@ -173,7 +193,6 @@ describe('Step2Service', () => {
 
     it('handles errors by showing a feedback message', () => {
       spyOn(FeedbackService, 'showError');
-      ContentEditor.document = { id: 'test-document-id' };
       const dialogData = { name: 'name', url: 'url' };
       spyOn(DialogService, 'show').and.returnValue($q.resolve(dialogData));
       const error = {
