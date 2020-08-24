@@ -18,6 +18,7 @@ class VersionsInfoWrapperCtrl {
   constructor(
     $uiRouterGlobals,
     $rootScope,
+    ContentEditor,
     PageStructureService,
     ProjectService,
   ) {
@@ -25,6 +26,7 @@ class VersionsInfoWrapperCtrl {
 
     this.$uiRouterGlobals = $uiRouterGlobals;
     this.$rootScope = $rootScope;
+    this.ContentEditor = ContentEditor;
     this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
   }
@@ -32,14 +34,10 @@ class VersionsInfoWrapperCtrl {
   $onInit() {
     this.documentId = this.$uiRouterGlobals.params.documentId;
     this.branchId = this.ProjectService.getSelectedProjectId();
-    this.unpublishedVariantId = this._getUnpublishedVariantId();
+    this.checkUnpublishedVariantId();
 
-    this._onPageChange = this.$rootScope.$on('page:change', () => {
-      this.unpublishedVariantId = this._getUnpublishedVariantId();
-    });
-    this._onPageCheckChanges = this.$rootScope.$on('page:check-changes', () => {
-      this.unpublishedVariantId = this._getUnpublishedVariantId();
-    });
+    this._onPageChange = this.$rootScope.$on('page:change', this.checkUnpublishedVariantId());
+    this._onPageCheckChanges = this.$rootScope.$on('page:check-changes', this.checkUnpublishedVariantId());
   }
 
   $onDestroy() {
@@ -47,11 +45,19 @@ class VersionsInfoWrapperCtrl {
     this._onPageCheckChanges();
   }
 
-  _getUnpublishedVariantId() {
-    return this.PageStructureService
+  checkUnpublishedVariantId() {
+    const id = this.PageStructureService
       .getPage()
       .getMeta()
       .getUnpublishedVariantId();
+
+    this.unpublishedVariantId = id;
+  }
+
+  uiCanExit() {
+    this.ContentEditor
+      .discardChanges()
+      .finally(() => this.ContentEditor.close());
   }
 }
 
