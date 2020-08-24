@@ -315,6 +315,7 @@
   "TOOLBAR_MENU_XPAGE_SCHEDULE_PUBLISH_ERROR": "Failed to schedule publication of page '{{documentName}}'",
   "TOOLBAR_MENU_XPAGE_SCHEDULE_UNPUBLISH": "Schedule to take offline...",
   "TOOLBAR_MENU_XPAGE_SCHEDULE_UNPUBLISH_ERROR": "Failed to schedule take offline of page '{{documentName}}'",
+  "TOOLBAR_MENU_XPAGE_TOOLS": "Tools",
   "TOOLBAR_MENU_XPAGE_UNPUBLISH": "Take offline",
   "TOOLBAR_MENU_XPAGE_UNPUBLISH_ERROR": "Failed to take page '{{documentName}}' offline",
   "TOOLBAR_MENU_XPAGE_VERSIONS": "Versions",
