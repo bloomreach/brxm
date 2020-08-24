@@ -160,7 +160,7 @@ describe('CreateContentService', () => {
     expect($translate.instant).toHaveBeenCalledWith('CREATE_NEW_DOCUMENT_TYPE', { documentType: 'document-type-name' });
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('CREATE_NEW_DOCUMENT_TYPE');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
-    expect(Step2Service.open).toHaveBeenCalledWith({}, 'url', 'locale', CreateContentService.componentInfo);
+    expect(Step2Service.open).toHaveBeenCalledWith({}, 'url', 'locale', CreateContentService.componentInfo, false);
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
   });
 
@@ -168,6 +168,18 @@ describe('CreateContentService', () => {
     spyOn($state, 'go');
     CreateContentService.stop();
     expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
+  });
+
+  describe('creating a new page', () => {
+    it('opens the second step of creating a new page', () => {
+      spyOn(Step2Service, 'open').and.returnValue($q.resolve({ displayName: 'page-type-name' }));
+
+      CreateContentService.next({}, 'url', 'locale', true);
+      $rootScope.$digest();
+
+      expect($translate.instant).toHaveBeenCalledWith('CREATE_XPAGE', { documentType: 'page-type-name' });
+      expect(Step2Service.open).toHaveBeenCalledWith({}, 'url', 'locale', {}, true);
+    });
   });
 
   describe('validate config data for transition to step1', () => {
