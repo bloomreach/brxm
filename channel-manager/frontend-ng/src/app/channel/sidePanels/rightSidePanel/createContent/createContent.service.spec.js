@@ -210,38 +210,67 @@ describe('CreateContentService', () => {
       expect(HstService.doGet).toHaveBeenCalledWith('document-id', 'representation');
     });
 
-    it('reloads the iframe for documents', () => {
+    it('shows an error and reloads the page if the request for a SiteMapPageRepresentation fails', () => {
+      spyOn(FeedbackService, 'showError');
       spyOn(HippoIframeService, 'reload');
+      HstService.doGet.and.returnValue($q.reject('failed to load representation'));
 
       CreateContentService.finish('document-id');
       $rootScope.$digest();
 
+      expect(FeedbackService.showError).toHaveBeenCalled();
       expect(HippoIframeService.reload).toHaveBeenCalled();
     });
 
-    it('should load the renderPath of a new XPage document', () => {
-      spyOn(HippoIframeService, 'load');
-      representation.experiencePage = true;
+    describe('for documents', () => {
+      it('should reload the iframe', () => {
+        spyOn(HippoIframeService, 'reload');
 
-      const page = jasmine.createSpyObj('page', ['getMeta']);
-      const pageMeta = jasmine.createSpyObj('pageMeta', ['getPathInfo']);
-      spyOn(PageStructureService, 'getPage').and.returnValue(page);
-      page.getMeta.and.returnValue(pageMeta);
-      pageMeta.getPathInfo.and.returnValue('old-render-path');
+        CreateContentService.finish('document-id');
+        $rootScope.$digest();
 
-      CreateContentService.finish('document-id');
-      $rootScope.$digest();
+        expect(HippoIframeService.reload).toHaveBeenCalled();
+      });
 
-      expect(HippoIframeService.load).toHaveBeenCalled();
+      it('should switch to state "edit-content"', () => {
+        spyOn(EditContentService, 'startEditing');
+
+        CreateContentService.finish('document-id');
+        $rootScope.$digest();
+
+        expect(EditContentService.startEditing).toHaveBeenCalledWith('document-id');
+      });
     });
 
-    it('switches to edit-content', () => {
-      spyOn(EditContentService, 'startEditing');
+    describe('for pages', () => {
+      beforeEach(() => {
+        representation.experiencePage = true;
 
-      CreateContentService.finish('document-id');
-      $rootScope.$digest();
+        const page = jasmine.createSpyObj('page', ['getMeta']);
+        const pageMeta = jasmine.createSpyObj('pageMeta', ['getPathInfo']);
+        spyOn(PageStructureService, 'getPage').and.returnValue(page);
+        page.getMeta.and.returnValue(pageMeta);
+        pageMeta.getPathInfo.and.returnValue('old-render-path');
+      });
 
-      expect(EditContentService.startEditing).toHaveBeenCalledWith('document-id');
+      it('should load the renderPath of a new XPage document', () => {
+        spyOn(HippoIframeService, 'load');
+
+        CreateContentService.finish('document-id');
+        $rootScope.$digest();
+
+        expect(HippoIframeService.load).toHaveBeenCalled();
+      });
+
+      it('should switch to state "edit-page"', () => {
+        spyOn($state, 'go');
+        representation.experiencePage = true;
+
+        CreateContentService.finish('document-id');
+        $rootScope.$digest();
+
+        expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page', { documentId: 'document-id' });
+      });
     });
   });
 
