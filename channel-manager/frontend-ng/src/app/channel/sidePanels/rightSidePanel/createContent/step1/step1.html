@@ -20,11 +20,11 @@
         flex="grow">
     <!-- Name and URL fields (as a separate component) -->
     <name-url-fields name-field="$ctrl.name"
+                     name-placeholder="$ctrl.isXPage() ? 'PLACEHOLDER_XPAGE_NAME' : 'PLACEHOLDER_DOCUMENT_NAME'"
                      url-field="$ctrl.url"
                      is-url-updating="$ctrl.isUrlUpdating"
                      locale="$ctrl.locale"
-                     md-autofocus="true"
-                     name-placeholder="$ctrl.isXPage() ? 'PLACEHOLDER_XPAGE_NAME' : 'PLACEHOLDER_DOCUMENT_NAME'">
+                     md-autofocus="true">
     </name-url-fields>
 
     <!-- Document type field -->

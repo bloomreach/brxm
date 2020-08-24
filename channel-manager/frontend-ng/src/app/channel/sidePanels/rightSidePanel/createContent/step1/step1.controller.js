@@ -97,7 +97,7 @@ class Step1Controller {
 
   submit() {
     this.Step1Service.createDocument()
-      .then(document => this.CreateContentService.next(document, this.url, this.locale));
+      .then(document => this.CreateContentService.next(document, this.url, this.locale, this.isXPage()));
     this.CmsService.reportUsageStatistic('CreateContent1Create');
   }
 
