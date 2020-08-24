@@ -82,6 +82,12 @@ public class HintsInspectorImpl implements HintsInspector {
     }
 
     @Override
+    public boolean canRestoreVersion(final String branchId, final Map<String, Serializable> hints) {
+        return isHintActionTrue(hints, "restoreVersionToBranch")
+                || isHintActionTrue(hints, "restoreVersion");
+    }
+
+    @Override
     public Optional<ErrorInfo> determineEditingFailure(final String branchId, final Map<String, Serializable> hints, final Session session) {
         if (hints.containsKey(HINT_IN_USE_BY)) {
             final Map<String, Serializable> params = new HashMap<>();

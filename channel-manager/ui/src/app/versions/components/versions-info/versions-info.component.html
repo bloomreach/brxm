@@ -73,7 +73,7 @@
           {{ 'VERSION' | translate }}
         </button>
 
-        <button *ngIf="unpublishedVariantId === version.jcrUUID && !isFirst"
+        <button *ngIf="versionsInfo.restoreEnabled && unpublishedVariantId === version.jcrUUID && !isFirst"
                 mat-stroked-button
                 color="primary"
                 [disabled]="actionInProgress"
