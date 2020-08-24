@@ -427,9 +427,23 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     private static Document createDocument(final String uuid, final Node handle, final DocumentType docType, final Node unpublished) {
+
         final Document document = assembleDocument(uuid, handle, unpublished, docType);
+        document.getInfo().setCanKeepDraft(canKeepDraft(handle));
         FieldTypeUtils.readFieldValues(unpublished, docType.getFields(), document.getFields());
         return document;
+    }
+
+    private static boolean canKeepDraft(final Node handle){
+        try {
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
+            final Map<String, Serializable> hints = documentWorkflow.hints();
+            return Boolean.TRUE.equals(hints.get(AbstractSaveDraftDocumentService.SAVE_DRAFT));
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            log.warn("Failed to determine if save draft is allowed for document: { path : {}}"
+                    , JcrUtils.getNodePathQuietly(handle));
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+        }
     }
 
     @Override
