@@ -38,6 +38,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -66,6 +67,7 @@ import static org.junit.Assert.fail;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
 import static org.onehippo.cm.engine.test.Validator.NOOP;
 
+@Ignore
 public class SiteIntegrationTest {
 
     static final String SITE_INTEGRATION_TEST = "SiteIntegrationTest";
