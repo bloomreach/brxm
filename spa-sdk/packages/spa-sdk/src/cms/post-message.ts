@@ -24,9 +24,11 @@ const GLOBAL_WINDOW = typeof window === 'undefined' ? undefined : window;
 
 export interface PostMessageOptions {
   /**
-   * CMS origin to verify a message sender.
+   * The brXM origin to verify an integration with the Experience Manager.
+   * This option should be used when the brXM is accessible from a host other than the Page Model API.
+   * By default, the origin from the `apiBaseUrl` or `endpoint` parameters is used.
    */
-  origin: string;
+  origin?: string;
 
   /**
    * The window reference for the CMS integration.
