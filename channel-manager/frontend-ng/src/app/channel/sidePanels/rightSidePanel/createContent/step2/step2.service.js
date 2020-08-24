@@ -85,10 +85,11 @@ class Step2Service {
       template: nameUrlFieldsDialogTemplate,
       controller: nameUrlFieldsDialogController,
       locals: {
-        title: this.$translate.instant('CHANGE_DOCUMENT_NAME'),
+        title: this.$translate.instant(this.xpage ? 'CHANGE_XPAGE_NAME' : 'CHANGE_DOCUMENT_NAME'),
         nameField: document.displayName,
         urlField: this.documentUrl,
         locale: this.documentLocale,
+        xpage: this.xpage,
       },
       controllerAs: '$ctrl',
       bindToController: true,
