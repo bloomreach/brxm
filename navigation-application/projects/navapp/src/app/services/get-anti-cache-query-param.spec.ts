@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,11 @@ describe('getAntiCacheQueryParam', () => {
   });
 
   it('should create anti cache query param if the location url does not contain antiCache', () => {
-    const expected = `antiCache=${new Date().toLocaleString()}`;
+    const expected = jasmine.stringMatching(/^antiCache=\d+/);
 
     const actual = getAntiCacheQueryParam('/some/path');
 
-    expect(actual).toBe(expected);
+    expect(actual).toEqual(expected);
   });
 
   it('should be able to find the antiCache query param if there are a few query params in the url', () => {
