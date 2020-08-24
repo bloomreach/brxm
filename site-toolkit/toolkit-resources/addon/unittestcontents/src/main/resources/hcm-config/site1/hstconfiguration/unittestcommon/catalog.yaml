@@ -15,6 +15,7 @@ definitions:
           hst:componentclassname: org.hippoecm.hst.test.BannerComponent
           hst:parameternames: [path]
           hst:parametervalues: [banners/banner2]
+          hst:ctype: banner
           # TODO include hst:dynamicparameter children and do unit tests against those!
         /testcatalogitem:
           jcr:primaryType: hst:componentdefinition
