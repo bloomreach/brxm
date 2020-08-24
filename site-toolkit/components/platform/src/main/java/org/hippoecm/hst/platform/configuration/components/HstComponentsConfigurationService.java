@@ -188,7 +188,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             if (isEmpty(child.getComponentDefinition())) {
 
                 // In case the component is a container item, this is legacy component instances support. For components
-                // that are not hst:components, this is not legacy!
+                // which are not container items, this is not legacy!
                 // If component instance does not have a component definition reference, explicitly populate component parameters.
                 ((HstComponentConfigurationService) child).populateLegacyComponentParameters(websiteClassLoader,legacyComponentParametersCache);
                 ((HstComponentConfigurationService) child).populateLegacyFieldGroups(websiteClassLoader, legacyComponentFieldGroupsCache);
