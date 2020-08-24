@@ -20,6 +20,7 @@ class CreateContentService {
     $state,
     $transitions,
     $translate,
+    ChannelService,
     CmsService,
     ContentService,
     EditContentService,
@@ -29,6 +30,7 @@ class CreateContentService {
     PageStructureService,
     ProjectService,
     RightSidePanelService,
+    SiteMapService,
     Step1Service,
     Step2Service,
   ) {
@@ -37,6 +39,7 @@ class CreateContentService {
     this.$q = $q;
     this.$state = $state;
     this.$translate = $translate;
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.EditContentService = EditContentService;
@@ -46,6 +49,7 @@ class CreateContentService {
     this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
+    this.SiteMapService = SiteMapService;
     this.Step1Service = Step1Service;
     this.Step2Service = Step2Service;
 
@@ -113,6 +117,10 @@ class CreateContentService {
     if (pageMeta.getPathInfo() !== renderPathInfo) {
       this.HippoIframeService.load(renderPathInfo);
     }
+
+    const siteMapId = this.ChannelService.getSiteMapId();
+    this.SiteMapService.load(siteMapId); // reload sitemap (left side panel)
+
     this.$state.go('hippo-cm.channel.edit-page', { documentId });
   }
 
