@@ -975,4 +975,36 @@ public class JcrUtils {
             return false;
         }
     }
+
+    /**
+     * <p>
+     *     Returns the list of jcr nodes which are descendants of {@code source} and of type {@code nodeType},
+     *     where {@code source} is never included in the result. When {@code prune} is {@code true}, matching descendants
+     *     are added and the descendants of a matching descendant are not scanned (and thus also not added)
+     * </p>
+     * @param source
+     * @param nodeType
+     * @return
+     */
+    public static List<Node> getDescendants(final Node source, final String nodeType, final boolean prune) throws RepositoryException {
+        final List<Node> populate = new ArrayList<>();
+        for (Node child : new NodeIterable(source.getNodes())) {
+            populateNodes(child, populate, nodeType, prune);
+        }
+        return populate;
+    }
+
+    private static void populateNodes(final Node node, final List<Node> nodes, final String nodeType, final boolean prune) throws RepositoryException {
+        if (node.isNodeType(nodeType)) {
+            nodes.add(node);
+            if (prune) {
+                return;
+            }
+        }
+        for (Node child : new NodeIterable(node.getNodes())) {
+            populateNodes(child, nodes, nodeType, prune);
+        }
+
+        return;
+    }
 }
