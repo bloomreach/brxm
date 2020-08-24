@@ -306,7 +306,7 @@
   "CHANGE": "Change",
   "CONTENT": "Content",
   "OK": "OK",
-  "TOOLBAR_BUTTON_XPAGE": "XPage",
+  "TOOLBAR_BUTTON_XPAGE": "Page",
   "CONFIRM_DISCARD_CHANGES_TO_COMPONENT": "Discard unsaved changes to component '{{component}}'?",
   "FEEDBACK_CANCEL_REQUEST": "Cancel request",
   "KEEP_DRAFT": "Save as draft",
