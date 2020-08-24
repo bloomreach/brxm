@@ -213,4 +213,37 @@ describe('initialize', () => {
     expect(listener0).toBeCalled();
     expect(listener1).not.toBeCalled();
   });
+
+  it('should use an origin from the endpoint', async () => {
+    const postMessageSpy = spyOn(window.parent, 'postMessage').and.callThrough();
+    await page.sync();
+
+    expect(postMessageSpy).toBeCalledWith(expect.anything(), 'http://localhost:8080');
+  });
+
+  it('should use an origin from the endpoint parameter', async () => {
+    const page = await initialize({
+      httpClient,
+      endpointQueryParameter: 'brxm',
+      request: { path: '/?brxm=https://api.example.com/api' },
+    });
+    const postMessageSpy = spyOn(window.parent, 'postMessage').and.callThrough();
+    await page.sync();
+
+    expect(postMessageSpy).toBeCalledWith(expect.anything(), 'https://api.example.com');
+  });
+
+  it('should use a custom origin', async () => {
+    const page = await initialize({
+      httpClient,
+      window,
+      endpoint: 'http://localhost:8080/site/my-spa/resourceapi',
+      origin: 'http://localhost:12345',
+      request: { path: '/?token=something' },
+    });
+    const postMessageSpy = spyOn(window.parent, 'postMessage').and.callThrough();
+    await page.sync();
+
+    expect(postMessageSpy).toBeCalledWith(expect.anything(), 'http://localhost:12345');
+  });
 });

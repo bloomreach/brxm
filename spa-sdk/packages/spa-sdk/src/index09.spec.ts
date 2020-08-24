@@ -218,4 +218,39 @@ describe('initialize', () => {
     expect(listener0).toBeCalled();
     expect(listener1).not.toBeCalled();
   });
+
+  it('should use an origin from the CMS base URL', async () => {
+    const postMessageSpy = spyOn(window.parent, 'postMessage').and.callThrough();
+    await page.sync();
+
+    expect(postMessageSpy).toBeCalledWith(expect.anything(), 'http://localhost:8080');
+  });
+
+  it('should use an origin from the API base URL', async () => {
+    const page = await initialize({
+      httpClient,
+      window,
+      apiBaseUrl: 'https://api.example.com/site/my-spa/resourceapi',
+      cmsBaseUrl: 'http://localhost:8080/site/my-spa',
+      request: { path: '' },
+    });
+    const postMessageSpy = spyOn(window.parent, 'postMessage').and.callThrough();
+    await page.sync();
+
+    expect(postMessageSpy).toBeCalledWith(expect.anything(), 'https://api.example.com');
+  });
+
+  it('should use a custom origin', async () => {
+    const page = await initialize({
+      httpClient,
+      window,
+      cmsBaseUrl: 'http://localhost:8080/site/my-spa',
+      origin: 'http://localhost:12345',
+      request: { path: '' },
+    });
+    const postMessageSpy = spyOn(window.parent, 'postMessage').and.callThrough();
+    await page.sync();
+
+    expect(postMessageSpy).toBeCalledWith(expect.anything(), 'http://localhost:12345');
+  });
 });
