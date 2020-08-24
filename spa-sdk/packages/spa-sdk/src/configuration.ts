@@ -15,7 +15,7 @@
  */
 
 import { ApiOptions } from './spa';
-import { CmsOptions } from './cms';
+import { CmsOptions, PostMessageOptions } from './cms';
 import { UrlBuilderOptions09, UrlBuilderOptions } from './url';
 
 /**
@@ -46,7 +46,7 @@ export interface ConfigurationWithProxy extends ApiOptions, CmsOptions {
 /**
  * Configuration of the SPA SDK using the JWT token-based setup.
  */
-export interface ConfigurationWithJwt extends ApiOptions, CmsOptions {
+export interface ConfigurationWithJwt extends ApiOptions, CmsOptions, PostMessageOptions {
   /**
    * The query string parameter used to pass authorization header value.
    * By default, `token` parameter is used.
