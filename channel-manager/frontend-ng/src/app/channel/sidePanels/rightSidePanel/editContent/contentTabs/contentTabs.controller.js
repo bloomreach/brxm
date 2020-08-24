@@ -26,14 +26,13 @@ class ContentTabsCtrl {
   }
 
   $onInit() {
-    this.selectedNavItem = this.$uiRouterGlobals.current.name.split('.').pop();
+    this._setActiveNavItem();
+    this.$transitions.onSuccess({ to: '**.edit-page.*' }, () => this._setActiveNavItem());
+    this.$transitions.onError({ to: '**.edit-page.*' }, () => this._setActiveNavItem());
+  }
 
-    this.$transitions.onSuccess(
-      { to: '**.edit-page.*' },
-      () => {
-        this.selectedNavItem = this.$uiRouterGlobals.current.name.split('.').pop();
-      },
-    );
+  _setActiveNavItem() {
+    this.selectedNavItem = this.$uiRouterGlobals.current.name.split('.').pop();
   }
 }
 
