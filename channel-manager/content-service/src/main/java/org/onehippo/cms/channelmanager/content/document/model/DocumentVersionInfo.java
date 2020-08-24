@@ -25,16 +25,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class DocumentVersionInfo {
 
     private final List<Version> versions;
+    private final boolean restoreEnabled;
 
     @JsonCreator
     public DocumentVersionInfo(
-            @JsonProperty("versions") List<Version> versions) {
+            @JsonProperty("versions") List<Version> versions,
+            @JsonProperty("restoreEnabled") boolean restoreEnabled
+    ) {
         Objects.requireNonNull(versions);
         this.versions = versions;
+        this.restoreEnabled = restoreEnabled;
     }
 
     public List<Version> getVersions() {
         return versions;
     }
 
+    public boolean isRestoreEnabled() {
+        return restoreEnabled;
+    }
 }

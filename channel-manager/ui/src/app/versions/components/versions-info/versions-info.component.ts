@@ -37,7 +37,7 @@ export class VersionsInfoComponent implements OnInit {
   @Input()
   unpublishedVariantId!: string;
 
-  versionsInfo: VersionsInfo = { versions: [] };
+  versionsInfo: VersionsInfo = { versions: [], restoreEnabled: true };
 
   actionInProgress = false;
 

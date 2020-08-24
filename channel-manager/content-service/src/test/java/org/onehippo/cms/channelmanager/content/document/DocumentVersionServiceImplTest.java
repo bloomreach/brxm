@@ -18,7 +18,10 @@ package org.onehippo.cms.channelmanager.content.document;
 
 import java.rmi.RemoteException;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.jcr.RepositoryException;
@@ -30,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.UserContext;
+import org.onehippo.cms.channelmanager.content.document.model.DocumentVersionInfo;
 import org.onehippo.cms.channelmanager.content.document.model.Version;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.repository.mock.MockNode;
@@ -60,6 +64,7 @@ public class DocumentVersionServiceImplTest {
 
     private String userId = "john";
     private Calendar mockNodeLastModified;
+    private Map<String,Boolean> mockHints;
 
     @Before
     public void setUp() throws RepositoryException, WorkflowException, RemoteException {
@@ -82,13 +87,17 @@ public class DocumentVersionServiceImplTest {
 
         userContext = new UserContext(session, null, null);
 
-        sut = new DocumentVersionServiceImpl();
+        mockHints = new HashMap<>();
+        mockHints.put("restoreVersion", true);
+        sut = new DocumentVersionServiceImpl((handle, branchId) -> mockHints);
     }
 
     @Test
     public void workspace_only_master() {
 
-        final List<Version> versions = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
+        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext);
+        assertThat(versionInfo.isRestoreEnabled(), is(true));
+        final List<Version> versions = versionInfo.getVersions();
 
         assertThat("Expected workspace version to be present", versions.size(), is(1));
 
@@ -115,7 +124,9 @@ public class DocumentVersionServiceImplTest {
         final Calendar newDate = Calendar.getInstance();
         mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
 
-        final List<Version> versions = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
+        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext);
+        assertThat(versionInfo.isRestoreEnabled(), is(true));
+        final List<Version> versions = versionInfo.getVersions();
 
         assertThat(versions.size(), is(2));
 
@@ -146,11 +157,15 @@ public class DocumentVersionServiceImplTest {
         final Calendar newDate = Calendar.getInstance();
         mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
 
-        final List<Version> masterVersions = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
+        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext);
+        assertThat(versionInfo.isRestoreEnabled(), is(false));
+        final List<Version> masterVersions = versionInfo.getVersions();
 
         assertThat(masterVersions.size(), is(0));
 
-        final List<Version> branchVersions = sut.getVersionInfo(mockHandle.getIdentifier(), "mybranch", userContext).getVersions();
+        final DocumentVersionInfo branchVersionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), "mybranch", userContext);
+        assertThat(branchVersionInfo.isRestoreEnabled(), is(true));
+        final List<Version> branchVersions = branchVersionInfo.getVersions();
 
         assertThat(branchVersions.size(), is(2));
 
@@ -182,7 +197,9 @@ public class DocumentVersionServiceImplTest {
         final Calendar newDate = Calendar.getInstance();
         mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
 
-        final List<Version> masterVersions = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
+        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext);
+        assertThat(versionInfo.isRestoreEnabled(), is(true));
+        final List<Version> masterVersions = versionInfo.getVersions();
 
         assertThat(masterVersions.size(), is(1));
 
@@ -224,7 +241,9 @@ public class DocumentVersionServiceImplTest {
         // reset the first one, overriding a version node created property...works for versioned mock nodes
         firstCheckin.setCreated(Calendar.getInstance());
 
-        final List<Version> masterVersions = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).getVersions();
+        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext);
+        assertThat(versionInfo.isRestoreEnabled(), is(true));
+        final List<Version> masterVersions = versionInfo.getVersions();
 
         assertThat(masterVersions.size(), is(11));
 
@@ -240,5 +259,32 @@ public class DocumentVersionServiceImplTest {
             assertTrue(prev.getTimestamp().getTimeInMillis() >= version.getTimestamp().getTimeInMillis());
             prev = version;
         }
+    }
+
+    @Test
+    public void restore_hints() {
+
+        mockHints.clear();
+        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).isRestoreEnabled(),
+                is(false));
+
+        mockHints.put("restoreVersion", true);
+        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).isRestoreEnabled(),
+                is(true));
+        mockHints.put("restoreVersion", false);
+        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).isRestoreEnabled(),
+                is(false));
+
+        mockHints.put("restoreVersionToBranch", true);
+        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).isRestoreEnabled(),
+                is(true));
+        mockHints.put("restoreVersionToBranch", false);
+        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).isRestoreEnabled(),
+                is(false));
+
+        mockHints.put("restoreVersion", true);
+        mockHints.put("restoreVersionToBranch", true);
+        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).isRestoreEnabled(),
+                is(true));
     }
 }
