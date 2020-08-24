@@ -49,7 +49,7 @@ class EditContentService {
     );
 
     $transitions.onEnter(
-      { entering: '**.edit-page.content' },
+      { entering: '**.edit-page.*' },
       transition => this._loadDocument(transition.params().documentId),
     );
 
