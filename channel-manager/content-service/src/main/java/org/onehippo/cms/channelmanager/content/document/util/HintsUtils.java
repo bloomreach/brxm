@@ -22,6 +22,7 @@ import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
@@ -49,6 +50,26 @@ public final class HintsUtils {
     public static Map<String, Serializable> getHints(EditableWorkflow editableWorkflow, String branchId) {
         try {
             return editableWorkflow.hints(branchId);
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            log.warn("Failed reading hints from workflow", e);
+        }
+        return Collections.emptyMap();
+    }
+
+    /**
+     * Gets the hints from the document workflow, taking into account the branchId present in the context payload.
+     * Please note that the hints are valid until a workflow action has been executed. After execution of
+     * a workflow action the hints should be recomputed because the state of the involved nodes usually changes.
+     *
+     * @param handle   a document handle node
+     * @param branchId branch Id for which to get the hints
+     * @return hints
+     */
+    public static Map<String, Serializable> getDocumentWorkflowHints(Node handle, String branchId) {
+        try {
+            return ContentWorkflowUtils
+                    .getDocumentWorkflow(handle)
+                    .hints(branchId);
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed reading hints from workflow", e);
         }

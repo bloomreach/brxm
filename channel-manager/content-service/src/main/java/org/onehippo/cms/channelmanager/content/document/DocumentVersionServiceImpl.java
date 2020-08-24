@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -38,11 +40,10 @@ import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
-import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.jackrabbit.JcrConstants.JCR_FROZENUUID;
+import static java.lang.Boolean.TRUE;
 import static org.apache.jackrabbit.JcrConstants.JCR_ROOTVERSION;
 import static org.apache.jackrabbit.JcrConstants.MIX_VERSIONABLE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
@@ -52,11 +53,16 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.util.JcrUtils.getDateProperty;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
-import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 
 public class DocumentVersionServiceImpl implements DocumentVersionService {
 
-    private final static Logger log = LoggerFactory.getLogger(DocumentVersionServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(DocumentVersionServiceImpl.class);
+
+    private final BiFunction<Node, String, Map<String, ?>> documentHintsGetter;
+
+    public DocumentVersionServiceImpl(final BiFunction<Node, String, Map<String, ?>> documentHintsGetter) {
+        this.documentHintsGetter = documentHintsGetter;
+    }
 
     @Override
     public DocumentVersionInfo getVersionInfo(
@@ -111,7 +117,13 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                 versionInfos.add(0, create(lastModified, preview, branchId));
             }
 
-            return new DocumentVersionInfo(versionInfos);
+            final Map<String, ?> hints = documentHintsGetter.apply(handleNode, branchId);
+            final boolean restoreEnabled =
+                    !versionInfos.isEmpty()
+                            && (TRUE.equals(hints.get("restoreVersionToBranch")) || TRUE.equals(hints.get("restoreVersion")));
+
+            return new DocumentVersionInfo(versionInfos, restoreEnabled);
+
         } catch (ItemNotFoundException e) {
             log.info("Document for id '{}' does not exist or user '{}' is not allowed to read it",
                     handleId, userSession.getUserID());
@@ -125,8 +137,9 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
     private Node getUnpublished(final Node handleNode) throws RepositoryException {
         for (Node variant : new NodeIterable(handleNode.getNodes(handleNode.getName()))) {
             final List<String> availability = JcrUtils.getStringListProperty(variant, HippoNodeType.HIPPO_AVAILABILITY, Collections.emptyList());
-            if (availability.contains("preview"))
+            if (availability.contains("preview")) {
                 return variant;
+            }
         }
         throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.NOT_A_DOCUMENT));
     }
