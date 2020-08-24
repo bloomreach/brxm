@@ -24,6 +24,7 @@ describe('XPageMenuService', () => {
   let DocumentWorkflowService;
   let FeedbackService;
   let PageService;
+  let PageToolsService;
   let XPageMenuService;
 
   const allWorkflowActions = [
@@ -39,6 +40,15 @@ describe('XPageMenuService', () => {
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
+
+    PageToolsService = jasmine.createSpyObj('PageToolsService', [
+      'hasExtensions',
+      'showPageTools',
+    ]);
+
+    angular.mock.module(($provide) => {
+      $provide.value('PageToolsService', PageToolsService);
+    });
 
     inject((
       _$q_,
@@ -113,6 +123,18 @@ describe('XPageMenuService', () => {
       };
 
       expect(XPageMenuService.menu.isVisible()).toBe(true);
+    });
+
+    it('queries the PageToolsService for extensions to check if "tools" action is visible', () => {
+      getAction('tools').isVisible();
+
+      expect(PageToolsService.hasExtensions).toHaveBeenCalled();
+    });
+
+    it('should show the page tools when clicked', () => {
+      getAction('tools').onClick();
+
+      expect(PageToolsService.showPageTools).toHaveBeenCalled();
     });
 
     it('should open the content editor', () => {

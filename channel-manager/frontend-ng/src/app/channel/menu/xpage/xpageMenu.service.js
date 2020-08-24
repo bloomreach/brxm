@@ -23,6 +23,7 @@ class XPageMenuService extends MenuService {
     DocumentWorkflowService,
     FeedbackService,
     PageService,
+    PageToolsService,
   ) {
     'ngInject';
 
@@ -97,6 +98,11 @@ class XPageMenuService extends MenuService {
     }
 
     menu
+      .addAction('tools', {
+        isVisible: () => PageToolsService.hasExtensions(),
+        onClick: () => PageToolsService.showPageTools(),
+        translationKey: 'TOOLBAR_MENU_XPAGE_TOOLS',
+      })
       .addAction('content', {
         onClick: () => showContent(),
         translationKey: 'TOOLBAR_MENU_XPAGE_CONTENT',
