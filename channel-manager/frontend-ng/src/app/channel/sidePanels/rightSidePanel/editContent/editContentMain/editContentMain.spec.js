@@ -205,19 +205,22 @@ describe('EditContentMainCtrl', () => {
     [true, false].forEach((editing) => {
       [true, false].forEach((dirty) => {
         [true, false].forEach((valid) => {
-          ContentEditor.isEditing.and.returnValue(editing);
-          ContentEditor.isDocumentDirty.and.returnValue(dirty);
-          form.$valid = valid;
-          expect($ctrl.isSaveAllowed()).toBe(editing && dirty && valid);
+          [true, false].forEach((retainable) => {
+            ContentEditor.isEditing.and.returnValue(editing);
+            ContentEditor.isDocumentDirty.and.returnValue(dirty);
+            ContentEditor.isRetainable.and.returnValue(retainable);
+            form.$valid = valid;
+            expect($ctrl.isSaveAllowed()).toBe(editing && (dirty || retainable) && valid);
+          });
         });
       });
     });
   });
 
   it('knows when keep draft is shown', () => {
-    [true, false].forEach((keepDraftAllowed) => {
-      ContentEditor.isKeepDraftAllowed.and.returnValue(keepDraftAllowed);
-      expect($ctrl.isKeepDraftShown()).toBe(keepDraftAllowed);
+    [true, false].forEach((allowed) => {
+      ContentEditor.isKeepDraftAllowed.and.returnValue(allowed);
+      expect($ctrl.isKeepDraftShown()).toBe(allowed);
     });
   });
 
@@ -229,12 +232,9 @@ describe('EditContentMainCtrl', () => {
   });
 
   it('knows when keep draft is enabled', () => {
-    [true, false].forEach((editing) => {
-      [true, false].forEach((dirty) => {
-        ContentEditor.isEditing.and.returnValue(editing);
-        ContentEditor.isDocumentDirty.and.returnValue(dirty);
-        expect($ctrl.isKeepDraftEnabled()).toBe(editing && dirty);
-      });
+    [true, false].forEach((retainable) => {
+      ContentEditor.isRetainable.and.returnValue(retainable);
+      expect($ctrl.isKeepDraftEnabled()).toBe(retainable);
     });
   });
 
