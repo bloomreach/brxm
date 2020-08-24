@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ describe('Step2Service', () => {
   function expectReset() {
     expect(Step2Service.documentLocale).toBeUndefined();
     expect(Step2Service.documentUrl).toBeUndefined();
+    expect(Step2Service.xpage).toBeUndefined();
   }
 
   beforeEach(() => {
@@ -85,23 +86,27 @@ describe('Step2Service', () => {
   });
 
   describe('open', () => {
-    it('resets locale and url values', () => {
+    it('resets locale, url and xpage values', () => {
       Step2Service.documentLocale = 'test-locale';
       Step2Service.documentUrl = 'test-url';
+      Step2Service.xpage = true;
       spyOn(ContentEditor, 'loadDocumentType').and.returnValue($q.reject());
+
       Step2Service.open({}, 'another-test-url', 'another-test-locale');
+
       expectReset();
     });
 
-    it('saves locale and url values when documentTypes are loaded', () => {
+    it('saves locale, url and xpage values when documentTypes are loaded', () => {
       const documentType = {};
       spyOn(ContentEditor, 'loadDocumentType').and.returnValue($q.resolve(documentType));
 
-      Step2Service.open({}, 'test-url', 'test-locale');
+      Step2Service.open({}, 'test-url', 'test-locale', {}, true);
       $rootScope.$digest();
 
       expect(Step2Service.documentLocale).toBe('test-locale');
       expect(Step2Service.documentUrl).toBe('test-url');
+      expect(Step2Service.xpage).toBe(true);
     });
 
     it('resolves the document type', (done) => {
@@ -256,6 +261,22 @@ describe('Step2Service', () => {
       const result = Step2Service.killEditor('1');
       expect(result).toBe(false);
       expect(ContentEditor.kill).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('isXPage', () => {
+    it('should return false by default', () => {
+      expect(Step2Service.isXPage()).toBe(false);
+    });
+
+    it('should return false', () => {
+      Step2Service.xpage = false;
+      expect(Step2Service.isXPage()).toBe(false);
+    });
+
+    it('should return true', () => {
+      Step2Service.xpage = true;
+      expect(Step2Service.isXPage()).toBe(true);
     });
   });
 });

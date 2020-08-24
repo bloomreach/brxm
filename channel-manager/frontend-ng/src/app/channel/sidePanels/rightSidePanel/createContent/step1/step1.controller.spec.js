@@ -83,18 +83,19 @@ describe('Create content step 1 controller', () => {
     expect(Step1Service.layout).toBe('test-layout');
   });
 
-  it('gets an editable document and passes it on to the next step together with url and locale', () => {
+  it('gets an editable document and passes it on to the next step together with url, locale and xpage flag', () => {
     const document = { displayName: 'document-name' };
     Step1Service.url = 'test-url';
     Step1Service.locale = 'test-locale';
     spyOn(Step1Service, 'createDocument').and.returnValue($q.resolve(document));
+    spyOn(Step1Service, 'isXPage').and.returnValue(true);
     spyOn(CreateContentService, 'next');
 
     $ctrl.submit();
     $rootScope.$digest();
 
     expect(Step1Service.createDocument).toHaveBeenCalled();
-    expect(CreateContentService.next).toHaveBeenCalledWith(document, 'test-url', 'test-locale');
+    expect(CreateContentService.next).toHaveBeenCalledWith(document, 'test-url', 'test-locale', true);
     expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent1Create');
   });
 
