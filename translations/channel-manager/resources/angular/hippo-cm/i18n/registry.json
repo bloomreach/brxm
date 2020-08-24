@@ -1684,7 +1684,7 @@
       }
     },
     "PLACEHOLDER_XPAGE_LAYOUT" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1694,7 +1694,7 @@
       }
     },
     "PLACEHOLDER_XPAGE_TYPE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1714,7 +1714,7 @@
       }
     },
     "PLACEHOLDER_XPAGE_NAME" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1724,6 +1724,26 @@
       }
     },
     "PLACEHOLDER_XPAGE_LOCATION" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "CREATE_XPAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "CHANGE_XPAGE_NAME" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
