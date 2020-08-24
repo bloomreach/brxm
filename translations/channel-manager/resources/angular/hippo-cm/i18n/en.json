@@ -124,6 +124,7 @@
   "SEARCH_COMPONENT_NAME": "component",
   "PAGE": "Page",
   "TOOLBAR_VIEW_AS_LABEL": "As viewed by:",
+  "CONFIRM_DISCARD_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE": "Discard unsaved changes to document '{{documentName}}'? This will delete the '{{documentName}}' document",
   "VIEWPORT_PHONE": "Phone",
   "RIGHT_SIDE_PANEL_TAB_COMPONENT_PROPERTIES": "Properties",
   "FEEDBACK_NOT_EDITABLE_TITLE": "Document not editable",
