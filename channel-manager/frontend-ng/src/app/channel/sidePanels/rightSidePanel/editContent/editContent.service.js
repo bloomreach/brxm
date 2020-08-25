@@ -27,6 +27,7 @@ class EditContentService {
     ContentService,
     ProjectService,
     RightSidePanelService,
+    PageService,
   ) {
     'ngInject';
 
@@ -38,6 +39,7 @@ class EditContentService {
     this.ContentService = ContentService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
+    this.PageService = PageService;
 
     $transitions.onEnter(
       { entering: '**.edit-content' },
@@ -88,7 +90,9 @@ class EditContentService {
 
   _beforeSwitchProject() {
     if (this._isEditingDocument()) {
-      return this.ContentEditor.confirmClose('SAVE_CHANGES_TO_DOCUMENT')
+      const messageKey = this.PageService.isXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
+
+      return this.ContentEditor.confirmClose(messageKey)
         .then(() => this.stopEditing());
     }
     return this.$q.resolve();
@@ -102,7 +106,7 @@ class EditContentService {
       this.ContentService.getDocument(documentId, selectedProjectId).then(
         (document) => {
           if (selectedProjectId && document.branchId !== selectedProjectId) {
-            this._showDocumentTitle(document.displayName);
+            this._showDocumentTitle(document);
             this.$state.go('hippo-cm.channel.add-to-project', { documentId });
           } else {
             this.editDocument(documentId);
@@ -125,15 +129,15 @@ class EditContentService {
     this.$state.go('hippo-cm.channel');
   }
 
-  _loadDocument(documentId) {
+  async _loadDocument(documentId) {
     this._showDefaultTitle();
     this.RightSidePanelService.startLoading();
-    this.ContentEditor.open(documentId)
-      .then(() => {
-        this.documentId = documentId;
-        this._showDocumentTitle(this.ContentEditor.getDocumentDisplayName());
-        this.RightSidePanelService.stopLoading();
-      });
+
+    const document = await this.ContentEditor.open(documentId);
+
+    this.documentId = documentId;
+    this._showDocumentTitle(document);
+    this.RightSidePanelService.stopLoading();
   }
 
   _showDefaultTitle() {
@@ -143,14 +147,18 @@ class EditContentService {
     this.RightSidePanelService.setTitle(documentLabel);
   }
 
-  _showDocumentTitle(documentName) {
-    const documentLabel = this.$translate.instant('DOCUMENT');
+  _showDocumentTitle(document) {
+    const messageKey = document.id === this.PageService.xPageId ? 'PAGE' : 'DOCUMENT';
+    const documentLabel = this.$translate.instant(messageKey);
+
     this.RightSidePanelService.setContext(documentLabel);
-    this.RightSidePanelService.setTitle(documentName);
+    this.RightSidePanelService.setTitle(document.displayName);
   }
 
   _onCloseChannel() {
-    return this.ContentEditor.confirmClose('SAVE_CHANGES_TO_DOCUMENT');
+    const messageKey = this.PageService.isXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
+
+    return this.ContentEditor.confirmClose(messageKey);
   }
 }
 

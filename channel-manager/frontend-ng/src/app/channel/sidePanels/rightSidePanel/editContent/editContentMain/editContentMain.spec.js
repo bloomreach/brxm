@@ -24,6 +24,7 @@ describe('EditContentMainCtrl', () => {
   let EditContentService;
   let HippoIframeService;
   let RightSidePanelService;
+  let PageService;
 
   let $ctrl;
   let form;
@@ -64,6 +65,10 @@ describe('EditContentMainCtrl', () => {
         'startLoading',
         'stopLoading',
       ]);
+      PageService = {
+        isXPage: false,
+        xPageId: undefined,
+      };
 
       $scope = $rootScope.$new();
       form = jasmine.createSpyObj('form', ['$setPristine']);
@@ -74,6 +79,7 @@ describe('EditContentMainCtrl', () => {
         EditContentService,
         HippoIframeService,
         RightSidePanelService,
+        PageService,
       },
       { form });
 
@@ -425,10 +431,28 @@ describe('EditContentMainCtrl', () => {
       $ctrl.discard();
 
       expect(DialogService.confirm).toHaveBeenCalled();
+      expect(DialogService.show).toHaveBeenCalled();
+    });
+
+    it('shows a dialog with a document related message', () => {
+      ContentEditor.isPristine.and.returnValue(false);
+
+      $ctrl.discard();
+
       expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', {
         documentName: 'Test',
       });
-      expect(DialogService.show).toHaveBeenCalled();
+    });
+
+    it('shows a dialog with a page related message', () => {
+      ContentEditor.isPristine.and.returnValue(false);
+      PageService.isXPage = true;
+
+      $ctrl.discard();
+
+      expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_XPAGE_UNSAVED_CHANGES_MESSAGE', {
+        documentName: 'Test',
+      });
     });
 
     it('does not show a dialog when the document has not changed', () => {
