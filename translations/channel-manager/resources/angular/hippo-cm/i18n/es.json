@@ -253,7 +253,6 @@
   "SAVE_COMPONENT_CHANGES_TITLE": "¿Guardar los cambios en el componente?",
   "SUBPAGE_MENU_EDITOR_EMPTY_MENU": "No hay elementos en el menú",
   "ERROR_NO_HOLDER": "No es posible guardar. Ya no puede editar el documento",
-  "CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE": "¿Descartar cambios sin guardar en el documento '{{documentName}}'?",
   "ERROR_CHANGE_DISCARD_FAILED": "No se pudieron descartar los cambios.",
   "TOOLBAR_MENU_CHANNEL_SUBMIT": "Enviar",
   "ERROR_PAGE_MOVE_FAILED": "No se pudo mover la página",

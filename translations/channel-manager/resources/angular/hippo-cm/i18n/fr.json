@@ -251,7 +251,6 @@
   "SAVE_COMPONENT_CHANGES_TITLE": "Sauvegarder les modifications du composant ?",
   "SUBPAGE_MENU_EDITOR_EMPTY_MENU": "Aucun élément dans le menu",
   "ERROR_NO_HOLDER": "Impossible de sauvegarder. Vous ne pouvez plus modifier le document",
-  "CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE": "Ignorer les modifications non sauvegardées du document '{{documentName}}’ ?",
   "ERROR_CHANGE_DISCARD_FAILED": "Les modifications n'ont pas pu être annulées",
   "TOOLBAR_MENU_CHANNEL_SUBMIT": "Envoyer",
   "ERROR_PAGE_MOVE_FAILED": "La page n'a pas pu être déplacée",

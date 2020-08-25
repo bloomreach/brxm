@@ -579,10 +579,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE" : {
       "status" : "CLEAN",
       "locales" : null
@@ -1752,6 +1748,65 @@
         "zh" : "UNRESOLVED",
         "es" : "UNRESOLVED"
       }
+    },
+    "TOOLBAR_MENU_XPAGE_TOOLS" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "CONFIRM_DISCARD_DOCUMENT_UNSAVED_CHANGES_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "SAVE_CHANGES_TO_XPAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "CONFIRM_DISCARD_XPAGE_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "CONFIRM_DISCARD_XPAGE_UNSAVED_CHANGES_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "CONFIRM_DISCARD_DOCUMENT_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
     }
   }
 }
