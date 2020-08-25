@@ -253,7 +253,6 @@
   "SAVE_COMPONENT_CHANGES_TITLE": "保存组件更改？",
   "SUBPAGE_MENU_EDITOR_EMPTY_MENU": "菜单中无任何项",
   "ERROR_NO_HOLDER": "无法保存。文档不再供您编辑",
-  "CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE": "放弃对文档 '{{documentName}}' 的未保存更改？",
   "ERROR_CHANGE_DISCARD_FAILED": "放弃变更失败",
   "TOOLBAR_MENU_CHANNEL_SUBMIT": "提交",
   "ERROR_PAGE_MOVE_FAILED": "移动页面失败",
