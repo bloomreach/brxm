@@ -29,6 +29,14 @@ class PageService {
     this.$rootScope.$on('page:check-changes', () => this.load());
   }
 
+  get isXPage() {
+    return 'xpage' in this.states;
+  }
+
+  get xPageId() {
+    return this.states && this.states.xpage ? this.states.xpage.id : undefined;
+  }
+
   async load() {
     const page = this.PageStructureService.getPage();
     if (!page) {
