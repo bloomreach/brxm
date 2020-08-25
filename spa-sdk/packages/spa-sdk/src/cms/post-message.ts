@@ -67,7 +67,7 @@ export class PostMessage<
   }
 
   private onMessage(event: MessageEvent) {
-    if (!event.data || !isMatched(event.origin, this.origin)) {
+    if (!event.data || !isMatched(event.origin, this.origin === '*' ? '' : this.origin)) {
       return;
     }
 
