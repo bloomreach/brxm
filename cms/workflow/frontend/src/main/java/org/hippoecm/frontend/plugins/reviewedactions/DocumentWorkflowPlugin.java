@@ -59,9 +59,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.repository.documentworkflow.BranchHandleImpl;
-import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
@@ -406,19 +403,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 final UnaryOperator<String> resolver = key ->
                         new StringResourceModel(key, DocumentWorkflowPlugin.this).getString();
                 final Node node = getWorkflow().getNode();
-                DocumentHandle documentHandle = new DocumentHandle(node);
-                final BranchHandleImpl branchHandle = new BranchHandleImpl(getBranchId(), documentHandle);
-                boolean transferable = false;
-                try {
-                    transferable = documentHandle.isTransferable();
-                } catch (WorkflowException e) {
-                    log.warn("Unable to determine if document: { path: %s } is transferable"
-                            , JcrUtils.getNodePathQuietly(node));
-                }
+                RetainableStateSummary retainableStateSummary = new RetainableStateSummary(node, getBranchId());
                 final String info = new BranchInfoBuilder(resolver, getBranchInfo(resolver))
-                        .draftChanges(transferable)
-                        .unpublishedChanges(branchHandle.isModified())
-                        .live(branchHandle.isLiveAvailable())
+                        .draftChanges(retainableStateSummary.hasDraftChanges())
+                        .unpublishedChanges(retainableStateSummary.hasUnpublishedChanges())
+                        .live(retainableStateSummary.isLive())
                         .build();
                 return new Model<>(info);
             }
