@@ -220,6 +220,13 @@ describe('XPageMenuService', () => {
   });
 
   describe('request-publish', () => {
+    it('should show the "request-publish" action with an icon', () => {
+      const action = addAction('request-publish');
+
+      expect(action.isIconVisible()).toBe(true);
+      expect(action.hasIconName()).toBe(true);
+    });
+
     it('should call DocumentWorkflowService.requestPublication()', () => {
       expectWorkflow('request-publish', DocumentWorkflowService.requestPublication);
     });
@@ -251,6 +258,13 @@ describe('XPageMenuService', () => {
   });
 
   describe('request-unpublish', () => {
+    it('should show the "request-unpublish" action with an icon', () => {
+      const action = addAction('request-unpublish');
+
+      expect(action.isIconVisible()).toBe(true);
+      expect(action.hasIconName()).toBe(true);
+    });
+
     it('should call DocumentWorkflowService.requestUnpublication()', () => {
       expectWorkflow('request-unpublish', DocumentWorkflowService.requestUnpublication);
     });
