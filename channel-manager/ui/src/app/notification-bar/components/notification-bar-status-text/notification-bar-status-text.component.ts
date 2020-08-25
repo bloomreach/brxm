@@ -16,6 +16,7 @@
 
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 import { DocumentState } from '../../../models/document-state.enum';
 import { XPageStatusInfo } from '../../../models/page-status-info.model';
@@ -29,9 +30,13 @@ export class NotificationBarStatusTextComponent {
   @Input()
   set statusInfo(value: XPageStatusInfo) {
     this.text = this.getText(value.status);
+
+    const statusTextTranslationKey = this.getDocumentStatusTextTranslationKey(value.xPageDocumentState);
+    const translatedStatusText = statusTextTranslationKey ? this.translateService.instant(statusTextTranslationKey) : undefined;
+
     this.textParams = {
       pageName: value.pageName || '',
-      status: this.getDocumentStatusText(value.xPageDocumentState),
+      status: translatedStatusText,
       dateTime: this.datePipe.transform(value.scheduledDateTime, 'full'),
       projectName: value.projectName || '',
     };
@@ -47,6 +52,7 @@ export class NotificationBarStatusTextComponent {
 
   constructor(
     private readonly datePipe: DatePipe,
+    private readonly translateService: TranslateService,
   ) {}
 
   private getText(pageStatus: XPageStatus): string | undefined {
@@ -72,12 +78,12 @@ export class NotificationBarStatusTextComponent {
     return statusTextMap[pageStatus];
   }
 
-  private getDocumentStatusText(state: DocumentState | undefined): string | undefined {
+  private getDocumentStatusTextTranslationKey(state: DocumentState | undefined): string | undefined {
     switch (state) {
-      case DocumentState.Live: return 'life';
-      case DocumentState.Changed: return 'changed';
-      case DocumentState.Unpublished: return 'unpublished changes';
-      case DocumentState.New: return 'offline';
+      case DocumentState.Live: return 'LIVE';
+      case DocumentState.Changed: return 'CHANGED';
+      case DocumentState.Unpublished: return 'UNPUBLISHED_CHANGES';
+      case DocumentState.New: return 'OFFLINE';
     }
   }
 }
