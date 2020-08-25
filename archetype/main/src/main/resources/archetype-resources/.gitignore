@@ -1,0 +1,45 @@
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+atlassian-ide-plugin.xml
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# Maven
+target/
+storage/
+overlays/
+
+## OSX
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# SASS
+*.sassc
+
+# Built Distributions
+*.tar.gz
+
+# Local HotSwap config
+hotswap-agent.properties
