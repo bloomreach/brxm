@@ -2,7 +2,7 @@
   "bundleType" : "REPOSITORY",
   "keyData" : {
     "hippo:cms.xpage/x-page-layout" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
