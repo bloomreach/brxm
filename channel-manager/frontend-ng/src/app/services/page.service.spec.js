@@ -212,4 +212,50 @@ describe('PageService', () => {
       });
     });
   });
+
+  describe('XPage related properties', () => {
+    describe('isXPage', () => {
+      it('should return true', () => {
+        PageService.states = { xpage: {} };
+
+        const actual = PageService.isXPage;
+
+        expect(actual).toBeTruthy();
+      });
+
+      it('should return false', () => {
+        PageService.states = {};
+
+        const actual = PageService.isXPage;
+
+        expect(actual).toBeFalsy();
+      });
+    });
+
+    describe('xPageId', () => {
+      it('should return undefined states are undefined', () => {
+        PageService.states = undefined;
+
+        const actual = PageService.xPageId;
+
+        expect(actual).toBeUndefined();
+      });
+
+      it('should return undefined if xpage field is undefined', () => {
+        PageService.states = {};
+
+        const actual = PageService.xPageId;
+
+        expect(actual).toBeUndefined();
+      });
+
+      it('should return id', () => {
+        PageService.states = { xpage: { id: 123 } };
+
+        const actual = PageService.xPageId;
+
+        expect(actual).toBe(123);
+      });
+    });
+  });
 });
