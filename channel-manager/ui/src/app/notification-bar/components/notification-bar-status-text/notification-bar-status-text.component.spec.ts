@@ -17,6 +17,7 @@
 import { DatePipe } from '@angular/common';
 import { NO_ERRORS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateService } from '@ngx-translate/core';
 
 import { DocumentState } from '../../../models/document-state.enum';
 import { XPageStatusInfo } from '../../../models/page-status-info.model';
@@ -42,6 +43,10 @@ describe('NotificationBarStatusTextComponent', () => {
       transform: jest.fn(v => v),
     };
 
+    const translateServiceMock = {
+      instant: jest.fn(v => v),
+    };
+
     fixture = TestBed.configureTestingModule({
       declarations: [
         NotificationBarStatusTextComponent,
@@ -49,6 +54,7 @@ describe('NotificationBarStatusTextComponent', () => {
       ],
       providers: [
         { provide: DatePipe, useValue: datePipe },
+        { provide: TranslateService, useValue: translateServiceMock },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(NotificationBarStatusTextComponent);
