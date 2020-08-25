@@ -252,7 +252,6 @@
   "SAVE_COMPONENT_CHANGES_TITLE": "Änderungen an Komponente speichern?",
   "SUBPAGE_MENU_EDITOR_EMPTY_MENU": "Keine Elemente im Menü",
   "ERROR_NO_HOLDER": "Speichern nicht möglich. Dieses Dokument können Sie nicht länger bearbeiten",
-  "CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE": "Nicht gespeicherte Änderungen am Dokument '{{documentName}}' verwerfen?",
   "ERROR_CHANGE_DISCARD_FAILED": "Verwerfen von Änderungen fehlgeschlagen",
   "TOOLBAR_MENU_CHANNEL_SUBMIT": "Senden",
   "ERROR_PAGE_MOVE_FAILED": "Seite konnte nicht verschoben werden",

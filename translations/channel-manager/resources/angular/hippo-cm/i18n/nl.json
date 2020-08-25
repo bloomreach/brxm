@@ -253,7 +253,6 @@
   "SAVE_COMPONENT_CHANGES_TITLE": "Componentwijzigingen opslaan?",
   "SUBPAGE_MENU_EDITOR_EMPTY_MENU": "Geen items in het menu",
   "ERROR_NO_HOLDER": "Kan niet opslaan. U mag dit document niet meer aanpassen.",
-  "CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE": "Niet-opgeslagen wijzigingen van document '{{documentName}}' annuleren?",
   "ERROR_CHANGE_DISCARD_FAILED": "Het is niet gelukt de wijzigingen te negeren",
   "TOOLBAR_MENU_CHANNEL_SUBMIT": "Wijzigingen opslaan",
   "ERROR_PAGE_MOVE_FAILED": "Het is niet gelukt de pagina te verplaatsen",
