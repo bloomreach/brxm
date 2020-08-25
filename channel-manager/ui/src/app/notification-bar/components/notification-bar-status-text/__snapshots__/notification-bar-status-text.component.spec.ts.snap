@@ -6,7 +6,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is EditingSharedCont
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERSsome pagelifeundefined
+   NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERSsome pageLIVEundefined
 
 </div>
 `;
@@ -17,7 +17,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is Offline should re
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_OFFLINEsome pageofflineundefined
+   NOTIFICATION_BAR_XPAGE_LABEL_OFFLINEsome pageOFFLINEundefined
 
 </div>
 `;
@@ -28,7 +28,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is ProjectInProgress
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_PROGRESSsome pagelifeundefined
+   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_PROGRESSsome pageLIVEundefined
 
 </div>
 `;
@@ -39,7 +39,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is ProjectInReview s
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_REVIEWsome pagelifeundefined
+   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_REVIEWsome pageLIVEundefined
 
 </div>
 `;
@@ -50,7 +50,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is ProjectPageApprov
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_APPROVEDsome pagelifeundefined
+   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_APPROVEDsome pageLIVEundefined
 
 </div>
 `;
@@ -61,7 +61,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is ProjectPageReject
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_REJECTEDsome pagelifeundefined
+   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_REJECTEDsome pageLIVEundefined
 
 </div>
 `;
@@ -72,7 +72,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is ProjectRunning sh
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IS_RUNNINGsome pagelifeundefined
+   NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IS_RUNNINGsome pageLIVEundefined
 
 </div>
 `;
@@ -83,7 +83,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is PublicationReques
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_PUBLICATION_REQUESTEDsome pageunpublished changesundefined
+   NOTIFICATION_BAR_XPAGE_LABEL_PUBLICATION_REQUESTEDsome pageUNPUBLISHED_CHANGESundefined
 
 </div>
 `;
@@ -94,7 +94,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is Published should 
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_LIVEsome pagelifeundefined
+   NOTIFICATION_BAR_XPAGE_LABEL_LIVEsome pageLIVEundefined
 
 </div>
 `;
@@ -105,7 +105,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is RejectedRequest s
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_REQUEST_REJECTEDsome pageunpublished changesundefined
+   NOTIFICATION_BAR_XPAGE_LABEL_REQUEST_REJECTEDsome pageUNPUBLISHED_CHANGESundefined
 
 </div>
 `;
@@ -116,7 +116,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is ScheduledPublicat
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATIONsome pageunpublished changes1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATIONsome pageUNPUBLISHED_CHANGES1596811323
 
 </div>
 `;
@@ -127,7 +127,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is ScheduledPublicat
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTEDsome pageunpublished changes1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTEDsome pageUNPUBLISHED_CHANGES1596811323
 
 </div>
 `;
@@ -138,7 +138,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is ScheduledToTakeOf
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINEsome pagelife1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINEsome pageLIVE1596811323
 
 </div>
 `;
@@ -149,7 +149,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is ScheduledToTakeOf
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTEDsome pagelife1596811323
+   NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTEDsome pageLIVE1596811323
 
 </div>
 `;
@@ -160,7 +160,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is TakeOfflineReques
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_TAKE_OFFLINE_REQUESTEDsome pagelifeundefined
+   NOTIFICATION_BAR_XPAGE_LABEL_TAKE_OFFLINE_REQUESTEDsome pageLIVEundefined
 
 </div>
 `;
@@ -171,7 +171,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is UnpublishedChange
 >
   
   
-   NOTIFICATION_BAR_XPAGE_LABEL_LIVE_UNPUBLISHED_CHANGESsome pagechangedundefined
+   NOTIFICATION_BAR_XPAGE_LABEL_LIVE_UNPUBLISHED_CHANGESsome pageCHANGEDundefined
 
 </div>
 `;
