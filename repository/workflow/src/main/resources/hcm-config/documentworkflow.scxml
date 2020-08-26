@@ -256,7 +256,7 @@
         <!-- remove holder from the draft document -->
         <hippo:setHolder holder="null"/>
         <hippo:setTransferable transferable="false"/>
-        <hippo:setRetainable retainable="true"/>
+        <hippo:setRetainable retainable="false"/>
         <hippo:result value="preview ? unpublished : published"/>
       </transition>
 
