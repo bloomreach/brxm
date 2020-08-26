@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,17 @@ class CreateContentService {
     $state,
     $transitions,
     $translate,
+    ChannelService,
     CmsService,
     ContentService,
     EditContentService,
     FeedbackService,
     HippoIframeService,
+    HstService,
+    PageStructureService,
     ProjectService,
     RightSidePanelService,
+    SiteMapService,
     Step1Service,
     Step2Service,
   ) {
@@ -35,13 +39,17 @@ class CreateContentService {
     this.$q = $q;
     this.$state = $state;
     this.$translate = $translate;
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.EditContentService = EditContentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.HstService = HstService;
+    this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
+    this.SiteMapService = SiteMapService;
     this.Step1Service = Step1Service;
     this.Step2Service = Step2Service;
 
@@ -57,7 +65,7 @@ class CreateContentService {
       { entering: '**.create-content-step-2' },
       (transition) => {
         const params = transition.params();
-        return this._step2(params.document, params.url, params.locale, params.componentInfo);
+        return this._step2(params.document, params.url, params.locale, params.componentInfo, params.xpage);
       },
     );
 
@@ -77,18 +85,43 @@ class CreateContentService {
     this.$state.go('hippo-cm.channel.create-content-step-1', { config });
   }
 
-  next(document, url, locale) {
+  next(document, url, locale, xpage) {
     this.$state.go('hippo-cm.channel.create-content-step-2', {
       componentInfo: this.componentInfo,
       document,
       locale,
       url,
+      xpage,
     });
   }
 
-  finish(documentId) {
-    this.HippoIframeService.reload();
-    this.EditContentService.startEditing(documentId);
+  async finish(documentId) {
+    let experiencePage;
+    let renderPathInfo;
+
+    try {
+      ({ data: { renderPathInfo, experiencePage } } = await this.HstService.doGet(documentId, 'representation'));
+    } catch (ignore) {
+      this.FeedbackService.showError(`Failed to retrieve Sitemap representation for document[${documentId}]`);
+      this.HippoIframeService.reload();
+      return;
+    }
+
+    if (!experiencePage) {
+      this.HippoIframeService.reload();
+      this.EditContentService.startEditing(documentId);
+      return;
+    }
+
+    const pageMeta = this.PageStructureService.getPage().getMeta();
+    if (pageMeta.getPathInfo() !== renderPathInfo) {
+      this.HippoIframeService.load(renderPathInfo);
+    }
+
+    const siteMapId = this.ChannelService.getSiteMapId();
+    this.SiteMapService.load(siteMapId); // reload sitemap (left side panel)
+
+    this.$state.go('hippo-cm.channel.edit-page', { documentId });
   }
 
   stop() {
@@ -124,36 +157,39 @@ class CreateContentService {
       this.componentInfo = {};
     }
 
-    this._showStep1Title();
+    this._showStep1Title(Object.keys(config.layouts || {}).length > 0 ? 'CREATE_XPAGE' : 'CREATE_CONTENT');
     this.RightSidePanelService.startLoading();
+
     return this.Step1Service.open(
       config.documentTemplateQuery,
       config.folderTemplateQuery,
       config.rootPath,
       config.defaultPath,
+      config.layouts,
     ).then(() => {
       this.RightSidePanelService.stopLoading();
     });
   }
 
-  _showStep1Title() {
+  _showStep1Title(key) {
     this.RightSidePanelService.clearContext();
-    const title = this.$translate.instant('CREATE_CONTENT');
+    const title = this.$translate.instant(key);
     this.RightSidePanelService.setTitle(title);
   }
 
-  _step2(document, url, locale, componentInfo) {
+  _step2(document, url, locale, componentInfo, xpage) {
     this.RightSidePanelService.startLoading();
-    this.Step2Service.open(document, url, locale, componentInfo)
+    this.Step2Service.open(document, url, locale, componentInfo, xpage)
       .then((documentType) => {
-        this._showStep2Title(documentType);
+        const translationKey = xpage ? 'CREATE_XPAGE' : 'CREATE_NEW_DOCUMENT_TYPE';
+        this._showStep2Title(translationKey, documentType);
         this.RightSidePanelService.stopLoading();
       });
   }
 
-  _showStep2Title(documentType) {
+  _showStep2Title(key, documentType) {
     const documentTypeName = { documentType: documentType.displayName };
-    const documentTitle = this.$translate.instant('CREATE_NEW_DOCUMENT_TYPE', documentTypeName);
+    const documentTitle = this.$translate.instant(key, documentTypeName);
     this.RightSidePanelService.setTitle(documentTitle);
   }
 

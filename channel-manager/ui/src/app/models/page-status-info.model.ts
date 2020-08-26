@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
+import { DocumentState } from './document-state.enum';
+import { XPageStatus } from './xpage-status.enum';
 
-export interface Ng1IframeService {
-  load(path: string): Promise<void>;
-  getCurrentRenderPathInfo(): string;
+export class XPageStatusInfo {
+  constructor(
+    readonly status: XPageStatus,
+    readonly xPageDocumentState: DocumentState,
+    readonly pageName: string,
+    readonly scheduledDateTime: number | undefined,
+    readonly projectName: string | undefined,
+  ) {}
 }
-
-export const NG1_IFRAME_SERVICE = new InjectionToken<Ng1IframeService>('NG1_IFRAME_SERVICE');

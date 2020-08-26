@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+import { InjectionToken } from '@angular/core';
 
-import { SharedModule } from '../shared/shared.module';
+import { VersionsInfo } from '../../versions/models/versions-info.model';
 
-import { NG1_PROJECT_SERVICE } from './services/ng1/project.ng1.service';
-
-@NgModule({
-  imports: [
-    SharedModule,
-  ],
-  providers: [
-    { provide: NG1_PROJECT_SERVICE, useValue: window.angular.element(document.body).injector().get('ProjectService') },
-  ],
-})
-export class ProjectsModule {
+export interface Ng1ContentService {
+  getDocumentVersionsInfo(documentId: string, branchId: string): Promise<VersionsInfo>;
 }
+
+export const NG1_CONTENT_SERVICE = new InjectionToken<Ng1ContentService>('NG1_CONTENT_SERVICE');

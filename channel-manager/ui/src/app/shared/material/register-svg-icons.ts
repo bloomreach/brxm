@@ -23,6 +23,7 @@ import commentProcessingOutline from '!!raw-loader!./icons/comment-processing-ou
 import commentRemoveOutline from '!!raw-loader!./icons/comment-remove-outline.svg';
 import lockOutline from '!!raw-loader!./icons/lock-outline.svg';
 import minusCircleOutline from '!!raw-loader!./icons/minus-circle-outline.svg';
+import plus from '!!raw-loader!./icons/plus.svg';
 import xpageIcon from '!!raw-loader!./icons/xpage.svg';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -41,4 +42,5 @@ export function registerSvgIcons(iconRegistry: MatIconRegistry, donSanitizer: Do
   registerIcon('alert-circle-outline', alertCircleOutline);
   registerIcon('lock-outline', lockOutline);
   registerIcon('comment-check-outline', commentCheckOutline);
+  registerIcon('plus', plus);
 }

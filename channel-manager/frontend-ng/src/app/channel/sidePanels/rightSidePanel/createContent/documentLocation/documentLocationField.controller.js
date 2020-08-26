@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,10 @@ class DocumentLocationFieldController {
       const path = this.rootPath + (this.defaultPath ? `/${this.defaultPath}` : '');
       this.setPath(path);
     }
+  }
+
+  isXPage() {
+    return this.Step1Service.isXPage();
   }
 
   setPath(path) {

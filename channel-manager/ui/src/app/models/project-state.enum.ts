@@ -14,21 +14,8 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
-
-import { SharedModule } from '../shared/shared.module';
-
-import { NG1_PAGESTRUCTURE_SERVICE } from './services/ng1/page-structure.ng1.service';
-import { NG1_PAGE_SERVICE } from './services/ng1/page.ng1.service';
-
-@NgModule({
-  imports: [
-    SharedModule,
-  ],
-  providers: [
-    { provide: NG1_PAGESTRUCTURE_SERVICE, useValue: window.angular.element(document.body).injector().get('PageStructureService') },
-    { provide: NG1_PAGE_SERVICE, useValue: window.angular.element(document.body).injector().get('PageService') },
-  ],
-})
-export class PagesModule {
+export enum ProjectState {
+  Unapproved = 'UNAPPROVED',
+  InReview = 'IN_REVIEW',
+  Approved = 'APPROVED',
 }

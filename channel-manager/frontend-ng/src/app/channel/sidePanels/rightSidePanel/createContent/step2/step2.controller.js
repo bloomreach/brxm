@@ -173,7 +173,7 @@ class Step2Controller {
   }
 
   isKeepDraftShown() {
-    return this.ContentEditor.isKeepDraftAllowed();
+    return !this.Step2Service.isXPage() && this.ContentEditor.isKeepDraftAllowed();
   }
 
   keepDraft() {

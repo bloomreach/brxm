@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ describe('EditContentService', () => {
   let EditContentService;
   let ProjectService;
   let RightSidePanelService;
+  let PageService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -50,11 +51,16 @@ describe('EditContentService', () => {
       'startLoading',
       'stopLoading',
     ]);
+    PageService = {
+      isXPage: false,
+      xPageId: undefined,
+    };
 
     angular.mock.module(($provide) => {
       $provide.value('ContentEditor', ContentEditor);
       $provide.value('ContentService', ContentService);
       $provide.value('RightSidePanelService', RightSidePanelService);
+      $provide.value('PageService', PageService);
     });
 
     inject((
@@ -81,7 +87,7 @@ describe('EditContentService', () => {
   });
 
   function editDocument(document) {
-    ContentEditor.open.and.returnValue($q.resolve());
+    ContentEditor.open.and.returnValue($q.resolve(document));
     ContentEditor.getDocument.and.returnValue(document);
     ContentEditor.getDocumentId.and.returnValue(document.id);
 
@@ -89,12 +95,12 @@ describe('EditContentService', () => {
     $rootScope.$digest();
   }
 
-  function editLockedDocument(documentId, displayName) {
-    ContentEditor.open.and.returnValue($q.resolve());
+  function editLockedDocument(document) {
+    ContentEditor.open.and.returnValue($q.resolve(document));
     ContentEditor.getDocument.and.returnValue(undefined);
-    ContentEditor.getDocumentDisplayName.and.returnValue(displayName);
+    ContentEditor.getDocumentDisplayName.and.returnValue(document.displayName);
 
-    EditContentService.startEditing(documentId);
+    EditContentService.startEditing(document.id);
     $rootScope.$digest();
   }
 
@@ -117,7 +123,7 @@ describe('EditContentService', () => {
     ProjectService.selectedProject.id = 'q';
     ContentService.getDocument.and.returnValue($q.resolve(document));
 
-    ContentEditor.open.and.returnValue($q.resolve());
+    ContentEditor.open.and.returnValue($q.resolve(document));
     ContentEditor.getDocument.and.returnValue(document);
     ContentEditor.getDocumentId.and.returnValue(document.id);
 
@@ -135,19 +141,53 @@ describe('EditContentService', () => {
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
     expect(ContentEditor.open).toHaveBeenCalledWith(document.id);
     expect($translate.instant).toHaveBeenCalledWith('DOCUMENT');
-    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('DOCUMENT');
+    expect(RightSidePanelService.setContext).toHaveBeenCalledWith('DOCUMENT');
+    expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
+  });
+
+  it('starts editing a xpage', () => {
+    const document = {
+      id: '42',
+    };
+    PageService.xPageId = '42';
+
+    editDocument(document);
+
+    expect(RightSidePanelService.clearContext).toHaveBeenCalled();
+    expect(RightSidePanelService.startLoading).toHaveBeenCalled();
+    expect(ContentEditor.open).toHaveBeenCalledWith(document.id);
+    expect($translate.instant).toHaveBeenCalledWith('PAGE');
+    expect(RightSidePanelService.setContext).toHaveBeenCalledWith('PAGE');
+    expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
+  });
+
+  it('starts editing a document as a part of a xpage', () => {
+    const document = {
+      id: '43',
+    };
+    PageService.xPageId = '42';
+
+    editDocument(document);
+
+    expect(RightSidePanelService.clearContext).toHaveBeenCalled();
+    expect(RightSidePanelService.startLoading).toHaveBeenCalled();
+    expect(ContentEditor.open).toHaveBeenCalledWith(document.id);
+    expect($translate.instant).toHaveBeenCalledWith('DOCUMENT');
+    expect(RightSidePanelService.setContext).toHaveBeenCalledWith('DOCUMENT');
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
   });
 
   it('starts editing a locked document', () => {
-    const documentId = '42';
-    const displayName = 'Locked document';
-    editLockedDocument(documentId, displayName);
+    const document = {
+      id: 42,
+      displayName: 'Locked document',
+    };
+    editLockedDocument(document);
 
     expect(RightSidePanelService.clearContext).toHaveBeenCalled();
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('DOCUMENT');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
-    expect(ContentEditor.open).toHaveBeenCalledWith(documentId);
+    expect(ContentEditor.open).toHaveBeenCalledWith(document.id);
     expect($translate.instant).toHaveBeenCalledWith('DOCUMENT');
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('Locked document');
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
@@ -224,6 +264,28 @@ describe('EditContentService', () => {
     });
   });
 
+  it('displays dialog with a document related message', () => {
+    const document = {
+      id: '42',
+    };
+    editDocument(document);
+    $state.go('hippo-cm');
+
+    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
+  });
+
+  it('displays dialog with a page related message', () => {
+    const document = {
+      id: '42',
+    };
+    PageService.isXPage = true;
+
+    editDocument(document);
+    $state.go('hippo-cm');
+
+    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_TO_XPAGE');
+  });
+
   it('confirms closing the open editor when the channel is closed', () => {
     const document = {
       id: '42',
@@ -234,7 +296,7 @@ describe('EditContentService', () => {
     $state.go('hippo-cm');
     $rootScope.$digest();
 
-    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
+    expect(ContentEditor.confirmClose).toHaveBeenCalled();
     expect($state.$current.name).toBe('hippo-cm');
   });
 
@@ -248,7 +310,7 @@ describe('EditContentService', () => {
     $state.go('hippo-cm');
     $rootScope.$digest();
 
-    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
+    expect(ContentEditor.confirmClose).toHaveBeenCalled();
     expect($state.$current.name).toBe('hippo-cm.channel.edit-content');
   });
 });
