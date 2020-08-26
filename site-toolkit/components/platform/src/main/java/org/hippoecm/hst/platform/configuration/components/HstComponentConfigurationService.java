@@ -1074,12 +1074,22 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             for (final Method method : parametersInfo.type().getMethods()) {
                 if (method.isAnnotationPresent(Parameter.class)) {
                     final Parameter parameter = method.getAnnotation(Parameter.class);
-                    //Remove jcr based parameter if a named parameter with the same name exists.
-                    //TODO SS: Check of parameter is overridable (value type is the same)
-                    hstDynamicComponentParameters.stream()
-                            .filter(dynamicParameter -> parameter.name().equals(dynamicParameter.getName()))
-                            .findFirst()
-                            .ifPresent(dynamicParameter -> hstDynamicComponentParameters.remove(dynamicParameter));
+                    final Optional<DynamicParameter> dynamicParameter = hstDynamicComponentParameters.stream().filter(
+                            dynamicComponentParameter -> (parameter.name().equals(dynamicComponentParameter.getName())))
+                            .findFirst();
+                    if (dynamicParameter.isPresent()) {
+                        if (!dynamicParameter.get().getValueType().supportsReturnType(method.getReturnType())) {
+                            //Remove jcr based parameter if an annotation parameter with the same name but with the different type exists
+                            log.warn(
+                                    "Jcr and annotation based parameters are defined with the same name but with different type: {}",
+                                    parameter.name());
+                            hstDynamicComponentParameters.remove(dynamicParameter.get());
+                        } else {
+                            //don't add annotation based parameter to the list, which means jcr based parameter 
+                            //overrides annotation based parameter
+                            continue;
+                        }
+                    }
                     hstDynamicComponentParameters.add(new DynamicComponentParameter(parameter, method));
                 }
             }
