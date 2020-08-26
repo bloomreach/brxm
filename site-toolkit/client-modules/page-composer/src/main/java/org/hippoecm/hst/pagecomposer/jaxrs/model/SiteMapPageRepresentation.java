@@ -83,8 +83,8 @@ public class SiteMapPageRepresentation {
         pageTitle = ((HippoNode)handleNode).getDisplayName();
         // from the pathInfo, remove the 'Mount path part' just like SiteMapPageRepresentation for a sitemap item above
         final Mount mount = hstLink.getMount();
-        pathInfo = "/" + hstLink.getPath();
-        renderPathInfo = mount == null ? pathInfo : mount.getMountPath() + pathInfo;
+        pathInfo = hstLink.getPath();
+        renderPathInfo = mount == null ? "/" + pathInfo : mount.getMountPath() + "/" + pathInfo;
         experiencePage = XPageUtils.isXPageDocument(handleNode);
         return this;
     }
