@@ -27,6 +27,7 @@ class EditContentMainCtrl {
     HippoIframeService,
     ProjectService,
     RightSidePanelService,
+    PageService,
   ) {
     'ngInject';
 
@@ -41,6 +42,7 @@ class EditContentMainCtrl {
     this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
+    this.PageService = PageService;
   }
 
   $onInit() {
@@ -116,8 +118,10 @@ class EditContentMainCtrl {
   }
 
   discard() {
-    const messageKey = this.isRetainable() ? 'CONFIRM_DISCARD_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE'
-      : 'CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE';
+    const messageKey = this.isRetainable()
+      ? 'CONFIRM_DISCARD_DOCUMENT_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE'
+      : 'CONFIRM_DISCARD_DOCUMENT_UNSAVED_CHANGES_MESSAGE';
+
     return this._confirmDiscardChanges(messageKey)
       .then(() => {
         this.form.$setPristine();
@@ -197,7 +201,9 @@ class EditContentMainCtrl {
   }
 
   _confirmExit() {
-    return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_TO_DOCUMENT')
+    const messageKey = this.PageService.isXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
+
+    return this.ContentEditor.confirmSaveOrDiscardChanges(messageKey)
       .then((action) => {
         if (action === 'SAVE') {
           this.HippoIframeService.reload();

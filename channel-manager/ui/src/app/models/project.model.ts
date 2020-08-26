@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
+import { ProjectState } from './project-state.enum';
 
-export interface Ng1ProjectService {
-  getSelectedProjectId(): string;
+export interface Project {
+  id: string;
+  name: string;
+  state: ProjectState;
 }
-
-export const NG1_PROJECT_SERVICE = new InjectionToken<Ng1ProjectService>('NG1_PROJECT_SERVICE');

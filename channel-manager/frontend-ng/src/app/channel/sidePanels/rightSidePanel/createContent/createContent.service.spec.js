@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,16 @@ describe('CreateContentService', () => {
   let $state;
   let $translate;
   let $window;
+  let ChannelService;
   let ContentService;
   let CreateContentService;
   let EditContentService;
   let FeedbackService;
   let HippoIframeService;
+  let HstService;
+  let PageStructureService;
   let RightSidePanelService;
+  let SiteMapService;
   let Step1Service;
   let Step2Service;
 
@@ -50,10 +54,14 @@ describe('CreateContentService', () => {
       _$state_,
       _$translate_,
       _$window_,
+      _ChannelService_,
       _CreateContentService_,
       _EditContentService_,
       _FeedbackService_,
       _HippoIframeService_,
+      _HstService_,
+      _PageStructureService_,
+      _SiteMapService_,
       _Step1Service_,
       _Step2Service_,
     ) => {
@@ -62,10 +70,14 @@ describe('CreateContentService', () => {
       $state = _$state_;
       $translate = _$translate_;
       $window = _$window_;
+      ChannelService = _ChannelService_;
       CreateContentService = _CreateContentService_;
       EditContentService = _EditContentService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
+      HstService = _HstService_;
+      PageStructureService = _PageStructureService_;
+      SiteMapService = _SiteMapService_;
       Step1Service = _Step1Service_;
       Step2Service = _Step2Service_;
     });
@@ -102,7 +114,7 @@ describe('CreateContentService', () => {
     expect(RightSidePanelService.clearContext).toHaveBeenCalled();
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('CREATE_CONTENT');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
-    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined, undefined);
+    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined, undefined, undefined);
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
     expect(CreateContentService.componentInfo).toEqual({});
   });
@@ -127,7 +139,7 @@ describe('CreateContentService', () => {
     expect(RightSidePanelService.clearContext).toHaveBeenCalled();
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('CREATE_CONTENT');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
-    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', 'fldr-tpl-query', undefined, undefined);
+    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', 'fldr-tpl-query', undefined, undefined, undefined);
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
     expect(CreateContentService.componentInfo).toEqual({
       id: '1234',
@@ -154,7 +166,7 @@ describe('CreateContentService', () => {
     expect($translate.instant).toHaveBeenCalledWith('CREATE_NEW_DOCUMENT_TYPE', { documentType: 'document-type-name' });
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('CREATE_NEW_DOCUMENT_TYPE');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
-    expect(Step2Service.open).toHaveBeenCalledWith({}, 'url', 'locale', CreateContentService.componentInfo);
+    expect(Step2Service.open).toHaveBeenCalledWith({}, 'url', 'locale', CreateContentService.componentInfo, false);
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
   });
 
@@ -162,6 +174,18 @@ describe('CreateContentService', () => {
     spyOn($state, 'go');
     CreateContentService.stop();
     expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
+  });
+
+  describe('creating a new page', () => {
+    it('opens the second step of creating a new page', () => {
+      spyOn(Step2Service, 'open').and.returnValue($q.resolve({ displayName: 'page-type-name' }));
+
+      CreateContentService.next({}, 'url', 'locale', true);
+      $rootScope.$digest();
+
+      expect($translate.instant).toHaveBeenCalledWith('CREATE_XPAGE', { documentType: 'page-type-name' });
+      expect(Step2Service.open).toHaveBeenCalledWith({}, 'url', 'locale', {}, true);
+    });
   });
 
   describe('validate config data for transition to step1', () => {
@@ -175,16 +199,94 @@ describe('CreateContentService', () => {
   });
 
   describe('finish', () => {
-    it('reloads the iframe', () => {
-      spyOn(HippoIframeService, 'reload');
+    let representation;
+
+    beforeEach(() => {
+      representation = {
+        experiencePage: false,
+        renderPathInfo: 'new-render-path',
+      };
+      spyOn(HstService, 'doGet').and.returnValue($q.resolve({ data: representation }));
+    });
+
+    it('request a SiteMapPageRepresentation', () => {
       CreateContentService.finish('document-id');
+      $rootScope.$digest();
+
+      expect(HstService.doGet).toHaveBeenCalledWith('document-id', 'representation');
+    });
+
+    it('shows an error and reloads the page if the request for a SiteMapPageRepresentation fails', () => {
+      spyOn(FeedbackService, 'showError');
+      spyOn(HippoIframeService, 'reload');
+      HstService.doGet.and.returnValue($q.reject('failed to load representation'));
+
+      CreateContentService.finish('document-id');
+      $rootScope.$digest();
+
+      expect(FeedbackService.showError).toHaveBeenCalled();
       expect(HippoIframeService.reload).toHaveBeenCalled();
     });
 
-    it('switches to edit-content', () => {
-      spyOn(EditContentService, 'startEditing');
-      CreateContentService.finish('document-id');
-      expect(EditContentService.startEditing).toHaveBeenCalledWith('document-id');
+    describe('for documents', () => {
+      it('should reload the iframe', () => {
+        spyOn(HippoIframeService, 'reload');
+
+        CreateContentService.finish('document-id');
+        $rootScope.$digest();
+
+        expect(HippoIframeService.reload).toHaveBeenCalled();
+      });
+
+      it('should switch to state "edit-content"', () => {
+        spyOn(EditContentService, 'startEditing');
+
+        CreateContentService.finish('document-id');
+        $rootScope.$digest();
+
+        expect(EditContentService.startEditing).toHaveBeenCalledWith('document-id');
+      });
+    });
+
+    describe('for pages', () => {
+      beforeEach(() => {
+        representation.experiencePage = true;
+
+        const page = jasmine.createSpyObj('page', ['getMeta']);
+        const pageMeta = jasmine.createSpyObj('pageMeta', ['getPathInfo']);
+        spyOn(PageStructureService, 'getPage').and.returnValue(page);
+        page.getMeta.and.returnValue(pageMeta);
+        pageMeta.getPathInfo.and.returnValue('old-render-path');
+      });
+
+      it('should load the renderPath of a new XPage document', () => {
+        spyOn(HippoIframeService, 'load');
+
+        CreateContentService.finish('document-id');
+        $rootScope.$digest();
+
+        expect(HippoIframeService.load).toHaveBeenCalled();
+      });
+
+      it('should reload the sitemap-listing in the left side-panel', () => {
+        spyOn(ChannelService, 'getSiteMapId').and.returnValue('current-sitemap');
+        spyOn(SiteMapService, 'load');
+
+        CreateContentService.finish('document-id');
+        $rootScope.$digest();
+
+        expect(SiteMapService.load).toHaveBeenCalledWith('current-sitemap');
+      });
+
+      it('should switch to state "edit-page"', () => {
+        spyOn($state, 'go');
+        representation.experiencePage = true;
+
+        CreateContentService.finish('document-id');
+        $rootScope.$digest();
+
+        expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page', { documentId: 'document-id' });
+      });
     });
   });
 

@@ -39,7 +39,7 @@ public final class HstActionProvider {
         ).flatMap(Set::stream).collect(toSet());
     }
 
-    private Set<Action> channelActions(ActionStateProviderContext actionProviderContext) {
+    private Set<Action> channelActions(final ActionStateProviderContext actionProviderContext) {
 
         final ChannelContext context = actionProviderContext.getChannelContext();
         final Set<Action> channelAction = new HashSet<>();
@@ -70,7 +70,7 @@ public final class HstActionProvider {
         return channelAction;
     }
 
-    private Set<Action> xPageActions(ActionStateProviderContext context) {
+    private Set<Action> xPageActions(final ActionStateProviderContext context) {
         return context.isExperiencePageRequest()
                 ? getXPageActions(context)
                 : Collections.emptySet();
@@ -80,21 +80,25 @@ public final class HstActionProvider {
         final Set<Action> actions = new HashSet<>();
         final XPageContext xPageContext = context.getXPageContext();
 
-        if (xPageContext.isPublishable() != null) {
-            actions.add(HstAction.XPAGE_PUBLISH.toAction(xPageContext.isPublishable()));
-            actions.add(HstAction.XPAGE_SCHEDULE_PUBLICATION.toAction(xPageContext.isPublishable()));
-        } else if (xPageContext.isRequestPublication() != null) {
-            actions.add(HstAction.XPAGE_REQUEST_PUBLICATION.toAction(xPageContext.isRequestPublication()));
-            actions.add(HstAction.XPAGE_REQUEST_SCHEDULE_PUBLICATION.toAction(xPageContext.isRequestPublication()));
-        }
+        xPageContext.isPublishable().ifPresent(publishable -> {
+            actions.add(HstAction.XPAGE_PUBLISH.toAction(publishable));
+            actions.add(HstAction.XPAGE_SCHEDULE_PUBLICATION.toAction(publishable));
+        });
 
-        if (xPageContext.isUnpublishable() != null) {
-            actions.add(HstAction.XPAGE_UNPUBLISH.toAction(xPageContext.isUnpublishable()));
-            actions.add(HstAction.XPAGE_SCHEDULE_UNPUBLICATION.toAction(xPageContext.isUnpublishable()));
-        } else if (xPageContext.isRequestDepublication() != null) {
-            actions.add(HstAction.XPAGE_REQUEST_UNPUBLICATION.toAction(xPageContext.isRequestDepublication()));
-            actions.add(HstAction.XPAGE_REQUEST_SCHEDULE_UNPUBLICATION.toAction(xPageContext.isRequestDepublication()));
-        }
+        xPageContext.isUnpublishable().ifPresent(unpublishable -> {
+            actions.add(HstAction.XPAGE_UNPUBLISH.toAction(unpublishable));
+            actions.add(HstAction.XPAGE_SCHEDULE_UNPUBLICATION.toAction(unpublishable));
+        });
+
+        xPageContext.isRequestPublication().ifPresent(requestPublication -> {
+            actions.add(HstAction.XPAGE_REQUEST_PUBLICATION.toAction(requestPublication));
+            actions.add(HstAction.XPAGE_REQUEST_SCHEDULE_PUBLICATION.toAction(requestPublication));
+        });
+
+        xPageContext.isRequestDepublication().ifPresent(requestDepublication -> {
+            actions.add(HstAction.XPAGE_REQUEST_UNPUBLICATION.toAction(requestDepublication));
+            actions.add(HstAction.XPAGE_REQUEST_SCHEDULE_UNPUBLICATION.toAction(requestDepublication));
+        });
 
         actions.add(HstAction.XPAGE_COPY.toAction(xPageContext.isCopyAllowed()));
         actions.add(HstAction.XPAGE_MOVE.toAction(xPageContext.isMoveAllowed()));
@@ -103,14 +107,14 @@ public final class HstActionProvider {
         return actions;
     }
 
-    private Set<Action> pageActions(ActionStateProviderContext context) {
+    private Set<Action> pageActions(final ActionStateProviderContext context) {
         return context.getChannelContext().isConfigurationLocked()
                 || context.isExperiencePageRequest()
                 ? Collections.emptySet()
                 : getPageActions(context);
     }
 
-    private Set<Action> getPageActions(ActionStateProviderContext context) {
+    private Set<Action> getPageActions(final ActionStateProviderContext context) {
 
         final Set<Action> actions = new HashSet<>();
         final PageContext pageContext = context.getPageContext();

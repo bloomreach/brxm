@@ -16,11 +16,11 @@
 
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 import { DocumentState } from '../../../models/document-state.enum';
-import { XPageState } from '../../../models/xpage-state.model';
+import { XPageStatusInfo } from '../../../models/page-status-info.model';
 import { XPageStatus } from '../../../models/xpage-status.enum';
-import { PageService } from '../../../pages/services/page.service';
 
 @Component({
   selector: 'em-notification-bar-status-text',
@@ -28,31 +28,34 @@ import { PageService } from '../../../pages/services/page.service';
 })
 export class NotificationBarStatusTextComponent {
   @Input()
-  set state(value: XPageState) {
-    this.text = this.getText(value);
+  set statusInfo(value: XPageStatusInfo) {
+    this.text = this.getText(value.status);
+
+    const statusTextTranslationKey = this.getDocumentStatusTextTranslationKey(value.xPageDocumentState);
+    const translatedStatusText = statusTextTranslationKey ? this.translateService.instant(statusTextTranslationKey) : undefined;
+
     this.textParams = {
-      pageName: value.name,
-      status: this.getDocumentStatusText(value.state),
-      dateTime: this.datePipe.transform(value.scheduledRequest?.scheduledDate, 'full'),
+      pageName: value.pageName || '',
+      status: translatedStatusText,
+      dateTime: this.datePipe.transform(value.scheduledDateTime, 'full'),
+      projectName: value.projectName || '',
     };
   }
 
   text: string | undefined;
-  textParams: { pageName: string, status: string | undefined, dateTime: string | null } | undefined;
+  textParams: {
+    pageName: string,
+    status: string | undefined,
+    dateTime: string | null,
+    projectName: string | undefined,
+  } | undefined;
 
   constructor(
-    private readonly pageService: PageService,
     private readonly datePipe: DatePipe,
+    private readonly translateService: TranslateService,
   ) {}
 
-  private getText(state: XPageState): string | undefined {
-    const status = this.pageService.getXPageStatus(state);
-
-    if (!status) {
-      this.text = undefined;
-      return;
-    }
-
+  private getText(pageStatus: XPageStatus): string | undefined {
     const statusTextMap = {
       [XPageStatus.Published]: 'NOTIFICATION_BAR_XPAGE_LABEL_LIVE',
       [XPageStatus.Offline]: 'NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE',
@@ -64,16 +67,23 @@ export class NotificationBarStatusTextComponent {
       [XPageStatus.ScheduledToTakeOffline]: 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE',
       [XPageStatus.ScheduledPublicationRequest]: 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTED',
       [XPageStatus.ScheduledToTakeOfflineRequest]: 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTED',
+      [XPageStatus.ProjectInProgress]: 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_PROGRESS',
+      [XPageStatus.ProjectInReview]: 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_REVIEW',
+      [XPageStatus.ProjectPageApproved]: 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_APPROVED',
+      [XPageStatus.ProjectPageRejected]: 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_REJECTED',
+      [XPageStatus.ProjectRunning]: 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IS_RUNNING',
+      [XPageStatus.EditingSharedContainers]: 'NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERS',
     };
 
-    return statusTextMap[status];
+    return statusTextMap[pageStatus];
   }
 
-  private getDocumentStatusText(state: DocumentState): string | undefined {
+  private getDocumentStatusTextTranslationKey(state: DocumentState | undefined): string | undefined {
     switch (state) {
-      case DocumentState.Live: return 'life';
-      case DocumentState.Unpublished: return 'unpublished changes';
-      case DocumentState.New: return 'offline';
+      case DocumentState.Live: return 'LIVE';
+      case DocumentState.Changed: return 'CHANGED';
+      case DocumentState.Unpublished: return 'UNPUBLISHED_CHANGES';
+      case DocumentState.New: return 'OFFLINE';
     }
   }
 }

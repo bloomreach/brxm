@@ -16,10 +16,11 @@
 
 import { InjectionToken } from '@angular/core';
 
-import { XPageState } from '../../../models/xpage-state.model';
+import { Project } from '../../models/project.model';
 
-export interface Ng1PageService {
-  states: { xpage?: XPageState };
+export interface Ng1ProjectService {
+  projects: Project[];
+  getSelectedProjectId(): string;
 }
 
-export const NG1_PAGE_SERVICE = new InjectionToken<Ng1PageService>('NG1_PAGE_SERVICE');
+export const NG1_PROJECT_SERVICE = new InjectionToken<Ng1ProjectService>('NG1_PROJECT_SERVICE');

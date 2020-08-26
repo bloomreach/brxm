@@ -16,11 +16,8 @@
 
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { mocked } from 'ts-jest/utils';
 
-import { XPageState } from '../../../models/xpage-state.model';
 import { XPageStatus } from '../../../models/xpage-status.enum';
-import { PageService } from '../../../pages/services/page.service';
 
 import { NotificationBarStatusIconComponent } from './notification-bar-status-icon.component';
 
@@ -38,32 +35,15 @@ describe('NotificationBarStatusIconComponent', () => {
   let component: NotificationBarStatusIconComponent;
   let fixture: ComponentFixture<NotificationBarStatusIconComponent>;
 
-  let pageServiceMock: PageService;
-
   beforeEach(() => {
-    pageServiceMock = {
-      getXPageStatus: jest.fn(),
-    } as unknown as typeof pageServiceMock;
-
     fixture = TestBed.configureTestingModule({
       declarations: [
         NotificationBarStatusIconComponent,
         MatIconMockComponent,
       ],
-      providers: [
-        { provide: PageService, useValue: pageServiceMock },
-      ],
     }).createComponent(NotificationBarStatusIconComponent);
 
     component = fixture.componentInstance;
-  });
-
-  it('should compute XPage status', () => {
-    const mockState = {} as XPageState;
-
-    component.state = mockState;
-
-    expect(pageServiceMock.getXPageStatus).toHaveBeenCalledWith(mockState);
   });
 
   describe.each([
@@ -77,11 +57,15 @@ describe('NotificationBarStatusIconComponent', () => {
     ['ScheduledToTakeOffline', XPageStatus.ScheduledToTakeOffline, 'calendar-clock'],
     ['ScheduledPublicationRequest', XPageStatus.ScheduledPublicationRequest, 'comment-processing-outline'],
     ['ScheduledToTakeOfflineRequest', XPageStatus.ScheduledToTakeOfflineRequest, 'comment-processing-outline'],
+    ['ProjectInProgress', XPageStatus.ProjectInProgress, 'minus-circle-outline'],
+    ['ProjectInReview', XPageStatus.ProjectInReview, 'comment-processing-outline'],
+    ['ProjectPageApproved', XPageStatus.ProjectPageApproved, 'comment-check-outline'],
+    ['ProjectPageRejected', XPageStatus.ProjectPageRejected, 'comment-remove-outline'],
+    ['ProjectRunning', XPageStatus.ProjectRunning, 'xpage'],
+    ['EditingSharedContainers', XPageStatus.EditingSharedContainers, 'alert-circle-outline'],
   ])('if xpage status is %s', (statusName, statusValue, expectedIcon) => {
     beforeEach(() => {
-      mocked(pageServiceMock.getXPageStatus).mockReturnValue(statusValue);
-
-      component.state = {} as XPageState;
+      component.status = statusValue;
 
       fixture.detectChanges();
     });
