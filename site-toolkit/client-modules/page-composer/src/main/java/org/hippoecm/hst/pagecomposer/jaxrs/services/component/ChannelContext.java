@@ -16,8 +16,10 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.util.Map;
 import java.util.Set;
 
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 import org.onehippo.cms7.services.hst.Channel;
 
 public class ChannelContext {
@@ -32,6 +34,8 @@ public class ChannelContext {
     private boolean workspaceExists;
     private boolean hasPrototypes;
     private Set<String> changeBySet;
+    private Set<XPageLayout> xPageLayouts;
+    private Map<String, String> xPageTemplateQueries;
 
     public String getChannelId() {
         return channelId;
@@ -73,6 +77,14 @@ public class ChannelContext {
         return hasPrototypes;
     }
 
+    public Set<XPageLayout> getXPageLayouts() {
+        return xPageLayouts;
+    }
+
+    public Map<String, String> getXPageTemplateQueries() {
+        return xPageTemplateQueries;
+    }
+
     ChannelContext setChannelAdmin(final boolean channelAdmin) {
         this.channelAdmin = channelAdmin;
         return this;
@@ -107,6 +119,16 @@ public class ChannelContext {
 
     ChannelContext setConfigurationLocked(final boolean configurationLocked) {
         this.configurationLocked = configurationLocked;
+        return this;
+    }
+
+    public ChannelContext setXPageLayouts(final Set<XPageLayout> layouts) {
+        this.xPageLayouts = layouts;
+        return this;
+    }
+
+    public ChannelContext setXPageTemplateQueries(final Map<String, String> xPageTemplateQueries) {
+        this.xPageTemplateQueries = xPageTemplateQueries;
         return this;
     }
 }

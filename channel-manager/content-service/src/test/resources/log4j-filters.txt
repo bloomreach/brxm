@@ -1,5 +1,5 @@
 #
-#  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+#  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
 #
 #  Licensed under the Apache License, Version 2.0 (the  "License");
 #  you may not use this file except in compliance with the License.
@@ -78,6 +78,8 @@ Failed to retrieve editor config node content type '/bla'
 Failed to retrieve hints for workflow
 Failed to retrieve JCR session for node '/bla'
 Failed to retrieve type of document '/bla'
+Failed to retrieve XPageLayout[unknown-xpage-layout]. Available id's are xpage-layout
+Failed to retrieve XPageLayout[xpage-layout]. Could not read property hippostd:channelid on node /content/documents/channel/news
 Failed to save changes to draft node of document uuid
 Failed to save changes to field 'ns:field' in draft node of document uuid
 Failed to set display name of node

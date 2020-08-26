@@ -180,8 +180,10 @@ class HippoIframeService {
     }
   }
 
-  async _onEditSharedContainers(event, data) {
-    this._editSharedContainers = data;
+  _onEditSharedContainers(event, data) {
+    this.$rootScope.$apply(() => {
+      this._editSharedContainers = data;
+    });
   }
 
   async _determineRenderPathInfo() {

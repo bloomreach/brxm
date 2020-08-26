@@ -15,20 +15,27 @@
  */
 
 .bloomreach-theme {
-  --blue-50: #cfe7fc;
-  --blue-100: #94c9f7;
-  --blue-200: #5faff5;
-  --blue-300: #3399f2;
-  --blue-400: #1785e6;
-  --blue-500: #00b5e2;
-  --blue-600: #0465ba;
+  --text-color-dark: rgba(0, 0, 0, .87);
+  --text-color-light: rgba(255, 255, 255, .87);
+  --text-color-dim: rgba(0, 0, 0, .6);
+  --text-color-disabled: rgba(0, 0, 0, .38);
+
+  --functional-green: #3DCC3D;
+
+  --blue-50: #E7F1F9;
+  --blue-100: #A6CCEA;
+  --blue-200: #79B6E6;
+  --blue-300: #509FDD;
+  --blue-400: #2B8BD4;
+  --blue-500: #147AC8;
+  --blue-600: #1265B3;
   --blue-700: #0259a6;
   --blue-800: #024e96;
   --blue-900: #004280;
-  --blue-a100: #99cfff;
-  --blue-a200: #4da0ff;
-  --blue-a400: #267dff;
-  --blue-a700: #0357ff;
+  --blue-A100: #CDEFF8;
+  --blue-A200: #65D0E9;
+  --blue-A400: #00B5E2;
+  --blue-A700: #00A5CE;
 
   --orange-50: #fce1cf;
   --orange-100: #f7ba94;
@@ -40,43 +47,38 @@
   --orange-700: #bd4a02;
   --orange-800: #a84202;
   --orange-900: #963c00;
-  --orange-a100: #ffc099;
-  --orange-a200: #ff9659;
-  --orange-a400: #ff751a;
-  --orange-a700: #ff5203;
+  --orange-A100: #FFDFCE;
+  --orange-A200: #ff9659;
+  --orange-A400: #ff751a;
+  --orange-A700: #E64A19;
 
   --red-50: #fccfcf;
   --red-100: #fc8c8c;
   --red-200: #fa5151;
   --red-300: #f22a2a;
   --red-400: #e61717;
-  --red-500: #d40d0d;
+  --red-500: #D40022;
   --red-600: #bd0606;
   --red-700: #ab0303;
   --red-800: #990202;
   --red-900: #850000;
-  --red-a100: #ff9999;
-  --red-a200: #ff596a;
-  --red-a400: #ff334e;
-  --red-a700: #f70029;
+  --red-A100: #ff9999;
+  --red-A200: #ff596a;
+  --red-A400: #ff334e;
+  --red-A700: #f70029;
 
   --grey-50: #ffffff;
-  --grey-100: #f4f4f5;
-  --grey-200: #e8e8ea;
-  --grey-300: #d9d9dd;
-  --grey-400: #b8bcbf;
-  --grey-500: #92a0a5;
-  --grey-600: #697279;
-  --grey-700: #39434c;
-  --grey-800: #22272f;
+  --grey-100: #F5F5F5;
+  --grey-200: #E8E8EA;
+  --grey-300: #D9D9DD;
+  --grey-400: #BCBCBC;
+  --grey-500: #9E9E9E;
+  --grey-600: #666666;
+  --grey-700: #494A4B;
+  --grey-800: #212121;
   --grey-900: #000000;
-  --grey-a100: #ffffff;
-  --grey-a200: #000000;
-  --grey-a400: #303030;
-  --grey-a700: #39434c;
-
-  --text-color-dark: rgba(0, 0, 0, .87);
-  --text-color-light: rgba(255, 255, 255, .87);
-  --text-color-dim: rgba(0, 0, 0, .6);
-  --text-color-disabled: rgba(0, 0, 0, .38)
+  --grey-A100: #F5F5F5;
+  --grey-A200: #E8E8EA;
+  --grey-A400: #BCBCBC;
+  --grey-A700: #494A4B;
 }
