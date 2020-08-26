@@ -527,10 +527,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "FEEDBACK_HELD_BY_OTHER_USER_MESSAGE" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "FEEDBACK_NOT_A_DOCUMENT_MESSAGE" : {
       "status" : "CLEAN",
       "locales" : null
@@ -559,27 +555,11 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "FEEDBACK_NOT_EDITABLE_HERE_TITLE" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "FEEDBACK_NOT_FOUND_TITLE" : {
       "status" : "CLEAN",
       "locales" : null
     },
-    "FEEDBACK_REQUEST_PENDING_MESSAGE" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "FEEDBACK_NOT_EDITABLE_TITLE" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "ERROR_NO_HOLDER" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -845,23 +825,7 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "FEEDBACK_PART_OF_PROJECT_MESSAGE" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "DOCUMENT_ADDED_TO_PROJECT" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "FEEDBACK_PROJECT_INVALID_STATE" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "FEEDBACK_HELD_BY_CORE_PROJECT_MESSAGE" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "FEEDBACK_PROJECT_NOT_FOUND" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -977,19 +941,11 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "NOTIFICATION_DOCUMENT_PUBLISHED" : {
       "status" : "CLEAN",
       "locales" : null
     },
     "REQUEST_PUBLICATION" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "FEEDBACK_NOT_EDITABLE_MESSAGE" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -1840,6 +1796,236 @@
       }
     },
     "OFFLINE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_XPAGE_NOT_EDITABLE_HERE_TITLE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_DOCUMENT_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_PROJECT_DOCUMENT_INVALID_STATE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_XPAGE_REQUEST_PENDING_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_DOCUMENT_HELD_BY_OTHER_USER_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_XPAGE_NOT_EDITABLE_TITLE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_XPAGE_NOT_EDITABLE_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_XPAGE_NO_EDITABLE_CONTENT_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_DOCUMENT_PART_OF_PROJECT_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_XPAGE_HELD_BY_OTHER_USER_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_DOCUMENT_REQUEST_PENDING_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_DOCUMENT_HELD_BY_CORE_PROJECT_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_DOCUMENT_NOT_EDITABLE_HERE_TITLE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_PROJECT_XPAGE_NOT_FOUND" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_PROJECT_XPAGE_INVALID_STATE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_PROJECT_DOCUMENT_NOT_FOUND" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_XPAGE_PART_OF_PROJECT_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_DOCUMENT_NOT_EDITABLE_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_XPAGE_HELD_BY_CORE_PROJECT_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "SAVE_XPAGE_CHANGES_TITLE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_DOCUMENT_NOT_EDITABLE_TITLE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_XPAGE_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "FEEDBACK_DOCUMENT_NO_EDITABLE_CONTENT_MESSAGE" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
