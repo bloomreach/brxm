@@ -38,6 +38,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ParameterType;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.AbstractHstComponentParameters;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
 import org.hippoecm.hst.util.WebFileUtils;
@@ -146,13 +147,13 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
                                                                        final String contentPath,
                                                                        final String prefix,
                                                                        final Node containerItemNode,
-                                                                       final ContainerItemHelper containerItemHelper,
-                                                                       final HstComponentParameters componentParameters,
+                                                                       final HstComponentConfiguration componentConfiguration,
+                                                                       final AbstractHstComponentParameters componentParameters,
                                                                        final List<ContainerItemComponentPropertyRepresentation> properties) {
         String containerItemPath = null;
         try {
             containerItemPath = containerItemNode.getPath();
-            final HstComponentConfiguration componentConfiguration = containerItemHelper.getConfigObject(containerItemNode.getIdentifier());
+
             if (hasWebFileTemplate(componentConfiguration, getTemplateExtensions())) {
                 // if there are multiple templates available, we inject a switchTemplateComponentPropertyRepresentation
                 // containing the possible values.

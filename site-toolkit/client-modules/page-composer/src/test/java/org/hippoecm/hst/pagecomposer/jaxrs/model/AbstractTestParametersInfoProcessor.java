@@ -30,6 +30,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.DynamicFieldGroup;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -84,6 +85,7 @@ public class AbstractTestParametersInfoProcessor {
         final MockHstComponentConfiguration componentReference = new MockHstComponentConfiguration("id");
         componentReference.setComponentClassName(componentClass.getName());
         componentReference.setCanonicalStoredLocation("/");
+        componentReference.setRenderPath(ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL + "/ftl/main/layout.ftl");
         final Stream<Method> stream = Arrays.stream(parameterInfo.type().getMethods());
         final Map<Parameter, Method> paramMap = stream.collect(Collectors.toMap(x -> x.getAnnotation(Parameter.class), a -> a));
         final List<DynamicParameter> dynamicParameters = getDynamicParameters(paramMap);
