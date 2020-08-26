@@ -439,11 +439,12 @@ describe('EditContentMainCtrl', () => {
 
       $ctrl.discard();
 
-      expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', {
+      expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_DOCUMENT_UNSAVED_CHANGES_MESSAGE', {
         documentName: 'Test',
       });
     });
 
+    /*
     it('shows a dialog with a page related message', () => {
       ContentEditor.isPristine.and.returnValue(false);
       PageService.isXPage = true;
@@ -454,6 +455,7 @@ describe('EditContentMainCtrl', () => {
         documentName: 'Test',
       });
     });
+    */
 
     it('does not show a dialog when the document has not changed', () => {
       ContentEditor.isPristine.and.returnValue(true);
