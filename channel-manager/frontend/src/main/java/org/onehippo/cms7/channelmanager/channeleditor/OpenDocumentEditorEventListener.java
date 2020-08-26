@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,17 +93,13 @@ class OpenDocumentEditorEventListener extends ExtEventListener {
             if (editor == null) {
                 editor = editorManager.openEditor(documentHandleModel);
             }
-            DocumentHandle documentHandle = new DocumentHandle(handle);
-            if (documentHandle.isRetainable() && IEditor.Mode.VIEW == mode) {
-                editor.saveDraft();
-            }
             if (mode == IEditor.Mode.EDIT && editor.getMode() != IEditor.Mode.EDIT) {
                 editor.setMode(mode);
             }
             editor.focus();
         } catch (ItemNotFoundException e) {
             ChannelEditor.log.warn("Could not find document with uuid '{}'", documentHandleUuid, e);
-        } catch (WorkflowException | EditorException | RepositoryException | ServiceException e) {
+        } catch (EditorException | RepositoryException | ServiceException e) {
             ChannelEditor.log.warn("Failed to open editor in '{}' mode for document with uuid '{}'", mode, documentHandleUuid, e);
         }
     }

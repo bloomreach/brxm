@@ -188,8 +188,8 @@ class EditContentMainCtrl {
 
   uiCanExit() {
     if (this.isRetainable()) {
-      return this.ContentEditor.keepDraft()
-        .finally(() => this.ContentEditor.close());
+      this.ContentEditor.close();
+      return this.$q.resolve();
     }
     return this._confirmExit()
       .then(() => this.ContentEditor.discardChanges()
