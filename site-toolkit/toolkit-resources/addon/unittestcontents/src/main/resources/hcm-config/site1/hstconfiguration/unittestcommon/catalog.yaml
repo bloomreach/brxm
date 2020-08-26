@@ -62,5 +62,19 @@ definitions:
           jcr:primaryType: hst:componentdefinition
           hst:componentclassname: org.hippoecm.hst.component.support.bean.dynamic.DocumentQueryDynamicComponent
           hst:label: Test Catalog Query component Item
-
+        /testcatalogitemparameteroverriding:
+          jcr:primaryType: hst:componentdefinition
+          hst:componentclassname: org.hippoecm.hst.component.support.bean.dynamic.DocumentQueryDynamicComponent
+          hst:label: Test Parameter Overriding
+          /sortOrder:
+            jcr:primaryType: hst:dynamicparameter
+            hst:valuetype: text
+            hst:defaultvalue: asc
+            /hst:fieldconfig:
+              jcr:primaryType: hst:dropdown
+              hst:value: [asc, desc]
+          /hideFutureItems:
+            jcr:primaryType: hst:dynamicparameter
+            hst:valuetype: boolean
+            hst:defaultvalue: true
 

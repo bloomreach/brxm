@@ -59,7 +59,7 @@ public enum ParameterValueType {
         return String.class;
     }
 
-    private boolean supportsReturnType(Class<?> returnType) {
+    public boolean supportsReturnType(Class<?> returnType) {
         if (supportedReturnTypes == null) {
             return false;
         }
