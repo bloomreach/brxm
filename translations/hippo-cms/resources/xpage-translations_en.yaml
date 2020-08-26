@@ -3,4 +3,4 @@ definitions:
     /hippo:configuration/hippo:translations/hippo:cms/xpage:
       /en:
         jcr:primaryType: hipposys:resourcebundle
-        x-page-layout: Xpage layout
+        x-page-layout: Page layout
