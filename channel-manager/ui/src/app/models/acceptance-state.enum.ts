@@ -14,21 +14,8 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
-
-import { SharedModule } from '../shared/shared.module';
-
-import { NG1_CHANNEL_SERVICE } from './services/ng1/channel.ng1service';
-import { NG1_IFRAME_SERVICE } from './services/ng1/iframe.ng1service';
-
-@NgModule({
-  imports: [
-    SharedModule,
-  ],
-  providers: [
-    { provide: NG1_IFRAME_SERVICE, useValue: window.angular.element(document.body).injector().get('HippoIframeService') },
-    { provide: NG1_CHANNEL_SERVICE, useValue: window.angular.element(document.body).injector().get('ChannelService') },
-  ],
-})
-export class ChannelsModule {
+export enum AcceptanceState {
+  InReview = 'in-review',
+  Approved = 'approved',
+  Rejected = 'rejected',
 }

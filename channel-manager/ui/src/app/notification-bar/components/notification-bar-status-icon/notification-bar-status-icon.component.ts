@@ -16,9 +16,7 @@
 
 import { Component, Input } from '@angular/core';
 
-import { XPageState } from '../../../models/xpage-state.model';
 import { XPageStatus } from '../../../models/xpage-status.enum';
-import { PageService } from '../../../pages/services/page.service';
 
 @Component({
   selector: 'em-notification-bar-status-icon',
@@ -27,20 +25,11 @@ import { PageService } from '../../../pages/services/page.service';
 })
 export class NotificationBarStatusIconComponent {
   @Input()
-  set state(value: XPageState) {
-    const status = this.pageService.getXPageStatus(value);
-
-    if (!status) {
-      this.icon = undefined;
-      return;
-    }
-
-    this.icon = this.getIcon(status);
+  set status(value: XPageStatus) {
+    this.icon = this.getIcon(value);
   }
 
   icon: string | undefined;
-
-  constructor(private readonly pageService: PageService) {}
 
   private getIcon(status: XPageStatus): string {
     const statusIconMap = {
@@ -54,6 +43,12 @@ export class NotificationBarStatusIconComponent {
       [XPageStatus.ScheduledToTakeOffline]: 'calendar-clock',
       [XPageStatus.ScheduledPublicationRequest]: 'comment-processing-outline',
       [XPageStatus.ScheduledToTakeOfflineRequest]: 'comment-processing-outline',
+      [XPageStatus.ProjectInProgress]: 'minus-circle-outline',
+      [XPageStatus.ProjectInReview]: 'comment-processing-outline',
+      [XPageStatus.ProjectPageApproved]: 'comment-check-outline',
+      [XPageStatus.ProjectPageRejected]: 'comment-remove-outline',
+      [XPageStatus.ProjectRunning]: 'xpage',
+      [XPageStatus.EditingSharedContainers]: 'alert-circle-outline',
     };
 
     return statusIconMap[status];

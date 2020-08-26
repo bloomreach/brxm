@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable } from '@angular/core';
+import { InjectionToken } from '@angular/core';
 
-import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from './ng1/channel.ng1service';
-
-@Injectable({
-  providedIn: 'root',
-})
-export class ChannelService {
-  constructor(
-    @Inject(NG1_CHANNEL_SERVICE) private readonly ng1ChannelService: Ng1ChannelService,
-  ) { }
-
-  makeRenderPath(path: string): string {
-    return this.ng1ChannelService.makeRenderPath(path);
-  }
+export interface Ng1IframeService {
+  load(path: string): Promise<void>;
+  getCurrentRenderPathInfo(): string;
+  isEditSharedContainers(): boolean;
 }
+
+export const NG1_IFRAME_SERVICE = new InjectionToken<Ng1IframeService>('NG1_IFRAME_SERVICE');

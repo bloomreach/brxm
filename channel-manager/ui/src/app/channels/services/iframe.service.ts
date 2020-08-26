@@ -16,7 +16,7 @@
 
 import { Inject, Injectable } from '@angular/core';
 
-import { Ng1IframeService, NG1_IFRAME_SERVICE } from './ng1/iframe.ng1service';
+import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../services/ng1/iframe.ng1service';
 
 @Injectable({
   providedIn: 'root',
@@ -32,5 +32,9 @@ export class IframeService {
 
   getCurrentRenderPathInfo(): string {
     return this.ng1IframeService.getCurrentRenderPathInfo();
+  }
+
+  isEditSharedContainers(): boolean {
+    return this.ng1IframeService.isEditSharedContainers();
   }
 }

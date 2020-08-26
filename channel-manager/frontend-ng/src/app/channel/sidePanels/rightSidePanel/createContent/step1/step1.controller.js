@@ -47,6 +47,18 @@ class Step1Controller {
     return this.Step1Service.documentTypes;
   }
 
+  get layout() {
+    return this.Step1Service.layout;
+  }
+
+  set layout(layout) {
+    this.Step1Service.layout = layout;
+  }
+
+  get layouts() {
+    return this.Step1Service.layouts;
+  }
+
   get locale() {
     return this.Step1Service.locale;
   }
@@ -79,9 +91,13 @@ class Step1Controller {
     this.Step1Service.url = url;
   }
 
+  isXPage() {
+    return this.Step1Service.isXPage();
+  }
+
   submit() {
     this.Step1Service.createDocument()
-      .then(document => this.CreateContentService.next(document, this.url, this.locale));
+      .then(document => this.CreateContentService.next(document, this.url, this.locale, this.isXPage()));
     this.CmsService.reportUsageStatistic('CreateContent1Create');
   }
 

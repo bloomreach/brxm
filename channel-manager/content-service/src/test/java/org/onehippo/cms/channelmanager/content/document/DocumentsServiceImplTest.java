@@ -28,14 +28,20 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.platform.api.ChannelService;
+import org.hippoecm.hst.platform.api.PlatformServices;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.hippoecm.repository.util.WorkflowUtils.Variant;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,8 +63,8 @@ import org.onehippo.cms.channelmanager.content.document.util.PublicationStateUti
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ConflictException;
@@ -69,6 +75,7 @@ import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -118,6 +125,7 @@ public class DocumentsServiceImplTest {
     private DocumentsServiceImpl documentsService;
     private HintsInspector hintsInspector;
     private BranchingService branchingService;
+    private PlatformServices platformServices;
 
     @Before
     public void setup() {
@@ -162,6 +170,9 @@ public class DocumentsServiceImplTest {
         branchingService = createMock(BranchingService.class);
         documentsService.setBranchingService(branchingService);
 
+        platformServices = createMock(PlatformServices.class);
+        HippoServiceRegistry.register(platformServices, PlatformServices.class);
+
         PowerMock.mockStatic(DocumentNameUtils.class);
         PowerMock.mockStatic(DocumentLocaleUtils.class);
         PowerMock.mockStatic(PublicationStateUtils.class);
@@ -180,6 +191,11 @@ public class DocumentsServiceImplTest {
         info.setDocumentTemplateQuery("new-news-document");
         info.setDocumentTypeId("project:newsdocument");
         info.setRootPath("/content/documents/channel/news");
+    }
+
+    @After
+    public void tearDown() {
+        HippoServiceRegistry.unregister(platformServices, PlatformServices.class);
     }
 
     @Test
@@ -1620,7 +1636,7 @@ public class DocumentsServiceImplTest {
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.of(folderWorkflow));
-        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news")))
+        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news"), eq(null)))
                 .andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(folderNode)).andReturn("/content/documents/channel/news");
 
@@ -1650,7 +1666,7 @@ public class DocumentsServiceImplTest {
                 .andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.of(folderWorkflow));
-        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news")))
+        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news"), eq(null)))
                 .andReturn("/content/documents/channel/news/breaking-news/breaking-news");
         expect(session.getNode(eq("/content/documents/channel/news/breaking-news/breaking-news")))
                 .andReturn(documentDraft);
@@ -1731,7 +1747,7 @@ public class DocumentsServiceImplTest {
                 .andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.of(folderWorkflow));
-        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news")))
+        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news"), eq(null)))
                 .andReturn("/content/documents/channel/news/breaking-news/breaking-news");
         expect(session.getNode(eq("/content/documents/channel/news/breaking-news/breaking-news")))
                 .andReturn(documentDraft);
@@ -1784,6 +1800,169 @@ public class DocumentsServiceImplTest {
 
         verifyAll();
     }
+
+    @Test(expected = InternalServerErrorException.class)
+    public void createXPageInFolderWithoutChannelIDThrowsException() throws Exception {
+        info.setLayout("xpage-layout");
+
+        final Node folderNode = createMock(Node.class);
+        final Node documentHandle = createMock(Node.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+
+        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
+                .andReturn(folderNode);
+        expect(FolderUtils.getLocale(folderNode))
+                .andReturn("en_GB");
+        expect(DocumentNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
+                .andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News (encoded)")))
+                .andReturn(false);
+        expect(DocumentNameUtils.encodeUrlName(eq("breaking news"), eq("en_GB")))
+                .andReturn("breaking-news");
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
+                .andReturn(false);
+        final DocumentType docType = provideDocumentType(documentHandle);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
+        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news"), eq(null)))
+                .andThrow(new RepositoryException());
+        expect(JcrUtils.getNodePathQuietly(folderNode)).andReturn("/content/documents/channel/news");
+
+        expect(JcrUtils.getStringProperty(folderNode, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, null)).andReturn("");
+
+        replayAll();
+
+        documentsService.createDocument(info, userContext);
+
+        verifyAll();
+    }
+
+    @Test(expected = InternalServerErrorException.class)
+    public void createXPageInFolderWithUnknownLayoutThrowsException() throws Exception {
+        info.setLayout("unknown-xpage-layout");
+
+        final Node folderNode = createMock(Node.class);
+        final Node documentHandle = createMock(Node.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+
+        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
+                .andReturn(folderNode);
+        expect(FolderUtils.getLocale(folderNode))
+                .andReturn("en_GB");
+        expect(DocumentNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
+                .andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News (encoded)")))
+                .andReturn(false);
+        expect(DocumentNameUtils.encodeUrlName(eq("breaking news"), eq("en_GB")))
+                .andReturn("breaking-news");
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
+                .andReturn(false);
+        final DocumentType docType = provideDocumentType(documentHandle);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
+        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news"), eq(null)))
+                .andThrow(new RepositoryException());
+        expect(JcrUtils.getNodePathQuietly(folderNode)).andReturn("/content/documents/channel/news");
+
+        expect(JcrUtils.getStringProperty(folderNode, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, null)).andReturn("channel-id");
+
+        final ChannelService channelService = createMock(ChannelService.class);
+        expect(platformServices.getChannelService()).andReturn(channelService);
+        expect(channelService.getXPageLayouts(eq("channel-id"))).andReturn(Collections.singletonMap("xpage-layout", null));
+
+        replayAll();
+
+        documentsService.createDocument(info, userContext);
+
+        verifyAll();
+    }
+
+    @Test
+    public void createXPage() throws Exception {
+        final Node rootFolderNode = createMock(Node.class);
+        final Node folderNode = createMock(Node.class);
+        final Node documentHandle = createMock(Node.class);
+        final Node documentDraft = createMock(Node.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+        final ChannelService channelService = createMock(ChannelService.class);
+        final XPageLayout layout = createMock(XPageLayout.class);
+        final JcrTemplateNode layoutTemplateNode = createMock(JcrTemplateNode.class);
+
+        info.setLayout("xpage-layout");
+        info.setDefaultPath("2017/11");
+        info.setFolderTemplateQuery("folderTemplateQuery");
+
+        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
+                .andReturn(rootFolderNode);
+        expect(FolderUtils.getOrCreateFolder(eq(rootFolderNode), eq("2017/11"), eq(session), eq("folderTemplateQuery")))
+                .andReturn(folderNode);
+        expect(FolderUtils.getLocale(folderNode))
+                .andReturn("en_GB");
+        expect(DocumentNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
+                .andReturn("Breaking News (encoded)");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News (encoded)")))
+                .andReturn(false);
+        expect(DocumentNameUtils.encodeUrlName(eq("breaking news"), eq("en_GB")))
+                .andReturn("breaking-news");
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
+                .andReturn(false);
+        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(JcrUtils.getStringProperty(folderNode, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, null))
+                .andReturn("channel-id");
+        expect(platformServices.getChannelService())
+                .andReturn(channelService);
+        expect(layout.getJcrTemplateNode())
+                .andReturn(layoutTemplateNode);
+        expect(channelService.getXPageLayouts(eq("channel-id")))
+                .andReturn(Collections.singletonMap("xpage-layout", layout));
+        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news"), eq(layoutTemplateNode)))
+                .andReturn("/content/documents/channel/news/breaking-news/breaking-news");
+        expect(session.getNode(eq("/content/documents/channel/news/breaking-news/breaking-news")))
+                .andReturn(documentDraft);
+        expect(documentDraft.getParent())
+                .andReturn(documentHandle);
+
+        DocumentNameUtils.setDisplayName(eq(documentHandle), eq("Breaking News (encoded)"));
+        expectLastCall();
+
+        expect(WorkflowUtils.getDocumentVariantNode(eq(documentHandle), eq(Variant.DRAFT)))
+                .andReturn(Optional.of(documentDraft));
+        expect(documentHandle.getIdentifier()).andReturn("uuid");
+
+        final DocumentType docType = provideDocumentType(documentHandle);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
+        expect(docType.getId()).andReturn("project:newsdocument");
+        expect(DocumentUtils.getDisplayName(documentHandle)).andReturn(Optional.of("Breaking News (encoded)"));
+        expect(JcrUtils.getNodeNameQuietly(eq(documentHandle))).andReturn("breaking-news");
+        expect(JcrUtils.getNodePathQuietly(eq(documentHandle))).andReturn("/content/documents/news/breaking-news");
+        expect(PublicationStateUtils.getPublicationStateFromVariant(documentDraft)).andReturn(PublicationState.NEW);
+        expect(DocumentLocaleUtils.getDocumentLocale(documentDraft)).andReturn("en");
+
+        session.save();
+        expectLastCall();
+
+        final List<FieldType> fields = Collections.emptyList();
+        expect(docType.getFields()).andReturn(fields);
+        FieldTypeUtils.readFieldValues(eq(documentDraft), eq(fields), isA(Map.class));
+        expectLastCall();
+
+        expect(documentDraft.getIdentifier()).andReturn("draftUuid").anyTimes();
+        expect(JcrUtils.getStringProperty(eq(documentDraft), anyString(), eq(null))).andReturn("draft");
+        expect(JcrUtils.getStringProperty(eq(documentDraft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
+        final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        expect(WorkflowUtils.getWorkflow(eq(documentHandle), eq("default"), eq(DocumentWorkflow.class)))
+                .andReturn(Optional.of(documentWorkflow));
+        expect(documentWorkflow.hints()).andReturn(new HashMap<>());
+        replayAll(documentDraft);
+
+        documentsService.createDocument(info, userContext);
+
+        verifyAll();
+    }
+
 
     @Test(expected = BadRequestException.class)
     public void updateDocumentNamesWithoutDisplayName() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@ class Step2Service {
     this.$q = $q;
     this.$translate = $translate;
     this.CmsService = CmsService;
-    this.ContentService = ContentService;
     this.ContentEditor = ContentEditor;
+    this.ContentService = ContentService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HstComponentService = HstComponentService;
@@ -45,9 +45,10 @@ class Step2Service {
   _reset() {
     delete this.documentLocale;
     delete this.documentUrl;
+    delete this.xpage;
   }
 
-  open(document, url, locale, componentInfo) {
+  open(document, url, locale, componentInfo, xpage) {
     this._reset();
 
     this.componentInfo = componentInfo;
@@ -56,6 +57,7 @@ class Step2Service {
       .then((documentType) => {
         this.documentLocale = locale;
         this.documentUrl = url;
+        this.xpage = xpage;
 
         this._reportUnsupportedRequiredFieldTypes(documentType);
 
@@ -83,10 +85,11 @@ class Step2Service {
       template: nameUrlFieldsDialogTemplate,
       controller: nameUrlFieldsDialogController,
       locals: {
-        title: this.$translate.instant('CHANGE_DOCUMENT_NAME'),
+        title: this.$translate.instant(this.xpage ? 'CHANGE_XPAGE_NAME' : 'CHANGE_DOCUMENT_NAME'),
         nameField: document.displayName,
         urlField: this.documentUrl,
         locale: this.documentLocale,
+        xpage: this.xpage,
       },
       controllerAs: '$ctrl',
       bindToController: true,
@@ -144,6 +147,10 @@ class Step2Service {
       return true;
     }
     return false;
+  }
+
+  isXPage() {
+    return !!this.xpage;
   }
 }
 

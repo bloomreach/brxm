@@ -17,7 +17,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { XPageState } from '../../../models/xpage-state.model';
+import { PageService } from '../../../services/page.service';
 
 import { NotificationBarComponent } from './notification-bar.component';
 
@@ -25,20 +25,37 @@ describe('NotificationBarComponent', () => {
   let component: NotificationBarComponent;
   let fixture: ComponentFixture<NotificationBarComponent>;
 
+  let pageServiceMock: PageService;
+
   beforeEach(() => {
+    pageServiceMock = {
+      getPageStatusInfo: jest.fn(() => ({})),
+    } as unknown as typeof pageServiceMock;
+
     fixture = TestBed.configureTestingModule({
       declarations: [NotificationBarComponent],
+      providers: [
+        { provide: PageService, useValue: pageServiceMock },
+      ],
       schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(NotificationBarComponent);
 
     component = fixture.componentInstance;
-
-    component.xPageState = {} as XPageState;
-
-    fixture.detectChanges();
   });
 
   it('should show the component', () => {
+    component.pageStates = {};
+
+    component.ngOnChanges();
+
+    fixture.detectChanges();
+
     expect(fixture.nativeElement).toMatchSnapshot();
+  });
+
+  it('should calculate the page status', () => {
+    component.ngOnChanges();
+
+    expect(pageServiceMock.getPageStatusInfo).toHaveBeenCalled();
   });
 });

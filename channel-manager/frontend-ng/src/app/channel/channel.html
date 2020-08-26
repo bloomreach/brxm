@@ -41,7 +41,8 @@
         </project-toggle>
       </div>
 
-      <div flex="30"
+      <div class="md-bloomreach-theme"
+           flex="30"
            layout
            layout-align="end center">
         <overlay-toggle name="components"
@@ -63,6 +64,16 @@
                         class="qa-toggle-content"
                         tooltip="{{ $ctrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}">
         </overlay-toggle>
+
+        <md-button
+          aria-label="{{ 'TOOLBAR_BUTTON_ADD' | translate }}"
+          class="qa-toolbar-button-add toolbar-button-add md-primary"
+          ng-click="$ctrl.add()"
+          ng-if="$ctrl.canAddXPage()">
+          <md-icon md-font-icon="mdi-plus"></md-icon>
+          {{ 'TOOLBAR_BUTTON_ADD' | translate }}
+          </md-button>
+
       </div>
     </div>
 
