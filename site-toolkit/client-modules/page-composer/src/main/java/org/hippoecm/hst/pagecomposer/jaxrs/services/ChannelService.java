@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -78,4 +80,6 @@ public interface ChannelService {
      * Find all mounts binding to the given channel
      */
     List<Mount> findMounts(final Channel channel);
+
+    Set<XPageLayout> getXPageLayouts(final String channelId);
 }

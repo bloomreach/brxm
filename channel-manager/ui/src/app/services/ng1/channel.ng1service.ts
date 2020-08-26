@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable } from '@angular/core';
+import { InjectionToken } from '@angular/core';
 
-import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from './ng1/workflow.ng1.service';
-
-@Injectable({
-  providedIn: 'root',
-})
-export class WorkflowService {
-  constructor(
-    @Inject(NG1_WORKFLOW_SERVICE) private readonly ng1WorkflowService: Ng1WorkflowService,
-  ) { }
-
-  createWorkflowAction<T>(documentId: string, ...pathElements: string[]): Promise<T> {
-    return this.ng1WorkflowService.createWorkflowAction(documentId, ...pathElements);
-  }
+export interface Ng1ChannelService {
+  makeRenderPath(path: string): string;
+  getHomePageRenderPathInfo(): string;
 }
+
+export const NG1_CHANNEL_SERVICE = new InjectionToken<Ng1ChannelService>('NG1_CHANNEL_SERVICE');

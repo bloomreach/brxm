@@ -16,12 +16,15 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.util.Optional;
+
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequest;
 
 public class XPageContext {
 
     private String xPageId;
+    private String xPageLockedBy;
     private String xPageName;
     private String xPageState;
     private WorkflowRequest workflowRequest;
@@ -39,29 +42,13 @@ public class XPageContext {
         return xPageId;
     }
 
-    public String getXPageName() {
-        return xPageName;
-    }
-
-    public String getXPageState() {
-        return xPageState;
-    }
-
-    public WorkflowRequest getWorkflowRequest() {
-        return workflowRequest;
-    }
-
-    public ScheduledRequest getScheduledRequest() {
-        return scheduledRequest;
-    }
-
-    public String getBranchId() {
-        return branchId;
-    }
-
     XPageContext setXPageId(final String xPageId) {
         this.xPageId = xPageId;
         return this;
+    }
+
+    public String getXPageName() {
+        return xPageName;
     }
 
     XPageContext setXPageName(final String xPageName) {
@@ -69,9 +56,17 @@ public class XPageContext {
         return this;
     }
 
+    public String getXPageState() {
+        return xPageState;
+    }
+
     XPageContext setXPageState(final String xPageState) {
         this.xPageState = xPageState;
         return this;
+    }
+
+    public WorkflowRequest getWorkflowRequest() {
+        return workflowRequest;
     }
 
     XPageContext setWorkflowRequest(final WorkflowRequest workflowRequest) {
@@ -79,9 +74,17 @@ public class XPageContext {
         return this;
     }
 
+    public ScheduledRequest getScheduledRequest() {
+        return scheduledRequest;
+    }
+
     XPageContext setScheduledRequest(final ScheduledRequest scheduledRequest) {
         this.scheduledRequest = scheduledRequest;
         return this;
+    }
+
+    public String getBranchId() {
+        return branchId;
     }
 
     XPageContext setBranchId(final String branchId) {
@@ -89,8 +92,17 @@ public class XPageContext {
         return this;
     }
 
-    public Boolean isPublishable() {
-        return publishable;
+    public String getLockedBy() {
+        return xPageLockedBy;
+    }
+
+    public XPageContext setLockedBy(final String lockedBy) {
+        this.xPageLockedBy = lockedBy;
+        return this;
+    }
+
+    public Optional<Boolean> isPublishable() {
+        return Optional.ofNullable(publishable);
     }
 
     public XPageContext setPublishable(final Boolean publishable) {
@@ -98,8 +110,8 @@ public class XPageContext {
         return this;
     }
 
-    public Boolean isUnpublishable() {
-        return unpublishable;
+    public Optional<Boolean> isUnpublishable() {
+        return Optional.ofNullable(unpublishable);
     }
 
     public XPageContext setUnpublishable(final Boolean unpublishable) {
@@ -107,13 +119,17 @@ public class XPageContext {
         return this;
     }
 
+    public Optional<Boolean> isRequestPublication() {
+        return Optional.ofNullable(requestPublication);
+    }
+
     public XPageContext setRequestPublication(final Boolean requestPublication) {
         this.requestPublication = requestPublication;
         return this;
     }
 
-    public Boolean isRequestPublication() {
-        return requestPublication;
+    public Optional<Boolean> isRequestDepublication() {
+        return Optional.ofNullable(requestDepublication);
     }
 
     public XPageContext setRequestDepublication(final Boolean requestDepublication) {
@@ -121,8 +137,8 @@ public class XPageContext {
         return this;
     }
 
-    public Boolean isRequestDepublication() {
-        return requestDepublication;
+    public Boolean isCopyAllowed() {
+        return copyAllowed;
     }
 
     public XPageContext setCopyAllowed(final Boolean copyAllowed) {
@@ -130,8 +146,8 @@ public class XPageContext {
         return this;
     }
 
-    public Boolean isCopyAllowed() {
-        return copyAllowed;
+    public Boolean isMoveAllowed() {
+        return moveAllowed;
     }
 
     public XPageContext setMoveAllowed(final Boolean moveAllowed) {
@@ -139,8 +155,8 @@ public class XPageContext {
         return this;
     }
 
-    public Boolean isMoveAllowed() {
-        return moveAllowed;
+    public Boolean isDeleteAllowed() {
+        return deleteAllowed;
     }
 
     public XPageContext setDeleteAllowed(final Boolean deleteAllowed) {
@@ -148,7 +164,4 @@ public class XPageContext {
         return this;
     }
 
-    public Boolean isDeleteAllowed() {
-        return deleteAllowed;
-    }
 }

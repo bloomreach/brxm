@@ -18,6 +18,7 @@ class ChannelCtrl {
   constructor(
     $log,
     $rootScope,
+    $state,
     $translate,
     ChannelMenuService,
     ChannelService,
@@ -25,6 +26,7 @@ class ChannelCtrl {
     ConfigService,
     FeedbackService,
     HippoIframeService,
+    PageService,
     PageMenuService,
     PageStructureService,
     ProjectService,
@@ -35,6 +37,7 @@ class ChannelCtrl {
 
     this.$log = $log;
     this.$rootScope = $rootScope;
+    this.$state = $state;
     this.$translate = $translate;
     this.ChannelMenuService = ChannelMenuService;
     this.ChannelService = ChannelService;
@@ -42,6 +45,7 @@ class ChannelCtrl {
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.PageService = PageService;
     this.PageMenuService = PageMenuService;
     this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
@@ -148,6 +152,47 @@ class ChannelCtrl {
 
   isSidePanelFullScreen(side) {
     return this.SidePanelService.isFullScreen(side);
+  }
+
+  add() {
+    if (!this.canAddXPage()) {
+      return;
+    }
+
+    const {
+      xPageLayouts,
+      xPageTemplateQueries,
+    } = this.PageService.getState('channel');
+
+    const layouts = Object.entries(xPageLayouts).map(([id, displayName]) => ({ id, displayName }));
+    const [[documentTemplateQuery, rootPath]] = Object.entries(xPageTemplateQueries);
+    const config = {
+      layouts,
+      documentTemplateQuery,
+      rootPath,
+    };
+    this.$state.go('hippo-cm.channel.create-content-step-1', { config });
+  }
+
+  canAddXPage() {
+    if (!this.PageService.hasState('channel')) {
+      return false;
+    }
+
+    const {
+      xPageLayouts,
+      xPageTemplateQueries,
+    } = this.PageService.getState('channel');
+
+    if (!xPageLayouts || Object.keys(xPageLayouts).length === 0) {
+      return false;
+    }
+
+    if (!xPageTemplateQueries || Object.keys(xPageTemplateQueries).length === 0) {
+      return false;
+    }
+
+    return true;
   }
 }
 

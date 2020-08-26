@@ -20,6 +20,7 @@
         flex="grow">
     <!-- Name and URL fields (as a separate component) -->
     <name-url-fields name-field="$ctrl.name"
+                     name-placeholder="$ctrl.isXPage() ? 'PLACEHOLDER_XPAGE_NAME' : 'PLACEHOLDER_DOCUMENT_NAME'"
                      url-field="$ctrl.url"
                      is-url-updating="$ctrl.isUrlUpdating"
                      locale="$ctrl.locale"
@@ -28,7 +29,7 @@
 
     <!-- Document type field -->
     <md-input-container class="create-content-field qa-doctype-field">
-      <label>{{ ::'PLACEHOLDER_DOCUMENT_TYPE' | translate }}</label>
+      <label>{{ ::$ctrl.isXPage() ? 'PLACEHOLDER_XPAGE_TYPE' : 'PLACEHOLDER_DOCUMENT_TYPE' | translate }}</label>
       <md-select ng-model="$ctrl.documentType"
                  name="documentType"
                  required
@@ -37,6 +38,21 @@
                  ng-class="{ 'hide-select-arrow': $ctrl.documentTypes.length === 1 }">
         <md-option ng-repeat="documentType in $ctrl.documentTypes"
                    value="{{ documentType.id }}">{{ documentType.displayName }}
+        </md-option>
+      </md-select>
+    </md-input-container>
+
+    <!-- XPage Layout field-->
+    <md-input-container class="create-content-field qa-layout-field" ng-if="$ctrl.layouts.length > 0">
+      <label>{{ ::'PLACEHOLDER_XPAGE_LAYOUT' | translate }}</label>
+      <md-select ng-model="$ctrl.layout"
+                 name="layout"
+                 required
+                 ng-disabled="$ctrl.layouts.length === 1"
+                 class="input-layout create-content-field qa-layout-select"
+                 ng-class="{ 'hide-select-arrow': $ctrl.layouts.length === 1 }">
+        <md-option ng-repeat="layout in $ctrl.layouts"
+                   value="{{ layout.id }}">{{ layout.displayName }}
         </md-option>
       </md-select>
     </md-input-container>

@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable } from '@angular/core';
+import { InjectionToken } from '@angular/core';
 
-import { Ng1ProjectService, NG1_PROJECT_SERVICE } from './ng1/project.ng1.service';
+import { PageStates } from '../../models/page-states.model';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class ProjectService {
-  constructor(
-    @Inject(NG1_PROJECT_SERVICE) private readonly ng1ProjectService: Ng1ProjectService,
-  ) { }
-
-  getSelectedProjectId(): string {
-    return this.ng1ProjectService.getSelectedProjectId();
-  }
+export interface Ng1PageService {
+  states: PageStates;
 }
+
+export const NG1_PAGE_SERVICE = new InjectionToken<Ng1PageService>('NG1_PAGE_SERVICE');

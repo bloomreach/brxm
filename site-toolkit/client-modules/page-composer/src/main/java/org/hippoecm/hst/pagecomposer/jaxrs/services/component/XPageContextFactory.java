@@ -73,15 +73,18 @@ final class XPageContextFactory {
 
         if (hints.containsKey("publish")) {
             xPageContext.setPublishable(TRUE.equals(hints.get("publish")));
-        }
-        if (hints.containsKey("depublish")) {
-            xPageContext.setUnpublishable(TRUE.equals(hints.get("depublish")));
-        }
-        if (hints.containsKey("requestPublication")) {
+        } else if (hints.containsKey("requestPublication")) {
             xPageContext.setRequestPublication(TRUE.equals(hints.get("requestPublication")));
         }
-        if (hints.containsKey("requestDepublication")) {
+
+        if (hints.containsKey("depublish")) {
+            xPageContext.setUnpublishable(TRUE.equals(hints.get("depublish")));
+        } else if (hints.containsKey("requestDepublication")) {
             xPageContext.setRequestDepublication(TRUE.equals(hints.get("requestDepublication")));
+        }
+
+        if (hints.containsKey("inUseBy")) {
+            xPageContext.setLockedBy((String) hints.get("inUseBy"));
         }
 
         return xPageContext;

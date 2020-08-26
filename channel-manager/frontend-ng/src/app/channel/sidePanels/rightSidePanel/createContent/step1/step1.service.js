@@ -40,19 +40,26 @@ class Step1Service {
     delete this.defaultPath;
     delete this.documentTemplateQuery;
     delete this.folderTemplateQuery;
+    delete this.layouts;
+    delete this.layout;
   }
 
   stop() {
     this._reset();
   }
 
-  open(documentTemplateQuery, folderTemplateQuery, rootPath, defaultPath) {
+  open(documentTemplateQuery, folderTemplateQuery, rootPath, defaultPath, layouts = []) {
     this._reset();
 
     this.rootPath = this._initRootPath(rootPath);
     this.defaultPath = defaultPath;
     this.documentTemplateQuery = documentTemplateQuery;
     this.folderTemplateQuery = folderTemplateQuery;
+    this.layouts = layouts;
+
+    if (layouts && layouts.length === 1) {
+      this.layout = layouts[0].id;
+    }
 
     return this.ContentService.getDocumentTemplateQuery(documentTemplateQuery)
       .then(documentTemplateQueryResult => this._onLoadDocumentTypes(documentTemplateQueryResult.documentTypes))
@@ -102,6 +109,7 @@ class Step1Service {
       folderTemplateQuery: this.folderTemplateQuery,
       rootPath: this.rootPath,
       defaultPath: this.defaultPath,
+      layout: this.layout,
     };
     return this.ContentService.createDocument(document)
       .catch(error => this._onError(error, 'Unexpected error creating a new document'));
@@ -120,6 +128,10 @@ class Step1Service {
       this.FeedbackService.showError(errorKey);
     }
     return this.$q.reject();
+  }
+
+  isXPage() {
+    return this.layouts && this.layouts.length > 0;
   }
 }
 

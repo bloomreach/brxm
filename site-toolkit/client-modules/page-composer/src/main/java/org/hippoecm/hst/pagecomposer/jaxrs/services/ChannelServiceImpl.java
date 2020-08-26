@@ -62,6 +62,7 @@ import org.hippoecm.hst.platform.api.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.platform.api.beans.FieldGroupInfo;
 import org.hippoecm.hst.platform.api.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
@@ -461,6 +462,12 @@ public class ChannelServiceImpl implements ChannelService {
         return allMounts.stream()
                 .filter(mount -> StringUtils.equals(mountPoint, mount.getMountPoint()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Set<XPageLayout> getXPageLayouts(final String channelId) {
+        final Map<String, XPageLayout> xPageLayoutsMap = channelService.getXPageLayouts(channelId);
+        return new HashSet<>(xPageLayoutsMap.values());
     }
 
     private List<Mount> loadAllMounts(final VirtualHosts virtualHosts) {

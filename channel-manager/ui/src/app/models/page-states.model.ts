@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
+import { ScheduledRequest } from './scheduled-request.model';
+import { WorkflowRequest } from './workflow-request.model';
+import { XPageState } from './xpage-state.model';
 
-import { VersionsInfo } from '../../../versions/models/versions-info.model';
-
-export interface Ng1ContentService {
-  getDocumentVersionsInfo(documentId: string, branchId: string): Promise<VersionsInfo>;
+export interface PageStates {
+  xpage?: XPageState;
+  scheduledRequest?: ScheduledRequest;
+  workflowRequest?: WorkflowRequest;
 }
-
-export const NG1_CONTENT_SERVICE = new InjectionToken<Ng1ContentService>('NG1_CONTENT_SERVICE');

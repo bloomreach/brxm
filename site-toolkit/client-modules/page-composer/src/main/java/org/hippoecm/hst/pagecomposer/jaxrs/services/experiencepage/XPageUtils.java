@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpSession;
 
 import org.apache.jackrabbit.JcrConstants;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -92,6 +93,19 @@ public class XPageUtils {
         final HippoWorkspace workspace = userSession.getWorkspace();
         final WorkflowManager workflowManager = workspace.getWorkflowManager();
         return (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
+    }
+
+    public static boolean isXPageDocument(final Node node) {
+        final Optional<Node> unpublished = WorkflowUtils.getDocumentVariantNode(node, WorkflowUtils.Variant.UNPUBLISHED);
+        if (!unpublished.isPresent()) {
+            return false;
+        }
+
+        try {
+            return unpublished.get().isNodeType(HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN);
+        } catch (RepositoryException e) {
+            return false;
+        }
     }
 
     /**
@@ -211,6 +225,5 @@ public class XPageUtils {
         } else {
             return containerItem;
         }
-
     }
 }

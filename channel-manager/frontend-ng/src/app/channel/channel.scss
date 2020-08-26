@@ -17,3 +17,7 @@
 channel {
   @include layout-fill-flex;
 }
+
+.md-button.toolbar-button-add {
+  margin-left: 20px;
+}

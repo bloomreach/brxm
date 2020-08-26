@@ -40,6 +40,7 @@ class HippoIframeCtrl {
     SpaService,
     ViewportService,
     PageService,
+    ProjectService,
   ) {
     'ngInject';
 
@@ -65,6 +66,7 @@ class HippoIframeCtrl {
     this.SpaService = SpaService;
     this.ViewportService = ViewportService;
     this.PageService = PageService;
+    this.ProjectService = ProjectService;
 
     this.iframeJQueryElement = this.$element.find('iframe');
     this._onSpaReady = this._onSpaReady.bind(this);
@@ -81,8 +83,16 @@ class HippoIframeCtrl {
     this._onMenuEdit = this._onMenuEdit.bind(this);
   }
 
-  get xPageState() {
-    return this.PageService.states ? this.PageService.states.xpage : undefined;
+  get pageStates() {
+    return this.PageService.states;
+  }
+
+  get currentProject() {
+    return this.ProjectService.projects.find(x => x.id === this.ProjectService.getSelectedProjectId());
+  }
+
+  get isEditingSharedContainers() {
+    return this.HippoIframeService.isEditSharedContainers();
   }
 
   $onInit() {

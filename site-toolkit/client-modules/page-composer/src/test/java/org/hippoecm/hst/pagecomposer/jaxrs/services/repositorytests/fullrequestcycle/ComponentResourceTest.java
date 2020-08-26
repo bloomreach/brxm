@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequest
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -28,6 +29,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.util.Maps;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ActionsAndStatesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.CategoryRepresentation;
@@ -87,6 +89,8 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         final ActionsAndStatesRepresentation actionsAndStates = getActionsAndStates(response);
 
         final Map<String, Boolean> actions = flattenActions(actionsAndStates.getActions());
+        final Map<String, Object> states = flattenStates(actionsAndStates.getStates());
+
         final Map<String, Boolean> expectedActionItems = ImmutableMap.<String, Boolean>builder()
                 .put(key(CHANNEL, CHANNEL_CLOSE), true)
                 .put(key(CHANNEL, CHANNEL_DELETE), false)
@@ -104,10 +108,13 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .describedAs("A page component request contains all channel and page actions")
                 .isEqualTo(expectedActionItems);
 
-        final Map<String, Object> states = flattenStates(actionsAndStates.getStates());
+        final Map<String, Object> expectedStates = ImmutableMap.<String, Object>builder()
+                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
+                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.emptyMap())
+                .build();
         Assertions.assertThat(states)
-                .describedAs("A page component request contains no states")
-                .isEmpty();
+                .describedAs("A page component contains only channel states")
+                .isEqualTo(expectedStates);
     }
 
     @Test
@@ -124,6 +131,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
 
         final ActionsAndStatesRepresentation actionsAndStates = getActionsAndStates(response);
         final Map<String, Boolean> actions = flattenActions(actionsAndStates.getActions());
+        final Map<String, Object> states = flattenStates(actionsAndStates.getStates());
 
         final Map<String, Boolean> expectedActionItems = ImmutableMap.<String, Boolean>builder()
                 .put(key(CHANNEL, CHANNEL_CLOSE), true)
@@ -137,10 +145,13 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .describedAs("A page component request contains all channel and page actions")
                 .isEqualTo(expectedActionItems);
 
-        final Map<String, Object> states = flattenStates(actionsAndStates.getStates());
+        final Map<String, Object> expectedStates = ImmutableMap.<String, Object>builder()
+                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
+                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.emptyMap())
+                .build();
         Assertions.assertThat(states)
-                .describedAs("A page component request contains no states")
-                .isEmpty();
+                .describedAs("A page component contains only channel states")
+                .isEqualTo(expectedStates);
     }
 
     @Test
@@ -185,14 +196,16 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
 
         final Map<String, Object> states = flattenStates(actionsAndStates.getStates());
 
-        final Map<String, ?> expectedStates = ImmutableMap.<String, String>builder()
+        final Map<String, Object> expectedStates = ImmutableMap.<String, Object>builder()
                 .put(key(XPAGE, HstState.XPAGE_BRANCH_ID), BranchConstants.MASTER_BRANCH_ID)
                 .put(key(XPAGE, HstState.XPAGE_ID), handleId)
                 .put(key(XPAGE, HstState.XPAGE_NAME), name)
                 .put(key(XPAGE, HstState.XPAGE_STATE), "live")
+                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
+                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.emptyMap())
                 .build();
         Assertions.assertThat(states)
-                .describedAs("A published xpage request contains only xpage states")
+                .describedAs("A published xpage request contains xpage and channel states")
                 .isEqualTo(expectedStates);
     }
 
