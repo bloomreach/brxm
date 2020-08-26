@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,6 +51,7 @@ import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockNodeFactory;
 
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -86,39 +88,34 @@ public class ContainerItemMenuServiceTest extends AbstractPageComposerTest{
     }
 
     private void configureMockContainerItemComponent(final Node node) throws RepositoryException {
-        EasyMock.expect(mockPageComposerContextService.getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT))
+        expect(mockPageComposerContextService.getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT))
                 .andReturn(node).anyTimes();
 
         Mount editingMount = createMock(Mount.class);
         HstSite hstSite = createMock(HstSite.class);
+
+        expect(mockPageComposerContextService.getEditingPreviewSite()).andStubReturn(hstSite);
+
         HstComponentsConfiguration componentsConfiguration = createMock(HstComponentsConfiguration.class);
-        EasyMock.expect(mockPageComposerContextService.getEditingMount())
-                .andReturn(editingMount).anyTimes();
-
-        EasyMock.expect(editingMount.getHstSite())
-                .andReturn(hstSite).anyTimes();
-
-        EasyMock.expect(hstSite.getComponentsConfiguration()).andReturn(componentsConfiguration).anyTimes();
+        expect(hstSite.getComponentsConfiguration()).andStubReturn(componentsConfiguration);
 
         final List<Parameter> parameters = Arrays.stream(DummyInfo.class.getMethods())
                 .map(x -> x.getAnnotation(Parameter.class))
-                .sorted((param1, param2) -> param1.name().compareTo(param2.name())).collect(Collectors.toList());
+                .sorted(Comparator.comparing(Parameter::name)).collect(Collectors.toList());
 
         final MockHstComponentConfiguration componentReference = new MockHstComponentConfiguration("id");
         componentReference.setComponentClassName(DummyComponent.class.getName());
         componentReference.setCanonicalStoredLocation("/");
+        componentReference.setCanonicalIdentifier(node.getIdentifier());
         List<DynamicParameter> dynamicParameters = getDynamicParameters(parameters);
         componentReference.setDynamicComponentParameters(dynamicParameters);
         final HashMap<String, HstComponentConfiguration> componentConfigurations = new HashMap<>();
         componentConfigurations.put("/", componentReference);
 
-        EasyMock.expect(componentsConfiguration.getComponentConfigurations())
+        expect(componentsConfiguration.getComponentConfigurations())
                 .andReturn(componentConfigurations).anyTimes();
 
-        EasyMock.replay(mockPageComposerContextService);
-        EasyMock.replay(editingMount);
-        EasyMock.replay(hstSite);
-        EasyMock.replay(componentsConfiguration);
+        EasyMock.replay(mockPageComposerContextService, editingMount, hstSite, componentsConfiguration);
     }
 
     @NotNull
