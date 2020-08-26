@@ -49,7 +49,9 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.parameters.ValueListProvider;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageComponentParameters;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.AbstractHstComponentParameters;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.hippoecm.hst.platform.api.ValueListProviderService;
@@ -105,21 +107,25 @@ public abstract class ParametersInfoProcessor {
         }
     }
 
+    /**
+     * Note in case of XPage {@code componentConfiguration}, the {@code containerItemHelper} is {@code null} since
+     * for XPage documents the {@code containerItemHelper} is not usable
+     */
     public static List<ContainerItemComponentPropertyRepresentation> getPopulatedProperties(
             final Class<?> infoClassType,
             final Locale locale,
             final String contentPath,
             final String prefix,
             final Node containerItemNode,
+            final HstComponentConfiguration componentConfiguration,
             final ContainerItemHelper containerItemHelper,
-            final List<PropertyRepresentationFactory> propertyPresentationFactories,
-            final HstComponentConfiguration componentReference) throws RepositoryException {
+            final List<PropertyRepresentationFactory> propertyPresentationFactories) throws RepositoryException {
 
-        final ResourceBundle[] resourceBundles = getResourceBundles(infoClassType, locale, componentReference);
+        final ResourceBundle[] resourceBundles = getResourceBundles(infoClassType, locale, componentConfiguration);
 
         final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap = new LinkedHashMap<>();
 
-        for (final DynamicParameter jcrComponentParameter : componentReference.getDynamicComponentParameters()) {
+        for (final DynamicParameter jcrComponentParameter : componentConfiguration.getDynamicComponentParameters()) {
             final ContainerItemComponentPropertyRepresentation property = new ContainerItemComponentPropertyRepresentation();
             property.setName(jcrComponentParameter.getName());
             property.setDefaultValue(jcrComponentParameter.getDefaultValue());
@@ -149,9 +155,14 @@ public abstract class ParametersInfoProcessor {
         }
 
 
-        final List<ContainerItemComponentPropertyRepresentation> properties = orderParametersByFieldGroup(componentReference, propertyMap, resourceBundles);
+        final List<ContainerItemComponentPropertyRepresentation> properties = orderParametersByFieldGroup(componentConfiguration, propertyMap, resourceBundles);
 
-        final HstComponentParameters componentParameters = new HstComponentParameters(containerItemNode, containerItemHelper);
+        final AbstractHstComponentParameters componentParameters;
+        if (componentConfiguration.isExperiencePageComponent()) {
+            componentParameters = new XPageComponentParameters(containerItemNode);
+        } else {
+            componentParameters = new HstComponentParameters(containerItemNode, containerItemHelper);
+        }
 
         setValueForProperties(properties, prefix, componentParameters, contentPath);
 
@@ -160,7 +171,7 @@ public abstract class ParametersInfoProcessor {
             for (final PropertyRepresentationFactory factory : propertyPresentationFactories) {
                 try {
                     final ContainerItemComponentPropertyRepresentation property = factory.createProperty(
-                            locale, contentPath, prefix, containerItemNode, containerItemHelper, componentParameters, 
+                            locale, contentPath, prefix, containerItemNode, componentConfiguration, componentParameters,
                             properties);
                     if (property != null) {
                         properties.add(index, property);
@@ -187,12 +198,12 @@ public abstract class ParametersInfoProcessor {
     @SuppressWarnings("UnusedDeclaration")
     public static void setValueForProperties(final List<ContainerItemComponentPropertyRepresentation> properties,
                                              final String prefix,
-                                             final HstComponentParameters componentParameters) {
+                                             final AbstractHstComponentParameters componentParameters) {
         setValueForProperties(properties, prefix, componentParameters, null);
     }
 
     public static void setValueForProperties(final Collection<ContainerItemComponentPropertyRepresentation> properties,
-                                             final String prefix, final HstComponentParameters componentParameters, 
+                                             final String prefix, final AbstractHstComponentParameters componentParameters,
                                              final String contentPath) {
         for (final ContainerItemComponentPropertyRepresentation prop : properties) {
             setValueForProperty(prop, prefix, componentParameters, contentPath);
@@ -205,13 +216,13 @@ public abstract class ParametersInfoProcessor {
     @SuppressWarnings("UnusedDeclaration")
     public static void setValueForProperty(final ContainerItemComponentPropertyRepresentation property,
                                            final String prefix,
-                                           final HstComponentParameters componentParameters) {
+                                           final AbstractHstComponentParameters componentParameters) {
         setValueForProperty(property, prefix, componentParameters, null);
     }
 
     public static void setValueForProperty(final ContainerItemComponentPropertyRepresentation property,
                                            final String prefix,
-                                           final HstComponentParameters componentParameters, final String contentPath) {
+                                           final AbstractHstComponentParameters componentParameters, final String contentPath) {
         
         final String value = componentParameters.getValue(prefix, property.getName());
         if (value != null && !value.isEmpty()) {

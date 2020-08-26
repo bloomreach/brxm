@@ -145,15 +145,15 @@ public class RepositoryParametersInfoProcessorTest extends AbstractPageComposerT
         final String contentPath = "/content/documents/testchannel";
         final ParametersInfo parameterInfo = TestComponent.class.getAnnotation(ParametersInfo.class);
 
-        final MockHstComponentConfiguration componentReference = createComponentReference(TestComponent.class);
+        final MockHstComponentConfiguration component = createComponentReference(TestComponent.class);
         List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parameterInfo.type(),
                 new Locale("en"),
                 contentPath,
                 DEFAULT_PARAMETER_PREFIX,
                 containerItemNode,
+                component,
                 helper,
-                propertyPresentationFactories,
-                componentReference);
+                propertyPresentationFactories);
 
         assertEquals("englishOnly EN", getProperty(properties, "englishOnly").getLabel());
         assertEquals("both EN", getProperty(properties, "both").getLabel());
@@ -167,9 +167,10 @@ public class RepositoryParametersInfoProcessorTest extends AbstractPageComposerT
                 contentPath,
                 DEFAULT_PARAMETER_PREFIX,
                 containerItemNode,
+                component,
                 helper,
-                propertyPresentationFactories,
-                componentReference);
+                propertyPresentationFactories
+                );
         assertEquals("englishOnly EN", getProperty(properties, "englishOnly").getLabel());
         assertEquals("both NL", getProperty(properties, "both").getLabel());
         assertEquals("englishOnlyGroup EN", getProperty(properties, "englishOnly").getGroupLabel());
