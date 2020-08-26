@@ -53,9 +53,9 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
 
     @Test
     public void get_unpopulated_properties() throws RepositoryException {
-        final MockHstComponentConfiguration componentReference = createComponentReference();
+        final MockHstComponentConfiguration component = createComponentReference();
         final List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
-                containerItemNode, helper, propertyPresentationFactories, componentReference);
+                containerItemNode, component, helper, propertyPresentationFactories);
 
         assertEquals(1, properties.size());
         final ContainerItemComponentPropertyRepresentation prop = properties.get(0);
@@ -67,7 +67,7 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
         {
             List<ContainerItemComponentPropertyRepresentation> propertiesFr = getPopulatedProperties(parameterInfo.type(),
                     Locale.FRENCH, null, DEFAULT_PARAMETER_PREFIX,
-                    containerItemNode, helper, propertyPresentationFactories, componentReference);
+                    containerItemNode, component, helper, propertyPresentationFactories);
             final ContainerItemComponentPropertyRepresentation propFr = propertiesFr.get(0);
             assertEquals("Bar (fr)", propFr.getLabel());
             assertEquals("BAR hint (fr)", propFr.getHint());
@@ -75,7 +75,7 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
         {
             List<ContainerItemComponentPropertyRepresentation> propertiesFrFR = getPopulatedProperties(parameterInfo.type(),
                     Locale.FRANCE, null, DEFAULT_PARAMETER_PREFIX,
-                    containerItemNode, helper, propertyPresentationFactories, componentReference);
+                    containerItemNode, component, helper, propertyPresentationFactories);
 
             final ContainerItemComponentPropertyRepresentation propFrFR = propertiesFrFR.get(0);
             assertEquals("Bar (fr_FR)", propFrFR.getLabel());
@@ -89,11 +89,11 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"bar"});
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"barValue"});
 
-        final MockHstComponentConfiguration componentReference = createComponentReference();
+        final MockHstComponentConfiguration component = createComponentReference();
 
         List<ContainerItemComponentPropertyRepresentation> properties =
                 getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, helper, propertyPresentationFactories, componentReference);
+                        containerItemNode, component, helper, propertyPresentationFactories);
 
         assertEquals(1, properties.size());
         final ContainerItemComponentPropertyRepresentation prop = properties.get(0);
@@ -135,9 +135,8 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
         expect(dropdownNode.getValueProvider()).andReturn(valueProvider).anyTimes();
 
         EasyMock.replay(valueProvider, dropdownNode);
-
-        DropdownListParameterConfig dropdownListParameterConfig = new DynamicComponentParameter.DropdownListParameterConfigImpl(
-                dropdownNode);
+        
+        DropdownListParameterConfig dropdownListParameterConfig = new DynamicComponentParameter.DropdownListParameterConfigImpl(dropdownNode);
         expect(dynamicParameter.getComponentParameterConfig()).andReturn(dropdownListParameterConfig).anyTimes();
         EasyMock.replay(dynamicParameter);
 
@@ -146,17 +145,42 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
         componentReference.setComponentDefinition("hst:components/common-catalog/catalogitem");
     }
 
-    @Test
-    public void get_populated_properties_with_dropdown_field_config_with_source_id() throws RepositoryException {
+	@Test
+    public void get_populated_properties_with_dynamic_parameter_translations() throws RepositoryException {
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"bar", "residualParameter"});
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"barValue", "residualParameterValue"});
-        
-        final MockHstComponentConfiguration componentReference = createComponentReference();
-        initDynamicParameterConfiguration(componentReference);
 
-        List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parameterInfo.type(),
-                null, null, DEFAULT_PARAMETER_PREFIX, containerItemNode, helper, propertyPresentationFactories,
-                componentReference);
+        final MockHstComponentConfiguration component = createComponentReference();
+        initDynamicParameterConfiguration(component);
+
+        List<ContainerItemComponentPropertyRepresentation> properties =
+                getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
+                        containerItemNode, component, helper, propertyPresentationFactories);
+
+        assertEquals(2, properties.size());
+        final ContainerItemComponentPropertyRepresentation prop = properties.get(0);
+        assertEquals("bar", prop.getName());
+        assertEquals("barValue",prop.getValue());
+
+        final ContainerItemComponentPropertyRepresentation prop2 = properties.get(1);
+        assertEquals("residualParameter", prop2.getName());
+        assertEquals("residualParameterValue",prop2.getValue());
+        assertEquals("residualParamLabel",prop2.getLabel());        
+    }
+
+    @Test
+    public void get_populated_properties_with_dropdown_field_config_with_source_id() throws RepositoryException {
+        containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES,
+                new String[] { "bar", "residualParameter" });
+        containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"barValue", "residualParameterValue"});
+        
+        final MockHstComponentConfiguration component = createComponentReference();
+        initDynamicParameterConfiguration(component);
+
+
+        List<ContainerItemComponentPropertyRepresentation> properties =
+                getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
+                        containerItemNode, component, helper, propertyPresentationFactories);
 
         assertEquals(2, properties.size());
         final ContainerItemComponentPropertyRepresentation prop = properties.get(0);
@@ -170,15 +194,15 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
 
     @Test
     public void get_populated_prefixed_properties() throws RepositoryException {
-        containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[] { "bar" });
+        containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"bar"});
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"barValue"});
 
-        final MockHstComponentConfiguration componentReference = createComponentReference();
+        final MockHstComponentConfiguration component = createComponentReference();
 
         {
             List<ContainerItemComponentPropertyRepresentation> prefixedProperties =
                     getPopulatedProperties(parameterInfo.type(), null, null, "some-prefix",
-                            containerItemNode, helper, propertyPresentationFactories, componentReference);
+                            containerItemNode, component, helper, propertyPresentationFactories);
 
             assertEquals(1, prefixedProperties.size());
             final ContainerItemComponentPropertyRepresentation prefixedProp = prefixedProperties.get(0);
@@ -193,7 +217,7 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
         {
             List<ContainerItemComponentPropertyRepresentation> prefixedProperties =
                     getPopulatedProperties(parameterInfo.type(), null, null, "some-prefix",
-                            containerItemNode, helper, propertyPresentationFactories, componentReference);
+                            containerItemNode, component, helper, propertyPresentationFactories);
 
 
             final ContainerItemComponentPropertyRepresentation prefixedProp = prefixedProperties.get(0);

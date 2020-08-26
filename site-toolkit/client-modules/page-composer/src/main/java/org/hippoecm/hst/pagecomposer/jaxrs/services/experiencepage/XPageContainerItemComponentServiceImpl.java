@@ -48,7 +48,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.UnknownClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.PageComposerUtil;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.hippoecm.repository.api.HippoSession;
@@ -71,14 +70,11 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
     private static Logger log = LoggerFactory.getLogger(XPageContainerItemComponentServiceImpl.class);
 
     private final PageComposerContextService pageComposerContextService;
-    private final ContainerItemHelper containerItemHelper;
     private final List<PropertyRepresentationFactory> propertyPresentationFactories;
 
     public XPageContainerItemComponentServiceImpl(final PageComposerContextService pageComposerContextService,
-                                                  final ContainerItemHelper containerItemHelper,
                                                   final List<PropertyRepresentationFactory> propertyPresentationFactories) {
         this.pageComposerContextService = pageComposerContextService;
-        this.containerItemHelper = containerItemHelper;
         this.propertyPresentationFactories = propertyPresentationFactories;
     }
 
@@ -313,6 +309,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
         final ExperiencePageService experiencePageService
                 = HippoServiceRegistry.getService(ExperiencePageService.class);
 
+        // 'componentItemNode' can be frozen node which is supported in experiencePageService.loadExperiencePageComponentItem
         final HstComponentConfiguration config = experiencePageService.loadExperiencePageComponentItem(componentItemNode, hstSite,
                 PageComposerUtil.getEditingSiteClassLoader());
 
@@ -323,8 +320,8 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             parametersInfo = defaultMissingParametersInfo;
         }
 
-        List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parametersInfo.type(), locale, contentPath, prefix, componentItemNode,
-                containerItemHelper, propertyPresentationFactories, config);
+        List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parametersInfo.type(), locale, contentPath, prefix,
+                componentItemNode, config, null, propertyPresentationFactories);
 
         ContainerItemComponentRepresentation representation = new ContainerItemComponentRepresentation();
         representation.setProperties(properties);

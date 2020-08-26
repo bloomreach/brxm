@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -40,14 +42,12 @@ import org.hippoecm.hst.mock.configuration.components.MockHstComponentConfigurat
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.property.SwitchTemplatePropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.AbstractHstComponentParameters;
 import org.hippoecm.hst.platform.configuration.components.DynamicComponentParameter;
 import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
-
-import javax.jcr.RepositoryException;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_PARAMETER_PREFIX;
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
@@ -144,11 +144,11 @@ public class ParametersInfoProcessorTest {
         final String currentMountCanonicalContentPath = "/content/documents/testchannel";
 
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
-        final HstComponentConfiguration componentReference = createComponentReference(NewstyleContainer.class);
+        final HstComponentConfiguration component = createComponentReference(NewstyleContainer.class);
         List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parameterInfo.type(),
                 null,
                 currentMountCanonicalContentPath,
-                DEFAULT_PARAMETER_PREFIX, containerItemNode, helper, propertyPresentationFactories, componentReference);
+                DEFAULT_PARAMETER_PREFIX, containerItemNode, component, helper, propertyPresentationFactories);
 
         assertEquals(14, properties.size());
 
@@ -218,12 +218,12 @@ public class ParametersInfoProcessorTest {
     List<ContainerItemComponentPropertyRepresentation> getProperties(final Class<?> componentClass, final Locale locale,
                                                                      final String contentPath) {
         try {
-            final HstComponentConfiguration componentReference = createComponentReference(componentClass);
+            final HstComponentConfiguration component = createComponentReference(componentClass);
             final ParametersInfo parametersInfo = componentClass.getAnnotation(ParametersInfo.class);
             return getPopulatedProperties(parametersInfo.type(),
                     locale,
                     contentPath,
-                    DEFAULT_PARAMETER_PREFIX, containerItemNode, helper, propertyPresentationFactories, componentReference);
+                    DEFAULT_PARAMETER_PREFIX, containerItemNode, component, helper, propertyPresentationFactories);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -769,8 +769,8 @@ public class ParametersInfoProcessorTest {
     @Test
     public void assert_methods_setValueForX_are_not_removed_since_in_use_by_downstream_projects() {
         try {
-            ParametersInfoProcessor.class.getMethod("setValueForProperties", List.class, String.class, HstComponentParameters.class);
-            ParametersInfoProcessor.class.getMethod("setValueForProperty", ContainerItemComponentPropertyRepresentation.class, String.class, HstComponentParameters.class);
+            ParametersInfoProcessor.class.getMethod("setValueForProperties", List.class, String.class, AbstractHstComponentParameters.class);
+            ParametersInfoProcessor.class.getMethod("setValueForProperty", ContainerItemComponentPropertyRepresentation.class, String.class, AbstractHstComponentParameters.class);
         } catch (NoSuchMethodException e) {
             fail(String.format("Although the method is not used in HST, it is used by downstream projects and is not allowed to be " +
                     "removed : %s", e.toString()));
