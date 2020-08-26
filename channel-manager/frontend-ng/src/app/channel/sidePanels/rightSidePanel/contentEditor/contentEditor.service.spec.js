@@ -237,7 +237,7 @@ describe('ContentEditorService', () => {
 
       function expectUnknownError() {
         expectError({
-          titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+          titleKey: 'FEEDBACK_DOCUMENT_NOT_EDITABLE_TITLE',
           messageKey: 'FEEDBACK_UNKNOWN_ERROR',
           messageParams: {
             errorKey: 'unknown',
@@ -262,8 +262,8 @@ describe('ContentEditorService', () => {
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
         expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expectError({
-          titleKey: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
-          messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
+          titleKey: 'FEEDBACK_DOCUMENT_NOT_EDITABLE_HERE_TITLE',
+          messageKey: 'FEEDBACK_DOCUMENT_NO_EDITABLE_CONTENT_MESSAGE',
           messageParams: {
             displayName: 'Display Name',
           },
@@ -311,8 +311,8 @@ describe('ContentEditorService', () => {
         expect(ContentEditor.getDocumentErrorMessages()).toEqual([]);
         expect(ContentEditor.getPublicationState()).toBe('changed');
         expect(ContentEditor.getError()).toEqual({
-          titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
-          messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
+          titleKey: 'FEEDBACK_DOCUMENT_NOT_EDITABLE_TITLE',
+          messageKey: 'FEEDBACK_DOCUMENT_HELD_BY_OTHER_USER_MESSAGE',
           messageParams: {
             displayName: 'Display Name',
             user: 'John Tester',
@@ -338,8 +338,8 @@ describe('ContentEditorService', () => {
         expect(ContentEditor.getDocument()).toBeUndefined();
         expect(ContentEditor.getDocumentErrorMessages()).toEqual([]);
         expect(ContentEditor.getError()).toEqual({
-          titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
-          messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
+          titleKey: 'FEEDBACK_DOCUMENT_NOT_EDITABLE_TITLE',
+          messageKey: 'FEEDBACK_DOCUMENT_HELD_BY_OTHER_USER_MESSAGE',
           messageParams: {
             user: 'tester',
           },
@@ -367,7 +367,7 @@ describe('ContentEditorService', () => {
         expect(ContentEditor.getPublicationState()).toBe('new');
         expect(ContentEditor.getError()).toEqual({
           titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
-          messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
+          messageKey: 'FEEDBACK_DOCUMENT_REQUEST_PENDING_MESSAGE',
           messageParams: {
             displayName: 'Display Name',
           },
@@ -1273,7 +1273,7 @@ describe('ContentEditorService', () => {
         expect(FeedbackService.showError).not.toHaveBeenCalled();
         expect(ContentEditor.getError()).toEqual({
           titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
-          messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
+          messageKey: 'FEEDBACK_DOCUMENT_REQUEST_PENDING_MESSAGE',
           messageParams: {
             displayName: 'Display Name',
           },
