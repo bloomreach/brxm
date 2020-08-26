@@ -410,9 +410,12 @@ class ContentEditorService {
   }
 
   keepDraft() {
-    this.document.info.retainable = true;
-    return this.ContentService.saveDocument(this.document)
-      .then(savedDocument => this._onLoadSuccess(savedDocument, this.documentType));
+    if (this.document && this.document.info) {
+      this.document.info.retainable = true;
+      return this.ContentService.saveDocument(this.document)
+        .then(savedDocument => this._onLoadSuccess(savedDocument, this.documentType));
+    }
+    return this.$q.resolve();
   }
 
   isRetainable() {
