@@ -212,32 +212,18 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
                                                            final Locale locale,
                                                            final String prefix) throws RepositoryException {
         final String contentPath = getContentPath();
-        final Mount editingMount = pageComposerContextService.getEditingMount();
-        final HstSite hstSite = editingMount.getHstSite();
-        final String componentCanonicalPath = componentItemNode.getPath();
 
-        final HstComponentsConfiguration componentsConfiguration = hstSite.getComponentsConfiguration();
-        final Map<String, HstComponentConfiguration> componentConfigurations = componentsConfiguration.getComponentConfigurations();
-
-        // TODO Below is EXTREMELY tricky and actuall brittle: from a componentItemNode you do not have enough information
-        // TODO to backtrack the HstComponentConfiguration instance that was clicked on in the Channel Mgr: Namely, a
-        // TODO component item can of course be inherited by a news page as well as an agenda page, for example if the
-        // TODO component item is in the inherited 'header' container in abstractpages. So, below you just happen to get
-        // TODO a component reference instance, not perse the one clicked. Then again, if you do not call #getParent
-        // TODO in general it most likely will go fine
-        final HstComponentConfiguration componentReference = componentConfigurations.values().stream() //TODO SS: Optimize loop
-                .filter(x -> x.getCanonicalStoredLocation().equals(componentCanonicalPath)).findFirst()
-                .orElseThrow(() -> new RuntimeException(String.format("Component representation is not found: '%s'", componentCanonicalPath)));
+        final HstComponentConfiguration configObject = containerItemHelper.getConfigObject(componentItemNode.getIdentifier());
 
         ParametersInfo parametersInfo = executeWithWebsiteClassLoader(node ->
-                ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentReference), componentItemNode);
+                ParametersInfoAnnotationUtils.getParametersInfoAnnotation(configObject), componentItemNode);
 
         if (parametersInfo == null) {
             parametersInfo = defaultMissingParametersInfo;
         }
 
         final List<ContainerItemComponentPropertyRepresentation> properties = getPopulatedProperties(parametersInfo.type(), locale, contentPath, prefix, componentItemNode,
-                containerItemHelper, propertyPresentationFactories, componentReference);
+                configObject, containerItemHelper, propertyPresentationFactories);
 
         ContainerItemComponentRepresentation representation = new ContainerItemComponentRepresentation();
         representation.setProperties(properties);

@@ -20,9 +20,9 @@ import java.util.Locale;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.AbstractHstComponentParameters;
 
 public interface PropertyRepresentationFactory {
 
@@ -30,8 +30,10 @@ public interface PropertyRepresentationFactory {
      * @param locale
      * @param contentPath
      * @param prefix
-     * @param containerItemNode
-     * @param containerItemHelper
+     * @param containerItemNode the container item node, either part of the hst configuration or an XPage document
+     * @param componentConfiguration the HstComponentConfiguration for {@code containerItemNode} which can be an hst
+     *                               configuration component item or an XPage document component
+     * containerItemNode} is a container node of an XPage document
      * @param componentParameters
      * @param properties the already existing {@link ContainerItemComponentPropertyRepresentation}s
      * @return a <code>ContainerItemComponentPropertyRepresentation</code> instance or <code>null</code> if no
@@ -44,7 +46,7 @@ public interface PropertyRepresentationFactory {
             final String contentPath,
             final String prefix,
             final Node containerItemNode,
-            final ContainerItemHelper containerItemHelper,
-            final HstComponentParameters componentParameters,
+            final HstComponentConfiguration componentConfiguration,
+            final AbstractHstComponentParameters componentParameters,
             final List<ContainerItemComponentPropertyRepresentation> properties);
 }

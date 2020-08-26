@@ -109,7 +109,6 @@
 
   <bean id="xPageContainerItemComponentService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerItemComponentServiceImpl">
     <constructor-arg ref="pageComposerContextService"/>
-    <constructor-arg ref="containerItemHelper"/>
     <constructor-arg ref="pageComposerPropertyPresentationFactories"/>
   </bean>
   <bean id="hstConfigurationService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl">
