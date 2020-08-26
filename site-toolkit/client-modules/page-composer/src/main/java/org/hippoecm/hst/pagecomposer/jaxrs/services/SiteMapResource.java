@@ -16,6 +16,8 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -177,6 +179,9 @@ public class SiteMapResource extends AbstractConfigResource {
                     ).collect(Collectors.toList());
 
                     pages.getPages().addAll(filteredDuplicates);
+
+                    // sort now the XPage have been added again on pathInfo
+                    Collections.sort(pages.getPages(), Comparator.comparing(SiteMapPageRepresentation::getPathInfo));
 
                 } catch (Exception e) {
                     log.warn("Exception occured while trying to load XPage Documents for the sitemap. Only the SiteMap " +
