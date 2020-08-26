@@ -36,3 +36,8 @@ definitions:
             hst:componentdefinition: hst:components/unittestpackage/testcatalogitequerycomponent
             hst:parameternames: [scope, includeSubtypes, documentTypes, sortField, sortOrder, hidePastItems, hideFutureItems, pageSize]
             hst:parametervalues: [contentforquery, "false", pagemodelapitest:contentforquery, "", ASC, "false", "false", "10"]
+          /testcatalogitemparameteroverrdinginstance:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentdefinition: hst:components/unittestpackage/testcatalogitemparameteroverriding
+            hst:parameternames: [scope, includeSubtypes, documentTypes, sortField, sortOrder, hidePastItems, hideFutureItems, pageSize]
+            hst:parametervalues: ["", "", "", "", "", "", "", ""]

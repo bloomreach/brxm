@@ -21,10 +21,12 @@ import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -149,7 +151,8 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
                     final List<DynamicParameter> dynamicComponentParameters = componentConfiguration
                             .getDynamicComponentParameters();
                     for (final DynamicParameter hstComponentParameter : dynamicComponentParameters) {
-                        if (!hstComponentParameter.isResidual()) {
+                        if (!hstComponentParameter.isResidual()
+                                || isOverriddenParameter(hstComponentParameter, object)) {
                             continue;
                         }
                         String parameterValue = getParameterValue(hstComponentParameter.getName(),
@@ -183,7 +186,25 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
                 throw new IllegalArgumentException("The parameter name is empty.");
             }
 
-            //TODO: While merging component parameters and interface parameter, overriding/removing should be handled. 
+            //If the parameter is overridden by residual parameter, then return residual parameter value
+            if (parameterConfiguration instanceof ComponentConfiguration) {
+                final ComponentConfiguration componentConfiguration = (ComponentConfiguration) parameterConfiguration;
+                final List<DynamicParameter> dynamicComponentParameters = componentConfiguration
+                        .getDynamicComponentParameters();
+                if (dynamicComponentParameters != null) {
+                    final Optional<DynamicParameter> hstComponentParameter = dynamicComponentParameters.stream()
+                            .filter(param -> param.isResidual() && param.getName().equals(parameterName)).findFirst();
+                    if (hstComponentParameter.isPresent()) {
+                        String parameterValue = getParameterValue(hstComponentParameter.get().getName(),
+                                parameterConfiguration, request);
+                        if (StringUtils.isEmpty(parameterValue)) {
+                            parameterValue = hstComponentParameter.get().getDefaultValue();
+                        }
+                        return converter.convert(parameterValue,
+                                hstComponentParameter.get().getValueType().getDefaultReturnType());
+                    }
+                }
+            }
             
             String parameterValue = getParameterValue(parameterName, parameterConfiguration, request);
             String defaultValue = null;
@@ -252,6 +273,14 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
          */
         protected String getPrefixedParameterName(final String parameterName, final ParameterConfiguration parameterConfiguration, final HttpServletRequest req) {
             return parameterName;
+        }
+
+        private boolean isOverriddenParameter(final DynamicParameter hstComponentParameter, final Object object) {
+            if (hstComponentParameter.isResidual()) {
+                final String methodName = "get" + StringUtils.capitalize(hstComponentParameter.getName());
+                return Arrays.stream(object.getClass().getMethods()).anyMatch(mt -> mt.getName().equals(methodName));
+            }
+            return false;
         }
     }
 
