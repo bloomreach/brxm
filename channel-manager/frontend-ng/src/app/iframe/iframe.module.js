@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import angular from 'angular';
 import ngTranslate from 'angular-translate';
 import Penpal from 'penpal';
 import ModelModule from '../model/model.module';

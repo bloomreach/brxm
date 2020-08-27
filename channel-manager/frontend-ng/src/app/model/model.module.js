@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import angular from 'angular';
 import * as HstConstants from './constants';
 import ModelFactoryService from './model-factory.service';
 import {
