@@ -90,9 +90,7 @@ export class VersionsInfoComponent implements OnInit {
     const versionParam = `br_version_uuid=${selectedVersionUUID}`;
     const index = this.versionsInfo.versions.findIndex(v => v.jcrUUID === selectedVersionUUID);
     const homePageRenderPath = this.ng1ChannelService.getHomePageRenderPathInfo();
-    let renderPath = this.ng1ChannelService.makeRenderPath(currentPath);
-
-    renderPath = renderPath.replace(homePageRenderPath, '');
+    const renderPath = this.ng1ChannelService.makeRenderPath(currentPath.replace(homePageRenderPath, ''));
 
     if (index <= 0) {
       return renderPath;
