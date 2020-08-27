@@ -158,6 +158,11 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-builtin</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services</artifactId>
     </dependency>
 
