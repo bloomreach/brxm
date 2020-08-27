@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import angular from 'angular';
 import iframeModule from './iframe.module';
 
-angular.bootstrap(document, [iframeModule]);
+angular.bootstrap(document.currentScript, [iframeModule]);

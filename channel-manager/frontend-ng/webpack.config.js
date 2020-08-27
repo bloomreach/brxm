@@ -102,6 +102,7 @@ const webpackConfig = merge.strategy({ plugins: 'replace' })(config, {
 
     env !== 'test' && new ProvidePlugin({
       $: 'jquery',
+      angular: [src('app/angular-no-conflict.js'), 'default'],
       'window.$': 'jquery',
       'window.jQuery': 'jquery',
       'window.dragula': 'dragula',
