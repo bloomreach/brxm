@@ -148,16 +148,26 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
     @Test
     public void test_api_residual_parameters_menu_component_invalid_site_menu_param_v10_assertion() throws Exception {
+
+        Session session = createSession("admin", "admin");
+        Node catalogItemNode = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pages/residualparamstestpage/container/testcatalogitemenucomponentinstance");
+        catalogItemNode.setProperty("hst:parameternames", new String[]{"menu"});
+        catalogItemNode.setProperty("hst:parametervalues", new String[]{"invalid ref"});
+        session.save();
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MenuDynamicComponent.class).build()) {
 
             String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0", "_maxreflevel=0");
 
             final JsonNode root = mapper.readTree(actual);
-            final String dynamicParamOverriddenValue = root.path("page").path("uid4").path("meta").path("paramsInfo").path("menu").asText();
+            final String dynamicParamOverriddenValue = root.path("page").path("uid3").path("meta").path("paramsInfo").path("menu").asText();
             assertEquals("Field 'siteMenu' does not contain expected value", "invalid ref", dynamicParamOverriddenValue);
 
             List<LogEvent> messages = interceptor.getEvents();
             Assert.assertTrue(interceptor.messages().anyMatch(m -> m.equals("Invalid site menu is selected within MenuDynamicComponent: " + dynamicParamOverriddenValue)));
+            catalogItemNode.setProperty("hst:parameternames", new String[]{"menu"});
+            catalogItemNode.setProperty("hst:parametervalues", new String[]{"main"});
+            session.logout();
+
         }
     }
 
@@ -170,7 +180,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         assertEquals("Field 'siteMenu' does not contain expected value", "main", validSiteMenu);
 
         final String menuReference = root.path("page").path("uid3").path("models").path("menu").path("$ref").asText();
-        assertEquals("Output does not contain reference to menu document", menuReference, "/page/uid7");
+        assertEquals("Output does not contain reference to menu document", menuReference, "/page/uid6");
     }
 
     @Test
@@ -179,45 +189,45 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
         final JsonNode root = mapper.readTree(actual);
 
-        final int paramCount = root.path("page").path("uid5").path("meta").path("paramsInfo").size();
+        final int paramCount = root.path("page").path("uid4").path("meta").path("paramsInfo").size();
         assertEquals("Number of parameters inside paramsinfo", 9, paramCount);
 
-        final String scope = root.path("page").path("uid5").path("meta").path("paramsInfo").path("scope").asText();
+        final String scope = root.path("page").path("uid4").path("meta").path("paramsInfo").path("scope").asText();
         assertEquals("Field 'scope' does not contain expected value", "contentforquery", scope);
 
-        final int pageSize = root.path("page").path("uid5").path("meta").path("paramsInfo").path("pageSize")
+        final int pageSize = root.path("page").path("uid4").path("meta").path("paramsInfo").path("pageSize")
                 .asInt();
         assertEquals("Field 'pageSize' does not contain expected value", 10, pageSize);
 
-        final String sortField = root.path("page").path("uid5").path("meta").path("paramsInfo").path("sortField").asText();
+        final String sortField = root.path("page").path("uid4").path("meta").path("paramsInfo").path("sortField").asText();
         assertEquals("Field 'sortField' does not contain expected value", "", sortField);
 
-        final String documentTypes = root.path("page").path("uid5").path("meta").path("paramsInfo").path("documentTypes").asText();
+        final String documentTypes = root.path("page").path("uid4").path("meta").path("paramsInfo").path("documentTypes").asText();
         assertEquals("Field 'documentTypes' does not contain expected value", "pagemodelapitest:contentforquery", documentTypes);
 
-        final boolean booleanSubType = root.path("page").path("uid5").path("meta").path("paramsInfo").path("includeSubtypes")
+        final boolean booleanSubType = root.path("page").path("uid4").path("meta").path("paramsInfo").path("includeSubtypes")
                 .asBoolean();
         assertEquals("Field 'includeSubtypes' does not contain expected value", false, booleanSubType);
 
-        final String sortOrder = root.path("page").path("uid5").path("meta").path("paramsInfo").path("sortOrder").asText();
+        final String sortOrder = root.path("page").path("uid4").path("meta").path("paramsInfo").path("sortOrder").asText();
         assertEquals("Field 'sortOrder' does not contain expected value", "ASC", sortOrder);
 
-        final String dateField = root.path("page").path("uid5").path("meta").path("paramsInfo").path("dateField").asText();
+        final String dateField = root.path("page").path("uid4").path("meta").path("paramsInfo").path("dateField").asText();
         assertEquals("Field 'dateField' does not contain expected value", "", dateField);
 
-        final boolean booleanHidePastItems = root.path("page").path("uid5").path("meta").path("paramsInfo").path("hidePastItems")
+        final boolean booleanHidePastItems = root.path("page").path("uid4").path("meta").path("paramsInfo").path("hidePastItems")
                 .asBoolean();
         assertEquals("Field 'hidePastItems' does not contain expected value", false, booleanHidePastItems);
 
-        final boolean booleanFuturePastItems = root.path("page").path("uid5").path("meta").path("paramsInfo").path("hideFutureItems")
+        final boolean booleanFuturePastItems = root.path("page").path("uid4").path("meta").path("paramsInfo").path("hideFutureItems")
                 .asBoolean();
         assertEquals("Field 'hideFutureItems' does not contain expected value", false, booleanFuturePastItems);
 
-        assertTrue("Field 'pagination' is missing", root.path("page").path("uid5").path("models").has("pagination"));
-        final String contentReference = root.path("page").path("uid5").path("models").path("pagination").path("$ref").asText();
-        assertEquals("Output does not contain reference to content document", contentReference, "/page/uid8");
-        assertTrue("Field 'scope' is missing", root.path("page").path("uid5").path("models").has("scope"));
-        final String contentQueryReference = root.path("page").path("uid5").path("models").path("scope").path("$ref").asText();
+        assertTrue("Field 'pagination' is missing", root.path("page").path("uid4").path("models").has("pagination"));
+        final String contentReference = root.path("page").path("uid4").path("models").path("pagination").path("$ref").asText();
+        assertEquals("Output does not contain reference to content document", contentReference, "/page/uid7");
+        assertTrue("Field 'scope' is missing", root.path("page").path("uid4").path("models").has("scope"));
+        final String contentQueryReference = root.path("page").path("uid4").path("models").path("scope").path("$ref").asText();
         assertNotNull("Content query scope reference ", contentQueryReference);
         assertTrue("Content document is missing from the pma output", root.path("page").has(contentQueryReference.split("/page/")[1]));
     }
@@ -228,49 +238,49 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
         final JsonNode root = mapper.readTree(actual);
 
-        final int pageSize = root.path("page").path("uid8").path("size")
+        final int pageSize = root.path("page").path("uid7").path("size")
                 .asInt();
         assertEquals("Field 'size' does not contain expected value", 10, pageSize);
 
-        final int currentPage = root.path("page").path("uid8").path("current").path("number")
+        final int currentPage = root.path("page").path("uid7").path("current").path("number")
                 .asInt();
         assertEquals("Field 'current' does not contain expected value", 1, currentPage);
 
-        final int totalRecords = root.path("page").path("uid8").path("total")
+        final int totalRecords = root.path("page").path("uid7").path("total")
                 .asInt();
         assertEquals("Field 'total' does not contain expected value", 6, totalRecords);
 
-        final boolean paginationFlag = root.path("page").path("uid8").path("enabled")
+        final boolean paginationFlag = root.path("page").path("uid7").path("enabled")
                 .asBoolean();
         assertEquals("Field 'enabled' does not contain expected value", true, paginationFlag);
 
-        final int firstPage = root.path("page").path("uid8").path("first").path("number")
+        final int firstPage = root.path("page").path("uid7").path("first").path("number")
                 .asInt();
         assertEquals("Field 'first' does not contain expected value", 1, firstPage);
 
-        final int offset = root.path("page").path("uid8").path("offset")
+        final int offset = root.path("page").path("uid7").path("offset")
                 .asInt();
         assertEquals("Field 'offset' does not contain expected value", 0, offset);
 
-        final int lastPage = root.path("page").path("uid8").path("last").path("number")
+        final int lastPage = root.path("page").path("uid7").path("last").path("number")
                 .asInt();
         assertEquals("Field 'last' does not contain expected value", 1, lastPage);
 
-        final int nextPage = root.path("page").path("uid8").path("next")
+        final int nextPage = root.path("page").path("uid7").path("next")
                 .asInt();
         assertEquals("Field 'next' does not contain expected value", 0, nextPage);
 
-        final int previousPage = root.path("page").path("uid8").path("previous")
+        final int previousPage = root.path("page").path("uid7").path("previous")
                 .asInt();
         assertEquals("Field 'previous' does not contain expected value", 0, previousPage);
 
-        final int pageCount = root.path("page").path("uid8").path("size").asInt();
+        final int pageCount = root.path("page").path("uid7").path("size").asInt();
         assertEquals("Number of elements inside pages", 10, pageCount);
 
-        final int contentItemLength = root.path("page").path("uid8").path("items").size();
+        final int contentItemLength = root.path("page").path("uid7").path("items").size();
         assertEquals("Number of elements inside items", 6, contentItemLength);
 
-        JsonNode itemsArray = root.path("page").path("uid8").path("items");
+        JsonNode itemsArray = root.path("page").path("uid7").path("items");
         for(int counter = 0; counter<contentItemLength; counter++)
         {
             assertNotNull("Content items", itemsArray.get(counter).path("$ref"));
@@ -662,7 +672,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         }
 
         final JsonNode root = mapper.readTree(actual);
-        final JsonNode paramsInfo = root.path("page").path("uid6").path("meta").path("paramsInfo");
+        final JsonNode paramsInfo = root.path("page").path("uid5").path("meta").path("paramsInfo");
 
         final int paramCount = paramsInfo.size();
         assertEquals("Number of parameters inside paramsinfo", 9, paramCount);
