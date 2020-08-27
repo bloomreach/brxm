@@ -68,7 +68,7 @@ public class HstComponentCatalogIT extends AbstractTestConfigurations {
             assertThat(catalogItems.size())
                     .as("Expected two catalog items bootstrapped below " +
                             "'/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage'")
-                    .isEqualTo(5);
+                    .isEqualTo(6);
 
 
             final HstComponentConfiguration bannerOldStyle = catalogItems.stream().filter(c -> c.getName().equals("unittestpackage/banner-old-style")).findFirst().get();
