@@ -63,10 +63,22 @@
     </property>
   </bean>
 
+  <!-- in case a component is locked but the reason only known by a downstream project, a downstream project can
+       contribute the reason: the first downstream reason contributor that 'knows' the reason, get to set the reason
+  -->
+  <bean id="componentLockedReasonContributors" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
+
   <bean id="cmsComponentAttributeContributors" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
-        <bean class="org.hippoecm.hst.core.channelmanager.CmsComponentComponentWindowAttributeContributor"/>
+        <bean class="org.hippoecm.hst.core.channelmanager.CmsComponentComponentWindowAttributeContributor">
+          <property name="componentLockedReasonContributors" ref="componentLockedReasonContributors"/>
+        </bean>
       </list>
     </property>
   </bean>
