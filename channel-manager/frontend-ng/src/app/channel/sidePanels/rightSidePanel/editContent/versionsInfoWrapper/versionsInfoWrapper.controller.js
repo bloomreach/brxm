@@ -36,8 +36,8 @@ class VersionsInfoWrapperCtrl {
     this.branchId = this.ProjectService.getSelectedProjectId();
     this.checkUnpublishedVariantId();
 
-    this._onPageChange = this.$rootScope.$on('page:change', this.checkUnpublishedVariantId());
-    this._onPageCheckChanges = this.$rootScope.$on('page:check-changes', this.checkUnpublishedVariantId());
+    this._onPageChange = this.$rootScope.$on('page:change', () => this.checkUnpublishedVariantId());
+    this._onPageCheckChanges = this.$rootScope.$on('page:check-changes', () => this.checkUnpublishedVariantId());
   }
 
   $onDestroy() {
