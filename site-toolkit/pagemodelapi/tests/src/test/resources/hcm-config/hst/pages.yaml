@@ -26,11 +26,6 @@ definitions:
             hst:componentdefinition: hst:components/unittestpackage/testcatalogitemenucomponent
             hst:parameternames: [menu]
             hst:parametervalues: [main]
-          /testcatalogitemenucomponentinstanceinvalid:
-            jcr:primaryType: hst:containeritemcomponent
-            hst:componentdefinition: hst:components/unittestpackage/testcatalogitemenucomponent
-            hst:parameternames: [menu]
-            hst:parametervalues: [invalid ref]
           /testcatalogitequerycomponentinstance:
             jcr:primaryType: hst:containeritemcomponent
             hst:componentdefinition: hst:components/unittestpackage/testcatalogitequerycomponent
