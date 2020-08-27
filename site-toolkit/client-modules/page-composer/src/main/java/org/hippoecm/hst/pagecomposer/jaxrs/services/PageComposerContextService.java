@@ -25,6 +25,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,15 +33,13 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
-import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
-import org.onehippo.repository.branch.BranchConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -226,20 +225,8 @@ public class PageComposerContextService {
     }
 
     public String getSelectedBranchId() {
-        final HttpSession httpSession = getRequestContext().getServletRequest().getSession();
-        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
-        if (cmsSessionContext == null) {
-            return null;
-        }
-        final BranchSelectionService branchSelectionService = HippoServiceRegistry.getService(BranchSelectionService.class);
-        if (branchSelectionService == null) {
-            return null;
-        }
-        final String branchId = branchSelectionService.getSelectedBranchId(cmsSessionContext.getContextPayload());
-        if (branchId == null) {
-            return BranchConstants.MASTER_BRANCH_ID;
-        }
-        return branchId;
+        final HttpServletRequest servletRequest = getRequestContext().getServletRequest();
+        return HstRequestUtils.getCmsSessionActiveBranchId(servletRequest);
     }
 
 }

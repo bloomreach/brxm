@@ -130,6 +130,10 @@ public interface EditableWorkflow extends Workflow {
      * <p>
      * Same as for {@link #hints()} (which returns hints for master) only now the hints for a specific {@code branchId}
      * </p>
+     * <p>
+     *     The {@code branchId} is allowed to be a non-existing branch: then just the hints for a non existing branch
+     *     are returned, which in general results in not many actions being allowed
+     * </p>
      *
      * @param branchId the branch to request the hints for.
      * @see #hints()

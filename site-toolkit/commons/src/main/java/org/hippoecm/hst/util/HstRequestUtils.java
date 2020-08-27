@@ -45,6 +45,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.platform.model.HstModel;
@@ -55,6 +56,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
+import org.onehippo.repository.branch.BranchConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -958,5 +960,32 @@ public class HstRequestUtils {
                         "is allowed", PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE, AccessToken.class.getName()));
             }
         }
+    }
+
+    /**
+     * <p>
+     *     If for {@code request} there is a CmsSessionContext (tied to the http Session for {@code request}, the stored
+     *     branchId on the cms session context payload is returned, and if no specific branchId info stored,
+     *     {@link BranchConstants#MASTER_BRANCH_ID} is returned
+     * </p>
+     * @param request the current http servlet request
+     * @return the selected branch Id on the CmsSessionContext and when not found returns {@link BranchConstants#MASTER_BRANCH_ID}
+     */
+    public static String getCmsSessionActiveBranchId(final HttpServletRequest request) {
+        final CmsSessionContext cmsSessionContext = getCmsSessionContext(request);
+        if (cmsSessionContext == null) {
+            return BranchConstants.MASTER_BRANCH_ID;
+        }
+        final BranchSelectionService branchSelectionService = HippoServiceRegistry.getService(BranchSelectionService.class);
+        if (branchSelectionService == null) {
+            // there is no branchSelectionService registered which can happen if there is no page-composer jar deployed
+            // in case of hst + repo deployments without cms (and no need for page-composer)
+            return BranchConstants.MASTER_BRANCH_ID;
+        }
+        final String branchId = branchSelectionService.getSelectedBranchId(cmsSessionContext.getContextPayload());
+        if (branchId == null) {
+            return BranchConstants.MASTER_BRANCH_ID;
+        }
+        return branchId;
     }
 }
