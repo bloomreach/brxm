@@ -34,11 +34,14 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.JcrSessionUtils;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,15 +80,28 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
                             handle.getPrimaryNodeType().getName());
                     return;
                 }
-                final Workflow documentWorkflow = cmsUser.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
-                final Map<String, Serializable> hints = documentWorkflow.hints();
+                final Workflow workflow = cmsUser.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
+
+                if (!(workflow instanceof DocumentWorkflow)) {
+                    log.debug("No DocumentWorkflow for '{}'", handle.getPath());
+                    return;
+                }
+
+                final DocumentWorkflow documentWorkflow = (DocumentWorkflow)workflow;
+
+                final String cmsSessionActiveBranchId = HstRequestUtils.getCmsSessionActiveBranchId(request);
+                final Map<String, Serializable> hints = documentWorkflow.hints(cmsSessionActiveBranchId);
                 if (FALSE.equals(hints.get(obtainEditableInstance().getAction()))) {
                     // Document most likely locked
                     final String inUseBy = (String) hints.get("inUseBy");
                     if (StringUtils.isNotBlank(inUseBy)) {
                         populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, inUseBy);
                     } else if (hints.get("requests") != null) {
+                        // TODO i18n
                         populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, "workflow request");
+                    } else if (!documentWorkflow.listBranches().contains(cmsSessionActiveBranchId)){
+                        // TODO i18n
+                        populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, "not part of project");
                     } else {
                         populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, "unknown");
                     }

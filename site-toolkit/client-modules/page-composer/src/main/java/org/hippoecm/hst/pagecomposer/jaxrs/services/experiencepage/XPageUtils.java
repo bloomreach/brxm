@@ -72,7 +72,7 @@ public class XPageUtils {
 
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(userSession, contextService);
         try {
-            if (Boolean.FALSE.equals(documentWorkflow.hints().get(DocumentWorkflowAction.obtainEditableInstance().getAction()))) {
+            if (Boolean.FALSE.equals(documentWorkflow.hints(contextService.getSelectedBranchId()).get(DocumentWorkflowAction.obtainEditableInstance().getAction()))) {
                 throw new ClientException("Document not editable", ClientError.ITEM_ALREADY_LOCKED);
             }
         } catch (RemoteException e) {
@@ -126,7 +126,8 @@ public class XPageUtils {
                                          final PageComposerContextService contextService) throws WorkflowException, RepositoryException {
 
         try {
-            if (!Boolean.TRUE.equals(documentWorkflow.hints().get("checkoutBranch"))) {
+
+            if (!Boolean.TRUE.equals(documentWorkflow.hints(contextService.getSelectedBranchId()).get("checkoutBranch"))) {
                 // there is only master branch, so no need to check out a branch
                 return false;
             }
