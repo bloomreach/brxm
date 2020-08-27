@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.channelmanager;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -51,6 +52,12 @@ import static org.hippoecm.repository.api.DocumentWorkflowAction.obtainEditableI
 public class CmsComponentComponentWindowAttributeContributor implements ComponentWindowAttributeContributor {
 
     private final static Logger log = LoggerFactory.getLogger(CmsComponentComponentWindowAttributeContributor.class);
+
+    private List<ComponentLockedReasonContributor> componentLockedReasonContributors;
+
+    public void setComponentLockedReasonContributors(final List<ComponentLockedReasonContributor> componentLockedReasonContributors) {
+        this.componentLockedReasonContributors = componentLockedReasonContributors;
+    }
 
     @Override
     public void contributePreamble(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap) {
@@ -92,18 +99,9 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
                 final Map<String, Serializable> hints = documentWorkflow.hints(cmsSessionActiveBranchId);
                 if (FALSE.equals(hints.get(obtainEditableInstance().getAction()))) {
                     // Document most likely locked
-                    final String inUseBy = (String) hints.get("inUseBy");
-                    if (StringUtils.isNotBlank(inUseBy)) {
-                        populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, inUseBy);
-                    } else if (hints.get("requests") != null) {
-                        // TODO i18n
-                        populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, "workflow request");
-                    } else if (!documentWorkflow.listBranches().contains(cmsSessionActiveBranchId)){
-                        // TODO i18n
-                        populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, "not part of project");
-                    } else {
-                        populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, "unknown");
-                    }
+                    final String reason = getLockedReason(compConfig, requestContext, documentWorkflow, cmsSessionActiveBranchId, hints);
+                    log.debug("Component configuration '{}' locked : '{}'", compConfig.getCanonicalStoredLocation(), reason);
+                    populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, reason);
                 }
 
             } else {
@@ -161,6 +159,31 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
 
     }
 
+    private String getLockedReason(final HstComponentConfiguration compConfig,
+                                   final HstRequestContext requestContext,
+                                   final DocumentWorkflow documentWorkflow,
+                                   final String cmsSessionActiveBranchId,
+                                   final Map<String, Serializable> hints) throws WorkflowException {
+        final String inUseBy = (String) hints.get("inUseBy");
+        if (StringUtils.isNotBlank(inUseBy)) {
+            return inUseBy;
+
+        } else if (hints.get("requests") != null) {
+            // TODO i18n
+            return "workflow request";
+        } else if (!documentWorkflow.listBranches().contains(cmsSessionActiveBranchId)){
+            // TODO i18n
+            return "not part of project";
+        } else {
+            return componentLockedReasonContributors.stream()
+                    .map(componentLockedReasonContributor -> componentLockedReasonContributor
+                            .findReason(requestContext, compConfig, documentWorkflow, hints, cmsSessionActiveBranchId))
+                    .filter(optional -> optional.isPresent())
+                    .map(optional -> optional.get())
+                    .findFirst().orElse("unknown");
+        }
+    }
+
     @Override
     public void contributeEpilogue(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap) {
         HstComponentConfiguration config = ((HstComponentConfiguration) window.getComponentInfo());
@@ -176,4 +199,5 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
         }
         return label;
     }
+
 }
