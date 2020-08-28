@@ -25,4 +25,7 @@ public class ChannelManagerPrivileges {
 
     // users having role hippo:author on an experience page can modify its content and its layout
     public static final String XPAGE_REQUIRED_PRIVILEGE_NAME = "hippo:author";
+
+    // required role to be able to edit a document
+    public static final String DOCUMENT_EDIT_REQUIRED_PRIVILEGE_NAME = "hippo:author";
 }

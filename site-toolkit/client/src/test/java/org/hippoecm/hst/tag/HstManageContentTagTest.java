@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,12 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.security.AccessControlManager;
+import javax.jcr.security.Privilege;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 
+import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
@@ -41,6 +44,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.container.MockHstComponentWindow;
 import org.hippoecm.hst.mock.core.request.MockComponentConfiguration;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
+import org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -58,11 +62,14 @@ import org.springframework.mock.web.MockServletContext;
 import static javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE;
 import static javax.servlet.jsp.tagext.Tag.EVAL_PAGE;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hippoecm.hst.core.container.ContainerConstants.CMS_USER_SESSION_ATTR_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.DOCUMENT_EDIT_REQUIRED_PRIVILEGE_NAME;
 import static org.junit.Assert.assertThat;
 
 public class HstManageContentTagTest {
@@ -76,7 +83,10 @@ public class HstManageContentTagTest {
         final StringBuilder expected = new StringBuilder();
 
         expected.append("<!-- {");
-        expected.append("\"HST-Type\":\"MANAGE_CONTENT_LINK\",");
+        expected.append("\"HST-Type\":\"MANAGE_CONTENT_LINK\"");
+        if (keysAndValues.length > 0) {
+            expected.append(",");
+        }
         for (int i = 0; i < keysAndValues.length; i++) {
             expected.append(String.format("\"%s\"", keysAndValues[i]));
             if (i % 2 == 0) {
@@ -205,10 +215,17 @@ public class HstManageContentTagTest {
         final HippoBean document = createMock(HippoBean.class);
         tag.setHippobean(document);
 
-        final MockNode root = MockNode.root();
+        final AccessControlManager acm = createMock(AccessControlManager.class);
+        final Privilege docEditPrivilege = createMock(Privilege.class);
+
+        final MockNode root = MockNode.root(null, acm);
+        hstRequestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, root.getSession());
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
+
+        expect(docEditPrivilege.getName()).andStubReturn(DOCUMENT_EDIT_REQUIRED_PRIVILEGE_NAME);
+        expect(acm.getPrivileges(eq(handle.getPath()))).andStubReturn(new Privilege[]{docEditPrivilege});
         expect(document.getNode()).andReturn(handle);
-        replay(document);
+        replay(document, acm, docEditPrivilege);
 
         assertManageContentResponse("uuid", handle.getIdentifier());
     }
@@ -218,13 +235,46 @@ public class HstManageContentTagTest {
         final HippoBean document = createMock(HippoBean.class);
         tag.setHippobean(document);
 
-        final MockNode root = MockNode.root();
+        final AccessControlManager acm = createMock(AccessControlManager.class);
+        final Privilege docEditPrivilege = createMock(Privilege.class);
+
+
+        final MockNode root = MockNode.root(null, acm);
+        hstRequestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, root.getSession());
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
+
+        expect(docEditPrivilege.getName()).andStubReturn(DOCUMENT_EDIT_REQUIRED_PRIVILEGE_NAME);
+        expect(acm.getPrivileges(eq(handle.getPath()))).andStubReturn(new Privilege[]{docEditPrivilege});
+
         final MockNode variant = handle.addNode("document", "myproject:newsdocument");
         expect(document.getNode()).andReturn(variant);
-        replay(document);
+        replay(document, acm, docEditPrivilege);
+
 
         assertManageContentResponse("uuid", handle.getIdentifier());
+    }
+
+    @Test
+    public void documentFromVariantBelowHandle_not_in_role_does_not_output_content_edit_UUID() throws Exception {
+        final HippoBean document = createMock(HippoBean.class);
+        tag.setHippobean(document);
+
+        final AccessControlManager acm = createMock(AccessControlManager.class);
+        final Privilege docEditPrivilege = createMock(Privilege.class);
+
+        final MockNode root = MockNode.root(null, acm);
+        hstRequestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, root.getSession());
+        final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
+
+        expect(docEditPrivilege.getName()).andStubReturn("SomeRole");
+        expect(acm.getPrivileges(eq(handle.getPath()))).andStubReturn(new Privilege[]{docEditPrivilege});
+
+        final MockNode variant = handle.addNode("document", "myproject:newsdocument");
+        expect(document.getNode()).andReturn(variant);
+        replay(document, acm, docEditPrivilege);
+
+
+        assertManageContentResponse();
     }
 
     @Test
@@ -361,8 +411,16 @@ public class HstManageContentTagTest {
         final HippoBean document = createMock(HippoBean.class);
         tag.setHippobean(document);
 
-        final MockNode root = MockNode.root();
+        final AccessControlManager acm = createMock(AccessControlManager.class);
+        final Privilege docEditPrivilege = createMock(Privilege.class);
+
+        final MockNode root = MockNode.root(null, acm);
+        hstRequestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, root.getSession());
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
+
+        expect(docEditPrivilege.getName()).andStubReturn(DOCUMENT_EDIT_REQUIRED_PRIVILEGE_NAME);
+        expect(acm.getPrivileges(eq(handle.getPath()))).andStubReturn(new Privilege[]{docEditPrivilege});
+
         expect(document.getNode()).andReturn(handle);
 
         final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
@@ -371,7 +429,7 @@ public class HstManageContentTagTest {
         expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
         hstRequestContext.setResolvedMount(resolvedMount);
 
-        replay(document, resolvedMount, mount);
+        replay(document, resolvedMount, mount, acm, docEditPrivilege);
 
         assertManageContentResponse(
             "parameterName", "absPath",
@@ -398,11 +456,18 @@ public class HstManageContentTagTest {
         final HippoBean document = createMock(HippoBean.class);
         tag.setHippobean(document);
 
-        final MockNode root = MockNode.root();
+        final AccessControlManager acm = createMock(AccessControlManager.class);
+        final Privilege docEditPrivilege = createMock(Privilege.class);
+
+        final MockNode root = MockNode.root(null, acm);
+        hstRequestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, root.getSession());
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
+
+        expect(docEditPrivilege.getName()).andStubReturn(DOCUMENT_EDIT_REQUIRED_PRIVILEGE_NAME);
+        expect(acm.getPrivileges(eq(handle.getPath()))).andStubReturn(new Privilege[]{docEditPrivilege});
         expect(document.getNode()).andReturn(handle);
 
-        replay(resolvedMount, mount, document);
+        replay(resolvedMount, mount, document, acm, docEditPrivilege);
 
         assertManageContentResponse(
             "parameterName", "relPath",
@@ -425,8 +490,15 @@ public class HstManageContentTagTest {
         final HippoBean document = createMock(HippoBean.class);
         tag.setHippobean(document);
 
-        final MockNode root = MockNode.root();
+        final AccessControlManager acm = createMock(AccessControlManager.class);
+        final Privilege docEditPrivilege = createMock(Privilege.class);
+
+        final MockNode root = MockNode.root(null, acm);
+        hstRequestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, root.getSession());
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
+
+        expect(docEditPrivilege.getName()).andStubReturn(DOCUMENT_EDIT_REQUIRED_PRIVILEGE_NAME);
+        expect(acm.getPrivileges(eq(handle.getPath()))).andStubReturn(new Privilege[]{docEditPrivilege});
         expect(document.getNode()).andReturn(handle);
 
         final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
@@ -435,7 +507,7 @@ public class HstManageContentTagTest {
         expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
         hstRequestContext.setResolvedMount(resolvedMount);
 
-        replay(document, resolvedMount, mount);
+        replay(document, resolvedMount, mount, acm, docEditPrivilege);
 
         assertManageContentResponse(
             "parameterName", "absPath",
@@ -457,8 +529,16 @@ public class HstManageContentTagTest {
         final HippoBean document = createMock(HippoBean.class);
         tag.setHippobean(document);
 
-        final MockNode root = MockNode.root();
+        final AccessControlManager acm = createMock(AccessControlManager.class);
+        final Privilege docEditPrivilege = createMock(Privilege.class);
+
+        final MockNode root = MockNode.root(null, acm);
+        hstRequestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, root.getSession());
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
+
+        expect(docEditPrivilege.getName()).andStubReturn(DOCUMENT_EDIT_REQUIRED_PRIVILEGE_NAME);
+        expect(acm.getPrivileges(eq(handle.getPath()))).andStubReturn(new Privilege[]{docEditPrivilege});
+
         expect(document.getNode()).andReturn(handle);
 
         final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
@@ -467,7 +547,7 @@ public class HstManageContentTagTest {
         expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
         hstRequestContext.setResolvedMount(resolvedMount);
 
-        replay(document, resolvedMount, mount);
+        replay(document, resolvedMount, mount, acm, docEditPrivilege);
 
         assertManageContentResponse(
             "parameterName", "absPath",
@@ -513,8 +593,16 @@ public class HstManageContentTagTest {
         final HippoBean document = createMock(HippoBean.class);
         tag.setHippobean(document);
 
-        final MockNode root = MockNode.root();
+        final AccessControlManager acm = createMock(AccessControlManager.class);
+        final Privilege docEditPrivilege = createMock(Privilege.class);
+
+        final MockNode root = MockNode.root(null, acm);
+        hstRequestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, root.getSession());
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
+
+        expect(docEditPrivilege.getName()).andStubReturn(DOCUMENT_EDIT_REQUIRED_PRIVILEGE_NAME);
+        expect(acm.getPrivileges(eq(handle.getPath()))).andStubReturn(new Privilege[]{docEditPrivilege});
+
         expect(document.getNode()).andReturn(handle);
 
         final Session jcrSession = createMock(Session.class);
@@ -525,7 +613,7 @@ public class HstManageContentTagTest {
         expect(folderNode.isNodeType(HippoStdNodeType.NT_DIRECTORY)).andReturn(true);
         expect(jcrSession.getNode("/my/channel/path/news/amsterdam")).andReturn(folderNode);
 
-        replay(document, jcrSession, folderNode);
+        replay(document, jcrSession, folderNode, acm, docEditPrivilege);
 
         assertManageContentResponse(
             "defaultPath", "2018/09/23",
