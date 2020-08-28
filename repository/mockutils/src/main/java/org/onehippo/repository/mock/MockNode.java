@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.query.QueryManager;
+import javax.jcr.security.AccessControlManager;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
@@ -118,7 +119,18 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     MockNode(String name, String primaryTypeName, QueryManager queryManager) {
-        super(name, queryManager);
+        this(name, primaryTypeName, queryManager, null);
+    }
+
+    MockNode(String name, String primaryTypeName, final MockNode original, QueryManager queryManager) throws RepositoryException {
+        this(name, primaryTypeName, queryManager, null);
+        copyProperties(original);
+        copyChildren(original);
+        copyMixins(original);
+    }
+
+    MockNode(final String name, final String primaryTypeName, final QueryManager queryManager, final AccessControlManager acm) {
+        super(name, queryManager, acm);
 
         this.identifier = UUID.randomUUID().toString();
         this.properties = new HashMap<>();
@@ -135,12 +147,15 @@ public class MockNode extends MockItem implements HippoNode {
         }
     }
 
-    MockNode(String name, String primaryTypeName, final MockNode original, QueryManager queryManager) throws RepositoryException {
-        this(name, primaryTypeName, queryManager);
+    MockNode(final String name, final String primaryTypeName, final MockNode original,
+             final QueryManager queryManager, final AccessControlManager acm)
+            throws RepositoryException {
+        this(name, primaryTypeName, queryManager, acm);
         copyProperties(original);
         copyChildren(original);
         copyMixins(original);
     }
+
 
     MockNode(MockNode original, QueryManager queryManager) throws RepositoryException {
         this(original.getName(), original.primaryItemName, original, queryManager);
@@ -173,6 +188,10 @@ public class MockNode extends MockItem implements HippoNode {
 
     public static MockNode root(QueryManager queryManager) {
         return new MockNode("", "rep:root", queryManager);
+    }
+
+    public static MockNode root(QueryManager queryManager, AccessControlManager acm) {
+        return new MockNode("", "rep:root", queryManager, acm);
     }
 
     public static boolean isDefaultSameNameSiblingSupported() {

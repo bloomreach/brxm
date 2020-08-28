@@ -38,6 +38,7 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
@@ -187,11 +188,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
     private boolean userInRole(final HstRequest request, final HstComponentConfiguration compConfig) {
 
-        final HippoSession cmsUser = (HippoSession) request.getRequestContext().getAttribute(ContainerConstants.CMS_USER_SESSION_ATTR_NAME);
-        if (cmsUser == null) {
-            throw new IllegalStateException("For Channel Manager preview requests there is expected to be a CMS user " +
-                    "Session available");
-        }
+        final HippoSession cmsUser = JcrSessionUtils.getCmsUser(request.getRequestContext());
 
         // note that EVEN if the backing JCR node for compConfig is from version history, because we decorate
         // the JCR Node to HippoBeanFrozenNode in ObjectConverterImpl.getActualNode(), the #getPath is decorated
