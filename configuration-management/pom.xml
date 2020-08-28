@@ -41,7 +41,7 @@
     <hippo.services.version>${hippo.release.version}</hippo.services.version>
     <hippo.jackrabbit.version>2.18.5-h2</hippo.jackrabbit.version>
     <hippo.utilities.version>${hippo.release.version}</hippo.utilities.version>
-    <snakeyaml.version>1.23</snakeyaml.version>
+    <snakeyaml.version>1.26</snakeyaml.version>
     <commons-lang3.version>3.8.1</commons-lang3.version>
     <commons-io.version>2.6</commons-io.version>
     <commons-collections4.version>4.2</commons-collections4.version>
