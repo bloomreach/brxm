@@ -40,11 +40,13 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.hippoecm.hst.util.ParametersInfoUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +68,8 @@ import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAG
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_UUID;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_COMPONENT_WINDOW;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.DOCUMENT_EDIT_REQUIRED_PRIVILEGE_NAME;
+import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
 import static org.hippoecm.hst.utils.TagUtils.encloseInHTMLComment;
 import static org.hippoecm.hst.utils.TagUtils.toJSONMap;
 
@@ -148,7 +152,7 @@ public class HstManageContentTag extends TagSupport {
             checkRootPath();
 
             write(HST_TYPE, HST_TYPE_MANAGE_CONTENT_LINK);
-            processHippoBean();
+            processHippoBean(requestContext);
             processDocumentTemplateQuery();
             processFolderTemplateQuery();
             processParameterName();
@@ -255,7 +259,7 @@ public class HstManageContentTag extends TagSupport {
         return jcrPath != null && jcrPath.isRelative();
     }
 
-    private void processHippoBean() throws ManageContentTagException, SkipManageContentTagException {
+    private void processHippoBean(final HstRequestContext requestContext) throws ManageContentTagException, SkipManageContentTagException {
         if (hippoBean == null) {
             return;
         }
@@ -271,6 +275,16 @@ public class HstManageContentTag extends TagSupport {
             final Node handleNode = getHandleNodeIfIsAncestor(editNode);
             if (handleNode == null) {
                 throw new ManageContentTagException("Could not find handle node of " + editNode.getPath());
+            }
+
+            // note do not use the jcr session from 'handleNode' since that is a session delegate between the cms user
+            // and site preview user!
+            final HippoSession cmsUser = JcrSessionUtils.getCmsUser(requestContext);
+
+            if (!isInRole(cmsUser, handleNode.getPath(), DOCUMENT_EDIT_REQUIRED_PRIVILEGE_NAME)) {
+                log.debug("User '{}' does not have required role '{}' on '{}'", cmsUser.getUserID(),
+                        DOCUMENT_EDIT_REQUIRED_PRIVILEGE_NAME, handleNode.getPath());
+                return;
             }
 
             log.debug("The node path for the manageContent tag is '{}'", handleNode.getPath());

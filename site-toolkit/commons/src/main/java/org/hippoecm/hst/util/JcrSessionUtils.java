@@ -25,6 +25,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,5 +99,33 @@ public class JcrSessionUtils {
             log.warn("Exception while checking privilege", e);
             return false;
         }
+    }
+
+    /**
+     * <p>
+     *     Utility method to return the <strong>CMS</strong> user {@link Session}. Note that accessing a {@link Session}
+     *     in Channel Mgr Preview mode via for example {@link HstRequestContext#getContentBean()} and then via the
+     *     {@link Node} from {@link HippoBean#getNode()} does return a <strong>different</strong> {@link Session} : It
+     *     namely returns a {@link Session} delegate: A combination of the HST preview user and the cms user.
+     * </p>
+     * <p>
+     *     Note this does not create a new {@link Session} : Code getting hold of the CMS {@link Session} should NEVER
+     *     log this {@link Session} out since this is managed by the HST
+     * </p>
+     * @param requestContext
+     * @return the cms {@link Session} in case the {@link HstRequestContext} is for a channel mgr preview request
+     * @throws IllegalStateException in case the request is not for a channel mgr preview request or in case there is
+     * no cms user session available on the HstRequestContext
+     */
+    public static HippoSession getCmsUser(final HstRequestContext requestContext) {
+        if (!requestContext.isChannelManagerPreviewRequest()) {
+            throw new IllegalStateException("Cms User is only available for Channel Manager preview requests");
+        }
+        final HippoSession cmsUser = (HippoSession) requestContext.getAttribute(ContainerConstants.CMS_USER_SESSION_ATTR_NAME);
+        if (cmsUser == null) {
+            throw new IllegalStateException("For Channel Manager preview requests there is expected to be a CMS user " +
+                    "Session available");
+        }
+        return cmsUser;
     }
 }
