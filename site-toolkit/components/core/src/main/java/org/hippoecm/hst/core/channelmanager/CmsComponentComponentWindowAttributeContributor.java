@@ -33,6 +33,7 @@ import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.Workflow;
@@ -57,11 +58,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
 
         try {
 
-            final HippoSession cmsUser = (HippoSession) requestContext.getAttribute(ContainerConstants.CMS_USER_SESSION_ATTR_NAME);
-            if (cmsUser == null) {
-                throw new IllegalStateException("For Channel Manager preview requests there is expected to be a CMS user " +
-                        "Session available");
-            }
+            final HippoSession cmsUser = JcrSessionUtils.getCmsUser(requestContext);
 
             if (compConfig.isExperiencePageComponent()) {
                 if (requestContext.isRenderingHistory()) {
