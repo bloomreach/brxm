@@ -47,7 +47,7 @@
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
 
-    <swagger.version>2.0.10</swagger.version>
+    <swagger.version>2.1.4</swagger.version>
 
     <maven.plugin.jacoco.version>0.8.1</maven.plugin.jacoco.version>
     <!-- Tells Sonar to run the unit tests -->
