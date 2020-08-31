@@ -59,6 +59,7 @@ export class VersionsInfoComponent implements OnInit {
   async getVersionsInfo(): Promise<void> {
     this.actionInProgress = true;
     this.versionsInfo = await this.ng1ContentService.getDocumentVersionsInfo(this.documentId, this.branchId);
+
     this.changeDetector.markForCheck();
     this.actionInProgress = false;
   }
@@ -88,6 +89,7 @@ export class VersionsInfoComponent implements OnInit {
   private createVersionPath(selectedVersionUUID: string): string {
     const currentPath = this.ng1IframeService.getCurrentRenderPathInfo();
     const versionParam = `br_version_uuid=${selectedVersionUUID}`;
+
     const index = this.versionsInfo.versions.findIndex(v => v.jcrUUID === selectedVersionUUID);
     const homePageRenderPath = this.ng1ChannelService.getHomePageRenderPathInfo();
     const renderPath = this.ng1ChannelService.makeRenderPath(currentPath.replace(homePageRenderPath, ''));
