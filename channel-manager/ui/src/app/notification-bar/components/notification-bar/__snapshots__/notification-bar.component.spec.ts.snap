@@ -8,8 +8,12 @@ exports[`NotificationBarComponent should show the component 1`] = `
   <div
     class="label"
   >
-    <em-notification-bar-status-icon />
-    <em-notification-bar-status-text />
+    <em-notification-bar-status-icon
+      class="qa-notification-bar-status-icon"
+    />
+    <em-notification-bar-status-text
+      class="qa-notification-bar-status-text"
+    />
   </div>
 </div>
 `;
