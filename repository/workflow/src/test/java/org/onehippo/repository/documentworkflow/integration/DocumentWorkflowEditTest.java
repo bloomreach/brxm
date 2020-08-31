@@ -30,8 +30,11 @@ import javax.jcr.version.VersionManager;
 
 import org.assertj.core.api.Assertions;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.JcrUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
@@ -479,9 +482,27 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
     }
 
     @Test
-    public void document_is_audit_traced() throws RepositoryException, WorkflowException, RemoteException {
+    public void document_is_audit_traced_for_author() throws RepositoryException, WorkflowException, RemoteException {
 
-        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
+        final HippoSession authorSession = (HippoSession) server.login("author", "author".toCharArray());
+        Assert.assertEquals("author", authorSession.getUserID());
+
+        is_audit_traced(authorSession);
+    }
+
+    @Test
+    public void document_is_audit_traced_for_admin() throws RepositoryException, WorkflowException, RemoteException {
+
+        final HippoSession authorSession = (HippoSession) server.login("admin", "admin".toCharArray());
+        Assert.assertEquals("admin", authorSession.getUserID());
+
+        is_audit_traced(authorSession);
+    }
+
+    private void is_audit_traced(final HippoSession userSession) throws RepositoryException, WorkflowException, RemoteException {
+        final WorkflowManager workflowManager = userSession.getWorkspace().getWorkflowManager();
+        final Node authorHandle = userSession.getNodeByIdentifier(handle.getIdentifier());
+        final DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow("default", authorHandle);
         Assertions.assertThat(documentWorkflow.listVersions())
                 .isEmpty();
 
@@ -504,7 +525,7 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         Assertions.assertThat(versions.size())
                 .isEqualTo(1);
 
-        documentWorkflow.restoreVersion(versions.firstKey());
+        getDocumentWorkflow(handle).restoreVersion(versions.firstKey());
         Assertions.assertThat(documentWorkflow.isModified()).isFalse();
     }
 
