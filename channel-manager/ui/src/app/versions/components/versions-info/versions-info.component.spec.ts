@@ -264,4 +264,17 @@ describe('VersionsInfoComponent', () => {
       expect(header).toMatchSnapshot();
     }));
   });
+
+  describe('onDestroy', () => {
+    it.only('should select the latest version when removing the component from the dom', fakeAsync(() => {
+      jest.spyOn(component, 'selectVersion');
+
+      component.ngOnInit();
+      tick();
+      component.unpublishedVariantId = secondVersionUUID;
+      component.ngOnDestroy();
+
+      expect(component.selectVersion).toHaveBeenCalledWith(firstVersionUUID);
+    }));
+  });
 });
