@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { Subject } from 'rxjs';
+
 class PageService {
   constructor($q, $rootScope, HstService, PageStructureService) {
     'ngInject';
@@ -24,6 +26,7 @@ class PageService {
     this.PageStructureService = PageStructureService;
     this.actions = null;
     this.states = null;
+    this.states$ = new Subject();
 
     this.$rootScope.$on('page:change', () => this.load());
     this.$rootScope.$on('page:check-changes', () => this.load());
@@ -57,9 +60,11 @@ class PageService {
 
       this.actions = actions;
       this.states = states;
+      this.states$.next(states);
     } catch (e) {
       this.actions = null;
       this.states = null;
+      this.states$.next(undefined);
     }
   }
 

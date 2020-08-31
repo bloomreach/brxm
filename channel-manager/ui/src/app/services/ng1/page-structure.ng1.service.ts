@@ -22,4 +22,4 @@ export interface Ng1PageStructureService {
   getPage(): any;
 }
 
-export const NG1_PAGESTRUCTURE_SERVICE = new InjectionToken<Ng1PageStructureService>('NG1_PAGESTRUCTURE_SERVICE');
+export const NG1_PAGE_STRUCTURE_SERVICE = new InjectionToken<Ng1PageStructureService>('NG1_PAGE_STRUCTURE_SERVICE');

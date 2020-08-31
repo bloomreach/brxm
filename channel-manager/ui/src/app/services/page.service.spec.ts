@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { TestBed } from '@angular/core/testing';
+import { async, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
 import { mocked } from 'ts-jest/utils';
 
 import { IframeService } from '../channels/services/iframe.service';
@@ -27,6 +28,7 @@ import { ScheduledRequestType } from '../models/scheduled-request-type.enum';
 import { WorkflowRequestType } from '../models/workflow-request-type.enum';
 import { XPageState } from '../models/xpage-state.model';
 import { XPageStatus } from '../models/xpage-status.enum';
+import { VersionsService } from '../versions/services/versions.service';
 
 import { Ng1PageService, NG1_PAGE_SERVICE } from './ng1/page.ng1.service';
 import { PageService } from './page.service';
@@ -38,16 +40,18 @@ describe('PageService', () => {
   let ng1PageService: Ng1PageService;
   let projectService: ProjectService;
   let iframeService: IframeService;
+  let versionsService: VersionsService;
 
   const xPageState = { branchId: 'testPageState' } as XPageState;
 
-  beforeEach(() => {
+  beforeEach(async(() => {
     const ng1PageServiceMock = {
       states: {
         get xpage(): XPageState {
           return xPageState;
         },
       },
+      states$: of({ xpage: { id: 'xpage-id' } }),
     };
 
     const projectServiceMock = {
@@ -59,12 +63,21 @@ describe('PageService', () => {
       isEditSharedContainers: jest.fn(() => false),
     };
 
+    const versionsServiceMock = {
+      getVersions: jest.fn().mockResolvedValue([
+        { jcrUUID: '1', timestamp: 123, userName: 'user1' },
+        { jcrUUID: '2', timestamp: 1234, userName: 'user2' },
+      ]),
+      isCurrentVersion: jest.fn(v => v.jcrUUID === '1'),
+    };
+
     TestBed.configureTestingModule({
       providers: [
         PageService,
         { provide: NG1_PAGE_SERVICE, useValue: ng1PageServiceMock },
         { provide: ProjectService, useValue: projectServiceMock },
         { provide: IframeService, useValue: iframeServiceMock },
+        { provide: VersionsService, useValue: versionsServiceMock },
       ],
     });
 
@@ -72,7 +85,8 @@ describe('PageService', () => {
     ng1PageService = TestBed.inject(NG1_PAGE_SERVICE);
     projectService = TestBed.inject(ProjectService);
     iframeService = TestBed.inject(IframeService);
-  });
+    versionsService = TestBed.inject(VersionsService);
+  }));
 
   describe.each([
     [
@@ -287,12 +301,12 @@ describe('PageService', () => {
     [
       'ProjectInReview',
       {
-        xpage: { acceptanceState: AcceptanceState.InReview, name: 'page name' },
+        xpage: { acceptanceState: AcceptanceState.InReview, name: 'page name', state: DocumentState.Changed },
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
         XPageStatus.ProjectInReview,
-        DocumentState.Draft,
+        DocumentState.Changed,
         'page name',
         undefined,
         'some project name',
@@ -301,12 +315,12 @@ describe('PageService', () => {
     [
       'ProjectInReview but is not set explicitly',
       {
-        xpage: { name: 'page name' },
+        xpage: { name: 'page name', state: DocumentState.Changed },
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
         XPageStatus.ProjectInReview,
-        DocumentState.Draft,
+        DocumentState.Changed,
         'page name',
         undefined,
         'some project name',
@@ -315,12 +329,12 @@ describe('PageService', () => {
     [
       'ProjectPageApproved',
       {
-        xpage: { acceptanceState: AcceptanceState.Approved, name: 'page name' },
+        xpage: { acceptanceState: AcceptanceState.Approved, name: 'page name', state: DocumentState.Changed },
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
         XPageStatus.ProjectPageApproved,
-        DocumentState.Draft,
+        DocumentState.Changed,
         'page name',
         undefined,
         'some project name',
@@ -329,12 +343,12 @@ describe('PageService', () => {
     [
       'ProjectPageRejected',
       {
-        xpage: { acceptanceState: AcceptanceState.Rejected, name: 'page name' },
+        xpage: { acceptanceState: AcceptanceState.Rejected, name: 'page name', state: DocumentState.Changed },
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
         XPageStatus.ProjectPageRejected,
-        DocumentState.Draft,
+        DocumentState.Changed,
         'page name',
         undefined,
         'some project name',
@@ -354,6 +368,25 @@ describe('PageService', () => {
         undefined,
       ),
     ],
+    [
+      'PreviousVersion',
+      {
+        xpage: { name: 'page name', state: DocumentState.Live },
+      },
+      undefined,
+      new XPageStatusInfo(
+        XPageStatus.PreviousVersion,
+        DocumentState.Live,
+        'page name',
+        undefined,
+        undefined,
+        {
+          jcrUUID: '2',
+          timestamp: 1234,
+          userName: 'user2',
+       },
+      ),
+    ],
   ])('getXPageStatus if page states represent "%s" state', (expectedStatusName, pageStates, project, expectedStatusInfo) => {
     test(`should return ${expectedStatusName} status info`, () => {
       ng1PageService.states = pageStates as PageStates;
@@ -361,6 +394,10 @@ describe('PageService', () => {
 
       if (expectedStatusName === 'EditingSharedContainers') {
         mocked(iframeService.isEditSharedContainers).mockReturnValue(true);
+      }
+
+      if (expectedStatusName === 'PreviousVersion') {
+        mocked(versionsService.isCurrentVersion).mockImplementation(v => v.jcrUUID === '2');
       }
 
       const actual = service.getPageStatusInfo();

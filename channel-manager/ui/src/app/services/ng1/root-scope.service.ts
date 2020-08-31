@@ -14,18 +14,6 @@
  * limitations under the License.
  */
 
-import { Version } from '../versions/models/version.model';
+import { InjectionToken } from '@angular/core';
 
-import { DocumentState } from './document-state.enum';
-import { XPageStatus } from './xpage-status.enum';
-
-export class XPageStatusInfo {
-  constructor(
-    readonly status: XPageStatus,
-    readonly xPageDocumentState: DocumentState,
-    readonly pageName: string,
-    readonly scheduledDateTime?: number,
-    readonly projectName?: string,
-    readonly version?: Version,
-  ) {}
-}
+export const NG1_ROOT_SCOPE = new InjectionToken<ng.IRootScopeService>('NG1_ROOT_SCOPE');

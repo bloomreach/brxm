@@ -20,6 +20,16 @@ exports[`NotificationBarStatusIconComponent if xpage status is Offline should re
 </div>
 `;
 
+exports[`NotificationBarStatusIconComponent if xpage status is PreviousVersion should render alert-circle-outline 1`] = `
+<div
+  id="root33"
+>
+  <mat-icon>
+    alert-circle-outline
+  </mat-icon>
+</div>
+`;
+
 exports[`NotificationBarStatusIconComponent if xpage status is ProjectInProgress should render minus-circle-outline 1`] = `
 <div
   id="root21"
