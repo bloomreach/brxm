@@ -93,7 +93,7 @@ export class VersionsInfoComponent implements OnInit {
     const homePageRenderPath = this.ng1ChannelService.getHomePageRenderPathInfo();
     const renderPath = this.ng1ChannelService.makeRenderPath(currentPath.replace(homePageRenderPath, ''));
 
-    if (index && index <= 0) {
+    if (index === undefined || index <= 0) {
       return renderPath;
     }
 
