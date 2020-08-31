@@ -102,6 +102,8 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
                     final String reason = getLockedReason(compConfig, requestContext, documentWorkflow, cmsSessionActiveBranchId, hints);
                     log.debug("Component configuration '{}' locked : '{}'", compConfig.getCanonicalStoredLocation(), reason);
                     populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, reason);
+                } else {
+                    populatingAttributesMap.put(ChannelManagerConstants.HST_XPAGE_EDITABLE, "true");
                 }
 
             } else {
