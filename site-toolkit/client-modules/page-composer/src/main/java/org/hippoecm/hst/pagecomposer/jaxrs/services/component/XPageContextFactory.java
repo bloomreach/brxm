@@ -64,7 +64,12 @@ final class XPageContextFactory {
         final String xPageBranchId = contextService.getSelectedBranchId().equals(unpublishedBranchId)
                 ? unpublishedBranchId
                 : MASTER_BRANCH_ID;
-        final Map<String, Serializable> hints = workflow.hints(xPageBranchId);
+        Map<String, Serializable> hints = workflow.hints(xPageBranchId);
+        if (TRUE.equals(hints.get("disposeEditableInstance"))) {
+            workflow.commitEditableInstance();
+            hints = workflow.hints(xPageBranchId);
+            workflow.obtainEditableInstance();
+        }
 
         final XPageContext xPageContext = new XPageContext()
                 .setBranchId(xPageBranchId)
