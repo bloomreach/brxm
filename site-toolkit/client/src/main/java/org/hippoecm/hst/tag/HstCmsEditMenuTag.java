@@ -36,6 +36,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.sitemenu.CommonMenu;
 import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,6 +90,12 @@ public class HstCmsEditMenuTag extends TagSupport {
             if (hstSite == null) {
                 log.debug("Skipping cms edit menu because no hst site for matched mount '{}'.",
                         requestContext.getResolvedMount().getMount().toString());
+                return EVAL_PAGE;
+            }
+
+            final Channel channel = hstSite.getChannel();
+            if (channel != null && channel.isConfigurationLocked()) {
+                log.debug("Channel '{}' is locked", channel.getName());
                 return EVAL_PAGE;
             }
 
