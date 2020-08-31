@@ -39,6 +39,10 @@ public interface ChannelManagerConstants {
      */
     @Deprecated
     String HST_PAGE_EDITABLE = "HST-Page-Editable";
+
+    // marker boolean to indicate that the container(item) is an editable XPage component
+    String HST_XPAGE_EDITABLE = "HST-XPage-Editable";
+
     String HST_RENDER_VARIANT = "HST-Render-Variant";
     String HST_SITE_HAS_PREVIEW_CONFIG = "HST-Site-HasPreviewConfig";
     String HST_END_MARKER = "HST-End";
