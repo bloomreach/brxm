@@ -49,6 +49,7 @@ export class NotificationBarStatusIconComponent {
       [XPageStatus.ProjectPageRejected]: 'comment-remove-outline',
       [XPageStatus.ProjectRunning]: 'xpage',
       [XPageStatus.EditingSharedContainers]: 'alert-circle-outline',
+      [XPageStatus.PreviousVersion]: 'alert-circle-outline',
     };
 
     return statusIconMap[status];
