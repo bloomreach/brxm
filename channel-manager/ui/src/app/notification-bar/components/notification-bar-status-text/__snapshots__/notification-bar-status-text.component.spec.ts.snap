@@ -22,6 +22,17 @@ exports[`NotificationBarStatusTextComponent if xpage status is Offline should re
 </div>
 `;
 
+exports[`NotificationBarStatusTextComponent if xpage status is PreviousVersion should render NOTIFICATION_BAR_XPAGE_LABEL_PREVIOUS_VERSION label 1`] = `
+<div
+  id="root33"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_PREVIOUS_VERSIONsome pageLIVEundefined
+
+</div>
+`;
+
 exports[`NotificationBarStatusTextComponent if xpage status is ProjectInProgress should render NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_PROGRESS label 1`] = `
 <div
   id="root21"
