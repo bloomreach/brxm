@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ChangeDetectorRef, Component, Inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 
 import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1service';
 import { Ng1ContentService, NG1_CONTENT_SERVICE } from '../../../services/ng1/content.ng1.service';
@@ -27,7 +27,7 @@ import { VersionsInfo } from '../../models/versions-info.model';
   templateUrl: './versions-info.component.html',
   styleUrls: ['./versions-info.component.scss'],
 })
-export class VersionsInfoComponent implements OnInit {
+export class VersionsInfoComponent implements OnInit, OnDestroy {
   @Input()
   documentId!: string;
 
@@ -54,6 +54,15 @@ export class VersionsInfoComponent implements OnInit {
       // Angular Element inputs are not yet initialized onInit
       this.getVersionsInfo();
     });
+  }
+
+  ngOnDestroy(): void {
+    const latestVersion = this.versionsInfo?.versions[0];
+    const id = latestVersion?.jcrUUID;
+
+    if (id && id !== this.unpublishedVariantId) {
+      this.selectVersion(id);
+    }
   }
 
   async getVersionsInfo(): Promise<void> {
