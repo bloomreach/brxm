@@ -15,11 +15,13 @@
  */
 
 import { InjectionToken } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { PageStates } from '../../models/page-states.model';
 
 export interface Ng1PageService {
   states: PageStates;
+  states$: Observable<PageStates>;
 }
 
 export const NG1_PAGE_SERVICE = new InjectionToken<Ng1PageService>('NG1_PAGE_SERVICE');

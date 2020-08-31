@@ -63,6 +63,7 @@ describe('NotificationBarStatusIconComponent', () => {
     ['ProjectPageRejected', XPageStatus.ProjectPageRejected, 'comment-remove-outline'],
     ['ProjectRunning', XPageStatus.ProjectRunning, 'xpage'],
     ['EditingSharedContainers', XPageStatus.EditingSharedContainers, 'alert-circle-outline'],
+    ['PreviousVersion', XPageStatus.PreviousVersion, 'alert-circle-outline'],
   ])('if xpage status is %s', (statusName, statusValue, expectedIcon) => {
     beforeEach(() => {
       component.status = statusValue;

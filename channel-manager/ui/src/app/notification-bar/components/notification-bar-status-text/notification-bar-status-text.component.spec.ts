@@ -175,6 +175,13 @@ describe('NotificationBarStatusTextComponent', () => {
       undefined,
       undefined,
     ), 'NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERS'],
+    ['PreviousVersion', new XPageStatusInfo(
+      XPageStatus.PreviousVersion,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      undefined,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PREVIOUS_VERSION'],
   ])('if xpage status is %s', (statusName, statusInfo, expectedText) => {
     beforeEach(() => {
       component.statusInfo = statusInfo;

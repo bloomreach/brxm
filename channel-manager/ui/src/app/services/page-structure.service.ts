@@ -16,7 +16,7 @@
 
 import { Inject, Injectable } from '@angular/core';
 
-import { Ng1PageStructureService, NG1_PAGESTRUCTURE_SERVICE } from './ng1/page-structure.ng1.service';
+import { Ng1PageStructureService, NG1_PAGE_STRUCTURE_SERVICE } from './ng1/page-structure.ng1.service';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,7 @@ export class PageStructureService {
   pageParsed$ = this.ng1PageStructureService.pageParsed$;
 
   constructor(
-    @Inject(NG1_PAGESTRUCTURE_SERVICE) private readonly ng1PageStructureService: Ng1PageStructureService,
+    @Inject(NG1_PAGE_STRUCTURE_SERVICE) private readonly ng1PageStructureService: Ng1PageStructureService,
   ) { }
 
   getPage(): any {
