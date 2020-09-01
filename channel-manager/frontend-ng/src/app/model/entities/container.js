@@ -46,6 +46,10 @@ export class Container extends ComponentEntity {
     return !!(metaDataXType && metaDataXType.toUpperCase() === HstConstants.XTYPE_NOMARKUP.toUpperCase());
   }
 
+  isXPageEditable() {
+    return this._meta[HstConstants.XPAGE_EDITABLE] === 'true';
+  }
+
   getDragDirection() {
     return this._meta[HstConstants.XTYPE] === HstConstants.XTYPE_SPAN ? 'horizontal' : 'vertical';
   }

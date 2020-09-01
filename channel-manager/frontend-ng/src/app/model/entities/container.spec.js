@@ -327,4 +327,18 @@ describe('Container', () => {
       expect(container2.getDropGroups()).toEqual(['xpages-shared']);
     });
   });
+
+  describe('getXPageEditable', () => {
+    it('should return true', () => {
+      const container = new Container({ 'HST-XPage-Editable': 'true' });
+
+      expect(container.isXPageEditable()).toBe(true);
+    });
+
+    it('should return false', () => {
+      const container = new Container({ 'HST-XPage-Editable': 'false' });
+
+      expect(container.isXPageEditable()).toBe(false);
+    });
+  });
 });

@@ -49,6 +49,7 @@ export const TYPE_PAGE_META = 'PAGE-META-DATA';
 export const TYPE_PROCESSED_HEAD_CONTRIBUTIONS = 'HST_PROCESSED_HEAD_CONTRIBUTIONS';
 export const TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS = 'HST_UNPROCESSED_HEAD_CONTRIBUTIONS';
 export const UNPUBLISHED_VARIANT_ID = 'HST-Unpublished-Variant-Id';
+export const XPAGE_EDITABLE = 'HST-XPage-Editable';
 export const XTYPE = 'HST-XType';
 export const XTYPE_NOMARKUP = 'HST.NoMarkup';
 export const XTYPE_SPAN = 'HST.Span';
