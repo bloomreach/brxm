@@ -126,7 +126,8 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
 
             // into the 'copy' of the xpage, now glue the 'containerConfigurations' from the XPage document variant:
             // it is however not a full replacement since all configuration from the 'hst config containers' should be
-            // kept EXCEPT the canonical stored path and identifier
+            // kept EXCEPT the canonical stored path, identifier, and the lastModified since this obviously is not part
+            // of the layout but of the experience page document container
 
             // first collect and do not manipulate in stream since then ConcurrentModificationException can happen
             // because component items get replaced
