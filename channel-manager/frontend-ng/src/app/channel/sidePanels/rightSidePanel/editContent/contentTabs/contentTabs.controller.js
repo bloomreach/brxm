@@ -47,7 +47,10 @@ class ContentTabsCtrl {
   }
 
   _confirmExit() {
-    return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_TO_DOCUMENT')
+    const titleKey = this.ContentEditor.isDocumentXPage ? 'SAVE_XPAGE_CHANGES_TITLE' : 'SAVE_DOCUMENT_CHANGES_TITLE';
+    const messageKey = this.ContentEditor.isDocumentXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
+
+    return this.ContentEditor.confirmSaveOrDiscardChanges(messageKey, {}, titleKey)
       .then((action) => {
         if (action === 'SAVE') {
           this.HippoIframeService.reload();
