@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
@@ -611,7 +612,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
             super(id, "addItemsDropDown", container);
             setVisibilityAllowed(true);
 
-            final Form<?> form = new Form("cpform");
+            final Form<?> form = new PostOnlyForm<>("cpform");
             add(form);
 
             final List<DropDownOption> options = getOptions();
