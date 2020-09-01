@@ -26,9 +26,9 @@ import { VersionsModule } from './versions/versions.module';
     SharedModule,
     NotificationBarModule,
     VersionsModule,
+    Ng1ServicesModule,
   ],
   providers: [
-    Ng1ServicesModule,
   ],
 })
 export class AppModule {
