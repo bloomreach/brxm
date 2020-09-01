@@ -134,8 +134,11 @@ class EditContentService {
 
     const document = await this.ContentEditor.open(documentId);
 
-    this.documentId = documentId;
-    this._showDocumentTitle(document);
+    if (document) {
+      this.documentId = documentId;
+      this._showDocumentTitle(document);
+    }
+
     this.RightSidePanelService.stopLoading();
   }
 
