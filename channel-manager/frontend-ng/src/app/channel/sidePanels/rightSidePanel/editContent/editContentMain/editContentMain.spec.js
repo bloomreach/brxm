@@ -24,7 +24,6 @@ describe('EditContentMainCtrl', () => {
   let EditContentService;
   let HippoIframeService;
   let RightSidePanelService;
-  let PageService;
 
   let $ctrl;
   let form;
@@ -57,6 +56,7 @@ describe('EditContentMainCtrl', () => {
         'publish',
         'save',
       ]);
+      ContentEditor.isDocumentXPage = false;
       DialogService = _DialogService_;
       EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
@@ -65,10 +65,6 @@ describe('EditContentMainCtrl', () => {
         'startLoading',
         'stopLoading',
       ]);
-      PageService = {
-        isXPage: false,
-        xPageId: undefined,
-      };
 
       $scope = $rootScope.$new();
       form = jasmine.createSpyObj('form', ['$setPristine']);
@@ -79,7 +75,6 @@ describe('EditContentMainCtrl', () => {
         EditContentService,
         HippoIframeService,
         RightSidePanelService,
-        PageService,
       },
       { form });
 
@@ -444,10 +439,9 @@ describe('EditContentMainCtrl', () => {
       });
     });
 
-    /*
     it('shows a dialog with a page related message', () => {
       ContentEditor.isPristine.and.returnValue(false);
-      PageService.isXPage = true;
+      ContentEditor.isDocumentXPage = true;
 
       $ctrl.discard();
 
@@ -455,7 +449,6 @@ describe('EditContentMainCtrl', () => {
         documentName: 'Test',
       });
     });
-    */
 
     it('does not show a dialog when the document has not changed', () => {
       ContentEditor.isPristine.and.returnValue(true);

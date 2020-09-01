@@ -165,6 +165,7 @@ class ContentEditorService {
     FeedbackService,
     FieldService,
     WorkflowService,
+    PageService,
   ) {
     'ngInject';
 
@@ -176,6 +177,11 @@ class ContentEditorService {
     this.FeedbackService = FeedbackService;
     this.FieldService = FieldService;
     this.WorkflowService = WorkflowService;
+    this.PageService = PageService;
+  }
+
+  get isDocumentXPage() {
+    return this.PageService.xPageId === this.getDocumentId();
   }
 
   _setDocumentId(id) {
@@ -469,8 +475,8 @@ class ContentEditorService {
       });
   }
 
-  confirmClose(messageKey, messageParams) {
-    return this.confirmSaveOrDiscardChanges(messageKey, messageParams)
+  confirmClose(messageKey, messageParams, titleKey) {
+    return this.confirmSaveOrDiscardChanges(messageKey, messageParams, titleKey)
       .then(() => this.discardChanges())
       .then(() => this.close());
   }
@@ -481,8 +487,8 @@ class ContentEditorService {
    * - resolved promise with value 'DISCARD' when changes have been discarded
    * - rejected promise when user canceled
    */
-  confirmSaveOrDiscardChanges(messageKey, messageParams) {
-    return this._askSaveOrDiscardChanges(messageKey, messageParams)
+  confirmSaveOrDiscardChanges(messageKey, messageParams, titleKey) {
+    return this._askSaveOrDiscardChanges(messageKey, messageParams, titleKey)
       .then((action) => {
         if (action === 'SAVE') {
           return this.save()
@@ -493,7 +499,7 @@ class ContentEditorService {
       });
   }
 
-  _askSaveOrDiscardChanges(messageKey, messageParams = {}) {
+  _askSaveOrDiscardChanges(messageKey, messageParams = {}, titleKey = 'SAVE_DOCUMENT_CHANGES_TITLE') {
     if (this.isPristine()) {
       return this.$q.resolve('DISCARD');
     }
@@ -502,7 +508,7 @@ class ContentEditorService {
     translateParams.documentName = this.document.displayName;
 
     const message = this.$translate.instant(messageKey, translateParams);
-    const title = this.$translate.instant('SAVE_DOCUMENT_CHANGES_TITLE');
+    const title = this.$translate.instant(titleKey);
 
     return this.DialogService.show({
       template: multiActionDialogTemplate,

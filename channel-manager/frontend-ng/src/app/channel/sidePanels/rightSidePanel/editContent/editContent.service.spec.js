@@ -26,7 +26,6 @@ describe('EditContentService', () => {
   let EditContentService;
   let ProjectService;
   let RightSidePanelService;
-  let PageService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -43,6 +42,7 @@ describe('EditContentService', () => {
       'kill',
       'open',
     ]);
+    ContentEditor.isDocumentXPage = false;
     ContentService = jasmine.createSpyObj('ContentService', ['getDocument']);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', [
       'clearContext',
@@ -51,16 +51,11 @@ describe('EditContentService', () => {
       'startLoading',
       'stopLoading',
     ]);
-    PageService = {
-      isXPage: false,
-      xPageId: undefined,
-    };
 
     angular.mock.module(($provide) => {
       $provide.value('ContentEditor', ContentEditor);
       $provide.value('ContentService', ContentService);
       $provide.value('RightSidePanelService', RightSidePanelService);
-      $provide.value('PageService', PageService);
     });
 
     inject((
@@ -149,7 +144,7 @@ describe('EditContentService', () => {
     const document = {
       id: '42',
     };
-    PageService.xPageId = '42';
+    ContentEditor.isDocumentXPage = true;
 
     editDocument(document);
 
@@ -158,22 +153,6 @@ describe('EditContentService', () => {
     expect(ContentEditor.open).toHaveBeenCalledWith(document.id);
     expect($translate.instant).toHaveBeenCalledWith('PAGE');
     expect(RightSidePanelService.setContext).toHaveBeenCalledWith('PAGE');
-    expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
-  });
-
-  it('starts editing a document as a part of a xpage', () => {
-    const document = {
-      id: '43',
-    };
-    PageService.xPageId = '42';
-
-    editDocument(document);
-
-    expect(RightSidePanelService.clearContext).toHaveBeenCalled();
-    expect(RightSidePanelService.startLoading).toHaveBeenCalled();
-    expect(ContentEditor.open).toHaveBeenCalledWith(document.id);
-    expect($translate.instant).toHaveBeenCalledWith('DOCUMENT');
-    expect(RightSidePanelService.setContext).toHaveBeenCalledWith('DOCUMENT');
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
   });
 
@@ -271,19 +250,23 @@ describe('EditContentService', () => {
     editDocument(document);
     $state.go('hippo-cm');
 
-    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
+    expect(ContentEditor.confirmClose).toHaveBeenCalledWith(
+      'SAVE_CHANGES_TO_DOCUMENT',
+      {},
+      'SAVE_DOCUMENT_CHANGES_TITLE',
+    );
   });
 
   it('displays dialog with a page related message', () => {
     const document = {
       id: '42',
     };
-    PageService.isXPage = true;
+    ContentEditor.isDocumentXPage = true;
 
     editDocument(document);
     $state.go('hippo-cm');
 
-    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_TO_XPAGE');
+    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_TO_XPAGE', {}, 'SAVE_XPAGE_CHANGES_TITLE');
   });
 
   it('confirms closing the open editor when the channel is closed', () => {
