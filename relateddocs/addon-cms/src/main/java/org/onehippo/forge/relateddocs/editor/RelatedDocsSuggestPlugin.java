@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -63,7 +64,7 @@ public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
     private static final Logger log = LoggerFactory.getLogger(RelatedDocsSuggestPlugin.class);
     private static final CssResourceReference CSS = new CssResourceReference(RelatedDocsSuggestPlugin.class, "RelatedDocsSuggestPlugin.css");
 
-    private Form suggestionsForm;
+    private Form<?> suggestionsForm;
     private AjaxSubmitLink refreshLink;
     private DialogLink browseLink;
 
@@ -103,7 +104,7 @@ public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
                 }
             }
 
-            suggestionsForm = new Form("suggestions-form");
+            suggestionsForm = new PostOnlyForm<>("suggestions-form");
             suggestionsForm.add(new TextField<>("count", new PropertyModel<>(this, "limit"), Integer.class));
 
             final Fragment fragment = new Fragment("relateddoc-view", "relateddoc-suggestions", this);
