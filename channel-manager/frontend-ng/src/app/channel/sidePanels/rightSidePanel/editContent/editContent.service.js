@@ -27,7 +27,6 @@ class EditContentService {
     ContentService,
     ProjectService,
     RightSidePanelService,
-    PageService,
   ) {
     'ngInject';
 
@@ -39,7 +38,6 @@ class EditContentService {
     this.ContentService = ContentService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
-    this.PageService = PageService;
 
     $transitions.onEnter(
       { entering: '**.edit-content' },
@@ -90,9 +88,10 @@ class EditContentService {
 
   _beforeSwitchProject() {
     if (this._isEditingDocument()) {
-      const messageKey = this.PageService.isXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
+      const titleKey = this.ContentEditor.isDocumentXPage ? 'SAVE_XPAGE_CHANGES_TITLE' : 'SAVE_DOCUMENT_CHANGES_TITLE';
+      const messageKey = this.ContentEditor.isDocumentXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
 
-      return this.ContentEditor.confirmClose(messageKey)
+      return this.ContentEditor.confirmClose(messageKey, {}, titleKey)
         .then(() => this.stopEditing());
     }
     return this.$q.resolve();
@@ -148,7 +147,7 @@ class EditContentService {
   }
 
   _showDocumentTitle(document) {
-    const messageKey = document.id === this.PageService.xPageId ? 'PAGE' : 'DOCUMENT';
+    const messageKey = this.ContentEditor.isDocumentXPage ? 'PAGE' : 'DOCUMENT';
     const documentLabel = this.$translate.instant(messageKey);
 
     this.RightSidePanelService.setContext(documentLabel);
@@ -156,9 +155,10 @@ class EditContentService {
   }
 
   _onCloseChannel() {
-    const messageKey = this.PageService.isXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
+    const titleKey = this.ContentEditor.isDocumentXPage ? 'SAVE_XPAGE_CHANGES_TITLE' : 'SAVE_DOCUMENT_CHANGES_TITLE';
+    const messageKey = this.ContentEditor.isDocumentXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
 
-    return this.ContentEditor.confirmClose(messageKey);
+    return this.ContentEditor.confirmClose(messageKey, {}, titleKey);
   }
 }
 

@@ -27,7 +27,6 @@ class EditContentMainCtrl {
     HippoIframeService,
     ProjectService,
     RightSidePanelService,
-    PageService,
   ) {
     'ngInject';
 
@@ -42,7 +41,6 @@ class EditContentMainCtrl {
     this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
-    this.PageService = PageService;
   }
 
   $onInit() {
@@ -118,9 +116,17 @@ class EditContentMainCtrl {
   }
 
   discard() {
-    const messageKey = this.isRetainable()
-      ? 'CONFIRM_DISCARD_DOCUMENT_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE'
-      : 'CONFIRM_DISCARD_DOCUMENT_UNSAVED_CHANGES_MESSAGE';
+    let messageKey;
+
+    if (this.isRetainable()) {
+      messageKey = this.ContentEditor.isDocumentXPage
+        ? 'CONFIRM_DISCARD_XPAGE_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE'
+        : 'CONFIRM_DISCARD_DOCUMENT_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE';
+    } else {
+      messageKey = this.ContentEditor.isDocumentXPage
+        ? 'CONFIRM_DISCARD_XPAGE_UNSAVED_CHANGES_MESSAGE'
+        : 'CONFIRM_DISCARD_DOCUMENT_UNSAVED_CHANGES_MESSAGE';
+    }
 
     return this._confirmDiscardChanges(messageKey)
       .then(() => {
@@ -201,9 +207,10 @@ class EditContentMainCtrl {
   }
 
   _confirmExit() {
-    const messageKey = this.PageService.isXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
+    const titleKey = this.ContentEditor.isDocumentXPage ? 'SAVE_XPAGE_CHANGES_TITLE' : 'SAVE_DOCUMENT_CHANGES_TITLE';
+    const messageKey = this.ContentEditor.isDocumentXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
 
-    return this.ContentEditor.confirmSaveOrDiscardChanges(messageKey)
+    return this.ContentEditor.confirmSaveOrDiscardChanges(messageKey, {}, titleKey)
       .then((action) => {
         if (action === 'SAVE') {
           this.HippoIframeService.reload();

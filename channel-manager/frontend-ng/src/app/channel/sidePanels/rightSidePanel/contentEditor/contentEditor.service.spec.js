@@ -698,12 +698,13 @@ describe('ContentEditorService', () => {
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
       ContentEditor.discardChanges.and.returnValue($q.resolve());
 
+      const titleKey = 'titleKey';
       const key = 'messageKey';
       const params = {};
-      ContentEditor.confirmClose(key, params);
+      ContentEditor.confirmClose(key, params, titleKey);
       $rootScope.$digest();
 
-      expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith(key, params);
+      expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith(key, params, titleKey);
       expect(ContentEditor.discardChanges).toHaveBeenCalled();
       expect(ContentEditor.close).toHaveBeenCalled();
     });
@@ -711,12 +712,13 @@ describe('ContentEditorService', () => {
     it('does not discards the editable instance or closes the editor with the confirmation is cancelled', () => {
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
 
+      const titleKey = 'titleKey';
       const key = 'messageKey';
       const params = {};
-      ContentEditor.confirmClose(key, params);
+      ContentEditor.confirmClose(key, params, titleKey);
       $rootScope.$digest();
 
-      expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith(key, params);
+      expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith(key, params, titleKey);
       expect(ContentEditor.discardChanges).not.toHaveBeenCalled();
       expect(ContentEditor.close).not.toHaveBeenCalled();
     });
