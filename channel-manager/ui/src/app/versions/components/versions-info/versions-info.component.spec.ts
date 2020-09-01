@@ -57,6 +57,7 @@ describe('VersionsInfoComponent', () => {
       },
     ],
     restoreEnabled: true,
+    createVersionEnabled: true,
   } as VersionsInfo;
 
   beforeEach(() => {
