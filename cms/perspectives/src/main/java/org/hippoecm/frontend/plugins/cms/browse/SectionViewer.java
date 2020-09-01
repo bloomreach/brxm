@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.plugins.cms.browse.model.BrowserSections;
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
@@ -121,7 +122,7 @@ public class SectionViewer extends Panel implements ICardView {
             select(selectedBrowserSection);
         }
 
-        final Form form = new Form("selection-form");
+        final Form<?> form = new PostOnlyForm<>("selection-form");
         add(form);
 
         final SectionNamesModel sectionNamesModel = new SectionNamesModel();
