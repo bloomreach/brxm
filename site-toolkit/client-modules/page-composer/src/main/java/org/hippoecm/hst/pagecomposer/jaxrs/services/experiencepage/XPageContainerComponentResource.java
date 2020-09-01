@@ -62,6 +62,7 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageU
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getObtainEditableInstanceWorkflow;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getInternalWorkflowSession;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getWorkspaceNode;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.validateTimestamp;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.findNewName;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.getCatalogItem;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
@@ -109,7 +110,8 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             final PageComposerContextService pageComposerContextService = getPageComposerContextService();
 
-            final DocumentWorkflow documentWorkflow = getObtainEditableInstanceWorkflow(getSession(), pageComposerContextService);
+            final HippoSession userSession = getSession();
+            final DocumentWorkflow documentWorkflow = getObtainEditableInstanceWorkflow(userSession, pageComposerContextService);
 
             final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
@@ -120,6 +122,12 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
             final Node catalogItem = ContainerUtils.getContainerItem(workflowSession, itemUUID);
 
             final Node containerNode = getWorkspaceNode(workflowSession, getPageComposerContextService().getRequestConfigIdentifier());
+
+            // we can always validate the timestamp against the workspace version, since the 'checkoutCorrectBranch'
+            // does already fail when a too old version is attempted to be restored: of course are a restore, the
+            // timestamp check always passes since a check is done against an older restored version
+            // TODO validate in integration test, including version history checked out branches
+            validateTimestamp(versionStamp, containerNode, userSession.getUserID());
 
             // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
             // containerNode. Find a correct newName and create a new node.
@@ -164,7 +172,6 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
     private Calendar updateTimestamp(final Node containerNode) throws RepositoryException {
         // update last modified for optimistic locking
-        // TODO Do we want this optimistic locking in this way?
         final Calendar updatedTimestamp = Calendar.getInstance();
         containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, updatedTimestamp);
         return updatedTimestamp;
@@ -181,13 +188,19 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
             final PageComposerContextService pageComposerContextService = getPageComposerContextService();
 
-            final DocumentWorkflow documentWorkflow = getObtainEditableInstanceWorkflow(getSession(), pageComposerContextService);
+            final HippoSession userSession = getSession();
+            final DocumentWorkflow documentWorkflow = getObtainEditableInstanceWorkflow(userSession, pageComposerContextService);
+            final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
 
             final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
-            final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
-
             final Node containerNode = getWorkspaceNode(workflowSession, getPageComposerContextService().getRequestConfigIdentifier());
+
+            // we can always validate the timestamp against the workspace version, since the 'checkoutCorrectBranch'
+            // does already fail when a too old version is attempted to be restored: of course are a restore, the
+            // timestamp check always passes since a check is done against an older restored version
+            // TODO validate in integration test, including version history checked out branches
+            validateTimestamp(container.getLastModifiedTimestamp(), containerNode, userSession.getUserID());
 
             final List<String> children = getWorkspaceChildren(workflowSession, container.getChildren());
 
@@ -198,8 +211,8 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
             });
 
             // update last modified for optimistic locking
-            // TODO Do we want this optimistic locking in this way?
-            updateTimestamp(containerNode);
+            final Calendar calendar = updateTimestamp(containerNode);
+            container.setLastModifiedTimestamp(calendar.getTimeInMillis());
 
             documentWorkflow.saveUnpublished();
 
@@ -254,13 +267,20 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
                 final PageComposerContextService pageComposerContextService = getPageComposerContextService();
 
-                final DocumentWorkflow documentWorkflow = getObtainEditableInstanceWorkflow(getSession(), pageComposerContextService);
-
-                final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
+                final HippoSession userSession = getSession();
+                final DocumentWorkflow documentWorkflow = getObtainEditableInstanceWorkflow(userSession, pageComposerContextService);
 
                 final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
 
+                final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
+
                 final Node container = getWorkspaceNode(internalWorkflowSession, getPageComposerContextService().getRequestConfigIdentifier());
+
+                // we can always validate the timestamp against the workspace version, since the 'checkoutCorrectBranch'
+                // does already fail when a too old version is attempted to be restored: of course are a restore, the
+                // timestamp check always passes since a check is done against an older restored version
+                // TODO validate in integration test, including version history checked out branches
+                validateTimestamp(versionStamp, container, userSession.getUserID());
 
 
                 // itemUUID can belong to versioned component item, in that case, find the checked out workspace equivalent
@@ -281,8 +301,13 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
                 workspaceContainerItem.remove();
 
+                // update last modified for optimistic locking
+                updateTimestamp(container);
+
                 documentWorkflow.saveUnpublished();
 
+                // TODO the updated timestamp should be returned and used by the FE for the next call from this
+                //      container
                 return ok(itemUUID + " deleted", isCheckedOut);
             } catch (ItemNotFoundException e) {
                 throw new ClientException("Item to delete not found", ClientError.INVALID_UUID);

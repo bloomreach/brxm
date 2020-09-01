@@ -19,6 +19,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage;
 import java.rmi.RemoteException;
 import java.util.Optional;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -30,7 +31,10 @@ import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
@@ -43,12 +47,18 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_FROZENUUID;
 import static org.apache.jackrabbit.JcrConstants.NT_FROZENNODE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
+import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
+import static org.hippoecm.repository.util.JcrUtils.isAncestor;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
+import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 
 public class XPageUtils {
 
@@ -150,16 +160,31 @@ public class XPageUtils {
             throw new WorkflowException("Expected unpublished variant to be present");
         }
 
-        final String currentBranchId = JcrUtils.getStringProperty(unpublished.get(), HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+        final String currentBranchId = getStringProperty(unpublished.get(), HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
 
-        final Node xpageComponent = getInternalWorkflowSession(documentWorkflow).getNodeByIdentifier(contextService.getRequestConfigIdentifier());
+        final Session workflowSession = getInternalWorkflowSession(documentWorkflow);
+        final Node xpageComponent = workflowSession.getNodeByIdentifier(contextService.getRequestConfigIdentifier());
 
         if (xpageComponent.isNodeType(NT_FROZENNODE)) {
+
+            // FIND OUT whether the FROZEN NODE is also the LATEST version for branch, otherwise there has been made
+            // changes by someone else *after* the current cms user loaded the page in the CM : Optimistic locking should
+            // then kick in! TODO cast this behavior in concrete in an integration test
+            final Document current = documentWorkflow.getBranch(targetBranchId, UNPUBLISHED);
+            if (!isAncestor(current.getNode(workflowSession), xpageComponent)) {
+                String msg = String.format("Node '%s' is not the most recent version for '%s' anymore. Someone else might have " +
+                                "made concurrent changes, page must be reloaded. This is optimistic locking",
+                        getNodePathQuietly(xpageComponent), targetBranchId);
+                log.info(msg);
+                throw new ClientException(msg, ClientError.ITEM_CHANGED);
+            }
+
+
             Node documentVariant = xpageComponent;
             while (documentVariant.getParent().isNodeType(NT_FROZENNODE)) {
                 documentVariant = documentVariant.getParent();
             }
-            final String xPageComponentBranchId = JcrUtils.getStringProperty(documentVariant, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+            final String xPageComponentBranchId = getStringProperty(documentVariant, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
             if (!targetBranchId.equals(xPageComponentBranchId)) {
                 throw new WorkflowException(String.format("Expected target branch id '%s' to be the same as the branch " +
                         "id '%s' to which the XPage component '%s' belongs", targetBranchId, xPageComponentBranchId,
@@ -187,13 +212,29 @@ public class XPageUtils {
     }
 
 
-    static void validateTimestamp(final long versionStamp, final Node container) throws RepositoryException {
-        if (true) {
-            // temporarily ignore validating timestamp for xpages since IF a 'hst:lastmodified' ends up on the
-            // container in an xpage, this timestamp is not taking into the HST Model timestamp (since container from
-            // XPageLayout is used!! and then this validation always fails
+    /**
+     * @throws ClientException in case  {@code versionStamp} is not 0, the {@code container} has the property
+     * {@code GENERAL_PROPERTY_LAST_MODIFIED} and the value is not equal to {@code versionStamp}
+     */
+    static void validateTimestamp(final long versionStamp, final Node container, final String userId) throws RepositoryException, ClientException {
+        if (versionStamp == 0) {
+            // no timestamp to validate against, ignore
+        }
+
+        // sometimes the UI has not yet been update with the timestamp if two calls are done after each other, therefore
+        // we now first check if the unpublished last modified by is equal to cmsUserId, and if so, we do not require
+        // the same timestamp, this is similar to checking the lock in
+        // org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper.doLock. Admittedly it would had been better
+        // if the UI always sends the updated timestamp but as long as it doesn't, this helps
+        final Node xPageUnpublishedVariant = getXPageUnpublishedVariant(container);
+        if (xPageUnpublishedVariant == null) {
+            throw new RepositoryException("Expected to find an unpublished variant");
+        }
+        final String lastModifiedBy = getStringProperty(xPageUnpublishedVariant, HIPPOSTDPUBWF_LAST_MODIFIED_BY, null);
+        if (userId.equals(lastModifiedBy)) {
             return;
         }
+
         if (versionStamp != 0 && container.hasProperty(GENERAL_PROPERTY_LAST_MODIFIED)) {
             long existingStamp = container.getProperty(GENERAL_PROPERTY_LAST_MODIFIED).getLong();
             if (existingStamp != versionStamp) {
@@ -217,7 +258,6 @@ public class XPageUtils {
         // note this can be a frozen node
         final Node containerItem = session.getNodeByIdentifier(identifier);
 
-        final Node workspaceNode;
         if (containerItem.isNodeType(JcrConstants.NT_FROZENNODE)) {
             // get hold of the workspace container item! Since 'checkoutCorrectBranch' did already do the checkout,
             // and a restore from version history restores the frozen uuid, we can safely get hold of that one
@@ -226,5 +266,55 @@ public class XPageUtils {
         } else {
             return containerItem;
         }
+    }
+
+
+    /**
+     * if belongs to XPage, returns the unpublished variant. If it is an XPage but there is no unpublished variant,
+     * we throw an ClientException for now, see CMS-13262.
+     * Note that the {@code node} can also be a frozen XPage node: In that case we try to get hold of the
+     * unpubished variant from the frozen node.
+     */
+    public static Node getXPageUnpublishedVariant(Node node) throws RepositoryException {
+        if (node.getSession().getRootNode().isSame(node)) {
+            return null;
+        }
+
+        if (node.isNodeType(NT_FROZEN_NODE)) {
+            Node current = node;
+            while (current.getParent().isNodeType(NT_FROZEN_NODE)) {
+                current = current.getParent();
+            }
+            // expected that current is now the frozen node of the unpublished variant
+            final String workspaceUUID = current.getProperty(JCR_FROZENUUID).getString();
+            try {
+                final Node unpublished = node.getSession().getNodeByIdentifier(workspaceUUID);
+                if (unpublished.getParent().isNodeType(HippoNodeType.NT_HANDLE) &&
+                        HippoStdNodeType.UNPUBLISHED.equals(getStringProperty(unpublished, HIPPOSTD_STATE, null))) {
+                    return unpublished;
+                } else {
+                    throw new ClientException(String.format("Could not find unpublished variant of Experience Page for '%s'.",
+                            node.getPath()), ClientError.INVALID_UUID);
+                }
+            } catch (ItemNotFoundException e) {
+                throw new ClientException(String.format("Could not find unpublished variant workspace node for versioned node '%s'",
+                        node.getPath()), ClientError.INVALID_UUID);
+            }
+
+        }
+
+        if (node.getName().equals(HstNodeTypes.NODENAME_HST_XPAGE) && node.getParent().isNodeType(HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN)) {
+            // found hst:page, parent must be hippo:document and must be unpublished variant
+            Node unpublished = node.getParent();
+            if (unpublished.getParent().isNodeType(HippoNodeType.NT_HANDLE) &&
+                    HippoStdNodeType.UNPUBLISHED.equals(getStringProperty(unpublished, HIPPOSTD_STATE, null))) {
+                return unpublished;
+            } else {
+                throw new ClientException(String.format("'%s' Does not belong to unpublished variant of Experience Page.",
+                        node.getPath()), ClientError.INVALID_UUID);
+            }
+        }
+
+        return getXPageUnpublishedVariant(node.getParent());
     }
 }

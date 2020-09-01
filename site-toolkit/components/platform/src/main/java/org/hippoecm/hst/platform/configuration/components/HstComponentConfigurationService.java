@@ -1855,6 +1855,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         canonicalIdentifier = xPageDocumentContainer.getCanonicalIdentifier();
         canonicalStoredLocation = xPageDocumentContainer.getCanonicalStoredLocation();
 
+        lastModified = xPageDocumentContainer.getLastModified();
+
         // mark the component to be an exp page container
         experiencePageComponent = true;
         // since the XPage document contains the container, we mark it shared
