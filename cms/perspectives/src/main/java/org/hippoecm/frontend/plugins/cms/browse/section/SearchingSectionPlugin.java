@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang3.StringUtils;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -36,9 +35,9 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
-
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -57,9 +56,7 @@ import org.hippoecm.frontend.plugins.standards.search.TextSearchBuilder;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.skin.Icon;
-
 import org.hippoecm.repository.api.HippoNodeType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +101,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         collection.addListener(this::redrawSearch);
 
-        final Form form = new Form("form") {
+        final Form<?> form = new PostOnlyForm<Void>("form") {
 
             @Override
             protected void onBeforeRender() {

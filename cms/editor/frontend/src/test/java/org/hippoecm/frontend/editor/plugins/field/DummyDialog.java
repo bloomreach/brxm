@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,17 +18,17 @@ package org.hippoecm.frontend.editor.plugins.field;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 class DummyDialog extends Panel {
 
-    private final Form form;
-
     public DummyDialog(final String id, final IModel<IPluginConfig> model, final IClusterConfig cluster, final boolean editable) {
         super(id);
 
-        add(form = new Form("form"));
+        final Form<?> form = new PostOnlyForm<>("form");
         form.add(new TemplateParameterEditor("tpe", model, cluster, editable));
+        add(form);
     }
 }

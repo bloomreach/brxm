@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package org.hippoecm.frontend.dialog;
 
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IFormSubmitter;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.form.PostOnlyForm;
 
 /**
  * The HippoForm is used to manually clear old feedback messages prior processing because
  * {@code org.hippoecm.frontend.plugins.cms.root.RootPlugin#RootPlugin} configured to keep all feedback messages
  * after each request cycle.
  */
-public class HippoForm<T> extends Form<T> {
+public class HippoForm<T> extends PostOnlyForm<T> {
     public HippoForm(final String id) {
         super(id);
     }
@@ -42,7 +42,7 @@ public class HippoForm<T> extends Form<T> {
         super.process(submittingComponent);
     }
 
-    public void clearFeedbackMessages(){
+    public void clearFeedbackMessages() {
         if (hasFeedbackMessage()) {
             getFeedbackMessages().clear();
         }
