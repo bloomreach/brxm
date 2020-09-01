@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import org.apache.wicket.util.string.Strings;
 
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -104,7 +105,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         collection.addListener(this::redrawSearch);
 
-        final Form form = new Form("form") {
+        final Form<?> form = new PostOnlyForm<Void>("form") {
 
             @Override
             protected void onBeforeRender() {

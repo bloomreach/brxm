@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.util.NodeIterable;
@@ -57,7 +58,7 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
         this.model = model;
 
         // add form with markup id setter so it can be updated via ajax
-        final Form<User> form = new Form<>("form", new CompoundPropertyModel<>(model));
+        final Form<User> form = new PostOnlyForm<>("form", CompoundPropertyModel.of(model));
         form.setOutputMarkupId(true);
         add(form);
 
