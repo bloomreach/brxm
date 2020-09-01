@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -61,6 +61,7 @@ import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandle
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.i18n.TranslatorUtils;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.session.UserSession;
@@ -74,7 +75,7 @@ import wicket.contrib.input.events.key.KeyType;
  * Utility class for implementing the {@link IDialogService.Dialog} interface. Provides OK and Cancel buttons by
  * default, and has support for fullscreen mode which is enabled by overriding {@code isFullscreenEnabled}.
  */
-public abstract class AbstractDialog<T> extends Form<T> implements IDialogService.Dialog, IAjaxIndicatorAware {
+public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDialogService.Dialog, IAjaxIndicatorAware {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
