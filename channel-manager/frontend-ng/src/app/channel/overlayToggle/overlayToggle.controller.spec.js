@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,31 @@ import 'angular-mocks';
 
 describe('overlayToggle component', () => {
   let $ctrl;
+  let $rootScope;
   let localStorageService;
+  let PageStructureService;
   let ProjectService;
 
   const testStorageKey = 'channelManager.overlays.testToggle';
   const onStateCallback = jasmine.createSpy('stateChangeCallback');
+
+  let page;
+  let pageMeta;
+  let containers;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
     inject((
       $componentController,
+      _$rootScope_,
       _localStorageService_,
+      _PageStructureService_,
       _ProjectService_,
     ) => {
+      $rootScope = _$rootScope_;
       localStorageService = _localStorageService_;
+      PageStructureService = _PageStructureService_;
       ProjectService = _ProjectService_;
 
       $ctrl = $componentController('overlayToggle', {}, {
@@ -47,6 +57,14 @@ describe('overlayToggle component', () => {
 
       spyOn(localStorageService, 'get');
       spyOn(localStorageService, 'set');
+
+      containers = [];
+      page = jasmine.createSpyObj('page', ['getMeta', 'getContainers']);
+      pageMeta = jasmine.createSpyObj('pageMeta', ['isXPage']);
+      pageMeta.isXPage.and.returnValue(false);
+      page.getMeta.and.returnValue(pageMeta);
+      page.getContainers.and.returnValue(containers);
+      spyOn(PageStructureService, 'getPage').and.returnValue(page);
     });
   });
 
@@ -71,6 +89,15 @@ describe('overlayToggle component', () => {
       expect($ctrl.initiateOverlay).toHaveBeenCalled();
     });
   });
+
+  describe('when the page changes', () => {
+    it('should initiate overlay again', () => {
+      spyOn($ctrl, 'initiateOverlay');
+      $rootScope.$emit('page:change');
+      expect($ctrl.initiateOverlay).toHaveBeenCalled();
+    });
+  });
+
 
   describe('initOverlay', () => {
     it('loads persisted state when selected project is master', () => {
@@ -105,6 +132,21 @@ describe('overlayToggle component', () => {
       expect($ctrl.loadPersistentState).not.toHaveBeenCalled();
       expect(onStateCallback).toHaveBeenCalledWith({ state: $ctrl.state });
     });
+
+    it('enables buttons and overlay when a branch is selected and editing is not allowed and an XPage container is marked editable', () => {
+      pageMeta.isXPage.and.returnValue(true);
+      containers.push({ isXPageEditable: () => false});
+      containers.push({ isXPageEditable: () => true});
+      spyOn(ProjectService, 'isBranch').and.returnValue(true);
+      spyOn(ProjectService, 'isEditingAllowed').and.returnValue(false);
+      spyOn($ctrl, 'loadPersistentState');
+
+      $ctrl.initiateOverlay();
+
+      expect($ctrl.disabled).toBe(false);
+      expect($ctrl.loadPersistentState).toHaveBeenCalled();
+    });
+
   });
 
   describe('setState', () => {
