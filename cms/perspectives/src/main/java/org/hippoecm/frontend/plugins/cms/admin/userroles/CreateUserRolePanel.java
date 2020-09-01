@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.hippoecm.frontend.util.EventBusUtils;
@@ -53,7 +54,7 @@ public class CreateUserRolePanel extends AdminBreadCrumbPanel {
         super(id, breadCrumbModel);
 
         // add form with markup id setter so it can be updated via ajax
-        final Form form = new Form<>("form");
+        final Form<?> form = new PostOnlyForm<>("form");
         form.setOutputMarkupId(true);
         add(form);
 
