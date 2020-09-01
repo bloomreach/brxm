@@ -78,6 +78,7 @@
     ]
   },
   "jest-junit": {
-    "outputDirectory": "coverage"
+    "outputDirectory": "../../target/surefire-reports/",
+    "outputName": "TEST-vue-sdk.xml"
   }
 }
