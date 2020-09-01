@@ -73,6 +73,7 @@
     "zone.js": "^0.10"
   },
   "jest-junit": {
-    "outputDirectory": "coverage"
+    "outputDirectory": "../../target/surefire-reports/",
+    "outputName": "TEST-ng-sdk.xml"
   }
 }
