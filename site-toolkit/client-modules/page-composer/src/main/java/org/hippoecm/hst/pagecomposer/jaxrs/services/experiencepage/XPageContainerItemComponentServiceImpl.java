@@ -113,7 +113,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
 
             final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
 
-            Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession);
+            Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession, userSession.getUserID());
 
             Set<String> removedVariants = doRetainVariants(containerItem, variants);
 
@@ -149,7 +149,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
 
             final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
 
-            Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession);
+            Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession, userSession.getUserID());
 
             final XPageComponentParameters componentParameters = getCurrentHstComponentParameters(containerItem);
             if (!componentParameters.hasPrefix(variantId)) {
@@ -185,7 +185,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
             final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
-            final Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession);
+            final Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession, userSession.getUserID());
 
             final XPageComponentParameters componentParameters = getCurrentHstComponentParameters(containerItem);
             setParameters(componentParameters, variantId, params);
@@ -218,7 +218,7 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
             final boolean isCheckedOut = checkoutCorrectBranch(documentWorkflow, pageComposerContextService);
 
             final Session internalWorkflowSession = getInternalWorkflowSession(documentWorkflow);
-            Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession);
+            Node containerItem = getWorkspaceContainerItem(versionStamp, internalWorkflowSession, userSession.getUserID());
 
             final XPageComponentParameters componentParameters = new XPageComponentParameters(containerItem);
             componentParameters.removePrefix(oldVariantId);
@@ -256,11 +256,12 @@ public class XPageContainerItemComponentServiceImpl implements ContainerItemComp
      * Note that 'pageComposerContextService.getRequestConfigIdentifier()' can return a frozen node : this method returns
      * the 'workspace' version of that node, and if not found, a ItemNotFoundException will be thrown
      */
-    private Node getWorkspaceContainerItem(final long versionStamp, final Session session) throws RepositoryException {
+    private Node getWorkspaceContainerItem(final long versionStamp, final Session workflowSession,
+                                           final String cmsUserId) throws RepositoryException {
 
-        final Node containerItem = getWorkspaceNode(session, pageComposerContextService.getRequestConfigIdentifier());
+        final Node containerItem = getWorkspaceNode(workflowSession, pageComposerContextService.getRequestConfigIdentifier());
         final Node container = containerItem.getParent();
-        validateTimestamp(versionStamp, container);
+        validateTimestamp(versionStamp, container, cmsUserId);
         return containerItem;
     }
 
