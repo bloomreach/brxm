@@ -59,6 +59,7 @@ import org.hippoecm.frontend.editor.plugins.field.CollapsibleFieldTitle;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
 import org.hippoecm.frontend.editor.plugins.field.FieldTitle;
 import org.hippoecm.frontend.editor.plugins.field.FlagList;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
@@ -621,7 +622,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
             super(id, "addItemsDropDown", container);
             setVisibilityAllowed(true);
 
-            final Form<?> form = new Form<>("cpform");
+            final Form<?> form = new PostOnlyForm<>("cpform");
             add(form);
 
             final List<DropDownOption> options = getOptions();

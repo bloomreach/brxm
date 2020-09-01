@@ -62,6 +62,7 @@ import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.buttons.ButtonStyle;
 import org.hippoecm.frontend.buttons.ButtonType;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.i18n.TranslatorUtils;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
@@ -74,7 +75,7 @@ import wicket.contrib.input.events.key.KeyType;
  * Utility class for implementing the {@link IDialogService.Dialog} interface. Provides OK and Cancel buttons by
  * default, and has support for fullscreen mode which is enabled by overriding {@code isFullscreenEnabled}.
  */
-public abstract class AbstractDialog<T> extends Form<T> implements IDialogService.Dialog, IAjaxIndicatorAware {
+public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDialogService.Dialog, IAjaxIndicatorAware {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
