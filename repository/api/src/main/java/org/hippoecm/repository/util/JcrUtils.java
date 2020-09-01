@@ -964,7 +964,7 @@ public class JcrUtils {
         }
     }
 
-    private static boolean isAncestor(final Node ancestor, final Node descendant) throws RepositoryException {
+    public static boolean isAncestor(final Node ancestor, final Node descendant) throws RepositoryException {
         try {
             Node node = descendant;
             do {
