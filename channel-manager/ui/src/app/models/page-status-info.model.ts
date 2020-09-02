@@ -27,5 +27,6 @@ export class XPageStatusInfo {
     readonly scheduledDateTime?: number,
     readonly projectName?: string,
     readonly version?: Version,
+    readonly lockedByUsername?: string,
   ) {}
 }
