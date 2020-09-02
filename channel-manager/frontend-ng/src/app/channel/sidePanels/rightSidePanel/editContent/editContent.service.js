@@ -106,6 +106,7 @@ class EditContentService {
         (document) => {
           if (selectedProjectId && document.branchId !== selectedProjectId) {
             this._showDocumentTitle(document);
+            this._setDocumentContext();
             this.$state.go('hippo-cm.channel.add-to-project', { documentId });
           } else {
             this.editDocument(documentId);
@@ -129,28 +130,35 @@ class EditContentService {
   }
 
   async _loadDocument(documentId) {
+    this.RightSidePanelService.clearContext();
+
     this._showDefaultTitle();
     this.RightSidePanelService.startLoading();
 
     const document = await this.ContentEditor.open(documentId);
 
-    this.documentId = documentId;
-    this._showDocumentTitle(document);
+    if (document) {
+      this.documentId = documentId;
+      this._showDocumentTitle(document);
+    }
+
+    this._setDocumentContext();
     this.RightSidePanelService.stopLoading();
   }
 
   _showDefaultTitle() {
-    this.RightSidePanelService.clearContext();
-
     const documentLabel = this.$translate.instant('DOCUMENT');
     this.RightSidePanelService.setTitle(documentLabel);
   }
 
-  _showDocumentTitle(document) {
+  _setDocumentContext() {
     const messageKey = this.ContentEditor.isDocumentXPage ? 'PAGE' : 'DOCUMENT';
     const documentLabel = this.$translate.instant(messageKey);
 
     this.RightSidePanelService.setContext(documentLabel);
+  }
+
+  _showDocumentTitle(document) {
     this.RightSidePanelService.setTitle(document.displayName);
   }
 
