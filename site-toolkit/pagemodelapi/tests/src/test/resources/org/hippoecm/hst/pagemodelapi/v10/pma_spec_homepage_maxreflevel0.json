@@ -580,7 +580,6 @@
           "path" : "banners/banner100"
         },
         "params" : {
-          "path" : "banners/banner100"
         }
       },
       "name" : "banner-old-style",
@@ -600,7 +599,6 @@
           "path" : "banners/banner101"
         },
         "params" : {
-          "path" : "banners/banner101"
         }
       },
       "name" : "banner-old-style-2",
