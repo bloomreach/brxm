@@ -23,4 +23,5 @@ export interface XPageState {
   name: string;
   state: DocumentState;
   acceptanceState?: AcceptanceState;
+  lockedBy?: string;
 }

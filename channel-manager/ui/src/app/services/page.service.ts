@@ -42,6 +42,7 @@ type StatusMatcher = (pageStates: PageStates) => XPageStatusInfo | undefined;
 export class PageService implements OnDestroy {
   // Matches the state or returns undefined to let the next match a try
   private readonly statusMatchers: StatusMatcher[] = [
+    (pageStates: PageStates) => this.matchLockedState(pageStates),
     (pageStates: PageStates) => this.matchPreviousPageVersion(pageStates),
     (pageStates: PageStates) => this.matchEditingSharedContainers(pageStates),
     (pageStates: PageStates) => this.matchProject(pageStates),
@@ -250,13 +251,31 @@ export class PageService implements OnDestroy {
 
     const currentVersion = this.pageVersions.find(v => this.versionsService.isCurrentVersion(v));
 
-    return  new XPageStatusInfo(
+    return new XPageStatusInfo(
       XPageStatus.PreviousVersion,
       xPageState.state,
       xPageState.name,
       undefined,
       undefined,
       currentVersion,
+    );
+  }
+
+  private matchLockedState(pageStates: PageStates): XPageStatusInfo | undefined {
+    const xPageState = pageStates.xpage;
+
+    if (!xPageState || !xPageState.lockedBy) {
+      return;
+    }
+
+    return new XPageStatusInfo(
+      XPageStatus.Locked,
+      xPageState.state,
+      xPageState.name,
+      undefined,
+      undefined,
+      undefined,
+      xPageState.lockedBy,
     );
   }
 }
