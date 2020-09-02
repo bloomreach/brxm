@@ -26,6 +26,7 @@ describe('XPageMenuService', () => {
   let PageService;
   let PageToolsService;
   let XPageMenuService;
+  let EditContentService;
 
   const allWorkflowActions = [
     'publish',
@@ -58,6 +59,7 @@ describe('XPageMenuService', () => {
       _FeedbackService_,
       _PageService_,
       _XPageMenuService_,
+      _EditContentService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -66,6 +68,7 @@ describe('XPageMenuService', () => {
       FeedbackService = _FeedbackService_;
       PageService = _PageService_;
       XPageMenuService = _XPageMenuService_;
+      EditContentService = _EditContentService_;
     });
 
     spyOn(DocumentWorkflowService, 'publish').and.returnValue($q.resolve());
@@ -76,6 +79,7 @@ describe('XPageMenuService', () => {
     spyOn(DocumentWorkflowService, 'scheduleUnpublication').and.returnValue($q.resolve());
     spyOn(DocumentWorkflowService, 'requestUnpublication').and.returnValue($q.resolve());
     spyOn(DocumentWorkflowService, 'requestScheduleUnpublication').and.returnValue($q.resolve());
+    spyOn(EditContentService, 'startEditing').and.returnValue($q.resolve());
 
     spyOn(PageService, 'load');
 
@@ -141,18 +145,16 @@ describe('XPageMenuService', () => {
       spyOn($state, 'go');
       getAction('content').onClick();
 
-      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page.content', {
-        documentId: 'xpage-document-id',
-      });
+      expect(EditContentService.startEditing).toHaveBeenCalledWith('xpage-document-id',
+        'hippo-cm.channel.edit-page.content');
     });
 
     it('should open the versions panel', () => {
       spyOn($state, 'go');
       getAction('versions').onClick();
 
-      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page.versions', {
-        documentId: 'xpage-document-id',
-      });
+      expect(EditContentService.startEditing).toHaveBeenCalledWith('xpage-document-id',
+        'hippo-cm.channel.edit-page.versions');
     });
 
     it('should hide workflow actions', () => {
