@@ -97,9 +97,11 @@ class EditContentService {
     return this.$q.resolve();
   }
 
-  startEditing(documentId) {
+  startEditing(documentId, state) {
+    const newState = state || 'hippo-cm.channel.edit-content';
+    const transition = () => this.$state.go(newState, { documentId });
     if (!this.ConfigService.projectsEnabled) {
-      this.editDocument(documentId);
+      transition.apply();
     } else {
       const selectedProjectId = this.ProjectService.selectedProject.id;
       this.ContentService.getDocument(documentId, selectedProjectId).then(
@@ -109,7 +111,7 @@ class EditContentService {
             this._setDocumentContext();
             this.$state.go('hippo-cm.channel.add-to-project', { documentId });
           } else {
-            this.editDocument(documentId);
+            transition.apply();
           }
         },
       );
