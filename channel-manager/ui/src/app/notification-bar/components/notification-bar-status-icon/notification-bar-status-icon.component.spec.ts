@@ -64,6 +64,7 @@ describe('NotificationBarStatusIconComponent', () => {
     ['ProjectRunning', XPageStatus.ProjectRunning, 'xpage'],
     ['EditingSharedContainers', XPageStatus.EditingSharedContainers, 'alert-circle-outline'],
     ['PreviousVersion', XPageStatus.PreviousVersion, 'alert-circle-outline'],
+    ['Locked', XPageStatus.Locked, 'lock-outline'],
   ])('if xpage status is %s', (statusName, statusValue, expectedIcon) => {
     beforeEach(() => {
       component.status = statusValue;

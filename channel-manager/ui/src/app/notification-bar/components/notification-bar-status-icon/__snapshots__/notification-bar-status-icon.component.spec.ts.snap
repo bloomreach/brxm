@@ -10,6 +10,16 @@ exports[`NotificationBarStatusIconComponent if xpage status is EditingSharedCont
 </div>
 `;
 
+exports[`NotificationBarStatusIconComponent if xpage status is Locked should render lock-outline 1`] = `
+<div
+  id="root35"
+>
+  <mat-icon>
+    lock-outline
+  </mat-icon>
+</div>
+`;
+
 exports[`NotificationBarStatusIconComponent if xpage status is Offline should render minus-circle-outline 1`] = `
 <div
   id="root3"
