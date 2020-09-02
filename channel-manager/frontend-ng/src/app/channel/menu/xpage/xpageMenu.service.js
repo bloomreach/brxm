@@ -24,6 +24,7 @@ class XPageMenuService extends MenuService {
     FeedbackService,
     PageService,
     PageToolsService,
+    EditContentService,
   ) {
     'ngInject';
 
@@ -46,15 +47,11 @@ class XPageMenuService extends MenuService {
     }
 
     function showVersions() {
-      $state.go('hippo-cm.channel.edit-page.versions', {
-        documentId: getDocumentId(),
-      });
+      EditContentService.startEditing(getDocumentId(), 'hippo-cm.channel.edit-page.versions');
     }
 
     function showContent() {
-      $state.go('hippo-cm.channel.edit-page.content', {
-        documentId: getDocumentId(),
-      });
+      EditContentService.startEditing(getDocumentId(), 'hippo-cm.channel.edit-page.content');
     }
 
     const menu = this.defineMenu('xpage', {
