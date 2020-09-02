@@ -11,6 +11,17 @@ exports[`NotificationBarStatusTextComponent if xpage status is EditingSharedCont
 </div>
 `;
 
+exports[`NotificationBarStatusTextComponent if xpage status is Locked should render NOTIFICATION_BAR_XPAGE_LABEL_LOCKED_BY_USER label 1`] = `
+<div
+  id="root35"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_LOCKED_BY_USERsome pageLIVEundefined
+
+</div>
+`;
+
 exports[`NotificationBarStatusTextComponent if xpage status is Offline should render NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE label 1`] = `
 <div
   id="root3"

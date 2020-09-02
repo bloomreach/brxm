@@ -111,8 +111,6 @@ describe('PageService', () => {
         XPageStatus.Published,
         DocumentState.Live,
         'page name',
-        undefined,
-        undefined,
       ),
     ],
     [
@@ -125,8 +123,6 @@ describe('PageService', () => {
         XPageStatus.UnpublishedChanges,
         DocumentState.Changed,
         'page name',
-        undefined,
-        undefined,
       ),
     ],
     [
@@ -139,8 +135,6 @@ describe('PageService', () => {
         XPageStatus.UnpublishedChanges,
         DocumentState.Unpublished,
         'page name',
-        undefined,
-        undefined,
       ),
     ],
     [
@@ -153,8 +147,6 @@ describe('PageService', () => {
         XPageStatus.Offline,
         DocumentState.New,
         'page name',
-        undefined,
-        undefined,
       ),
     ],
     [
@@ -168,8 +160,6 @@ describe('PageService', () => {
         XPageStatus.PublicationRequest,
         DocumentState.Unpublished,
         'page name',
-        undefined,
-        undefined,
       ),
     ],
     [
@@ -183,8 +173,6 @@ describe('PageService', () => {
         XPageStatus.TakeOfflineRequest,
         DocumentState.Live,
         'page name',
-        undefined,
-        undefined,
       ),
     ],
     [
@@ -198,8 +186,6 @@ describe('PageService', () => {
         XPageStatus.RejectedRequest,
         DocumentState.Changed,
         'page name',
-        undefined,
-        undefined,
       ),
     ],
     [
@@ -214,7 +200,6 @@ describe('PageService', () => {
         DocumentState.Unpublished,
         'page name',
         1596811323,
-        undefined,
       ),
     ],
     [
@@ -229,7 +214,6 @@ describe('PageService', () => {
         DocumentState.Live,
         'page name',
         1596811323,
-        undefined,
       ),
     ],
     [
@@ -244,7 +228,6 @@ describe('PageService', () => {
         DocumentState.Unpublished,
         'page name',
         1596811323,
-        undefined,
       ),
     ],
     [
@@ -259,7 +242,6 @@ describe('PageService', () => {
         DocumentState.Live,
         'page name',
         1596811323,
-        undefined,
       ),
     ],
     [
@@ -364,8 +346,6 @@ describe('PageService', () => {
         XPageStatus.EditingSharedContainers,
         DocumentState.Live,
         'page name',
-        undefined,
-        undefined,
       ),
     ],
     [
@@ -385,6 +365,22 @@ describe('PageService', () => {
           timestamp: 1234,
           userName: 'user2',
        },
+      ),
+    ],
+    [
+      'Locked',
+      {
+        xpage: { name: 'page name', state: DocumentState.Live, lockedBy: 'username' },
+      },
+      undefined,
+      new XPageStatusInfo(
+        XPageStatus.Locked,
+        DocumentState.Live,
+        'page name',
+        undefined,
+        undefined,
+        undefined,
+        'username',
       ),
     ],
   ])('getXPageStatus if page states represent "%s" state', (expectedStatusName, pageStates, project, expectedStatusInfo) => {

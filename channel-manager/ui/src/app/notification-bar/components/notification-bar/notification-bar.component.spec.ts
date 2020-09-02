@@ -16,7 +16,11 @@
 
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { mocked } from 'ts-jest/utils';
 
+import { DocumentState } from '../../../models/document-state.enum';
+import { XPageStatusInfo } from '../../../models/page-status-info.model';
+import { XPageStatus } from '../../../models/xpage-status.enum';
 import { PageService } from '../../../services/page.service';
 
 import { NotificationBarComponent } from './notification-bar.component';
@@ -57,5 +61,139 @@ describe('NotificationBarComponent', () => {
     component.ngOnChanges();
 
     expect(pageServiceMock.getPageStatusInfo).toHaveBeenCalled();
+  });
+
+  describe.each([
+    ['RejectedRequest', new XPageStatusInfo(
+      XPageStatus.RejectedRequest,
+      DocumentState.Unpublished,
+      'some page',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_REQUEST_REJECTED'],
+    ['ProjectPageRejected', new XPageStatusInfo(
+      XPageStatus.ProjectPageRejected,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      'project name',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_REJECTED'],
+    ['EditingSharedContainers', new XPageStatusInfo(
+      XPageStatus.EditingSharedContainers,
+      DocumentState.Live,
+      'some page',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERS'],
+    ['Locked', new XPageStatusInfo(
+      XPageStatus.Locked,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      undefined,
+      undefined,
+      'username',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_LOCKED_BY_USER'],
+  ])('if xpage status is %s', (statusName, statusInfo, expectedText) => {
+    beforeEach(() => {
+      mocked(pageServiceMock.getPageStatusInfo).mockReturnValue(statusInfo);
+
+      component.ngOnChanges();
+    });
+
+    test(`should use danger color as background`, () => {
+      expect(component.danger).toBeTruthy();
+    });
+  });
+
+  describe.each([
+    ['Published', new XPageStatusInfo(
+      XPageStatus.Published,
+      DocumentState.Live,
+      'some page',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_LIVE'],
+    ['Offline', new XPageStatusInfo(
+      XPageStatus.Offline,
+      DocumentState.New,
+      'some page',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE'],
+    ['UnpublishedChanges', new XPageStatusInfo(
+      XPageStatus.UnpublishedChanges,
+      DocumentState.Changed,
+      'some page',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_LIVE_UNPUBLISHED_CHANGES'],
+    ['PublicationRequest', new XPageStatusInfo(
+      XPageStatus.PublicationRequest,
+      DocumentState.Unpublished,
+      'some page',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PUBLICATION_REQUESTED'],
+    ['TakeOfflineRequest', new XPageStatusInfo(
+      XPageStatus.TakeOfflineRequest,
+      DocumentState.Live,
+      'some page',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_TAKE_OFFLINE_REQUESTED'],
+    ['ScheduledPublication', new XPageStatusInfo(
+      XPageStatus.ScheduledPublication,
+      DocumentState.Unpublished,
+      'some page',
+      1596811323,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION'],
+    ['ScheduledToTakeOffline', new XPageStatusInfo(
+      XPageStatus.ScheduledToTakeOffline,
+      DocumentState.Live,
+      'some page',
+      1596811323,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE'],
+    ['ScheduledPublicationRequest', new XPageStatusInfo(
+      XPageStatus.ScheduledPublicationRequest,
+      DocumentState.Unpublished,
+      'some page',
+      1596811323,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTED'],
+    ['ScheduledToTakeOfflineRequest', new XPageStatusInfo(
+      XPageStatus.ScheduledToTakeOfflineRequest,
+      DocumentState.Live,
+      'some page',
+      1596811323,
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTED'],
+    ['ProjectInProgress', new XPageStatusInfo(
+      XPageStatus.ProjectInProgress,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      'project name',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_PROGRESS'],
+    ['ProjectInReview', new XPageStatusInfo(
+      XPageStatus.ProjectInReview,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      'project name',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_REVIEW'],
+    ['ProjectPageApproved', new XPageStatusInfo(
+      XPageStatus.ProjectPageApproved,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      'project name',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_APPROVED'],
+    ['ProjectRunning', new XPageStatusInfo(
+      XPageStatus.ProjectRunning,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      'project name',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IS_RUNNING'],
+    ['PreviousVersion', new XPageStatusInfo(
+      XPageStatus.PreviousVersion,
+      DocumentState.Live,
+      'some page',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_PREVIOUS_VERSION'],
+  ])('if xpage status is %s', (statusName, statusInfo, expectedText) => {
+    beforeEach(() => {
+      mocked(pageServiceMock.getPageStatusInfo).mockReturnValue(statusInfo);
+
+      component.ngOnChanges();
+    });
+
+    test(`should not use danger color as background`, () => {
+      expect(component.danger).toBeFalsy();
+    });
   });
 });

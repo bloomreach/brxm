@@ -32,4 +32,5 @@ export enum XPageStatus {
   ProjectPageRejected,
   EditingSharedContainers,
   PreviousVersion,
+  Locked,
 }
