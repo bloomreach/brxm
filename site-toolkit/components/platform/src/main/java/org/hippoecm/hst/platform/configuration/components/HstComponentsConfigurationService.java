@@ -175,26 +175,33 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
     public void populateComponentReferences(final Collection<HstComponentConfiguration> populate,
                                             final ClassLoader websiteClassLoader) {
-        for (HstComponentConfiguration child : populate) {
-            if (isNotEmpty(child.getComponentDefinition())) {
-                ((HstComponentConfigurationService) child).populateCatalogItemReference(availableContainerItems);
-            }
-        }
 
         final Map<String, List<DynamicParameter>> legacyComponentParametersCache = new HashMap<>();
         final Map<String, List<DynamicFieldGroup>> legacyComponentFieldGroupsCache = new HashMap<>();
 
         for (HstComponentConfiguration child : populate) {
-            if (isEmpty(child.getComponentDefinition())) {
-
+            if (isNotEmpty(child.getComponentDefinition())) {
+                ((HstComponentConfigurationService) child).populateCatalogItemReference(availableContainerItems);
+            } else {
                 // In case the component is a container item, this is legacy component instances support. For components
                 // which are not container items, this is not legacy!
                 // If component instance does not have a component definition reference, explicitly populate component parameters.
                 ((HstComponentConfigurationService) child).populateLegacyComponentParameters(websiteClassLoader,legacyComponentParametersCache);
                 ((HstComponentConfigurationService) child).populateLegacyFieldGroups(websiteClassLoader, legacyComponentFieldGroupsCache);
+            }
+        }
+
+        for (HstComponentConfiguration child : populate) {
+            if (isEmpty(child.getComponentDefinition())) {
+                // Only AFTER #populateCatalogItemReference, #populateLegacyComponentParameters and #populateLegacyFieldGroups
+                // have been done it is allowed to invoke #populateComponentReferences : If we do it while not all
+                // components have the 'component parameters' set, the result can be that referenced component items are
+                // already merged/deep copied into another component while not having their 'dynamic component parameters' set, and
+                // thus are not fully functional!
                 ((HstComponentConfigurationService) child).populateComponentReferences(canonicalComponentConfigurations);
             }
         }
+
     }
 
     public void enhanceComponentTree(final Collection<HstComponentConfiguration> childComponents, final boolean hstConfigModel) {
