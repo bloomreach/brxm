@@ -44,7 +44,6 @@
     "testEnvironment": "jsdom"
   },
   "jest-junit": {
-    "outputDirectory": "../../target/surefire-reports/",
     "outputName": "TEST-spa-sdk.xml"
   },
   "browserslist": [
