@@ -76,7 +76,9 @@ class EditContentService {
   }
 
   _isEditingDocument() {
-    return this.$state.$current.name === 'hippo-cm.channel.edit-content';
+    return ['hippo-cm.channel.edit-content',
+      'hippo-cm.channel.edit-page.content',
+      'hippo-cm.channel.edit-page.versions'].includes(this.$state.$current.name);
   }
 
   _stopEditingDocument(documentId) {
@@ -120,11 +122,7 @@ class EditContentService {
 
   branchAndEditDocument(documentId) {
     this.ContentService.branchDocument(documentId)
-      .then(() => this.editDocument(documentId));
-  }
-
-  editDocument(documentId) {
-    this.$state.go('hippo-cm.channel.edit-content', { documentId });
+      .then(() => this.$state.go('hippo-cm.channel.edit-content', { documentId }));
   }
 
   stopEditing() {
