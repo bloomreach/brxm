@@ -40,6 +40,7 @@ export class NotificationBarStatusTextComponent {
       dateTime: this.datePipe.transform(value.scheduledDateTime, 'full'),
       projectName: value.projectName || '',
       versionNumber: this.datePipe.transform(value.version?.timestamp, 'full'),
+      userName: value.lockedByUsername,
     };
   }
 
@@ -50,6 +51,7 @@ export class NotificationBarStatusTextComponent {
     dateTime: string | null,
     projectName: string | undefined,
     versionNumber: string | null,
+    userName: string | undefined,
   } | undefined;
 
   constructor(
@@ -76,6 +78,7 @@ export class NotificationBarStatusTextComponent {
       [XPageStatus.ProjectRunning]: 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IS_RUNNING',
       [XPageStatus.EditingSharedContainers]: 'NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERS',
       [XPageStatus.PreviousVersion]: 'NOTIFICATION_BAR_XPAGE_LABEL_PREVIOUS_VERSION',
+      [XPageStatus.Locked]: 'NOTIFICATION_BAR_XPAGE_LABEL_LOCKED_BY_USER',
     };
 
     return statusTextMap[pageStatus];

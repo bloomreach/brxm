@@ -26,6 +26,7 @@ const DANGER_XPAGE_STATUSES = [
   XPageStatus.RejectedRequest,
   XPageStatus.ProjectPageRejected,
   XPageStatus.EditingSharedContainers,
+  XPageStatus.Locked,
 ];
 
 @Component({

@@ -50,6 +50,7 @@ export class NotificationBarStatusIconComponent {
       [XPageStatus.ProjectRunning]: 'xpage',
       [XPageStatus.EditingSharedContainers]: 'alert-circle-outline',
       [XPageStatus.PreviousVersion]: 'alert-circle-outline',
+      [XPageStatus.Locked]: 'lock-outline',
     };
 
     return statusIconMap[status];
