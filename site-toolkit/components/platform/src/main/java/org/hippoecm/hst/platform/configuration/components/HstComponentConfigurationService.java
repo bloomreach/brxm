@@ -34,6 +34,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.builtin.components.StandardContainerComponent;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
@@ -42,6 +44,7 @@ import org.hippoecm.hst.configuration.components.DynamicFieldGroup;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
+import org.hippoecm.hst.configuration.experiencepage.ExperiencePageLoadingException;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.component.HstURL;
@@ -50,15 +53,12 @@ import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.hippoecm.hst.configuration.experiencepage.ExperiencePageLoadingException;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
 
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
@@ -1394,27 +1394,20 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     this.lastModified = referencedComp.lastModified;
                 }
 
+                if (this.fieldGroups.isEmpty()) {
+                    this.fieldGroups = referencedComp.fieldGroups;
+                } else {
+                    mergeFieldGroups(referencedComp.fieldGroups, this.fieldGroups);
+                }
+
+                if (this.hstDynamicComponentParameters.isEmpty()) {
+                    this.hstDynamicComponentParameters = referencedComp.hstDynamicComponentParameters;
+                } else {
+                    mergeDynamicParameters(referencedComp.hstDynamicComponentParameters, this.hstDynamicComponentParameters);
+                }
+
                 // inherited variable flag not needed to take from the referencedComp so no check here for that variable!
                 // prototype variable flag not needed to take from the referencedComp so no check here for that variable!
-
-                if (!referencedComp.parameters.isEmpty()) {
-                    // as we already have parameters, add only the once we do not yet have
-                    for (Entry<String, String> entry : referencedComp.parameters.entrySet()) {
-                        if (!parameters.containsKey(entry.getKey())) {
-                            parameters.put(entry.getKey(), entry.getValue());
-                        }
-                    }
-                }
-
-                if (!referencedComp.parameterNamePrefixSet.isEmpty()) {
-                    // as we already have parameters, add only the once we do not yet have
-                    for (String prefix : referencedComp.parameterNamePrefixSet) {
-                        if (!parameterNamePrefixSet.contains(prefix)) {
-                            parameterNamePrefixSet.add(prefix);
-                        }
-                    }
-                }
-
                 this.usedChildReferenceNames.addAll(referencedComp.usedChildReferenceNames);
 
                 // now we need to merge all the descendant components from the referenced component with this component.
@@ -1446,6 +1439,27 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
         }
     }
+
+    private void mergeFieldGroups(final List<DynamicFieldGroup> source,
+                                  final List<DynamicFieldGroup> target) {
+        source.stream().forEach(dynamicFieldGroup -> {
+            // dynamicFieldGroup has an equals and hashcode impl
+            if (!target.contains(dynamicFieldGroup)) {
+                target.add(dynamicFieldGroup);
+            }
+        });
+    }
+    private void mergeDynamicParameters(final List<DynamicParameter> source,
+                                        final List<DynamicParameter> target) {
+
+        source.stream().forEach(dynamicParameter -> {
+            if (!target.contains(dynamicParameter.getName())) {
+                target.add(dynamicParameter);
+            }
+        });
+    }
+
+
 
     private void combine(HstComponentConfigurationService childToMerge,
                          Map<String, HstComponentConfiguration> rootComponentConfigurations) {
@@ -1532,11 +1546,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (this.lastModified == null) {
             this.lastModified = childToMerge.lastModified;
         }
+
         if (this.fieldGroups.isEmpty()) {
             this.fieldGroups = childToMerge.fieldGroups;
+        } else {
+            mergeFieldGroups(childToMerge.fieldGroups, this.fieldGroups);
         }
+
         if (this.hstDynamicComponentParameters.isEmpty()) {
             this.hstDynamicComponentParameters = childToMerge.hstDynamicComponentParameters;
+        } else {
+            mergeDynamicParameters(childToMerge.hstDynamicComponentParameters, this.hstDynamicComponentParameters);
         }
 
         // debatable however not really relevant whether when fine grained merged the component is shared or not, since
