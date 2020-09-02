@@ -165,6 +165,7 @@ class ContentEditorService {
     FeedbackService,
     FieldService,
     WorkflowService,
+    ChannelService,
     PageService,
   ) {
     'ngInject';
@@ -178,6 +179,7 @@ class ContentEditorService {
     this.FieldService = FieldService;
     this.WorkflowService = WorkflowService;
     this.PageService = PageService;
+    this.ChannelService = ChannelService;
   }
 
   get isDocumentXPage() {
@@ -291,7 +293,8 @@ class ContentEditorService {
 
   async _closeDocumentWhenValid(id) {
     try {
-      await this.CmsService.closeDocumentWhenValid(id);
+      await this.CmsService.closeDocumentWhenValid(id)
+        .then(() => this.ChannelService.updateNavLocation());
     } catch (e) {
       throw new ErrorResponse('DOCUMENT_INVALID');
     }
