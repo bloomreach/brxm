@@ -25,6 +25,7 @@ describe('ContentEditorService', () => {
   let FeedbackService;
   let FieldService;
   let WorkflowService;
+  let ChannelService;
 
   let stringField;
   let multipleStringField;
@@ -107,21 +108,24 @@ describe('ContentEditorService', () => {
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError', 'showNotification']);
     FieldService = jasmine.createSpyObj('FieldService', ['setDocumentId']);
     WorkflowService = jasmine.createSpyObj('WorkflowService', ['createWorkflowAction']);
+    ChannelService = jasmine.createSpyObj('ChannelService', ['updateNavLocation']);
 
     angular.mock.module(($provide) => {
       $provide.value('ContentService', ContentService);
+      $provide.value('ChannelService', ChannelService);
       $provide.value('FeedbackService', FeedbackService);
       $provide.value('FieldService', FieldService);
       $provide.value('WorkflowService', WorkflowService);
     });
 
-    inject((_$q_, _$rootScope_, _$translate_, _CmsService_, _ContentEditor_, _DialogService_) => {
+    inject((_$q_, _$rootScope_, _$translate_, _CmsService_, _ContentEditor_, _DialogService_, _ChannelService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $translate = _$translate_;
       CmsService = _CmsService_;
       ContentEditor = _ContentEditor_;
       DialogService = _DialogService_;
+      ChannelService = _ChannelService_;
     });
 
     spyOn(CmsService, 'closeDocumentWhenValid');
