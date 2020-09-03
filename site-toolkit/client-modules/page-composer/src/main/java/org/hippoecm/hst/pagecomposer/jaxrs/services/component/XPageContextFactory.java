@@ -32,10 +32,13 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.DocumentUtils;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 import static java.lang.Boolean.TRUE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 final class XPageContextFactory {
 
@@ -53,11 +56,18 @@ final class XPageContextFactory {
         final ScheduledRequest scheduledRequest = DocumentStateUtils.getScheduledRequest(handle);
         final WorkflowRequest workflowRequest = DocumentStateUtils.getWorkflowRequest(handle);
         final DocumentWorkflow workflow = XPageUtils.getDocumentWorkflow(userSession, contextService);
-        final String selectedBranchId = contextService.getSelectedBranchId();
-        final Map<String, Serializable> hints = workflow.hints(selectedBranchId);
+        final Node unpublished = userSession.getNodeByIdentifier(contextService.getExperiencePageUnpublishedVariantUUID());
+        final String unpublishedBranchId = JcrUtils.getStringProperty(unpublished, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+        // Only if the unpublished variant branchId is equal to the one selected in XM
+        // we select it as the xPage branch id.
+        // Otherwise the user would see x-page state of a non-selected branch.
+        final String xPageBranchId = contextService.getSelectedBranchId().equals(unpublishedBranchId)
+                ? unpublishedBranchId
+                : MASTER_BRANCH_ID;
+        final Map<String, Serializable> hints = workflow.hints(xPageBranchId);
 
         final XPageContext xPageContext = new XPageContext()
-                .setBranchId(selectedBranchId)
+                .setBranchId(xPageBranchId)
                 .setXPageId(experiencePageHandleUUID)
                 .setXPageName(name)
                 .setXPageState(documentState.name().toLowerCase())
@@ -67,7 +77,7 @@ final class XPageContextFactory {
                 .setMoveAllowed(TRUE.equals(hints.get("move")))
                 .setDeleteAllowed(TRUE.equals(hints.get("delete")));
 
-        if (!BranchConstants.MASTER_BRANCH_ID.equals(selectedBranchId)) {
+        if (!BranchConstants.MASTER_BRANCH_ID.equals(xPageBranchId)) {
             return xPageContext;
         }
 
