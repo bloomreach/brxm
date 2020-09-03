@@ -73,11 +73,6 @@ right-side-panel {
       color: $text-dim;
     }
 
-    md-icon[md-svg-icon] {
-      color: map-get($grey, 900);
-      opacity: .87;
-    }
-
     .md-button {
       padding-left: 0;
       padding-right: 0;
