@@ -30,7 +30,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>archetype</module>
     <module>channel-manager</module>
     <module>cms</module>
     <module>commons</module>
@@ -83,7 +82,9 @@
     <profile>
       <id>archetype</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>!no-archetype</name>
+        </property>
       </activation>
       <modules>
         <module>archetype</module>
