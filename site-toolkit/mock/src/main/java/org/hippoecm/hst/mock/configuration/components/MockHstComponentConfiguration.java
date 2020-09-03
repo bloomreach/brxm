@@ -431,6 +431,12 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public boolean isExperiencePageComponent() {
         return false;
     }
+
+    @Override
+    public boolean isHidden() {
+        return false;
+    }
+
     @Override
     public List<DynamicParameter> getDynamicComponentParameters() {
         return dynamicComponentParameters;
