@@ -69,7 +69,7 @@ class OverlayToggleController {
     }
   }
 
-  _isInitiallyDisabled () {
+  _isInitiallyDisabled() {
     if (!this.ProjectService.isBranch()) {
       return false;
     }
