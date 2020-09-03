@@ -73,6 +73,7 @@
     "zone.js": "^0.10"
   },
   "jest-junit": {
+    "outputDirectory": "coverage",
     "outputName": "TEST-ng-sdk.xml"
   }
 }
