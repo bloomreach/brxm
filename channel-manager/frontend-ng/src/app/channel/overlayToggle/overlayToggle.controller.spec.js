@@ -133,10 +133,11 @@ describe('overlayToggle component', () => {
       expect(onStateCallback).toHaveBeenCalledWith({ state: $ctrl.state });
     });
 
-    it('enables buttons and overlay when a branch is selected and editing is not allowed and an XPage container is marked editable', () => {
+    it('enables buttons and overlay when a branch is selected and editing is not allowed '
+        + 'and an XPage container is marked editable', () => {
       pageMeta.isXPage.and.returnValue(true);
-      containers.push({ isXPageEditable: () => false});
-      containers.push({ isXPageEditable: () => true});
+      containers.push({ isXPageEditable: () => false });
+      containers.push({ isXPageEditable: () => true });
       spyOn(ProjectService, 'isBranch').and.returnValue(true);
       spyOn(ProjectService, 'isEditingAllowed').and.returnValue(false);
       spyOn($ctrl, 'loadPersistentState');
@@ -146,7 +147,6 @@ describe('overlayToggle component', () => {
       expect($ctrl.disabled).toBe(false);
       expect($ctrl.loadPersistentState).toHaveBeenCalled();
     });
-
   });
 
   describe('setState', () => {
