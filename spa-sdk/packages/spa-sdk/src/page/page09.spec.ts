@@ -95,6 +95,14 @@ describe('PageImpl', () => {
     });
   });
 
+  describe('getDocument', () => {
+    it('should throw an error', () => {
+      const page = createPage();
+
+      expect(() => page.getDocument()).toThrowError();
+    });
+  });
+
   describe('getMeta', () => {
     it('should delegate to the MetaFactory to create new meta', () => {
       const page = createPage();
