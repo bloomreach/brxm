@@ -44,6 +44,7 @@
     "testEnvironment": "jsdom"
   },
   "jest-junit": {
+    "outputDirectory": "coverage",
     "outputName": "TEST-spa-sdk.xml"
   },
   "browserslist": [
