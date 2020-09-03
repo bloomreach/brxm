@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
@@ -53,7 +54,7 @@ public class EditorTabsPlugin extends TabsPlugin {
 
             @Override
             protected WebMarkupContainer newPanelContainer(final String id) {
-                final Form form = new Form(id);
+                final Form<?> form = new PostOnlyForm<>(id);
                 // prevent the form submit when hitting enter key at input fields
                 form.add(new PreventDefaultFormSubmitBehavior());
                 return form;
