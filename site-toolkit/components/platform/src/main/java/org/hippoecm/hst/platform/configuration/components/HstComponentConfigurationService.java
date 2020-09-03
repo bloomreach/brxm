@@ -264,6 +264,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      */
     private boolean detached;
 
+    private boolean hidden;
+
     protected List<DynamicFieldGroup> fieldGroups = new ArrayList<>();
 
     // constructor for copy purpose only
@@ -516,6 +518,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         if (isCatalogItem) {
             this.ctype = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_CTYPE));
+            this.hidden = isCatalogItemHidden(node);
             // do not load children
             return;
         }
@@ -530,6 +533,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             childConfByName.put(StringPool.get(childComponent.getName()), childComponent);
             log.debug("Added component service with key '{}'", id);
         }
+    }
+
+    private Boolean isCatalogItemHidden(final HstNode catalogItem) {
+        Boolean hidden = catalogItem.getValueProvider().getBoolean(
+            HstNodeTypes.COMPONENT_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER);
+        HstNode containerItemPackage = catalogItem.getParent();
+        return  hidden || containerItemPackage.getValueProvider().getBoolean(
+                HstNodeTypes.CONTAINERITEM_PACKAGE_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER);
     }
 
     private boolean isAncestorXPage(final HstComponentConfigurationService comp) {
@@ -929,6 +940,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     public void setExperiencePageComponent(final boolean experiencePageComponent) {
         this.experiencePageComponent = experiencePageComponent;
+    }
+
+    @Override
+    public boolean isHidden() {
+        return hidden;
     }
 
     /**
