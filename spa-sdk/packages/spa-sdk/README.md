@@ -128,6 +128,7 @@ Method | Description
 --- | ---
 <code>getComponent(...componentNames): Component &vert; undefined</code> | Gets a component in the page (e.g. `getComponent('main', 'right')`). If `componentNames` is omitted, then the page root component will be returned.
 <code>getContent<T>(reference: Reference &vert; string): Content &vert; T &vert; undefined</code> | Gets a content item used on the page.
+<code>getDocument<T>(): T &vert; undefined</code> | Gets the page root document. This option is available only along with the Experience Pages feature.
 `getMeta(meta): MetaCollection` | Generates a meta-data collection from the provided `meta` model.
 <code>getTitle(): string &vert; undefined</code> | Gets the title of the page, or `undefined` if not configured.
 `getUrl(link?: Link): string` | Generates a URL for a link object.<br> - If the link object type is internal, then it will prepend `spaBaseUrl` or `baseUrl`. In case when the link starts with the same path as in `cmsBaseUrl`, this part will be removed.<br> - If the link parameter is omitted, then the link to the current page will be returned.<br> - In other cases, the link will be returned as-is.
