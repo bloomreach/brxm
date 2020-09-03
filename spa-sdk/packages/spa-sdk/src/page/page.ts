@@ -81,6 +81,7 @@ interface PageMeta {
  * Model of a page.
  */
 export interface PageModel {
+  document?: Reference;
   links: Record<PageLinks, Link>;
   meta: PageMeta;
   page: Record<string,  (ComponentModel | ContainerItemModel | ContainerModel) & PageRootModel | ContentModel>;
@@ -117,6 +118,12 @@ export interface Page {
    * an [RFC-6901](https://tools.ietf.org/html/rfc6901) JSON Pointer.
    */
   getContent<T>(reference: Reference | string): T | undefined;
+
+  /**
+   * Gets the page root document.
+   * This option is available only along with the Experience Pages feature.
+   */
+  getDocument<T>(): T | undefined;
 
   /**
    * Generates a meta-data collection from the provided meta-data model.
@@ -241,6 +248,10 @@ export class PageImpl implements Page {
     }
 
     return this.content.get(model);
+  }
+
+  getDocument<T>(): T | undefined {
+    return this.model.document && this.getContent(this.model.document);
   }
 
   getMeta(meta: MetaCollectionModel) {
