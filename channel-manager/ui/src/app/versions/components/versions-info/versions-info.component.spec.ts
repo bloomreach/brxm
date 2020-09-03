@@ -266,7 +266,7 @@ describe('VersionsInfoComponent', () => {
   });
 
   describe('onDestroy', () => {
-    it.only('should select the latest version when removing the component from the dom', fakeAsync(() => {
+    it('should select the latest version when removing the component from the dom', fakeAsync(() => {
       jest.spyOn(component, 'selectVersion');
 
       component.ngOnInit();
