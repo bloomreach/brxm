@@ -99,6 +99,26 @@ describe('PageImpl', () => {
     });
   });
 
+  describe('getDocument', () => {
+    it('should return a page document', () => {
+      const page = createPage({
+        ...model,
+        document: { $ref: 'something' },
+      });
+
+      spyOn(page, 'getContent').and.returnValue('document');
+
+      expect(page.getDocument()).toBe('document');
+      expect(page.getContent).toHaveBeenCalledWith({ $ref: 'something' });
+    });
+
+    it('should return an undefined value', () => {
+      const page = createPage();
+
+      expect(page.getDocument()).toBeUndefined();
+    });
+  });
+
   describe('getMeta', () => {
     it('should delegate to the MetaFactory to create new meta', () => {
       const page = createPage();

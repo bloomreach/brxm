@@ -104,6 +104,10 @@ export class PageImpl implements Page {
     return this.content.get(contentReference);
   }
 
+  getDocument<T>(): T | undefined {
+    throw new Error('The page document is not supported by this version of the Page Model API.');
+  }
+
   getMeta(meta: MetaCollectionModel) {
     return this.metaFactory(meta);
   }
