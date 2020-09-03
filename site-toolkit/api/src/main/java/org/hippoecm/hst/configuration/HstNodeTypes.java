@@ -109,6 +109,7 @@ public interface HstNodeTypes {
     String COMPONENT_PROPERTY_RESOURCE_TEMPLATE = "hst:resourcetemplate";
     String COMPONENT_PROPERTY_XTYPE = "hst:xtype";
     String COMPONENT_PROPERTY_CTYPE = "hst:ctype";
+    String COMPONENT_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER = "hst:hiddeninchannelmanager";
     String COMPONENT_PROPERTY_REFERECENCENAME = "hst:referencename";
     String COMPONENT_PROPERTY_REFERECENCECOMPONENT = "hst:referencecomponent";
     String COMPONENT_PROPERTY_COMPONENTDEFINITION = "hst:componentdefinition";
@@ -123,6 +124,8 @@ public interface HstNodeTypes {
     String COMPONENT_PROPERTY_COMPONENT_FILTER_TAG = "hst:componentfiltertag";
     String COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE = "hst:suppresswastemessage";
     String COMPONENT_PROPERTY_FIELD_GROUPS = "hst:fieldgroups";
+
+    String CONTAINERITEM_PACKAGE_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER = "hst:hiddeninchannelmanager";
 
     String TEMPLATE_PROPERTY_RENDERPATH = "hst:renderpath";
     String TEMPLATE_PROPERTY_IS_NAMED = "hst:isnamed";
