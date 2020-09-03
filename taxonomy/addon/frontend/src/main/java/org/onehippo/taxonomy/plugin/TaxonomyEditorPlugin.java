@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,8 +32,6 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.swing.tree.TreeNode;
 
-import com.google.common.base.Strings;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
@@ -61,11 +59,11 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.validation.validator.StringValidator;
-
 import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -80,7 +78,6 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
-
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.api.TaxonomyException;
@@ -97,9 +94,10 @@ import org.onehippo.taxonomy.plugin.tree.TaxonomyNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTree;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTreeModel;
 import org.onehippo.taxonomy.util.TaxonomyUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * TaxonomyEditorPlugin used when editing taxonomy documents.
@@ -212,7 +210,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             toolbarHolder.setVisible(false);
         }
 
-        container = new Form("container") {
+        container = new PostOnlyForm<Void>("container") {
 
             @Override
             public boolean isVisible() {
