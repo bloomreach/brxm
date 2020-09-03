@@ -82,6 +82,7 @@
     "testEnvironment": "enzyme"
   },
   "jest-junit": {
+    "outputDirectory": "coverage",
     "outputName": "TEST-react-sdk.xml"
   }
 }
