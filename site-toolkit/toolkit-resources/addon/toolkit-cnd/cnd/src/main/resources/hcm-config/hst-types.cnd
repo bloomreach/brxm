@@ -123,6 +123,7 @@
  - hst:iconpath (string)
  - hst:label (string)
  - hst:fieldgroups (string) multiple
+ - hst:hiddeninchannelmanager (boolean)
 //Should be used only for field group parameter
  - * (string) multiple
  + * (hst:dynamicparameter)
@@ -148,6 +149,7 @@
 + * (hst:containeritemcomponent)
 
 [hst:containeritempackage] > nt:base, mix:referenceable orderable
+- hst:hiddeninchannelmanager (boolean)
 + * (hst:containeritemcomponent)
 + * (hst:componentdefinition)
 

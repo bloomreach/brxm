@@ -379,6 +379,11 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     boolean isExperiencePageComponent();
 
     /**
+     * {@code true} if this catalog item should be hidden in channel manager
+     */
+    boolean isHidden();
+
+    /**
      * @return a depth-first stream of this {@link HstComponentConfiguration} plus its descendants
      */
     default Stream<HstComponentConfiguration> flattened() {
