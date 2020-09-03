@@ -78,6 +78,7 @@
     ]
   },
   "jest-junit": {
+    "outputDirectory": "coverage",
     "outputName": "TEST-vue-sdk.xml"
   }
 }
