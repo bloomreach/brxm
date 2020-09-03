@@ -63,7 +63,7 @@
 
       <div matLine
            class="version-actions">
-        <button *ngIf="versionsInfo.createVersionEnabled && unpublishedVariantId === version.jcrUUID && isFirst"
+        <button *ngIf="versionsInfo.createEnabled && unpublishedVariantId === version.jcrUUID && isFirst"
                 mat-stroked-button
                 color="primary"
                 [disabled]="actionInProgress"
