@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -39,9 +40,7 @@ public class ToolkitRepresentation {
     public ToolkitRepresentation represent(Mount mount) {
         HstSite site = mount.getHstSite();
         List<HstComponentConfiguration> allUniqueContainerItems = site.getComponentsConfiguration().getAvailableContainerItems();
-        for (HstComponentConfiguration child : allUniqueContainerItems) {
-            components.add(new ComponentRepresentation().represent(child, mount));
-        }
+        allUniqueContainerItems.stream().filter(c -> !c.isHidden()).forEach(child -> components.add(new ComponentRepresentation().represent(child, mount)));
         return this;
     }
     
