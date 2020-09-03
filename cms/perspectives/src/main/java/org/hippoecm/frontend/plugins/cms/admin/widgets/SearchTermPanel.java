@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugins.cms.widgets.SubmittingTextField;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
@@ -38,7 +39,7 @@ public class SearchTermPanel extends Panel {
     protected SearchTermPanel(final String id) {
         super(id);
 
-        final Form form = new Form("search-form");
+        final Form<?> form = new PostOnlyForm<>("search-form");
         form.setOutputMarkupId(true);
         add(form);
 
