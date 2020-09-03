@@ -19,5 +19,5 @@ import { Version } from './version.model';
 export interface VersionsInfo {
   versions: Version[];
   restoreEnabled: boolean;
-  createVersionEnabled: boolean;
+  createEnabled: boolean;
 }

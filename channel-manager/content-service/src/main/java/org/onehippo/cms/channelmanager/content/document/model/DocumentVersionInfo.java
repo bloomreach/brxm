@@ -26,18 +26,18 @@ public class DocumentVersionInfo {
 
     private final List<Version> versions;
     private final boolean restoreEnabled;
-    private boolean createVersionEnabled;
+    private boolean createEnabled;
 
     @JsonCreator
     public DocumentVersionInfo(
             @JsonProperty("versions") List<Version> versions,
             @JsonProperty("restoreEnabled") boolean restoreEnabled,
-            @JsonProperty("createVersionEnabled") boolean createVersionEnabled
+            @JsonProperty("createEnabled") boolean createEnabled
     ) {
         Objects.requireNonNull(versions);
         this.versions = versions;
         this.restoreEnabled = restoreEnabled;
-        this.createVersionEnabled = createVersionEnabled;
+        this.createEnabled = createEnabled;
     }
 
     public List<Version> getVersions() {
@@ -48,7 +48,7 @@ public class DocumentVersionInfo {
         return restoreEnabled;
     }
 
-    public boolean isCreateVersionEnabled() {
-        return createVersionEnabled;
+    public boolean isCreateEnabled() {
+        return createEnabled;
     }
 }

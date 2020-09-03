@@ -122,9 +122,9 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                     !versionInfos.isEmpty()
                             && (TRUE.equals(hints.get("restoreVersionToBranch")) || TRUE.equals(hints.get("restoreVersion")));
 
-            final boolean createVersionEnabled = TRUE.equals(hints.get("version"));
+            final boolean createEnabled = TRUE.equals(hints.get("version"));
 
-            return new DocumentVersionInfo(versionInfos, restoreEnabled, createVersionEnabled);
+            return new DocumentVersionInfo(versionInfos, restoreEnabled, createEnabled);
 
         } catch (ItemNotFoundException e) {
             log.info("Document for id '{}' does not exist or user '{}' is not allowed to read it",
