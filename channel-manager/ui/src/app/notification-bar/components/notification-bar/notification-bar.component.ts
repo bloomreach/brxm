@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Component, HostBinding, Input, OnChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
 
-import { PageStates } from '../../../models/page-states.model';
 import { XPageStatusInfo } from '../../../models/page-status-info.model';
-import { Project } from '../../../models/project.model';
 import { XPageStatus } from '../../../models/xpage-status.enum';
 import { PageService } from '../../../services/page.service';
 
@@ -33,26 +33,31 @@ const DANGER_XPAGE_STATUSES = [
   templateUrl: 'notification-bar.component.html',
   styleUrls: ['notification-bar.component.scss'],
 })
-export class NotificationBarComponent implements OnChanges {
-  @Input()
-  pageStates!: PageStates;
-
-  @Input()
-  currentProject!: Project;
-
-  @Input()
-  isEditingSharedContainers = false;
-
+export class NotificationBarComponent implements OnInit, OnDestroy {
   @HostBinding('class.danger')
   danger = false;
 
   pageStatusInfo: XPageStatusInfo | undefined;
 
-  constructor(private readonly pageService: PageService) {}
+  private readonly unsubscribe = new Subject();
 
-  ngOnChanges(): void {
-    // PageService extracts necessary data from appropriate services and use inputs for triggering change detection
-    this.pageStatusInfo = this.pageService.getPageStatusInfo();
-    this.danger = DANGER_XPAGE_STATUSES.some(x => x === this.pageStatusInfo?.status);
+  constructor(
+    private readonly pageService: PageService,
+    private readonly cd: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    this.pageService.pageStatusInfo$.pipe(
+      tap(pageStatusInfo => this.danger = DANGER_XPAGE_STATUSES.some(x => x === pageStatusInfo?.status)),
+      takeUntil(this.unsubscribe),
+    ).subscribe(pageStatusInfo => {
+      this.pageStatusInfo = pageStatusInfo;
+      this.cd.detectChanges();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 }
