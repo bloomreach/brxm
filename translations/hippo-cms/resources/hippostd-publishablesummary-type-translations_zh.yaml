@@ -2,8 +2,10 @@ definitions:
   config:
     /hippo:configuration/hippo:translations/hippo:types/hippostd:publishableSummary:
       /zh:
-        hippostd:stateSummary=review: 审查中
-        hippostd:stateSummary=changed: 前一版本执行中
         jcr:primaryType: hipposys:resourcebundle
+        hippostd:stateSummary=review: 审查中
+        hippostd:stateSummary=changed: 实时，未发布的更改
+        hippostd:stateSummary=new-draft-changes: 离线，草稿更改
+        hippostd:stateSummary=live-draft-changes: 实时，草稿更改
         hippostd:stateSummary=new: 离线
         hippostd:stateSummary=live: 执行中

@@ -2,8 +2,10 @@ definitions:
   config:
     /hippo:configuration/hippo:translations/hippo:types/hippostd:publishableSummary:
       /nl:
-        hippostd:stateSummary=review: Wacht op goedkeuring
-        hippostd:stateSummary=changed: Eerdere versie is gepubliceerd
         jcr:primaryType: hipposys:resourcebundle
+        hippostd:stateSummary=review: Wacht op goedkeuring
+        hippostd:stateSummary=changed: Live, niet-gepubliceerde wijzigingen
+        hippostd:stateSummary=new-draft-changes: Offline, conceptwijzigingen
+        hippostd:stateSummary=live-draft-changes: Live, conceptwijzigingen
         hippostd:stateSummary=new: Niet gepubliceerd
         hippostd:stateSummary=live: Gepubliceerd
