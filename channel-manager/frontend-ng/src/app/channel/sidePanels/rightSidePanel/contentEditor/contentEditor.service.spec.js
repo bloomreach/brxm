@@ -1497,28 +1497,6 @@ describe('ContentEditorService', () => {
     });
   });
 
-  describe('reload', () => {
-    it('should gracefully resolve if there is nothing to reload', (done) => {
-      ContentEditor.reload().then(done);
-      $rootScope.$digest();
-    });
-
-    it('should reload the editable document', () => {
-      ContentEditor.document = testDocument;
-      ContentEditor.documentId = testDocument.id;
-      ContentEditor.documentType = testDocumentType;
-
-      const reloadedDocument = { id: 'reloadedDocumentId' };
-      ContentService.getEditableDocument.and.returnValue($q.resolve(reloadedDocument));
-
-      ContentEditor.reload();
-      $rootScope.$digest();
-
-      expect(ContentService.getEditableDocument).toHaveBeenCalledWith(testDocument.id);
-      expect(ContentEditor.document).toBe(reloadedDocument);
-    });
-  });
-
   describe('confirmPristine', () => {
     beforeEach(() => {
       testDocument.displayName = 'Test';
