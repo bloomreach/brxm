@@ -97,7 +97,28 @@ class ChannelCtrl {
   }
 
   isConfigurationLocked() {
+    if (this._isXPageRejectedInProjectBranch()) {
+      return false;
+    }
+
     return this.ChannelService.isConfigurationLocked();
+  }
+
+  _isXPageRejectedInProjectBranch() {
+    const page = this.PageStructureService.getPage();
+    if (!page) {
+      return false;
+    }
+
+    const pageMeta = page.getMeta();
+    if (!pageMeta) {
+      return false;
+    }
+
+    return pageMeta.isXPage()
+      && this.ProjectService.isBranch()
+      && this.ProjectService.isInReview()
+      && page.getContainers().some(container => container.isXPageEditable());
   }
 
   isChannelLoaded() {
