@@ -319,9 +319,13 @@ describe('EditContentService', () => {
 
   describe('reloadEditor', () => {
     it('should reload the editor', () => {
+      ContentEditor.getDocumentId.and.returnValue('documentId');
+      spyOn($state, 'go');
       EditContentService.reloadEditor();
 
-      expect(ContentEditor.reload).toHaveBeenCalled();
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page.content',
+        { documentId: 'documentId' },
+        { reload: true });
     });
   });
 
