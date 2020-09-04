@@ -15,8 +15,8 @@
  */
 
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { mocked } from 'ts-jest/utils';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 import { DocumentState } from '../../../models/document-state.enum';
 import { XPageStatusInfo } from '../../../models/page-status-info.model';
@@ -29,12 +29,18 @@ describe('NotificationBarComponent', () => {
   let component: NotificationBarComponent;
   let fixture: ComponentFixture<NotificationBarComponent>;
 
-  let pageServiceMock: PageService;
+  let pageStatusInfo$: Subject<XPageStatusInfo | undefined>;
 
   beforeEach(() => {
-    pageServiceMock = {
-      getPageStatusInfo: jest.fn(() => ({})),
-    } as unknown as typeof pageServiceMock;
+    pageStatusInfo$ = new BehaviorSubject<XPageStatusInfo | undefined>(new XPageStatusInfo(
+      XPageStatus.Published,
+      DocumentState.Live,
+      'some xpage document',
+    ));
+
+    const pageServiceMock = {
+      pageStatusInfo$,
+    };
 
     fixture = TestBed.configureTestingModule({
       declarations: [NotificationBarComponent],
@@ -48,19 +54,9 @@ describe('NotificationBarComponent', () => {
   });
 
   it('should show the component', () => {
-    component.pageStates = {};
-
-    component.ngOnChanges();
-
     fixture.detectChanges();
 
     expect(fixture.nativeElement).toMatchSnapshot();
-  });
-
-  it('should calculate the page status', () => {
-    component.ngOnChanges();
-
-    expect(pageServiceMock.getPageStatusInfo).toHaveBeenCalled();
   });
 
   describe.each([
@@ -91,11 +87,11 @@ describe('NotificationBarComponent', () => {
       'username',
     ), 'NOTIFICATION_BAR_XPAGE_LABEL_LOCKED_BY_USER'],
   ])('if xpage status is %s', (statusName, statusInfo, expectedText) => {
-    beforeEach(() => {
-      mocked(pageServiceMock.getPageStatusInfo).mockReturnValue(statusInfo);
+    beforeEach(async(() => {
+      pageStatusInfo$.next(statusInfo);
 
-      component.ngOnChanges();
-    });
+      fixture.detectChanges();
+    }));
 
     test(`should use danger color as background`, () => {
       expect(component.danger).toBeTruthy();
@@ -187,9 +183,7 @@ describe('NotificationBarComponent', () => {
     ), 'NOTIFICATION_BAR_XPAGE_LABEL_PREVIOUS_VERSION'],
   ])('if xpage status is %s', (statusName, statusInfo, expectedText) => {
     beforeEach(() => {
-      mocked(pageServiceMock.getPageStatusInfo).mockReturnValue(statusInfo);
-
-      component.ngOnChanges();
+      pageStatusInfo$.next(statusInfo);
     });
 
     test(`should not use danger color as background`, () => {

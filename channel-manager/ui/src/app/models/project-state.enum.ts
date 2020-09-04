@@ -18,4 +18,5 @@ export enum ProjectState {
   Unapproved = 'UNAPPROVED',
   InReview = 'IN_REVIEW',
   Approved = 'APPROVED',
+  Running = 'RUNNING',
 }
