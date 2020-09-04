@@ -100,7 +100,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         assertEquals("path", propertyRepresentation.get("name"));
         assertEquals("/some/default", propertyRepresentation.get("defaultValue"));
-        assertEquals("/content/document", propertyRepresentation.get("value"));
+        assertEquals("common/aboutfolder/about-us", propertyRepresentation.get("value"));
 
     }
 
