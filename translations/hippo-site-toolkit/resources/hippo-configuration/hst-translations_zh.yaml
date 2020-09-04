@@ -23,4 +23,5 @@ definitions:
         sortField: 排序字段
         sortOrder#asc: 升序
         filter.group: 分页
+        hidePastItems: 隐藏过去项目
         documentTypes.hint: 使用技术名称（以逗号分隔）

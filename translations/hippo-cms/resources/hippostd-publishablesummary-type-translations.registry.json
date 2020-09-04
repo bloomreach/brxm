@@ -2,14 +2,8 @@
   "bundleType" : "REPOSITORY",
   "keyData" : {
     "hippo:types.hippostd:publishableSummary/hippostd:stateSummary=changed" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:types.hippostd:publishableSummary/hippostd:stateSummary=review" : {
       "status" : "CLEAN",
@@ -24,24 +18,12 @@
       "locales" : null
     },
     "hippo:types.hippostd:publishableSummary/hippostd:stateSummary=new-draft-changes" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:types.hippostd:publishableSummary/hippostd:stateSummary=live-draft-changes" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

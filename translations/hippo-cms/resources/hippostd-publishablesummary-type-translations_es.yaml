@@ -2,8 +2,10 @@ definitions:
   config:
     /hippo:configuration/hippo:translations/hippo:types/hippostd:publishableSummary:
       /es:
-        hippostd:stateSummary=review: En revisión
-        hippostd:stateSummary=changed: Una versión anterior está publicada
         jcr:primaryType: hipposys:resourcebundle
+        hippostd:stateSummary=review: En revisión
+        hippostd:stateSummary=changed: Activo, cambios no publicados
+        hippostd:stateSummary=new-draft-changes: Desactivado, cambios en el borrador
+        hippostd:stateSummary=live-draft-changes: Activo, cambios en el borrador
         hippostd:stateSummary=new: No publicado
         hippostd:stateSummary=live: Publicado
