@@ -21,6 +21,7 @@ import { Project } from '../../models/project.model';
 export interface Ng1ProjectService {
   projects: Project[];
   getSelectedProjectId(): string;
+  afterChange(id: string, callback: () => void): void;
 }
 
 export const NG1_PROJECT_SERVICE = new InjectionToken<Ng1ProjectService>('NG1_PROJECT_SERVICE');

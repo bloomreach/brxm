@@ -24,6 +24,8 @@ import { Ng1ProjectService, NG1_PROJECT_SERVICE } from './ng1/project.ng1.servic
   providedIn: 'root',
 })
 export class ProjectService {
+  readonly coreBranchId = 'master';
+
   constructor(
     @Inject(NG1_PROJECT_SERVICE) private readonly ng1ProjectService: Ng1ProjectService,
   ) { }
@@ -36,7 +38,11 @@ export class ProjectService {
     return this.ng1ProjectService.getSelectedProjectId();
   }
 
+  afterChange(id: string, callback: () => void): void {
+    this.ng1ProjectService.afterChange(id, callback);
+  }
+
   isCore(project: Project): boolean {
-    return project.id === 'master';
+    return project.id === this.coreBranchId;
   }
 }
