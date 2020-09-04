@@ -15,8 +15,8 @@
  */
 
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { merge, Observable, Subject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 import { IframeService } from '../channels/services/iframe.service';
 import { AcceptanceState } from '../models/acceptance-state.enum';
@@ -28,13 +28,13 @@ import { ScheduledRequestType } from '../models/scheduled-request-type.enum';
 import { WorkflowRequestType } from '../models/workflow-request-type.enum';
 import { XPageState } from '../models/xpage-state.model';
 import { XPageStatus } from '../models/xpage-status.enum';
-import { Version } from '../versions/models/version.model';
 import { VersionsService } from '../versions/services/versions.service';
 
 import { Ng1PageService, NG1_PAGE_SERVICE } from './ng1/page.ng1.service';
+import { NG1_ROOT_SCOPE } from './ng1/root-scope.service';
 import { ProjectService } from './project.service';
 
-type StatusMatcher = (pageStates: PageStates) => XPageStatusInfo | undefined;
+type StatusMatcher = (pageStates: PageStates) => Promise<XPageStatusInfo | undefined> | XPageStatusInfo | undefined;
 
 @Injectable({
   providedIn: 'root',
@@ -50,43 +50,51 @@ export class PageService implements OnDestroy {
     (pageStates: PageStates) => this.matchScheduledRequest(pageStates),
     (pageStates: PageStates) => this.matchXPageState(pageStates),
   ];
-  private readonly unsubscribe = new Subject();
-
-  private pageVersions: Version[] | undefined;
+  private readonly pageStatusInfoChangeTrigger = new Subject<void>();
+  private readonly onEditSharedContainersUnsubscribe: () => void;
 
   constructor(
     @Inject(NG1_PAGE_SERVICE) private readonly ng1PageService: Ng1PageService,
+    @Inject(NG1_ROOT_SCOPE) private readonly $rootScope: ng.IRootScopeService,
     private readonly projectService: ProjectService,
     private readonly iframeService: IframeService,
     private readonly versionsService: VersionsService,
   ) {
-    ng1PageService.states$.pipe(
-      takeUntil(this.unsubscribe),
-    ).subscribe(async pageStates => {
-      if (pageStates?.xpage?.id) {
-        this.pageVersions = await this.versionsService.getVersions(pageStates?.xpage?.id);
-      } else {
-        this.pageVersions = undefined;
-      }
-    });
+    this.onEditSharedContainersUnsubscribe = this.$rootScope.$on(
+      'iframe:page:edit-shared-containers',
+      () => this.pageStatusInfoChangeTrigger.next(),
+    );
+
+    this.projectService.afterChange(
+      'PageService:project-change-listener',
+      () => this.pageStatusInfoChangeTrigger.next(),
+    );
+  }
+
+  get pageStatusInfo$(): Observable<XPageStatusInfo | undefined> {
+    return merge(
+      this.ng1PageService.states$,
+      this.pageStatusInfoChangeTrigger,
+    ).pipe(
+      switchMap(async () => await this.getPageStatusInfo()),
+    );
   }
 
   ngOnDestroy(): void {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
+    this.onEditSharedContainersUnsubscribe();
   }
 
   getXPageState(): XPageState | undefined {
-    return this.ng1PageService.states.xpage;
+    return this.ng1PageService.states?.xpage;
   }
 
-  getPageStatusInfo(): XPageStatusInfo | undefined {
+  async getPageStatusInfo(): Promise<XPageStatusInfo | undefined> {
     if (!this.ng1PageService.states) {
       return;
     }
 
     for (const statusMatcher of this.statusMatchers) {
-      const statusInfo = statusMatcher(this.ng1PageService.states);
+      const statusInfo = await statusMatcher(this.ng1PageService.states);
 
       if (statusInfo) {
         return statusInfo;
@@ -192,10 +200,15 @@ export class PageService implements OnDestroy {
       return;
     }
 
-    const getPageStatus = (projectState: ProjectState, pageAcceptanceCriteria?: AcceptanceState) => {
+    // skip the matcher if user is observing a project but the XPage document isn't a part of the project
+    if (xPageState.branchId === this.projectService.coreBranchId) {
+      return;
+    }
+
+    const getPageStatus = (projectState: ProjectState, pageAcceptanceState?: AcceptanceState) => {
       switch (project.state) {
         case ProjectState.InReview:
-          switch (pageAcceptanceCriteria) {
+          switch (pageAcceptanceState) {
             case AcceptanceState.InReview: return XPageStatus.ProjectInReview;
             case AcceptanceState.Approved: return XPageStatus.ProjectPageApproved;
             case AcceptanceState.Rejected: return XPageStatus.ProjectPageRejected;
@@ -204,7 +217,8 @@ export class PageService implements OnDestroy {
           return XPageStatus.ProjectInReview;
 
         case ProjectState.Unapproved: return XPageStatus.ProjectInProgress;
-        case ProjectState.Approved: return XPageStatus.ProjectRunning;
+        case ProjectState.Approved: return XPageStatus.ProjectPageApproved;
+        case ProjectState.Running: return XPageStatus.ProjectRunning;
       }
 
       return XPageStatus.ProjectRunning;
@@ -239,17 +253,29 @@ export class PageService implements OnDestroy {
     );
   }
 
-  private matchPreviousPageVersion(pageStates: PageStates): XPageStatusInfo | undefined {
+  private async matchPreviousPageVersion(pageStates: PageStates): Promise<XPageStatusInfo | undefined> {
     const xPageState = pageStates.xpage;
+    const project = this.projectService.currentProject;
 
-    if (!xPageState ||
-      !this.pageVersions ||
-      this.pageVersions.length === 0 ||
-      this.versionsService.isCurrentVersion(this.pageVersions[0])) {
+    if (!xPageState) {
       return;
     }
 
-    const currentVersion = this.pageVersions.find(v => this.versionsService.isCurrentVersion(v));
+    // skip the matcher if user is observing a project but the XPage document isn't a part of the project since
+    // the unpublished variant id has an unrelated state
+    if (project && !this.projectService.isCore(project) && xPageState.branchId === this.projectService.coreBranchId) {
+      return;
+    }
+
+    const pageVersions = await this.versionsService.getVersions(xPageState.id);
+
+    if (!pageVersions ||
+      pageVersions.length === 0 ||
+      this.versionsService.isCurrentVersion(pageVersions[0])) {
+      return;
+    }
+
+    const currentVersion = pageVersions.find(v => this.versionsService.isCurrentVersion(v));
 
     return new XPageStatusInfo(
       XPageStatus.PreviousVersion,
