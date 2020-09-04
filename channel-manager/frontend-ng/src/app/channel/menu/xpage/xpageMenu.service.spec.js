@@ -203,8 +203,8 @@ describe('XPageMenuService', () => {
   function expectWorkflowSuccess(actionId, spy) {
     const result = `Workflow[${actionId}] resolved`;
     spy.and.returnValue($q.resolve(result));
-    const action = addAction(actionId);
 
+    const action = addAction(actionId);
     action.onClick();
     $rootScope.$digest();
 
@@ -215,8 +215,8 @@ describe('XPageMenuService', () => {
   function expectWorkflowFailed(actionId, spy) {
     const result = `Workflow[${actionId}] rejected`;
     spy.and.returnValue($q.reject(result));
-    const action = addAction(actionId);
 
+    const action = addAction(actionId);
     action.onClick();
     $rootScope.$digest();
 
@@ -240,6 +240,40 @@ describe('XPageMenuService', () => {
     expectWorkflowFailed(actionId, spy);
   }
 
+  function expectEditorAwareWorkflow(actionId, spy) {
+    spyOn(EditContentService, 'ensureEditorIsPristine');
+    spyOn(EditContentService, 'reloadEditor');
+    spyOn(EditContentService, 'isEditing').and.returnValue(false);
+
+    expectWorkflow(actionId, spy);
+    expect(EditContentService.isEditing).toHaveBeenCalledWith('xpage-document-id');
+    expect(EditContentService.isEditing).toHaveBeenCalledTimes(2);
+
+    spy.calls.reset();
+
+    // Document is being edited
+    EditContentService.isEditing.and.returnValue(true);
+    // Ensure pristine dialog is cancelled
+    EditContentService.ensureEditorIsPristine.and.returnValue($q.reject('CANCELLED'));
+
+    const action = addAction(actionId);
+    action.onClick();
+    $rootScope.$digest();
+
+    expect(spy).not.toHaveBeenCalled();
+    expect(EditContentService.reloadEditor).not.toHaveBeenCalled();
+
+    // Ensure pristine dialog is resolved
+    spy.and.returnValue($q.resolve());
+    EditContentService.ensureEditorIsPristine.and.returnValue($q.resolve());
+
+    action.onClick();
+    $rootScope.$digest();
+
+    expect(spy).toHaveBeenCalled();
+    expect(EditContentService.reloadEditor).toHaveBeenCalled();
+  }
+
   describe('publish', () => {
     it('should show the "publish" action with an icon', () => {
       const action = addAction('publish');
@@ -249,7 +283,7 @@ describe('XPageMenuService', () => {
     });
 
     it('should call DocumentWorkflowService.publish()', () => {
-      expectWorkflow('publish', DocumentWorkflowService.publish);
+      expectEditorAwareWorkflow('publish', DocumentWorkflowService.publish);
     });
   });
 
@@ -287,7 +321,7 @@ describe('XPageMenuService', () => {
     });
 
     it('should call DocumentWorkflowService.unpublish()', () => {
-      expectWorkflow('unpublish', DocumentWorkflowService.unpublish);
+      expectEditorAwareWorkflow('unpublish', DocumentWorkflowService.unpublish);
     });
   });
 
