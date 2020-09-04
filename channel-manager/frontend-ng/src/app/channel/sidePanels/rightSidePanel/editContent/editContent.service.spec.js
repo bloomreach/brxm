@@ -324,8 +324,7 @@ describe('EditContentService', () => {
       EditContentService.reloadEditor();
 
       expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page.content',
-        { documentId: 'documentId' },
-        { reload: true });
+        { documentId: 'documentId', lastModified: jasmine.any(Number) });
     });
   });
 
