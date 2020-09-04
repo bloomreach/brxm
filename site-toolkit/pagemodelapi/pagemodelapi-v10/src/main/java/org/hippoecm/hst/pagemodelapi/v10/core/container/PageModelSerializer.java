@@ -62,21 +62,21 @@ import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
 
 public class PageModelSerializer extends JsonSerializer<Object> implements ResolvableSerializer {
 
-    private static ThreadLocal<SerializerContext> tlSerializerContext = new ThreadLocal<>();
+    static ThreadLocal<SerializerContext> tlSerializerContext = new ThreadLocal<>();
 
     private static Logger log = LoggerFactory.getLogger(PageModelSerializer.class);
 
     private static final String PAGINATION_QUERY_PAGE_PARAM = "%s:page";
     private static final String PAGINATION_QUERY_LIMIT_PARAM = "%s:limit";
 
-    private static class SerializerContext {
+    static class SerializerContext {
         private boolean firstEntity = true;
-        private final ArrayDeque<JsonPointerWrapper> serializeQueue = new ArrayDeque<>();
+        final ArrayDeque<JsonPointerWrapper> serializeQueue = new ArrayDeque<>();
         // the current page model entity that is being serialized
         private Object serializingPageModelEntity;
         // hash set to keep track of already serialized objects (same pointers)
         private final Set<String> serializedPointers = new HashSet<>();
-        private final Set<Object> handledPmaEntities = new HashSet<>();
+        final Set<Object> handledPmaEntities = new HashSet<>();
         private final Map<Object, String> objectJsonPointerMap = new HashMap<>();
         private final int maxDocumentRefLevel;
 
@@ -164,7 +164,7 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
         if (ref.getObject() instanceof HippoBean) {
             HippoBean hippoBean = (HippoBean) ref.getObject();
 
-            DecoratedPageModelEntityWrapper<HippoBean> wrapper = wrapHippoBean(0, hippoBean);
+            DecoratedPageModelEntityWrapper<HippoBean> wrapper = wrapHippoBean(0, hippoBean, metadataDecorators);
 
             //DecoratedPageModelEntityWrapper wrapper = new DecoratedPageModelEntityWrapper(hippoBean, getHippoBeanType(hippoBean), 0);
 
@@ -251,7 +251,7 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
             return new JsonPointerWrapper(decoratedPageModelEntityWrapper, jsonPointerId);
         }
         if (object instanceof HippoDocumentBean || object instanceof HippoFolderBean) {
-            final DecoratedPageModelEntityWrapper<HippoBean> decoratedPageModelEntityWrapper = wrapHippoBean(nextDepth, (HippoBean) object);
+            final DecoratedPageModelEntityWrapper<HippoBean> decoratedPageModelEntityWrapper = wrapHippoBean(nextDepth, (HippoBean) object, metadataDecorators);
             return new JsonPointerWrapper(decoratedPageModelEntityWrapper, jsonPointerId);
         }
         if (object instanceof Pagination) {
@@ -262,7 +262,8 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
         return new JsonPointerWrapper(object, jsonPointerId);
     }
 
-    private PageModelSerializer.DecoratedPageModelEntityWrapper<HippoBean> wrapHippoBean(final int nextDepth, final HippoBean hippoBean) {
+    static PageModelSerializer.DecoratedPageModelEntityWrapper<HippoBean> wrapHippoBean(final int nextDepth, final HippoBean hippoBean,
+                                                                                        final List<MetadataDecorator> metadataDecorators) {
         final HstRequestContext requestContext = RequestContextProvider.get();
         final DecoratedPageModelEntityWrapper<HippoBean> wrapper
                 = new DecoratedPageModelEntityWrapper<>(hippoBean, getHippoBeanType(hippoBean), nextDepth);
@@ -326,7 +327,7 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
         /**
          * Adds or replaces the query parameters
          * 
-         * @param link external or internal uri path
+         * @param uri external or internal uri path
          * @param pageNumber number of the pagination page
          * @return
          */
@@ -427,7 +428,7 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
     }
 
 
-    private static class JsonPointerWrapper {
+    static class JsonPointerWrapper {
 
         private final Object object;
         private final String jsonPointer;
@@ -450,7 +451,7 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
     }
 
     @JsonPropertyOrder({"id", "type", "links", "meta", "data"})
-    private static class DecoratedPageModelEntityWrapper<T> extends IdentifiableLinkableMetadataBaseModel {
+    static class DecoratedPageModelEntityWrapper<T> extends IdentifiableLinkableMetadataBaseModel {
 
         private final T data;
         private final String type;
@@ -496,7 +497,7 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
      *
      * @param contentBeanModel content bean model
      */
-    private void addLinksToContent(final HstRequestContext requestContext, final DecoratedPageModelEntityWrapper<HippoBean> contentBeanModel) {
+    private static void addLinksToContent(final HstRequestContext requestContext, final DecoratedPageModelEntityWrapper<HippoBean> contentBeanModel) {
         final HippoBean bean = contentBeanModel.getData();
 
         final HstLink selfLink = requestContext.getHstLinkCreator().create(bean.getNode(), requestContext);
@@ -508,7 +509,7 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
 
     }
 
-    private String getHippoBeanType(final HippoBean bean) {
+    private static String getHippoBeanType(final HippoBean bean) {
         if (bean instanceof HippoGalleryImageSet) {
             return "imageset";
         }
