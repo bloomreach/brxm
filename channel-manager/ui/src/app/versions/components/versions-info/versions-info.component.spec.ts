@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Pipe, PipeTransform } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
@@ -28,6 +29,13 @@ import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../../services/ng1/
 import { VersionsInfo } from '../../models/versions-info.model';
 
 import { VersionsInfoComponent } from './versions-info.component';
+
+@Pipe({name: 'moment'})
+export class MomentMockPipe implements PipeTransform {
+  transform(value: number | string | Date, format?: string): string {
+    return `${value}`;
+  }
+}
 
 describe('VersionsInfoComponent', () => {
   let component: VersionsInfoComponent;
@@ -80,7 +88,10 @@ describe('VersionsInfoComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      declarations: [VersionsInfoComponent],
+      declarations: [
+        VersionsInfoComponent,
+        MomentMockPipe,
+      ],
       imports: [
         MatListModule,
         MatIconModule,

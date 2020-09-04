@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { DatePipe } from '@angular/common';
 import { NO_ERRORS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
@@ -22,6 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DocumentState } from '../../../models/document-state.enum';
 import { XPageStatusInfo } from '../../../models/page-status-info.model';
 import { XPageStatus } from '../../../models/xpage-status.enum';
+import { MomentPipe } from '../../../shared/pipes/moment.pipe';
 
 import { NotificationBarStatusTextComponent } from './notification-bar-status-text.component';
 
@@ -39,7 +39,7 @@ describe('NotificationBarStatusTextComponent', () => {
   let fixture: ComponentFixture<NotificationBarStatusTextComponent>;
 
   beforeEach(() => {
-    const datePipe = {
+    const momentPipe = {
       transform: jest.fn(v => v),
     };
 
@@ -53,7 +53,7 @@ describe('NotificationBarStatusTextComponent', () => {
         TranslateMockPipe,
       ],
       providers: [
-        { provide: DatePipe, useValue: datePipe },
+        { provide: MomentPipe, useValue: momentPipe },
         { provide: TranslateService, useValue: translateServiceMock },
       ],
       schemas: [NO_ERRORS_SCHEMA],
