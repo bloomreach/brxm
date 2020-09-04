@@ -22,6 +22,7 @@ class XPageMenuService extends MenuService {
     $state,
     DocumentWorkflowService,
     FeedbackService,
+    HippoIframeService,
     PageService,
     PageToolsService,
     EditContentService,
@@ -79,7 +80,7 @@ class XPageMenuService extends MenuService {
     function invokeWorkflow(onClick, translationKey) {
       return () => onClick(getDocumentId())
         .catch(msg => failure(translationKey, msg))
-        .finally(() => PageService.load());
+        .finally(() => HippoIframeService.reload());
     }
 
     function addWorkflowAction(id, onClick, config = {}) {
