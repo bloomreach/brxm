@@ -1496,4 +1496,85 @@ describe('ContentEditorService', () => {
       expect(ContentEditor.getDocumentFieldValue('choice', 1, 'string')).toBe('value');
     });
   });
+
+  describe('reload', () => {
+    it('should gracefully resolve if there is nothing to reload', (done) => {
+      ContentEditor.reload().then(done);
+      $rootScope.$digest();
+    });
+
+    it('should reload the editable document', () => {
+      ContentEditor.document = testDocument;
+      ContentEditor.documentId = testDocument.id;
+      ContentEditor.documentType = testDocumentType;
+
+      const reloadedDocument = { id: 'reloadedDocumentId' };
+      ContentService.getEditableDocument.and.returnValue($q.resolve(reloadedDocument));
+
+      ContentEditor.reload();
+      $rootScope.$digest();
+
+      expect(ContentService.getEditableDocument).toHaveBeenCalledWith(testDocument.id);
+      expect(ContentEditor.document).toBe(reloadedDocument);
+    });
+  });
+
+  describe('confirmPristine', () => {
+    beforeEach(() => {
+      testDocument.displayName = 'Test';
+      ContentEditor.document = testDocument;
+      spyOn($translate, 'instant');
+    });
+
+    it('should resolve if editor is pristine', (done) => {
+      ContentEditor.confirmPristine().then(done);
+      $rootScope.$digest();
+    });
+
+    it('should reject with "CANCELLED" if dialog is cancelled', (done) => {
+      ContentEditor.markDocumentDirty();
+      DialogService.show.and.returnValue($q.reject());
+
+      ContentEditor.confirmPristine()
+        .catch((e) => {
+          expect(e).toBe('CANCELLED');
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('should reject with "Unknown action <actionId>" if dialog returns unknown action', (done) => {
+      ContentEditor.markDocumentDirty();
+      DialogService.show.and.returnValue($q.resolve('UNKNOWN'));
+
+      ContentEditor.confirmPristine()
+        .catch((e) => {
+          expect(e).toBe('Unknown action \'UNKNOWN\'');
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('should saves changes', () => {
+      ContentEditor.markDocumentDirty();
+      DialogService.show.and.returnValue($q.resolve('SAVE'));
+      spyOn(ContentEditor, 'save').and.returnValue($q.resolve());
+
+      ContentEditor.confirmPristine();
+      $rootScope.$digest();
+
+      expect(ContentEditor.save).toHaveBeenCalled();
+    });
+
+    it('should discard changes', () => {
+      ContentEditor.markDocumentDirty();
+      DialogService.show.and.returnValue($q.resolve('DISCARD'));
+      spyOn(ContentEditor, 'discardChanges').and.returnValue($q.resolve());
+
+      ContentEditor.confirmPristine();
+      $rootScope.$digest();
+
+      expect(ContentEditor.discardChanges).toHaveBeenCalled();
+    });
+  });
 });
