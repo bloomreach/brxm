@@ -103,6 +103,17 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
     }
 
     @Test
+    public void xpage_api_compatibility_v10_assertion() throws Exception {
+
+        String actual = getActualJson("/spa/resourceapi/experiences/expPage1.html", "1.0");
+
+        InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_experience_page_expPage1.json");
+
+        assertions(actual, expected);
+    }
+
+
+    @Test
     public void test_api_residual_parameters_v10_assertion() throws Exception {
         final String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0");
 
