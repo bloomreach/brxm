@@ -16,18 +16,11 @@
 
 class OverlayToggleController {
   constructor(
-    $rootScope,
-    PageStructureService,
-    ProjectService,
     localStorageService,
   ) {
     'ngInject';
 
-    this.PageStructureService = PageStructureService;
-    this.ProjectService = ProjectService;
     this.localStorageService = localStorageService;
-
-    $rootScope.$on('page:change', () => this.initiateOverlay());
   }
 
   $onInit() {
@@ -42,7 +35,7 @@ class OverlayToggleController {
   }
 
   initiateOverlay() {
-    if (this._isInitiallyDisabled()) {
+    if (this.isInitiallyDisabled()) {
       this.disabled = true;
       this.state = false;
     } else {
@@ -67,23 +60,6 @@ class OverlayToggleController {
     } else {
       this.state = state;
     }
-  }
-
-  _isInitiallyDisabled() {
-    if (!this.ProjectService.isBranch()) {
-      return false;
-    }
-
-    if (this.ProjectService.isEditingAllowed(this.name)) {
-      return false;
-    }
-
-    const page = this.PageStructureService.getPage();
-    if (page && page.getMeta().isXPage() && page.getContainers().some(container => container.isXPageEditable())) {
-      return false;
-    }
-
-    return true;
   }
 }
 
