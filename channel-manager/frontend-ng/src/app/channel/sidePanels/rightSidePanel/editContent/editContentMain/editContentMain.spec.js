@@ -193,11 +193,14 @@ describe('EditContentMainCtrl', () => {
   });
 
   it('knows when publish is allowed', () => {
-    [true, false].forEach((editorAllowsPublish) => {
-      [true, false].forEach((dirty) => {
-        ContentEditor.isPublishAllowed.and.returnValue(editorAllowsPublish);
-        ContentEditor.isDocumentDirty.and.returnValue(dirty);
-        expect($ctrl.isPublishAllowed()).toBe(editorAllowsPublish && !dirty);
+    [true, false].forEach((isXPage) => {
+      [true, false].forEach((editorAllowsPublish) => {
+        [true, false].forEach((dirty) => {
+          ContentEditor.isDocumentXPage = isXPage;
+          ContentEditor.isPublishAllowed.and.returnValue(editorAllowsPublish);
+          ContentEditor.isDocumentDirty.and.returnValue(dirty);
+          expect($ctrl.isPublishAllowed()).toBe(!isXPage && editorAllowsPublish && !dirty);
+        });
       });
     });
   });
