@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ChangeDetectorRef, Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { XPageStatusInfo } from '../../../models/page-status-info.model';
 import { XPageStatus } from '../../../models/xpage-status.enum';
@@ -34,9 +34,6 @@ const DANGER_XPAGE_STATUSES = [
   styleUrls: ['notification-bar.component.scss'],
 })
 export class NotificationBarComponent implements OnInit, OnDestroy {
-  @HostBinding('class.danger')
-  danger = false;
-
   pageStatusInfo: XPageStatusInfo | undefined;
 
   private readonly unsubscribe = new Subject();
@@ -44,14 +41,22 @@ export class NotificationBarComponent implements OnInit, OnDestroy {
   constructor(
     private readonly pageService: PageService,
     private readonly cd: ChangeDetectorRef,
+    private readonly elfRef: ElementRef,
   ) {}
 
   ngOnInit(): void {
     this.pageService.pageStatusInfo$.pipe(
-      tap(pageStatusInfo => this.danger = DANGER_XPAGE_STATUSES.some(x => x === pageStatusInfo?.status)),
       takeUntil(this.unsubscribe),
     ).subscribe(pageStatusInfo => {
       this.pageStatusInfo = pageStatusInfo;
+      const danger = DANGER_XPAGE_STATUSES.some(x => x === pageStatusInfo?.status);
+
+      if (danger) {
+        this.elfRef.nativeElement.classList.add('danger');
+      } else {
+        this.elfRef.nativeElement.classList.remove('danger');
+      }
+
       this.cd.detectChanges();
     });
   }
