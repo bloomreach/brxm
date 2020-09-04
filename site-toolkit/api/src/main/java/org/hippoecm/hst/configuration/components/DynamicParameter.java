@@ -54,7 +54,7 @@ public interface DynamicParameter {
     boolean isResidual();
 
     /**
-     * @return the parameter config of the parameter
+     * @return the parameter config of the parameter if present, {@code null} otherwise
      */
     DynamicParameterConfig getComponentParameterConfig();
 }
