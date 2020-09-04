@@ -23,6 +23,7 @@ describe('XPageMenuService', () => {
   let $state;
   let DocumentWorkflowService;
   let FeedbackService;
+  let HippoIframeService;
   let PageService;
   let PageToolsService;
   let XPageMenuService;
@@ -57,6 +58,7 @@ describe('XPageMenuService', () => {
       _$state_,
       _DocumentWorkflowService_,
       _FeedbackService_,
+      _HippoIframeService_,
       _PageService_,
       _XPageMenuService_,
       _EditContentService_,
@@ -66,6 +68,7 @@ describe('XPageMenuService', () => {
       $state = _$state_;
       DocumentWorkflowService = _DocumentWorkflowService_;
       FeedbackService = _FeedbackService_;
+      HippoIframeService = _HippoIframeService_;
       PageService = _PageService_;
       XPageMenuService = _XPageMenuService_;
       EditContentService = _EditContentService_;
@@ -81,7 +84,7 @@ describe('XPageMenuService', () => {
     spyOn(DocumentWorkflowService, 'requestScheduleUnpublication').and.returnValue($q.resolve());
     spyOn(EditContentService, 'startEditing').and.returnValue($q.resolve());
 
-    spyOn(PageService, 'load');
+    spyOn(HippoIframeService, 'reload');
 
     spyOn(FeedbackService, 'showError');
     spyOn(FeedbackService, 'showNotification');
@@ -191,7 +194,7 @@ describe('XPageMenuService', () => {
     $rootScope.$digest();
 
     expect(spy).toHaveBeenCalledWith('xpage-document-id');
-    expect(PageService.load).toHaveBeenCalled();
+    expect(HippoIframeService.reload).toHaveBeenCalled();
   }
 
   function expectWorkflowFailed(actionId, spy) {
@@ -203,7 +206,7 @@ describe('XPageMenuService', () => {
     $rootScope.$digest();
 
     expect(spy).toHaveBeenCalledWith('xpage-document-id');
-    expect(PageService.load).toHaveBeenCalled();
+    expect(HippoIframeService.reload).toHaveBeenCalled();
     expect(FeedbackService.showError).toHaveBeenCalledWith(
       `${action.translationKey}_ERROR`,
       {
@@ -217,7 +220,7 @@ describe('XPageMenuService', () => {
     expectWorkflowSuccess(actionId, spy);
 
     spy.calls.reset();
-    PageService.load.calls.reset();
+    HippoIframeService.reload.calls.reset();
 
     expectWorkflowFailed(actionId, spy);
   }
