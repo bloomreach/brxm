@@ -190,7 +190,7 @@ exports[`VersionsInfoComponent restoring a version should not show restore butto
               class="qa-version-timestamp mat-line"
               matline=""
             >
-               Nov 8, 2020 04:03 
+               1604847780000 
             </p>
             
             <p
@@ -316,7 +316,7 @@ exports[`VersionsInfoComponent restoring a version should show restore button fo
               class="qa-version-timestamp mat-line"
               matline=""
             >
-               Nov 8, 2020 04:03 
+               1604847780000 
             </p>
             
             <p
@@ -440,7 +440,7 @@ exports[`VersionsInfoComponent selecting version should show the selected versio
           class="qa-version-timestamp mat-line"
           matline=""
         >
-           Nov 8, 2020 04:03 
+           1604847780000 
         </p>
         
         <p
@@ -601,7 +601,7 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
               class="qa-version-timestamp mat-line"
               matline=""
             >
-               Nov 8, 2020 04:03 
+               1604847780000 
             </p>
             
             <p
