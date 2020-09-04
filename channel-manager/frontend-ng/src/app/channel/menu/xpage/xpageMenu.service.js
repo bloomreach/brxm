@@ -19,6 +19,7 @@ import MenuService from '../menu.service';
 class XPageMenuService extends MenuService {
   constructor(
     $log,
+    $q,
     $state,
     DocumentWorkflowService,
     EditContentService,
@@ -98,6 +99,19 @@ class XPageMenuService extends MenuService {
       });
     }
 
+    function addEditorAwareWorkflowAction(id, onclick, config) {
+      addWorkflowAction(id, (documentId) => {
+        if (!EditContentService.isEditing(documentId)) {
+          return onclick(documentId);
+        }
+
+        return EditContentService.ensureEditorIsPristine()
+          .then(() => onclick(documentId))
+          .then(() => EditContentService.reloadEditor())
+          .catch(err => (err === 'CANCELLED' ? $q.resolve() : $q.reject(err)));
+      }, config);
+    }
+
     menu
       .addAction('tools', {
         isVisible: () => PageToolsService.hasExtensions(),
@@ -123,7 +137,7 @@ class XPageMenuService extends MenuService {
           'request-schedule-publish'),
       });
 
-    addWorkflowAction('unpublish', id => DocumentWorkflowService.unpublish(id), {
+    addEditorAwareWorkflowAction('unpublish', id => DocumentWorkflowService.unpublish(id), {
       iconName: 'mdi-minus-circle',
     });
 
@@ -140,7 +154,7 @@ class XPageMenuService extends MenuService {
       isEnabled: () => isEnabled('request-schedule-unpublish') && !isEditingCurrentPage(),
     });
 
-    addWorkflowAction('publish', id => DocumentWorkflowService.publish(id), {
+    addEditorAwareWorkflowAction('publish', id => DocumentWorkflowService.publish(id), {
       iconName: 'mdi-check-circle',
     });
 
