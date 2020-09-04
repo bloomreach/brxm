@@ -31,6 +31,7 @@ import { XPageStatus } from '../models/xpage-status.enum';
 import { VersionsService } from '../versions/services/versions.service';
 
 import { Ng1PageService, NG1_PAGE_SERVICE } from './ng1/page.ng1.service';
+import { NG1_ROOT_SCOPE } from './ng1/root-scope.service';
 import { PageService } from './page.service';
 import { ProjectService } from './project.service';
 
@@ -54,9 +55,15 @@ describe('PageService', () => {
       states$: of({ xpage: { id: 'xpage-id' } }),
     };
 
+    const $rootScopeMock = {
+      $on: jest.fn(),
+    };
+
     const projectServiceMock = {
       currentProject: undefined,
       isCore: jest.fn(x => x.id === 'master'),
+      afterChange: jest.fn(),
+      coreBranchId: 'master',
     };
 
     const iframeServiceMock = {
@@ -75,6 +82,7 @@ describe('PageService', () => {
       providers: [
         PageService,
         { provide: NG1_PAGE_SERVICE, useValue: ng1PageServiceMock },
+        { provide: NG1_ROOT_SCOPE, useValue: $rootScopeMock },
         { provide: ProjectService, useValue: projectServiceMock },
         { provide: IframeService, useValue: iframeServiceMock },
         { provide: VersionsService, useValue: versionsServiceMock },
@@ -104,7 +112,7 @@ describe('PageService', () => {
     [
       'Published',
       {
-        xpage: { state: DocumentState.Live, name: 'page name' },
+        xpage: { state: DocumentState.Live, name: 'page name', branchId: 'master' },
       },
       undefined,
       new XPageStatusInfo(
@@ -116,7 +124,7 @@ describe('PageService', () => {
     [
       'UnpublishedChanges changed',
       {
-        xpage: { state: DocumentState.Changed, name: 'page name' },
+        xpage: { state: DocumentState.Changed, name: 'page name', branchId: 'master' },
       },
       undefined,
       new XPageStatusInfo(
@@ -128,7 +136,7 @@ describe('PageService', () => {
     [
       'UnpublishedChanges unpublished',
       {
-        xpage: { state: DocumentState.Unpublished, name: 'page name' },
+        xpage: { state: DocumentState.Unpublished, name: 'page name', branchId: 'master' },
       },
       undefined,
       new XPageStatusInfo(
@@ -140,7 +148,7 @@ describe('PageService', () => {
     [
       'Offline',
       {
-        xpage: { name: 'page name', state: DocumentState.New },
+        xpage: { name: 'page name', state: DocumentState.New, branchId: 'master' },
       },
       undefined,
       new XPageStatusInfo(
@@ -152,7 +160,7 @@ describe('PageService', () => {
     [
       'PublicationRequest',
       {
-        xpage: { name: 'page name', state: DocumentState.Unpublished },
+        xpage: { name: 'page name', state: DocumentState.Unpublished, branchId: 'master' },
         workflowRequest: { type: WorkflowRequestType.Publish, name: 'page name' },
       },
       undefined,
@@ -165,7 +173,7 @@ describe('PageService', () => {
     [
       'TakeOfflineRequest',
       {
-        xpage: { name: 'page name', state: DocumentState.Live },
+        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
         workflowRequest: { type: WorkflowRequestType.Depublish, name: 'page name' },
       },
       undefined,
@@ -178,7 +186,7 @@ describe('PageService', () => {
     [
       'RejectedRequest',
       {
-        xpage: { name: 'page name', state: DocumentState.Changed },
+        xpage: { name: 'page name', state: DocumentState.Changed, branchId: 'master' },
         workflowRequest: { type: WorkflowRequestType.Rejected },
       },
       undefined,
@@ -191,7 +199,7 @@ describe('PageService', () => {
     [
       'ScheduledPublish',
       {
-        xpage: { name: 'page name', state: DocumentState.Unpublished },
+        xpage: { name: 'page name', state: DocumentState.Unpublished, branchId: 'master' },
         workflowRequest: { type: WorkflowRequestType.ScheduledPublish, requestDate: 1596811323 },
       },
       undefined,
@@ -205,7 +213,7 @@ describe('PageService', () => {
     [
       'ScheduledDepublish',
       {
-        xpage: { name: 'page name', state: DocumentState.Live },
+        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
         workflowRequest: { type: WorkflowRequestType.ScheduledDepublish, requestDate: 1596811323 },
       },
       undefined,
@@ -219,7 +227,7 @@ describe('PageService', () => {
     [
       'ScheduledPublication',
       {
-        xpage: { name: 'page name', state: DocumentState.Unpublished },
+        xpage: { name: 'page name', state: DocumentState.Unpublished, branchId: 'master' },
         scheduledRequest: { type: ScheduledRequestType.Publish, scheduledDate: 1596811323 },
       },
       undefined,
@@ -233,7 +241,7 @@ describe('PageService', () => {
     [
       'ScheduledToTakeOffline',
       {
-        xpage: { name: 'page name', state: DocumentState.Live },
+        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
         scheduledRequest: { type: ScheduledRequestType.Depublish, scheduledDate: 1596811323 },
       },
       undefined,
@@ -246,8 +254,8 @@ describe('PageService', () => {
     ],
     [
       'ProjectRunning',
-      { xpage: { name: 'page name', state: DocumentState.Live } },
-      { id: '123', name: 'some project name', state: ProjectState.Approved },
+      { xpage: { name: 'page name', state: DocumentState.Live, branchId: 'ABC123' } },
+      { id: '123', name: 'some project name', state: ProjectState.Running },
       new XPageStatusInfo(
         XPageStatus.ProjectRunning,
         DocumentState.Live,
@@ -257,8 +265,18 @@ describe('PageService', () => {
       ),
     ],
     [
-      'ProjectRunning but is not set explicitly',
-      { xpage: { name: 'page name', state: DocumentState.Live } },
+      'ProjectRunning but XPage is not a part of the project',
+      { xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' } },
+      { id: '123', name: 'some project name', state: ProjectState.Running },
+      new XPageStatusInfo(
+        XPageStatus.Published,
+        DocumentState.Live,
+        'page name',
+      ),
+    ],
+    [
+      'ProjectRunning but it is not set explicitly',
+      { xpage: { name: 'page name', state: DocumentState.Live, branchId: 'ABC123'  } },
       { id: '123', name: 'some project name' },
       new XPageStatusInfo(
         XPageStatus.ProjectRunning,
@@ -270,7 +288,7 @@ describe('PageService', () => {
     ],
     [
       'ProjectInProgress',
-      { xpage: { name: 'page name', state: DocumentState.Live } },
+      { xpage: { name: 'page name', state: DocumentState.Live, branchId: 'ABC123'  } },
       { id: '123', name: 'some project name', state: ProjectState.Unapproved },
       new XPageStatusInfo(
         XPageStatus.ProjectInProgress,
@@ -281,9 +299,19 @@ describe('PageService', () => {
       ),
     ],
     [
+      'ProjectInProgress but XPage is not a part of the project',
+      { xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master'  } },
+      { id: '123', name: 'some project name', state: ProjectState.Unapproved },
+      new XPageStatusInfo(
+        XPageStatus.Published,
+        DocumentState.Live,
+        'page name',
+      ),
+    ],
+    [
       'ProjectInReview',
       {
-        xpage: { acceptanceState: AcceptanceState.InReview, name: 'page name', state: DocumentState.Changed },
+        xpage: { acceptanceState: AcceptanceState.InReview, name: 'page name', state: DocumentState.Changed, branchId: 'ABC123'  },
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
@@ -295,23 +323,21 @@ describe('PageService', () => {
       ),
     ],
     [
-      'ProjectInReview but is not set explicitly',
+      'ProjectInReview but XPage is not a part of the project',
       {
-        xpage: { name: 'page name', state: DocumentState.Changed },
+        xpage: { acceptanceState: AcceptanceState.InReview, name: 'page name', state: DocumentState.Changed, branchId: 'master'  },
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
-        XPageStatus.ProjectInReview,
+        XPageStatus.UnpublishedChanges,
         DocumentState.Changed,
         'page name',
-        undefined,
-        'some project name',
       ),
     ],
     [
       'ProjectPageApproved',
       {
-        xpage: { acceptanceState: AcceptanceState.Approved, name: 'page name', state: DocumentState.Changed },
+        xpage: { acceptanceState: AcceptanceState.Approved, name: 'page name', state: DocumentState.Changed, branchId: 'ABC123'  },
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
@@ -323,9 +349,21 @@ describe('PageService', () => {
       ),
     ],
     [
+      'ProjectPageApproved but XPage is not a part of the project',
+      {
+        xpage: { acceptanceState: AcceptanceState.Approved, name: 'page name', state: DocumentState.Changed, branchId: 'master'  },
+      },
+      { id: '123', name: 'some project name', state: ProjectState.InReview },
+      new XPageStatusInfo(
+        XPageStatus.UnpublishedChanges,
+        DocumentState.Changed,
+        'page name',
+      ),
+    ],
+    [
       'ProjectPageRejected',
       {
-        xpage: { acceptanceState: AcceptanceState.Rejected, name: 'page name', state: DocumentState.Changed },
+        xpage: { acceptanceState: AcceptanceState.Rejected, name: 'page name', state: DocumentState.Changed, branchId: 'ABC123'  },
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
@@ -337,9 +375,21 @@ describe('PageService', () => {
       ),
     ],
     [
+      'ProjectPageRejected but XPage is not a part of the project',
+      {
+        xpage: { acceptanceState: AcceptanceState.Rejected, name: 'page name', state: DocumentState.Changed, branchId: 'master'  },
+      },
+      { id: '123', name: 'some project name', state: ProjectState.InReview },
+      new XPageStatusInfo(
+        XPageStatus.UnpublishedChanges,
+        DocumentState.Changed,
+        'page name',
+      ),
+    ],
+    [
       'EditingSharedContainers',
       {
-        xpage: { name: 'page name', state: DocumentState.Live },
+        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master'  },
       },
       undefined,
       new XPageStatusInfo(
@@ -351,7 +401,7 @@ describe('PageService', () => {
     [
       'PreviousVersion',
       {
-        xpage: { name: 'page name', state: DocumentState.Live },
+        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
       },
       undefined,
       new XPageStatusInfo(
@@ -368,9 +418,40 @@ describe('PageService', () => {
       ),
     ],
     [
+      'PreviousVersion if a project is active but XPage is not a part of the project',
+      {
+        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
+      },
+      { id: '123', name: 'some project name', state: ProjectState.InReview },
+      new XPageStatusInfo(
+        XPageStatus.Published,
+        DocumentState.Live,
+        'page name',
+      ),
+    ],
+    [
+      'PreviousVersion if a project is active but XPage is a part of the project',
+      {
+        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'ABC123' },
+      },
+      { id: '123', name: 'some project name', state: ProjectState.InReview },
+      new XPageStatusInfo(
+        XPageStatus.PreviousVersion,
+        DocumentState.Live,
+        'page name',
+        undefined,
+        undefined,
+        {
+          jcrUUID: '2',
+          timestamp: 1234,
+          userName: 'user2',
+        },
+      ),
+    ],
+    [
       'Locked',
       {
-        xpage: { name: 'page name', state: DocumentState.Live, lockedBy: 'username' },
+        xpage: { name: 'page name', state: DocumentState.Live, lockedBy: 'username', branchId: 'master' },
       },
       undefined,
       new XPageStatusInfo(
@@ -384,7 +465,7 @@ describe('PageService', () => {
       ),
     ],
   ])('getXPageStatus if page states represent "%s" state', (expectedStatusName, pageStates, project, expectedStatusInfo) => {
-    test(`should return ${expectedStatusName} status info`, () => {
+    test(`should return ${expectedStatusName} status info`, async () => {
       ng1PageService.states = pageStates as PageStates;
       (projectService as any).currentProject = project;
 
@@ -392,11 +473,11 @@ describe('PageService', () => {
         mocked(iframeService.isEditSharedContainers).mockReturnValue(true);
       }
 
-      if (expectedStatusName === 'PreviousVersion') {
+      if (expectedStatusName.startsWith('PreviousVersion')) {
         mocked(versionsService.isCurrentVersion).mockImplementation(v => v.jcrUUID === '2');
       }
 
-      const actual = service.getPageStatusInfo();
+      const actual = await service.getPageStatusInfo();
 
       expect(actual).toEqual(expectedStatusInfo);
     });
