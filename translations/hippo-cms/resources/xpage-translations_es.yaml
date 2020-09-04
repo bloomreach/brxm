@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/xpage:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        x-page-layout: Diseño de la página
