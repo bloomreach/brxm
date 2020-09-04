@@ -79,8 +79,7 @@ class OverlayToggleController {
     }
 
     const page = this.PageStructureService.getPage();
-    const pageMeta = page.getMeta();
-    if (pageMeta.isXPage() && page.getContainers().some(container => container.isXPageEditable())) {
+    if (page && page.getMeta().isXPage() && page.getContainers().some(container => container.isXPageEditable())) {
       return false;
     }
 
