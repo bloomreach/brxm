@@ -50,6 +50,7 @@
                         default-state="false"
                         state="$ctrl.isComponentsOverlayDisplayed"
                         on-state-change="$ctrl.isComponentsOverlayDisplayed = state"
+                        is-initially-disabled="$ctrl.isComponentOverlayInitiallyDisabled()"
                         icon-svg="toggle-components-overlay"
                         tooltip="{{ $ctrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
                         class="qa-toggle-components">
@@ -60,6 +61,7 @@
                         default-state="true"
                         state="$ctrl.isContentOverlayDisplayed"
                         on-state-change="$ctrl.isContentOverlayDisplayed = state"
+                        is-initially-disabled="$ctrl.isContentOverlayInitiallyDisabled()"
                         icon-svg="toggle-editing-overlay"
                         class="qa-toggle-content"
                         tooltip="{{ $ctrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}">
