@@ -161,7 +161,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
                             parameterValue = hstComponentParameter.getDefaultValue();
                         }
 
-                        componentParameters.put(hstComponentParameter.getName(), converter.convert(parameterValue,
+                        componentParameters.put(hstComponentParameter.getName(), converter.convert(hstComponentParameter.getName(), parameterValue, parameterConfiguration,
                                 hstComponentParameter.getValueType().getDefaultReturnType()));
                     }
                 }
@@ -200,7 +200,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
                         if (StringUtils.isEmpty(parameterValue)) {
                             parameterValue = hstComponentParameter.get().getDefaultValue();
                         }
-                        return converter.convert(parameterValue,
+                        return converter.convert(parameterName, parameterValue, parameterConfiguration,
                                 hstComponentParameter.get().getValueType().getDefaultReturnType());
                     }
                 }
@@ -222,7 +222,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
 
             if (customEditorType == null || customEditorType == EmptyPropertyEditor.class) {
                 try {
-                    return converter.convert(parameterValue, returnType);
+                    return converter.convert(parameterName, parameterValue, parameterConfiguration, returnType);
                 } catch (HstParameterValueConversionException e) {
                     log.warn("Could not convert '"+parameterValue+"' to returnType "+returnType.getName()+ ".. Try to return default value", e.toString());
                     if(defaultValue == null) {
@@ -230,7 +230,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
                         return null;
                     } else {
                         // if default value is incorrect, the runtime exception HstParameterValueConversionException is just thrown
-                        return converter.convert(defaultValue, returnType);
+                        return converter.convert(parameterName, defaultValue, parameterConfiguration, returnType);
                     }
                 }
             } else {
