@@ -97,28 +97,11 @@ class ChannelCtrl {
   }
 
   isConfigurationLocked() {
-    if (this._isXPageRejectedInProjectBranch()) {
+    if (!this.isComponentOverlayInitiallyDisabled()) {
       return false;
     }
 
     return this.ChannelService.isConfigurationLocked();
-  }
-
-  _isXPageRejectedInProjectBranch() {
-    const page = this.PageStructureService.getPage();
-    if (!page) {
-      return false;
-    }
-
-    const pageMeta = page.getMeta();
-    if (!pageMeta) {
-      return false;
-    }
-
-    return pageMeta.isXPage()
-      && this.ProjectService.isBranch()
-      && this.ProjectService.isInReview()
-      && page.getContainers().some(container => container.isXPageEditable());
   }
 
   isChannelLoaded() {
@@ -214,6 +197,52 @@ class ChannelCtrl {
     }
 
     return true;
+  }
+
+  isComponentOverlayInitiallyDisabled() {
+    if (!this.ProjectService.isBranch())  {
+      return false;
+    }
+
+    if (this.ProjectService.isEditingAllowed('components')) {
+      return false;
+    }
+
+    if (this._pageContainsEditableXPageContainer()) {
+      return false;
+    }
+
+    return true;
+  }
+
+  isContentOverlayInitiallyDisabled() {
+    if (!this.ProjectService.isBranch()) {
+      return false;
+    }
+
+    if (this.ProjectService.isEditingAllowed('content')) {
+      return false;
+    }
+
+    return true;
+  }
+
+  _pageContainsEditableXPageContainer() {
+    const page = this.PageStructureService.getPage();
+    if (!page) {
+      return false;
+    }
+
+    const meta = page.getMeta();
+    if (!meta) {
+      return false;
+    }
+
+    if (!meta.isXPage()) {
+      return false;
+    }
+
+    return page.getContainers().some(container => container.isXPageEditable());
   }
 }
 
