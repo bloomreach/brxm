@@ -25,11 +25,12 @@ describe('overlayToggle component', () => {
   let ProjectService;
 
   const testStorageKey = 'channelManager.overlays.testToggle';
-  const onStateCallback = jasmine.createSpy('stateChangeCallback');
 
+  let containers;
+  let isInitiallyDisabled;
+  let onStateCallback;
   let page;
   let pageMeta;
-  let containers;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -46,10 +47,14 @@ describe('overlayToggle component', () => {
       PageStructureService = _PageStructureService_;
       ProjectService = _ProjectService_;
 
+      isInitiallyDisabled = jasmine.createSpy('isInitiallyDisabled').and.returnValue(false);
+      onStateCallback = jasmine.createSpy('stateChangeCallback');
+
       $ctrl = $componentController('overlayToggle', {}, {
         name: 'testToggle',
         state: false,
         defaultState: true,
+        isInitiallyDisabled,
         onStateChange: onStateCallback,
         iconName: 'md-icon-name',
         tooltip: 'Test tooltip',
@@ -90,62 +95,26 @@ describe('overlayToggle component', () => {
     });
   });
 
-  describe('when the page changes', () => {
-    it('should initiate overlay again', () => {
-      spyOn($ctrl, 'initiateOverlay');
-      $rootScope.$emit('page:change');
-      expect($ctrl.initiateOverlay).toHaveBeenCalled();
-    });
-  });
-
-
   describe('initOverlay', () => {
-    it('loads persisted state when selected project is master', () => {
+    beforeEach(() => {
       spyOn($ctrl, 'loadPersistentState');
+    });
 
+    it('loads from persisted state when initially enabled', () => {
+      isInitiallyDisabled.and.returnValue(false);
       $ctrl.initiateOverlay();
 
       expect($ctrl.disabled).toBe(false);
       expect($ctrl.loadPersistentState).toHaveBeenCalled();
     });
 
-    it('loads persisted state when a branch is selected and editing is allowed', () => {
-      spyOn(ProjectService, 'isBranch').and.returnValue(true);
-      spyOn(ProjectService, 'isEditingAllowed').and.returnValue(true);
-      spyOn($ctrl, 'loadPersistentState');
-
-      $ctrl.initiateOverlay();
-
-      expect($ctrl.disabled).toBe(false);
-      expect($ctrl.loadPersistentState).toHaveBeenCalled();
-    });
-
-    it('disables buttons and overlay when a branch is selected and editing is not allowed', () => {
-      spyOn(ProjectService, 'isBranch').and.returnValue(true);
-      spyOn(ProjectService, 'isEditingAllowed').and.returnValue(false);
-      spyOn($ctrl, 'loadPersistentState');
-
+    it('is disabled when initially disabled', () => {
+      isInitiallyDisabled.and.returnValue(true);
       $ctrl.initiateOverlay();
 
       expect($ctrl.disabled).toBe(true);
       expect($ctrl.state).toBe(false);
       expect($ctrl.loadPersistentState).not.toHaveBeenCalled();
-      expect(onStateCallback).toHaveBeenCalledWith({ state: $ctrl.state });
-    });
-
-    it('enables buttons and overlay when a branch is selected and editing is not allowed '
-        + 'and an XPage container is marked editable', () => {
-      pageMeta.isXPage.and.returnValue(true);
-      containers.push({ isXPageEditable: () => false });
-      containers.push({ isXPageEditable: () => true });
-      spyOn(ProjectService, 'isBranch').and.returnValue(true);
-      spyOn(ProjectService, 'isEditingAllowed').and.returnValue(false);
-      spyOn($ctrl, 'loadPersistentState');
-
-      $ctrl.initiateOverlay();
-
-      expect($ctrl.disabled).toBe(false);
-      expect($ctrl.loadPersistentState).toHaveBeenCalled();
     });
   });
 

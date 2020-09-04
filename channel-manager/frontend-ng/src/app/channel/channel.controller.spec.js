@@ -290,14 +290,28 @@ describe('ChannelController', () => {
   });
 
   describe('isConfigurationLocked', () => {
+    it('should return value from ChannelService if component-overlay is initially disabled', () => {
+      spyOn(ChannelService, 'isConfigurationLocked').and.returnValue('valueFromChannelService');
+      spyOn($ctrl, 'isComponentOverlayInitiallyDisabled').and.returnValue(true);
+
+      expect($ctrl.isConfigurationLocked()).toBe('valueFromChannelService');
+    });
+
+    it('should return false if component-overlay is not initially disabled', () => {
+      spyOn($ctrl, 'isComponentOverlayInitiallyDisabled').and.returnValue(false);
+
+      expect($ctrl.isConfigurationLocked()).toBe(false);
+    });
+  });
+
+  describe('isComponentOverlayInitiallyDisabled', () => {
     let containers;
     let page;
     let pageMeta;
 
     beforeEach(() => {
-      spyOn(ChannelService, 'isConfigurationLocked').and.returnValue('valueFromChannelService');
       spyOn(ProjectService, 'isBranch');
-      spyOn(ProjectService, 'isInReview');
+      spyOn(ProjectService, 'isEditingAllowed');
 
       containers = [];
       page = jasmine.createSpyObj('page', ['getMeta', 'getContainers']);
@@ -308,56 +322,82 @@ describe('ChannelController', () => {
       page.getContainers.and.returnValue(containers);
     });
 
-    it('should return value from ChannelService if there is no page', () => {
-      PageStructureService.getPage.and.returnValue(null);
-
-      expect($ctrl.isConfigurationLocked()).toBe('valueFromChannelService');
-    });
-
-    it('should return value from ChannelService if there is no page meta', () => {
-      page.getMeta.and.returnValue(null);
-
-      expect($ctrl.isConfigurationLocked()).toBe('valueFromChannelService');
-    });
-
-    it('should return value from ChannelService if not an xpage', () => {
-      pageMeta.isXPage.and.returnValue(false);
-
-      expect($ctrl.isConfigurationLocked()).toBe('valueFromChannelService');
-    });
-
-    it('should return value from ChannelService if xpage is not part of project branch', () => {
-      pageMeta.isXPage.and.returnValue(true);
+    it('is false if not on a project branch', () => {
       ProjectService.isBranch.and.returnValue(false);
 
-      expect($ctrl.isConfigurationLocked()).toBe('valueFromChannelService');
+      expect($ctrl.isComponentOverlayInitiallyDisabled()).toBe(false);
     });
 
-    it('should return value from ChannelService if xpage is part of a project but not in review', () => {
-      pageMeta.isXPage.and.returnValue(true);
+    it('is false if editing of "components" is allowed on the project branch', () => {
       ProjectService.isBranch.and.returnValue(true);
-      ProjectService.isInReview.and.returnValue(false);
+      ProjectService.isEditingAllowed.and.returnValue(true);
 
-      expect($ctrl.isConfigurationLocked()).toBe('valueFromChannelService');
+      expect($ctrl.isComponentOverlayInitiallyDisabled()).toBe(false);
+      expect(ProjectService.isEditingAllowed).toHaveBeenCalledWith('components');
     });
 
-    it('should return value from ChannelService if xpage is part of project and is in review', () => {
-      pageMeta.isXPage.and.returnValue(true);
-      ProjectService.isBranch.and.returnValue(true);
-      ProjectService.isInReview.and.returnValue(true);
+    describe('project is not editable', () => {
+      it('is true if there is no page', () => {
+        ProjectService.isBranch.and.returnValue(true);
+        ProjectService.isEditingAllowed.and.returnValue(false);
+        PageStructureService.getPage.and.returnValue(null);
 
-      expect($ctrl.isConfigurationLocked()).toBe('valueFromChannelService');
+        expect($ctrl.isComponentOverlayInitiallyDisabled()).toBe(true);
+      });
+
+      it('is true if there is no page meta', () => {
+        ProjectService.isBranch.and.returnValue(true);
+        ProjectService.isEditingAllowed.and.returnValue(false);
+        page.getMeta.and.returnValue(null);
+
+        expect($ctrl.isComponentOverlayInitiallyDisabled()).toBe(true);
+      });
+
+      it('is true if page is not an xpage', () => {
+        ProjectService.isBranch.and.returnValue(true);
+        ProjectService.isEditingAllowed.and.returnValue(false);
+        pageMeta.isXPage.and.returnValue(false);
+
+        expect($ctrl.isComponentOverlayInitiallyDisabled()).toBe(true);
+      });
+
+      it('is false if the page is a rejected xpage', () => {
+        ProjectService.isBranch.and.returnValue(true);
+        ProjectService.isEditingAllowed.and.returnValue(false);
+        pageMeta.isXPage.and.returnValue(true);
+        containers.push({ isXPageEditable: () => false });
+        containers.push({ isXPageEditable: () => true });
+
+        expect($ctrl.isComponentOverlayInitiallyDisabled()).toBe(false);
+      });
+    });
+  });
+
+  describe('isContentOverlayInitiallyDisabled', () => {
+    beforeEach(() => {
+      spyOn(ProjectService, 'isBranch');
+      spyOn(ProjectService, 'isEditingAllowed');
     });
 
-    it('should return false if xpage is part of project and is rejected', () => {
-      pageMeta.isXPage.and.returnValue(true);
+    it('is false if not on a project branch', () => {
+      ProjectService.isBranch.and.returnValue(false);
+
+      expect($ctrl.isContentOverlayInitiallyDisabled()).toBe(false);
+    });
+
+    it('is false if editing of "content" is allowed on the project branch', () => {
       ProjectService.isBranch.and.returnValue(true);
-      ProjectService.isInReview.and.returnValue(true);
+      ProjectService.isEditingAllowed.and.returnValue(true);
 
-      containers.push({ isXPageEditable: () => false });
-      containers.push({ isXPageEditable: () => true });
+      expect($ctrl.isContentOverlayInitiallyDisabled()).toBe(false);
+      expect(ProjectService.isEditingAllowed).toHaveBeenCalledWith('content');
+    });
 
-      expect($ctrl.isConfigurationLocked()).toBe(false);
+    it('is true if project is not editable', () => {
+      ProjectService.isBranch.and.returnValue(true);
+      ProjectService.isEditingAllowed.and.returnValue(false);
+
+      expect($ctrl.isContentOverlayInitiallyDisabled()).toBe(true);
     });
   });
 });
