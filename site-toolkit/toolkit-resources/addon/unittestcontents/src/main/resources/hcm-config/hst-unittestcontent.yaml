@@ -212,6 +212,7 @@ definitions:
             /expPage1:
               jcr:primaryType: hippo:handle
               jcr:mixinTypes: ['mix:referenceable']
+              jcr:uuid: 0da7bebd-fec6-4703-b690-a47b1b3fc7e6
               /expPage1:
                 jcr:primaryType: unittestproject:newspage
                 jcr:mixinTypes: ['mix:versionable', 'hst:xpagemixin']
@@ -238,22 +239,22 @@ definitions:
                       hst:componentclassname: org.hippoecm.hst.test.BannerComponent
                       hst:parameternameprefixes: ['', variant1]
                       hst:parameternames: [path, path]
-                      hst:parametervalues: [/content/document, /content/variant1]
+                      hst:parametervalues: [common/aboutfolder/about-us, common/aboutfolder/about-us-2]
                       hst:template: banner
                     /banner-new-style:
                       jcr:primaryType: hst:containeritemcomponent
-                      hst:componentdefinition: hst:components/testpackage/testitem
+                      hst:componentdefinition: hst:components/unittestpackage/banner-new-style
                       hst:parameternameprefixes: ['', variant1]
                       hst:parameternames: [path, path]
-                      hst:parametervalues: [/content/document, /content/variant1]
+                      hst:parametervalues: [common/aboutfolder/about-us, common/aboutfolder/about-us-2]
                   /430df2da-3dc8-40b5-bed5-bdc44b8445c7:
                     jcr:primaryType: hst:containercomponent
                     /banner:
                       jcr:primaryType: hst:containeritemcomponent
-                      hst:componentdefinition: hst:components/testpackage/testitem
+                      hst:componentdefinition: hst:components/unittestpackage/banner-new-style
                       hst:parameternameprefixes: ['']
                       hst:parameternames: [path]
-                      hst:parametervalues: [/content/document]
+                      hst:parametervalues: [common/aboutfolder/contact]
                       hst:template: banner
             /expPage2:
               jcr:primaryType: hippo:handle
@@ -281,7 +282,7 @@ definitions:
                     jcr:primaryType: hst:containercomponent
                     /banner:
                       jcr:primaryType: hst:containeritemcomponent
-                      hst:componentdefinition: hst:components/testpackage/testitem
+                      hst:componentdefinition: hst:components/unittestpackage/banner-new-style
                       hst:parameternameprefixes: ['', variant1]
                       hst:parameternames: [path]
                       hst:parametervalues: [/content/document]
