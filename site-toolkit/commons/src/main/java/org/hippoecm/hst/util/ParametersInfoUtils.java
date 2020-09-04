@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,6 +52,12 @@ public class ParametersInfoUtils {
      */
     public static <T> T createParametersInfo(HstComponent component, final ComponentConfiguration componentConfig,
             final HttpServletRequest request) {
+
+        return createParametersInfo(component, componentConfig, request, DEFAULT_HST_PARAMETER_VALUE_CONVERTER);
+    }
+
+    public static <T> T createParametersInfo(final HstComponent component, final ComponentConfiguration componentConfig,
+                                              final HttpServletRequest request, final HstParameterValueConverter valueConverter) {
         // first, try the new ParametersInfo annotation
         ParametersInfo annotation = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(component,
                 componentConfig);
@@ -64,10 +70,11 @@ public class ParametersInfoUtils {
         HstParameterInfoProxyFactory parameterInfoProxyFacotory = RequestContextProvider.get()
                 .getParameterInfoProxyFactory();
         T parametersInfo = parameterInfoProxyFacotory.createParameterInfoProxy(annotation, componentConfig, request,
-                DEFAULT_HST_PARAMETER_VALUE_CONVERTER);
+                valueConverter);
 
         return parametersInfo;
     }
+
 
     /**
      * Returns an annotation on a 'parameter method' in a parameters info class, i.e. a method that is annotated
