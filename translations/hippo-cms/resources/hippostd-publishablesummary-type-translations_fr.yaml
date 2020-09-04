@@ -2,8 +2,11 @@ definitions:
   config:
     /hippo:configuration/hippo:translations/hippo:types/hippostd:publishableSummary:
       /fr:
-        hippostd:stateSummary=review: En attente d'approbation
-        hippostd:stateSummary=changed: Une ancienne version est publiée
         jcr:primaryType: hipposys:resourcebundle
+        hippostd:stateSummary=review: En attente d'approbation
+        hippostd:stateSummary=changed: En direct, modifications non publiées
+        hippostd:stateSummary=new-draft-changes: Hors connexion, modifications du
+          projet
+        hippostd:stateSummary=live-draft-changes: En direct, modifications du projet
         hippostd:stateSummary=new: Non publié
         hippostd:stateSummary=live: Publié

@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/xpage:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        x-page-layout: 页面布局
