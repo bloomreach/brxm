@@ -502,6 +502,27 @@ class ContentEditorService {
       });
   }
 
+  confirmPristine(messageKey, messageParams, titleKey) {
+    if (this.isPristine()) {
+      return this.$q.resolve();
+    }
+
+    return this._askSaveOrDiscardChanges(messageKey, messageParams, titleKey)
+      .catch(() => this.$q.reject('CANCELLED'))
+      .then((action) => {
+        if (action === 'SAVE') {
+          return this.save();
+        }
+
+        if (action === 'DISCARD') {
+          return this.discardChanges();
+        }
+
+        return this.$q.reject(`Unknown action '${action}'`);
+      });
+  }
+
+
   _askSaveOrDiscardChanges(messageKey, messageParams = {}, titleKey = 'SAVE_DOCUMENT_CHANGES_TITLE') {
     if (this.isPristine()) {
       return this.$q.resolve('DISCARD');
@@ -585,6 +606,15 @@ class ContentEditorService {
     }
 
     return this.isDocumentDirty() ? 'SAVE_AND_REQUEST_PUBLICATION' : 'REQUEST_PUBLICATION';
+  }
+
+  reload() {
+    if (!this.isEditing()) {
+      return this.$q.resolve();
+    }
+
+    return this.ContentService.getEditableDocument(this.documentId)
+      .then(document => this._onLoadSuccess(document, this.documentType));
   }
 
   publish() {

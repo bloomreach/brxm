@@ -79,6 +79,15 @@ class EditContentService {
     return this.ContentEditor.getDocumentId() === documentId;
   }
 
+  ensureEditorIsPristine() {
+    const messageKey = this.ContentEditor.isDocumentXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
+    return this.ContentEditor.confirmPristine(messageKey);
+  }
+
+  reloadEditor() {
+    return this.ContentEditor.reload();
+  }
+
   _isEditingDocument() {
     return ['hippo-cm.channel.edit-content',
       'hippo-cm.channel.edit-page.content',

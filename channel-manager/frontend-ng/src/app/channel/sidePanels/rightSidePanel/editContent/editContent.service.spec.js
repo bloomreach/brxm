@@ -33,6 +33,7 @@ describe('EditContentService', () => {
     ContentEditor = jasmine.createSpyObj('ContentEditor', [
       'confirmClose',
       'close',
+      'confirmPristine',
       'confirmSaveOrDiscardChanges',
       'discardChanges',
       'getDocument',
@@ -41,6 +42,7 @@ describe('EditContentService', () => {
       'getError',
       'kill',
       'open',
+      'reload',
     ]);
     ContentEditor.isDocumentXPage = false;
     ContentService = jasmine.createSpyObj('ContentService', ['getDocument']);
@@ -312,6 +314,29 @@ describe('EditContentService', () => {
       editDocument({ id: 'documentId' });
 
       expect(EditContentService.isEditing('documentId')).toBe(true);
+    });
+  });
+
+  describe('reloadEditor', () => {
+    it('should reload the editor', () => {
+      EditContentService.reloadEditor();
+
+      expect(ContentEditor.reload).toHaveBeenCalled();
+    });
+  });
+
+  describe('ensureEditorIsPristine', () => {
+    it('should ensure document is pristine', () => {
+      EditContentService.ensureEditorIsPristine();
+
+      expect(ContentEditor.confirmPristine).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
+    });
+
+    it('should ensure xpage is pristine', () => {
+      ContentEditor.isDocumentXPage = true;
+      EditContentService.ensureEditorIsPristine();
+
+      expect(ContentEditor.confirmPristine).toHaveBeenCalledWith('SAVE_CHANGES_TO_XPAGE');
     });
   });
 });
