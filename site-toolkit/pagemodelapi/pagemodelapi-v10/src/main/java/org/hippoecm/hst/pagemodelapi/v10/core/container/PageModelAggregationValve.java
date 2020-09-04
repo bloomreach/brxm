@@ -129,9 +129,11 @@ public class PageModelAggregationValve extends AggregationValve {
     private String apiDocPath;
 
     private boolean prettyPrint;
+    private JsonPointerFactory jsonPointerFactory;
 
     public PageModelAggregationValve(final PageModelObjectMapperFactory factory, final Map<Class<?>, Class<?>> extraMixins,
                                      final JsonPointerFactory jsonPointerFactory) {
+        this.jsonPointerFactory = jsonPointerFactory;
         pageModelObjectMapper = factory.createPageModelObjectMapper().registerModule(new SimpleModule().setSerializerModifier(
                 new PageModelSerializerModifier(metadataDecorators, jsonPointerFactory)
         ));
@@ -221,6 +223,7 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         aggregatedPageModel.setPageWindowModel(pageWindowModel);
+
         aggregatedPageModel.setDocument(requestContext.getContentBean());
 
         addPreviewFlagToPageModel(aggregatedPageModel, requestContext);
@@ -253,7 +256,7 @@ public class PageModelAggregationValve extends AggregationValve {
                             String.format("Expected window for '%s' to be present", window.getReferenceName())));
 
             addComponentRenderingURLLink(hstResponse, requestContext, currentComponentWindowModel);
-            addParametersInfoMetadata(window, hstRequest, currentComponentWindowModel);
+            addParametersInfoMetadata(pageWindowModel, window, hstRequest, currentComponentWindowModel);
             decorateComponentWindowMetadata(hstRequest, hstResponse, currentComponentWindowModel);
 
             for (Map.Entry<String, Object> entry : hstRequest.getModelsMap().entrySet()) {
@@ -369,10 +372,12 @@ public class PageModelAggregationValve extends AggregationValve {
 
     /**
      * Add <code>params</code> metadata to the {@code model} from the {@code window}.
+     * @param pageWindowModel
      * @param window HST Component Window instance
      * @param model the {@link MetadataContributable} model instance where the parameter map should be contributed to
      */
-    private void addParametersInfoMetadata(HstComponentWindow window, HstRequest hstRequest, MetadataContributable model) {
+    private void addParametersInfoMetadata(final ComponentWindowModel pageWindowModel,
+                                           HstComponentWindow window, HstRequest hstRequest, MetadataContributable model) {
         final ComponentConfiguration compConfig = (window.getComponent() != null)
                 ? window.getComponent().getComponentConfiguration()
                 : null;
@@ -381,7 +386,8 @@ public class PageModelAggregationValve extends AggregationValve {
             return;
         }
 
-        final Object paramsInfo = ParametersInfoUtils.createParametersInfo(window.getComponent(), compConfig, hstRequest);
+        final Object paramsInfo = ParametersInfoUtils.createParametersInfo(window.getComponent(), compConfig, hstRequest,
+                new PageModelApiParameterValueConvertor(jsonPointerFactory, metadataDecorators));
 
         if (paramsInfo != null) {
             try {
