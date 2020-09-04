@@ -89,18 +89,21 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
   async restoreVersion(versionUUID: string): Promise<void> {
     this.actionInProgress = true;
     await this.ng1WorkflowService.createWorkflowAction(this.documentId, 'restore', versionUUID);
-    const currentPath = this.ng1IframeService.getCurrentRenderPathInfo();
-    const renderPath = this.ng1ChannelService.makeRenderPath(currentPath);
+    const renderPath = this.getRenderPath();
     await this.ng1IframeService.load(renderPath);
     await this.getVersionsInfo();
   }
 
-  private createVersionPath(selectedVersionUUID: string): string {
+  private getRenderPath(): string {
     const currentPath = this.ng1IframeService.getCurrentRenderPathInfo();
+    const homePageRenderPath = this.ng1ChannelService.getHomePageRenderPathInfo();
+    return this.ng1ChannelService.makeRenderPath(currentPath.replace(homePageRenderPath, ''));
+  }
+
+  private createVersionPath(selectedVersionUUID: string): string {
+    const renderPath = this.getRenderPath();
     const versionParam = `br_version_uuid=${selectedVersionUUID}`;
     const index = this.versionsInfo?.versions.findIndex(v => v.jcrUUID === selectedVersionUUID);
-    const homePageRenderPath = this.ng1ChannelService.getHomePageRenderPathInfo();
-    const renderPath = this.ng1ChannelService.makeRenderPath(currentPath.replace(homePageRenderPath, ''));
 
     if (index === undefined || index <= 0) {
       return renderPath;
