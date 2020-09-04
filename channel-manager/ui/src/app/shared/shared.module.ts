@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -22,10 +22,14 @@ import { BrowserModule } from '@angular/platform-browser';
 import { TranslationsModule } from '../translations/translations.module';
 
 import { MaterialModule } from './material/material.module';
+import { MomentPipe } from './pipes/moment.pipe';
 
 @NgModule({
+  declarations: [
+    MomentPipe,
+  ],
   providers: [
-    DatePipe,
+    MomentPipe,
   ],
   exports: [
     BrowserModule,
@@ -33,6 +37,7 @@ import { MaterialModule } from './material/material.module';
     MaterialModule,
     TranslationsModule,
     HttpClientModule,
+    MomentPipe,
   ],
 })
-export class SharedModule { }
+export class SharedModule {}
