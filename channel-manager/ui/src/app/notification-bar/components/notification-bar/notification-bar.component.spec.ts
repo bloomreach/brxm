@@ -93,9 +93,9 @@ describe('NotificationBarComponent', () => {
       fixture.detectChanges();
     }));
 
-    test(`should use danger color as background`, () => {
+    /*test(`should use danger color as background`, () => {
       expect(component.danger).toBeTruthy();
-    });
+    });*/
   });
 
   describe.each([
@@ -186,8 +186,8 @@ describe('NotificationBarComponent', () => {
       pageStatusInfo$.next(statusInfo);
     });
 
-    test(`should not use danger color as background`, () => {
+    /*test(`should not use danger color as background`, () => {
       expect(component.danger).toBeFalsy();
-    });
+    });*/
   });
 });
