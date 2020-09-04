@@ -161,7 +161,7 @@ class EditContentMainCtrl {
   }
 
   isPublishAllowed() {
-    return this.ContentEditor.isPublishAllowed() && !this.isDocumentDirty();
+    return !this.ContentEditor.isDocumentXPage && this.ContentEditor.isPublishAllowed() && !this.isDocumentDirty();
   }
 
   isRetainable() {
