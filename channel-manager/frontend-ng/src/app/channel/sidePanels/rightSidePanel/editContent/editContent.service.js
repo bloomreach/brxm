@@ -85,7 +85,9 @@ class EditContentService {
   }
 
   reloadEditor() {
-    return this.ContentEditor.reload();
+    this.$state.go('hippo-cm.channel.edit-page.content', {
+      documentId: this.ContentEditor.getDocumentId(),
+    }, { reload: true });
   }
 
   _isEditingDocument() {

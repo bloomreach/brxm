@@ -608,15 +608,6 @@ class ContentEditorService {
     return this.isDocumentDirty() ? 'SAVE_AND_REQUEST_PUBLICATION' : 'REQUEST_PUBLICATION';
   }
 
-  reload() {
-    if (!this.isEditing()) {
-      return this.$q.resolve();
-    }
-
-    return this.ContentService.getEditableDocument(this.documentId)
-      .then(document => this._onLoadSuccess(document, this.documentType));
-  }
-
   publish() {
     const workflowAction = this.canPublish ? 'publish' : 'requestPublication';
     const notificationKey = this.canPublish ? 'NOTIFICATION_DOCUMENT_PUBLISHED' : 'NOTIFICATION_PUBLICATION_REQUESTED';
