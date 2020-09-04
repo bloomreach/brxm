@@ -18,6 +18,7 @@ import { InjectionToken } from '@angular/core';
 
 export interface Ng1ConfigService {
   locale: string;
+  timeZone: string;
   rootUuid: string;
   getCmsContextPath(): string;
   getCmsOrigin(): string;

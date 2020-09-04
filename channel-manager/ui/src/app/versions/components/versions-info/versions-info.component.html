@@ -52,7 +52,7 @@
       <p matLine
          *ngIf="!isFirst"
          class="qa-version-timestamp">
-        {{ version.timestamp | date:'MMM d, y hh:mm' }}
+        {{ version.timestamp | moment }}
       </p>
 
       <p matLine
