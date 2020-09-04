@@ -29,6 +29,7 @@ describe('ChannelController', () => {
   let HippoIframeService;
   let PageService;
   let PageStructureService;
+  let ProjectService;
   let SidePanelService;
 
   beforeEach(() => {
@@ -44,6 +45,7 @@ describe('ChannelController', () => {
       _CmsService_,
       _FeedbackService_,
       _PageService_,
+      _ProjectService_,
     ) => {
       const resolvedPromise = _$q_.when();
 
@@ -54,6 +56,7 @@ describe('ChannelController', () => {
       ChannelService = _ChannelService_;
       FeedbackService = _FeedbackService_;
       PageService = _PageService_;
+      ProjectService = _ProjectService_;
 
       spyOn(ChannelService, 'clearChannel');
       spyOn(ChannelService, 'hasChannel');
@@ -283,6 +286,78 @@ describe('ChannelController', () => {
           },
         });
       });
+    });
+  });
+
+  describe('isConfigurationLocked', () => {
+    let containers;
+    let page;
+    let pageMeta;
+
+    beforeEach(() => {
+      spyOn(ChannelService, 'isConfigurationLocked').and.returnValue('valueFromChannelService');
+      spyOn(ProjectService, 'isBranch');
+      spyOn(ProjectService, 'isInReview');
+
+      containers = [];
+      page = jasmine.createSpyObj('page', ['getMeta', 'getContainers']);
+      pageMeta = jasmine.createSpyObj('pageMeta', ['isXPage']);
+
+      PageStructureService.getPage.and.returnValue(page);
+      page.getMeta.and.returnValue(pageMeta);
+      page.getContainers.and.returnValue(containers);
+    });
+
+    it('should return value from ChannelService if there is no page', () => {
+      PageStructureService.getPage.and.returnValue(null);
+
+      expect($ctrl.isConfigurationLocked()).toBe('valueFromChannelService');
+    });
+
+    it('should return value from ChannelService if there is no page meta', () => {
+      page.getMeta.and.returnValue(null);
+
+      expect($ctrl.isConfigurationLocked()).toBe('valueFromChannelService');
+    });
+
+    it('should return value from ChannelService if not an xpage', () => {
+      pageMeta.isXPage.and.returnValue(false);
+
+      expect($ctrl.isConfigurationLocked()).toBe('valueFromChannelService');
+    });
+
+    it('should return value from ChannelService if xpage is not part of project branch', () => {
+      pageMeta.isXPage.and.returnValue(true);
+      ProjectService.isBranch.and.returnValue(false);
+
+      expect($ctrl.isConfigurationLocked()).toBe('valueFromChannelService');
+    });
+
+    it('should return value from ChannelService if xpage is part of a project but not in review', () => {
+      pageMeta.isXPage.and.returnValue(true);
+      ProjectService.isBranch.and.returnValue(true);
+      ProjectService.isInReview.and.returnValue(false);
+
+      expect($ctrl.isConfigurationLocked()).toBe('valueFromChannelService');
+    });
+
+    it('should return value from ChannelService if xpage is part of project and is in review', () => {
+      pageMeta.isXPage.and.returnValue(true);
+      ProjectService.isBranch.and.returnValue(true);
+      ProjectService.isInReview.and.returnValue(true);
+
+      expect($ctrl.isConfigurationLocked()).toBe('valueFromChannelService');
+    });
+
+    it('should return false if xpage is part of project and is rejected', () => {
+      pageMeta.isXPage.and.returnValue(true);
+      ProjectService.isBranch.and.returnValue(true);
+      ProjectService.isInReview.and.returnValue(true);
+
+      containers.push({ isXPageEditable: () => false });
+      containers.push({ isXPageEditable: () => true });
+
+      expect($ctrl.isConfigurationLocked()).toBe(false);
     });
   });
 });

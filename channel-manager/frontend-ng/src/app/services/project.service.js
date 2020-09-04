@@ -53,6 +53,10 @@ class ProjectService {
     return this.selectedProject.id !== this.masterId;
   }
 
+  isInReview() {
+    return this.selectedProject.state && this.selectedProject.state === 'IN_REVIEW';
+  }
+
   updateSelectedProject(projectId) {
     const projectIdIdentical = projectId === this.selectedProject.id;
 
