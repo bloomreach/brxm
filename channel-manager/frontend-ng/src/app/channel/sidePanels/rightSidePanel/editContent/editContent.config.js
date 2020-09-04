@@ -58,6 +58,7 @@ function config($stateProvider) {
     abstract: true,
     params: {
       documentId: '',
+      lastModified: '',
     },
     views: {
       main: {
