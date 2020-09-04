@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -39,6 +40,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerComponentResource;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
@@ -49,6 +51,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static java.lang.Boolean.FALSE;
@@ -269,9 +272,33 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         assertTrue(admin.nodeExists(publishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/testitem"));
 
 
-        // now delete
+        // now delete : for versioned XPage tests, the containerId from above can be one from version history but since
+        // the XPage already has been modified by the create, it has been checked out to the workspace : If you then
+        // use the OLD containerId again, the request SHOULD fail because that means the user is interacting with a
+        // STALE page
+        if (versionedXPageTest) {
+            final RequestResponseMock deleteRequestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + containerId + "./" + createdUUID, null,
+                    "DELETE");
+            try (final Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(XPageContainerComponentResource.class).build()) {
+                final MockHttpServletResponse fail = render(mountId, deleteRequestResponse, creds);
+                assertThat(fail.getStatus())
+                        .as("Because the delete request is done with the containerId from version history, it is " +
+                                "expected that the request fail since the version has been checked out already to the workspace " +
+                                "and thus is 'containerId' part of a stale page")
+                        .isEqualTo(400);
+
+                final List<String> messages = interceptor.messages().collect(Collectors.toList());
+                assertThat(messages.size())
+                        .isEqualTo(1);
+
+                assertThat(messages.get(0)) .as("Expected message about not being most recent version for containerId")
+                        .contains("s not the most recent version for 'master' anymore");
+
+            }
+        }
         final RequestResponseMock deleteRequestResponse = mockGetRequestResponse(
-                "http", "localhost", "/_rp/" + containerId + "./" + createdUUID, null,
+                "http", "localhost", "/_rp/" + newContainerItem.getParent().getIdentifier() + "./" + createdUUID, null,
                 "DELETE");
         final MockHttpServletResponse deleteResponse = render(mountId, deleteRequestResponse, creds);
         assertEquals(Response.Status.OK.getStatusCode(), deleteResponse.getStatus());
