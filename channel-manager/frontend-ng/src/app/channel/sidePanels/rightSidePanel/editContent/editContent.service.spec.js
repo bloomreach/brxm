@@ -296,4 +296,22 @@ describe('EditContentService', () => {
     expect(ContentEditor.confirmClose).toHaveBeenCalled();
     expect($state.$current.name).toBe('hippo-cm.channel.edit-content');
   });
+
+  describe('isEditing', () => {
+    it('returns false if not editing any document', () => {
+      expect(EditContentService.isEditing('documentId')).toBe(false);
+    });
+
+    it('returns false if not editing the referenced document', () => {
+      editDocument({ id: 'documentId' });
+
+      expect(EditContentService.isEditing('anotherDocumentId')).toBe(false);
+    });
+
+    it('returns true if editing the referenced document', () => {
+      editDocument({ id: 'documentId' });
+
+      expect(EditContentService.isEditing('documentId')).toBe(true);
+    });
+  });
 });
