@@ -75,6 +75,10 @@ class EditContentService {
     });
   }
 
+  isEditing(documentId) {
+    return this.ContentEditor.getDocumentId() === documentId;
+  }
+
   _isEditingDocument() {
     return ['hippo-cm.channel.edit-content',
       'hippo-cm.channel.edit-page.content',

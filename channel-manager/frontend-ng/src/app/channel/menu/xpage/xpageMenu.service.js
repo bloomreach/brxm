@@ -21,11 +21,11 @@ class XPageMenuService extends MenuService {
     $log,
     $state,
     DocumentWorkflowService,
+    EditContentService,
     FeedbackService,
     HippoIframeService,
     PageService,
     PageToolsService,
-    EditContentService,
   ) {
     'ngInject';
 
@@ -45,6 +45,10 @@ class XPageMenuService extends MenuService {
 
     function getDocumentName() {
       return PageService.getState('xpage').name;
+    }
+
+    function isEditingCurrentPage() {
+      return EditContentService.isEditing(getDocumentId());
     }
 
     function showVersions() {
@@ -122,20 +126,36 @@ class XPageMenuService extends MenuService {
     addWorkflowAction('unpublish', id => DocumentWorkflowService.unpublish(id), {
       iconName: 'mdi-minus-circle',
     });
-    addWorkflowAction('schedule-unpublish', id => DocumentWorkflowService.scheduleUnpublication(id));
+
+    addWorkflowAction('schedule-unpublish', id => DocumentWorkflowService.scheduleUnpublication(id), {
+      isEnabled: () => isEnabled('schedule-unpublish') && !isEditingCurrentPage(),
+    });
+
     addWorkflowAction('request-unpublish', id => DocumentWorkflowService.requestUnpublication(id), {
       iconName: 'mdi-minus-circle',
+      isEnabled: () => isEnabled('request-unpublish') && !isEditingCurrentPage(),
     });
-    addWorkflowAction('request-schedule-unpublish', id => DocumentWorkflowService.requestScheduleUnpublication(id));
+
+    addWorkflowAction('request-schedule-unpublish', id => DocumentWorkflowService.requestScheduleUnpublication(id), {
+      isEnabled: () => isEnabled('request-schedule-unpublish') && !isEditingCurrentPage(),
+    });
 
     addWorkflowAction('publish', id => DocumentWorkflowService.publish(id), {
       iconName: 'mdi-check-circle',
     });
-    addWorkflowAction('schedule-publish', id => DocumentWorkflowService.schedulePublication(id));
+
+    addWorkflowAction('schedule-publish', id => DocumentWorkflowService.schedulePublication(id), {
+      isEnabled: () => isEnabled('schedule-publish') && !isEditingCurrentPage(),
+    });
+
     addWorkflowAction('request-publish', id => DocumentWorkflowService.requestPublication(id), {
       iconName: 'mdi-check-circle',
+      isEnabled: () => isEnabled('request-publish') && !isEditingCurrentPage(),
     });
-    addWorkflowAction('request-schedule-publish', id => DocumentWorkflowService.requestSchedulePublication(id));
+
+    addWorkflowAction('request-schedule-publish', id => DocumentWorkflowService.requestSchedulePublication(id), {
+      isEnabled: () => isEnabled('request-schedule-publish') && !isEditingCurrentPage(),
+    });
   }
 }
 

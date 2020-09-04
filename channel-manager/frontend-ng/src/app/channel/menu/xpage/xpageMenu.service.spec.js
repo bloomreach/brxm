@@ -22,22 +22,26 @@ describe('XPageMenuService', () => {
   let $rootScope;
   let $state;
   let DocumentWorkflowService;
+  let EditContentService;
   let FeedbackService;
   let HippoIframeService;
   let PageService;
   let PageToolsService;
   let XPageMenuService;
-  let EditContentService;
 
-  const allWorkflowActions = [
-    'publish',
+  const allScheduledAndRequestWorkflowActions = [
     'schedule-publish',
     'request-publish',
     'request-schedule-publish',
-    'unpublish',
     'schedule-unpublish',
     'request-unpublish',
     'request-schedule-unpublish',
+  ];
+
+  const allWorkflowActions = [
+    'publish',
+    'unpublish',
+    ...allScheduledAndRequestWorkflowActions,
   ];
 
   beforeEach(() => {
@@ -57,21 +61,21 @@ describe('XPageMenuService', () => {
       _$rootScope_,
       _$state_,
       _DocumentWorkflowService_,
+      _EditContentService_,
       _FeedbackService_,
       _HippoIframeService_,
       _PageService_,
       _XPageMenuService_,
-      _EditContentService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $state = _$state_;
       DocumentWorkflowService = _DocumentWorkflowService_;
+      EditContentService = _EditContentService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       PageService = _PageService_;
       XPageMenuService = _XPageMenuService_;
-      EditContentService = _EditContentService_;
     });
 
     spyOn(DocumentWorkflowService, 'publish').and.returnValue($q.resolve());
@@ -178,6 +182,17 @@ describe('XPageMenuService', () => {
     it('should show disabled workflow actions', () => {
       allWorkflowActions.forEach((actionId) => {
         const action = addAction(actionId, false);
+
+        expect(action.isVisible()).toBe(true);
+        expect(action.isEnabled()).toBe(false);
+      });
+    });
+
+    it('should show disabled schedule & request workflow actions while editor is open', () => {
+      spyOn(EditContentService, 'isEditing').and.returnValue(true);
+
+      allScheduledAndRequestWorkflowActions.forEach((actionId) => {
+        const action = addAction(actionId, true);
 
         expect(action.isVisible()).toBe(true);
         expect(action.isEnabled()).toBe(false);
