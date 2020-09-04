@@ -87,7 +87,8 @@ class EditContentService {
   reloadEditor() {
     this.$state.go('hippo-cm.channel.edit-page.content', {
       documentId: this.ContentEditor.getDocumentId(),
-    }, { reload: true });
+      lastModified: Date.now(),
+    });
   }
 
   _isEditingDocument() {
