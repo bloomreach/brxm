@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DocumentState } from '../../../models/document-state.enum';
 import { XPageStatusInfo } from '../../../models/page-status-info.model';
 import { XPageStatus } from '../../../models/xpage-status.enum';
+import { MomentPipe } from '../../../shared/pipes/moment.pipe';
 
 @Component({
   selector: 'em-notification-bar-status-text',
@@ -37,9 +37,9 @@ export class NotificationBarStatusTextComponent {
     this.textParams = {
       pageName: value.pageName || '',
       status: translatedStatusText,
-      dateTime: this.datePipe.transform(value.scheduledDateTime, 'full'),
+      dateTime: value.scheduledDateTime ? this.momentPipe.transform(value.scheduledDateTime) : undefined,
       projectName: value.projectName || '',
-      versionNumber: this.datePipe.transform(value.version?.timestamp, 'full'),
+      versionNumber: value.version?.timestamp ? this.momentPipe.transform(value.version.timestamp) : undefined,
       userName: value.lockedByUsername,
     };
   }
@@ -48,14 +48,14 @@ export class NotificationBarStatusTextComponent {
   textParams: {
     pageName: string,
     status: string | undefined,
-    dateTime: string | null,
+    dateTime: string | undefined,
     projectName: string | undefined,
-    versionNumber: string | null,
+    versionNumber: string | undefined,
     userName: string | undefined,
   } | undefined;
 
   constructor(
-    private readonly datePipe: DatePipe,
+    private readonly momentPipe: MomentPipe,
     private readonly translateService: TranslateService,
   ) {}
 
