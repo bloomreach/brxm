@@ -80,12 +80,18 @@ class XPageMenuService extends MenuService {
         msg,
         documentName: getDocumentName(),
       });
+
+      HippoIframeService.reload();
     }
 
     function invokeWorkflow(onClick, translationKey) {
       return () => onClick(getDocumentId())
-        .catch(msg => failure(translationKey, msg))
-        .finally(() => HippoIframeService.reload());
+        .then((result) => {
+          if (result !== 'NO-RELOAD') {
+            HippoIframeService.reload();
+          }
+        })
+        .catch(msg => failure(translationKey, msg));
     }
 
     function addWorkflowAction(id, onClick, config = {}) {
@@ -108,7 +114,7 @@ class XPageMenuService extends MenuService {
         return EditContentService.ensureEditorIsPristine()
           .then(() => onclick(documentId))
           .then(() => EditContentService.reloadEditor())
-          .catch(err => (err === 'CANCELLED' ? $q.resolve() : $q.reject(err)));
+          .catch(err => (err === 'CANCELLED' ? $q.resolve('NO-RELOAD') : $q.reject(err)));
       }, config);
     }
 
