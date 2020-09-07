@@ -200,7 +200,7 @@ class ChannelCtrl {
   }
 
   isComponentOverlayInitiallyDisabled() {
-    if (!this.ProjectService.isBranch())  {
+    if (!this.ProjectService.isBranch()) {
       return false;
     }
 

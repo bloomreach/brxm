@@ -19,33 +19,20 @@ import 'angular-mocks';
 
 describe('overlayToggle component', () => {
   let $ctrl;
-  let $rootScope;
   let localStorageService;
-  let PageStructureService;
-  let ProjectService;
-
-  const testStorageKey = 'channelManager.overlays.testToggle';
-
-  let containers;
   let isInitiallyDisabled;
   let onStateCallback;
-  let page;
-  let pageMeta;
+
+  const testStorageKey = 'channelManager.overlays.testToggle';
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
     inject((
       $componentController,
-      _$rootScope_,
       _localStorageService_,
-      _PageStructureService_,
-      _ProjectService_,
     ) => {
-      $rootScope = _$rootScope_;
       localStorageService = _localStorageService_;
-      PageStructureService = _PageStructureService_;
-      ProjectService = _ProjectService_;
 
       isInitiallyDisabled = jasmine.createSpy('isInitiallyDisabled').and.returnValue(false);
       onStateCallback = jasmine.createSpy('stateChangeCallback');
@@ -62,14 +49,6 @@ describe('overlayToggle component', () => {
 
       spyOn(localStorageService, 'get');
       spyOn(localStorageService, 'set');
-
-      containers = [];
-      page = jasmine.createSpyObj('page', ['getMeta', 'getContainers']);
-      pageMeta = jasmine.createSpyObj('pageMeta', ['isXPage']);
-      pageMeta.isXPage.and.returnValue(false);
-      page.getMeta.and.returnValue(pageMeta);
-      page.getContainers.and.returnValue(containers);
-      spyOn(PageStructureService, 'getPage').and.returnValue(page);
     });
   });
 
