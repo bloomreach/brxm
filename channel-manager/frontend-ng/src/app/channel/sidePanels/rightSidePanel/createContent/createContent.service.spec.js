@@ -285,7 +285,7 @@ describe('CreateContentService', () => {
         CreateContentService.finish('document-id');
         $rootScope.$digest();
 
-        expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page', { documentId: 'document-id' });
+        expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page.content', { documentId: 'document-id' });
       });
     });
   });
