@@ -16,11 +16,14 @@
 
 class OverlayToggleController {
   constructor(
+    $rootScope,
     localStorageService,
   ) {
     'ngInject';
 
     this.localStorageService = localStorageService;
+
+    $rootScope.$on('page:change', () => this.initiateOverlay());
   }
 
   $onInit() {
