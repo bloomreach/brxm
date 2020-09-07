@@ -22,9 +22,11 @@
   ],
   "scripts": {
     "build": "rollup -c rollup.config.js",
+    "bump": "$npm_execpath version --no-git-tag-version",
     "lint": "tslint --project .",
     "test": "jest",
-    "docs": "typedoc && minicat src/docs/typedoc.css >> docs/assets/css/main.css"
+    "docs": "typedoc && minicat src/docs/typedoc.css >> docs/assets/css/main.css",
+    "release": "$npm_execpath publish"
   },
   "jest": {
     "testEnvironment": "jsdom",
