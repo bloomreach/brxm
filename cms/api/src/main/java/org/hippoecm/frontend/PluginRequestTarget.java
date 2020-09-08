@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,10 +15,11 @@
  */
 package org.hippoecm.frontend;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -29,7 +30,6 @@ import org.apache.wicket.request.ILogData;
 import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.hippoecm.frontend.util.WebApplicationHelper;
 
 /**
  * Extension of Wicket's {@link AjaxRequestTarget} that filters the list of
@@ -45,7 +45,8 @@ public final class PluginRequestTarget implements AjaxRequestTarget {
 
     public PluginRequestTarget(final AjaxRequestTarget upstream) {
         this.upstream = upstream;
-        registerRespondListener(this.componentsToRender = new OnlyRenderComponentsOnPage());
+        this.componentsToRender = new OnlyRenderComponentsOnPage(upstream.getPage());
+        registerRespondListener(this.componentsToRender);
     }
 
     @Override
@@ -175,10 +176,12 @@ public final class PluginRequestTarget implements AjaxRequestTarget {
 
     private static class OnlyRenderComponentsOnPage implements ITargetRespondListener {
 
-        private List<Component> components;
+        private final Set<Component> components;
+        private final Page upstreamPage;
 
-        public OnlyRenderComponentsOnPage() {
-            this.components = new ArrayList<>();
+        public OnlyRenderComponentsOnPage(Page upstreamPage) {
+            this.components = new TreeSet<>(Comparator.comparing(Component::getMarkupId));
+            this.upstreamPage = upstreamPage;
         }
 
         void add(Component... components) {
@@ -187,11 +190,12 @@ public final class PluginRequestTarget implements AjaxRequestTarget {
 
         @Override
         public void onTargetRespond(final AjaxRequestTarget target) {
-            for (Component component : components) {
-                if (WebApplicationHelper.isPartOfPage(component)) {
-                    target.add(component);
-                }
-            }
+            // Only add the components that have upstreamPage as parent.
+            final Component[] componentArray = this.components.stream()
+                    .filter(component -> upstreamPage.equals(component.findParent(Page.class)))
+                    .toArray(Component[]::new);
+            target.add(componentArray);
         }
+
     }
 }
