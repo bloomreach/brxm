@@ -47,10 +47,12 @@ public abstract class AbstractInvokerPreProcessor implements InvokerPreprocessor
         try {
             final Optional<String> forbiddenOperation = isForbiddenOperation(exchange);
             if (forbiddenOperation.isPresent()) {
-                ResponseRepresentation entity = new ResponseRepresentation();
-                entity.setMessage(forbiddenOperation.get());
-                entity.setSuccess(false);
-                entity.setErrorCode(ClientError.FORBIDDEN.name());
+                final ResponseRepresentation<Void> entity = ResponseRepresentation.<Void>builder()
+                        .setSuccess(false)
+                        .setMessage(forbiddenOperation.get())
+                        .setErrorCode(ClientError.FORBIDDEN.name())
+                        .build();
+
                 return new MessageContentsList(Response.status(Response.Status.FORBIDDEN).entity(entity).build());
             }
         } catch (Exception e) {

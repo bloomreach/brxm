@@ -15,40 +15,59 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * This model represents that response that the frontend expects to wrap the actual data.
  */
-public class ResponseRepresentation {
-    private boolean success;
-    private String message;
+public class ResponseRepresentation<T> {
+
     private String errorCode;
-    private Object data;
+    private String message;
     private boolean reloadRequired;
+    private boolean success;
+    private T data;
 
-    public ResponseRepresentation() {
-        this(ArrayUtils.EMPTY_STRING_ARRAY);
-    }
+    public ResponseRepresentation() {}
 
-    public ResponseRepresentation(Object data) {
+    public ResponseRepresentation(final boolean success, final String message, final T data, final boolean reloadRequired, final String errorCode) {
+        this.success = success;
+        this.message = message;
         this.data = data;
+        this.reloadRequired = reloadRequired;
+        this.errorCode = errorCode;
     }
 
-    public Object getData() {
-        return data;
+    public boolean isSuccess() {
+        return success;
     }
 
-    public void setData(Object data) {
-        this.data = data;
+    public void setSuccess(final boolean success) {
+        this.success = success;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(final String message) {
         this.message = message;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(final T data) {
+        this.data = data;
+    }
+
+    public boolean isReloadRequired() {
+        return reloadRequired;
+    }
+
+    public void setReloadRequired(final boolean reloadRequired) {
+        this.reloadRequired = reloadRequired;
     }
 
     public String getErrorCode() {
@@ -59,19 +78,59 @@ public class ResponseRepresentation {
         this.errorCode = errorCode;
     }
 
-    public boolean isSuccess() {
-        return success;
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("success", success)
+                .append("message", message)
+                .append("data", data)
+                .append("reloadRequired", reloadRequired)
+                .append("errorCode", errorCode)
+                .toString();
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
+    public static <T> ResponseRepresentation.Builder<T> builder() {
+        return new ResponseRepresentation.Builder<>();
     }
 
-    public boolean isReloadRequired() {
-        return reloadRequired;
-    }
+    public static final class Builder<T> {
 
-    public void setReloadRequired(final boolean reloadRequired) {
-        this.reloadRequired = reloadRequired;
+        private String errorCode;
+        private String message;
+        private boolean reloadRequired;
+        private boolean success;
+        private T data;
+
+        private Builder() {
+        }
+
+        public Builder<T> setSuccess(final boolean success) {
+            this.success = success;
+            return this;
+        }
+
+        public Builder<T> setMessage(final String message) {
+            this.message = message;
+            return this;
+        }
+
+        public Builder<T> setData(final T data) {
+            this.data = data;
+            return this;
+        }
+
+        public Builder<T> setReloadRequired(final boolean reloadRequired) {
+            this.reloadRequired = reloadRequired;
+            return this;
+        }
+
+        public Builder<T> setErrorCode(final String errorCode) {
+            this.errorCode = errorCode;
+            return this;
+        }
+
+        public ResponseRepresentation<T> build() {
+            return new ResponseRepresentation<>(success, message, data, reloadRequired, errorCode);
+        }
     }
 }
