@@ -1480,7 +1480,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (source == target) {
             return;
         }
-        source.stream().forEach(dynamicFieldGroup -> {
+        source.forEach(dynamicFieldGroup -> {
             // dynamicFieldGroup has an equals and hashcode impl
             if (!target.contains(dynamicFieldGroup)) {
                 target.add(dynamicFieldGroup);
@@ -1499,7 +1499,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (source == target) {
             return;
         }
-        source.stream().forEach(dynamicParameter -> {
+        source.forEach(dynamicParameter -> {
             if (!dynamicParameter.isResidual()) {
                 // only residual parameters should be merged since a class can have only one ParametersInfo class
                 return;
@@ -1508,7 +1508,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             final String name = dynamicParameter.getName();
 
             // DynamicParameter instances do not have hashcode/equals hence we need to go through all the target params
-            if (!target.stream().filter(targetParam -> name.equals(targetParam)).findAny().isPresent()) {
+            if (target.stream().noneMatch(targetParam -> name.equals(targetParam.getName()))) {
                 // found a residual parameter which was not yet present in the target component its dynamic parametr
                 target.add(dynamicParameter);
             }
