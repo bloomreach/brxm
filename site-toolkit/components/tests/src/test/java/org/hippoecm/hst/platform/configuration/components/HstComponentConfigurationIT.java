@@ -186,7 +186,7 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
                 .setProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME, "org.hippoecm.hst.test.HeaderComponent");
         session.save();
 
-        invalidator.eventPaths(new String[]{"//hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
 
         final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
@@ -216,7 +216,7 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
                 .setProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME, "org.hippoecm.hst.test.BannerComponent");
         session.save();
 
-        invalidator.eventPaths(new String[]{"//hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
 
         final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
@@ -257,9 +257,9 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
 
         session.save();
 
-        invalidator.eventPaths(new String[]{"//hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
 
-        invalidator.eventPaths(new String[]{"//hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:components/header"});
 
         final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
