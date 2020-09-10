@@ -31,21 +31,20 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerItemComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -563,9 +562,9 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // not a frozen node checkout involved, hence no reload of page needed
         assertRequiresReload(response, false);
 
-        final ExtResponseRepresentation extResponseRepresentation = mapper.readerFor(ExtResponseRepresentation.class).readValue(response.getContentAsString());
+        final ResponseRepresentation responseRepresentation = mapper.readerFor(ResponseRepresentation.class).readValue(response.getContentAsString());
 
-        final Map<String, Object> data = (Map<String, Object>)extResponseRepresentation.getData();
+        final Map<String, Object> data = (Map<String, Object>) responseRepresentation.getData();
 
         final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
@@ -805,9 +804,9 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // frozen node check out involved, hence a page reload is required
         assertRequiresReload(response, true);
 
-        final ExtResponseRepresentation extResponseRepresentation = mapper.readerFor(ExtResponseRepresentation.class).readValue(response.getContentAsString());
+        final ResponseRepresentation responseRepresentation = mapper.readerFor(ResponseRepresentation.class).readValue(response.getContentAsString());
 
-        final Map<String, Object> data = (Map<String, Object>)extResponseRepresentation.getData();
+        final Map<String, Object> data = (Map<String, Object>) responseRepresentation.getData();
 
         final Node container = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 

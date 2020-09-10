@@ -33,7 +33,7 @@ import org.assertj.core.util.Maps;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ActionsAndStatesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.CategoryRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.Category;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstState;
@@ -224,11 +224,11 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
     }
 
     private ActionsAndStatesRepresentation getActionsAndStates(MockHttpServletResponse response) throws UnsupportedEncodingException, JsonProcessingException {
-        final ExtResponseRepresentation extResponseRepresentation = mapper.readValue(response.getContentAsString(), ExtResponseRepresentation.class);
+        final ResponseRepresentation responseRepresentation = mapper.readValue(response.getContentAsString(), ResponseRepresentation.class);
         // Jackson's representation for the data object is a map of maps.
         // However, for assertions we prefer the ActionRepresentation.
         // So 1st we map the data to a string
-        final String dataAsString = mapper.writeValueAsString(extResponseRepresentation.getData());
+        final String dataAsString = mapper.writeValueAsString(responseRepresentation.getData());
         // and then back again to an ActionRepresentation
         return mapper.readValue(dataAsString, ActionsAndStatesRepresentation.class);
     }

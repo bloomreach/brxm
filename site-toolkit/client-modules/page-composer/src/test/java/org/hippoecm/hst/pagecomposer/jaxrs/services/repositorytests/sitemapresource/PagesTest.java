@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
@@ -48,7 +48,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getMountRepresentation();
-        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        final ResponseRepresentation representation = (ResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         final MountRepresentation data =  (MountRepresentation)representation.getData();
         assertThat(data.getHostName(), is("localhost"));
@@ -62,7 +62,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         final Response response = siteMapResource.getSiteMapPages(null);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         SiteMapPagesRepresentation siteMapPagesRepresentation =
-                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+                (SiteMapPagesRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
 
         SiteMapPageRepresentation prev = null;
         for (SiteMapPageRepresentation siteMapPageRepresentation : siteMapPagesRepresentation.getPages()) {
@@ -81,7 +81,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
-                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+                (SiteMapPagesRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
 
         assertEquals("/", siteMapPagesRepresentation.getPages().get(0).getPathInfo());
         assertEquals("home", siteMapPagesRepresentation.getPages().get(0).getName());
@@ -97,7 +97,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
-                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+                (SiteMapPagesRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
         assertFalse("home".equals(siteMapPagesRepresentation.getPages().get(0).getName()));
     }
 
@@ -107,7 +107,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
-                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+                (SiteMapPagesRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
 
         for (SiteMapPageRepresentation siteMapPageRepresentation : siteMapPagesRepresentation.getPages()) {
             // hst:default/hst:siteap/webfiles sitemap item has hst:containerresource = true hence not part of pages overview
@@ -125,7 +125,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
-                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+                (SiteMapPagesRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
 
         boolean found = false;
         for (SiteMapPageRepresentation siteMapPageRepresentation : siteMapPagesRepresentation.getPages()) {
@@ -144,7 +144,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
-                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+                (SiteMapPagesRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
 
         boolean found = false;
         for (SiteMapPageRepresentation siteMapPageRepresentation : siteMapPagesRepresentation.getPages()) {
@@ -170,7 +170,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
-                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+                (SiteMapPagesRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
 
         assertEquals("/", siteMapPagesRepresentation.getPages().get(0).getPathInfo());
         assertEquals("home", siteMapPagesRepresentation.getPages().get(0).getName());
@@ -183,7 +183,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages(null);
         SiteMapPagesRepresentation siteMapPagesRepresentation =
-                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+                (SiteMapPagesRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
         assertEquals("localhost", siteMapPagesRepresentation.getHost());
         assertEquals("", siteMapPagesRepresentation.getMount());
     }

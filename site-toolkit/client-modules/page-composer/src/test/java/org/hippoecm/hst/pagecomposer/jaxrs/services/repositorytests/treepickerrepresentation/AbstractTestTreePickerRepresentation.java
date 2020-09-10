@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.HippoDocumentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapItemResource;
@@ -46,7 +46,7 @@ public class AbstractTestTreePickerRepresentation extends AbstractPageComposerTe
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
         final HippoDocumentResource resource = createHippoDocumentResource();
         final Response response = resource.get("");
-        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        final ResponseRepresentation representation = (ResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         return (AbstractTreePickerRepresentation) representation.getData();
     }
@@ -57,7 +57,7 @@ public class AbstractTestTreePickerRepresentation extends AbstractPageComposerTe
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
         final HippoDocumentResource resource = createHippoDocumentResource();
         final Response response = resource.get(siteMapPathInfo);
-        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        final ResponseRepresentation representation = (ResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         return (AbstractTreePickerRepresentation) representation.getData();
     }
@@ -67,7 +67,7 @@ public class AbstractTestTreePickerRepresentation extends AbstractPageComposerTe
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
         final SiteMapResource siteMapResource = createSiteMapResource();
         final Response response = siteMapResource.getSiteMapTreePicker();
-        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        final ResponseRepresentation representation = (ResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         return (AbstractTreePickerRepresentation) representation.getData();
     }
@@ -77,7 +77,7 @@ public class AbstractTestTreePickerRepresentation extends AbstractPageComposerTe
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
         final SiteMapItemResource siteMapItemResource = createSiteMapItemResource();
         final Response response = siteMapItemResource.getSiteMapItemTreePicker();
-        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        final ResponseRepresentation representation = (ResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         return (AbstractTreePickerRepresentation) representation.getData();
     }
@@ -88,7 +88,7 @@ public class AbstractTestTreePickerRepresentation extends AbstractPageComposerTe
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
         final SiteMapResource siteMapResource = createSiteMapResource();
         final Response response = siteMapResource.getSiteMapTreePicker(siteMapPathInfo);
-        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        final ResponseRepresentation representation = (ResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         return (AbstractTreePickerRepresentation) representation.getData();
     }
