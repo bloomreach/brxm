@@ -17,7 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.treepickerr
 
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.SiteMapTreePickerRepresentation;
@@ -226,7 +226,7 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
         final Response response = resource.get("about-us");
 
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
-        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        final ResponseRepresentation representation = (ResponseRepresentation) response.getEntity();
         assertEquals(ClientError.INVALID_UUID.toString(), representation.getErrorCode());
     }
 
@@ -238,7 +238,7 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
         final Response response = resource.get("path/that/cannot/be/matched");
 
         assertThat(response.getStatus(), is(Response.Status.BAD_REQUEST.getStatusCode()));
-        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        final ResponseRepresentation representation = (ResponseRepresentation) response.getEntity();
         assertEquals(ClientError.INVALID_UUID.toString(), representation.getErrorCode());
     }
 

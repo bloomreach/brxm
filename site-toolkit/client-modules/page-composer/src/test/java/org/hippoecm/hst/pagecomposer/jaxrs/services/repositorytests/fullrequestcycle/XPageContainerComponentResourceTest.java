@@ -33,13 +33,11 @@ import javax.jcr.Value;
 import javax.servlet.ServletException;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerComponentResource;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
@@ -53,6 +51,8 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -217,10 +217,10 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
 
         final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, creds);
-        final ExtResponseRepresentation extResponseRepresentation = mapper.readerFor(ExtResponseRepresentation.class).readValue(createResponse.getContentAsString());
+        final ResponseRepresentation responseRepresentation = mapper.readerFor(ResponseRepresentation.class).readValue(createResponse.getContentAsString());
 
         if (!allowed) {
-            assertEquals("FORBIDDEN", extResponseRepresentation.getErrorCode());
+            assertEquals("FORBIDDEN", responseRepresentation.getErrorCode());
             return;
         }
 
@@ -235,7 +235,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         // assert modifying the preview did not create a draft variant!!! changes are directly on unpublished
         assertNull(getVariant(handle, "draft"));
 
-        Map<String, ?> map = (Map) extResponseRepresentation.getData();
+        Map<String, ?> map = (Map) responseRepresentation.getData();
         final String createdUUID = map.get("id").toString();
 
         // assertion on newly created item

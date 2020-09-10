@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,12 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapresource;
 
-
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEventListenerRegistry;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageMoveContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageMoveEvent;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -112,7 +111,7 @@ public class PageMoveEventTest extends AbstractSiteMapResourceTest {
             final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
             SiteMapResource siteMapResource = createResource();
             final Response response = siteMapResource.move(home.getId(), news.getId());
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     OK.getStatusCode(), response.getStatus());
 
             final PageMoveEvent pme = pageMoveEventListener.receivedEvent;
@@ -135,7 +134,7 @@ public class PageMoveEventTest extends AbstractSiteMapResourceTest {
             final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
             SiteMapResource siteMapResource = createResource();
             final Response response = siteMapResource.move(home.getId(), news.getId());
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 
             final String originalSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "/home";
@@ -160,7 +159,7 @@ public class PageMoveEventTest extends AbstractSiteMapResourceTest {
             final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
             SiteMapResource siteMapResource = createResource();
             final Response response = siteMapResource.move(home.getId(), news.getId());
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     BAD_REQUEST.getStatusCode(), response.getStatus());
 
             final String originalSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "/home";
