@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.platform.configuration.components;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.ConfigurationUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -35,6 +38,7 @@ import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -164,5 +168,126 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
             }
         }
 
+    }
+
+    /**
+     * Setup : component A has ParameterInfo class X, and component A inherits component B which also has ParameterInfo class X.
+     * In this case, Component A should end up with samen dynamic parameters instance as Component B
+     */
+    @Test
+    public void component_referencing_component_with_same_componentClass_does_load_dynamicParameters_correct() throws Exception {
+
+        // /hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header inherits from
+        // /hst:hst/hst:configurations/unittestcommon/hst:components/header which already has
+        // classname org.hippoecm.hst.test.HeaderComponent : setting it now also on 'basepage/header' should result in
+        // that it still works
+
+        session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header")
+                .setProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME, "org.hippoecm.hst.test.HeaderComponent");
+        session.save();
+
+        invalidator.eventPaths(new String[]{"//hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
+
+        final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
+        final HstSite hstSite = mount.getMount().getHstSite();
+
+        final HstComponentConfiguration baseHeader = hstSite.getComponentsConfiguration().getComponentConfiguration("hst:abstractpages/basepage/header");
+        final HstComponentConfiguration header = hstSite.getComponentsConfiguration().getComponentConfiguration("hst:components/header");
+
+        assertThat(baseHeader.getDynamicComponentParameters())
+                .as("Expected same instance for dynamic component parameters since same ParameterInfo class " +
+                        "should result in shared dynamic component parameters object")
+                .isSameAs(header.getDynamicComponentParameters());
+    }
+
+    /**
+     * Setup : component A has ParameterInfo class X, and component A inherits component B which has ParameterInfo class Y.
+     * In this case, Component A should end up with dynamic parameters for class X, nothing from class Y (so no merging)
+     */
+    @Test
+    public void component_referencing_component_with_other_componentClass_does_skip_dynamicParameters_inherited_component() throws Exception {
+        // /hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header inherits from
+        // /hst:hst/hst:configurations/unittestcommon/hst:components/header which already has
+        // classname org.hippoecm.hst.test.HeaderComponent : setting now on 'basepage/header' the class BannerComponent
+        // should result in that the referenced hst:components/header its dynamic component parameters are skipped
+        // completely (only residual parameters get merged since they are not ParameterInfo class related
+
+        session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header")
+                .setProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME, "org.hippoecm.hst.test.BannerComponent");
+        session.save();
+
+        invalidator.eventPaths(new String[]{"//hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
+
+        final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
+        final HstSite hstSite = mount.getMount().getHstSite();
+
+        final HstComponentConfiguration baseHeader = hstSite.getComponentsConfiguration().getComponentConfiguration("hst:abstractpages/basepage/header");
+        final HstComponentConfiguration header = hstSite.getComponentsConfiguration().getComponentConfiguration("hst:components/header");
+
+        final List<DynamicParameter> baseHeaderParameters = baseHeader.getDynamicComponentParameters();
+        final List<DynamicParameter> headerParameters = header.getDynamicComponentParameters();
+
+
+        assertThat(baseHeaderParameters)
+                .as("Expected ParameterInfo from inherited component ignored since already has own parameterInfo")
+                .isNotSameAs(headerParameters);
+
+        assertThat(baseHeaderParameters.get(0).getName())
+                .as("Expected 'path' from BannerComponentInfo")
+                .isEqualTo("path");
+
+        assertThat(headerParameters.get(0).getName())
+                .as("Expected 'header' from HeaderComponentInfo")
+                .isEqualTo("header");
+    }
+
+    /**
+     * This is not about DynamicComponentParameters but actual stored hst:parameternames/values
+     */
+    @Test
+    public void referenced_component_parameters_are_merged() throws Exception {
+
+        final Node baseHeader = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header");
+        baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[] {"one", "two"});
+        baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"val1", "val2"});
+
+        final Node componentHeader = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:components/header");
+        componentHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[] {"three", "four"});
+        componentHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"val3", "val4"});
+
+        session.save();
+
+        invalidator.eventPaths(new String[]{"//hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
+
+        invalidator.eventPaths(new String[]{"//hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
+
+        final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
+        final HstSite hstSite = mount.getMount().getHstSite();
+
+        final HstComponentConfiguration baseHeaderConfig = hstSite.getComponentsConfiguration().getComponentConfiguration("hst:abstractpages/basepage/header");
+
+        assertThat(baseHeaderConfig.getLocalParameters().keySet())
+                .containsExactly("one", "two");
+        assertThat(baseHeaderConfig.getLocalParameters().values())
+                .containsExactly("val1", "val2");
+
+        assertThat(baseHeaderConfig.getParameters().keySet())
+                .containsExactly("one", "two", "three", "four");
+        assertThat(baseHeaderConfig.getParameters().values())
+                .containsExactly("val1", "val2", "val3", "val4");
+
+
+        final HstComponentConfiguration componentHeaderConfig = hstSite.getComponentsConfiguration().getComponentConfiguration("hst:components/header");
+
+
+        assertThat(componentHeaderConfig.getLocalParameters().keySet())
+                .containsExactly("three", "four");
+        assertThat(componentHeaderConfig.getLocalParameters().values())
+                .containsExactly("val3", "val4");
+
+        assertThat(componentHeaderConfig.getParameters().keySet())
+                .containsExactly("three", "four");
+        assertThat(componentHeaderConfig.getParameters().values())
+                .containsExactly("val3", "val4");
     }
 }
