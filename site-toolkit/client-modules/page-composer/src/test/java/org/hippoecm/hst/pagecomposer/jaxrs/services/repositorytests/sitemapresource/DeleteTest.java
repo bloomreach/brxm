@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
@@ -63,7 +63,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete(home.getId());
         assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
-        assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
+        assertTrue(((ResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
 
         assertTrue(session.nodeExists(componentConfiguration.getCanonicalStoredLocation()));
         assertEquals("deleted",
@@ -84,7 +84,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete(home.getId());
         assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
-        assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
+        assertTrue(((ResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
 
         assertFalse(session.nodeExists(componentConfiguration.getCanonicalStoredLocation()));
 
@@ -106,7 +106,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete(home.getId());
         assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
-        assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
+        assertTrue(((ResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
         assertTrue(session.nodeExists(componentConfiguration.getCanonicalStoredLocation()));
         assertFalse(session.getNode(componentConfiguration.getCanonicalStoredLocation()).hasProperty(EDITABLE_PROPERTY_STATE));
     }
@@ -126,7 +126,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         // create 'bar' below 'foo'
         // first have to re-init the context to have the above added page to be part of the hst model
         initContext();
-        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) newFooResponse.getEntity()).getData();
+        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ResponseRepresentation) newFooResponse.getEntity()).getData();
         final SiteMapItemRepresentation newBar = createSiteMapItemRepresentation("bar", prototypeUUID);
         siteMapResource.create(newBar, siteMapPageFooRepresentation.getId());
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/foo/bar"));
@@ -156,7 +156,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         // create 'bar' below 'foo'
         // first have to re-init the context to have the above added page to be part of the hst model
         initContext();
-        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) newFooResponse.getEntity()).getData();
+        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ResponseRepresentation) newFooResponse.getEntity()).getData();
         final SiteMapItemRepresentation newBar = createSiteMapItemRepresentation("bar", prototypeUUID);
         siteMapResource.create(newBar, siteMapPageFooRepresentation.getId());
 
@@ -198,7 +198,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         // create 'bar' below 'foo'
         // first have to re-init the context to have the above added page to be part of the hst model
         initContext();
-        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) newFooResponse.getEntity()).getData();
+        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ResponseRepresentation) newFooResponse.getEntity()).getData();
         final SiteMapItemRepresentation newBar = createSiteMapItemRepresentation("bar", prototypeUUID);
         siteMapResource.create(newBar, siteMapPageFooRepresentation.getId());
 
@@ -237,7 +237,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         // create 'bar' below 'foo'
         // first have to re-init the context to have the above added page to be part of the hst model
         initContext();
-        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) newFooResponse.getEntity()).getData();
+        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ResponseRepresentation) newFooResponse.getEntity()).getData();
         final SiteMapItemRepresentation newBar = createSiteMapItemRepresentation("bar", prototypeUUID);
         siteMapResource.create(newBar, siteMapPageFooRepresentation.getId());
 
@@ -273,7 +273,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response newFooResponse = siteMapResource.create(newFoo);
 
-        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) newFooResponse.getEntity()).getData();
+        SiteMapPageRepresentation siteMapPageFooRepresentation = (SiteMapPageRepresentation) ((ResponseRepresentation) newFooResponse.getEntity()).getData();
         initContext();
         mountResource.publish();
         // reload model and context
@@ -312,7 +312,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation nonWorkspaceItem = getSiteMapItemRepresentation(session, "about-us");
         final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete(nonWorkspaceItem.getId());
-        final ExtResponseRepresentation representation = (ExtResponseRepresentation) delete.getEntity();
+        final ResponseRepresentation representation = (ResponseRepresentation) delete.getEntity();
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), delete.getStatus());
         assertThat(representation.getErrorCode(), is(ClientError.ITEM_NOT_CORRECT_LOCATION.name()));
     }
@@ -323,7 +323,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete(home.getId());
         assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
-        assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
+        assertTrue(((ResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
 
         // a refetch for deleted item should not return return the home sitemap item any more since it is marked for deletion
         final SiteMapItemRepresentation homeAgain = getSiteMapItemRepresentation(session, "home");
@@ -338,7 +338,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete(home.getId());
         assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
-        assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
+        assertTrue(((ResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
 
         try {
             final Node deletedNode = session.getNodeByIdentifier(home.getId());
@@ -375,7 +375,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
             // force reload of hst model
             getSiteMapItemRepresentation(session, "home");
             final Response deleteAgain = siteMapResource.delete(homeId);
-            final ExtResponseRepresentation representation = (ExtResponseRepresentation) deleteAgain.getEntity();
+            final ResponseRepresentation representation = (ResponseRepresentation) deleteAgain.getEntity();
             assertEquals(Response.Status.OK.getStatusCode(), deleteAgain.getStatus());
         }
     }

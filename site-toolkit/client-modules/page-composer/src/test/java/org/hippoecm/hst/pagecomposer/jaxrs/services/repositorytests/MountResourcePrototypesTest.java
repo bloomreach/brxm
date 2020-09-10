@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import javax.jcr.Node;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PrototypeRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PrototypesRepresentation;
 import org.hippoecm.repository.util.JcrUtils;
@@ -42,14 +42,14 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         mockNewRequest(session, "localhost", "");
         final Response response = mountResource.getPrototypePages();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) response.getEntity()).getData();
+        PrototypesRepresentation representation = (PrototypesRepresentation)((ResponseRepresentation) response.getEntity()).getData();
         assertEquals(0, representation.getPrototypes().size());
     }
 
     @Test
     public void test_prototype_pages() throws Exception {
         mockNewRequest(session, "localhost", "");
-        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+        PrototypesRepresentation representation = (PrototypesRepresentation)((ResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
         assertEquals(1, representation.getPrototypes().size());
         assertEquals("prototype-page", representation.getPrototypes().get(0).getName());
     }
@@ -62,7 +62,7 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         prototypeNode.getNode("main/container2").remove();
         session.save();
         mockNewRequest(session, "localhost", "");
-        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+        PrototypesRepresentation representation = (PrototypesRepresentation)((ResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
         assertEquals(1, representation.getPrototypes().size());
         assertFalse(representation.getPrototypes().get(0).getHasContainerInPageDefinition());
      }
@@ -77,7 +77,7 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
         mockNewRequest(session, "localhost", "");
-        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+        PrototypesRepresentation representation = (PrototypesRepresentation)((ResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
         assertEquals(2, representation.getPrototypes().size());
     }
 
@@ -108,7 +108,7 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
         mockNewRequest(session, "localhost", "");
-        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+        PrototypesRepresentation representation = (PrototypesRepresentation)((ResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
 
         PrototypeRepresentation prev = null;
         for (PrototypeRepresentation prototypeRepresentation : representation.getPrototypes()) {
@@ -139,7 +139,7 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
         mockNewRequest(session, "localhost", "");
-        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+        PrototypesRepresentation representation = (PrototypesRepresentation)((ResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
 
         PrototypeRepresentation prev = null;
         for (PrototypeRepresentation prototypeRepresentation : representation.getPrototypes()) {

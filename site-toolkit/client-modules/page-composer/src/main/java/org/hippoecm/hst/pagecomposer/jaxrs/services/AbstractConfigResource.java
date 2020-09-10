@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BaseChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
@@ -74,7 +74,7 @@ public class AbstractConfigResource {
     }
 
     protected Response ok(String msg, Object data, boolean reloadRequired) {
-        ExtResponseRepresentation entity = new ExtResponseRepresentation(data);
+        ResponseRepresentation entity = new ResponseRepresentation(data);
         entity.setMessage(msg);
         entity.setSuccess(true);
         entity.setReloadRequired(reloadRequired);
@@ -94,7 +94,7 @@ public class AbstractConfigResource {
     }
 
     protected Response error(String msg, Object data, boolean reloadRequired) {
-        ExtResponseRepresentation entity = new ExtResponseRepresentation(data);
+        ResponseRepresentation entity = new ResponseRepresentation(data);
         entity.setMessage(msg);
         entity.setSuccess(false);
         entity.setReloadRequired(reloadRequired);
@@ -107,7 +107,7 @@ public class AbstractConfigResource {
 
 
     protected Response clientError(String msg, Object data, boolean reloadRequired) {
-        ExtResponseRepresentation entity = new ExtResponseRepresentation(data);
+        ResponseRepresentation entity = new ResponseRepresentation(data);
         entity.setMessage(msg);
         entity.setSuccess(false);
         entity.setReloadRequired(reloadRequired);
@@ -119,7 +119,7 @@ public class AbstractConfigResource {
     }
 
     protected Response created(String msg, boolean reloadRequired) {
-        ExtResponseRepresentation entity = new ExtResponseRepresentation();
+        ResponseRepresentation entity = new ResponseRepresentation();
         entity.setMessage(msg);
         entity.setSuccess(true);
         entity.setReloadRequired(reloadRequired);
@@ -131,7 +131,7 @@ public class AbstractConfigResource {
     }
 
     protected Response conflict(String msg, boolean reloadRequired) {
-        ExtResponseRepresentation entity = new ExtResponseRepresentation();
+        ResponseRepresentation entity = new ResponseRepresentation();
         entity.setMessage(msg);
         entity.setSuccess(false);
         entity.setReloadRequired(reloadRequired);
@@ -231,7 +231,7 @@ public class AbstractConfigResource {
         } else {
             log.info(formattedMessage);
         }
-        final ExtResponseRepresentation entity = new ExtResponseRepresentation();
+        final ResponseRepresentation entity = new ResponseRepresentation();
         entity.setSuccess(false);
         entity.setMessage(e.toString());
         entity.setErrorCode(e.getError().name());
@@ -288,7 +288,7 @@ public class AbstractConfigResource {
         final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation()
                 .represent(containerItemNode, containerItem.getComponentDefinition(), containerItem.getTimeStamp());
 
-        final ExtResponseRepresentation entity = new ExtResponseRepresentation(containerItemRepresentation);
+        final ResponseRepresentation entity = new ResponseRepresentation(containerItemRepresentation);
         entity.setReloadRequired(requiresReload);
         entity.setSuccess(true);
         entity.setMessage(msg);

@@ -18,23 +18,20 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
- * This model represents that response that Ext expects to wrap the actual data.
- *
- * @version $Id$
+ * This model represents that response that the frontend expects to wrap the actual data.
  */
-
-public class ExtResponseRepresentation {
+public class ResponseRepresentation {
     private boolean success;
     private String message;
     private String errorCode;
     private Object data;
     private boolean reloadRequired;
 
-    public ExtResponseRepresentation() {
+    public ResponseRepresentation() {
         this(ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
-    public ExtResponseRepresentation(Object data) {
+    public ResponseRepresentation(Object data) {
         this.data = data;
     }
 
