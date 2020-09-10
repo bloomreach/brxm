@@ -1419,11 +1419,30 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (this.hstDynamicComponentParameters.isEmpty()) {
                     this.hstDynamicComponentParameters = referencedComp.hstDynamicComponentParameters;
                 } else {
-                    mergeDynamicParameters(referencedComp.hstDynamicComponentParameters, this.hstDynamicComponentParameters);
+                    mergeResidualDynamicParameters(referencedComp.hstDynamicComponentParameters, this.hstDynamicComponentParameters);
                 }
 
                 // inherited variable flag not needed to take from the referencedComp so no check here for that variable!
                 // prototype variable flag not needed to take from the referencedComp so no check here for that variable!
+
+                if (!referencedComp.parameters.isEmpty()) {
+                    // as we already have parameters, add only the once we do not yet have
+                    for (Entry<String, String> entry : referencedComp.parameters.entrySet()) {
+                        if (!parameters.containsKey(entry.getKey())) {
+                            parameters.put(entry.getKey(), entry.getValue());
+                        }
+                    }
+                }
+
+                if (!referencedComp.parameterNamePrefixSet.isEmpty()) {
+                    // as we already have parameters, add only the once we do not yet have
+                    for (String prefix : referencedComp.parameterNamePrefixSet) {
+                        if (!parameterNamePrefixSet.contains(prefix)) {
+                            parameterNamePrefixSet.add(prefix);
+                        }
+                    }
+                }
+
                 this.usedChildReferenceNames.addAll(referencedComp.usedChildReferenceNames);
 
                 // now we need to merge all the descendant components from the referenced component with this component.
@@ -1458,6 +1477,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private void mergeFieldGroups(final List<DynamicFieldGroup> source,
                                   final List<DynamicFieldGroup> target) {
+        if (source == target) {
+            return;
+        }
         source.stream().forEach(dynamicFieldGroup -> {
             // dynamicFieldGroup has an equals and hashcode impl
             if (!target.contains(dynamicFieldGroup)) {
@@ -1465,11 +1487,29 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
         });
     }
-    private void mergeDynamicParameters(final List<DynamicParameter> source,
-                                        final List<DynamicParameter> target) {
 
+    // only merge residual parameters, not the one from the ParametersInfo since a component class can
+    // have only one single ParametersInfo : merging residual params means that there is a component which
+    // has a ParametersInfo class and inherits from another component which is a new style component
+    // which has dynamic parameters configured
+    // Note that merging residual parameters in effect for now will never happen since residual parameters are currently
+    // only supported on container items which do not support inheritance
+    private void mergeResidualDynamicParameters(final List<DynamicParameter> source,
+                                                final List<DynamicParameter> target) {
+        if (source == target) {
+            return;
+        }
         source.stream().forEach(dynamicParameter -> {
-            if (!target.contains(dynamicParameter.getName())) {
+            if (!dynamicParameter.isResidual()) {
+                // only residual parameters should be merged since a class can have only one ParametersInfo class
+                return;
+            }
+
+            final String name = dynamicParameter.getName();
+
+            // DynamicParameter instances do not have hashcode/equals hence we need to go through all the target params
+            if (!target.stream().filter(targetParam -> name.equals(targetParam)).findAny().isPresent()) {
+                // found a residual parameter which was not yet present in the target component its dynamic parametr
                 target.add(dynamicParameter);
             }
         });
@@ -1572,7 +1612,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (this.hstDynamicComponentParameters.isEmpty()) {
             this.hstDynamicComponentParameters = childToMerge.hstDynamicComponentParameters;
         } else {
-            mergeDynamicParameters(childToMerge.hstDynamicComponentParameters, this.hstDynamicComponentParameters);
+            mergeResidualDynamicParameters(childToMerge.hstDynamicComponentParameters, this.hstDynamicComponentParameters);
         }
 
         // debatable however not really relevant whether when fine grained merged the component is shared or not, since
