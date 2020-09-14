@@ -148,7 +148,7 @@
                 </resource>
                 <resource>
                   <directory>${basedir}/node_modules/@bloomreach/navapp-communication/bundles</directory>
-                  <targetPath>navapp</targetPath>
+                  <targetPath>navapp-communication</targetPath>
                   <filtering>false</filtering>
                 </resource>
                 <resource>
@@ -157,7 +157,7 @@
                     <include>penpal.js</include>
                     <filtering>false</filtering>
                   </includes>
-                  <targetPath>navapp</targetPath>
+                  <targetPath>navapp-communication</targetPath>
                 </resource>
               </resources>
             </configuration>
