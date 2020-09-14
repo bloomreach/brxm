@@ -25,7 +25,7 @@
     "bump": "yarn workspaces foreach version",
     "docs": "yarn workspaces foreach --parallel run docs",
     "lint": "yarn workspaces foreach --parallel run lint",
-    "release": "YARN_NPM_AUTH_TOKEN=$NPM_AUTH_TOKEN yarn workspaces foreach --include @bloomreach/*-sdk npm publish",
+    "release": "YARN_NPM_AUTH_TOKEN=$NPM_AUTH_TOKEN yarn workspaces foreach --include '@bloomreach/*-sdk' npm publish --access public",
     "test": "yarn workspaces foreach --parallel run test"
   },
   "resolutions": {
