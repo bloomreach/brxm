@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,18 @@
 
 const fs = require('file-system');
 
-const targetDir = 'target/classes/angular/navapp';
+const targetDirNavApp = 'target/classes/angular/navapp';
+const targetDirNavAppCommunication = 'target/classes/angular/navapp-communication';
 
 // ----------------------------------------------------------------------------
 // Files needed for the Navigation Application
 // ----------------------------------------------------------------------------
 
-fs.copySync('node_modules/@bloomreach/navapp/dist/navapp/', targetDir);
+fs.copySync('node_modules/@bloomreach/navapp/dist/navapp/', targetDirNavApp);
 
 // ----------------------------------------------------------------------------
 // Files needed for the navigation communication library used by the CMS
 // ----------------------------------------------------------------------------
 
-fs.copyFileSync('node_modules/penpal/dist/penpal.js', targetDir + '/penpal.js');
-fs.copySync(
-  'node_modules/@bloomreach/navapp-communication/bundles/',
-  targetDir,
-);
+fs.copyFileSync('node_modules/penpal/dist/penpal.js', targetDirNavAppCommunication + '/penpal.js');
+fs.copySync('node_modules/@bloomreach/navapp-communication/bundles/', targetDirNavAppCommunication);

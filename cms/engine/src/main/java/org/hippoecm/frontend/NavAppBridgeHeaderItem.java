@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.Response;
@@ -40,12 +41,14 @@ import org.slf4j.LoggerFactory;
  */
 public class NavAppBridgeHeaderItem extends HippoHeaderItem {
 
+    private static final Logger log = LoggerFactory.getLogger(NavAppBridgeHeaderItem.class);
+
+    private static final String LOGOUT_CALLBACK_URL = "logoutCallbackUrl";
+    private static final String NAVAPP_COMMUNICATION_DEFAULT_LOCATION = "angular/navapp-communication/";
+    private static final String NAVAPP_COMMUNICATION_LOCATION = "navapp-communication.location";
     private static final String NAVIGATION_API_JS = "navapp-bridge.js";
     private static final String PARENT_ORIGIN = "parentOrigin";
-    private static final String LOGOUT_CALLBACK_URL = "logoutCallbackUrl";
 
-    private static final Logger log = LoggerFactory.getLogger(NavAppBridgeHeaderItem.class);
-    private static final String NAVAPP_COMMUNICATION_LOCATION = "navapp-communication.location";
     public static final String IFRAMES_CONNECTION_TIMEOUT = "iframesConnectionTimeout";
     public static final String SUB_APP_CONNECTION_TIMEOUT_MESSAGE = "subAppConnectionTimeoutMessage";
 
@@ -75,7 +78,6 @@ public class NavAppBridgeHeaderItem extends HippoHeaderItem {
         OnDomReadyHeaderItem.forScript(createScript()).render(response);
     }
 
-
     private String createScript() {
 
         final Map<String, String> variables = new HashMap<>();
@@ -84,8 +86,6 @@ public class NavAppBridgeHeaderItem extends HippoHeaderItem {
         variables.put(IFRAMES_CONNECTION_TIMEOUT, String.valueOf(iframesConnectionTimeout));
         variables.put(SUB_APP_CONNECTION_TIMEOUT_MESSAGE, new ClassResourceModel(SUB_APP_CONNECTION_TIMEOUT_MESSAGE
                 , NavAppBridgeHeaderItem.class).getObject());
-
-
 
         try (final PackageTextTemplate javaScript = new PackageTextTemplate(NavAppBridgeHeaderItem.class, NAVIGATION_API_JS)) {
             return javaScript.asString(variables);
@@ -96,8 +96,9 @@ public class NavAppBridgeHeaderItem extends HippoHeaderItem {
     }
 
     private String getNavAppCommunicationResourcePrefix() {
-        return System.getProperty(NAVAPP_COMMUNICATION_LOCATION, null) == null ? "angular/navapp/" : "";
+        return System.getProperty(NAVAPP_COMMUNICATION_LOCATION, null) == null
+                ? NAVAPP_COMMUNICATION_DEFAULT_LOCATION
+                : StringUtils.EMPTY;
     }
-
 
 }
