@@ -61,18 +61,18 @@ public class NavAppRedirectFilter implements Filter {
     static final List<String> ACCEPTED_PATH_PREFIXES = Arrays.asList(
             "angular",
             "auth",
+            "binaries",
             "ckeditor",
             "console",
             "logging",
             "navapp-assets",
+            "oidc",
             "ping",
             "repository",
             "site",
             "skin",
             "wicket",
-            "ws",
-            "binaries",
-            "oidc"
+            "ws"
     );
 
     private static List<String> acceptedPathPrefixes;
