@@ -145,29 +145,6 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
         componentReference.setComponentDefinition("hst:components/common-catalog/catalogitem");
     }
 
-	@Test
-    public void get_populated_properties_with_dynamic_parameter_translations() throws RepositoryException {
-        containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"bar", "residualParameter"});
-        containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"barValue", "residualParameterValue"});
-
-        final MockHstComponentConfiguration component = createComponentReference();
-        initDynamicParameterConfiguration(component);
-
-        List<ContainerItemComponentPropertyRepresentation> properties =
-                getPopulatedProperties(parameterInfo.type(), null, null, DEFAULT_PARAMETER_PREFIX,
-                        containerItemNode, component, helper, propertyPresentationFactories);
-
-        assertEquals(2, properties.size());
-        final ContainerItemComponentPropertyRepresentation prop = properties.get(0);
-        assertEquals("bar", prop.getName());
-        assertEquals("barValue",prop.getValue());
-
-        final ContainerItemComponentPropertyRepresentation prop2 = properties.get(1);
-        assertEquals("residualParameter", prop2.getName());
-        assertEquals("residualParameterValue",prop2.getValue());
-        assertEquals("residualParamLabel",prop2.getLabel());        
-    }
-
     @Test
     public void get_populated_properties_with_dropdown_field_config_with_source_id() throws RepositoryException {
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES,
