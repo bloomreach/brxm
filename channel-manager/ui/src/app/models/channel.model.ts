@@ -14,16 +14,6 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
-
-export interface Ng1ConfigService {
-  locale: string;
-  timeZone: string;
-  rootUuid: string;
-  variantsUuid: string;
-  getCmsContextPath(): string;
-  getCmsOrigin(): string;
-  isDevMode(): boolean;
+export interface Channel {
+  contextPath: string;
 }
-
-export const NG1_CONFIG_SERVICE = new InjectionToken<Ng1ConfigService>('NG1_CONFIG_SERVICE');
