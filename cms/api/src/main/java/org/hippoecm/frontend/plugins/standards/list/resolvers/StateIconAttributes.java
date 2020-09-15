@@ -235,9 +235,8 @@ public class StateIconAttributes implements IObservable, IDetachable {
     private Icon[] getStateIcons(final String state) {
         switch (state) {
             case "new":
-                return new Icon[]{Icon.MINUS_CIRCLE, Icon.EMPTY};
             case "new-draft-changes":
-                return new Icon[]{Icon.MINUS_CIRCLE, Icon.EXCLAMATION_TRIANGLE};
+                return new Icon[]{Icon.MINUS_CIRCLE, Icon.EMPTY};
             case "live":
                 return new Icon[]{Icon.CHECK_CIRCLE, Icon.EMPTY};
             case "live-draft-changes":

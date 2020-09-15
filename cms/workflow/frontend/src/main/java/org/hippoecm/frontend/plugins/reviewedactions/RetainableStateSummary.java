@@ -80,7 +80,7 @@ public class RetainableStateSummary {
                     && (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
                     || stateSummaryNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY))) {
                 final String stateSummaryValue = getState(stateSummaryNode);
-                live = "live".equals(stateSummaryValue);
+                live = !"new".equals(stateSummaryValue);
                 unpublishedChanges = "changed".equals(stateSummaryValue);
             }
         }
@@ -99,7 +99,7 @@ public class RetainableStateSummary {
         }
 
         final Node unpublished = branchHandle.getUnpublished();
-        if (unpublished!=null && unpublished.isModified()) {
+        if (unpublished!=null && branchHandle.isModified()) {
             return "changed";
         }
         return "live";
