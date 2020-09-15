@@ -32,6 +32,7 @@ class EditComponentMainCtrl {
     ChannelService,
     CmsService,
     ComponentEditor,
+    ConfigService,
     EditComponentService,
     FeedbackService,
     HippoIframeService,
@@ -48,6 +49,7 @@ class EditComponentMainCtrl {
     this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.ConfigService = ConfigService;
 
     this._onComponentMoved = this._onComponentMoved.bind(this);
     this._onDocumentSelect = this._onDocumentSelect.bind(this);
@@ -64,6 +66,10 @@ class EditComponentMainCtrl {
     this._offComponentMoved();
     this._offDocumentSelect();
     this._offPageChange();
+  }
+
+  get variantsVisible() {
+    return this.ConfigService.relevancePresent;
   }
 
   _onComponentMoved() {

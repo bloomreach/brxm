@@ -67,32 +67,7 @@ class EditComponentService {
       return;
     }
 
-    if (this.ConfigService.relevancePresent) {
-      const channel = this.ChannelService.getChannel();
-      const properties = {
-        channel,
-        // TODO: move this logic to ComponentEditorService upon `relevancePresent` flag removal
-        component: {
-          id: componentElement.getId(),
-          label: componentElement.getLabel(),
-          lastModified: componentElement.getLastModified(),
-          variant: componentElement.getRenderVariant(),
-        },
-        container: {
-          isDisabled: componentElement.container.isDisabled(),
-          isInherited: componentElement.container.isInherited(),
-          id: componentElement.container.getId(),
-        },
-      };
-
-      this.MaskService.mask();
-      this.CmsService.publish('show-component-properties', {
-        ...properties,
-        page: this.PageStructureService.getPage().getMeta().toJSON(),
-      });
-    } else {
-      this.$state.go('hippo-cm.channel.edit-component', { componentId: componentElement.getId() });
-    }
+    this.$state.go('hippo-cm.channel.edit-component', { componentId: componentElement.getId() });
   }
 
   stopEditing() {

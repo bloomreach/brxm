@@ -20,6 +20,7 @@ import editComponentConfig from './editComponent.config';
 import editComponentMainComponent from './editComponentMain.component';
 import editComponentService from './editComponent.service';
 import propertyGroupComponent from './propertyGroup/propertyGroup.component';
+import componentVariantsComponent from './componentVariants/componentVariants.component';
 
 const editComponentModule = angular
   .module('hippo-cm.channel.rightSidePanel.editComponent', [])
@@ -28,6 +29,7 @@ const editComponentModule = angular
   .service('EditComponentService', editComponentService)
   .component('editComponentMain', editComponentMainComponent)
   .component('componentFields', componentFieldsComponent)
-  .component('propertyGroup', propertyGroupComponent);
+  .component('propertyGroup', propertyGroupComponent)
+  .component('componentVariants', componentVariantsComponent);
 
 export default editComponentModule.name;
