@@ -23,11 +23,9 @@ import java.util.Properties;
 import java.util.function.UnaryOperator;
 
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.onehippo.repository.branch.BranchConstants;
 
 import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
@@ -36,7 +34,7 @@ public class BranchInfoBuilderTest {
     private final BranchInfoBuilder builder;
     private final String expected;
 
-    private static UnaryOperator<String> propertyResolver = (key) -> {
+    private static final UnaryOperator<String> propertyResolver = (key) -> {
         try (InputStream input = ClassLoader.getSystemResourceAsStream("org/hippoecm/frontend/plugins/reviewedactions/DocumentWorkflowPlugin.properties")) {
             Properties prop = new Properties();
             prop.load(input);
@@ -90,16 +88,16 @@ public class BranchInfoBuilderTest {
                         .draftChanges(true)
                         .unpublishedChanges(true)
                         , "Core document (offline, draft)"},
+                {new BranchInfoBuilder(propertyResolver, "Core document")
+                        .live(true)
+                        .unpublishedChanges(true)
+                        , "Core document (live, unpublished changes)"},
         });
     }
 
     @NotNull
     private static BranchInfoBuilder getUserInfoBuilder() {
         return new BranchInfoBuilder(propertyResolver, propertyResolver.apply("core-document"));
-    }
-
-    @Before
-    public void setUp() throws Exception {
     }
 
     public BranchInfoBuilderTest(BranchInfoBuilder builder, String expected){
