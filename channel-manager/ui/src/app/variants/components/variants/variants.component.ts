@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { NotificationBarModule } from './notification-bar/notification-bar.module';
-import { Ng1ServicesModule } from './services/ng1/ng1-services.module';
-import { SharedModule } from './shared/shared.module';
-import { VariantsModule } from './variants/variants.module';
-import { VersionsModule } from './versions/versions.module';
-
-@NgModule({
-  imports: [
-    SharedModule,
-    NotificationBarModule,
-    VersionsModule,
-    VariantsModule,
-    Ng1ServicesModule,
-  ],
-  providers: [
-  ],
+@Component({
+  selector: 'em-variants',
+  templateUrl: './variants.component.html',
+  styleUrls: ['./variants.component.scss'],
 })
-export class AppModule {
-  ngDoBootstrap(): void { }
+export class VariantsComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+    console.log('variants initiated');
+  }
+
 }

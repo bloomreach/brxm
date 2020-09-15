@@ -22,6 +22,8 @@
       <form name="$ctrl.form"
             class="form-dense-layout"
             flex>
+        <component-variants ng-if="$ctrl.variantsVisible"></component-variants>
+
         <md-subheader md-colors="{background: 'hippo-grey-200'}"
                       ng-if="$ctrl.ComponentEditor.isForeignPage()">
           <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
