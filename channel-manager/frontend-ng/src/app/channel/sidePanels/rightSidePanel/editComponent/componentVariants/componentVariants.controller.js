@@ -18,10 +18,6 @@ class ComponentVariantsCtrl {
   constructor() {
     'ngInject';
   }
-
-  $onInit() {
-    console.log('init variants component');
-  }
 }
 
 export default ComponentVariantsCtrl;

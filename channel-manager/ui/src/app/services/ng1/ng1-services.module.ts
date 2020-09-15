@@ -17,6 +17,7 @@
 import { NgModule } from '@angular/core';
 
 import { NG1_CHANNEL_SERVICE } from './channel.ng1service';
+import { NG1_COMPONENT_EDITOR_SERVICE } from './component-editor.ng1.service';
 import { NG1_CONFIG_SERVICE } from './config.ng1.service';
 import { NG1_CONTENT_SERVICE } from './content.ng1.service';
 import { NG1_IFRAME_SERVICE } from './iframe.ng1service';
@@ -37,6 +38,7 @@ import { NG1_WORKFLOW_SERVICE } from './workflow.ng1.service';
     { provide: NG1_PROJECT_SERVICE, useValue: window.angular.element(document.body).injector().get('ProjectService') },
     { provide: NG1_WORKFLOW_SERVICE, useValue: window.angular.element(document.body).injector().get('WorkflowService') },
     { provide: NG1_ROOT_SCOPE, useValue: window.angular.element(document.body).injector().get('$rootScope') },
+    { provide: NG1_COMPONENT_EDITOR_SERVICE, useValue: window.angular.element(document.body).injector().get('ComponentEditor') },
   ],
 })
 export class Ng1ServicesModule {
