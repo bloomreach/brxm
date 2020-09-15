@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { switchMap } from 'rxjs/operators';
+
+import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
+import { VariantsService } from '../../services/variants.service';
 
 @Component({
   selector: 'em-variants',
@@ -22,11 +26,19 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./variants.component.scss'],
 })
 export class VariantsComponent implements OnInit {
+  variants$ = this.variantsService
+    .getVariantIds(this.componentEditorService.getComponentId())
+    .pipe(
+      switchMap(variantIds => this.variantsService.getVariants(variantIds)),
+    );
 
-  constructor() { }
+  constructor(
+    @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,
+    private readonly variantsService: VariantsService,
+  ) { }
 
   ngOnInit(): void {
-    console.log('variants initiated');
+    this.variants$.subscribe(console.log);
   }
 
 }

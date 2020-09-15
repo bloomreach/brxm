@@ -16,14 +16,8 @@
 
 import { InjectionToken } from '@angular/core';
 
-export interface Ng1ConfigService {
-  locale: string;
-  timeZone: string;
-  rootUuid: string;
-  variantsUuid: string;
-  getCmsContextPath(): string;
-  getCmsOrigin(): string;
-  isDevMode(): boolean;
+export interface Ng1ComponentEditorService {
+  getComponentId(): string;
 }
 
-export const NG1_CONFIG_SERVICE = new InjectionToken<Ng1ConfigService>('NG1_CONFIG_SERVICE');
+export const NG1_COMPONENT_EDITOR_SERVICE = new InjectionToken<Ng1ComponentEditorService>('NG1_COMPONENT_EDITOR_SERVICE');
