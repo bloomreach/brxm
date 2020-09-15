@@ -89,7 +89,9 @@ class EditComponentService {
   _loadComponent(componentId) {
     this._showDefaultTitle();
     this.RightSidePanelService.startLoading();
-    this.ComponentEditor.open(componentId)
+
+    return this.ComponentEditor
+      .open(componentId)
       .then(() => {
         this._showComponentTitle();
         this.RightSidePanelService.stopLoading();
