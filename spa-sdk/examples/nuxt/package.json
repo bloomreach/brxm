@@ -1,6 +1,6 @@
 {
   "name": "@bloomreach/example-nuxt",
-  "version": "14.3.1",
+  "version": "14.3.2",
   "description": "Example Nuxt.js SPA for Bloomreach Experience",
   "private": true,
   "scripts": {
@@ -11,8 +11,8 @@
     "start": "cross-env NODE_ENV=production node server/index.js"
   },
   "dependencies": {
-    "@bloomreach/spa-sdk": "^14.3.1",
-    "@bloomreach/vue-sdk": "^14.3.1",
+    "@bloomreach/spa-sdk": "^14.3.2",
+    "@bloomreach/vue-sdk": "^14.3.2",
     "@nuxtjs/axios": "^5.10",
     "@nuxtjs/dotenv": "^1.4",
     "cookie-universal-nuxt": "^2.1",

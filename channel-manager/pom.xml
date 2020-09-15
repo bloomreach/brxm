@@ -20,12 +20,12 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.3.1-SNAPSHOT</version>
+    <version>14.3.2-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>14.3.1-SNAPSHOT</version>
+  <version>14.3.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 

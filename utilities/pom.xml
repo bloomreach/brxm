@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.3.1-SNAPSHOT</version>
+    <version>14.3.2-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -29,7 +29,7 @@
   <packaging>jar</packaging>
 
   <artifactId>hippo-cms7-utilities</artifactId>
-  <version>14.3.1-SNAPSHOT</version>
+  <version>14.3.2-SNAPSHOT</version>
 
   <inceptionYear>2012</inceptionYear>
 

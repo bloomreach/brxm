@@ -1,6 +1,6 @@
 {
   "name": "@bloomreach/vue-sdk",
-  "version": "14.3.1",
+  "version": "14.3.2",
   "description": "Bloomreach SPA SDK for Vue.js",
   "keywords": [
     "bloomreach",
@@ -37,7 +37,7 @@
     "last 1 edge version"
   ],
   "dependencies": {
-    "@bloomreach/spa-sdk": "^14.3.1",
+    "@bloomreach/spa-sdk": "^14.3.2",
     "vue-class-component": "^7.2",
     "vue-fragment": "^1.5",
     "vue-property-decorator": "^8.4"

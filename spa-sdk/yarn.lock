@@ -2310,7 +2310,7 @@ __metadata:
     "@angular/platform-browser-dynamic": ^9.1
     "@angular/platform-server": ^9.1
     "@angular/router": ^9.1
-    "@bloomreach/ng-sdk": ^14.3.1
+    "@bloomreach/ng-sdk": ^14.3.2
     "@nguniversal/builders": ^9.1
     "@nguniversal/express-engine": ^9.1
     "@types/cookie": ^0.4
@@ -2336,8 +2336,8 @@ __metadata:
   resolution: "@bloomreach/example-nuxt@workspace:examples/nuxt"
   dependencies:
     "@babel/runtime-corejs3": ^7.9
-    "@bloomreach/spa-sdk": ^14.3.1
-    "@bloomreach/vue-sdk": ^14.3.1
+    "@bloomreach/spa-sdk": ^14.3.2
+    "@bloomreach/vue-sdk": ^14.3.2
     "@nuxt/typescript-build": ^1.0
     "@nuxtjs/axios": ^5.10
     "@nuxtjs/dotenv": ^1.4
@@ -2363,7 +2363,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bloomreach/example-react-csr@workspace:examples/react-csr"
   dependencies:
-    "@bloomreach/react-sdk": ^14.3.1
+    "@bloomreach/react-sdk": ^14.3.2
     "@types/react": ^16.9
     "@types/react-dom": ^16.9
     "@types/react-router-dom": ^5.1
@@ -2384,7 +2384,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bloomreach/example-react-ssr@workspace:examples/react-ssr"
   dependencies:
-    "@bloomreach/react-sdk": ^14.3.1
+    "@bloomreach/react-sdk": ^14.3.2
     "@types/node": ^14.0
     "@types/react": ^16.9
     "@types/react-dom": ^16.9
@@ -2402,8 +2402,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bloomreach/example-vue@workspace:examples/vue"
   dependencies:
-    "@bloomreach/spa-sdk": ^14.3.1
-    "@bloomreach/vue-sdk": ^14.3.1
+    "@bloomreach/spa-sdk": ^14.3.2
+    "@bloomreach/vue-sdk": ^14.3.2
     "@types/jest": ^25.2
     "@typescript-eslint/eslint-plugin": ^2.34
     "@typescript-eslint/parser": ^2.34
@@ -2433,7 +2433,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bloomreach/ng-sdk@^14.3.1, @bloomreach/ng-sdk@workspace:packages/ng-sdk":
+"@bloomreach/ng-sdk@^14.3.2, @bloomreach/ng-sdk@workspace:packages/ng-sdk":
   version: 0.0.0-use.local
   resolution: "@bloomreach/ng-sdk@workspace:packages/ng-sdk"
   dependencies:
@@ -2448,7 +2448,7 @@ __metadata:
     "@angular/language-service": ^9.1
     "@angular/platform-browser": ^9.1
     "@angular/platform-browser-dynamic": ^9.1
-    "@bloomreach/spa-sdk": ^14.3.1
+    "@bloomreach/spa-sdk": ^14.3.2
     "@types/jest": ^25.2
     codelyzer: ^5.2
     jest: ^26.0
@@ -2468,7 +2468,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bloomreach/react-sdk@^14.3.1, @bloomreach/react-sdk@workspace:packages/react-sdk":
+"@bloomreach/react-sdk@^14.3.2, @bloomreach/react-sdk@workspace:packages/react-sdk":
   version: 0.0.0-use.local
   resolution: "@bloomreach/react-sdk@workspace:packages/react-sdk"
   dependencies:
@@ -2476,7 +2476,7 @@ __metadata:
     "@babel/plugin-proposal-object-rest-spread": ^7.9
     "@babel/preset-env": ^7.9
     "@babel/preset-react": ^7.9
-    "@bloomreach/spa-sdk": ^14.3.1
+    "@bloomreach/spa-sdk": ^14.3.2
     "@types/enzyme": ^3.10
     "@types/jest": ^25.2
     "@types/react": ^16.9
@@ -2503,7 +2503,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bloomreach/spa-sdk@^14.3.1, @bloomreach/spa-sdk@workspace:packages/spa-sdk":
+"@bloomreach/spa-sdk@^14.3.2, @bloomreach/spa-sdk@workspace:packages/spa-sdk":
   version: 0.0.0-use.local
   resolution: "@bloomreach/spa-sdk@workspace:packages/spa-sdk"
   dependencies:
@@ -2537,11 +2537,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bloomreach/vue-sdk@^14.3.1, @bloomreach/vue-sdk@workspace:packages/vue-sdk":
+"@bloomreach/vue-sdk@^14.3.2, @bloomreach/vue-sdk@workspace:packages/vue-sdk":
   version: 0.0.0-use.local
   resolution: "@bloomreach/vue-sdk@workspace:packages/vue-sdk"
   dependencies:
-    "@bloomreach/spa-sdk": ^14.3.1
+    "@bloomreach/spa-sdk": ^14.3.2
     "@types/jest": ^25.2
     "@typescript-eslint/eslint-plugin": ^2.34
     "@typescript-eslint/parser": ^2.34

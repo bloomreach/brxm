@@ -21,13 +21,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.3.1-SNAPSHOT</version>
+    <version>14.3.2-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo CMS7 Services - autoreload</name>
   <artifactId>hippo-services-autoreload</artifactId>
-  <version>14.3.1-SNAPSHOT</version>
+  <version>14.3.2-SNAPSHOT</version>
 
   <inceptionYear>2014</inceptionYear>
 
