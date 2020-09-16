@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
-import { switchMap } from 'rxjs/operators';
+import { Component, Inject } from '@angular/core';
+import { map, switchMap, take } from 'rxjs/operators';
 
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { VariantsService } from '../../services/variants.service';
@@ -25,20 +25,16 @@ import { VariantsService } from '../../services/variants.service';
   templateUrl: './variants.component.html',
   styleUrls: ['./variants.component.scss'],
 })
-export class VariantsComponent implements OnInit {
+export class VariantsComponent {
   variants$ = this.variantsService
     .getVariantIds(this.componentEditorService.getComponentId())
     .pipe(
       switchMap(variantIds => this.variantsService.getVariants(variantIds)),
     );
+  initialSelection$ = this.variants$.pipe(take(1), map(variants => variants[0].id));
 
   constructor(
     @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,
     private readonly variantsService: VariantsService,
   ) { }
-
-  ngOnInit(): void {
-    this.variants$.subscribe(console.log);
-  }
-
 }

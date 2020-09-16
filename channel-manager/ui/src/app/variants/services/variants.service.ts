@@ -21,6 +21,7 @@ import { map } from 'rxjs/operators';
 
 import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../services/ng1/channel.ng1service';
 import { Ng1ConfigService, NG1_CONFIG_SERVICE } from '../../services/ng1/config.ng1.service';
+import { Variant } from '../models/variant.model';
 
 export interface ApiResponseBody {
   data: any;
@@ -56,7 +57,7 @@ export class VariantsService {
     );
   }
 
-  getVariants(variantIds: string[]): Observable<any> {
+  getVariants(variantIds: string[]): Observable<Variant[]> {
     const channelContextPath = this.channelService.getChannel().contextPath;
     const cmsContextPath = this.configService.getCmsContextPath();
     const variantsUuid = this.configService.variantsUuid;
