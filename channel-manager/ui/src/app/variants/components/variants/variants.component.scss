@@ -24,6 +24,13 @@
 }
 
 .variant-select {
+  align-items: center;
   display: grid;
+  grid-gap: $spacing-half;
+  grid-template-columns: 1fr auto auto;
+}
+
+::ng-deep .mat-form-field-wrapper {
+  padding-bottom: 0;
 }
 

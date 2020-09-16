@@ -21,9 +21,11 @@ import calendarClock from '!!raw-loader!./icons/calendar-clock.svg';
 import commentCheckOutline from '!!raw-loader!./icons/comment-check-outline.svg';
 import commentProcessingOutline from '!!raw-loader!./icons/comment-processing-outline.svg';
 import commentRemoveOutline from '!!raw-loader!./icons/comment-remove-outline.svg';
+import copy from '!!raw-loader!./icons/copy.svg';
 import lockOutline from '!!raw-loader!./icons/lock-outline.svg';
 import minusCircleOutline from '!!raw-loader!./icons/minus-circle-outline.svg';
 import plus from '!!raw-loader!./icons/plus.svg';
+import trash from '!!raw-loader!./icons/trash.svg';
 import xpageIcon from '!!raw-loader!./icons/xpage.svg';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -43,4 +45,6 @@ export function registerSvgIcons(iconRegistry: MatIconRegistry, donSanitizer: Do
   registerIcon('lock-outline', lockOutline);
   registerIcon('comment-check-outline', commentCheckOutline);
   registerIcon('plus', plus);
+  registerIcon('copy', copy);
+  registerIcon('trash', trash);
 }
