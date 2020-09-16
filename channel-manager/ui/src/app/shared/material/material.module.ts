@@ -16,9 +16,11 @@
 
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSelectModule } from '@angular/material/select';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { registerSvgIcons } from './register-svg-icons';
@@ -29,6 +31,8 @@ import { registerSvgIcons } from './register-svg-icons';
     MatListModule,
     MatIconModule,
     MatProgressBarModule,
+    MatSelectModule,
+    MatFormFieldModule,
   ],
 })
 export class MaterialModule {
