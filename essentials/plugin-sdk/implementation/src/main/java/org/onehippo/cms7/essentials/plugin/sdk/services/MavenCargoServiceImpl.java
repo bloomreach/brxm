@@ -18,6 +18,8 @@ package org.onehippo.cms7.essentials.plugin.sdk.services;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -55,13 +57,7 @@ public class MavenCargoServiceImpl implements MavenCargoService {
         return updatePluginConfig(cargoPlugin -> {
             Xpp3Dom configuration = (Xpp3Dom) cargoPlugin.getConfiguration();
             Xpp3Dom container = configuration.getChild("container");
-
-            // Add dependencies element to the container if it doesn't already exist
-            Xpp3Dom dependencies = container.getChild("dependencies");
-            if (dependencies == null) {
-                dependencies = new Xpp3Dom("dependencies");
-                container.addChild(dependencies);
-            }
+            Xpp3Dom dependencies = ensureChildElement(container, "dependencies");
 
             // Avoid duplicate dependencies
             for (Xpp3Dom dep : dependencies.getChildren()) {
@@ -143,6 +139,29 @@ public class MavenCargoServiceImpl implements MavenCargoService {
             }
             return true;
         });
+    }
+
+    public boolean addSystemProperty(final String propertyName, final String propertyValue) {
+        return updatePluginConfig(cargoPlugin -> {
+            Xpp3Dom configuration = (Xpp3Dom) cargoPlugin.getConfiguration();
+            Xpp3Dom container = configuration.getChild("container");
+            Xpp3Dom systemProperties = ensureChildElement(container, "systemProperties");
+
+            // Add new property with specified value
+            Xpp3Dom property = new Xpp3Dom(propertyName);
+            property.setValue(propertyValue);
+            systemProperties.addChild(property);
+        });
+    }
+
+    private Xpp3Dom ensureChildElement(final Xpp3Dom parent, final String childName) {
+        Xpp3Dom child = parent.getChild(childName);
+        if (child == null) {
+            child = new Xpp3Dom(childName);
+            parent.addChild(child);
+        }
+
+        return child;
     }
 
     private boolean updateProjectPom(final Function<Model, Boolean> modifier) {
