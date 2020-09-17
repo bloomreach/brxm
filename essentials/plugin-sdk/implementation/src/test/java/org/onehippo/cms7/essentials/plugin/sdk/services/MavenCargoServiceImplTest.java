@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,5 +132,18 @@ public class MavenCargoServiceImplTest extends ResourceModifyingTest {
         }
         assertNotNull(cargoProfile);
         assertTrue(cargoProfile.getProperties().containsKey("es.tcpPort"));
+    }
+
+    @Test
+    public void addSystemPropertyTest() throws IOException, XmlPullParserException {
+        final File pomXml = createModifiableFile("/project/pom.xml", "pom.xml");
+
+        String before = contentOf(pomXml);
+        assertEquals(0, StringUtils.countMatches(before, "<my.test.property>newValue</my.test.property>"));
+
+        assertTrue(service.addSystemProperty("my.test.property", "newValue"));
+
+        String after = contentOf(pomXml);
+        assertEquals(1, StringUtils.countMatches(after, "<my.test.property>newValue</my.test.property>"));
     }
 }

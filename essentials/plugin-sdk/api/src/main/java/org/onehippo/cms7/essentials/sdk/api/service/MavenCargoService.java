@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,4 +53,13 @@ public interface MavenCargoService {
      * @return              true upon success, false otherwise
      */
     boolean mergeCargoProfile(URL incomingDefinitions);
+
+    /**
+     * Ensure that the specified property is present in the cargo plugin's systemProperties section.
+     *
+     * @param propertyName  name of the property
+     * @param propertyValue value of the property
+     * @return              true upon success, false otherwise
+     */
+    boolean addSystemProperty(final String propertyName, final String propertyValue);
 }
