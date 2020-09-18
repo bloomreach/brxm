@@ -19,6 +19,8 @@ class TargetingService {
     $http,
     $q,
     $window,
+    ConfigService,
+    HstService,
     PathService,
   ) {
     'ngInject';
@@ -26,6 +28,8 @@ class TargetingService {
     this.$http = $http;
     this.$q = $q;
     this.$window = $window;
+    this.ConfigService = ConfigService;
+    this.HstService = HstService;
     this.PathService = PathService;
 
     this.init();
@@ -45,6 +49,32 @@ class TargetingService {
 
     this._apiUrl = Targeting.HttpProxy.REST_URL;
     this._collectors = Targeting.CollectorPlugins || {};
+  }
+
+  async getVariantIDs(containerItemId) {
+    try {
+      const result = await this.HstService.doGet(containerItemId);
+      return this._success(`Successfully loaded variant ids for container-item "${containerItemId}"`, result);
+    } catch (e) {
+      return this._failure(`Failed to load variant ids for container-item "${containerItemId}"`, e);
+    }
+  }
+
+  async getVariants(containerItemId) {
+    const response = await this.getVariantIDs(containerItemId);
+    if (!response.success) {
+      return response;
+    }
+
+    try {
+      const variantIDs = response.data;
+      const { locale, variantsUuid } = this.ConfigService;
+      const result = await this.HstService
+        .doPostWithParams(variantIDs, variantsUuid, { locale }, 'componentvariants');
+      return this._success(`Successfully loaded variants for container-item "${containerItemId}"`, result);
+    } catch (e) {
+      return this._failure(`Failed to load variants for container-item "${containerItemId}"`, e);
+    }
   }
 
   async getPersonas() {
