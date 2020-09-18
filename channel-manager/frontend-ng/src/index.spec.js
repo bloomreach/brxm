@@ -139,6 +139,7 @@ function mockHost() {
       },
       Hippo: {
         Events: createMessageBus($window),
+        Targeting: { HttpProxy: {} },
         Workflow: {
           invoke: () => Promise.resolve(),
         },
