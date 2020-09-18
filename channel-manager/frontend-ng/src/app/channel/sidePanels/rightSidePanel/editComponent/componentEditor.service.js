@@ -56,16 +56,17 @@ class ComponentEditorService {
     this._onPageChange = this._onPageChange.bind(this);
   }
 
-  open(componentId) {
+  open(componentId, variantId) {
     this.close();
     this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
 
     const channel = this.ChannelService.getChannel();
     const page = this.PageStructureService.getPage();
     const component = page.getComponentById(componentId);
+    variantId = variantId || component.getRenderVariant();
 
     this.request = this.HstComponentService
-      .getProperties(component.getId(), component.getRenderVariant())
+      .getProperties(component.getId(), variantId)
       .then(response => this._onLoadSuccess(channel, component, page, response.properties))
       .catch(() => this._onLoadFailure())
       .finally(() => { delete this.request; });
@@ -94,6 +95,10 @@ class ComponentEditorService {
     } else {
       this.HippoIframeService.load(pagePath);
     }
+  }
+
+  getComponent() {
+    return this.component;
   }
 
   isForeignPage() {

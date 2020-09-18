@@ -26,12 +26,17 @@ import { VariantsService } from '../../services/variants.service';
   styleUrls: ['./variants.component.scss'],
 })
 export class VariantsComponent {
+  private readonly component = this.componentEditorService.getComponent();
   variants$ = this.variantsService
-    .getVariantIds(this.componentEditorService.getComponentId())
-    .pipe(
-      switchMap(variantIds => this.variantsService.getVariants(variantIds)),
-    );
-  initialSelection$ = this.variants$.pipe(take(1), map(variants => variants[0].id));
+  .getVariantIds(this.component.getId())
+  .pipe(
+    switchMap(variantIds => this.variantsService.getVariants(variantIds)),
+  );
+  initialSelection$ = this.variants$
+  .pipe(
+    take(1),
+    map(variants => variants.find(v => v.id === this.component.getRenderVariant())?.id),
+  );
 
   constructor(
     @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -29,6 +30,16 @@ describe('VariantsComponent', () => {
   let component: VariantsComponent;
   let componentEl: HTMLElement;
   let fixture: ComponentFixture<VariantsComponent>;
+
+  @Component({
+    // tslint:disable-next-line:component-selector
+    selector: 'mat-icon',
+    template: '{{ svgIcon }}',
+  })
+  class MatIconMockComponent {
+    @Input()
+    svgIcon!: string;
+  }
 
   const mockVariants = [
    {
@@ -66,9 +77,14 @@ describe('VariantsComponent', () => {
     mockVariants[1].id,
   ];
 
+  const mockComponent = {
+    getId: () => 'mockComponentId',
+    getRenderVariant: () => 'hippo-default',
+  };
+
   beforeEach(async(() => {
     const componentEditorServiceMock = {
-      getComponentId: () => 'mockComponentId',
+      getComponent: () => mockComponent,
     };
     const variantsServiceMock = {
       getVariantIds: () => of(mockVariantIds),
@@ -81,7 +97,7 @@ describe('VariantsComponent', () => {
         MatSelectModule,
         BrowserAnimationsModule,
       ],
-      declarations: [ VariantsComponent ],
+      declarations: [ VariantsComponent, MatIconMockComponent ],
       providers: [
         { provide: NG1_COMPONENT_EDITOR_SERVICE, useValue: componentEditorServiceMock },
         { provide: VariantsService, useValue: variantsServiceMock },

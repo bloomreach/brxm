@@ -24,10 +24,8 @@ describe('EditComponentService', () => {
 
   let ChannelService;
   let ComponentEditor;
-  let ConfigService;
   let EditComponentService;
   let MaskService;
-  let PageStructureService;
   let RightSidePanelService;
 
   let mockComponent;
@@ -79,10 +77,8 @@ describe('EditComponentService', () => {
       _$translate_,
       _$window_,
       _ChannelService_,
-      _ConfigService_,
       _EditComponentService_,
       _MaskService_,
-      _PageStructureService_,
       _RightSidePanelService_,
     ) => {
       $log = _$log_;
@@ -92,10 +88,8 @@ describe('EditComponentService', () => {
       $translate = _$translate_;
       $window = _$window_;
       ChannelService = _ChannelService_;
-      ConfigService = _ConfigService_;
       EditComponentService = _EditComponentService_;
       MaskService = _MaskService_;
-      PageStructureService = _PageStructureService_;
       RightSidePanelService = _RightSidePanelService_;
     });
 
@@ -138,7 +132,7 @@ describe('EditComponentService', () => {
     it('opens the component editor', () => {
       editComponent();
 
-      expect(ComponentEditor.open).toHaveBeenCalledWith('component.id');
+      expect(ComponentEditor.open).toHaveBeenCalledWith('component.id', 'component.renderVariant');
     });
 
     it('sets the context label to COMPONENT and the title label to the component name', () => {
@@ -229,37 +223,5 @@ describe('EditComponentService', () => {
     expect($log.warn).toHaveBeenCalled();
     expect(MaskService.mask).not.toHaveBeenCalled();
     expect($window.APP_TO_CMS.publish).not.toHaveBeenCalled();
-  });
-
-  describe('is Relevance is present', () => {
-    beforeEach(() => {
-      ConfigService.relevancePresent = true;
-    });
-
-    it('triggers an event to show the component properties dialog', () => {
-      const page = jasmine.createSpyObj('page', ['getMeta']);
-      const pageMeta = jasmine.createSpyObj('pageMeta', ['toJSON']);
-      pageMeta.toJSON.and.returnValue('page-data');
-      page.getMeta.and.returnValue(pageMeta);
-      spyOn(PageStructureService, 'getPage').and.returnValue(page);
-      spyOn(MaskService, 'mask');
-      spyOn($window.APP_TO_CMS, 'publish');
-
-      editComponent();
-
-      expect(MaskService.mask).toHaveBeenCalled();
-      expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-component-properties', {
-        ...testData,
-        page: 'page-data',
-      });
-    });
-
-    it('removes the mask when the component properties dialog is closed', () => {
-      spyOn(MaskService, 'unmask');
-
-      $window.CMS_TO_APP.publish('hide-component-properties');
-
-      expect(MaskService.unmask).toHaveBeenCalled();
-    });
   });
 });
