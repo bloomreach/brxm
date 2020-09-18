@@ -16,15 +16,19 @@
 
 describe('TargetingService', () => {
   let $httpBackend;
+  let $rootScope;
   let $window;
+  let ConfigService;
   let TargetingService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.targeting');
 
-    inject((_$httpBackend_, _$window_, _TargetingService_) => {
+    inject((_$httpBackend_, _$rootScope_, _$window_, _ConfigService_, _TargetingService_) => {
       $httpBackend = _$httpBackend_;
+      $rootScope = _$rootScope_;
       $window = _$window_;
+      ConfigService = _ConfigService_;
       TargetingService = _TargetingService_;
     });
 
@@ -47,6 +51,91 @@ describe('TargetingService', () => {
       delete $window.parent.Hippo.Targeting;
       expect(() => TargetingService.init())
         .toThrowError('Failed to retrieve targeting configuration from global scope, is relevance enabled?');
+    });
+  });
+
+  describe('getVariantIDs', () => {
+    it('should return a list of variant IDs', () => {
+      const responseData = {
+        message: 'Available variants: ',
+        data: ['variant1', 'hippo-default'],
+      };
+      $httpBackend
+        .expectGET('/test/container-item-id./')
+        .respond(200, responseData);
+
+      const promiseSpy = jasmine.createSpy('promiseSpy');
+      TargetingService.getVariantIDs('container-item-id').then(promiseSpy);
+      $httpBackend.flush();
+
+      expect(promiseSpy).toHaveBeenCalledWith(responseData);
+    });
+  });
+
+  describe('getVariants', () => {
+    beforeEach(() => {
+      ConfigService.variantsUuid = 'variantsUuid';
+      ConfigService.locale = 'locale';
+    });
+
+    it('should request the variant IDs', () => {
+      spyOn(TargetingService, 'getVariantIDs');
+
+      TargetingService.getVariants('container-item-id');
+      expect(TargetingService.getVariantIDs).toHaveBeenCalled();
+    });
+
+    it('should return a list of variants', () => {
+      spyOn(TargetingService, 'getVariantIDs').and.returnValue({
+        data: ['variant-1', 'variant-2'],
+        success: true,
+      });
+
+      const responseData = {
+        data: [{ id: 'hippo-default' }],
+        message: 'Component personas loaded successfully',
+        success: true,
+      };
+      $httpBackend
+        .expectPOST('/test/variantsUuid./componentvariants?locale=locale', ['variant-1', 'variant-2'])
+        .respond(200, responseData);
+
+      const promiseSpy = jasmine.createSpy('promiseSpy');
+      TargetingService.getVariants('container-item-id').then(promiseSpy).catch(fail);
+      $httpBackend.flush();
+
+      expect(promiseSpy).toHaveBeenCalledWith(responseData);
+    });
+
+    it('should resolve with an error response if the request for variant ids fails', () => {
+      const errorResponse = { success: false };
+      spyOn(TargetingService, 'getVariantIDs').and.returnValue(errorResponse);
+
+      const promiseSpy = jasmine.createSpy('promiseSpy');
+      TargetingService.getVariants('container-item-id').then(promiseSpy);
+
+      $rootScope.$digest();
+      expect(promiseSpy).toHaveBeenCalledWith(errorResponse);
+    });
+
+    it('should resolve with an error response if the backend fails', () => {
+      spyOn(TargetingService, 'getVariantIDs').and.returnValue({ success: true });
+
+      const errorResponse = { success: false };
+      $httpBackend
+        .expectPOST()
+        .respond(400, errorResponse);
+
+      const promiseSpy = jasmine.createSpy('promiseSpy');
+      TargetingService.getVariants('container-item-id').then(promiseSpy).catch(fail);
+
+      $httpBackend.flush();
+      expect(promiseSpy).toHaveBeenCalledWith({
+        data: errorResponse,
+        message: 'Failed to load variants for container-item "container-item-id"',
+        reloadRequired: false,
+        success: false,
+      });
     });
   });
 
@@ -107,9 +196,9 @@ describe('TargetingService', () => {
 
     it('should resolve with an error response if the backend fails', () => {
       const responseData = {};
-      const promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(urlRegex).respond(500, responseData);
 
+      const promiseSpy = jasmine.createSpy('promiseSpy');
       TargetingService.getPersonas().then(promiseSpy);
       $httpBackend.flush();
 
@@ -172,7 +261,7 @@ describe('TargetingService', () => {
 
       expect(promiseSpy).toHaveBeenCalledWith({
         data: responseData,
-        message: 'Failed to load characteristics',
+        message: 'Failed to load characteristics IDs',
         reloadRequired: false,
         success: false,
       });
@@ -183,14 +272,12 @@ describe('TargetingService', () => {
     const urlRegex = /targeting-rest-url\/characteristics\/(.+).*/;
 
     it('should retrieve a characteristic by id', () => {
-      const promiseSpy = jasmine.createSpy('promiseSpy');
       const responseData = {
         id: 'dayofweek',
         targetGroups: [],
         success: true,
         message: 'OK',
       };
-
       $httpBackend
         .expectGET(urlRegex, { Accept: 'application/json, text/plain, */*' }, ['characterId'])
         .respond((method, url, data, headers, params) => {
@@ -200,30 +287,27 @@ describe('TargetingService', () => {
 
           return [200, {
             data: responseData,
-            errorCode: null,
             message: null,
-            reloadRequired: false,
             success: true,
           }];
         });
 
+      const promiseSpy = jasmine.createSpy('promiseSpy');
       TargetingService.getCharacteristic('dayofweek').then(promiseSpy);
       $httpBackend.flush();
 
       expect(promiseSpy).toHaveBeenCalledWith({
         data: responseData,
-        errorCode: null,
         message: 'Characteristic "dayofweek" loaded successfully',
-        reloadRequired: false,
         success: true,
       });
     });
 
     it('should resolve with an error response if the backend fails', () => {
       const responseData = {};
-      const promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(urlRegex).respond(500, responseData);
 
+      const promiseSpy = jasmine.createSpy('promiseSpy');
       TargetingService.getCharacteristic('dayofweek').then(promiseSpy);
       $httpBackend.flush();
 
