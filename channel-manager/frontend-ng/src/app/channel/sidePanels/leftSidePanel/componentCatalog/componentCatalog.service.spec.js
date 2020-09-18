@@ -153,22 +153,6 @@ describe('ComponentCatalogService', () => {
       expect(page.getComponentById).toHaveBeenCalledWith('new-component-id');
       expect(EditComponentService.startEditing).toHaveBeenCalledWith(component);
     });
-
-    it('should not close the right side panel if relevance is present', () => {
-      ConfigService.relevancePresent = true;
-      ComponentCatalogService.selectComponent();
-      $rootScope.$digest();
-
-      expect(RightSidePanelService.close).not.toHaveBeenCalled();
-    });
-
-    it('should not open the component editor if relevance is present', () => {
-      ConfigService.relevancePresent = true;
-      ComponentCatalogService.selectComponent();
-      $rootScope.$digest();
-
-      expect(EditComponentService.startEditing).not.toHaveBeenCalled();
-    });
   });
 
   describe('getSelectedComponent', () => {

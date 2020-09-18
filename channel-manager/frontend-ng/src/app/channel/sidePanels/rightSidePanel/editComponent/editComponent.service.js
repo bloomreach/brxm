@@ -47,7 +47,7 @@ class EditComponentService {
 
     $transitions.onEnter(
       { entering: '**.edit-component' },
-      transition => this._loadComponent(transition.params().componentId),
+      transition => this._loadComponent(transition.params()),
     );
 
     CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
@@ -60,14 +60,17 @@ class EditComponentService {
     });
   }
 
-  startEditing(componentElement) {
+  startEditing(componentElement, variantId) {
     this.readyForUser = false;
     if (!componentElement) {
       this.$log.warn('Problem opening the component properties editor: no component provided.');
       return;
     }
 
-    this.$state.go('hippo-cm.channel.edit-component', { componentId: componentElement.getId() });
+    this.$state.go('hippo-cm.channel.edit-component', {
+      componentId: componentElement.getId(),
+      variantId: variantId || componentElement.getRenderVariant(),
+    });
   }
 
   stopEditing() {
@@ -86,12 +89,12 @@ class EditComponentService {
     return this.readyForUser;
   }
 
-  _loadComponent(componentId) {
+  _loadComponent({ componentId, variantId }) {
     this._showDefaultTitle();
     this.RightSidePanelService.startLoading();
 
     return this.ComponentEditor
-      .open(componentId)
+      .open(componentId, variantId)
       .then(() => {
         this._showComponentTitle();
         this.RightSidePanelService.stopLoading();

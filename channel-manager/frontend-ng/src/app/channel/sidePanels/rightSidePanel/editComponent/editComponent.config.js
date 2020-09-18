@@ -21,6 +21,7 @@ function editComponentConfig($stateProvider) {
     name: 'hippo-cm.channel.edit-component',
     params: {
       componentId: '',
+      variantId: '',
     },
     views: {
       main: {

@@ -121,6 +121,24 @@ exports[`VariantsComponent should create 1`] = `
         </div>
       </div>
     </mat-form-field>
+    <button
+      mat-icon-button=""
+    >
+      <mat-icon
+        svgicon="copy"
+      >
+        copy
+      </mat-icon>
+    </button>
+    <button
+      mat-icon-button=""
+    >
+      <mat-icon
+        svgicon="trash"
+      >
+        trash
+      </mat-icon>
+    </button>
   </div>
 </div>
 `;
