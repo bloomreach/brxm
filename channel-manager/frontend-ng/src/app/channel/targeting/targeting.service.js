@@ -91,12 +91,31 @@ class TargetingService {
     }
   }
 
-  async getCharacteristics() {
+  async getCharacteristicsIDs() {
     try {
       const result = await this._execute('GET', ['characteristics'], null, this._getDefaultParams());
-      return this._success('Characteristics loaded successfully', result);
+      return this._success('Characteristics IDs loaded successfully', result);
     } catch (e) {
-      return this._failure('Failed to load characteristics', e);
+      return this._failure('Failed to load characteristics IDs', e);
+    }
+  }
+
+  async getCharacteristics() {
+    const response = await this.getCharacteristicsIDs();
+    if (!response.success) {
+      return response;
+    }
+
+    try {
+      const characteristics = await this.$q.all(response.data.items
+        .map(item => item.id)
+        .map(id => this.getCharacteristic(id)));
+
+      return this._success('Characteristics loaded successfully', {
+        items: characteristics.map(characteristic => characteristic.data),
+      });
+    } catch (e) {
+      return this._failure('Failed to load characteristics');
     }
   }
 

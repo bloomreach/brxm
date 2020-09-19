@@ -212,10 +212,31 @@ describe('TargetingService', () => {
   });
 
   describe('getCharacteristics', () => {
+    it('should return a list of characteristics', () => {
+      spyOn(TargetingService, 'getCharacteristicsIDs').and.returnValue({
+        data: { items: [{ id: 'c1' }, { id: 'c2' }] },
+        success: true,
+      });
+      spyOn(TargetingService, 'getCharacteristic')
+        .and.callFake(id => ({ data: `characteristic-${id}`, success: true }));
+
+      const promiseSpy = jasmine.createSpy('promiseSpy');
+      TargetingService.getCharacteristics().then(promiseSpy);
+      $rootScope.$digest();
+
+      expect(promiseSpy).toHaveBeenCalledWith({
+        data: { items: ['characteristic-c1', 'characteristic-c2'] },
+        message: 'Characteristics loaded successfully',
+        reloadRequired: false,
+        success: true,
+      });
+    });
+  });
+
+  describe('getCharacteristicsIDs', () => {
     const urlRegex = /targeting-rest-url\/characteristics.*/;
 
-    it('should retrieve a list of characteristic ids', () => {
-      const promiseSpy = jasmine.createSpy('promiseSpy');
+    it('should return an array of characteristic IDs', () => {
       const responseData = {
         items: [
           { id: 'city' },
@@ -223,7 +244,6 @@ describe('TargetingService', () => {
         ],
         count: 2,
       };
-
       $httpBackend
         .expectGET(urlRegex)
         .respond((method, url, data, headers, params) => {
@@ -232,31 +252,27 @@ describe('TargetingService', () => {
 
           return [200, {
             data: responseData,
-            errorCode: null,
-            message: null,
-            reloadRequired: false,
             success: true,
           }];
         });
 
-      TargetingService.getCharacteristics().then(promiseSpy);
+      const promiseSpy = jasmine.createSpy('promiseSpy');
+      TargetingService.getCharacteristicsIDs().then(promiseSpy);
       $httpBackend.flush();
 
       expect(promiseSpy).toHaveBeenCalledWith({
         data: responseData,
-        errorCode: null,
-        message: 'Characteristics loaded successfully',
-        reloadRequired: false,
+        message: 'Characteristics IDs loaded successfully',
         success: true,
       });
     });
 
     it('should resolve with an error response if the backend fails', () => {
       const responseData = {};
-      const promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(urlRegex).respond(500, responseData);
 
-      TargetingService.getCharacteristics().then(promiseSpy);
+      const promiseSpy = jasmine.createSpy('promiseSpy');
+      TargetingService.getCharacteristicsIDs().then(promiseSpy);
       $httpBackend.flush();
 
       expect(promiseSpy).toHaveBeenCalledWith({
