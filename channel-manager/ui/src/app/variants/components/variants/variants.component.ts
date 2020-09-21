@@ -15,7 +15,6 @@
  */
 
 import { Component, Inject } from '@angular/core';
-import { switchMap } from 'rxjs/operators';
 
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
@@ -29,12 +28,7 @@ import { VariantsService } from '../../services/variants.service';
 export class VariantsComponent {
   private readonly component = this.componentEditorService.getComponent();
   initialSelection = this.ng1StateService.params.variantId;
-
-  variants$ = this.variantsService
-  .getVariantIds(this.component.getId())
-  .pipe(
-    switchMap(variantIds => this.variantsService.getVariants(variantIds)),
-  );
+  variants$ = this.variantsService.getVariants(this.component.getId());
 
   constructor(
     @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,
