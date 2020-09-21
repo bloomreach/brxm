@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Inject, Injectable, NgZone } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 
 import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1service';
 import { Variant } from '../models/variant.model';
@@ -27,10 +26,17 @@ import { Variant } from '../models/variant.model';
 export class VariantsService {
   constructor(
     @Inject(NG1_TARGETING_SERVICE) private readonly targetingService: Ng1TargetingService,
+    private zone: NgZone,
   ) {}
 
   getVariants(componentId: string): Observable<Variant[]> {
-    return from(this.targetingService.getVariants(componentId))
-      .pipe(map(response => response.data));
+    const variantsObservable = new Subject<Variant[]>();
+    this.targetingService.getVariants(componentId)
+      .then(response => {
+        this.zone.run(() => {
+          variantsObservable.next(response.data);
+        });
+      });
+    return variantsObservable;
   }
 }
