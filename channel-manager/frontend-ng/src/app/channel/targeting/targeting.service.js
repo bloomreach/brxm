@@ -21,6 +21,7 @@ class TargetingService {
     $window,
     ConfigService,
     HstService,
+    PageStructureService,
     PathService,
   ) {
     'ngInject';
@@ -30,6 +31,7 @@ class TargetingService {
     this.$window = $window;
     this.ConfigService = ConfigService;
     this.HstService = HstService;
+    this.PageStructureService = PageStructureService;
     this.PathService = PathService;
 
     this.init();
@@ -49,6 +51,9 @@ class TargetingService {
 
     this._apiUrl = Targeting.HttpProxy.REST_URL;
     this._collectors = Targeting.CollectorPlugins || {};
+
+    this._personaRulesSeparator = Targeting.PropertiesEditor.PERSONA_RULES_SEPARATOR;
+    this._personaVariantSeparator = Targeting.PropertiesEditor.PERSONA_VARIANT_SEPARATOR;
   }
 
   async getVariantIDs(containerItemId) {
@@ -74,6 +79,72 @@ class TargetingService {
       return this._success(`Successfully loaded variants for container-item "${containerItemId}"`, result);
     } catch (e) {
       return this._failure(`Failed to load variants for container-item "${containerItemId}"`, e);
+    }
+  }
+
+  /**
+   * Add a new variant
+   *
+   * @param {*} componentId the id of the component
+   * @param {*} formData the form-data of the variant
+   * @param {*} persona the persona (can be null)
+   * @param  {...any} characteristics var-args of objects like { id: 'characteristicId', targetGroupId: 'targetGroupId'}
+   */
+  async addVariant(componentId, formData, persona, ...characteristics) {
+    const page = this.PageStructureService.getPage();
+    const component = page.getComponentById(componentId);
+    const variantId = 'hippo-new-configuration';
+
+    const newVariantId = this._createVariantId(persona, characteristics);
+    const headers = {
+      lastModifiedTimestamp: component.lastModified,
+      'Move-To': newVariantId,
+    };
+
+    try {
+      const result = await this.HstService.doPutFormWithHeaders(formData, componentId, headers, variantId);
+      return this._success('oleole', result);
+    } catch (e) {
+      return this._failure('Failed to create', e);
+    }
+  }
+
+  _createVariantId(persona, characteristics = [], abvariantId) {
+    if (!abvariantId) {
+      abvariantId = Math.floor(new Date().getTime() / 1000);
+    }
+
+    const rules = characteristics.map((characteristic) => {
+      const rule = {};
+      rule[characteristic.id] = characteristic.targetGroupId;
+      return rule;
+    });
+
+    const personaId = persona ? persona.id : '';
+    const encodedRules = this._encodeRules(rules);
+    return personaId
+      + this._personaVariantSeparator + abvariantId
+      + (encodedRules ? this._personaRulesSeparator + encodedRules : '');
+  }
+
+  _encodeRules(rules) {
+    if (!rules || rules.length === 0) {
+      return '';
+    }
+
+    return JSON.stringify(['and'].concat(rules));
+  }
+
+  async deleteVariant(componentId, variantId) {
+    const page = this.PageStructureService.getPage();
+    const component = page.getComponentById(componentId);
+    const encodedVariantId = encodeURIComponent(variantId);
+    const headers = { lastModifiedTimestamp: component.lastModified };
+    try {
+      const result = await this.HstService.doDeleteWithHeaders(componentId, headers, encodedVariantId);
+      return this._success(`Successfully removed variant "${variantId}" from container-item "${componentId}"`, result);
+    } catch (e) {
+      return this._failure(`Failed to remove variant "${variantId}" from container-item "${componentId}"`, e);
     }
   }
 
