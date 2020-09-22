@@ -17,7 +17,8 @@
 <div class="variant-select mat-typography">
   <mat-form-field appearance="outline">
     <mat-label>Selected variant</mat-label>
-    <mat-select [value]="initialSelection$ | async">
+    <mat-select [value]="initialSelection"
+        (selectionChange)="changeVariant($event.value)">
       <mat-option *ngFor="let variant of variants$ | async"
                   [value]="variant.id">
         {{ variant.variantName }}
