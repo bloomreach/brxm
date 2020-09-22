@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,12 +39,16 @@ import insightsActive from '!!raw-loader!./icons/menu/insights.highlighted.svg';
 import insights from '!!raw-loader!./icons/menu/insights.svg';
 import projectsActive from '!!raw-loader!./icons/menu/projects.highlighted.svg';
 import projects from '!!raw-loader!./icons/menu/projects.svg';
+import searchAndMerchandisingActive from '!!raw-loader!./icons/menu/search-and-merch.highlighted.svg';
+import searchAndMerchandising from '!!raw-loader!./icons/menu/search-and-merch.svg';
 import seoActive from '!!raw-loader!./icons/menu/seo.highlighted.svg';
 import seo from '!!raw-loader!./icons/menu/seo.svg';
 import settingsActive from '!!raw-loader!./icons/menu/settings.highlighted.svg';
 import settings from '!!raw-loader!./icons/menu/settings.svg';
 import siteSearchActive from '!!raw-loader!./icons/menu/site-search.highlighted.svg';
 import siteSearch from '!!raw-loader!./icons/menu/site-search.svg';
+import testingActive from '!!raw-loader!./icons/menu/testing.highlighted.svg';
+import testing from '!!raw-loader!./icons/menu/testing.svg';
 import user from '!!raw-loader!./icons/menu/user.svg';
 import widgetActive from '!!raw-loader!./icons/menu/widget.highlighted.svg';
 import widget from '!!raw-loader!./icons/menu/widget.svg';
@@ -93,6 +97,9 @@ export const registerIcons = (iconRegistry: MatIconRegistry, donSanitizer: DomSa
   registerIcon('projects', projects);
   registerIcon('projects.highlighted', projectsActive);
 
+  registerIcon('search-and-merchandising', searchAndMerchandising);
+  registerIcon('search-and-merchandising.highlighted', searchAndMerchandisingActive);
+
   registerIcon('seo', seo);
   registerIcon('seo.highlighted', seoActive);
 
@@ -101,6 +108,9 @@ export const registerIcons = (iconRegistry: MatIconRegistry, donSanitizer: DomSa
 
   registerIcon('site-search', siteSearch);
   registerIcon('site-search.highlighted', siteSearchActive);
+
+  registerIcon('testing', testing);
+  registerIcon('testing.highlighted', testingActive);
 
   registerIcon('widget', widget);
   registerIcon('widget.highlighted', widgetActive);
