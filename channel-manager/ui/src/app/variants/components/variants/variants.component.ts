@@ -15,9 +15,10 @@
  */
 
 import { Component, Inject } from '@angular/core';
-import { map, switchMap, take } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
+import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
 import { VariantsService } from '../../services/variants.service';
 
 @Component({
@@ -27,19 +28,24 @@ import { VariantsService } from '../../services/variants.service';
 })
 export class VariantsComponent {
   private readonly component = this.componentEditorService.getComponent();
+  initialSelection = this.ng1StateService.params.variantId;
+
   variants$ = this.variantsService
   .getVariantIds(this.component.getId())
   .pipe(
     switchMap(variantIds => this.variantsService.getVariants(variantIds)),
   );
-  initialSelection$ = this.variants$
-  .pipe(
-    take(1),
-    map(variants => variants.find(v => v.id === this.component.getRenderVariant())?.id),
-  );
 
   constructor(
     @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,
+    @Inject(NG1_STATE_SERVICE) private readonly ng1StateService: Ng1StateService,
     private readonly variantsService: VariantsService,
   ) { }
+
+  changeVariant(variantId: string): void {
+    this.ng1StateService.go('hippo-cm.channel.edit-component', {
+      componentId: this.component.getId(),
+      variantId,
+    });
+  }
 }
