@@ -22,6 +22,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 
 import { NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
+import { NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
 import { VariantsService } from '../../services/variants.service';
 
 import { VariantsComponent } from './variants.component';
@@ -90,6 +91,12 @@ describe('VariantsComponent', () => {
       getVariantIds: () => of(mockVariantIds),
       getVariants: () => of(mockVariants),
     };
+    const stateServiceMock = {
+      go: jest.fn(),
+      params: {
+        variantId: mockVariants[0].id,
+      },
+    };
 
     TestBed.configureTestingModule({
       imports: [
@@ -100,6 +107,7 @@ describe('VariantsComponent', () => {
       declarations: [ VariantsComponent, MatIconMockComponent ],
       providers: [
         { provide: NG1_COMPONENT_EDITOR_SERVICE, useValue: componentEditorServiceMock },
+        { provide: NG1_STATE_SERVICE, useValue: stateServiceMock },
         { provide: VariantsService, useValue: variantsServiceMock },
       ],
     })
@@ -117,10 +125,7 @@ describe('VariantsComponent', () => {
     expect(componentEl).toMatchSnapshot();
   });
 
-  it('should select the first variant by default', done => {
-    component.initialSelection$.subscribe(id => {
-      expect(id).toEqual(mockVariantIds[0]);
-      done();
-    });
+  it('should select the first variant by default', () => {
+    expect(component.initialSelection).toEqual(mockVariantIds[0]);
   });
 });
