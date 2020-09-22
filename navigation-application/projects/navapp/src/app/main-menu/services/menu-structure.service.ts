@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ export class MenuStructureService {
 
   private createMenuStructure(): MenuItem[] {
     this.extensions.caption = this.translate('MENU_CONTAINER_EXTENSIONS');
+
     const dashboard = new MenuItemLink(
       'xm-home',
        this.translate('MENU_ITEM_XM_HOME'),
@@ -73,33 +74,31 @@ export class MenuStructureService {
       'document-search',
     );
 
-    const siteSearch = new MenuItemContainer(
-       this.translate('MENU_CONTAINER_SITE_SEARCH'),
+    const searchAndMerchandising = new MenuItemContainer(
+      this.translate('MENU_ITEM_SEARCH_AND_MERCHANDISING'),
       [
-        new MenuItemLink('site-search/search-ranking', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_RANKING')),
-        new MenuItemLink('site-search/redirects', this.translate('MENU_ITEM_SITE_SEARCH_REDIRECTS')),
-        new MenuItemLink('site-search/search-facets', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_FACETS')),
-        new MenuItemLink('site-search/ab-testing', this.translate('MENU_ITEM_SITE_SEARCH_AB_TESTING')),
-        new MenuItemContainer(this.translate('MENU_CONTAINER_CAMPAIGNS_AND_ASSETS'), [
-          new MenuItemLink('site-search/campaigns', this.translate('MENU_ITEM_SITE_SEARCH_CAMPAIGNS')),
-          new MenuItemLink('site-search/assets', this.translate('MENU_ITEM_SITE_SEARCH_ASSETS')),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_SITE_SEARCH'), [
+          new MenuItemLink('search-and-merchandising/site-search/search-ranking', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_RANKING')),
+          new MenuItemLink('search-and-merchandising/site-search/redirects', this.translate('MENU_ITEM_SITE_SEARCH_REDIRECTS')),
+          new MenuItemLink('search-and-merchandising/site-search/search-facets', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_FACETS')),
+          new MenuItemLink('search-and-merchandising/site-search/autosuggest-blacklist', this.translate('MENU_ITEM_SITE_SEARCH_AUTOSUGGEST_BLACKLIST')),
+          new MenuItemLink('search-and-merchandising/site-search/synonyms', this.translate('MENU_ITEM_SITE_SEARCH_SYNONYMS')),
         ]),
-        new MenuItemLink('site-search/autosuggest-blacklist', this.translate('MENU_ITEM_SITE_SEARCH_AUTOSUGGEST_BLACKLIST')),
-        new MenuItemLink('site-search/synonyms', this.translate('MENU_ITEM_SITE_SEARCH_SYNONYMS')),
-        new MenuItemLink('site-search/search-ranking-diagnostics', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_RANKING_DIAGNOSTICS')),
-        new MenuItemLink('site-search/profile-simulator', this.translate('MENU_ITEM_SITE_SEARCH_PROFILE_SIMULATOR')),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_CATEGORIES'), [
+          new MenuItemLink('search-and-merchandising/categories/category-ranking', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_RANKING')),
+          new MenuItemLink('search-and-merchandising/categories/all-category-pages', this.translate('MENU_ITEM_CATEGORIES_ALL_CATEGORY_PAGES')),
+          new MenuItemLink('search-and-merchandising/categories/category-facets-ranking', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_FACETS')),
+        ]),
+        new MenuItemContainer(this.translate('MENU_ITEM_OPERATIONAL_TOOLS'), [
+          new MenuItemContainer(this.translate('MENU_CONTAINER_CAMPAIGNS_AND_ASSETS'), [
+            new MenuItemLink('search-and-merchandising/operational-tools/campaigns', this.translate('MENU_ITEM_SITE_SEARCH_CAMPAIGNS')),
+            new MenuItemLink('search-and-merchandising/operational-tools/assets', this.translate('MENU_ITEM_SITE_SEARCH_ASSETS')),
+          ]),
+          new MenuItemLink('search-and-merchandising/operational-tools/search-ranking-diagnostics', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_RANKING_DIAGNOSTICS')),
+          new MenuItemLink('search-and-merchandising/operational-tools/profile-simulator', this.translate('MENU_ITEM_SITE_SEARCH_PROFILE_SIMULATOR')),
+        ]),
       ],
-      'site-search',
-    );
-
-    const categories = new MenuItemContainer(
-       this.translate('MENU_CONTAINER_CATEGORIES'),
-      [
-        new MenuItemLink('categories/category-ranking', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_RANKING')),
-        new MenuItemLink('categories/all-category-pages', this.translate('MENU_ITEM_CATEGORIES_ALL_CATEGORY_PAGES')),
-        new MenuItemLink('categories/category-facets-ranking', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_FACETS')),
-      ],
-      'categories',
+      'search-and-merchandising',
     );
 
     const seo = new MenuItemLink('seo', this.translate('MENU_ITEM_SEO'), 'seo');
@@ -129,9 +128,6 @@ export class MenuStructureService {
         ]),
         new MenuItemContainer(this.translate('MENU_CONTAINER_LIBRARY'), [
           new MenuItemContainer(this.translate('MENU_CONTAINER_OVERVIEW'), [
-            new MenuItemLink('insights/overview/account-overview', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_ACCOUNT_OVERVIEW')),
-            new MenuItemLink('insights/overview/account-traffic-breakdown',
-              this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_ACCOUNT_TRAFFIC_BREAKDOWN')),
             new MenuItemLink('insights/overview/sitewide-overview', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_SITEWIDE_OVERVIEW')),
             new MenuItemLink('insights/overview/site-search-overview', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_SITE_SEARCH_OVERVIEW')),
             new MenuItemLink('insights/overview/site-search-kpis', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_SITE_SEARCH_KPIS')),
@@ -148,8 +144,14 @@ export class MenuStructureService {
               this.translate('MENU_ITEM_INSIGHTS_REPORTING_SITE_SEARCH_DIAGNOSTICS')),
             new MenuItemLink('insights/reporting/site-search-debugging-library',
               this.translate('MENU_ITEM_INSIGHTS_REPORTING_SITE_SEARCH_DEBUGGING_LIBRARY')),
-            new MenuItemLink('insights/reporting/account-api-usage', this.translate('MENU_ITEM_INSIGHTS_REPORTING_ACCOUNT_API_USAGE')),
           ]),
+        ]),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_ACCOUNT_ANALYTICS'), [
+          new MenuItemLink('insights/account-analytics/account-overview', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_ACCOUNT_OVERVIEW')),
+          new MenuItemLink('insights/account-analytics/account-traffic-breakdown',
+            this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_ACCOUNT_TRAFFIC_BREAKDOWN')),
+          new MenuItemLink('insights/account-analytics/account-api-usage',
+            this.translate('MENU_ITEM_INSIGHTS_REPORTING_ACCOUNT_API_USAGE')),
         ]),
         new MenuItemContainer(this.translate('MENU_CONTAINER_CATEGORY_ANALYTICS'), [
           new MenuItemLink('insights/category-analytics/overall-performance',
@@ -206,6 +208,12 @@ export class MenuStructureService {
       'insights',
     );
 
+    const testing = new MenuItemLink(
+      'testing',
+      this.translate('MENU_ITEM_TESTING'),
+      'testing',
+    );
+
     const audiences = new MenuItemContainer(
        this.translate('MENU_CONTAINER_AUDIENCES'),
       [
@@ -221,7 +229,7 @@ export class MenuStructureService {
     const setup = new MenuItemContainer(
        this.translate('MENU_CONTAINER_SETUP'),
       [
-        new MenuItemContainer(this.translate('MENU_CONTAINER_ALGORITHM_SETTINGS'), [
+        new MenuItemContainer(this.translate('MENU_CONTAINER_BRSM_GLOBAL_CONFIGURATIONS'), [
           new MenuItemLink('setup/algorithm-settings/global-ranking-rules',
             this.translate('MENU_ITEM_SETUP_ALGORITHM_SETTINGS_GLOBAL_RANKING_RULES')),
           new MenuItemLink('setup/algorithm-settings/global-facet-management',
@@ -344,11 +352,11 @@ export class MenuStructureService {
       projects,
       content,
       documentSearch,
-      siteSearch,
-      categories,
+      searchAndMerchandising,
       seo,
       pathways,
       insights,
+      testing,
       audiences,
       this.extensions,
       setup,
