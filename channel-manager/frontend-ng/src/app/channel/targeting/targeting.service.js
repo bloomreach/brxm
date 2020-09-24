@@ -87,15 +87,15 @@ class TargetingService {
    *
    * @param {*} componentId the id of the component
    * @param {*} formData the form-data of the variant
-   * @param {*} persona the persona (can be null)
-   * @param  {...any} characteristics var-args of objects like { id: 'characteristicId', targetGroupId: 'targetGroupId'}
+   * @param {string} personaId optional personaId
+   * @param {Array<{ [characteristicId]: targetGroupValue }>} array of characteristic objects
    */
-  async addVariant(componentId, formData, persona, ...characteristics) {
+  async addVariant(componentId, formData, personaId, characteristics) {
     const page = this.PageStructureService.getPage();
     const component = page.getComponentById(componentId);
     const variantId = 'hippo-new-configuration';
 
-    const newVariantId = this._createVariantId(persona, characteristics);
+    const newVariantId = this._createVariantId(personaId, characteristics);
     const headers = {
       lastModifiedTimestamp: component.lastModified,
       'Move-To': newVariantId,
@@ -103,31 +103,24 @@ class TargetingService {
 
     try {
       const result = await this.HstService.doPutFormWithHeaders(formData, componentId, headers, variantId);
-      return this._success('oleole', result);
+      return this._success(`Succesfully created a new variant for component ${componentId}`, result);
     } catch (e) {
       return this._failure('Failed to create', e);
     }
   }
 
-  _createVariantId(persona, characteristics = [], abvariantId) {
+  _createVariantId(personaId = '', characteristics = [], abvariantId) {
     if (!abvariantId) {
       abvariantId = Math.floor(new Date().getTime() / 1000);
     }
 
-    const rules = characteristics.map((characteristic) => {
-      const rule = {};
-      rule[characteristic.id] = characteristic.targetGroupId;
-      return rule;
-    });
-
-    const personaId = persona ? persona.id : '';
-    const encodedRules = this._encodeRules(rules);
+    const encodedCharacteristics = this._encodeCharacteristics(characteristics);
     return personaId
       + this._personaVariantSeparator + abvariantId
-      + (encodedRules ? this._personaRulesSeparator + encodedRules : '');
+      + (encodedCharacteristics ? this._personaRulesSeparator + encodedCharacteristics : '');
   }
 
-  _encodeRules(rules) {
+  _encodeCharacteristics(rules) {
     if (!rules || rules.length === 0) {
       return '';
     }

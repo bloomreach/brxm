@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach
+ * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,17 @@
 import { InjectionToken } from '@angular/core';
 
 import { ApiResponseBody } from '../../models/api-response-body';
-import { Variant } from '../../variants/models/variant.model';
+import { Variant, VariantCharacteristicData } from '../../variants/models/variant.model';
 
 export interface Ng1TargetingService {
-  getCharacteristics(): Promise<void>;
-  getVariants(containerItemId: string): Promise<ApiResponseBody<Variant[]>>;}
+  getCharacteristics(): Promise<ApiResponseBody<void>>;
+  getVariants(containerItemId: string): Promise<ApiResponseBody<Variant[]>>;
+  addVariant(
+    componentId: string,
+    formData: any,
+    personaId?: string,
+    characteristics?: VariantCharacteristicData[],
+  ): Promise<ApiResponseBody<any>>;
+}
 
 export const NG1_TARGETING_SERVICE = new InjectionToken<Ng1TargetingService>('NG1_TARGETING_SERVICE');
