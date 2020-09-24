@@ -88,7 +88,9 @@ public class BaseHstComponent extends GenericHstComponent {
      * to a resolved parameter in the resolved HstSiteMapItem
      *
      * The parameter map used has inherited parameters from ancestor components, which have precedence over child components)
-     *
+     * <b>Note that the returned value does not take into account that there are for example prefixed parameters for targeting
+     * or param values which should be overridden by a query param. In general, always better to use
+     * BaseHstComponent#getComponentParametersInfo(org.hippoecm.hst.core.component.HstRequest)</b>
      * @param name
      * @return the resolved parameter value for this name, or <code>null</null> if not present
      */
