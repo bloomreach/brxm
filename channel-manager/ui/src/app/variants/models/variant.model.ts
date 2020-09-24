@@ -14,12 +14,32 @@
  * limitations under the License.
  */
 
+export enum VariantExpressionType {
+  Persona = 'persona',
+  Rule = 'rule',
+}
+
+export interface VariantExpression {
+  id: string;
+  name: string;
+  type: VariantExpressionType;
+}
+
+export interface VariantRules {
+  persona: string;
+  characteristics: VariantCharacteristicData[];
+}
+
+export interface VariantCharacteristicData {
+  [characteristicId: string]: string;
+}
+
 export interface Variant {
   abvariantId: string | null;
   avatar: string;
   defaultVariant: boolean;
   description: string | null;
-  expressions: [];
+  expressions: VariantExpression[];
   group: string;
   id: string;
   name: string;
