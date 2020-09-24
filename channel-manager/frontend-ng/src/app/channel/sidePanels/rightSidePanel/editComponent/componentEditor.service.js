@@ -315,14 +315,14 @@ class ComponentEditorService {
       return;
     }
 
-    await this.ContainerService.renderComponent(component, this._propertiesAsFormData());
+    await this.ContainerService.renderComponent(component, this.propertiesAsFormData());
   }
 
   async save() {
     const { data: { id }, reloadRequired } = await this.HstComponentService.setParameters(
       this.component.getId(),
       this.component.getRenderVariant(),
-      this._propertiesAsFormData(),
+      this.propertiesAsFormData(),
     );
 
     if (reloadRequired) {
@@ -333,7 +333,7 @@ class ComponentEditorService {
     return this.CmsService.reportUsageStatistic('CompConfigSidePanelSave');
   }
 
-  _propertiesAsFormData() {
+  propertiesAsFormData() {
     return this.properties.reduce((formData, { name, type, value }) => {
       if (type === 'datefield') {
         // cut off the time and time zone information from the value that the datefield returns

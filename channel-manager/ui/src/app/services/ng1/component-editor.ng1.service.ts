@@ -17,6 +17,7 @@
 import { InjectionToken } from '@angular/core';
 
 export interface Ng1ComponentEditorService {
+  propertiesAsFormData(): { [formField: string]: string };
   getComponent(): any;
   getComponentId(): string;
 }
