@@ -39,10 +39,10 @@ public class ParentApiCallerTest {
 
     @Test
     public void updateNavLocation() {
-        final String javascript = String.format(ParentApiCaller.JAVA_SCRIPT_TEMPLATE, "{\"path\":\"path\",\"breadcrumbLabel\":\"some breadcrumb label\"}");
+        final String javascript = String.format(ParentApiCaller.JAVA_SCRIPT_TEMPLATE, "{\"path\":\"path\",\"breadcrumbLabel\":\"some breadcrumb label\",\"addHistory\":false}");
         handler.appendJavaScript(javascript);
         replay(handler);
-        parentApi.updateNavLocation("path", "some breadcrumb label");
+        parentApi.updateNavLocation("path", "some breadcrumb label", false);
         verify(handler);
     }
 
