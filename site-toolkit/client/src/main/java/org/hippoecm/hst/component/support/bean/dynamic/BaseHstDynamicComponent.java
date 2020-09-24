@@ -42,9 +42,11 @@ import com.google.common.base.Strings;
  * </p>
  * <p>
  * The component exposes all its params:
+ * <pre>
  *      In Page Model API it's handled by the API itself.
  *      For FTL, the component sets the parameters in the request, using the attribute
  *          "org.hippoecm.hst.utilsParameterUtils.parametersInfo".
+ * </pre>
  * </p>
  * <p>
  * The component also finds all parameters of type JcrPath, resolves the beans that are referenced and
@@ -93,9 +95,23 @@ public class BaseHstDynamicComponent extends BaseHstComponent {
             try {
                 DynamicParameterConfig componentParameterConfig = param.getComponentParameterConfig();
                 if (componentParameterConfig instanceof JcrPathParameterConfig) {
-                    HippoBean bean = getContentBeanForPath(getComponentParameter(param.getName()), request,
-                        ((JcrPathParameterConfig)componentParameterConfig).isRelative());
-                    request.setModel(param.getName(), bean);
+                    // do not use BaseHstComponent#getComponentParameter since this does not take 'targeting' neither
+                    // POST query params into account, see HstParameterInfoProxyFactoryImpl#ParameterInfoInvocationHandler#getParameterValue
+                    final Object o = componentParametersInfo.getResidualParameterValues().get(param.getName());
+                    if (o == null) {
+                        log.debug("No residual value for '{}' found. If it is non-residual, it means there is a subclass which " +
+                                "should set the model for the explicit interface method itself.", param.getName());
+                        continue;
+                    }
+                    if (o instanceof String) {
+                        HippoBean bean = getContentBeanForPath((String)o, request,
+                                ((JcrPathParameterConfig)componentParameterConfig).isRelative());
+                        request.setModel(param.getName(), bean);
+                    } else {
+                        // never expected actually
+                        log.warn("Unexpected value type for jcr path param '{}'. Type was '{}'", param.getName(), o.getClass());
+                    }
+
                 }
             } catch (ObjectBeanManagerException obme) {
                 log.error("Problem fetching or converting bean", obme);
