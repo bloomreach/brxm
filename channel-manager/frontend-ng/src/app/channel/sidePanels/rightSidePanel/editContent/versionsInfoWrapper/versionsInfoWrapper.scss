@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-import './versionsInfoWrapper.scss';
-import controller from './versionsInfoWrapper.controller';
-import template from './versionsInfoWrapper.html';
-
-const versionsInfoWrapperComponent = {
-  controller,
-  template,
-};
-
-export default versionsInfoWrapperComponent;
+versions-info-wrapper {
+  overflow: scroll;
+}
