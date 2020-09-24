@@ -132,8 +132,6 @@ public class BrowserPerspective extends Perspective {
                 final String newTab = JcrUtils.getNodePathQuietly(newModel.getObject());
                 final String documentName = getDocumentName(newModel);
 
-                updateNavLocation(newTab, documentName);
-
                 state.onTabChanged(newTab);
             }
 
@@ -198,7 +196,7 @@ public class BrowserPerspective extends Perspective {
             }
             if (state.isUpdateLastVisited()) {
                 final LastVisited lastVisited = state.getLastVisited();
-                updateNavLocation(lastVisited.getPath(), lastVisited.getLabel());
+                updateNavLocation(lastVisited.getPath(), lastVisited.getLabel(), true);
             }
         }
         state.reset();
@@ -219,7 +217,6 @@ public class BrowserPerspective extends Perspective {
     protected void onActivated() {
         super.onActivated();
         tabs.focusRecentTabUnlessHidden();
-        updateNavLocation(tabs.getSelectedTabPath(), null);
     }
 
     @Override
@@ -310,11 +307,11 @@ public class BrowserPerspective extends Perspective {
 
     }
 
-    private void updateNavLocation(String selectedTabPath, String breadcrumbLabel) {
+    private void updateNavLocation(String selectedTabPath, String breadcrumbLabel, boolean addHistory) {
         final String appPath = getAppPath();
         final String path = Optional.ofNullable(selectedTabPath)
                 .map(tabPath -> String.format("%s/path%s", appPath, tabPath))
                 .orElse(appPath);
-        new ParentApiCaller().updateNavLocation(path, breadcrumbLabel);
+        new ParentApiCaller().updateNavLocation(path, breadcrumbLabel, addHistory);
     }
 }
