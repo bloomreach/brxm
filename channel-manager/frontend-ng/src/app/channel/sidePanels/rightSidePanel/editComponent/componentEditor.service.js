@@ -63,11 +63,15 @@ class ComponentEditorService {
     const channel = this.ChannelService.getChannel();
     const page = this.PageStructureService.getPage();
     const component = page.getComponentById(componentId);
-    variantId = variantId || component.getRenderVariant();
+
+    if (!variantId && component) {
+      variantId = component.getRenderVariant();
+    }
 
     this.request = this.HstComponentService
-      .getProperties(component.getId(), variantId)
+      .getProperties(componentId, variantId)
       .then(response => this._onLoadSuccess(channel, component, page, response.properties))
+      .then(() => this.updatePreview())
       .catch(() => this._onLoadFailure())
       .finally(() => { delete this.request; });
 
