@@ -273,9 +273,17 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         public void updateModel(final IModel<Node> model) {
             super.setModel(updateModelForFrozenNodeWithCurrentBranchId(model));
 
-            onModelChanged(NavLocation.document(model));
-            if (navLocationModel != null) {
-                navLocationModel.setObject(NavLocation.document(model));
+            final Node node = model.getObject();
+            if (node == null) {
+                return;
+            }
+
+            try {
+                if (node.isNodeType(NT_HANDLE)) {
+                    onModelChanged(NavLocation.document(model));
+                }
+            } catch (RepositoryException e) {
+                log.warn("Failed to check node type", e);
             }
         }
 
