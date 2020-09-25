@@ -28,7 +28,7 @@ public class BrowseState implements IClusterable {
     private boolean tabChanged;
     private boolean listingChanged;
     private boolean expandChanged;
-    private boolean lastVisitedChanged;
+    private boolean navLocationChanged;
 
     // render actions
     private boolean expandDefault;
@@ -45,7 +45,7 @@ public class BrowseState implements IClusterable {
     private String section;
     private boolean expanded;
     private Selection last;
-    private LastVisited lastVisited;
+    private NavLocation navLocation;
 
     public void onSectionChanged(final String newSection) {
         sectionChanged = true;
@@ -61,10 +61,10 @@ public class BrowseState implements IClusterable {
         listingChanged = true;
     }
 
-    public void onLastVisitedChanged(final LastVisited newLastVisited) {
-        if (!Objects.equals(lastVisited, newLastVisited)) {
-            lastVisitedChanged = true;
-            lastVisited = newLastVisited;
+    public void onNavLocationChanged(final NavLocation newNavLocation) {
+        if (!Objects.equals(navLocation, newNavLocation)) {
+            navLocationChanged = true;
+            navLocation = newNavLocation;
         }
     }
 
@@ -141,7 +141,7 @@ public class BrowseState implements IClusterable {
 
     private boolean renderStateIsDirty() {
         return expandDefault || collapseAll || collapseListing || expandListing || focusTabs || blurTabs ||
-                restoreSelection || shelveSelection || lastVisitedChanged;
+                restoreSelection || shelveSelection || navLocationChanged;
     }
 
     private boolean currentSectionMatchesLastSection() {
@@ -149,7 +149,7 @@ public class BrowseState implements IClusterable {
     }
 
     public boolean isDirty() {
-        return sectionChanged || tabChanged || listingChanged || expandChanged || lastVisitedChanged;
+        return sectionChanged || tabChanged || listingChanged || expandChanged || navLocationChanged;
     }
 
     public void reset() {
@@ -157,7 +157,7 @@ public class BrowseState implements IClusterable {
         tabChanged = false;
         listingChanged = false;
         expandChanged = false;
-        lastVisitedChanged = false;
+        navLocationChanged = false;
 
         expandDefault = false;
         collapseAll = false;
@@ -177,8 +177,8 @@ public class BrowseState implements IClusterable {
         return last == null ? null : last.tab;
     }
 
-    public LastVisited getLastVisited() {
-        return lastVisited;
+    public NavLocation getNavLocation() {
+        return navLocation;
     }
 
     // Render state
@@ -214,8 +214,8 @@ public class BrowseState implements IClusterable {
         return restoreSelection;
     }
 
-    public boolean isUpdateLastVisited() {
-        return lastVisitedChanged;
+    public boolean isUpdateNavLocation() {
+        return navLocationChanged;
     }
 
     @Override
@@ -225,6 +225,7 @@ public class BrowseState implements IClusterable {
                 append("sectionChanged", sectionChanged).
                 append("listingChanged", listingChanged).
                 append("tabChanged", tabChanged).
+                append("navLocationChanged", navLocationChanged).
                 append("tab", tab).
                 append("section", section).
                 append("expanded", isExpanded()).
@@ -237,6 +238,7 @@ public class BrowseState implements IClusterable {
                 append("blurTabs", blurTabs).
                 append("shelveSelection", shelveSelection).
                 append("restoreSelection", restoreSelection).
+                append("navLocation", navLocation).
                 toString();
     }
 

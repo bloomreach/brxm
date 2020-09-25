@@ -59,10 +59,10 @@ public class Navigator extends RenderPlugin {
         final JcrNodeModel defaultRootPath = new JcrNodeModel(config.getString("model.default.path", "/"));
 
         final boolean isPicker = Strings.isEqual(getVariation(), "picker");
-        final ObservableModel<LastVisited> lastVisitedModel = !isPicker
-                ? ObservableModel.from(context, LastVisited.MODEL_ID)
+        final ObservableModel<NavLocation> navLocationModel = !isPicker
+                ? ObservableModel.from(context, NavLocation.MODEL_ID)
                 : null;
-        final BrowseService browseService = new BrowseService(context, config, defaultRootPath, lastVisitedModel) {
+        final BrowseService browseService = new BrowseService(context, config, defaultRootPath, navLocationModel) {
 
             @Override
             public void browse(final IModel<Node> model) {
