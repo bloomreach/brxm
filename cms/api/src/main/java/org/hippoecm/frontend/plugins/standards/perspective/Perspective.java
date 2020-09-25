@@ -225,6 +225,10 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     protected void onDeactivated() {
     }
 
+    protected boolean isActivated() {
+        return isActivated;
+    }
+
     protected void publishEvent(final String name) {
         if (eventsEnabled() && StringUtils.isNotEmpty(name)) {
             final UsageEvent event = new UsageEvent(name);
