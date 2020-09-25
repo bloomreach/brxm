@@ -41,15 +41,15 @@ import com.google.common.base.Strings;
  * {@link DynamicComponentInfo} or an extension of it as its {@link ParametersInfo#type()}.
  * </p>
  * <p>
- * The component exposes all its params:
+ * This component exposes all its params:
  * <pre>
  *      In Page Model API it's handled by the API itself.
  *      For FTL, the component sets the parameters in the request, using the attribute
- *          "org.hippoecm.hst.utilsParameterUtils.parametersInfo".
+ *          "org.hippoecm.hst.utils.ParameterUtils.parametersInfo".
  * </pre>
  * </p>
  * <p>
- * The component also finds all parameters of type JcrPath, resolves the beans that are referenced and
+ * The component also finds all the residual (defined in JCR) parameters of type JcrPath, resolves the beans that are referenced and
  * sets those beans as separate models in the request, each by the name of its parameter.
  * </p>
  * <p>
@@ -84,7 +84,7 @@ public class BaseHstDynamicComponent extends BaseHstComponent {
     /**
      * Process the component parameters
      *
-     * Resolves beans of all parameters of type JcrPath and sets them
+     * Resolves beans of all residual (defined in JCR) parameters of type JcrPath and sets them
      * as separate models into the request.
      *
      * @param componentParametersInfo The configuration of the current component
@@ -109,7 +109,8 @@ public class BaseHstDynamicComponent extends BaseHstComponent {
                         request.setModel(param.getName(), bean);
                     } else {
                         // never expected actually
-                        log.warn("Unexpected value type for jcr path param '{}'. Type was '{}'", param.getName(), o.getClass());
+                        log.warn("Unexpected value type for jcr path param '{}'. Type was '{}', but String is expected",
+                                param.getName(), o.getClass());
                     }
 
                 }
@@ -120,7 +121,7 @@ public class BaseHstDynamicComponent extends BaseHstComponent {
     }
 
     /**
-     * Finds a HippoBean for a given path. If path is null or empty, null will be returned
+     * Finds a HippoBean for a given path. If the path is null or empty, null will be returned
      *
      * @param documentPath relative document (content) path
      * @param request      HstRequest
