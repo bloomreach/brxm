@@ -196,7 +196,7 @@ public class BrowserPerspective extends Perspective {
             }
             if (state.isUpdateNavLocation()) {
                 final NavLocation navLocation = state.getNavLocation();
-                updateNavLocation(navLocation.getPath(), navLocation.getLabel(), true);
+                updateNavLocation(navLocation);
             }
         }
         state.reset();
@@ -304,14 +304,15 @@ public class BrowserPerspective extends Perspective {
                 reference.detach();
             }
         }
-
     }
 
-    private void updateNavLocation(String selectedTabPath, String breadcrumbLabel, boolean addHistory) {
+    private void updateNavLocation(final NavLocation navLocation) {
         final String appPath = getAppPath();
-        final String path = Optional.ofNullable(selectedTabPath)
+        final String path = Optional.ofNullable(navLocation.getPath())
                 .map(tabPath -> String.format("%s/path%s", appPath, tabPath))
                 .orElse(appPath);
-        new ParentApiCaller().updateNavLocation(path, breadcrumbLabel, addHistory);
+        final String label = navLocation.getLabel();
+        final boolean addToHistory = navLocation.getMode() == NavLocation.Mode.ADD;
+        new ParentApiCaller().updateNavLocation(path, label, addToHistory);
     }
 }
