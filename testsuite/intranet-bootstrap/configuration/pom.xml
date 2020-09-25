@@ -19,7 +19,7 @@ limitations under the License. -->
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-intranet-bootstrap</artifactId>
-    <version>14.4.0-SNAPSHOT</version>
+    <version>14.4.0-cm-extjs-removal-SNAPSHOT</version>
   </parent>
 
   <name>My Hippo Project Bootstrap Configuration</name>
