@@ -58,7 +58,7 @@ public class BrowseStateTest {
         assertTrue(state.isDirty());
 
         state = new BrowseState();
-        state.onLastVisitedChanged(new LastVisited("path", "label"));
+        state.onNavLocationChanged(new NavLocation("path", "label"));
         assertTrue(state.isDirty());
     }
 
@@ -90,7 +90,7 @@ public class BrowseStateTest {
         assertFalse(state.isDirty());
 
         state = new BrowseState();
-        state.onLastVisitedChanged(new LastVisited("path", "label"));
+        state.onNavLocationChanged(new NavLocation("path", "label"));
         state.reset();
         assertFalse(state.isDirty());
     }

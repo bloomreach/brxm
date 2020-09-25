@@ -21,24 +21,25 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
 
-public class LastVisited implements IClusterable {
+public class NavLocation implements IClusterable {
 
-    public static final String MODEL_ID = "LAST_VISITED_MODEL";
+    public static final String MODEL_ID = "NAV_LOCATION_MODEL";
 
-    public static LastVisited document(final IModel<Node> model) {
+    public static NavLocation document(final IModel<Node> model) {
         final String path = JcrUtils.getNodePathQuietly(model.getObject());
         final String label = getDocumentName(model);
-        return new LastVisited(path, label);
+        return new NavLocation(path, label);
     }
 
-    public static LastVisited folder(final IModel<Node> model) {
+    public static NavLocation folder(final IModel<Node> model) {
         final String path = JcrUtils.getNodePathQuietly(model.getObject());
-        return new LastVisited(path, StringUtils.EMPTY);
+        return new NavLocation(path, StringUtils.EMPTY);
     }
 
     private static String getDocumentName(final IModel<Node> model) {
@@ -55,7 +56,7 @@ public class LastVisited implements IClusterable {
     private final String label;
     private final String path;
 
-    LastVisited(final String path, final String label) {
+    NavLocation(final String path, final String label) {
         this.path = path;
         this.label = label;
     }
@@ -69,6 +70,14 @@ public class LastVisited implements IClusterable {
     }
 
     @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("label", label)
+                .append("path", path)
+                .toString();
+    }
+
+    @Override
     public boolean equals(final Object o) {
         if (this == o) {
             return true;
@@ -76,7 +85,7 @@ public class LastVisited implements IClusterable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final LastVisited that = (LastVisited) o;
+        final NavLocation that = (NavLocation) o;
         return Objects.equals(getLabel(), that.getLabel()) &&
                 Objects.equals(getPath(), that.getPath());
     }

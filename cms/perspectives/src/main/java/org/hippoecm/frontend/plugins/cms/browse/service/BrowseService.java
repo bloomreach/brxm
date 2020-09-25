@@ -33,7 +33,7 @@ import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.browse.LastVisited;
+import org.hippoecm.frontend.plugins.cms.browse.NavLocation;
 import org.hippoecm.frontend.plugins.cms.browse.model.BrowserSections;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection.DocumentCollectionType;
@@ -68,20 +68,20 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
     private final DocumentCollectionModel collectionModel;
     private final DocumentModelService documentService;
     private final BrowserSections sections;
-    private final ObservableModel<LastVisited> lastVisitedModel;
+    private final ObservableModel<NavLocation> navLocationModel;
     private FolderModelService folderService;
 
     public BrowseService(final IPluginContext context, final IPluginConfig config, final JcrNodeModel document) {
         this(context, config, document, null);
     }
 
-    public BrowseService(final IPluginContext context, final IPluginConfig config, final JcrNodeModel document, final ObservableModel<LastVisited> lastVisitedModel) {
+    public BrowseService(final IPluginContext context, final IPluginConfig config, final JcrNodeModel document, final ObservableModel<NavLocation> navLocationModel) {
         documentService = new DocumentModelService(config, context);
         documentService.init(context);
 
         collectionModel = new DocumentCollectionModel(null);
 
-        this.lastVisitedModel = lastVisitedModel;
+        this.navLocationModel = navLocationModel;
 
         if (config.containsKey("model.folder")) {
             folderService = new FolderModelService(config);
@@ -202,9 +202,9 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
     protected void onBrowse() {
     }
 
-    private void onModelChanged(final LastVisited lastVisited) {
-        if (lastVisitedModel != null) {
-            lastVisitedModel.setObject(lastVisited);
+    private void onModelChanged(final NavLocation navLocation) {
+        if (navLocationModel != null) {
+            navLocationModel.setObject(navLocation);
         }
     }
 
@@ -273,9 +273,9 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         public void updateModel(final IModel<Node> model) {
             super.setModel(updateModelForFrozenNodeWithCurrentBranchId(model));
 
-            onModelChanged(LastVisited.document(model));
-            if (lastVisitedModel != null) {
-                lastVisitedModel.setObject(LastVisited.document(model));
+            onModelChanged(NavLocation.document(model));
+            if (navLocationModel != null) {
+                navLocationModel.setObject(NavLocation.document(model));
             }
         }
 
@@ -351,7 +351,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         public void updateModel(final IModel<Node> model) {
             super.setModel(model);
 
-            onModelChanged(LastVisited.folder(model));
+            onModelChanged(NavLocation.folder(model));
         }
 
         @Override
