@@ -54,7 +54,7 @@ public class BrowserPerspective extends Perspective {
     private IExpandableCollapsable listing;
     private TabsPlugin tabs;
     private ObservableModel<String> sectionModel;
-    private ObservableModel<LastVisited> lastVisitedModel;
+    private ObservableModel<NavLocation> navLocationModel;
     private ModelService<Node> nodeService;
     private BrowseState state;
 
@@ -112,16 +112,16 @@ public class BrowserPerspective extends Perspective {
             }
         }, IObserver.class.getName());
 
-        lastVisitedModel = ObservableModel.from(context, LastVisited.MODEL_ID);
-        context.registerService(new IObserver<ObservableModel<LastVisited>>() {
+        navLocationModel = ObservableModel.from(context, NavLocation.MODEL_ID);
+        context.registerService(new IObserver<ObservableModel<NavLocation>>() {
             @Override
-            public ObservableModel<LastVisited> getObservable() {
-                return lastVisitedModel;
+            public ObservableModel<NavLocation> getObservable() {
+                return navLocationModel;
             }
 
             @Override
-            public void onEvent(final Iterator<? extends IEvent<ObservableModel<LastVisited>>> events) {
-                state.onLastVisitedChanged(lastVisitedModel.getObject());
+            public void onEvent(final Iterator<? extends IEvent<ObservableModel<NavLocation>>> events) {
+                state.onNavLocationChanged(navLocationModel.getObject());
             }
 
         }, IObserver.class.getName());
@@ -194,9 +194,9 @@ public class BrowserPerspective extends Perspective {
             if (state.isRestoreSelection()) {
                 nodeService.setModel(new JcrNodeModel(state.getTab()));
             }
-            if (state.isUpdateLastVisited()) {
-                final LastVisited lastVisited = state.getLastVisited();
-                updateNavLocation(lastVisited.getPath(), lastVisited.getLabel(), true);
+            if (state.isUpdateNavLocation()) {
+                final NavLocation navLocation = state.getNavLocation();
+                updateNavLocation(navLocation.getPath(), navLocation.getLabel(), true);
             }
         }
         state.reset();
@@ -208,7 +208,7 @@ public class BrowserPerspective extends Perspective {
     protected void onDetach() {
         sectionModel.detach();
         nodeService.detach();
-        lastVisitedModel.detach();
+        navLocationModel.detach();
 
         super.onDetach();
     }
