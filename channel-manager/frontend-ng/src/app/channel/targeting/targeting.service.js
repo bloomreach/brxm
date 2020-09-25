@@ -39,6 +39,7 @@ class TargetingService {
 
   init() {
     const iframe = this.$window.parent;
+
     if (!iframe.Hippo) {
       throw new Error('Failed to retrieve Hippo object from global scope');
     }

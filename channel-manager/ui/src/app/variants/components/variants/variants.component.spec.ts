@@ -15,7 +15,7 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -23,10 +23,10 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
+import { Variant } from '../../models/variant.model';
 import { VariantsService } from '../../services/variants.service';
 
 import { VariantsComponent } from './variants.component';
-import { Variant } from '../../models/variant.model';
 
 describe('VariantsComponent', () => {
   let component: VariantsComponent;
@@ -107,12 +107,6 @@ describe('VariantsComponent', () => {
         variantId: mockVariants[0].id,
       },
       go: jest.fn(),
-    };
-    const stateServiceMock = {
-      go: jest.fn(),
-      params: {
-        variantId: mockVariants[0].id,
-      },
     };
 
     TestBed.configureTestingModule({
