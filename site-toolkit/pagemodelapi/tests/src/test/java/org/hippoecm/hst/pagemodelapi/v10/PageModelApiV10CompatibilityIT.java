@@ -237,10 +237,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         assertTrue("Field 'pagination' is missing", root.path("page").path("uid4").path("models").has("pagination"));
         final String contentReference = root.path("page").path("uid4").path("models").path("pagination").path("$ref").asText();
         assertEquals("Output does not contain reference to content document", contentReference, "/page/uid7");
-        assertTrue("Field 'scope' is missing", root.path("page").path("uid4").path("models").has("scope"));
-        final String contentQueryReference = root.path("page").path("uid4").path("models").path("scope").path("$ref").asText();
-        assertNotNull("Content query scope reference ", contentQueryReference);
-        assertTrue("Content document is missing from the pma output", root.path("page").has(contentQueryReference.split("/page/")[1]));
+        assertFalse("Field 'scope' must be missing, because it's not a residual field", root.path("page").path("uid4").path("models").has("scope"));
     }
 
     @Test
