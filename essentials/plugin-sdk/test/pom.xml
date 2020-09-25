@@ -19,7 +19,7 @@
   <parent>
     <artifactId>hippo-essentials-plugin-sdk</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>14.4.0-SNAPSHOT</version>
+    <version>14.4.0-cm-extjs-removal-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 

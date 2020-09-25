@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-repository</artifactId>
-    <version>14.4.0-SNAPSHOT</version>
+    <version>14.4.0-cm-extjs-removal-SNAPSHOT</version>
   </parent>
 
   <name>Repository Connector</name>
