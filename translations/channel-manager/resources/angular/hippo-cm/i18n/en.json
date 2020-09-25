@@ -107,6 +107,7 @@
   "ERROR_MENU_SAVE_FAILED": "Failed to save menu",
   "ERROR_REQUEST_PUBLICATION_FAILED": "Failed to request publication of document '{{ documentName }}'",
   "TOOLBAR_MENU_PAGE_TOOLS": "Tools",
+  "VARIANT": "Variant",
   "PLACEHOLDER_DOCUMENT_NAME": "Document Name",
   "DOCUMENT_CONTAINS_ONE_ERROR": "Could not save '{{name}}': document contains 1 error",
   "TOOLBAR_MENU_XPAGE_PUBLISH_ERROR": "Failed to publish page '{{documentName}}'",

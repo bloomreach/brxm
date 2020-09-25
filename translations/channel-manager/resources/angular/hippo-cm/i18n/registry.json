@@ -1498,6 +1498,16 @@
     "CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "VARIANT" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
