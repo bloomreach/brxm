@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -39,8 +38,8 @@ import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.ServiceTracker;
-import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.util.JcrConstants;
 
 public class BrowserPerspective extends Perspective {
 
@@ -130,19 +129,7 @@ public class BrowserPerspective extends Perspective {
             @Override
             void onUpdateModel(final IModel<Node> oldModel, final IModel<Node> newModel) {
                 final String newTab = JcrUtils.getNodePathQuietly(newModel.getObject());
-                final String documentName = getDocumentName(newModel);
-
                 state.onTabChanged(newTab);
-            }
-
-            String getDocumentName(IModel<Node> model) {
-                try {
-                    final IModel<String> nameModel = DocumentUtils.getDocumentNameModel(model);
-
-                    return nameModel != null ? nameModel.getObject() : "";
-                } catch (RepositoryException e) {
-                    return "";
-                }
             }
         };
 
@@ -169,6 +156,10 @@ public class BrowserPerspective extends Perspective {
 
     @Override
     public void render(final PluginRequestTarget target) {
+        if (isActive() && !isActivated()) {
+            beforeActivated();
+        }
+
         if (state.processChanges(hasOpenTabs())) {
             if (state.isExpandDefault()) {
                 wireframe.expandDefault();
@@ -204,6 +195,33 @@ public class BrowserPerspective extends Perspective {
         super.render(target);
     }
 
+    private void beforeActivated() {
+        tabs.focusRecentTabUnlessHidden();
+
+        // When rendering for the first time, we want to replace the URL for of the content-perspective ("/content"),
+        // with a NavLocation that depicts the root path of the content-perspective ("/content/path/content/documents")
+        if (navLocationModel.getObject() == null) {
+            final IModel<Node> rootFolder = new JcrNodeModel(JcrConstants.DOCUMENTS_PATH);
+            final NavLocation navLocation = NavLocation.folder(rootFolder).setMode(NavLocation.Mode.REPLACE);
+            navLocationModel.setObject(navLocation);
+            updateNavLocation(navLocation);
+            return;
+        }
+
+        final NavLocation navLocation = navLocationModel.getObject();
+        final String selectedTabPath = tabs.getSelectedTabPath();
+        if (selectedTabPath == null || selectedTabPath.equals(navLocation.getPath())) {
+            // The previously rendered document or folder is already displayed, we only need to add the NavLocation
+            // to the history
+            updateNavLocation(navLocation);
+            return;
+        }
+
+        final IModel<Node> document = new JcrNodeModel(selectedTabPath);
+        final NavLocation newNavLocation = NavLocation.document(document).setMode(NavLocation.Mode.REPLACE);
+        navLocationModel.setObject(newNavLocation);
+    }
+
     @Override
     protected void onDetach() {
         sectionModel.detach();
@@ -211,12 +229,6 @@ public class BrowserPerspective extends Perspective {
         navLocationModel.detach();
 
         super.onDetach();
-    }
-
-    @Override
-    protected void onActivated() {
-        super.onActivated();
-        tabs.focusRecentTabUnlessHidden();
     }
 
     @Override

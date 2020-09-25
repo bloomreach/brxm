@@ -80,8 +80,9 @@ public class NavLocation implements IClusterable {
         return mode;
     }
 
-    public void setMode(final Mode mode) {
+    public NavLocation setMode(final Mode mode) {
         this.mode = mode;
+        return this;
     }
 
     @Override
