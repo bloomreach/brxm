@@ -33,6 +33,7 @@ describe('TargetingService', () => {
     });
 
     $window.parent.Hippo.Targeting.HttpProxy.REST_URL = 'targeting-rest-url';
+
     TargetingService.init();
   });
 
