@@ -31,6 +31,11 @@ public class NavLocation implements IClusterable {
 
     public static final String MODEL_ID = "NAV_LOCATION_MODEL";
 
+    public enum Mode {
+        ADD,
+        REPLACE
+    }
+
     public static NavLocation document(final IModel<Node> model) {
         final String path = JcrUtils.getNodePathQuietly(model.getObject());
         final String label = getDocumentName(model);
@@ -56,6 +61,8 @@ public class NavLocation implements IClusterable {
     private final String label;
     private final String path;
 
+    private Mode mode = Mode.ADD;
+
     NavLocation(final String path, final String label) {
         this.path = path;
         this.label = label;
@@ -69,11 +76,20 @@ public class NavLocation implements IClusterable {
         return label;
     }
 
+    public Mode getMode() {
+        return mode;
+    }
+
+    public void setMode(final Mode mode) {
+        this.mode = mode;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("label", label)
                 .append("path", path)
+                .append("mode", mode)
                 .toString();
     }
 
