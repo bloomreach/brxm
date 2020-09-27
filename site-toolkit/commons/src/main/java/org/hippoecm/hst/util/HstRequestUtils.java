@@ -767,7 +767,7 @@ public class HstRequestUtils {
         return cmsLocation;
     }
 
-    private static HstModel getPlatformHstModel() {
+    public static HstModel getPlatformHstModel() {
 
         HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
         for (HstModel hstModel : hstModelRegistry.getHstModels()) {
