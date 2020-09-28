@@ -36,15 +36,15 @@ public class NavLocation implements IClusterable {
         REPLACE
     }
 
-    public static NavLocation document(final IModel<Node> model) {
+    public static NavLocation document(final IModel<Node> model, final Mode mode) {
         final String path = JcrUtils.getNodePathQuietly(model.getObject());
         final String label = getDocumentName(model);
-        return new NavLocation(path, label);
+        return new NavLocation(path, label, mode);
     }
 
-    public static NavLocation folder(final IModel<Node> model) {
+    public static NavLocation folder(final IModel<Node> model, final Mode mode) {
         final String path = JcrUtils.getNodePathQuietly(model.getObject());
-        return new NavLocation(path, StringUtils.EMPTY);
+        return new NavLocation(path, StringUtils.EMPTY, mode);
     }
 
     private static String getDocumentName(final IModel<Node> model) {
@@ -60,12 +60,12 @@ public class NavLocation implements IClusterable {
 
     private final String label;
     private final String path;
+    private final Mode mode;
 
-    private Mode mode = Mode.ADD;
-
-    NavLocation(final String path, final String label) {
+    NavLocation(final String path, final String label, final Mode mode) {
         this.path = path;
         this.label = label;
+        this.mode = mode;
     }
 
     public String getPath() {
@@ -78,11 +78,6 @@ public class NavLocation implements IClusterable {
 
     public Mode getMode() {
         return mode;
-    }
-
-    public NavLocation setMode(final Mode mode) {
-        this.mode = mode;
-        return this;
     }
 
     @Override
