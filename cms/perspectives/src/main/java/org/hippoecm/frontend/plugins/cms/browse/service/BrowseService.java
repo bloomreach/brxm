@@ -281,7 +281,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
             }
 
             try {
-                if (node.isNodeType(NT_HANDLE)) {
+                if (node.isNodeType(NT_HANDLE) || node.isNodeType(NT_VERSION)) {
                     onModelChanged(NavLocation.document(model, NavLocation.Mode.ADD));
                 }
             } catch (RepositoryException e) {
