@@ -47,12 +47,6 @@ describe('TargetingService', () => {
       delete $window.parent.Hippo;
       expect(() => TargetingService.init()).toThrowError('Failed to retrieve Hippo object from global scope');
     });
-
-    it('should throw an error if it can not find the global "Hippo.Targeting" object', () => {
-      delete $window.parent.Hippo.Targeting;
-      expect(() => TargetingService.init())
-        .toThrowError('Failed to retrieve targeting configuration from global scope, is relevance enabled?');
-    });
   });
 
   describe('getVariantIDs', () => {
