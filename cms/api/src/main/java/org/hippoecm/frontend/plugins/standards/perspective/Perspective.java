@@ -225,8 +225,11 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     protected void onDeactivated() {
     }
 
-    protected boolean isActivated() {
-        return isActivated;
+    /**
+     * @return true when the perspective is transitioning from deactivated -> activated
+     */
+    protected boolean isActivating() {
+        return isActive() && !isActivated;
     }
 
     protected void publishEvent(final String name) {
