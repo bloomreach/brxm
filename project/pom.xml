@@ -1004,42 +1004,6 @@
           </execution>
         </executions>
       </plugin>
-      <!-- detect if offline and build a commandline.offline property value
-           which can be passed along to forked/executed processes,
-      -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>${maven.build.helper.version}</version>
-        <executions>
-          <execution>
-            <id>property-commandline-offline</id>
-            <goals>
-              <goal>regex-property</goal>
-            </goals>
-            <configuration>
-              <name>commandline.offline</name>
-              <value>"${settings.offline}"</value>
-              <regex>"true"</regex>
-              <replacement>"-o"</replacement>
-              <failIfNoMatch>false</failIfNoMatch>
-            </configuration>
-          </execution>
-          <execution>
-            <id>property-commandline-online</id>
-            <goals>
-              <goal>regex-property</goal>
-            </goals>
-            <configuration>
-              <name>commandline.offline</name>
-              <value>${commandline.offline}</value>
-              <regex>"false"</regex>
-              <replacement />
-              <failIfNoMatch>false</failIfNoMatch>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
