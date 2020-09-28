@@ -46,15 +46,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Behavior to open a document.
+ * Behavior to open a document or folder in the content perspective.
  * <p>
- * This class adds header item containing javascript ( {@link #OPEN_DOCUMENT_EDITOR_JS} ).
+ * This class adds header item containing javascript ( {@link #JS_FILE} ).
  * </p>
  * <p>
  * That script adds two functions:
  * <ul>
- *     <li><code>Hippo.openDocumentById(id,mode)</code></li>
- *     <li><code>Hippo.openDocumentByPath(path,mode)</code></li>
+ *     <li><code>Hippo.openById(id,mode)</code></li>
+ *     <li><code>Hippo.openByPath(path,mode)</code></li>
  * </ul>
  *
  * </p>
@@ -63,20 +63,22 @@ import org.slf4j.LoggerFactory;
  * <ul>
  * <li>Valid values for mode are {@link IEditor.Mode#VIEW}, {@link IEditor.Mode#EDIT}. If the mode is not valid it
  * will default to {@link IEditor.Mode#VIEW} without error</li>
- * <li>The id is the identified of the handle of the document to open. An invalid id will result in an error.</li>
- * <li>The path the is absolute path of the handle of the document to open. An invalid path will result in an error.</li>
+ * <li>The id is either the identifier of the folder, or the handle of the document to open in the content perspective.
+ * An invalid id will result in an error.</li>
+ * <li>The path the is absolute path of the folder or the handle of the document to open. An invalid path will result in
+ * an error.</li>
  * </ul>
  * </p>
  */
-public class OpenDocumentEditorBehavior extends AbstractDefaultAjaxBehavior {
+public class OpenInContentPerspectiveBehavior extends AbstractDefaultAjaxBehavior {
 
-    private static final Logger log = LoggerFactory.getLogger(OpenDocumentEditorBehavior.class);
+    private static final Logger log = LoggerFactory.getLogger(OpenInContentPerspectiveBehavior.class);
 
-    private static final String OPEN_DOCUMENT_EDITOR_JS = "open-document-editor.js";
+    private static final String JS_FILE = "open-in-content-perspective.js";
 
     private final IPluginContext context;
 
-    public OpenDocumentEditorBehavior(final IPluginContext context) {
+    public OpenInContentPerspectiveBehavior(final IPluginContext context) {
         this.context = context;
     }
 
@@ -90,10 +92,10 @@ public class OpenDocumentEditorBehavior extends AbstractDefaultAjaxBehavior {
         final Map<String, String> scriptParams = new TreeMap<>();
         scriptParams.put("callbackUrl", this.getCallbackUrl().toString());
         String resource = null;
-        try (final PackageTextTemplate openDocumentEditorJs = new PackageTextTemplate(OpenDocumentEditorBehavior.class, OPEN_DOCUMENT_EDITOR_JS)) {
+        try (final PackageTextTemplate openDocumentEditorJs = new PackageTextTemplate(OpenInContentPerspectiveBehavior.class, JS_FILE)) {
             resource = openDocumentEditorJs.asString(scriptParams);
         } catch (IOException e) {
-            log.warn("Resource {} could not be closed.", OPEN_DOCUMENT_EDITOR_JS, e);
+            log.warn("Resource {} could not be closed.", JS_FILE, e);
         }
         return resource;
     }
@@ -102,48 +104,65 @@ public class OpenDocumentEditorBehavior extends AbstractDefaultAjaxBehavior {
     protected void respond(final AjaxRequestTarget target) {
         final Request request = RequestCycle.get().getRequest();
         final IRequestParameters requestParameters = request.getRequestParameters();
-        final String documentId = requestParameters.getParameterValue("documentId").toString();
-        final String documentPath = requestParameters.getParameterValue("documentPath").toString();
+        final String nodeId = requestParameters.getParameterValue("nodeId").toString();
+        final String nodePath = requestParameters.getParameterValue("nodePath").toString();
         final String modeString = requestParameters.getParameterValue("mode").toString();
         final IEditor.Mode mode = IEditor.Mode.fromString(modeString, IEditor.Mode.VIEW);
 
-        if (documentId == null && documentPath == null) {
-            log.warn("Failed to open editor in '{}' mode; parameter 'documentId' and 'documentPath' are both empty", mode);
+        if (nodeId == null && nodePath == null) {
+            log.warn("Failed to open document or folder in '{}' mode; parameter 'nodeId' and 'nodePath' are both empty", mode);
             return;
         }
 
-        final Node handle = documentId != null
-                ? getDocumentById(documentId)
-                : getDocumentByPath(documentPath);
+        final Node node = nodeId != null
+                ? getNodeById(nodeId)
+                : getNodeByPath(nodePath);
 
-        if (handle == null) {
+        if (node == null) {
             return;
         }
 
-        final JcrNodeModel handleModel = new JcrNodeModel(handle);
+        final JcrNodeModel nodeModel = new JcrNodeModel(node);
+        final String uuid = nodeModel.getItemModel().getUuid();
         try {
-            if (!handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                log.debug("Node with uuid '{}' is not a handle", handle.getIdentifier());
-
-                final IBrowseService<IModel<Node>> service = context.getService("service.browse", IBrowseService.class);
-                if (service != null) {
-                    service.browse(handleModel);
-                } else {
-                    log.warn("No browse service found, cannot open document");
+            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                final IEditor<?> editor = getEditor(nodeModel);
+                if (mode == IEditor.Mode.EDIT && editor.getMode() != IEditor.Mode.EDIT) {
+                    editor.setMode(mode);
                 }
+                editor.focus();
                 return;
             }
 
-            final IEditor<?> editor = getEditor(handleModel);
-            if (mode == IEditor.Mode.EDIT && editor.getMode() != IEditor.Mode.EDIT) {
-                editor.setMode(mode);
+            log.debug("Node with uuid '{}' is not a handle", uuid);
+            final IBrowseService<IModel<Node>> service = context.getService("service.browse", IBrowseService.class);
+            if (service != null) {
+                service.browse(nodeModel);
+            } else {
+                log.warn("No browse service found, cannot open node with uuid '{}'", uuid);
             }
-            editor.focus();
         } catch (ItemNotFoundException e) {
-            log.warn("Could not find document with uuid '{}'", handleModel.getItemModel().getUuid(), e);
+            log.warn("Could not find node with uuid '{}'", uuid, e);
         } catch (EditorException | RepositoryException | ServiceException e) {
-            log.warn("Failed to open editor in '{}' mode for document with uuid '{}'", mode,
-                    handleModel.getItemModel().getUuid(), e);
+            log.warn("Failed to open node with uuid '{}' in mode '{}'", uuid,  mode, e);
+        }
+    }
+
+    private static Node getNodeByPath(final String path) {
+        try {
+            return UserSession.get().getJcrSession().getNode(path);
+        } catch (RepositoryException e) {
+            log.warn("Failed to find node with path '{}'", path, e);
+            return null;
+        }
+    }
+
+    private static Node getNodeById(final String identifier) {
+        try {
+            return UserSession.get().getJcrSession().getNodeByIdentifier(identifier);
+        } catch (RepositoryException e) {
+            log.warn("Failed to find node with uuid '{}'", identifier, e);
+            return null;
         }
     }
 
@@ -151,28 +170,10 @@ public class OpenDocumentEditorBehavior extends AbstractDefaultAjaxBehavior {
         final IEditorManager editorManager = context.getService("service.edit", IEditorManager.class);
         final IEditor<?> editor = editorManager.getEditor(handleModel);
         if (editor != null) {
-            log.debug("Open existing editor for handle: { uuid: {}}", handleModel.getItemModel().getUuid());
+            log.debug("Open existing editor for handle with uuid '{}'", handleModel.getItemModel().getUuid());
             return editor;
         }
-        log.debug("Open new editor for handle: { uuid: {}}", handleModel.getItemModel().getUuid());
+        log.debug("Open new editor for handle with uuid '{}'", handleModel.getItemModel().getUuid());
         return editorManager.openEditor(handleModel);
-    }
-
-    private static Node getDocumentByPath(final String path) {
-        try {
-            return UserSession.get().getJcrSession().getNode(path);
-        } catch (RepositoryException e) {
-            log.warn("Failed to find document with path '{}'", path, e);
-            return null;
-        }
-    }
-
-    private static Node getDocumentById(final String identifier) {
-        try {
-            return UserSession.get().getJcrSession().getNodeByIdentifier(identifier);
-        } catch (RepositoryException e) {
-            log.warn("Failed to find document with uuid '{}'", identifier, e);
-            return null;
-        }
     }
 }

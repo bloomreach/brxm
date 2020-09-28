@@ -149,7 +149,7 @@
     },
 
     _openContentPath: function(path, mode) {
-      Hippo.openDocumentByPath(path, mode);
+      Hippo.openByPath(path, mode);
     },
 
     _openContent: function(uuid, mode) {
