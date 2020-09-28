@@ -280,7 +280,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
 
             try {
                 if (node.isNodeType(NT_HANDLE)) {
-                    onModelChanged(NavLocation.document(model));
+                    onModelChanged(NavLocation.document(model, NavLocation.Mode.ADD));
                 }
             } catch (RepositoryException e) {
                 log.warn("Failed to check node type", e);
@@ -359,7 +359,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         public void updateModel(final IModel<Node> model) {
             super.setModel(model);
 
-            onModelChanged(NavLocation.folder(model));
+            onModelChanged(NavLocation.folder(model, NavLocation.Mode.ADD));
         }
 
         @Override
