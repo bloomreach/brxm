@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -125,25 +124,26 @@ public class OpenInContentPerspectiveBehavior extends AbstractDefaultAjaxBehavio
 
         final JcrNodeModel nodeModel = new JcrNodeModel(node);
         final String uuid = nodeModel.getItemModel().getUuid();
-        try {
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                final IEditor<?> editor = getEditor(nodeModel);
-                if (mode == IEditor.Mode.EDIT && editor.getMode() != IEditor.Mode.EDIT) {
-                    editor.setMode(mode);
-                }
-                editor.focus();
-                return;
-            }
 
-            log.debug("Node with uuid '{}' is not a handle", uuid);
+        if (mode == IEditor.Mode.VIEW) {
             final IBrowseService<IModel<Node>> service = context.getService("service.browse", IBrowseService.class);
             if (service != null) {
                 service.browse(nodeModel);
             } else {
                 log.warn("No browse service found, cannot open node with uuid '{}'", uuid);
             }
-        } catch (ItemNotFoundException e) {
-            log.warn("Could not find node with uuid '{}'", uuid, e);
+            return;
+        }
+
+        try {
+            if (!node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                log.debug("Node with uuid '{}' is not a handle", uuid);
+                return;
+            }
+
+            final IEditor<?> editor = getEditor(nodeModel);
+            editor.setMode(IEditor.Mode.EDIT);
+            editor.focus();
         } catch (EditorException | RepositoryException | ServiceException e) {
             log.warn("Failed to open node with uuid '{}' in mode '{}'", uuid,  mode, e);
         }
