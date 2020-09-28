@@ -196,31 +196,6 @@ public class BrowserPerspective extends Perspective {
         super.render(target);
     }
 
-    private void updateNavLocation() {
-        // When rendering for the first time, we want to replace the URL for of the content-perspective ("/content"),
-        // with a NavLocation that depicts the root path of the content-perspective ("/content/path/content/documents")
-        if (navLocationModel.getObject() == null) {
-            final IModel<Node> rootFolder = new JcrNodeModel(JcrConstants.DOCUMENTS_PATH);
-            final NavLocation navLocation = NavLocation.folder(rootFolder, NavLocation.Mode.REPLACE);
-            navLocationModel.setObject(navLocation);
-            updateNavLocation(navLocation);
-            return;
-        }
-
-        final NavLocation navLocation = navLocationModel.getObject();
-        final String selectedTabPath = tabs.getSelectedTabPath();
-        if (selectedTabPath == null || selectedTabPath.equals(navLocation.getPath())) {
-            // The previously rendered document or folder is already displayed, we only need to add the NavLocation
-            // to the history
-            updateNavLocation(navLocation);
-            return;
-        }
-
-        final IModel<Node> document = new JcrNodeModel(selectedTabPath);
-        final NavLocation newNavLocation = NavLocation.document(document, NavLocation.Mode.REPLACE);
-        navLocationModel.setObject(newNavLocation);
-    }
-
     @Override
     protected void onDetach() {
         sectionModel.detach();
@@ -315,6 +290,31 @@ public class BrowserPerspective extends Perspective {
                 reference.detach();
             }
         }
+    }
+
+    private void updateNavLocation() {
+        // When rendering for the first time, we want to replace the URL for of the content-perspective ("/content"),
+        // with a NavLocation that depicts the root path of the content-perspective ("/content/path/content/documents")
+        if (navLocationModel.getObject() == null) {
+            final IModel<Node> rootFolder = new JcrNodeModel(JcrConstants.DOCUMENTS_PATH);
+            final NavLocation navLocation = NavLocation.folder(rootFolder, NavLocation.Mode.REPLACE);
+            navLocationModel.setObject(navLocation);
+            updateNavLocation(navLocation);
+            return;
+        }
+
+        final NavLocation navLocation = navLocationModel.getObject();
+        final String selectedTabPath = tabs.getSelectedTabPath();
+        if (selectedTabPath == null || selectedTabPath.equals(navLocation.getPath())) {
+            // The previously rendered document or folder is already displayed, we only need to add the NavLocation
+            // to the history
+            updateNavLocation(navLocation);
+            return;
+        }
+
+        final IModel<Node> document = new JcrNodeModel(selectedTabPath);
+        final NavLocation newNavLocation = NavLocation.document(document, NavLocation.Mode.REPLACE);
+        navLocationModel.setObject(newNavLocation);
     }
 
     private void updateNavLocation(final NavLocation navLocation) {
