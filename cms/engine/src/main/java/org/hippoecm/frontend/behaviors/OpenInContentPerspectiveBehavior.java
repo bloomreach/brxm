@@ -23,6 +23,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -109,14 +110,14 @@ public class OpenInContentPerspectiveBehavior extends AbstractDefaultAjaxBehavio
         final String modeString = requestParameters.getParameterValue("mode").toString();
         final IEditor.Mode mode = IEditor.Mode.fromString(modeString, IEditor.Mode.VIEW);
 
-        if (nodeId == null && nodePath == null) {
+        if (StringUtils.isAllBlank(nodeId, nodePath)) {
             log.warn("Failed to open document or folder in '{}' mode; parameter 'nodeId' and 'nodePath' are both empty", mode);
             return;
         }
 
         final Node node = nodeId != null
-                ? getNodeById(nodeId)
-                : getNodeByPath(nodePath);
+                ? getNodeById(nodeId.trim())
+                : getNodeByPath(nodePath.trim());
 
         if (node == null) {
             return;
