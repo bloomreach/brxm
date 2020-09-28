@@ -202,7 +202,7 @@ public class BrowserPerspective extends Perspective {
         // with a NavLocation that depicts the root path of the content-perspective ("/content/path/content/documents")
         if (navLocationModel.getObject() == null) {
             final IModel<Node> rootFolder = new JcrNodeModel(JcrConstants.DOCUMENTS_PATH);
-            final NavLocation navLocation = NavLocation.folder(rootFolder).setMode(NavLocation.Mode.REPLACE);
+            final NavLocation navLocation = NavLocation.folder(rootFolder, NavLocation.Mode.REPLACE);
             navLocationModel.setObject(navLocation);
             updateNavLocation(navLocation);
             return;
@@ -218,7 +218,7 @@ public class BrowserPerspective extends Perspective {
         }
 
         final IModel<Node> document = new JcrNodeModel(selectedTabPath);
-        final NavLocation newNavLocation = NavLocation.document(document).setMode(NavLocation.Mode.REPLACE);
+        final NavLocation newNavLocation = NavLocation.document(document, NavLocation.Mode.REPLACE);
         navLocationModel.setObject(newNavLocation);
     }
 
