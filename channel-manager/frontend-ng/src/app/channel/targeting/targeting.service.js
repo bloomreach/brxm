@@ -44,17 +44,10 @@ class TargetingService {
       throw new Error('Failed to retrieve Hippo object from global scope');
     }
 
-    if (!iframe.Hippo.Targeting) {
-      throw new Error('Failed to retrieve targeting configuration from global scope, is relevance enabled?');
-    }
+    const { Targeting = { HttpProxy: {} } } = iframe.Hippo;
 
-    const { Targeting } = iframe.Hippo;
-
-    this._apiUrl = Targeting.HttpProxy.REST_URL;
+    this._apiUrl = Targeting.HttpProxy.REST_URL || '/_targeting';
     this._collectors = Targeting.CollectorPlugins || {};
-
-    this._personaRulesSeparator = Targeting.PropertiesEditor.PERSONA_RULES_SEPARATOR;
-    this._personaVariantSeparator = Targeting.PropertiesEditor.PERSONA_VARIANT_SEPARATOR;
   }
 
   async getVariantIDs(containerItemId) {
@@ -116,9 +109,9 @@ class TargetingService {
     }
 
     const encodedCharacteristics = this._encodeCharacteristics(characteristics);
-    return personaId
-      + this._personaVariantSeparator + abvariantId
-      + (encodedCharacteristics ? this._personaRulesSeparator + encodedCharacteristics : '');
+    const personaVariant = `${personaId}@${abvariantId}`;
+    const personaRules = encodedCharacteristics ? `$${encodedCharacteristics}}` : '';
+    return personaVariant + personaRules;
   }
 
   _encodeCharacteristics(rules) {
