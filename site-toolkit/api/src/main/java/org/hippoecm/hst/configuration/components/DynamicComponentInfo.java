@@ -24,7 +24,13 @@ import java.util.Map;
 public interface DynamicComponentInfo {
 
     /**
-     * Returns residual component parameter values
+     * <p>
+     *     The residual parameters are the parameters coming from JCR component parameter configuration and do not
+     *     include the parameters backed by the Parameters Info interface. If the Parameters Info interface parameter
+     *     is overridden by a JCR parameter configuration, the parameter is still NOT part of the residual parameter
+     *     values
+     * </p>
+     * @return the residual component parameter values
      */
     Map<String, Object> getResidualParameterValues();
 

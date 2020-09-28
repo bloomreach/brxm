@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.configuration.components.DropdownListParameterConfig;
@@ -81,8 +82,21 @@ public class TestBaseHstDynamicComponent {
                 } else {
                     if ("document1".equals(args[0])) {
                         return "banners/banner1";
-                    } else if ("image1".equals(args[0])) {
+                    }
+                    else if ("image1".equals(args[0])) {
                         return "/content/images/image1";
+                    }
+                    else if ("string1".equals(args[0])) {
+                        return "string1";
+                    }
+                    else if ("string2".equals(args[0])) {
+                        return "string2";
+                    }
+                    else if ("dropdown1".equals(args[0])) {
+                        return "dropdown1";
+                    }
+                    else if ("dropdown2".equals(args[0])) {
+                        return "dropdown2";
                     }
                 }
                 return null;
@@ -104,9 +118,7 @@ public class TestBaseHstDynamicComponent {
 
         HippoBean siteContentBean = createNiceMock(HippoBean.class);
         HippoBean document1 = createNiceMock(HippoBean.class);
-        HippoBean document2 = createNiceMock(HippoBean.class);
         HippoBean image1 = createNiceMock(HippoBean.class);
-        HippoBean image2 = createNiceMock(HippoBean.class);
         ObjectBeanManager objectBeanManager = createNiceMock(ObjectBeanManager.class);
         expect(siteContentBean.getBean("banners/banner1")).andReturn(document1).anyTimes();
         expect(requestContext.getSiteContentBaseBean()).andReturn(siteContentBean).anyTimes();
@@ -200,7 +212,7 @@ public class TestBaseHstDynamicComponent {
 
             @Override
             public boolean isResidual() {
-                return false;
+                return true;
             }
 
             @Override
@@ -301,7 +313,7 @@ public class TestBaseHstDynamicComponent {
 
                 @Override
                 public Map<String, Object> getResidualParameterValues() {
-                    return null;
+                    return componentParameters.stream().filter(DynamicParameter::isResidual).collect(Collectors.toMap(parameter -> parameter.getName(), parameter -> getComponentParameter(parameter.getName())));
                 }
 
                 @Override
