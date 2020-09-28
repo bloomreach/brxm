@@ -156,8 +156,9 @@ public class BrowserPerspective extends Perspective {
 
     @Override
     public void render(final PluginRequestTarget target) {
-        if (isActive() && !isActivated()) {
-            beforeActivated();
+        if (isActivating()) {
+            tabs.focusRecentTabUnlessHidden();
+            updateNavLocation();
         }
 
         if (state.processChanges(hasOpenTabs())) {
@@ -195,9 +196,7 @@ public class BrowserPerspective extends Perspective {
         super.render(target);
     }
 
-    private void beforeActivated() {
-        tabs.focusRecentTabUnlessHidden();
-
+    private void updateNavLocation() {
         // When rendering for the first time, we want to replace the URL for of the content-perspective ("/content"),
         // with a NavLocation that depicts the root path of the content-perspective ("/content/path/content/documents")
         if (navLocationModel.getObject() == null) {
