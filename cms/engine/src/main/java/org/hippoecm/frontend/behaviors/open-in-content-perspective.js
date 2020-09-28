@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,28 @@
 (function () {
   "use strict";
 
-
-  Hippo.openDocumentById = function(documentId, mode) {
+  Hippo.openById = function(nodeId, mode) {
     const CALLBACK_URL = '${callbackUrl}';
 
     Wicket.Ajax.get({
       u: CALLBACK_URL,
       ep: {
-        documentId,
+        nodeId,
         mode,
       },
     });
   };
-  Hippo.openDocumentByPath = function(documentPath, mode) {
+  Hippo.openByPath = function(nodePath, mode) {
     const CALLBACK_URL = '${callbackUrl}';
 
     Wicket.Ajax.get({
       u: CALLBACK_URL,
       ep: {
-        documentPath,
+        nodePath,
         mode,
       },
     });
   };
 
 }());
-//# sourceURL=open-document-editor.js
+//# sourceURL=open-in-content-perspective.js
