@@ -18,13 +18,14 @@
   <mat-form-field appearance="outline">
     <mat-label class="qa-variant-select-label">
       {{ 'VARIANT' | translate }}
+
     </mat-label>
-    <mat-select class="qa-variant-select"
-                [(value)]="variantIdParam"
+    <mat-select [formControl]="variantSelect"
+                class="qa-variant-select"
                 (selectionChange)="selectVariant($event.value)">
       <mat-option *ngFor="let variant of variants"
                   class="{{ 'qa-variant-select-option-' + variant.id }}"
-                  [value]="variant.id">
+                  [value]="variant">
         {{ variant.variantName }}
       </mat-option>
     </mat-select>
