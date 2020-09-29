@@ -19,13 +19,14 @@ function editComponentConfig($stateProvider) {
 
   $stateProvider.state({
     name: 'hippo-cm.channel.edit-component',
+    abstract: true,
     params: {
       componentId: '',
       variantId: '',
     },
     views: {
       main: {
-        component: 'editComponentMain',
+        component: 'editComponentTabs',
       },
       tools: {
         component: '', // no tools
@@ -34,6 +35,9 @@ function editComponentConfig($stateProvider) {
         template: '', // no icon
       },
     },
+  }).state({
+    name: 'hippo-cm.channel.edit-component.properties',
+    component: 'editComponentMain',
   });
 }
 
