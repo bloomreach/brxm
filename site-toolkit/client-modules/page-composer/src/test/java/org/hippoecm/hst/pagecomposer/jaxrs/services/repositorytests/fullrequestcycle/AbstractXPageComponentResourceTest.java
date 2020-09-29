@@ -78,7 +78,9 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
         // create a catalog item that can be put in the container
         String[] content = new String[] {
                 "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage", "hst:containeritempackage",
-                "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem", "hst:containeritemcomponent",
+                "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/oldstyle-testitem", "hst:containeritemcomponent",
+                   "hst:componentclassname", "org.hippoecm.hst.test.BannerComponent",
+                "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/newstyle-testitem", "hst:componentdefinition",
                    "hst:componentclassname", "org.hippoecm.hst.test.BannerComponent",
         };
 

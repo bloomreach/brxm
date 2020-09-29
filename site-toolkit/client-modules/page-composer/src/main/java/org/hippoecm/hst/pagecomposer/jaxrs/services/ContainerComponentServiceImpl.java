@@ -37,9 +37,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.findNewName;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.createComponentItem;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.getCatalogItem;
 
 public class ContainerComponentServiceImpl implements ContainerComponentService {
@@ -60,19 +58,11 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
             final Node catalogItem = ContainerUtils.getContainerItem(session, catalogItemUUID);
             final Node containerNode = lockAndGetContainer(versionStamp);
 
+            final HstComponentConfiguration componentDefinition = getCatalogItem(pageComposerContextService, catalogItem);
+
             // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
             // containerNode. Find a correct newName and create a new node.
-            final String newItemNodeName = findNewName(catalogItem.getName(), containerNode);
-
-            final HstComponentConfiguration componentDefinition = getCatalogItem(pageComposerContextService, catalogItem);
-            final Node newItem;
-            if (catalogItem.getPrimaryNodeType().getName().equals(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
-                //If it is a legacy catalog item, i.e. it's type is hst:containeritemcomponent, copy the whole catalog item node
-                newItem = JcrUtils.copy(session, catalogItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
-            } else {
-                newItem = containerNode.addNode(newItemNodeName, NODETYPE_HST_CONTAINERITEMCOMPONENT);
-                newItem.setProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION, componentDefinition.getId());
-            }
+            final Node newItem = createComponentItem(containerNode, catalogItem, componentDefinition);
 
             HstConfigurationUtils.persistChanges(session);
 
@@ -84,7 +74,6 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
             throw e;
         }
     }
-
 
     @Override
     public ContainerItem createContainerItem(final Session session, final String catalogItemUUID, final String siblingItemUUID, final long versionStamp) throws RepositoryException {
