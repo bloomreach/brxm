@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, NgZone, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
@@ -29,8 +30,8 @@ import { VariantsService } from '../../services/variants.service';
 export class VariantsComponent implements OnInit {
   private readonly component = this.componentEditorService.getComponent();
   private readonly componentId = this.component.getId();
-  variantIdParam = this.ng1StateService.params.variantId;
   variants?: Variant[];
+  variantSelect = new FormControl();
 
   constructor(
     @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,
@@ -41,15 +42,18 @@ export class VariantsComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.variants = await this.variantsService.getVariants(this.componentId);
+
+    this.selectVariantFromParams();
   }
 
-  get selectedVariant(): Variant | undefined {
-    return this.variants?.find(v => v.id === this.variantIdParam);
+  selectVariantFromParams(): void {
+    const initialSelection = this.variants?.find(v => v.id === this.ng1StateService.params.variantId);
+    this.variantSelect.setValue(initialSelection);
   }
 
   async addVariant(): Promise<void> {
     const formData = this.componentEditorService.propertiesAsFormData();
-    const { persona, characteristics } = this.extractRules(this.selectedVariant);
+    const { persona, characteristics } = this.extractRules(this.variantSelect.value);
 
     await this.variantsService.addVariant(this.componentId, formData, persona, characteristics);
 
@@ -57,14 +61,25 @@ export class VariantsComponent implements OnInit {
     const newVariant = newVariants.find(variant => !this.variants?.find(v => v.id === variant.id));
 
     this.variants = newVariants;
-    this.selectVariant(newVariant?.id || '');
+
+    if (newVariant) {
+      return this.selectVariant(newVariant);
+    }
+
+    return this.selectVariant(this.variants[0]);
   }
 
-  selectVariant(variantId: string): void {
-    this.ng1StateService.go('hippo-cm.channel.edit-component', {
+  async selectVariant(variant: Variant): Promise<void> {
+    // when selecing a variant a user might have changes
+    // user might cancel, discard changes or save those changes
+    // this visually restores the previous value in the select so it does not switch back and forth
+    this.selectVariantFromParams();
+
+    return this.ng1StateService.go('hippo-cm.channel.edit-component', {
       componentId: this.componentId,
-      variantId,
-    });
+      variantId: variant.id,
+    })
+    .catch(error => error /* catching cancel transition error */);
   }
 
   private extractRules(variant?: Variant): VariantRules {

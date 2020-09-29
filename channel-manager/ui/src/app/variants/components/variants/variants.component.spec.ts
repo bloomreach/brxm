@@ -16,6 +16,7 @@
 
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -106,7 +107,7 @@ describe('VariantsComponent', () => {
       params: {
         variantId: mockVariants[0].id,
       },
-      go: jest.fn(),
+      go: jest.fn(() => Promise.resolve()),
     };
 
     TestBed.configureTestingModule({
@@ -115,6 +116,7 @@ describe('VariantsComponent', () => {
         MatSelectModule,
         BrowserAnimationsModule,
         TranslateModule.forRoot(),
+        ReactiveFormsModule,
       ],
       declarations: [ VariantsComponent, MatIconMockComponent ],
       providers: [
@@ -141,24 +143,22 @@ describe('VariantsComponent', () => {
   });
 
   it('should set initial selected variant', () => {
-    expect(component.selectedVariant).toBe(mockVariants[0]);
+    expect(component.variantSelect.value).toBe(mockVariants[0]);
   });
 
   it('should go to edit component state of selected variant', fakeAsync(() => {
-    const variantId = 'myVariant';
-
-    component.selectVariant(variantId);
+    component.selectVariant(mockVariants[1]);
 
     expect(stateService.go).toHaveBeenCalledWith('hippo-cm.channel.edit-component', {
       componentId: mockComponent.getId(),
-      variantId,
+      variantId: mockVariants[1].id,
     });
   }));
 
   describe('adding variant', () => {
     it('should select the newly added variant', async () => {
       jest.spyOn(variantsService, 'addVariant');
-      component.variantIdParam = mockVariants[1].id;
+      component.variantSelect.setValue(mockVariants[1]);
 
       await component.addVariant();
 

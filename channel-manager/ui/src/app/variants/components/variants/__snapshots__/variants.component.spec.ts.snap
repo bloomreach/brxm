@@ -9,7 +9,7 @@ exports[`VariantsComponent should create 1`] = `
   >
     <mat-form-field
       appearance="outline"
-      class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label mat-form-field-hide-placeholder"
+      class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label mat-form-field-hide-placeholder ng-untouched ng-pristine ng-valid"
     >
       <div
         class="mat-form-field-wrapper"
@@ -54,7 +54,7 @@ exports[`VariantsComponent should create 1`] = `
               aria-invalid="false"
               aria-multiselectable="false"
               aria-required="false"
-              class="qa-variant-select mat-select mat-select-empty"
+              class="qa-variant-select mat-select mat-select-empty ng-untouched ng-pristine ng-valid"
               role="listbox"
               tabindex="0"
             >
