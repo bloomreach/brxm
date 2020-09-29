@@ -156,6 +156,11 @@ public class BrowserPerspective extends Perspective {
 
     @Override
     public void render(final PluginRequestTarget target) {
+        if (!isActive() && !isActivating()) {
+            super.render(target);
+            return;
+        }
+
         if (isActivating()) {
             tabs.focusRecentTabUnlessHidden();
             updateNavLocation();
