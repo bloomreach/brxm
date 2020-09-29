@@ -56,7 +56,7 @@ public class HandleIdentifierStrategy implements IdentifierStrategy {
         String identifier = null;
         if (node != null){
             identifier = isRevision(node) ? getHandleIdentifierAssociatedWithRevision(node) :
-                    getHandleIndentifierAssociatedWithDescendant(node);
+                    getHandleIdentifierAssociatedWithDescendant(node);
             if (identifier == null){
                 log.warn("Node { path: {} } is not a handle, descendant of a handle or revision, " +
                         "please provide a path to a handle, document or revision", node.getPath());
@@ -77,7 +77,7 @@ public class HandleIdentifierStrategy implements IdentifierStrategy {
         return node.getDepth() == 0;
     }
 
-    private String getHandleIndentifierAssociatedWithDescendant(final Node node) throws RepositoryException {
+    private String getHandleIdentifierAssociatedWithDescendant(final Node node) throws RepositoryException {
         Node ascendant = ascentToHandleOrNode(node);
         if (ascendant != null && !isRoot(ascendant)){
                 log.debug("Return handle { path: {} } as ascendant of descendant { path: {} }",
@@ -102,7 +102,9 @@ public class HandleIdentifierStrategy implements IdentifierStrategy {
             if (property != null) {
                 final Value[] values = property.getValues();
                 if (values.length > 0) {
-                    return values[0].getString();
+                    final String documentIdentifier = values[0].getString();
+                    final Node document = node.getSession().getNodeByIdentifier(documentIdentifier);
+                    return getHandleIdentifierAssociatedWithDescendant(document);
                 }
             }
         }
