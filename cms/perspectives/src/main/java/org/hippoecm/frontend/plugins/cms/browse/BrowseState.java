@@ -17,9 +17,14 @@ package org.hippoecm.frontend.plugins.cms.browse;
 
 import java.util.Objects;
 
+import javax.jcr.Node;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class BrowseState implements IClusterable {
 
@@ -53,8 +58,19 @@ public class BrowseState implements IClusterable {
     }
 
     public void onTabChanged(final String newTab) {
+        if (tab != null && newTab == null) {
+            onLastTabClosed(tab);
+        }
         tabChanged = true;
         tab = newTab;
+    }
+
+    private void onLastTabClosed(final String path) {
+        if (navLocation != null && path.equals(navLocation.getPath())) {
+            final JcrNodeModel documentModel = new JcrNodeModel(path);
+            final IModel<Node> folderModel = documentModel.getParentModel();
+            onNavLocationChanged(NavLocation.folder(folderModel, NavLocation.Mode.ADD));
+        }
     }
 
     public void onListingChanged() {
@@ -220,25 +236,25 @@ public class BrowseState implements IClusterable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).
-                append("expandChanged", expandChanged).
-                append("sectionChanged", sectionChanged).
-                append("listingChanged", listingChanged).
-                append("tabChanged", tabChanged).
-                append("navLocationChanged", navLocationChanged).
-                append("tab", tab).
-                append("section", section).
-                append("expanded", isExpanded()).
-                append("last", last).
-                append("expandDefault", expandDefault).
-                append("expandListing", expandListing).
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).
+                append("blurTabs", blurTabs).
                 append("collapseAll", collapseAll).
                 append("collapseListing", collapseListing).
+                append("expandChanged", expandChanged).
+                append("expandDefault", expandDefault).
+                append("expanded", isExpanded()).
+                append("expandListing", expandListing).
                 append("focusTabs", focusTabs).
-                append("blurTabs", blurTabs).
-                append("shelveSelection", shelveSelection).
-                append("restoreSelection", restoreSelection).
+                append("last", last).
+                append("listingChanged", listingChanged).
                 append("navLocation", navLocation).
+                append("navLocationChanged", navLocationChanged).
+                append("restoreSelection", restoreSelection).
+                append("section", section).
+                append("sectionChanged", sectionChanged).
+                append("shelveSelection", shelveSelection).
+                append("tab", tab).
+                append("tabChanged", tabChanged).
                 toString();
     }
 
