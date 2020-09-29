@@ -18,13 +18,15 @@ package org.hippoecm.frontend.plugins.cms.browse;
 import java.util.Objects;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.usagestatistics.events.HandleIdentifierStrategy;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class BrowseState implements IClusterable {
 
@@ -67,9 +69,21 @@ public class BrowseState implements IClusterable {
 
     private void onLastTabClosed(final String path) {
         if (navLocation != null && path.equals(navLocation.getPath())) {
-            final JcrNodeModel documentModel = new JcrNodeModel(path);
-            final IModel<Node> folderModel = documentModel.getParentModel();
-            onNavLocationChanged(NavLocation.folder(folderModel, NavLocation.Mode.ADD));
+            JcrNodeModel documentModel = new JcrNodeModel(path);
+            final Node documentNode = documentModel.getNode();
+
+            try {
+                if (!documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    final HandleIdentifierStrategy identifierStrategy = new HandleIdentifierStrategy();
+                    final String nodeId = identifierStrategy.getIdentifier(documentNode);
+                    if (nodeId != null) {
+                        documentModel = new JcrNodeModel(documentNode.getSession().getNodeByIdentifier(nodeId));
+                    }
+                }
+            } catch (RepositoryException ignored) {
+            }
+
+            onNavLocationChanged(NavLocation.folder(documentModel.getParentModel(), NavLocation.Mode.ADD));
         }
     }
 
