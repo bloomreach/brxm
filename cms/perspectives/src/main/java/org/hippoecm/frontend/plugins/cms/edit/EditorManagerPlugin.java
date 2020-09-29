@@ -266,8 +266,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
             // cleanup internals
             editors.remove(getEditor(model));
             if (editors.size() == 0) {
-                final JcrNodeModel nodeModel = (JcrNodeModel) model;
-                browser.setModel(nodeModel.getParentModel());
+                browser.setModel(new JcrNodeModel((Node) null));
             }
         }
     }
