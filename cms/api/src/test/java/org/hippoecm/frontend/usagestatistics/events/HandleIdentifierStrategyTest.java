@@ -39,7 +39,7 @@ public class HandleIdentifierStrategyTest {
     @Before
     public void setUp() throws Exception {
         strategy = new HandleIdentifierStrategy();
-        root = new MockNode("root","rep:root");
+        root = MockNode.root();
         descendantOfRootAscendantOfHandle = new MockNode("descendantOfRootAscendantOfHandle");
         handle = new MockNode("handle", HippoNodeType.NT_HANDLE);
         childOfHandle = new MockNode("child");
@@ -50,6 +50,7 @@ public class HandleIdentifierStrategyTest {
         jcrFrozen = new MockNode("jcr:frozenNode", JcrConstants.NT_FROZEN_NODE);
         jcrFrozen.setProperty(HippoNodeType.HIPPO_RELATED, new Value[]{new StringValue(handle.getIdentifier())} );
         ntVersion.addNode(jcrFrozen);
+        root.addNode(ntVersion);
     }
 
     @Test
