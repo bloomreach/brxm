@@ -17,16 +17,18 @@
 import componentEditorService from './componentEditor.service';
 import componentFieldsComponent from './componentFields/componentFields.component';
 import editComponentConfig from './editComponent.config';
-import editComponentMainComponent from './editComponentMain.component';
+import editComponentMainComponent from './editComponentMain/editComponentMain.component';
 import editComponentService from './editComponent.service';
 import propertyGroupComponent from './propertyGroup/propertyGroup.component';
 import componentVariantsComponent from './componentVariants/componentVariants.component';
+import editComponentTabsComponent from './editComponentTabs/editComponentTabs.component';
 
 const editComponentModule = angular
   .module('hippo-cm.channel.rightSidePanel.editComponent', [])
   .config(editComponentConfig)
   .service('ComponentEditor', componentEditorService)
   .service('EditComponentService', editComponentService)
+  .component('editComponentTabs', editComponentTabsComponent)
   .component('editComponentMain', editComponentMainComponent)
   .component('componentFields', componentFieldsComponent)
   .component('propertyGroup', propertyGroupComponent)

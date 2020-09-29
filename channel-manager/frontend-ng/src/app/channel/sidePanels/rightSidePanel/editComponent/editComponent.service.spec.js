@@ -206,7 +206,7 @@ describe('EditComponentService', () => {
 
     EditComponentService.stopEditing()
       .then(() => {
-        expect($state.go).toHaveBeenCalledWith('^');
+        expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
         done();
       });
     $rootScope.$digest();
