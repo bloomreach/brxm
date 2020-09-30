@@ -242,6 +242,7 @@
   "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Discard your changes to channel '{{ channelName }}'?",
   "ERROR_CHANNEL_SETTINGS_NOT_EDITABLE": "Settings are only editable when in own projects workspace",
   "ERROR_CREATE_WITH_UNSUPPORTED_VALIDATOR": "Failed to create document, it contains an unsupported validator",
+  "EXPERIMENTS": "Experiments",
   "COLLAPSE": "Collapse",
   "TOOLBAR_BUTTON_CHANNEL": "Channel",
   "FEEDBACK_NOT_A_DOCUMENT_MESSAGE": "Only documents can be edited here.",

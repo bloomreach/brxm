@@ -38,6 +38,9 @@ function editComponentConfig($stateProvider) {
   }).state({
     name: 'hippo-cm.channel.edit-component.properties',
     component: 'editComponentMain',
+  }).state({
+    name: 'hippo-cm.channel.edit-component.experiments',
+    component: 'experimentsWrapper',
   });
 }
 
