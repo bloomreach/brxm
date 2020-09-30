@@ -295,6 +295,7 @@
       }
     },
     "uid5" : {
+      "type" : "pagination",
       "offset" : 50,
       "items" : [ {
         "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
