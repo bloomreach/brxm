@@ -49,6 +49,11 @@ export class VariantsComponent implements OnInit {
   selectVariantFromParams(): void {
     const initialSelection = this.variants?.find(v => v.id === this.ng1StateService.params.variantId);
     this.variantSelect.setValue(initialSelection);
+    console.log(this.variantSelect.value);
+  }
+
+  get selectedVariant(): Variant {
+    return this.variantSelect.value;
   }
 
   async addVariant(): Promise<void> {

@@ -34,4 +34,8 @@ $custom-typography: mat-typography-config(
   border-color: map-get($blue, 500);
 }
 
+.mat-icon-button {
+  color: map-get($text-color, dim);
+}
+
 @import 'mdi-styles-fix';

@@ -23,6 +23,10 @@
   padding: $spacing-full;
 }
 
+::ng-deep .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+
 .variant-select {
   align-items: center;
   display: grid;
@@ -30,7 +34,37 @@
   grid-template-columns: 1fr auto auto;
 }
 
-::ng-deep .mat-form-field-wrapper {
-  padding-bottom: 0;
-}
+.variant-expressions {
+  padding-top: $spacing-full;
 
+  &-list {
+    $form-field-outline-color: rgba(0, 0, 0, 0.12);
+
+    position: relative;
+    border: 1px solid $form-field-outline-color;
+    border-radius: 4px;
+    padding: $spacing-half;
+
+    &-label {
+      color: map-get($text-color, dim);
+      padding: 0 3px;
+      position: absolute;
+      background: map-get($grey, 200);
+      font-size: 75%;
+      top: -1em;
+    }
+  }
+
+  &-list-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+
+  &-actions {
+    padding-top: $spacing-full;
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: $spacing-half;
+  }
+}
