@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@import '~@bloomreach/frontend-theme/palettes';
+
 // Typography
 $font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
 $font-family-semi-bold: 'Open Sans Semibold', $font-family;
@@ -23,8 +25,8 @@ $font-normal: 14px;
 $font-small: 12px;
 
 // Notification banner
-$notification-banner-bgcolor: #e7f1f9;
-$notification-banner-danger-bgcolor: #fccfcf;
+$notification-banner-bgcolor: map-get($blue, 50);
+$notification-banner-danger-bgcolor: map-get($red, 50);
 $notification-banner-fontsize: $font-normal;
 $notification-banner-height: 48px;
 $notification-banner-shadow: 0 0 4px 2px rgba(0, 0, 0, .12);
