@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Component, Inject, NgZone, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
-import { Variant, VariantExpressionType, VariantRules } from '../../models/variant.model';
+import { Variant, VariantExpressions, VariantExpressionType } from '../../models/variant.model';
 import { VariantsService } from '../../services/variants.service';
 
 @Component({
@@ -53,7 +53,7 @@ export class VariantsComponent implements OnInit {
 
   async addVariant(): Promise<void> {
     const formData = this.componentEditorService.propertiesAsFormData();
-    const { persona, characteristics } = this.extractRules(this.variantSelect.value);
+    const { persona, characteristics } = this.extractExpressions(this.variantSelect.value);
 
     await this.variantsService.addVariant(this.componentId, formData, persona, characteristics);
 
@@ -82,7 +82,7 @@ export class VariantsComponent implements OnInit {
     .catch(error => error /* catching cancel transition error */);
   }
 
-  private extractRules(variant?: Variant): VariantRules {
+  private extractExpressions(variant?: Variant): VariantExpressions {
     let persona = '';
     const characteristics: any[] = [];
 
