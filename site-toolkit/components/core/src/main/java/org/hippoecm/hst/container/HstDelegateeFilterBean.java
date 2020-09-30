@@ -342,8 +342,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     // requestHostName.equals(hostName) is typically only true if there is a rendering host matched for a CM page request
                     // since a rending host (from query param or http session) is used, validate the actual browser host
                     // CAN be match at all in either the current HST Model OR the model from hst:platform : The latter model
-                    // most be used to check whether the current browser host name is actually a configured CMS Host in hst host config.
-                    // A typicall request that ends up here is for example:
+                    // must be used to check whether the current browser host name is actually a configured CMS Host in hst host config.
+                    // A typical request that ends up here is for example:
                     //
                     // http://cms.example.com:8080/site/_cmsinternal/?org.hippoecm.hst.container.render_host=dev.example.com
                     //
@@ -351,9 +351,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     // can also be matched in *either the current model* or the platform model!
 
                     if (vHosts.matchVirtualHost(requestHostName) != null) {
-                        log.debug("Request host '{}' is legit since can be matched in the site model");
+                        log.debug("Request host '{}' is legit since can be matched in the site model", requestHostName);
                     } else if (HstRequestUtils.getPlatformHstModel().getVirtualHosts().matchVirtualHost(requestHostName) != null) {
-                        log.debug("Request host '{}' is legit since can be matched in the platform model");
+                        log.debug("Request host '{}' is legit since can be matched in the platform model", requestHostName);
                     } else {
                         // There are several causes why this might happen:
                         // - hst host and reverse proxy configuration mismatch
