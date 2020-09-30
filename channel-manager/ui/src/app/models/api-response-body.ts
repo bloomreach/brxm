@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
-
-export interface Ng1ComponentEditorService {
-  propertiesAsFormData(): { [formField: string]: string };
-  getComponent(): any;
+export interface ApiResponseBody<T> {
+  data: T;
+  errorCode: string | null;
+  message: string;
+  reloadRequired: boolean;
+  success: boolean;
 }
-
-export const NG1_COMPONENT_EDITOR_SERVICE = new InjectionToken<Ng1ComponentEditorService>('NG1_COMPONENT_EDITOR_SERVICE');

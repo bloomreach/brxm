@@ -1,5 +1,5 @@
-/*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2020 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
+import targetingService from './targeting.service';
 
-export interface Ng1ComponentEditorService {
-  propertiesAsFormData(): { [formField: string]: string };
-  getComponent(): any;
-}
+const targetingModule = angular
+  .module('hippo-cm.channel.targeting', [])
+  .service('TargetingService', targetingService);
 
-export const NG1_COMPONENT_EDITOR_SERVICE = new InjectionToken<Ng1ComponentEditorService>('NG1_COMPONENT_EDITOR_SERVICE');
+export default targetingModule;
