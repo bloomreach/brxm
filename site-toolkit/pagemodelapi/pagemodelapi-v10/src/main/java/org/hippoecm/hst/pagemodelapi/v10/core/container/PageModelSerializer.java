@@ -295,8 +295,10 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
         return wrapper;
     }
 
-    @JsonPropertyOrder({ "offset", "items", "total", "first", "previous", "current", "next", "last", "pages", "size", "enabled"})
+    @JsonPropertyOrder({ "type","offset", "items", "total", "first", "previous", "current", "next", "last", "pages", "size", "enabled"})
     private static class DecoratedPaginationEntityWrapper {
+
+        private final static String PAGINATION_TYPE = "pagination";
 
         private final Pagination<HippoBean> pagination;
         private final String componentNamespace;
@@ -336,6 +338,11 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
             uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_PAGE_PARAM, componentNamespace), pageNumber);
             uriBuilder.replaceQueryParam(String.format(PAGINATION_QUERY_LIMIT_PARAM, componentNamespace), pagination.getLimit());
             return uriBuilder.build().toUriString();
+        }
+
+        @JsonProperty
+        public String getType() {
+            return PAGINATION_TYPE;
         }
 
         @JsonProperty
