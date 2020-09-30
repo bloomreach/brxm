@@ -16,21 +16,28 @@
 
 <div class="variant-select mat-typography">
   <mat-form-field appearance="outline">
-    <mat-label>Selected variant</mat-label>
-    <mat-select [value]="initialSelection"
-        (selectionChange)="changeVariant($event.value)">
-      <mat-option *ngFor="let variant of variants$ | async"
+    <mat-label class="qa-variant-select-label">
+      {{ 'VARIANT' | translate }}
+    </mat-label>
+    <mat-select class="qa-variant-select"
+                [(value)]="variantIdParam"
+                (selectionChange)="selectVariant($event.value)">
+      <mat-option *ngFor="let variant of variants"
+                  class="{{ 'qa-variant-select-option-' + variant.id }}"
                   [value]="variant.id">
         {{ variant.variantName }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 
-  <button mat-icon-button>
+  <button mat-icon-button
+          class="qa-variant-copy"
+          (click)="addVariant()">
     <mat-icon svgIcon="copy"></mat-icon>
   </button>
 
-  <button mat-icon-button>
+  <button mat-icon-button
+          class="qa-variant-delete">
     <mat-icon svgIcon="trash"></mat-icon>
   </button>
 </div>

@@ -364,6 +364,7 @@
   "VALIDATION_ILLEGAL_CHARACTERS": "One or more invalid characters ({{characters}}) have been entered",
   "VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT": "'/', ' ' and ':'",
   "VALIDATION_REQUIRED": "Enter a value",
+  "VARIANT": "Variant",
   "VERSION": "Version",
   "VERSIONS": "Versions",
   "LATEST_VERSION": "Latest version",

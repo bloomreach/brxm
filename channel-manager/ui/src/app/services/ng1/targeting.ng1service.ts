@@ -16,9 +16,18 @@
 
 import { InjectionToken } from '@angular/core';
 
-export interface Ng1ComponentEditorService {
-  propertiesAsFormData(): { [formField: string]: string };
-  getComponent(): any;
+import { ApiResponseBody } from '../../models/api-response-body';
+import { Variant, VariantCharacteristicData } from '../../variants/models/variant.model';
+
+export interface Ng1TargetingService {
+  getCharacteristics(): Promise<ApiResponseBody<void>>;
+  getVariants(containerItemId: string): Promise<ApiResponseBody<Variant[]>>;
+  addVariant(
+    componentId: string,
+    formData: any,
+    personaId?: string,
+    characteristics?: VariantCharacteristicData[],
+  ): Promise<ApiResponseBody<any>>;
 }
 
-export const NG1_COMPONENT_EDITOR_SERVICE = new InjectionToken<Ng1ComponentEditorService>('NG1_COMPONENT_EDITOR_SERVICE');
+export const NG1_TARGETING_SERVICE = new InjectionToken<Ng1TargetingService>('NG1_TARGETING_SERVICE');
