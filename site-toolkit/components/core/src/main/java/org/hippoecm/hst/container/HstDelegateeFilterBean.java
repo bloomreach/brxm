@@ -36,7 +36,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -77,6 +76,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -630,9 +630,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             sendError(req, res, HttpServletResponse.SC_UNAUTHORIZED);
         } catch (Exception e) {
             if(log.isDebugEnabled()) {
-                log.warn("Exception for '{}':", containerRequest, e);
+                log.warn("ContainerException for '{}':", containerRequest, e);
             } else {
-                log.warn("Exception for '{}': {}",containerRequest,  e.toString());
+                log.warn("ContainerException for '{}': {}",containerRequest,  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
