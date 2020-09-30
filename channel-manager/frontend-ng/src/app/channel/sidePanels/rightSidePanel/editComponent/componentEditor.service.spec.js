@@ -714,12 +714,12 @@ describe('ComponentEditorService', () => {
     });
 
     it('should not render a component if it is not present on the page', () => {
+      mockPage.getComponentById.and.returnValue(null);
       const properties = [
         { name: 'a', value: '2017-09-21T00:00:00.000+02:00', type: 'datefield' },
       ];
       openComponentEditor(properties);
 
-      mockPage.getComponentById.and.returnValue(null);
       ComponentEditor.updatePreview();
       $rootScope.$digest();
 

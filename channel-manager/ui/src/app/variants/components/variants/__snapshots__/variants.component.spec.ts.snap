@@ -54,7 +54,7 @@ exports[`VariantsComponent should create 1`] = `
               aria-invalid="false"
               aria-multiselectable="false"
               aria-required="false"
-              class="mat-select mat-select-empty"
+              class="qa-variant-select mat-select mat-select-empty"
               role="listbox"
               tabindex="0"
             >
@@ -93,8 +93,10 @@ exports[`VariantsComponent should create 1`] = `
               >
                 
                 
-                <mat-label>
-                  Selected variant
+                <mat-label
+                  class="qa-variant-select-label"
+                >
+                   VARIANT 
                 </mat-label>
                 
                 
@@ -122,6 +124,7 @@ exports[`VariantsComponent should create 1`] = `
       </div>
     </mat-form-field>
     <button
+      class="qa-variant-copy"
       mat-icon-button=""
     >
       <mat-icon
@@ -131,6 +134,7 @@ exports[`VariantsComponent should create 1`] = `
       </mat-icon>
     </button>
     <button
+      class="qa-variant-delete"
       mat-icon-button=""
     >
       <mat-icon
