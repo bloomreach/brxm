@@ -16,9 +16,10 @@
 
 import { Inject, Injectable } from '@angular/core';
 
+import { ComponentProperties } from '../../models/component-properties.model';
 import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1service';
 import { GroupedVariant } from '../models/grouped-variant.model';
-import { Variant } from '../models/variant.model';
+import { Variant, VariantCharacteristicData } from '../models/variant.model';
 
 const DEFAULT_VARIANT_ID = 'hippo-default';
 
@@ -42,8 +43,13 @@ export class VariantsService {
     return response.data;
   }
 
-  async addVariant(componentId: string, formData: any, persona?: any, characteristics?: any[]): Promise<any> {
-    const response = await this.targetingService.addVariant(componentId, formData, persona, characteristics);
+  async addVariant(
+    componentId: string,
+    formData: ComponentProperties,
+    personaId?: string,
+    characteristics?: VariantCharacteristicData[],
+  ): Promise<any> {
+    const response = await this.targetingService.addVariant(componentId, formData, personaId, characteristics);
     return response.data;
   }
 

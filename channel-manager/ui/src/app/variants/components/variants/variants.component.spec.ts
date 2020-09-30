@@ -46,7 +46,7 @@ describe('VariantsComponent', () => {
     svgIcon!: string;
   }
 
-  const mockRules = [
+  const mockExpressions = [
     {
       country: 'thenetherlands-1440145311193',
     },
@@ -76,8 +76,8 @@ describe('VariantsComponent', () => {
      variantName: 'Dutch',
      expressions: [
        {type: 'persona', id: 'dirk-1440145443062', name: 'Dutch'},
-       {type: 'rule', id: `${Object.keys(mockRules[0])[0]}/${Object.values(mockRules[0])[0]}`, name: 'The Netherlands'},
-       {type: 'rule', id: `${Object.keys(mockRules[1])[0]}/${Object.values(mockRules[1])[0]}`, name: 'Africa'},
+       {type: 'rule', id: `${Object.keys(mockExpressions[0])[0]}/${Object.values(mockExpressions[0])[0]}`, name: 'The Netherlands'},
+       {type: 'rule', id: `${Object.keys(mockExpressions[1])[0]}/${Object.values(mockExpressions[1])[0]}`, name: 'Africa'},
      ],
      defaultVariant: false,
      abvariantId: '1600075014',
@@ -166,7 +166,7 @@ describe('VariantsComponent', () => {
         mockComponent.getId(),
         mockFormData,
         mockVariants[1].expressions[0].id,
-        mockRules,
+        mockExpressions,
       );
     });
 

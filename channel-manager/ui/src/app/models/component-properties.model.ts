@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
-
-import { ComponentProperties } from '../../models/component-properties.model';
-
-export interface Ng1ComponentEditorService {
-  propertiesAsFormData(): ComponentProperties;
-  getComponent(): any;
+export interface ComponentProperties {
+  [componentProperty: string]: string;
 }
-
-export const NG1_COMPONENT_EDITOR_SERVICE = new InjectionToken<Ng1ComponentEditorService>('NG1_COMPONENT_EDITOR_SERVICE');
