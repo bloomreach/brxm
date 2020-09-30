@@ -54,5 +54,13 @@ describe('EditComponentTabsCtrl', () => {
       $rootScope.$digest();
       expect($ctrl.selectedNavItem).toEqual(newNavItem);
     });
+
+    it('should select the experiments tab on transition to content state', () => {
+      const newNavItem = 'experiments';
+      $ctrl.$onInit();
+      $state.go(`hippo-cm.channel.edit-component.${newNavItem}`, { componentId: 'c1', variantId: 'v1' });
+      $rootScope.$digest();
+      expect($ctrl.selectedNavItem).toEqual(newNavItem);
+    });
   });
 });

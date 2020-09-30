@@ -22,6 +22,7 @@ import editComponentService from './editComponent.service';
 import propertyGroupComponent from './propertyGroup/propertyGroup.component';
 import componentVariantsComponent from './componentVariants/componentVariants.component';
 import editComponentTabsComponent from './editComponentTabs/editComponentTabs.component';
+import experimentsWrapperComponent from './experimentsWrapper/experimentsWrapper.component';
 
 const editComponentModule = angular
   .module('hippo-cm.channel.rightSidePanel.editComponent', [])
@@ -32,6 +33,7 @@ const editComponentModule = angular
   .component('editComponentMain', editComponentMainComponent)
   .component('componentFields', componentFieldsComponent)
   .component('propertyGroup', propertyGroupComponent)
-  .component('componentVariants', componentVariantsComponent);
+  .component('componentVariants', componentVariantsComponent)
+  .component('experimentsWrapper', experimentsWrapperComponent);
 
 export default editComponentModule.name;
