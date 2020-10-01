@@ -130,7 +130,7 @@ class TargetingService {
 
     const encodedCharacteristics = this._encodeCharacteristics(characteristics);
     const personaVariant = `${personaId}@${abvariantId}`;
-    const personaRules = encodedCharacteristics ? `$${encodedCharacteristics}}` : '';
+    const personaRules = encodedCharacteristics ? `$${encodedCharacteristics}` : '';
     return personaVariant + personaRules;
   }
 
