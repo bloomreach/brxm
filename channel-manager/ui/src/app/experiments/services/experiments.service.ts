@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-import { ExperimentsService } from '../../services/experiments.service';
+import { TargetingApiResponse } from '../../shared/models/targeting-api-response.model';
+import { Experiment } from '../models/experiment.model';
 
-@Component({
-  templateUrl: 'experiments.component.html',
-  styleUrls: ['experiments.component.scss'],
+import mockApiResponse from './mock-api-response';
+
+@Injectable({
+  providedIn: 'root',
 })
-export class ExperimentsComponent {
-  readonly experiment$ = this.experimentsService.getExperiment();
-
-  constructor(private readonly experimentsService: ExperimentsService) {}
+export class ExperimentsService {
+  getExperiment(): Observable<Experiment> {
+    return of(mockApiResponse as TargetingApiResponse<Experiment>).pipe(
+      map(response => response.data),
+    );
+  }
 }
