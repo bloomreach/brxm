@@ -109,6 +109,7 @@ class TargetingService {
     const page = this.PageStructureService.getPage();
     const component = page.getComponentById(componentId);
 
+    const encodedVariantId = encodeURIComponent(variantId);
     const newVariantId = this._createVariantId(personaId, characteristics);
     const headers = {
       lastModifiedTimestamp: component.lastModified,
@@ -116,7 +117,7 @@ class TargetingService {
     };
 
     try {
-      const result = await this.HstService.doPutFormWithHeaders(formData, componentId, headers, variantId);
+      const result = await this.HstService.doPutFormWithHeaders(formData, componentId, headers, encodedVariantId);
       return this._success(`Succesfully updated variant ${variantId} for component ${componentId}`, result);
     } catch (e) {
       return this._failure('Failed to update', e);
