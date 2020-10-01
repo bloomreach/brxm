@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
-import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -32,6 +31,7 @@ import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,9 +56,11 @@ public class AutoEditPlugin extends Plugin {
                     final String user = UserSession.get().getJcrSession().getUserID();
                     QueryManager qMgr = UserSession.get().getJcrSession().getWorkspace().getQueryManager();
                     // FIXME wrong knowledge in use here
-                    Query query = qMgr.createQuery("select * from " + HippoStdNodeType.NT_PUBLISHABLE
-                        + " where " + HippoStdNodeType.HIPPOSTD_STATE + "='" + HippoStdNodeType.DRAFT + "' "
-                        + "and " + HippoStdNodeType.HIPPOSTD_HOLDER + "='" + user + "'", Query.SQL);
+                    final String statement = String.format("select * from %s where %s='%s' and %s='%s'",
+                            HippoStdNodeType.NT_PUBLISHABLE,
+                            HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.DRAFT,
+                            HippoStdNodeType.HIPPOSTD_HOLDER, user);
+                    Query query = qMgr.createQuery(statement, Query.SQL);
 
                     NodeIterator iter = query.execute().getNodes();
                     while (iter.hasNext()) {
@@ -66,6 +68,11 @@ public class AutoEditPlugin extends Plugin {
                         if (node == null) {
                             continue;
                         }
+
+                        if (JcrUtils.getBooleanProperty(node, HippoStdNodeType.HIPPOSTD_RETAINABLE, false)) {
+                            continue;
+                        }
+
                         if (!node.getName().equals(HippoNodeType.HIPPO_PROTOTYPE)) {
                             JcrNodeModel model = new JcrNodeModel(node);
                             try {
