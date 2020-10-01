@@ -216,7 +216,6 @@
   "UNPUBLISHED_CHANGES": "nicht veröffentlichte Änderungen",
   "ERROR_NAME_ALREADY_EXISTS": "Erstellen des Dokuments fehlgeschlagen. Der Name wird bereits verwendet",
   "ERROR_NOT_A_DOCUMENT": "Das ausgewählte Element ist kein Dokument",
-  "VERSIONS_LIST_HEADER": "Datum & Zeit, Benutzer",
   "VALIDATION_ILLEGAL_CHARACTERS": "Ein oder mehrere ungültige Zeichen ({{characters}}) wurden eingegeben",
   "ERROR_DOES_NOT_EXIST": "Abrufen des Dokuments fehlgeschlagen",
   "NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE": "Seite '{{pageName}}': offline",

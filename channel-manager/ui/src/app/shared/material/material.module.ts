@@ -16,8 +16,9 @@
 
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatRippleModule } from '@angular/material/core';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -26,9 +27,10 @@ import { registerSvgIcons } from './register-svg-icons';
 @NgModule({
   exports: [
     MatButtonModule,
-    MatListModule,
     MatIconModule,
     MatProgressBarModule,
+    MatRippleModule,
+    MatDividerModule,
   ],
 })
 export class MaterialModule {
