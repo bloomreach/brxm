@@ -83,7 +83,6 @@ class ComponentEditorService {
 
     return this.request;
   }
-  
 
   getPropertyGroups() {
     return this.propertyGroups;
