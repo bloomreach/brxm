@@ -14,6 +14,16 @@
  * limitations under the License.
  */
 
+const DEFAULT_SUCCESS_RESPONSE = {
+  reloadRequired: false,
+  success: true,
+};
+
+const DEFAULT_FAILURE_RESPONSE = {
+  reloadRequired: false,
+  success: false,
+};
+
 class TargetingService {
   constructor(
     $http,
@@ -165,15 +175,6 @@ class TargetingService {
 
     try {
       const result = await this._execute('GET', ['personas'], null, params);
-
-      // Wrap response in data object to create consistent return body for this service's methods
-      result.data = {
-        items: result.items,
-        count: result.count,
-      };
-      delete result.items;
-      delete result.count;
-
       return this._success('Personas loaded successfully', result);
     } catch (e) {
       return this._failure('Failed to load personas', e);
@@ -281,13 +282,27 @@ class TargetingService {
   }
 
   _success(message, response) {
-    response.message = response.message || message;
-    return response;
+    return this._parseResponse(message, response, DEFAULT_SUCCESS_RESPONSE);
   }
 
   _failure(message, response) {
-    response.message = response.message || message;
-    return response;
+    return this._parseResponse(message, response, DEFAULT_FAILURE_RESPONSE);
+  }
+
+  _parseResponse(message, response, defaultProperties) {
+    message = response.message || message;
+
+    return response.hasOwnProperty('data')
+      ? {
+        ...defaultProperties,
+        ...response,
+        message,
+    }
+      : {
+      ...defaultProperties,
+      data: response,
+      message,
+    };
   }
 
   _execute(method, pathElements, data, params, headers = {}) {
