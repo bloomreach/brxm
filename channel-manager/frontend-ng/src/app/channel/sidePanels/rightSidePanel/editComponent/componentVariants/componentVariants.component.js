@@ -20,6 +20,10 @@ import controller from './componentVariants.controller';
 const componentVariantsComponent = {
   controller,
   template,
+  bindings: {
+    onVariantUpdated: '&',
+    onVariantInitiated: '&',
+  },
 };
 
 export default componentVariantsComponent;

@@ -36,6 +36,7 @@ class EditComponentMainCtrl {
     EditComponentService,
     FeedbackService,
     HippoIframeService,
+    ComponentVariantsService,
   ) {
     'ngInject';
 
@@ -50,6 +51,7 @@ class EditComponentMainCtrl {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.ConfigService = ConfigService;
+    this.ComponentVariantsService = ComponentVariantsService;
 
     this._onComponentMoved = this._onComponentMoved.bind(this);
     this._onDocumentSelect = this._onDocumentSelect.bind(this);
@@ -70,6 +72,15 @@ class EditComponentMainCtrl {
 
   get variantsVisible() {
     return this.ConfigService.relevancePresent;
+  }
+
+  onVariantUpdated(variant) {
+    this.ComponentVariantsService.setCurrentVariant(variant);
+    this.form.$setDirty();
+  }
+
+  onVariantInitiated(variant) {
+    this.ComponentVariantsService.setCurrentVariant(variant);
   }
 
   _onComponentMoved() {

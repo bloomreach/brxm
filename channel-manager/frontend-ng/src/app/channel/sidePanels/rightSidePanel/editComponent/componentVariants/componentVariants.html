@@ -14,4 +14,6 @@
   limitations under the License.
   -->
 
-<em-variants></em-variants>
+<em-variants ng-on-variant_initiated="$ctrl.onVariantInitiated({ variant: $event.detail.variant })"
+             ng-on-variant_updated="$ctrl.onVariantUpdated({ variant: $event.detail.variant })">
+</em-variants>

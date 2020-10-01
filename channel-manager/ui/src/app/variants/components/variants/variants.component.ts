@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
-import { Variant, VariantExpressions, VariantExpressionType } from '../../models/variant.model';
+import { Variant, VariantExpression, VariantExpressions, VariantExpressionType } from '../../models/variant.model';
 import { VariantsService } from '../../services/variants.service';
 
 @Component({
@@ -31,7 +31,14 @@ export class VariantsComponent implements OnInit {
   private readonly component = this.componentEditorService.getComponent();
   private readonly componentId = this.component.getId();
   variants?: Variant[];
+  currentVariant?: Variant;
   variantSelect = new FormControl();
+
+  @Output()
+  variantUpdated = new EventEmitter<{ variant: Variant | undefined }>();
+
+  @Output()
+  variantInitiated = new EventEmitter<{ variant: Variant | undefined }>();
 
   constructor(
     @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,
@@ -43,17 +50,7 @@ export class VariantsComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.variants = await this.variantsService.getVariants(this.componentId);
 
-    this.selectVariantFromParams();
-  }
-
-  selectVariantFromParams(): void {
-    const initialSelection = this.variants?.find(v => v.id === this.ng1StateService.params.variantId);
-    this.variantSelect.setValue(initialSelection);
-    console.log(this.variantSelect.value);
-  }
-
-  get selectedVariant(): Variant {
-    return this.variantSelect.value;
+    this.resetToStateParamsVariant();
   }
 
   async addVariant(): Promise<void> {
@@ -78,7 +75,7 @@ export class VariantsComponent implements OnInit {
     // when selecing a variant a user might have changes
     // user might cancel, discard changes or save those changes
     // this visually restores the previous value in the select so it does not switch back and forth
-    this.selectVariantFromParams();
+    this.resetToStateParamsVariant();
 
     return this.ng1StateService.go('hippo-cm.channel.edit-component', {
       componentId: this.componentId,
@@ -87,11 +84,25 @@ export class VariantsComponent implements OnInit {
     .catch(error => error /* catching cancel transition error */);
   }
 
+  removeExpression(expression: VariantExpression): void {
+    if (this.currentVariant?.expressions) {
+      this.currentVariant.expressions = this.currentVariant.expressions.filter(exp => exp.id !== expression.id);
+    }
+
+    this.variantUpdated.emit({ variant: this.currentVariant });
+  }
+
+  private resetToStateParamsVariant(): void {
+     this.currentVariant = this.variants?.find(v => v.id === this.ng1StateService.params.variantId);
+     this.variantInitiated.emit({ variant: this.currentVariant });
+     this.variantSelect.setValue(this.currentVariant);
+  }
+
   private extractExpressions(variant?: Variant): VariantExpressions {
     let persona = '';
     const characteristics: any[] = [];
 
-    variant?.expressions.map(({ id, type }) => {
+    variant?.expressions.forEach(({ id, type }) => {
       if (type === VariantExpressionType.Persona) {
         persona = id;
       } else {
