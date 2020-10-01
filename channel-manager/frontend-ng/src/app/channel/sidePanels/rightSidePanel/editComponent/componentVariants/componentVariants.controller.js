@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-class ComponentVariantsCtrl {
-  constructor() {
-    'ngInject';
-  }
-}
+class ComponentVariantsCtrl { }
 
 export default ComponentVariantsCtrl;

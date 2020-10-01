@@ -105,6 +105,24 @@ class TargetingService {
     }
   }
 
+  async updateVariant(componentId, formData, variantId, personaId, characteristics) {
+    const page = this.PageStructureService.getPage();
+    const component = page.getComponentById(componentId);
+
+    const newVariantId = this._createVariantId(personaId, characteristics);
+    const headers = {
+      lastModifiedTimestamp: component.lastModified,
+      'Move-To': newVariantId,
+    };
+
+    try {
+      const result = await this.HstService.doPutFormWithHeaders(formData, componentId, headers, variantId);
+      return this._success(`Succesfully updated variant ${variantId} for component ${componentId}`, result);
+    } catch (e) {
+      return this._failure('Failed to update', e);
+    }
+  }
+
   _createVariantId(personaId = '', characteristics = [], abvariantId) {
     if (!abvariantId) {
       abvariantId = Math.floor(new Date().getTime() / 1000);

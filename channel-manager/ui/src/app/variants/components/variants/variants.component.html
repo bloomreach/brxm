@@ -45,16 +45,16 @@
   </div>
 
   <div class="variant-expressions"
-       *ngIf="selectedVariant?.expressions.length > 0">
+       *ngIf="currentVariant?.expressions.length > 0">
     <div class="variant-expressions-list">
       <div class="variant-expressions-list-label">
         Variant Expressions
       </div>
 
       <div class="variant-expressions-list-item"
-           *ngFor="let expression of selectedVariant.expressions">
+           *ngFor="let expression of currentVariant?.expressions">
         <span>{{ expression.name }}</span>
-        <button mat-icon-button>
+        <button mat-icon-button (click)="removeExpression(expression)">
           <mat-icon svgIcon="close"></mat-icon>
         </button>
       </div>
