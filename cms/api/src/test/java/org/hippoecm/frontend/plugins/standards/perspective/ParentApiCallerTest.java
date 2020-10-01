@@ -18,12 +18,8 @@ package org.hippoecm.frontend.plugins.standards.perspective;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms.json.Json;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
@@ -39,12 +35,20 @@ public class ParentApiCallerTest {
 
     @Test
     public void updateNavLocation() {
-        final String javascript = String.format(ParentApiCaller.JAVA_SCRIPT_TEMPLATE, "{\"path\":\"path\",\"breadcrumbLabel\":\"some breadcrumb label\",\"addHistory\":false}");
+        final String javascript = String.format(ParentApiCaller.JAVA_SCRIPT_TEMPLATE, "{\"path\":\"path\",\"breadcrumbLabel\":\"some breadcrumb label\"}");
         handler.appendJavaScript(javascript);
         replay(handler);
         parentApi.updateNavLocation("path", "some breadcrumb label", false);
         verify(handler);
     }
 
+    @Test
+    public void updateNavLocationAddHistory() {
+        final String javascript = String.format(ParentApiCaller.JAVA_SCRIPT_TEMPLATE, "{\"path\":\"path\",\"breadcrumbLabel\":\"some breadcrumb label\",\"addHistory\":true}");
+        handler.appendJavaScript(javascript);
+        replay(handler);
+        parentApi.updateNavLocation("path", "some breadcrumb label", true);
+        verify(handler);
+    }
 
 }
