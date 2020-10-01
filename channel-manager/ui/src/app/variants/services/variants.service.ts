@@ -53,6 +53,11 @@ export class VariantsService {
     return response.data;
   }
 
+  async deleteVariant(componentId: string, variantId: string): Promise<void> {
+    const response = await this.targetingService.deleteVariant(componentId, variantId);
+    return response;
+  }
+
   groupVariants(variants: { id: string, name: string }[]): GroupedVariant[] {
     const suffixedVariantRegEx = /(.*)-[A-Z]$/;
     const groupedVariants = new Map<string, GroupedVariant>();
