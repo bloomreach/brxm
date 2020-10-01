@@ -30,7 +30,7 @@ import { VariantsService } from '../../services/variants.service';
 export class VariantsComponent implements OnInit {
   private readonly component = this.componentEditorService.getComponent();
   private readonly componentId = this.component.getId();
-  variants?: Variant[];
+  variants: Variant[] = [];
   currentVariant?: Variant;
   variantSelect = new FormControl();
 
@@ -66,6 +66,14 @@ export class VariantsComponent implements OnInit {
 
     if (newVariant) {
       return this.selectVariant(newVariant);
+    }
+
+    return this.selectVariant(this.variants[0]);
+  }
+
+  async deleteVariant(): Promise<void> {
+    if (this.currentVariant) {
+      await this.variantsService.deleteVariant(this.componentId, this.currentVariant.id);
     }
 
     return this.selectVariant(this.variants[0]);
