@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import componentVariantsService from './componentVariants/componentVariants.service';
 import componentEditorService from './componentEditor.service';
 import componentFieldsComponent from './componentFields/componentFields.component';
 import editComponentConfig from './editComponent.config';
@@ -29,6 +30,7 @@ const editComponentModule = angular
   .config(editComponentConfig)
   .service('ComponentEditor', componentEditorService)
   .service('EditComponentService', editComponentService)
+  .service('ComponentVariantsService', componentVariantsService)
   .component('editComponentTabs', editComponentTabsComponent)
   .component('editComponentMain', editComponentMainComponent)
   .component('componentFields', componentFieldsComponent)

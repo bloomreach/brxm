@@ -29,12 +29,15 @@ class ComponentEditorService {
     ChannelService,
     CmsService,
     CommunicationService,
+    ConfigService,
     ContainerService,
     DialogService,
     FeedbackService,
     HippoIframeService,
     HstComponentService,
     PageStructureService,
+    ComponentVariantsService,
+    TargetingService,
   ) {
     'ngInject';
 
@@ -50,6 +53,9 @@ class ComponentEditorService {
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
     this.PageStructureService = PageStructureService;
+    this.ComponentVariantsService = ComponentVariantsService;
+    this.ConfigService = ConfigService;
+    this.TargetingService = TargetingService;
 
     this.killed = false;
 
@@ -77,6 +83,7 @@ class ComponentEditorService {
 
     return this.request;
   }
+  
 
   getPropertyGroups() {
     return this.propertyGroups;
@@ -323,11 +330,33 @@ class ComponentEditorService {
   }
 
   async save() {
-    const { data: { id }, reloadRequired } = await this.HstComponentService.setParameters(
-      this.component.getId(),
-      this.component.getRenderVariant(),
-      this.propertiesAsFormData(),
-    );
+    let response;
+
+    const componentId = this.component.getId();
+    const formData = this.propertiesAsFormData();
+    let variantId;
+
+    if (this.ConfigService.relevancePresent) {
+      const variant = this.ComponentVariantsService.getCurrentVariant();
+      const { persona, characteristics } = this.ComponentVariantsService.extractExpressions(variant);
+      variantId = variant.id;
+      response = await this.TargetingService.updateVariant(
+        componentId,
+        formData,
+        variantId,
+        persona,
+        characteristics,
+      );
+    } else {
+      variantId = this.component.getRenderVariant();
+      response = await this.HstComponentService.setParameters(
+        componentId,
+        variantId,
+        formData,
+      );
+    }
+
+    const { data: { id }, reloadRequired } = response;
 
     if (reloadRequired) {
       await this.HippoIframeService.reload();
