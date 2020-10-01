@@ -47,13 +47,12 @@ describe('TargetingService', () => {
     $httpBackend.verifyNoOutstandingExpectation();
   });
 
-  function expectHttp(backend, message, when, ...expects) {
-    const responseData = {};
-    backend.respond((method, url, data, headers, params) => {
+  function expectHttp(backend, message, when, expects = [], data = {}) {
+    backend.respond((method, url, _data, headers, params) => {
       expects.forEach(exp => exp(params));
 
       return [200, {
-        data: responseData,
+        data,
         message: null,
         success: true,
       }];
@@ -64,14 +63,15 @@ describe('TargetingService', () => {
     $httpBackend.flush();
 
     expect(promiseSpy).toHaveBeenCalledWith({
-      data: responseData,
+      data,
       message,
       success: true,
+      reloadRequired: false,
     });
   }
 
-  function expectGet(url, message, when, ...verify) {
-    expectHttp($httpBackend.expectGET(url), message, when, ...verify);
+  function expectGet(url, message, when, verify, responseData) {
+    expectHttp($httpBackend.expectGET(url), message, when, verify, responseData);
   }
 
   function expectHttpError(responseData, message, when) {
@@ -178,8 +178,14 @@ describe('TargetingService', () => {
         urlRegex,
         'Personas loaded successfully',
         () => TargetingService.getPersonas(),
-        expectDefaultParams,
-        params => expect(params.collectors).toBe('collector1,collector2'),
+        [
+          expectDefaultParams,
+          params => expect(params.collectors).toBe('collector1,collector2'),
+        ],
+        {
+          items: ['woot'],
+          count: 1,
+        },
       );
     });
 
@@ -209,8 +215,10 @@ describe('TargetingService', () => {
       $rootScope.$digest();
 
       expect(promiseSpy).toHaveBeenCalledWith({
-        items: ['characteristic-c1', 'characteristic-c2'],
+        data: { items: ['characteristic-c1', 'characteristic-c2'] },
         message: 'Characteristics loaded successfully',
+        reloadRequired: false,
+        success: true,
       });
     });
   });
@@ -223,7 +231,7 @@ describe('TargetingService', () => {
         urlRegex,
         'Characteristics IDs loaded successfully',
         () => TargetingService.getCharacteristicsIDs(),
-        expectDefaultParams,
+        [expectDefaultParams],
       );
     });
 
@@ -241,8 +249,10 @@ describe('TargetingService', () => {
         $httpBackend.expectGET(urlRegex, { Accept: 'application/json, text/plain, */*' }, ['characterId']),
         'Characteristic "dayofweek" loaded successfully',
         () => TargetingService.getCharacteristic('dayofweek'),
-        expectDefaultParams,
-        params => expect(params.characterId).toBe('dayofweek'),
+        [
+          expectDefaultParams,
+          params => expect(params.characterId).toBe('dayofweek'),
+        ],
       );
     });
 
