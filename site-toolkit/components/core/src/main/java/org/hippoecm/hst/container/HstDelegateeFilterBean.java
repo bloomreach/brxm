@@ -49,6 +49,7 @@ import org.hippoecm.hst.container.security.TokenException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ContainerNotFoundException;
@@ -68,6 +69,7 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.core.sitemapitemhandler.FilterChainAwareHstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
+import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
@@ -86,6 +88,7 @@ import static java.lang.Boolean.TRUE;
 import static java.util.Collections.emptyMap;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMSSESSIONCONTEXT_BINDING_PATH;
@@ -148,6 +151,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     private String clusterNodeAffinityHeaderName;
     private String clusterNodeAffinityQueryParam;
     private boolean xForwardedHostSpoofingProtection;
+    private PropertyParser propertyParserWithDefaultValueColonSupport;
 
     @Override
     public void setServletContext(ServletContext servletContext) {
@@ -199,6 +203,12 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     public void setxForwardedHostSpoofingProtection(final boolean xForwardedHostSpoofingProtection) {
         this.xForwardedHostSpoofingProtection = xForwardedHostSpoofingProtection;
+    }
+
+
+    public void setContainerConfiguration(final ContainerConfiguration containerConfiguration) {
+        propertyParserWithDefaultValueColonSupport = new PropertyParser(containerConfiguration.toProperties(), PropertyParser.DEFAULT_PLACEHOLDER_PREFIX, PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX,
+                ":", false);
     }
 
     @Override
@@ -491,7 +501,17 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     if (isNotBlank((String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME))) {
 
                         final String previewURL = (String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME);
-                        doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), hstContainerUrl.getParameterMap(), previewURL);
+
+                        // replace property placeholders
+                        final String parsed = (String) propertyParserWithDefaultValueColonSupport.resolveProperty(PREVIEW_URL_PROPERTY_NAME, previewURL);
+                        if (isBlank(parsed)) {
+                            final String msg = String.format("Cannot parse property '%s = %s' because of unresolvable property place holders. Return 404",
+                                    PREVIEW_URL_PROPERTY_NAME, previewURL);
+                            log.warn(msg);
+                            throw new MatchException(msg);
+                        }
+
+                        doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), hstContainerUrl.getParameterMap(), parsed);
                         return;
                     }
                 }
