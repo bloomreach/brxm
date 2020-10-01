@@ -26,6 +26,7 @@
     <property name="previewDecorator" ref="org.hippoecm.hst.core.internal.PreviewDecorator" />
     <property name="repository" ref="javax.jcr.Repository" />
     <property name="hstRequestProcessor" ref="org.hippoecm.hst.core.container.HstRequestProcessor" />
+    <property name="containerConfiguration" ref="containerConfiguration"/>
     <property name="jwtTokenAuthorizationHeader" value="${jwt.token.authorization.header}"/>
     <property name="jwtTokenParam" value="${jwt.token.param}" />
     <property name="clusterNodeAffinityCookieName" value="${cluster.node.affinity.cookie.name}"/>
