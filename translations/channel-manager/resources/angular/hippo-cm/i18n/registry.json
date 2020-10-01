@@ -1291,10 +1291,6 @@
         "es" : "UNRESOLVED"
       }
     },
-    "VERSIONS_LIST_HEADER" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERS" : {
       "status" : "CLEAN",
       "locales" : null

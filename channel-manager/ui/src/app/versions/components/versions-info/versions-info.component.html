@@ -14,55 +14,39 @@
   limitations under the License.
   -->
 <div class="mat-typography" *ngIf="versionsInfo">
-  <mat-selection-list class="qa-version-list"
-                      *ngIf="versionsInfo?.versions.length === 0">
-    <h3 matSubheader
-        class="qa-version-list-header">
+  <ng-container *ngIf="versionsInfo?.versions.length === 0">
+    <div class="no-versions qa-version-list-header">
       {{ 'NO_VERSIONS_AVAILABLE' | translate }}
-    </h3>
+    </div>
     <mat-divider></mat-divider>
-  </mat-selection-list>
+  </ng-container>
 
-  <mat-selection-list *ngIf="versionsInfo?.versions.length > 0"
-                      color="primary"
-                      class="qa-version-list"
-                      [multiple]="false"
-                      (selectionChange)="selectVersion($event.option.value)">
-    <h3 matSubheader
-        class="qa-version-list-header">
-      {{ 'VERSIONS_LIST_HEADER' | translate }}
+  <div *ngIf="versionsInfo?.versions.length > 0" class="versions-list qa-version-list">
+    <div *ngFor="let version of versionsInfo?.versions; first as isFirst"
+         matRipple
+         (click)="selectVersion(version.jcrUUID)"
+         [class]="'qa-version-' + version.jcrUUID"
+         [class.selected]="isVersionSelected(version.jcrUUID)"
+         class="version">
 
-      <mat-progress-bar *ngIf="actionInProgress"
-                        mode="indeterminate">
-      </mat-progress-bar>
-    </h3>
+      <div class="description">
+        <p *ngIf="isFirst"
+           class="timestamp qa-latest-version">
+          {{ 'LATEST_VERSION' | translate }}
+        </p>
 
-    <mat-divider></mat-divider>
+        <p *ngIf="!isFirst"
+           class="timestamp qa-version-timestamp">
+          {{ version.timestamp | moment }}
+        </p>
 
-    <mat-list-option *ngFor="let version of versionsInfo?.versions; first as isFirst"
-                     [class]="'qa-version-' + version.jcrUUID"
-                     [value]="version.jcrUUID"
-                     [selected]="unpublishedVariantId === version.jcrUUID">
-      <p matLine
-         *ngIf="isFirst"
-         class="qa-latest-version">
-        {{ 'LATEST_VERSION' | translate }}
-      </p>
+        <p *ngIf="!isFirst"
+           class="qa-version-username">
+          {{ version.userName || ('SYSTEM' | translate) }}
+        </p>
+      </div>
 
-      <p matLine
-         *ngIf="!isFirst"
-         class="qa-version-timestamp">
-        {{ version.timestamp | moment }}
-      </p>
-
-      <p matLine
-         *ngIf="!isFirst"
-         class="qa-version-username">
-        {{ version.userName || ('SYSTEM' | translate) }}
-      </p>
-
-      <div matLine
-           class="version-actions">
+      <div class="actions">
         <button *ngIf="versionsInfo.createEnabled && unpublishedVariantId === version.jcrUUID && isFirst"
                 mat-stroked-button
                 color="primary"
@@ -82,7 +66,6 @@
           {{ 'RESTORE' | translate }}
         </button>
       </div>
-      <mat-divider></mat-divider>
-    </mat-list-option>
-  </mat-selection-list>
+    </div>
+  </div>
 </div>
