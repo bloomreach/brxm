@@ -18,21 +18,26 @@ describe('TargetingService', () => {
   let $httpBackend;
   let $rootScope;
   let $window;
+  let ChannelService;
   let ConfigService;
   let TargetingService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.targeting');
 
-    inject((_$httpBackend_, _$rootScope_, _$window_, _ConfigService_, _TargetingService_) => {
+    inject((_$httpBackend_, _$rootScope_, _$window_, _ChannelService_, _ConfigService_, _TargetingService_) => {
       $httpBackend = _$httpBackend_;
       $rootScope = _$rootScope_;
       $window = _$window_;
+      ChannelService = _ChannelService_;
       ConfigService = _ConfigService_;
       TargetingService = _TargetingService_;
     });
 
     $window.parent.Hippo.Targeting.HttpProxy.REST_URL = 'targeting-rest-url';
+
+    ConfigService.locale = 'locale';
+    ConfigService.variantsUuid = 'variantsUuid';
 
     TargetingService.init();
   });
@@ -117,11 +122,6 @@ describe('TargetingService', () => {
   });
 
   describe('getVariants', () => {
-    beforeEach(() => {
-      ConfigService.variantsUuid = 'variantsUuid';
-      ConfigService.locale = 'locale';
-    });
-
     it('should request the variant IDs', () => {
       spyOn(TargetingService, 'getVariantIDs');
 
@@ -181,7 +181,7 @@ describe('TargetingService', () => {
         expectDefaultParams,
         params => expect(params.collectors).toBe('collector1,collector2'),
       );
-        });
+    });
 
     it('should not choke if there are no collectors defined', () => {
       $window.parent.Hippo.Targeting.CollectorPlugins = null;
@@ -192,8 +192,8 @@ describe('TargetingService', () => {
 
     it('should resolve with an error response if the backend fails', () => {
       expectGetError(urlRegex, 'Failed to load personas', () => TargetingService.getPersonas());
-      });
     });
+  });
 
   describe('getCharacteristics', () => {
     it('should return a list of characteristics', () => {
@@ -227,13 +227,13 @@ describe('TargetingService', () => {
         () => TargetingService.getCharacteristicsIDs(),
         expectDefaultParams,
       );
-        });
+    });
 
     it('should resolve with an error response if the backend fails', () => {
       expectGetError(urlRegex, 'Failed to load characteristics IDs',
         () => TargetingService.getCharacteristicsIDs());
-      });
     });
+  });
 
   describe('getCharacteristic', () => {
     const urlRegex = /targeting-rest-url\/characteristics\/(.+).*/;
@@ -252,5 +252,99 @@ describe('TargetingService', () => {
       expectGetError(urlRegex, 'Failed to load characteristic "dayofweek"',
         () => TargetingService.getCharacteristic('dayofweek'));
     });
-        });
+  });
+
+  describe('getExperiment', () => {
+    const urlRegex = /targeting-rest-url\/experiments\/component\/(.+).*/;
+
+    it('should retrieve the experiment for the specified component', () => {
+      expectGet(
+        urlRegex,
+        'Experiment loaded successfully for component "componentId"',
+        () => TargetingService.getExperiment('componentId'),
+        expectDefaultParams,
+        params => expect(params.locale).toBe('locale'),
+      );
+    });
+
+    it('should resolve with an error response if the backend fails', () => {
+      expectGetError(urlRegex, 'Failed to load experiment for component "componentId"',
+        () => TargetingService.getExperiment('componentId'));
+    });
+  });
+
+  describe('saveExperiment', () => {
+    const urlRegex = /targeting-rest-url\/experiments\/saveExperiment(.+).*/;
+
+    it('should save the experiment for the specified component, goal and variant', () => {
+      const checkChanges = spyOn(ChannelService, 'checkChanges');
+      const payload = {
+        componentId: 'componentId',
+        goalId: 'goalId',
+        variantId: 'variantId',
+      };
+
+      expectHttp(
+        $httpBackend.expectPOST(urlRegex, payload),
+        'Experiment saved for component "componentId" with goal "goalId" and variant "variantId"',
+        () => TargetingService.saveExperiment('componentId', 'goalId', 'variantId'),
+        expectDefaultParams,
+      );
+      expect(checkChanges).toHaveBeenCalled();
+    });
+
+    it('should resolve with an error response if the backend fails', () => {
+      expectPostError(
+        urlRegex,
+        'Failed to save experiment for component "componentId" with goal "goalId" and variant "variantId"',
+        () => TargetingService.saveExperiment('componentId', 'goalId', 'variantId'),
+      );
+    });
+  });
+
+  describe('completeExperiment', () => {
+    const urlRegex = /targeting-rest-url\/experiments\/complete(.+).*/;
+
+    it('should complete the experiment of the specified component', () => {
+      const checkChanges = spyOn(ChannelService, 'checkChanges');
+
+      expectHttp(
+        $httpBackend.expectPOST(urlRegex, 'componentId'),
+        'Experiment completed for component "componentId"',
+        () => TargetingService.completeExperiment('componentId', 'keepVariantId'),
+        expectDefaultParams,
+        params => expect(params.keepOnlyVariantId).toBe('keepVariantId'),
+      );
+      expect(checkChanges).toHaveBeenCalled();
+    });
+
+    it('should resolve with an error response if the backend fails', () => {
+      expectPostError(
+        urlRegex,
+        'Failed to complete experiment for component "componentId"',
+        () => TargetingService.completeExperiment('componentId'),
+      );
+    });
+  });
+
+  describe('getExperimentState', () => {
+    const urlRegex = /targeting-rest-url\/experiments\/serving(.+).*/;
+
+    it('should return the state of the specified experiment', () => {
+      expectGet(
+        urlRegex,
+        'Succesfully loaded state of experiment "experimentId"',
+        () => TargetingService.getExperimentState('experimentId'),
+        expectDefaultParams,
+      );
+    });
+
+    it('should resolve with an error response if the backend fails', () => {
+      expectGetError(
+        urlRegex,
+        'Failed to load state of experiment "experimentId"',
+        () => TargetingService.getExperimentState('experimentId'),
+      );
+    });
+  });
 });
