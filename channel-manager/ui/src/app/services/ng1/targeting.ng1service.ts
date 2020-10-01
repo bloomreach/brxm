@@ -25,6 +25,7 @@ import { Variant, VariantCharacteristicData } from '../../variants/models/varian
 export interface Ng1TargetingService {
   getCharacteristics(): Promise<TargetingApiResponse<void>>;
   getVariants(containerItemId: string): Promise<TargetingApiResponse<Variant[]>>;
+  deleteVariant(componentId: string, variantId: string): Promise<void>;
   addVariant(
     componentId: string,
     formData: any,
