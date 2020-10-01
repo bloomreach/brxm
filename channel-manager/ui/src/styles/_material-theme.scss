@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-@import 'variables';
-@import 'material-theme';
+@import '~@angular/material/theming';
+@import '~@bloomreach/frontend-theme/palettes';
 
-$custom-typography: mat-typography-config(
-  $font-family: inspect($font-family)
-);
-
-@include mat-core($custom-typography);
-@include angular-material-theme($theme);
-
-// default body text color
-.mat-typography {
-  color: map-get($text-color, dark);
-}
-
-.mat-stroked-button:not(.mat-button-disabled) {
-  border-color: map-get($blue, 500);
-}
-
-@import 'mdi-styles-fix';
+$primary: mat-palette($blue);
+$accent: mat-palette($orange);
+$warn: mat-palette($red);
+$theme: mat-light-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+  ),
+));

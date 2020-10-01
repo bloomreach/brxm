@@ -220,7 +220,6 @@
   "UNPUBLISHED_CHANGES": "unpublished changes",
   "ERROR_NAME_ALREADY_EXISTS": "Failed to create document. The name is already used",
   "ERROR_NOT_A_DOCUMENT": "Selected element is not a document",
-  "VERSIONS_LIST_HEADER": "Date & time, user",
   "VALIDATION_ILLEGAL_CHARACTERS": "One or more invalid characters ({{characters}}) have been entered",
   "ERROR_DOES_NOT_EXIST": "Failed to retrieve document",
   "NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE": "Page '{{pageName}}': offline",
