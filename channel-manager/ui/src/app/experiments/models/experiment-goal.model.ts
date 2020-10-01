@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
-
-import { ExperimentsService } from '../../services/experiments.service';
-
-@Component({
-  templateUrl: 'experiments.component.html',
-  styleUrls: ['experiments.component.scss'],
-})
-export class ExperimentsComponent {
-  readonly experiment$ = this.experimentsService.getExperiment();
-
-  constructor(private readonly experimentsService: ExperimentsService) {}
+export interface ExperimentGoal {
+  id: string;
+  name: string;
+  type: 'PAGE';
+  readOnly: boolean;
+  targetPage: string;
+  mountId: string;
 }

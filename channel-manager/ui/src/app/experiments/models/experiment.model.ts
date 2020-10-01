@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
+import { ExperimentGoal } from './experiment-goal.model';
+import { ExperimentState } from './experiment-state.enum';
+import { ExperimentVariant } from './experiment-variant.model';
 
-import { ExperimentsService } from '../../services/experiments.service';
-
-@Component({
-  templateUrl: 'experiments.component.html',
-  styleUrls: ['experiments.component.scss'],
-})
-export class ExperimentsComponent {
-  readonly experiment$ = this.experimentsService.getExperiment();
-
-  constructor(private readonly experimentsService: ExperimentsService) {}
+export interface Experiment {
+  id: string;
+  state: ExperimentState;
+  type: 'PAGE';
+  startTime: number;
+  winnerVariant: ExperimentVariant | null;
+  variants: ExperimentVariant[];
+  goal: ExperimentGoal;
 }

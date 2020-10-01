@@ -14,16 +14,34 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
+@import 'variables';
 
-import { ExperimentsService } from '../../services/experiments.service';
+:host {
+  display: block;
+}
 
-@Component({
-  templateUrl: 'experiments.component.html',
-  styleUrls: ['experiments.component.scss'],
-})
-export class ExperimentsComponent {
-  readonly experiment$ = this.experimentsService.getExperiment();
+.mat-list-item {
+  font-size: $font-normal;
 
-  constructor(private readonly experimentsService: ExperimentsService) {}
+  &:first-child {
+    height: $br-size-xl;
+  }
+
+  .experiment-goal-header {
+    font-weight: bold;
+  }
+
+  .line-header {
+    flex-basis: 110px;
+  }
+
+  .experiment-state {
+    text-transform: capitalize;
+  }
+
+  .mat-divider {
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
 }
