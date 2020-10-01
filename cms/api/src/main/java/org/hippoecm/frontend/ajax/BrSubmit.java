@@ -17,7 +17,6 @@ package org.hippoecm.frontend.ajax;
 
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.ajax.AjaxDisableComponentListener;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 
 public abstract class BrSubmit extends AjaxButton {
@@ -31,6 +30,6 @@ public abstract class BrSubmit extends AjaxButton {
     protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
         super.updateAjaxAttributes(attributes);
 
-        attributes.getAjaxCallListeners().add(new AjaxDisableComponentListener());
+        attributes.getAjaxCallListeners().add(new PreventDoubleClickListener());
     }
 }
