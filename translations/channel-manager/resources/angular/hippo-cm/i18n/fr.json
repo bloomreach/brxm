@@ -215,7 +215,6 @@
   "UNPUBLISHED_CHANGES": "modifications non publiées",
   "ERROR_NAME_ALREADY_EXISTS": "Échec de la création de document. Le nom est déjà utilisé",
   "ERROR_NOT_A_DOCUMENT": "L’élément sélectionné n’est pas un document",
-  "VERSIONS_LIST_HEADER": "Date et heure, utilisateur",
   "VALIDATION_ILLEGAL_CHARACTERS": "Un ou plusieurs caractères ({{characters}}) non valides on été saisis",
   "ERROR_DOES_NOT_EXIST": "Échec de la récupération de document",
   "NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE": "Page '{{pageName}}' : hors connexion",
