@@ -733,9 +733,7 @@ describe('ChannelService', () => {
     });
 
     it('returns an origin from the preview url', () => {
-      ChannelService.getProperties.and.returnValue({
-        'org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo_url': 'http://example.com:3000/something',
-      });
+      ChannelService.getChannel.and.returnValue({ spaUrl: 'http://example.com:3000/something' });
 
       expect(ChannelService.getOrigin()).toBe('http://example.com:3000');
     });
