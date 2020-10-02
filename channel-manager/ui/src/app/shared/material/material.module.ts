@@ -16,6 +16,9 @@
 
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatRippleModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -29,11 +32,14 @@ import { registerSvgIcons } from './register-svg-icons';
 @NgModule({
   exports: [
     MatButtonModule,
-    MatListModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatSelectModule,
+    MatDialogModule,
+    MatDividerModule,
     MatFormFieldModule,
+    MatIconModule,
+    MatListModule,
+    MatProgressBarModule,
+    MatRippleModule,
+    MatSelectModule,
     MatSnackBarModule,
   ],
 })
