@@ -317,7 +317,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     private void writeObject(final ObjectOutputStream output) throws IOException {
         if (isAttached()) {
-            log.warn("Undetached JcrItemModel " + getPath());
+            log.warn("Undetached JcrItemModel {}", this);
             final T object = this.getObject();
             if (object != null) {
                 TraceMonitor.trace(object);
