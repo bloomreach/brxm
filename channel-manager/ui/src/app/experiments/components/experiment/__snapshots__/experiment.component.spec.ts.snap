@@ -74,6 +74,13 @@ exports[`ExperimentComponent should be shown 1`] = `
       <mat-divider />
     </mat-list-item>
   </mat-list>
-  <em-experiment-status-chart />
+  <div
+    class="experiment-status-wrapper"
+  >
+    <em-experiment-status-message
+      class="qa-experiment-status-message"
+    />
+    <em-experiment-status-chart />
+  </div>
 </div>
 `;

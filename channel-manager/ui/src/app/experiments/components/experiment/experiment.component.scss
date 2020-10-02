@@ -45,3 +45,11 @@
     width: auto;
   }
 }
+
+.experiment-status-wrapper {
+  padding: $br-size;
+
+  em-experiment-status-chart {
+    margin-top: $br-size;
+  }
+}
