@@ -22,7 +22,7 @@ import { SharedModule } from '../shared/shared.module';
 import { TranslationsModule } from '../translations/translations.module';
 
 import { ExperimentStatusChartComponent } from './components/experiment-status-chart/experiment-status-chart.component';
-import { ExperimentsComponent } from './components/experiments/experiments.component';
+import { ExperimentComponent } from './components/experiment/experiment.component';
 import { ExperimentNamePipe } from './pipes/experiment-name.pipe';
 
 @NgModule({
@@ -32,17 +32,17 @@ import { ExperimentNamePipe } from './pipes/experiment-name.pipe';
     TranslationsModule,
   ],
   declarations: [
-    ExperimentsComponent,
+    ExperimentComponent,
     ExperimentStatusChartComponent,
     ExperimentNamePipe,
   ],
   entryComponents: [
-    ExperimentsComponent,
+    ExperimentComponent,
   ],
 })
 export class ExperimentsModule {
   constructor(readonly injector: Injector) {
-    const el = createCustomElement(ExperimentsComponent, { injector });
-    customElements.define('em-experiments', el);
+    const el = createCustomElement(ExperimentComponent, { injector });
+    customElements.define('em-experiment', el);
   }
 }

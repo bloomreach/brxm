@@ -22,7 +22,7 @@ import { ExperimentState } from '../../models/experiment-state.enum';
 import { Experiment } from '../../models/experiment.model';
 import { ExperimentsService } from '../../services/experiments.service';
 
-import { ExperimentsComponent } from './experiments.component';
+import { ExperimentComponent } from './experiment.component';
 
 @Pipe({name: 'experimentName'})
 export class ExperimentNameMockPipe implements PipeTransform {
@@ -45,9 +45,9 @@ export class MomentMockPipe implements PipeTransform {
   }
 }
 
-describe('ExperimentsComponent', () => {
-  let fixture: ComponentFixture<ExperimentsComponent>;
-  let component: ExperimentsComponent;
+describe('ExperimentComponent', () => {
+  let fixture: ComponentFixture<ExperimentComponent>;
+  let component: ExperimentComponent;
 
   const mockExperiment = {
     id: 100,
@@ -78,7 +78,7 @@ describe('ExperimentsComponent', () => {
 
     fixture = TestBed.configureTestingModule({
       declarations: [
-        ExperimentsComponent,
+        ExperimentComponent,
         ExperimentNameMockPipe,
         TranslateMockPipe,
         MomentMockPipe,
@@ -90,7 +90,7 @@ describe('ExperimentsComponent', () => {
       schemas: [
         NO_ERRORS_SCHEMA,
       ],
-    }).createComponent(ExperimentsComponent);
+    }).createComponent(ExperimentComponent);
 
     component = fixture.componentInstance;
 
