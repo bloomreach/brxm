@@ -396,6 +396,9 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     }
 
     private boolean isValidSession() {
+        if (!Application.exists()) {
+            return false;
+        }
         final Session session = UserSession.get().getJcrSession();
         return session.getUserID().equals(userId);
     }
