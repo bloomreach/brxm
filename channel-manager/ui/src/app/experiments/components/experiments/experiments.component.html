@@ -17,7 +17,7 @@
 <ng-container *ngIf="experiment$ | async as experiment">
   <mat-list role="list">
     <mat-list-item role="listitem">
-      <span class="experiment-goal-header">America (3 variants)</span>
+      <span class="experiment-goal-header">{{ experiment | experimentName }}</span>
       <mat-divider></mat-divider>
     </mat-list-item>
     <mat-list-item role="listitem">
