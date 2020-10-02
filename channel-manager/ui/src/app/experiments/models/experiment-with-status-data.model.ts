@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-export interface ApiResponseBody<T> {
-  data: T;
-  errorCode: string | null;
-  message: string;
-  reloadRequired: boolean;
-  success: boolean;
-}
+import { ExperimentStatus } from './experiment-status.model';
+import { Experiment } from './experiment.model';
+
+export type ExperimentWithStatusData = Experiment & Partial<{ status: ExperimentStatus }>;
