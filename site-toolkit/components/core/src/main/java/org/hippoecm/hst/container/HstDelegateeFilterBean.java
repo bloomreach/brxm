@@ -505,10 +505,10 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                         // replace property placeholders
                         final String parsed = (String) propertyParserWithDefaultValueColonSupport.resolveProperty(PREVIEW_URL_PROPERTY_NAME, previewURL);
                         if (isBlank(parsed)) {
-                            final String msg = String.format("Cannot parse property '%s = %s' because of unresolvable property place holders. Return 404",
+                            log.warn("Cannot parse property '{} = {}' because of unresolvable property place holders. Return 404",
                                     PREVIEW_URL_PROPERTY_NAME, previewURL);
-                            log.warn(msg);
-                            throw new MatchException(msg);
+                            sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                            return;
                         }
 
                         doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), hstContainerUrl.getParameterMap(), parsed);
