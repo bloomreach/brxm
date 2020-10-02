@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExperimentsComponent should be shown 1`] = `
+<div
+  id="root0"
+>
+  
+  
+  <mat-list
+    role="list"
+  >
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="experiment-goal-header"
+      >
+        100
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_GOAL
+      </span>
+      <span>
+        Goal 1
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_PAGE
+      </span>
+      <span>
+        /target-page
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_STATE
+      </span>
+      <span
+        class="experiment-state"
+      >
+        running
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_START_DATE
+      </span>
+      <span>
+        1600868196063
+      </span>
+      <mat-divider />
+    </mat-list-item>
+  </mat-list>
+</div>
+`;

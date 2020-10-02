@@ -14,22 +14,37 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Inject, Injectable } from '@angular/core';
 
-import { TargetingApiResponse } from '../../shared/models/targeting-api-response.model';
-import { Experiment } from '../models/experiment.model';
-
-import mockApiResponse from './mock-api-response';
+import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1service';
+import { ExperimentWithStatusData } from '../models/experiment-with-status-data.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExperimentsService {
-  getExperiment(): Observable<Experiment> {
-    return of(mockApiResponse as TargetingApiResponse<Experiment>).pipe(
-      map(response => response.data),
-    );
+  constructor(@Inject(NG1_TARGETING_SERVICE) private readonly ng1TargetingService: Ng1TargetingService) {}
+
+  async getExperiment(componentId: string): Promise<ExperimentWithStatusData | undefined> {
+    const response = await this.ng1TargetingService.getExperiment(componentId);
+
+    if (!response.success) {
+      return;
+    }
+
+    const experiment = response.data;
+
+    const statusResponse = await this.ng1TargetingService.getExperimentStatus(experiment.id);
+
+    if (!statusResponse.success) {
+      return experiment;
+    }
+
+    const status = statusResponse.data;
+
+    return {
+      ...experiment,
+      status,
+    };
   }
 }

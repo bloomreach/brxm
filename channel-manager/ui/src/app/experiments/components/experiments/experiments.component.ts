@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 
+import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { ExperimentsService } from '../../services/experiments.service';
 
 @Component({
@@ -23,7 +24,12 @@ import { ExperimentsService } from '../../services/experiments.service';
   styleUrls: ['experiments.component.scss'],
 })
 export class ExperimentsComponent {
-  readonly experiment$ = this.experimentsService.getExperiment();
+  private readonly component = this.componentEditorService.getComponent();
+  private readonly componentId = this.component.getId();
+  readonly experiment$ = this.experimentsService.getExperiment(this.componentId);
 
-  constructor(private readonly experimentsService: ExperimentsService) {}
+  constructor(
+    @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,
+    private readonly experimentsService: ExperimentsService,
+  ) {}
 }
