@@ -44,8 +44,22 @@ beforeEach(() => {
 });
 
 describe('ContainerItemImpl', () => {
+  describe('getLabel', () => {
+    it('should return a label', () => {
+      const containerItem = createContainerItem({ ...model, ctype: 'NewsList', label: 'News List' });
+
+      expect(containerItem.getLabel()).toBe('News List');
+    });
+  });
+
   describe('getType', () => {
-    it('should return a type', () => {
+    it('should return a component type', () => {
+      const containerItem = createContainerItem({ ...model, ctype: 'NewsList', label: 'News List' });
+
+      expect(containerItem.getType()).toBe('NewsList');
+    });
+
+    it('should fall back to the label', () => {
       const containerItem = createContainerItem({ ...model, label: 'Banner' });
 
       expect(containerItem.getType()).toBe('Banner');

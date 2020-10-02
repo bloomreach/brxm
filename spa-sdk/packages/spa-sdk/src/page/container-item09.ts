@@ -35,6 +35,7 @@ const PARAMETER_HIDDEN = 'com.onehippo.cms7.targeting.TargetingParameterUtil.hid
  */
 export interface ContainerItemModel extends ComponentModel {
   _meta: ContainerItemMeta;
+  ctype?: string;
   label?: string;
   type: typeof TYPE_COMPONENT_CONTAINER_ITEM;
 }
@@ -66,8 +67,12 @@ export class ContainerItemImpl
     this.emit('update', {});
   }
 
-  getType() {
+  getLabel() {
     return this.model.label;
+  }
+
+  getType() {
+    return this.model.ctype ?? this.model.label;
   }
 
   isHidden() {
