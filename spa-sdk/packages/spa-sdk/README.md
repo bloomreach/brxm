@@ -168,6 +168,7 @@ The `ContainerItem` objects are usually visible on the page and interact with th
 
 Method | Description
 --- | ---
+<code>getLabel(): string &vert; undefined</code> | Returns the label of a container item catalogue component.
 <code>getType(): string &vert; undefined</code> | Returns the type of a container item. The available types depend on which container items have been configured in the backend (e.g. "Banner").
 `isHidden(): boolean` | Returns whether the component should not render anything. Hiding components is only possible with the Relevance feature.
 `on(eventName: string, listener: Function): Function` | Subscribes for an event and returns the unsubscribe function.
