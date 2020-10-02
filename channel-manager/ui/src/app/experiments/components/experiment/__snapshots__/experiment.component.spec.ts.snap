@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ExperimentsComponent should be shown 1`] = `
+exports[`ExperimentComponent should be shown 1`] = `
 <div
   id="root0"
 >

@@ -20,10 +20,10 @@ import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../.
 import { ExperimentsService } from '../../services/experiments.service';
 
 @Component({
-  templateUrl: 'experiments.component.html',
-  styleUrls: ['experiments.component.scss'],
+  templateUrl: 'experiment.component.html',
+  styleUrls: ['experiment.component.scss'],
 })
-export class ExperimentsComponent {
+export class ExperimentComponent {
   private readonly component = this.componentEditorService.getComponent();
   private readonly componentId = this.component.getId();
   readonly experiment$ = this.experimentsService.getExperiment(this.componentId);
