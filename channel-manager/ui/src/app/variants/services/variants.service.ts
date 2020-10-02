@@ -19,7 +19,7 @@ import { Inject, Injectable } from '@angular/core';
 import { ComponentProperties } from '../../models/component-properties.model';
 import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1service';
 import { GroupedVariant } from '../models/grouped-variant.model';
-import { Variant, VariantCharacteristicData } from '../models/variant.model';
+import { Variant, VariantCharacteristicData, VariantExpressions, VariantExpressionType } from '../models/variant.model';
 
 const DEFAULT_VARIANT_ID = 'hippo-default';
 
@@ -56,6 +56,30 @@ export class VariantsService {
   async deleteVariant(componentId: string, variantId: string): Promise<void> {
     const response = await this.targetingService.deleteVariant(componentId, variantId);
     return response;
+  }
+
+  extractExpressions(variant?: Variant): VariantExpressions {
+    let persona = '';
+    const characteristics: any[] = [];
+
+    variant?.expressions.forEach(({ id, type }) => {
+      if (type === VariantExpressionType.Persona) {
+        persona = id;
+      } else {
+        const parts = id.split('/');
+        const characteristic = parts[0];
+        const targetGroupId = parts[1];
+
+        characteristics.push({
+          [characteristic]: targetGroupId,
+        });
+      }
+    });
+
+    return {
+      persona,
+      characteristics,
+    };
   }
 
   groupVariants(variants: { id: string, name: string }[]): GroupedVariant[] {
