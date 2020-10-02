@@ -48,7 +48,7 @@ export class ExperimentStatusChartComponent implements OnInit {
         position: () => ({top: 0, left: 0}),
         format: {
           // title: d3.format('%d/%m %H:%M') as (x: c3.Primitive, index: number) => string,
-          value: value => `${value} %`,
+          value: (value: number) => `${value} %`,
         },
       },
       axis: {
