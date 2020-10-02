@@ -14,6 +14,23 @@
  * limitations under the License.
  */
 
+@import '~@bloomreach/frontend-theme/palettes';
+@import 'material-theme';
+@import 'variables';
+
+@mixin mat-divider-border($config-or-theme) {
+  $config: mat-get-color-config($config-or-theme);
+  $foreground: map-get($config, foreground);
+
+  border-bottom: 1px solid mat-color($foreground, divider);
+}
+
+@mixin mat-hover-background($config-or-theme) {
+  $config: mat-get-color-config($config-or-theme);
+  $background: map-get($config, background);
+
+  background: mat-color($background, hover);
+}
 
 .mat-line {
   font-size: 14px !important;
@@ -24,7 +41,7 @@
 }
 
 .mat-list-single-selected-option {
-  background-color: #e7f1f9;
+  background-color: map-get($blue, 50);
 
   .mat-line:first-child {
     font-weight: bold !important;
@@ -49,4 +66,43 @@
   bottom: 0;
   left: 0;
   right: 0;
+}
+
+.no-versions {
+  height: 72px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.version {
+  @include mat-divider-border($theme);
+
+  height: 88px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  cursor: pointer;
+
+  &:first-child {
+    height: 72px;
+  }
+
+  &:hover {
+    @include mat-hover-background($theme);
+  }
+
+  &.selected {
+    background-color: #e7f1f9;
+
+    .timestamp {
+      font-weight: 800;
+    }
+  }
+
+  p {
+    margin: 0;
+  }
 }
