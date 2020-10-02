@@ -139,7 +139,7 @@
   "ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED": "Cannot update component: the container is locked by '{{lockedBy}}'",
   "ERROR_WORKFLOW_ERROR": "Failed to update, another user has changed the status of this document",
   "EXPAND": "Expand",
-  "EXPERIMENTS": "Experiments",
+  "EXPERIMENT": "Experiment",
   "EXPERIMENT_LABEL_COMPLETED": "Experiment completed",
   "EXPERIMENT_LABEL_CREATED": "Experiment created",
   "EXPERIMENT_LABEL_RUNNING": "Experiment running",
