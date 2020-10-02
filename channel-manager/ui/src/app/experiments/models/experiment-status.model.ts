@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-interface ExperimentStatusAtTimestamp {
+export interface ExperimentStatusAtTimestamp {
   [variantId: string]: number;
   timestamp: number;
 }
