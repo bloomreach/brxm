@@ -29,7 +29,6 @@ import javax.jcr.Session;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.wicket.Application;
-import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.string.PrependingStringBuffer;
@@ -38,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Model for JCR {@link Item}s.  The model tracks the Item as well as it can, using the first referenceable ancestor
+ * Model for JCR {@link Item}s.  The model tracks the Item as well as it can, using the first referencable ancestor
  * plus a relative path as the identification/retrieval method. When the Item (or one of its ancestors) is moved, this
  * is transparent.
  * <p>
@@ -323,9 +322,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
             if (object != null) {
                 TraceMonitor.trace(object);
             }
-            if (RuntimeConfigurationType.DEPLOYMENT.equals(Application.get().getConfigurationType())) {
-                detach();
-            }
+            detach();
         }
         output.defaultWriteObject();
     }
