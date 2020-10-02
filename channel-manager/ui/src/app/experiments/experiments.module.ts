@@ -22,15 +22,17 @@ import { SharedModule } from '../shared/shared.module';
 import { TranslationsModule } from '../translations/translations.module';
 
 import { ExperimentsComponent } from './components/experiments/experiments.component';
+import { ExperimentNamePipe } from './pipes/experiment-name.pipe';
 
 @NgModule({
-  declarations: [
-    ExperimentsComponent,
-  ],
   imports: [
     CommonModule,
     SharedModule,
     TranslationsModule,
+  ],
+  declarations: [
+    ExperimentsComponent,
+    ExperimentNamePipe,
   ],
   entryComponents: [
     ExperimentsComponent,
