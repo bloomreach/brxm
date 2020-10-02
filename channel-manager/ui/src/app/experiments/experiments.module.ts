@@ -21,6 +21,7 @@ import { createCustomElement } from '@angular/elements';
 import { SharedModule } from '../shared/shared.module';
 import { TranslationsModule } from '../translations/translations.module';
 
+import { ExperimentStatusChartComponent } from './components/experiment-status-chart/experiment-status-chart.component';
 import { ExperimentsComponent } from './components/experiments/experiments.component';
 import { ExperimentNamePipe } from './pipes/experiment-name.pipe';
 
@@ -32,6 +33,7 @@ import { ExperimentNamePipe } from './pipes/experiment-name.pipe';
   ],
   declarations: [
     ExperimentsComponent,
+    ExperimentStatusChartComponent,
     ExperimentNamePipe,
   ],
   entryComponents: [
