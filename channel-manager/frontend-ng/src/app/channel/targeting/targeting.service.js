@@ -225,7 +225,7 @@ class TargetingService {
     }
   }
 
-  async getExperimentState(experimentId) {
+  async getExperimentStatus(experimentId) {
     try {
       const params = this._getDefaultParams();
       const result = await this._execute('GET', ['experiments', 'serving', experimentId], null, params);

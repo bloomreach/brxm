@@ -327,14 +327,14 @@ describe('TargetingService', () => {
     });
   });
 
-  describe('getExperimentState', () => {
+  describe('getExperimentStatus', () => {
     const urlRegex = /targeting-rest-url\/experiments\/serving(.+).*/;
 
     it('should return the state of the specified experiment', () => {
       expectGet(
         urlRegex,
         'Succesfully loaded state of experiment "experimentId"',
-        () => TargetingService.getExperimentState('experimentId'),
+        () => TargetingService.getExperimentStatus('experimentId'),
         expectDefaultParams,
       );
     });
@@ -343,7 +343,7 @@ describe('TargetingService', () => {
       expectGetError(
         urlRegex,
         'Failed to load state of experiment "experimentId"',
-        () => TargetingService.getExperimentState('experimentId'),
+        () => TargetingService.getExperimentStatus('experimentId'),
       );
     });
   });
