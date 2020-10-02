@@ -61,22 +61,37 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     // recursion detection
     private transient boolean detaching = false;
 
+    /**
+     * Variable to store constructor stacktrace to simplify fixing "undetached model" warning. Is only used when the
+     * {@link TraceMonitor} is enabled.
+     */
+    private String stacktrace;
+
     public JcrItemModel(final T item) {
         super(item);
 
         userId = UserSession.get().getJcrSession().getUserID();
 
         if (item != null) {
-            TraceMonitor.track(item);
             isProperty = !item.isNode();
             doSave();
         }
+
+        trace();
     }
 
     public JcrItemModel(final String path, final boolean property) {
         absPath = path;
         isProperty = property;
         userId = UserSession.get().getJcrSession().getUserID();
+
+        trace();
+    }
+
+    private void trace() {
+        if (TraceMonitor.isEnabled()) {
+            stacktrace = TraceMonitor.getStackTrace();
+        }
     }
 
     /**
@@ -165,11 +180,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     @Override
     protected T load() {
-        final T object = loadModel();
-        if (object != null) {
-            TraceMonitor.track(object);
-        }
-        return object;
+        return loadModel();
     }
 
     @SuppressWarnings("unchecked")
@@ -226,12 +237,6 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     @Override
     public void detach() {
-        if (isAttached()) {
-            final T object = this.getObject();
-            if (object != null) {
-                TraceMonitor.release(object);
-            }
-        }
         detaching = true;
         save();
         super.detach();
@@ -318,9 +323,8 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     private void writeObject(final ObjectOutputStream output) throws IOException {
         if (isAttached()) {
             log.warn("Undetached JcrItemModel {}", this);
-            final T object = this.getObject();
-            if (object != null) {
-                TraceMonitor.trace(object);
+            if (TraceMonitor.isEnabled()) {
+                log.warn("Call stack when JcrItemModel was created:\n" + stacktrace);
             }
             detach();
         }
