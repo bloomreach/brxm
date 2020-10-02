@@ -22,6 +22,7 @@ import { SharedModule } from '../shared/shared.module';
 import { TranslationsModule } from '../translations/translations.module';
 
 import { ExperimentStatusChartComponent } from './components/experiment-status-chart/experiment-status-chart.component';
+import { ExperimentStatusMessageComponent } from './components/experiment-status-message/experiment-status-message.component';
 import { ExperimentComponent } from './components/experiment/experiment.component';
 import { ExperimentNamePipe } from './pipes/experiment-name.pipe';
 
@@ -33,6 +34,7 @@ import { ExperimentNamePipe } from './pipes/experiment-name.pipe';
   ],
   declarations: [
     ExperimentComponent,
+    ExperimentStatusMessageComponent,
     ExperimentStatusChartComponent,
     ExperimentNamePipe,
   ],

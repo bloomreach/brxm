@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExperimentStatusMessageComponent if the winner variant is not present should be shown 1`] = `
+<div
+  id="root0"
+>
+  
+  
+   EXPERIMENT_WINNER_ABSENTundefined,
+
+  
+   EXPERIMENT_AFTER_THIS_MANY_VISITS{"count":100}.
+
+</div>
+`;
+
+exports[`ExperimentStatusMessageComponent if the winner variant is present should be shown 1`] = `
+<div
+  id="root1"
+>
+  
+  
+  
+   EXPERIMENT_WINNER_PRESENT{"variantName":"Variant1"},
+
+   EXPERIMENT_AFTER_THIS_MANY_VISITS{"count":100}.
+
+</div>
+`;
