@@ -20,10 +20,12 @@ import { ExperimentGoal } from '../../experiments/models/experiment-goal.model';
 import { ExperimentStatus } from '../../experiments/models/experiment-status.model';
 import { Experiment } from '../../experiments/models/experiment.model';
 import { TargetingApiResponse } from '../../models/targeting-api-response.model';
+import { Persona } from '../../variants/models/persona.model';
 import { Variant, VariantCharacteristicData } from '../../variants/models/variant.model';
 
 export interface Ng1TargetingService {
   getCharacteristics(): Promise<TargetingApiResponse<void>>;
+  getPersonas(): Promise<TargetingApiResponse<{ items: Persona[] }>>;
   getVariants(containerItemId: string): Promise<TargetingApiResponse<Variant[]>>;
   deleteVariant(componentId: string, variantId: string): Promise<void>;
   addVariant(
