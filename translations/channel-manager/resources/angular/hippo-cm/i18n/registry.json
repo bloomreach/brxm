@@ -1499,16 +1499,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "EXPERIMENTS" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
     "VARIANT" : {
       "status" : "ADDED",
       "locales" : {
@@ -1550,6 +1540,16 @@
       }
     },
     "EXPERIMENT_STATE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "EXPERIMENT" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
