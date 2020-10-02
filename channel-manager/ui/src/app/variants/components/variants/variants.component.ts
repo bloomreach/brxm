@@ -105,28 +105,4 @@ export class VariantsComponent implements OnInit {
      this.variantInitiated.emit({ variant: this.currentVariant });
      this.variantSelect.setValue(this.currentVariant);
   }
-
-  private extractExpressions(variant?: Variant): VariantExpressions {
-    let persona = '';
-    const characteristics: any[] = [];
-
-    variant?.expressions.forEach(({ id, type }) => {
-      if (type === VariantExpressionType.Persona) {
-        persona = id;
-      } else {
-        const parts = id.split('/');
-        const characteristic = parts[0];
-        const targetGroupId = parts[1];
-
-        characteristics.push({
-          [characteristic]: targetGroupId,
-        });
-      }
-    });
-
-    return {
-      persona,
-      characteristics,
-    };
-  }
 }
