@@ -40,7 +40,9 @@ import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.parameters.HstValueType;
-import org.onehippo.cms7.services.hst.Channel;
+import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.core.util.PropertyParser;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,9 +53,15 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.channel.ChannelException.Type.CHANNEL_LOCKED;
 import static org.hippoecm.hst.configuration.channel.ChannelException.Type.CHANNEL_OUT_OF_SYNC;
+import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_URL_PROPERTY_NAME;
+import static org.hippoecm.hst.core.util.PropertyParser.DEFAULT_PLACEHOLDER_PREFIX;
+import static org.hippoecm.hst.core.util.PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX;
 import static org.hippoecm.hst.platform.configuration.channel.ChannelUtils.getChannelInfoClass;
 
 public class ChannelPropertyMapper {
+
+
+
 
     static final Logger log = LoggerFactory.getLogger(ChannelPropertyMapper.class);
 
@@ -198,6 +206,30 @@ public class ChannelPropertyMapper {
             allProperties.keySet().forEach(
                     propertyName -> properties.computeIfAbsent(propertyName, name -> allProperties.get(name))
             );
+
+
+
+            if (properties.containsKey(PREVIEW_URL_PROPERTY_NAME)) {
+                final Object o = properties.get(PREVIEW_URL_PROPERTY_NAME);
+                if (o instanceof String) {
+                    final String spaUrl = (String)o;
+                    // when there is a unresolvable property placeholder we just keep the url as is, which will
+                    // of course result in a broken spa url but at least a redirect is done which shows the url with
+                    // wrong property
+                    final PropertyParser propertyParserWithDefaultValueColonSupport =
+                            new PropertyParser(HstServices.getComponentManager().getContainerConfiguration().toProperties(),
+                                    DEFAULT_PLACEHOLDER_PREFIX, DEFAULT_PLACEHOLDER_SUFFIX,
+                                    ":", true);
+                    // replace property placeholders
+                    final String parsed = (String) propertyParserWithDefaultValueColonSupport.resolveProperty(PREVIEW_URL_PROPERTY_NAME, spaUrl);
+
+                    if (!spaUrl.equals(parsed)) {
+                        log.info("Parsed '{}' into '{}' as spaUrl", spaUrl, parsed);
+                    }
+
+                    channel.setSpaUrl(parsed);
+                }
+            }
 
             channel.setProperties(properties);
         }
