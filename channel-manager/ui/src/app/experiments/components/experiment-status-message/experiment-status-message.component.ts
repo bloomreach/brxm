@@ -14,6 +14,18 @@
  * limitations under the License.
  */
 
-:host {
-  display: block;
+import { Component, Input } from '@angular/core';
+
+import { ExperimentVariant } from '../../models/experiment-variant.model';
+
+@Component({
+  selector: 'em-experiment-status-message',
+  templateUrl: 'experiment-status-message.component.html',
+})
+export class ExperimentStatusMessageComponent {
+  @Input()
+  winnerVariant?: ExperimentVariant;
+
+  @Input()
+  visits = 0;
 }
