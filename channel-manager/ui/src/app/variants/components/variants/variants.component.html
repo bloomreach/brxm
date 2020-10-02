@@ -45,9 +45,9 @@
     </button>
   </div>
 
-  <div class="variant-expressions"
-       *ngIf="currentVariant?.expressions.length > 0">
-    <div class="variant-expressions-list">
+  <div class="variant-expressions">
+    <div class="variant-expressions-list"
+         *ngIf="currentVariant?.expressions.length > 0">
       <div class="variant-expressions-list-label">
         Variant Expressions
       </div>
@@ -55,14 +55,15 @@
       <div class="variant-expressions-list-item"
            *ngFor="let expression of currentVariant?.expressions">
         <span>{{ expression.name }}</span>
-        <button mat-icon-button (click)="removeExpression(expression)">
+        <button mat-icon-button
+                (click)="removeExpression(expression)">
           <mat-icon svgIcon="close"></mat-icon>
         </button>
       </div>
     </div>
 
     <div class="variant-expressions-actions">
-      <button mat-stroked-button>
+      <button mat-stroked-button (click)="addSegment()">
         <mat-icon svgIcon="plus"></mat-icon>
         Add segment
       </button>

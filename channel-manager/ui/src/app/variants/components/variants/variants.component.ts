@@ -16,11 +16,15 @@
 
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 
+import { Ng1CmsService, NG1_CMS_SERVICE } from '../../../services/ng1/cms.ng1.service';
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
-import { Variant, VariantExpression, VariantExpressions, VariantExpressionType } from '../../models/variant.model';
+import { Persona } from '../../models/persona.model';
+import { Variant, VariantExpression, VariantExpressionType } from '../../models/variant.model';
 import { VariantsService } from '../../services/variants.service';
+import { SegmentsDialogComponent } from '../segments-dialog/segments-dialog.component';
 
 @Component({
   selector: 'em-variants',
@@ -43,19 +47,20 @@ export class VariantsComponent implements OnInit {
   constructor(
     @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,
     @Inject(NG1_STATE_SERVICE) private readonly ng1StateService: Ng1StateService,
+    @Inject(NG1_CMS_SERVICE) private readonly cmsService: Ng1CmsService,
+    private readonly dialogService: MatDialog,
     private readonly variantsService: VariantsService,
   ) {
   }
 
   async ngOnInit(): Promise<void> {
     this.variants = await this.variantsService.getVariants(this.componentId);
-
     this.resetToStateParamsVariant();
   }
 
   async addVariant(): Promise<void> {
     const formData = this.componentEditorService.propertiesAsFormData();
-    const { persona, characteristics } = this.extractExpressions(this.variantSelect.value);
+    const { persona, characteristics } = this.variantsService.extractExpressions(this.variantSelect.value);
 
     await this.variantsService.addVariant(this.componentId, formData, persona, characteristics);
 
@@ -98,6 +103,23 @@ export class VariantsComponent implements OnInit {
     }
 
     this.variantUpdated.emit({ variant: this.currentVariant });
+  }
+
+  async addSegment(): Promise<void> {
+    this.cmsService.publish('show-mask');
+    const ref = this.dialogService.open(SegmentsDialogComponent);
+
+    ref.afterClosed().subscribe((persona: Persona) => {
+      this.currentVariant?.expressions.push({
+        id: persona.id,
+        name: persona.name,
+        type: VariantExpressionType.Persona,
+      });
+
+      this.variantUpdated.emit({ variant: this.currentVariant });
+
+      this.cmsService.publish('remove-mask');
+    });
   }
 
   private resetToStateParamsVariant(): void {
