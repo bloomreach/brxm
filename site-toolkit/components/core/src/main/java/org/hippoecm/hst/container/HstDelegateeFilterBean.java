@@ -151,7 +151,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     private String clusterNodeAffinityHeaderName;
     private String clusterNodeAffinityQueryParam;
     private boolean xForwardedHostSpoofingProtection;
-    private PropertyParser propertyParserWithDefaultValueColonSupport;
 
     @Override
     public void setServletContext(ServletContext servletContext) {
@@ -203,12 +202,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     public void setxForwardedHostSpoofingProtection(final boolean xForwardedHostSpoofingProtection) {
         this.xForwardedHostSpoofingProtection = xForwardedHostSpoofingProtection;
-    }
-
-
-    public void setContainerConfiguration(final ContainerConfiguration containerConfiguration) {
-        propertyParserWithDefaultValueColonSupport = new PropertyParser(containerConfiguration.toProperties(), PropertyParser.DEFAULT_PLACEHOLDER_PREFIX, PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX,
-                ":", false);
     }
 
     @Override
@@ -498,20 +491,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                         && !requestContext.isPageModelApiRequest()) {
 
                     final Channel channel = hstSite.getChannel();
-                    if (isNotBlank((String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME))) {
+                    if (channel.getSpaUrl() != null) {
 
-                        final String previewURL = (String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME);
-
-                        // replace property placeholders
-                        final String parsed = (String) propertyParserWithDefaultValueColonSupport.resolveProperty(PREVIEW_URL_PROPERTY_NAME, previewURL);
-                        if (isBlank(parsed)) {
-                            log.warn("Cannot parse property '{} = {}' because of unresolvable property place holders. Return 404",
-                                    PREVIEW_URL_PROPERTY_NAME, previewURL);
-                            sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                            return;
-                        }
-
-                        doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), hstContainerUrl.getParameterMap(), parsed);
+                        doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), hstContainerUrl.getParameterMap(), channel.getSpaUrl());
                         return;
                     }
                 }
