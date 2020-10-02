@@ -74,5 +74,6 @@ exports[`ExperimentsComponent should be shown 1`] = `
       <mat-divider />
     </mat-list-item>
   </mat-list>
+  <em-experiment-status-chart />
 </div>
 `;
