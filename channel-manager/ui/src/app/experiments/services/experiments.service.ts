@@ -17,6 +17,8 @@
 import { Inject, Injectable } from '@angular/core';
 
 import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1service';
+import { ExperimentStatusWithVisits } from '../models/experiment-status-with-visits.model';
+import { ExperimentStatusAtTimestamp } from '../models/experiment-status.model';
 import { ExperimentWithStatusData } from '../models/experiment-with-status-data.model';
 
 @Injectable({
@@ -34,17 +36,49 @@ export class ExperimentsService {
 
     const experiment = response.data;
 
-    const statusResponse = await this.ng1TargetingService.getExperimentStatus(experiment.id);
+    const experimentStatus = await this.getExperimentStatus(experiment.id);
 
-    if (!statusResponse.success) {
+    if (!experimentStatus) {
       return experiment;
     }
 
-    const status = statusResponse.data;
-
     return {
       ...experiment,
-      status,
+      statusWithVisits: experimentStatus.statusWithVisits,
+      totalVisits: experimentStatus.totalVisits,
     };
+  }
+
+  async getExperimentStatus(experimentId: string): Promise<ExperimentStatusWithVisits  | undefined> {
+    const response = await this.ng1TargetingService.getExperimentStatus(experimentId);
+
+    if (!response.success) {
+      return;
+    }
+
+    const status = response.data;
+
+    let totalVisits = 0;
+    const statusWithVisits = status.map(pointAtTimestamp => {
+      const visits = this.calculateVisitsPerTimestamp(pointAtTimestamp);
+
+      totalVisits += visits;
+
+      return {
+        ...pointAtTimestamp,
+        visits,
+      };
+    });
+
+    return {
+      statusWithVisits,
+      totalVisits,
+    };
+  }
+
+  calculateVisitsPerTimestamp(point: ExperimentStatusAtTimestamp): number {
+    return Object.keys(point).reduce((sum, key) => {
+      return key !== 'timestamp' ? sum + point[key] : sum;
+    }, 0);
   }
 }

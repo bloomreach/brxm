@@ -44,7 +44,7 @@
 
   <div class="experiment-status-wrapper">
     <em-experiment-status-message [winnerVariant]="experiment.winnerVariant"
-                                  [visits]="0"
+                                  [visits]="experiment.totalVisits"
                                   class="qa-experiment-status-message">
     </em-experiment-status-message>
     <em-experiment-status-chart [experiment]="experiment"></em-experiment-status-chart>

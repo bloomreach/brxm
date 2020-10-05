@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { ExperimentStatusWithVisits } from './experiment-status-with-visits.model';
-import { Experiment } from './experiment.model';
+import { ExperimentStatusAtTimestamp } from './experiment-status.model';
 
-export type ExperimentWithStatusData = Experiment & Partial<ExperimentStatusWithVisits>;
+export interface ExperimentStatusAtTimestampWithVisits extends ExperimentStatusAtTimestamp {
+  visits: number;
+}
+
+export interface ExperimentStatusWithVisits {
+  statusWithVisits: ExperimentStatusAtTimestampWithVisits[];
+  totalVisits: number;
+}
