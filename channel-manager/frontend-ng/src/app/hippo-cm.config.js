@@ -55,15 +55,36 @@ function config(
     url: '/',
     component: 'hippoCm',
     resolve: {
-      translations: ($translate, ConfigService) => {
+      translations: ($log, $translate, ConfigService) => {
         'ngInject';
+
+        const { locale } = ConfigService;
+        let language;
+        if (locale) {
+          try {
+            ({ language } = new Intl.Locale(locale));
+          } catch (e) {
+            language = FALLBACK_LOCALE;
+            $log.warn(`Failed to retrieve language from locale "${locale}", using "${FALLBACK_LOCALE}" instead`);
+          }
+        }
+        $translateProvider
+          .registerAvailableLanguageKeys([language, FALLBACK_LOCALE], {
+            [`${language}_*`]: language,
+            [`${FALLBACK_LOCALE}_*`]: FALLBACK_LOCALE,
+          })
+          .fallbackLanguage(FALLBACK_LOCALE);
 
         $translateProvider.useStaticFilesLoader({
           prefix: 'i18n/',
           suffix: `.json?antiCache=${ConfigService.antiCache}`,
         });
-        return $translate.use(ConfigService.locale || $translate.fallbackLanguage())
-          .catch(() => $translate.use($translate.fallbackLanguage()));
+
+        return $translate.use(language)
+          .catch(() => {
+            $log.warn(`Failed to load translations for locale "${locale}", using "${FALLBACK_LOCALE}" instead`);
+            return $translate.use($translate.fallbackLanguage());
+          });
       },
       dateLocale: (ConfigService) => {
         'ngInject';
@@ -81,17 +102,6 @@ function config(
       },
     },
   });
-
-  $translateProvider
-    .registerAvailableLanguageKeys(['en', 'nl', 'fr', 'de', 'es', 'zh'], {
-      'en_*': 'en',
-      'nl_*': 'nl',
-      'fr_*': 'fr',
-      'de_*': 'de',
-      'es_*': 'es',
-      'zh_*': 'zh',
-    });
-  $translateProvider.fallbackLanguage(FALLBACK_LOCALE);
 
   // AngularJs sanitizes all 'external' values itself automatically, so don't
   // let angular-translate sanitize values too to prevent double-escaping.
