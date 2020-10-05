@@ -748,23 +748,6 @@ describe('ComponentEditorService', () => {
       });
     });
 
-    it('reloads the page if the server requires it', () => {
-      spyOn(HippoIframeService, 'reload');
-      spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve({
-        reloadRequired: true,
-        data: { id: 'newComponentId' },
-      }));
-
-      openComponentEditor();
-      spyOn(ComponentEditor, 'open');
-
-      ComponentEditor.save();
-      $rootScope.$digest();
-
-      expect(HippoIframeService.reload).toHaveBeenCalled();
-      expect(ComponentEditor.open).toHaveBeenCalledWith('newComponentId');
-    });
-
     it('reports user statistics', (done) => {
       spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve({ data: {} }));
 

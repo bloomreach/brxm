@@ -5,144 +5,167 @@ exports[`VariantsComponent should create 1`] = `
   id="root0"
 >
   <div
-    class="variant-select mat-typography"
+    class="mat-typography"
   >
-    <mat-form-field
-      appearance="outline"
-      class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label mat-form-field-hide-placeholder ng-untouched ng-pristine ng-valid"
+    <div
+      class="variant-select"
     >
-      <div
-        class="mat-form-field-wrapper"
+      <mat-form-field
+        appearance="outline"
+        class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label mat-form-field-hide-placeholder ng-untouched ng-pristine ng-valid"
       >
         <div
-          class="mat-form-field-flex"
+          class="mat-form-field-wrapper"
         >
-          
-          
           <div
-            class="mat-form-field-outline"
-          >
-            <div
-              class="mat-form-field-outline-start"
-            />
-            <div
-              class="mat-form-field-outline-gap"
-            />
-            <div
-              class="mat-form-field-outline-end"
-            />
-          </div>
-          <div
-            class="mat-form-field-outline mat-form-field-outline-thick"
-          >
-            <div
-              class="mat-form-field-outline-start"
-            />
-            <div
-              class="mat-form-field-outline-gap"
-            />
-            <div
-              class="mat-form-field-outline-end"
-            />
-          </div>
-          
-          <div
-            class="mat-form-field-infix"
-          >
-            <mat-select
-              aria-disabled="false"
-              aria-invalid="false"
-              aria-multiselectable="false"
-              aria-required="false"
-              class="qa-variant-select mat-select mat-select-empty ng-untouched ng-pristine ng-valid"
-              role="listbox"
-              tabindex="0"
-            >
-              <div
-                aria-hidden="true"
-                cdk-overlay-origin=""
-                class="mat-select-trigger"
-              >
-                <div
-                  class="mat-select-value"
-                >
-                  
-                  <span
-                    class="mat-select-placeholder"
-                  >
-                     
-                  </span>
-                  
-                </div>
-                <div
-                  class="mat-select-arrow-wrapper"
-                >
-                  <div
-                    class="mat-select-arrow"
-                  />
-                </div>
-              </div>
-              
-            </mat-select>
-            <span
-              class="mat-form-field-label-wrapper"
-            >
-              
-              <label
-                class="mat-form-field-label mat-empty mat-form-field-empty"
-              >
-                
-                
-                <mat-label
-                  class="qa-variant-select-label"
-                >
-                   VARIANT 
-                </mat-label>
-                
-                
-              </label>
-            </span>
-          </div>
-          
-        </div>
-        
-        <div
-          class="mat-form-field-subscript-wrapper"
-        >
-          
-          
-          <div
-            class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
-            style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+            class="mat-form-field-flex"
           >
             
+            
             <div
-              class="mat-form-field-hint-spacer"
-            />
+              class="mat-form-field-outline"
+            >
+              <div
+                class="mat-form-field-outline-start"
+              />
+              <div
+                class="mat-form-field-outline-gap"
+              />
+              <div
+                class="mat-form-field-outline-end"
+              />
+            </div>
+            <div
+              class="mat-form-field-outline mat-form-field-outline-thick"
+            >
+              <div
+                class="mat-form-field-outline-start"
+              />
+              <div
+                class="mat-form-field-outline-gap"
+              />
+              <div
+                class="mat-form-field-outline-end"
+              />
+            </div>
+            
+            <div
+              class="mat-form-field-infix"
+            >
+              <mat-select
+                aria-disabled="false"
+                aria-invalid="false"
+                aria-multiselectable="false"
+                aria-required="false"
+                class="qa-variant-select mat-select mat-select-empty ng-untouched ng-pristine ng-valid"
+                role="listbox"
+                tabindex="0"
+              >
+                <div
+                  aria-hidden="true"
+                  cdk-overlay-origin=""
+                  class="mat-select-trigger"
+                >
+                  <div
+                    class="mat-select-value"
+                  >
+                    
+                    <span
+                      class="mat-select-placeholder"
+                    >
+                       
+                    </span>
+                    
+                  </div>
+                  <div
+                    class="mat-select-arrow-wrapper"
+                  >
+                    <div
+                      class="mat-select-arrow"
+                    />
+                  </div>
+                </div>
+                
+              </mat-select>
+              <span
+                class="mat-form-field-label-wrapper"
+              >
+                
+                <label
+                  class="mat-form-field-label mat-empty mat-form-field-empty"
+                >
+                  
+                  
+                  <mat-label
+                    class="qa-variant-select-label"
+                  >
+                     VARIANT 
+                  </mat-label>
+                  
+                  
+                </label>
+              </span>
+            </div>
+            
+          </div>
+          
+          <div
+            class="mat-form-field-subscript-wrapper"
+          >
+            
+            
+            <div
+              class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+              style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+            >
+              
+              <div
+                class="mat-form-field-hint-spacer"
+              />
+            </div>
           </div>
         </div>
+      </mat-form-field>
+      <button
+        class="qa-variant-copy"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="copy"
+        >
+          copy
+        </mat-icon>
+      </button>
+      <button
+        class="qa-variant-delete"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="trash"
+        >
+          trash
+        </mat-icon>
+      </button>
+    </div>
+    <div
+      class="variant-expressions"
+    >
+      
+      <div
+        class="variant-expressions-actions"
+      >
+        <button
+          mat-stroked-button=""
+        >
+          <mat-icon
+            svgicon="plus"
+          >
+            plus
+          </mat-icon>
+           Add segment 
+        </button>
       </div>
-    </mat-form-field>
-    <button
-      class="qa-variant-copy"
-      mat-icon-button=""
-    >
-      <mat-icon
-        svgicon="copy"
-      >
-        copy
-      </mat-icon>
-    </button>
-    <button
-      class="qa-variant-delete"
-      mat-icon-button=""
-    >
-      <mat-icon
-        svgicon="trash"
-      >
-        trash
-      </mat-icon>
-    </button>
+    </div>
   </div>
 </div>
 `;

@@ -165,9 +165,14 @@ class TargetingService {
 
     try {
       const result = await this._execute('GET', ['personas'], null, params);
+
+      // Wrap response in data object to create consistent return body for this service's methods
       result.data = {
         items: result.items,
+        count: result.count,
       };
+      delete result.items;
+      delete result.count;
 
       return this._success('Personas loaded successfully', result);
     } catch (e) {
