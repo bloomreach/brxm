@@ -14,12 +14,28 @@
  * limitations under the License.
  */
 
-import { isLink } from './link';
+import { isLink, TYPE_LINK_EXTERNAL, TYPE_LINK_INTERNAL, TYPE_LINK_RESOURCE, TYPE_LINK_UNKNOWN } from './link';
 
 describe('isLink', () => {
   it('should be a link', () => {
     expect(isLink({ href: 'something' })).toBe(true);
     expect(isLink({ href: '' })).toBe(true);
+  });
+
+  it('should be an internal link', () => {
+    expect(isLink({ type: TYPE_LINK_INTERNAL })).toBe(true);
+  });
+
+  it('should be an external link', () => {
+    expect(isLink({ type: TYPE_LINK_EXTERNAL })).toBe(true);
+  });
+
+  it('should be a resource link', () => {
+    expect(isLink({ type: TYPE_LINK_RESOURCE })).toBe(true);
+  });
+
+  it('should be an unknown link', () => {
+    expect(isLink({ type: TYPE_LINK_UNKNOWN })).toBe(true);
   });
 
   it('should not be a link', () => {

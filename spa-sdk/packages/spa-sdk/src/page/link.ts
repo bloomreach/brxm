@@ -29,15 +29,21 @@ export const TYPE_LINK_INTERNAL = 'internal';
  */
 export const TYPE_LINK_RESOURCE = 'resource';
 
+/**
+ * Unresolved link.
+ */
+export const TYPE_LINK_UNKNOWN = 'unknown';
+
 export type LinkType = typeof TYPE_LINK_EXTERNAL
   | typeof TYPE_LINK_INTERNAL
-  | typeof TYPE_LINK_RESOURCE;
+  | typeof TYPE_LINK_RESOURCE
+  | typeof TYPE_LINK_UNKNOWN;
 
 /**
  * A link to a resource or a page.
  */
 export interface Link {
-  href: string;
+  href?: string;
   type?: LinkType;
 }
 
@@ -46,5 +52,9 @@ export interface Link {
  * @param value The value to check.
  */
 export function isLink(value: any): value is Link {
-  return !!(value && Object.prototype.hasOwnProperty.call(value, 'href'));
+  return !!value && (
+    Object.prototype.hasOwnProperty.call(value, 'href')
+      || Object.prototype.hasOwnProperty.call(value, 'type')
+      && [TYPE_LINK_EXTERNAL, TYPE_LINK_INTERNAL, TYPE_LINK_RESOURCE, TYPE_LINK_UNKNOWN].includes(value.type)
+  );
 }
