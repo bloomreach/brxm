@@ -330,15 +330,13 @@ class ComponentEditorService {
 
   async save() {
     let response;
-
     const componentId = this.component.getId();
     const formData = this.propertiesAsFormData();
-    let variantId;
 
     if (this.ConfigService.relevancePresent) {
       const variant = this.ComponentVariantsService.getCurrentVariant();
       const { persona, characteristics } = this.ComponentVariantsService.extractExpressions(variant);
-      variantId = variant.id;
+      const variantId = variant.id;
       response = await this.TargetingService.updateVariant(
         componentId,
         formData,
@@ -347,7 +345,7 @@ class ComponentEditorService {
         characteristics,
       );
     } else {
-      variantId = this.component.getRenderVariant();
+      const variantId = this.component.getRenderVariant();
       response = await this.HstComponentService.setParameters(
         componentId,
         variantId,
@@ -355,14 +353,8 @@ class ComponentEditorService {
       );
     }
 
-    const { data: { id }, reloadRequired } = response;
-
-    if (reloadRequired) {
-      await this.HippoIframeService.reload();
-      await this.open(id);
-    }
-
-    return this.CmsService.reportUsageStatistic('CompConfigSidePanelSave');
+    this.CmsService.reportUsageStatistic('CompConfigSidePanelSave');
+    return response;
   }
 
   propertiesAsFormData() {
