@@ -20,14 +20,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>13.4.5-SNAPSHOT</version>
+    <version>13.4.6-SNAPSHOT</version>
     <relativePath>../release/pom.xml</relativePath>
   </parent>
 
   <artifactId>hippo-testsuite</artifactId>
   <name>Hippo Test Suite</name>
   <description>Hippo Test Suite</description>
-  <version>13.4.5-SNAPSHOT</version>
+  <version>13.4.6-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
