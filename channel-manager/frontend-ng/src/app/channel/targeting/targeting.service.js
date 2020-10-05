@@ -118,6 +118,7 @@ class TargetingService {
 
     try {
       const result = await this.HstService.doPutFormWithHeaders(formData, componentId, headers, encodedVariantId);
+      result.newVariantId = newVariantId;
       return this._success(`Succesfully updated variant ${variantId} for component ${componentId}`, result);
     } catch (e) {
       return this._failure('Failed to update', e);
@@ -164,6 +165,10 @@ class TargetingService {
 
     try {
       const result = await this._execute('GET', ['personas'], null, params);
+      result.data = {
+        items: result.items,
+      };
+
       return this._success('Personas loaded successfully', result);
     } catch (e) {
       return this._failure('Failed to load personas', e);
@@ -270,32 +275,14 @@ class TargetingService {
     };
   }
 
-  _success(message, data) {
-    if (data.hasOwnProperty('data')) {
-      data.message = data.message || message;
-      return data;
-    }
-
-    return {
-      data,
-      message,
-      reloadRequired: false,
-      success: true,
-    };
+  _success(message, response) {
+    response.message = response.message || message;
+    return response;
   }
 
-  _failure(message, data) {
-    if (data.hasOwnProperty('data')) {
-      data.message = data.message || message;
-      return data;
-    }
-
-    return {
-      data,
-      message,
-      reloadRequired: false,
-      success: false,
-    };
+  _failure(message, response) {
+    response.message = response.message || message;
+    return response;
   }
 
   _execute(method, pathElements, data, params, headers = {}) {
