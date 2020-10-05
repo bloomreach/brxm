@@ -84,7 +84,7 @@ export class ComponentImpl implements Component {
   }
 
   getUrl() {
-    return this.urlBuilder.getApiUrl(this.model._links.componentRendering.href);
+    return this.urlBuilder.getApiUrl(this.model._links.componentRendering.href!);
   }
 
   getName() {

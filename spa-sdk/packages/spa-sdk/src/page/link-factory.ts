@@ -33,7 +33,7 @@ export class LinkFactory extends SimpleFactory<LinkType, LinkBuilder> {
   }
 
   private createLink(link: Link) {
-    if (!link.type || !this.mapping.has(link.type)) {
+    if (!link.type || typeof link.href === 'undefined' || !this.mapping.has(link.type)) {
       return link.href;
     }
 
