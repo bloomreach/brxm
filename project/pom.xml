@@ -100,8 +100,13 @@
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
     <jackson2.version>2.10.5</jackson2.version>
     <jackson2-databind.version>2.10.5</jackson2-databind.version>
-    <spring.version>5.1.15.RELEASE</spring.version>
-    <spring-security.version>5.1.10.RELEASE</spring-security.version>
+    <spring.version>5.1.18.RELEASE</spring.version>
+    <!-- spring-data-redis version is not in sync with spring, caching module needs to be updated. See ENT-2061 -->
+    <spring-data-redis.version>1.8.23.RELEASE</spring-data-redis.version>
+    <spring-integration-ftp.version>5.1.12.RELEASE</spring-integration-ftp.version>
+    <spring-integration-sftp.version>5.1.12.RELEASE</spring-integration-sftp.version>
+    <spring-security.version>5.1.12.RELEASE</spring-security.version>
+    <spring-security-oauth2.version>2.3.7.RELEASE</spring-security-oauth2.version>
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.4.15</groovy.version>
     <freemarker.version>2.3.28</freemarker.version>
