@@ -101,7 +101,7 @@ public class CmsSubAppIFrameCommunicationBehavior extends Behavior {
     private String createScript() {
 
         final Map<String, String> variables = new HashMap<>();
-        log.info("Add {key:{},value:{} as parameter to script", I_FRAME_ELEMENT_ID_KEY, this.iFrameElementId);
+        log.info("Add key:{},value:{} as parameter to script", I_FRAME_ELEMENT_ID_KEY, this.iFrameElementId);
         variables.put(I_FRAME_ELEMENT_ID_KEY, this.iFrameElementId);
 
         try (final PackageTextTemplate javaScript = new PackageTextTemplate(CmsSubAppIFrameCommunicationBehavior.class

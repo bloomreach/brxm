@@ -81,7 +81,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         final AccessToken accessToken = (AccessToken) servletRequest.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE);
         if (accessToken != null) {
             // render on behalf of authorized user
-            log.debug("Request '{}' is invoked with a valid token for user '{}'", accessToken);
+            log.debug("Request '{}' is invoked with a valid token", accessToken);
             cmsUserCredentials = accessToken.getCmsSessionContext().getRepositoryCredentials();
             Session previewCmsUserSession = null;
             Session cmsUserSession = null;
