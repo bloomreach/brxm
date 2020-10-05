@@ -29,6 +29,7 @@ class EditComponentMainCtrl {
     $q,
     $rootScope,
     $scope,
+    $state,
     ChannelService,
     CmsService,
     ComponentEditor,
@@ -44,6 +45,7 @@ class EditComponentMainCtrl {
     this.$q = $q;
     this.$rootScope = $rootScope;
     this.$scope = $scope;
+    this.$state = $state;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ComponentEditor = ComponentEditor;
@@ -125,20 +127,36 @@ class EditComponentMainCtrl {
       .then(() => this.form.$setPristine());
   }
 
-  save() {
-    return this.ComponentEditor.save()
-      .then(() => this.form.$setPristine())
-      .then(() => this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent'))
-      .catch((error) => {
-        this.FeedbackService.showError(
-          SAVE_ERRORS[error.data.error] || SAVE_ERRORS.GENERAL_ERROR,
-          error.data.parameterMap,
-        );
-        this.HippoIframeService.reload();
-        if (error.message && error.message.startsWith('javax.jcr.ItemNotFoundException')) {
-          this.EditComponentService.killEditor();
-        }
-      });
+  async save(exitingState) {
+    try {
+      const response = await this.ComponentEditor.save();
+
+      this.form.$setPristine();
+      this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent');
+
+      const { data: { id }, reloadRequired, newVariantId } = response;
+
+      if (this.ConfigService.relevancePresent && !exitingState) {
+        await this.$state.go('hippo-cm.channel.edit-component', {
+          componentId: id,
+          variantId: newVariantId,
+        });
+      }
+
+      if (reloadRequired) {
+        await this.HippoIframeService.reload();
+        await this.ComponentEditor.open(id);
+      }
+    } catch (error) {
+      this.FeedbackService.showError(
+        SAVE_ERRORS[error.data.error] || SAVE_ERRORS.GENERAL_ERROR,
+        error.data.parameterMap,
+      );
+      this.HippoIframeService.reload();
+      if (error.message && error.message.startsWith('javax.jcr.ItemNotFoundException')) {
+        this.EditComponentService.killEditor();
+      }
+    }
   }
 
   deleteComponent() {
@@ -198,7 +216,7 @@ class EditComponentMainCtrl {
       return this.ComponentEditor.confirmSaveOrDiscardChanges(this._isFormValid())
         .then((action) => {
           if (action === 'SAVE') {
-            return this.save();
+            return this.save(true);
           }
           return this.$q.resolve();
         })
