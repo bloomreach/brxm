@@ -127,7 +127,7 @@ class EditComponentMainCtrl {
       .then(() => this.form.$setPristine());
   }
 
-  async save(exitingState) {
+  async save(exitingState = false) {
     try {
       const response = await this.ComponentEditor.save();
 

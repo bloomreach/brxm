@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatListModule } from '@angular/material/list';
+
+import { NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1service';
 
 import { SegmentsDialogComponent } from './segments-dialog.component';
 
@@ -22,12 +26,22 @@ describe('SegmentsDialogComponent', () => {
   let component: SegmentsDialogComponent;
   let fixture: ComponentFixture<SegmentsDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(() => {
+    const targetingServiceMock = {};
+    const matDialogRefMock = {};
+
     TestBed.configureTestingModule({
+      imports: [
+        MatDialogModule,
+        MatListModule,
+      ],
       declarations: [ SegmentsDialogComponent ],
-    })
-    .compileComponents();
-  }));
+      providers: [
+        { provide: NG1_TARGETING_SERVICE, useValue: targetingServiceMock },
+        { provide: MatDialogRef, useValue: matDialogRefMock },
+      ],
+    });
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SegmentsDialogComponent);
