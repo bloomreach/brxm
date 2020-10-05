@@ -144,7 +144,7 @@ public class HstEventsCollector {
         }
 
         if (!eventPath.startsWith(rootPath)) {
-            log.warn("Unexpected monitored event outside the rootPath '{}'. Skip it");
+            log.warn("Unexpected monitored event outside the rootPath '{}'. Skip it", rootPath);
             return true;
         }
 
