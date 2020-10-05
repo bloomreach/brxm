@@ -18,7 +18,8 @@ import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import * as c3 from 'c3';
 import * as d3 from 'd3';
 
-import { ExperimentStatus, ExperimentStatusAtTimestamp } from '../../models/experiment-status.model';
+import { ExperimentStatusAtTimestampWithVisits } from '../../models/experiment-status-with-visits.model';
+import { ExperimentStatusAtTimestamp } from '../../models/experiment-status.model';
 import { ExperimentWithStatusData } from '../../models/experiment-with-status-data.model';
 
 interface AxisDayRegion {
@@ -104,7 +105,7 @@ export class ExperimentStatusChartComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (!this.experiment.status) {
+    if (!this.experiment.statusWithVisits) {
       return;
     }
 
@@ -114,7 +115,7 @@ export class ExperimentStatusChartComponent implements OnInit {
       ...this.defaultChartConfiguration,
     });
 
-    this.updateData(this.experiment.status);
+    this.updateData(this.experiment.statusWithVisits);
   }
 
   private formatXAxis(): string {
@@ -133,7 +134,7 @@ export class ExperimentStatusChartComponent implements OnInit {
     return '%d/%m %H:%M';
   }
 
-  private updateData(points: ExperimentStatus): void {
+  private updateData(points: ExperimentStatusAtTimestampWithVisits[]): void {
     const data = this.dataTemplate;
     data.json = this.normalizeData(points);
 
@@ -142,18 +143,15 @@ export class ExperimentStatusChartComponent implements OnInit {
     this.chart.regions(this.dayRegions(points));
   }
 
-  private normalizeData(points: ExperimentStatus): ExperimentStatus {
+  private normalizeData(points: ExperimentStatusAtTimestampWithVisits[]): ExperimentStatusAtTimestamp[] {
     return points.map(point => {
       const normalizedPoint: ExperimentStatusAtTimestamp = { timestamp: point.timestamp };
-      const total = Object.keys(point).reduce((sum, key) => {
-        return key !== 'timestamp' ? sum + point.key : sum;
-      }, 0);
 
-      if (total === 0) {
+      if (point.visits === 0) {
         return normalizedPoint;
       }
 
-      let newTotal = 0;
+      let newNormalizedVisits = 0;
       let maxKey: string | undefined;
       let maxValue = 0;
 
@@ -162,9 +160,9 @@ export class ExperimentStatusChartComponent implements OnInit {
           continue;
         }
 
-        const normalizedValue = Math.round((100 * point.key) / total);
+        const normalizedValue = Math.round((100 * point.key) / point.visits);
         normalizedPoint.key = normalizedValue;
-        newTotal += normalizedValue;
+        newNormalizedVisits += normalizedValue;
 
         if (maxKey === undefined || normalizedPoint.key > maxValue) {
           maxKey = key;
@@ -172,8 +170,8 @@ export class ExperimentStatusChartComponent implements OnInit {
         }
       }
 
-      if (newTotal > 100) {
-        normalizedPoint.maxKey -= (newTotal - 100);
+      if (newNormalizedVisits > 100) {
+        normalizedPoint.maxKey -= (newNormalizedVisits - 100);
       }
 
       return normalizedPoint;
@@ -193,7 +191,7 @@ export class ExperimentStatusChartComponent implements OnInit {
    * We make the regions start on the second day because that looks nicer when there's only
    * a single day.
    */
-  private dayRegions(points: ExperimentStatus): AxisDayRegion[] {
+  private dayRegions(points: ExperimentStatusAtTimestampWithVisits[]): AxisDayRegion[] {
     if (!points || points.length === 0) {
       return [];
     }

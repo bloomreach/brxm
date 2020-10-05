@@ -15,7 +15,7 @@ exports[`ExperimentComponent should be shown 1`] = `
       <span
         class="experiment-goal-header"
       >
-        100
+        experiment-1
       </span>
       <mat-divider />
     </mat-list-item>
