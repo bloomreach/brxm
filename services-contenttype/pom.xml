@@ -21,13 +21,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>12.6.12-SNAPSHOT</version>
+    <version>12.6.13-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo CMS7 Services - contenttype</name>
   <artifactId>hippo-services-contenttype</artifactId>
-  <version>12.6.12-SNAPSHOT</version>
+  <version>12.6.13-SNAPSHOT</version>
 
   <inceptionYear>2013</inceptionYear>
 
