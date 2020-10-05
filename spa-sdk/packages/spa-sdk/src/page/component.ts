@@ -54,7 +54,7 @@ type ComponentLinks = 'self';
 
 type ComponentModels = Record<string, any>;
 
-type ComponentParameters = Partial<Record<string, string>>;
+type ComponentParameters = Record<string, any>;
 
 /**
  * Model of a component.
