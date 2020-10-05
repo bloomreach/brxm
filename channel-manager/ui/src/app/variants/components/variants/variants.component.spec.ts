@@ -17,14 +17,16 @@
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { NG1_CMS_SERVICE } from '../../../services/ng1/cms.ng1.service';
 import { NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
-import { Variant } from '../../models/variant.model';
+import { Variant, VariantCharacteristicData } from '../../models/variant.model';
 import { VariantsService } from '../../services/variants.service';
 
 import { VariantsComponent } from './variants.component';
@@ -53,7 +55,7 @@ describe('VariantsComponent', () => {
     {
       continent: 'africa-AF',
     },
-  ];
+  ] as VariantCharacteristicData[];
 
   const mockVariants = [
    {
@@ -100,6 +102,7 @@ describe('VariantsComponent', () => {
       propertiesAsFormData: () => mockFormData,
     };
     const variantsServiceMock = {
+      extractExpressions: jest.fn(),
       addVariant: () => Promise.resolve(),
       getVariants: () => Promise.resolve(mockVariants),
     };
@@ -109,9 +112,13 @@ describe('VariantsComponent', () => {
       },
       go: jest.fn(() => Promise.resolve()),
     };
+    const cmsServiceMock = {
+      publish: jest.fn(),
+    };
 
     TestBed.configureTestingModule({
       imports: [
+        MatDialogModule,
         MatFormFieldModule,
         MatSelectModule,
         BrowserAnimationsModule,
@@ -122,6 +129,7 @@ describe('VariantsComponent', () => {
       providers: [
         { provide: NG1_COMPONENT_EDITOR_SERVICE, useValue: componentEditorServiceMock },
         { provide: NG1_STATE_SERVICE, useValue: stateServiceMock },
+        { provide: NG1_CMS_SERVICE, useValue: cmsServiceMock },
         { provide: VariantsService, useValue: variantsServiceMock },
       ],
     });
@@ -159,6 +167,10 @@ describe('VariantsComponent', () => {
     it('should select the newly added variant', async () => {
       jest.spyOn(variantsService, 'addVariant');
       component.variantSelect.setValue(mockVariants[1]);
+      jest.spyOn(variantsService, 'extractExpressions').mockReturnValue({
+        persona: mockVariants[1].expressions[0].id,
+        characteristics: mockExpressions,
+      });
 
       await component.addVariant();
 
@@ -175,6 +187,10 @@ describe('VariantsComponent', () => {
         id: 'newVariant',
       } as Variant;
       jest.spyOn(variantsService, 'getVariants').mockResolvedValue(mockVariants.concat(newVariant));
+      jest.spyOn(variantsService, 'extractExpressions').mockReturnValue({
+        persona: mockVariants[1].expressions[0].id,
+        characteristics: mockExpressions,
+      });
 
       await component.addVariant();
 

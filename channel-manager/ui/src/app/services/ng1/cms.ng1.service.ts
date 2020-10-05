@@ -21,4 +21,3 @@ export interface Ng1CmsService {
 }
 
 export const NG1_CMS_SERVICE = new InjectionToken<Ng1CmsService>('NG1_CMS_SERVICE');
-
