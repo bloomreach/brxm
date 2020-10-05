@@ -20,13 +20,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>14.3.2-SNAPSHOT</version>
+    <version>14.3.3-SNAPSHOT</version>
     <relativePath>../release/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Community Translations</name>
   <artifactId>hippo-community-translations</artifactId>
-  <version>14.3.2-SNAPSHOT</version>
+  <version>14.3.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2016</inceptionYear>
