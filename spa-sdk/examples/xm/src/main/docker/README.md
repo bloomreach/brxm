@@ -10,8 +10,11 @@ docker run -p 8080:8080 bloomreach/xm-spa-example
 ```
 
 ## Links
-- [React-based application](https://code.onehippo.org/cms-community/bloomreach-spa-sdk/tree/bloomreach-spa-sdk-14.3.0/examples/react-csr);
-- [Next.js-based application](https://code.onehippo.org/cms-community/bloomreach-spa-sdk/tree/bloomreach-spa-sdk-14.3.0/examples/react-ssr).
+- [React-based application](https://github.com/bloomreach/brxm/tree/brxm-14.3.2/spa-sdk/examples/react-csr);
+- [Next.js-based application](https://github.com/bloomreach/brxm/tree/brxm-14.3.2/spa-sdk/examples/react-ssr);
+- [Angular-based application](https://github.com/bloomreach/brxm/tree/brxm-14.3.2/spa-sdk/examples/angular);
+- [Vue.js-based application](https://github.com/bloomreach/brxm/tree/brxm-14.3.2/spa-sdk/examples/vue);
+- [Nuxt.js-based application](https://github.com/bloomreach/brxm/tree/brxm-14.3.2/spa-sdk/examples/nuxt).
 
 ## License
 Published under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) license.

@@ -87,7 +87,7 @@ Then build the brXM docker image:
     mvn -Pdocker.build
 
 This maven profile will create a docker image and add it to the local docker registry. The new image will be tagged
-as com.bloomreach/xm-spa-example:14.3.0
+as com.bloomreach/xm-spa-example:14.3.2
 
 To run the image with in-memory h2 database:
 
