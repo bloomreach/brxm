@@ -30,7 +30,7 @@ import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.resource.CoreLibrariesContributor;
 import org.hippoecm.frontend.behaviors.ContextMenuBehavior;
 import org.hippoecm.frontend.behaviors.IContextMenu;
-import org.hippoecm.frontend.behaviors.OpenDocumentEditorBehavior;
+import org.hippoecm.frontend.behaviors.OpenInContentPerspectiveBehavior;
 import org.hippoecm.frontend.dialog.DialogServiceFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.event.IRefreshable;
@@ -119,7 +119,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
             context.registerService(this, Home.class.getName());
             registerGlobalBehaviorTracker();
-            add(new OpenDocumentEditorBehavior(context));
+            add(new OpenInContentPerspectiveBehavior(context));
 
             add(menuBehavior = new ContextMenuBehavior());
 
