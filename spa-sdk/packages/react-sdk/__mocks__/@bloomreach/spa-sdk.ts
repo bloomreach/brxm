@@ -30,6 +30,7 @@ const component = new class implements Component {
 const page = new class implements Page {
   getComponent = jest.fn(() => component);
   getContent = jest.fn();
+  getDocument = jest.fn();
   getMeta = jest.fn();
   getTitle = jest.fn();
   getUrl = jest.fn();
