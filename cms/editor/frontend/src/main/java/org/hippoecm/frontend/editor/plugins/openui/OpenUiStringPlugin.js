@@ -62,11 +62,11 @@ class OpenUiStringPlugin {
   }
 
   navigateDocument(path) {
-    Hippo.openDocumentByPath(path, 'view');
+    Hippo.openByPath(path, 'view');
   }
 
   openDocument(id) {
-    Hippo.openDocumentById(id, 'view');
+    Hippo.openById(id, 'view');
   }
 
   getFieldValue(...path) {

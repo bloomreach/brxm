@@ -111,11 +111,6 @@ definitions:
         jcr:primaryType: frontend:plugin
         editor.id: service.edit
         plugin.class: org.hippoecm.frontend.plugins.cms.edit.AutoEditPlugin
-      /controllerPlugin:
-        jcr:primaryType: frontend:plugin
-        browser.id: service.browse
-        editor.id: service.edit
-        plugin.class: org.hippoecm.frontend.plugins.cms.root.ControllerPlugin
       /adminLoader:
         jcr:primaryType: frontend:plugin
         jcr:mixinTypes: ['frontend:navigationitem']

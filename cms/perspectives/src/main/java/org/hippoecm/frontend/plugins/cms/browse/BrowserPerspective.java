@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -39,8 +38,8 @@ import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.ServiceTracker;
-import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.util.JcrConstants;
 
 public class BrowserPerspective extends Perspective {
 
@@ -54,6 +53,7 @@ public class BrowserPerspective extends Perspective {
     private IExpandableCollapsable listing;
     private TabsPlugin tabs;
     private ObservableModel<String> sectionModel;
+    private ObservableModel<NavLocation> navLocationModel;
     private ModelService<Node> nodeService;
     private BrowseState state;
 
@@ -111,25 +111,25 @@ public class BrowserPerspective extends Perspective {
             }
         }, IObserver.class.getName());
 
+        navLocationModel = ObservableModel.from(context, NavLocation.MODEL_ID);
+        context.registerService(new IObserver<ObservableModel<NavLocation>>() {
+            @Override
+            public ObservableModel<NavLocation> getObservable() {
+                return navLocationModel;
+            }
+
+            @Override
+            public void onEvent(final Iterator<? extends IEvent<ObservableModel<NavLocation>>> events) {
+                state.onNavLocationChanged(navLocationModel.getObject());
+            }
+
+        }, IObserver.class.getName());
+
         nodeService = new ModelService<Node>(config.getString(MODEL_DOCUMENT)) {
             @Override
             void onUpdateModel(final IModel<Node> oldModel, final IModel<Node> newModel) {
                 final String newTab = JcrUtils.getNodePathQuietly(newModel.getObject());
-                final String documentName = getDocumentName(newModel);
-
-                updateNavLocation(newTab, documentName);
-
                 state.onTabChanged(newTab);
-            }
-
-            String getDocumentName(IModel<Node> model) {
-                try {
-                    final IModel<String> nameModel = DocumentUtils.getDocumentNameModel(model);
-
-                    return nameModel != null ? nameModel.getObject() : "";
-                } catch (RepositoryException e) {
-                    return "";
-                }
             }
         };
 
@@ -156,6 +156,16 @@ public class BrowserPerspective extends Perspective {
 
     @Override
     public void render(final PluginRequestTarget target) {
+        if (!isActive() && !isActivating()) {
+            super.render(target);
+            return;
+        }
+
+        if (isActivating()) {
+            tabs.focusRecentTabUnlessHidden();
+            updateNavLocation();
+        }
+
         if (state.processChanges(hasOpenTabs())) {
             if (state.isExpandDefault()) {
                 wireframe.expandDefault();
@@ -181,6 +191,10 @@ public class BrowserPerspective extends Perspective {
             if (state.isRestoreSelection()) {
                 nodeService.setModel(new JcrNodeModel(state.getTab()));
             }
+            if (state.isUpdateNavLocation()) {
+                final NavLocation navLocation = state.getNavLocation();
+                updateNavLocation(navLocation);
+            }
         }
         state.reset();
 
@@ -191,15 +205,9 @@ public class BrowserPerspective extends Perspective {
     protected void onDetach() {
         sectionModel.detach();
         nodeService.detach();
+        navLocationModel.detach();
 
         super.onDetach();
-    }
-
-    @Override
-    protected void onActivated() {
-        super.onActivated();
-        tabs.focusRecentTabUnlessHidden();
-        updateNavLocation(tabs.getSelectedTabPath(), null);
     }
 
     @Override
@@ -287,14 +295,40 @@ public class BrowserPerspective extends Perspective {
                 reference.detach();
             }
         }
-
     }
 
-    private void updateNavLocation(String selectedTabPath, String breadcrumbLabel) {
+    private void updateNavLocation() {
+        // When rendering for the first time, we want to replace the URL for of the content-perspective ("/content"),
+        // with a NavLocation that depicts the root path of the content-perspective ("/content/path/content/documents")
+        if (navLocationModel.getObject() == null) {
+            final IModel<Node> rootFolder = new JcrNodeModel(JcrConstants.DOCUMENTS_PATH);
+            final NavLocation navLocation = NavLocation.folder(rootFolder, NavLocation.Mode.REPLACE);
+            navLocationModel.setObject(navLocation);
+            updateNavLocation(navLocation);
+            return;
+        }
+
+        final NavLocation navLocation = navLocationModel.getObject();
+        final String selectedTabPath = tabs.getSelectedTabPath();
+        if (selectedTabPath == null || selectedTabPath.equals(navLocation.getPath())) {
+            // The previously rendered document or folder is already displayed, we only need to add the NavLocation
+            // to the history
+            updateNavLocation(navLocation);
+            return;
+        }
+
+        final IModel<Node> document = new JcrNodeModel(selectedTabPath);
+        final NavLocation newNavLocation = NavLocation.document(document, NavLocation.Mode.REPLACE);
+        navLocationModel.setObject(newNavLocation);
+    }
+
+    private void updateNavLocation(final NavLocation navLocation) {
         final String appPath = getAppPath();
-        final String path = Optional.ofNullable(selectedTabPath)
+        final String path = Optional.ofNullable(navLocation.getPath())
                 .map(tabPath -> String.format("%s/path%s", appPath, tabPath))
                 .orElse(appPath);
-        new ParentApiCaller().updateNavLocation(path, breadcrumbLabel);
+        final String label = navLocation.getLabel();
+        final boolean addToHistory = navLocation.getMode() == NavLocation.Mode.ADD;
+        new ParentApiCaller().updateNavLocation(path, label, addToHistory);
     }
 }
