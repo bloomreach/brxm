@@ -39,9 +39,12 @@ public class ContainerConfigurationImpl implements ContainerConfiguration {
     private static final Logger log = LoggerFactory.getLogger(ContainerConfigurationImpl.class);
 
     protected Configuration configuration;
+    private final Properties properties;
 
     public ContainerConfigurationImpl(Configuration configuration) {
         this.configuration = configuration;
+        properties = ConfigurationConverter.getProperties(configuration);
+
     }
 
     public boolean isEmpty() {
@@ -168,7 +171,9 @@ public class ContainerConfigurationImpl implements ContainerConfiguration {
     }
     
     public Properties toProperties() {
-        return ConfigurationConverter.getProperties(configuration);
+        // ConfigurationConverter.getProperties(configuration) is fairly slow, hence instead do that once and
+        // return new Properties(properties) : we do not return 'properties' since that object is modifiable
+        return new Properties(properties);
     }
-    
+
 }

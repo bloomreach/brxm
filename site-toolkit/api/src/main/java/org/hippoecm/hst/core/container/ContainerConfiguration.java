@@ -177,9 +177,14 @@ public interface ContainerConfiguration {
     boolean isDevelopmentMode();
     
     /**
+     * <p>
      * Convert a ContainerConfiguration class into a Properties class. List properties
      * are joined into a string using the delimiter of the configuration.
-     * 
+     * </p>
+     * <p>
+     *     modifications to the returned Properties object are not reflected in the ContainerConfiguration and
+     *     only to the returned Properties: Every new invocation returns a new unique instance
+     * </p>
      * @return Properties created from the Configuration
      */
     Properties toProperties();
