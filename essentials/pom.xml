@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -50,14 +50,6 @@
     <maven.plugin.frontend.version>1.6</maven.plugin.frontend.version>
     <nodejs.version>v8.13.0</nodejs.version>
     <npm.version>6.4.1</npm.version>
-
-    <maven.plugin.jacoco.version>0.8.1</maven.plugin.jacoco.version>
-    <!-- Tells Sonar to run the unit tests -->
-    <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
-    <!-- Tells Sonar to use JaCoCo as the code coverage tool -->
-    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-    <sonar.jacoco.reportPath>${basedir}/target/target/jacoco.exec</sonar.jacoco.reportPath>
-
   </properties>
   <modules>
     <module>plugin-sdk</module>
@@ -149,34 +141,6 @@
         </plugin>
       </plugins>
     </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${maven.plugin.jacoco.version}</version>
-        <executions>
-          <execution>
-            <id>jacoco-initialize</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-            <configuration>
-              <excludes>
-                <exclude>org.hippoecm.*</exclude>
-              </excludes>
-              <destFile>${basedir}/target/jacoco.exec</destFile>
-            </configuration>
-          </execution>
-          <execution>
-            <id>jacoco-site</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
   </build>
 
   <profiles>
