@@ -14,5 +14,11 @@
  * limitations under the License.
  */
 
-@import '~c3/c3.min.css';
-@import './app/shared/material/material';
+export interface ExperimentGoal {
+  id: string;
+  name: string;
+  type: 'PAGE';
+  readOnly: boolean;
+  targetPage: string;
+  mountId: string;
+}

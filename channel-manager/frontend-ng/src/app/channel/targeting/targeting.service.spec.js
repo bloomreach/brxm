@@ -18,21 +18,26 @@ describe('TargetingService', () => {
   let $httpBackend;
   let $rootScope;
   let $window;
+  let ChannelService;
   let ConfigService;
   let TargetingService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.targeting');
 
-    inject((_$httpBackend_, _$rootScope_, _$window_, _ConfigService_, _TargetingService_) => {
+    inject((_$httpBackend_, _$rootScope_, _$window_, _ChannelService_, _ConfigService_, _TargetingService_) => {
       $httpBackend = _$httpBackend_;
       $rootScope = _$rootScope_;
       $window = _$window_;
+      ChannelService = _ChannelService_;
       ConfigService = _ConfigService_;
       TargetingService = _TargetingService_;
     });
 
     $window.parent.Hippo.Targeting.HttpProxy.REST_URL = 'targeting-rest-url';
+
+    ConfigService.locale = 'locale';
+    ConfigService.variantsUuid = 'variantsUuid';
 
     TargetingService.init();
   });
@@ -41,6 +46,63 @@ describe('TargetingService', () => {
     $httpBackend.verifyNoOutstandingRequest();
     $httpBackend.verifyNoOutstandingExpectation();
   });
+
+  function expectHttp(backend, message, when, ...expects) {
+    const responseData = {};
+    backend.respond((method, url, data, headers, params) => {
+      expects.forEach(exp => exp(params));
+
+      return [200, {
+        data: responseData,
+        message: null,
+        success: true,
+      }];
+    });
+
+    const promiseSpy = jasmine.createSpy('promiseSpy');
+    when().then(promiseSpy).catch(fail);
+    $httpBackend.flush();
+
+    expect(promiseSpy).toHaveBeenCalledWith({
+      data: responseData,
+      message,
+      success: true,
+    });
+  }
+
+  function expectGet(url, message, when, ...verify) {
+    expectHttp($httpBackend.expectGET(url), message, when, ...verify);
+  }
+
+  function expectHttpError(responseData, message, when) {
+    const promiseSpy = jasmine.createSpy('promiseSpy');
+    when().then(promiseSpy).catch(fail);
+    $httpBackend.flush();
+
+    expect(promiseSpy).toHaveBeenCalledWith({
+      data: responseData,
+      message,
+      reloadRequired: false,
+      success: false,
+    });
+  }
+
+  function expectGetError(url, message, when) {
+    const responseData = {};
+    $httpBackend.expectGET(url).respond(500, responseData);
+    expectHttpError(responseData, message, when);
+  }
+
+  function expectPostError(url, message, when) {
+    const responseData = {};
+    $httpBackend.expectPOST(url).respond(500, responseData);
+    expectHttpError(responseData, message, when);
+  }
+
+  function expectDefaultParams(params) {
+    expect(params['Force-Client-Host']).toBe('true');
+    expect(params.antiCache).toBeTruthy();
+  }
 
   describe('init', () => {
     it('should throw an error if it can not find the global "Hippo" object', () => {
@@ -51,28 +113,15 @@ describe('TargetingService', () => {
 
   describe('getVariantIDs', () => {
     it('should return a list of variant IDs', () => {
-      const responseData = {
-        message: 'Available variants: ',
-        data: ['variant1', 'hippo-default'],
-      };
-      $httpBackend
-        .expectGET('/test/container-item-id./')
-        .respond(200, responseData);
-
-      const promiseSpy = jasmine.createSpy('promiseSpy');
-      TargetingService.getVariantIDs('container-item-id').then(promiseSpy);
-      $httpBackend.flush();
-
-      expect(promiseSpy).toHaveBeenCalledWith(responseData);
+      expectGet(
+        '/test/container-item-id./',
+        'Successfully loaded variant ids for container-item "container-item-id"',
+        () => TargetingService.getVariantIDs('container-item-id'),
+      );
     });
   });
 
   describe('getVariants', () => {
-    beforeEach(() => {
-      ConfigService.variantsUuid = 'variantsUuid';
-      ConfigService.locale = 'locale';
-    });
-
     it('should request the variant IDs', () => {
       spyOn(TargetingService, 'getVariantIDs');
 
@@ -86,20 +135,12 @@ describe('TargetingService', () => {
         success: true,
       });
 
-      const responseData = {
-        data: [{ id: 'hippo-default' }],
-        message: 'Component personas loaded successfully',
-        success: true,
-      };
-      $httpBackend
-        .expectPOST('/test/variantsUuid./componentvariants?locale=locale', ['variant-1', 'variant-2'])
-        .respond(200, responseData);
-
-      const promiseSpy = jasmine.createSpy('promiseSpy');
-      TargetingService.getVariants('container-item-id').then(promiseSpy).catch(fail);
-      $httpBackend.flush();
-
-      expect(promiseSpy).toHaveBeenCalledWith(responseData);
+      const url = '/test/variantsUuid./componentvariants?locale=locale';
+      expectHttp(
+        $httpBackend.expectPOST(url, ['variant-1', 'variant-2']),
+        'Successfully loaded variants for container-item "container-item-id"',
+        () => TargetingService.getVariants('container-item-id'),
+      );
     });
 
     it('should resolve with an error response if the request for variant ids fails', () => {
@@ -116,21 +157,8 @@ describe('TargetingService', () => {
     it('should resolve with an error response if the backend fails', () => {
       spyOn(TargetingService, 'getVariantIDs').and.returnValue({ success: true });
 
-      const errorResponse = { success: false };
-      $httpBackend
-        .expectPOST()
-        .respond(400, errorResponse);
-
-      const promiseSpy = jasmine.createSpy('promiseSpy');
-      TargetingService.getVariants('container-item-id').then(promiseSpy).catch(fail);
-
-      $httpBackend.flush();
-      expect(promiseSpy).toHaveBeenCalledWith({
-        data: errorResponse,
-        message: 'Failed to load variants for container-item "container-item-id"',
-        reloadRequired: false,
-        success: false,
-      });
+      expectPostError('', 'Failed to load variants for container-item "container-item-id"',
+        () => TargetingService.getVariants('container-item-id'));
     });
   });
 
@@ -146,63 +174,24 @@ describe('TargetingService', () => {
     });
 
     it('should retrieve a list of personas', () => {
-      const promiseSpy = jasmine.createSpy('promiseSpy');
-      const responseData = {
-        items: [
-          { id: 'persona1' },
-          { id: 'persona2' },
-        ],
-        count: 2,
-      };
-
-      $httpBackend
-        .expectGET(urlRegex)
-        .respond((method, url, data, headers, params) => {
-          expect(params.collectors).toBe('collector1,collector2');
-          expect(params['Force-Client-Host']).toBe('true');
-          expect(params.antiCache).toBeTruthy();
-
-          return [200, responseData];
-        });
-
-      TargetingService.getPersonas().then(promiseSpy);
-      $httpBackend.flush();
-
-      expect(promiseSpy).toHaveBeenCalledWith({
-        data: responseData,
-        message: 'Personas loaded successfully',
-        reloadRequired: false,
-        success: true,
-      });
+      expectGet(
+        urlRegex,
+        'Personas loaded successfully',
+        () => TargetingService.getPersonas(),
+        expectDefaultParams,
+        params => expect(params.collectors).toBe('collector1,collector2'),
+      );
     });
 
     it('should not choke if there are no collectors defined', () => {
       $window.parent.Hippo.Targeting.CollectorPlugins = null;
       TargetingService.init();
 
-      const promiseSpy = jasmine.createSpy('promiseSpy');
-      $httpBackend.expectGET(urlRegex).respond(200);
-
-      TargetingService.getPersonas().then(promiseSpy);
-      $httpBackend.flush();
-
-      expect(promiseSpy).toHaveBeenCalled();
+      expectGet(urlRegex, 'Personas loaded successfully', () => TargetingService.getPersonas());
     });
 
     it('should resolve with an error response if the backend fails', () => {
-      const responseData = {};
-      $httpBackend.expectGET(urlRegex).respond(500, responseData);
-
-      const promiseSpy = jasmine.createSpy('promiseSpy');
-      TargetingService.getPersonas().then(promiseSpy);
-      $httpBackend.flush();
-
-      expect(promiseSpy).toHaveBeenCalledWith({
-        data: responseData,
-        message: 'Failed to load personas',
-        reloadRequired: false,
-        success: false,
-      });
+      expectGetError(urlRegex, 'Failed to load personas', () => TargetingService.getPersonas());
     });
   });
 
@@ -232,50 +221,17 @@ describe('TargetingService', () => {
     const urlRegex = /targeting-rest-url\/characteristics.*/;
 
     it('should return an array of characteristic IDs', () => {
-      const responseData = {
-        items: [
-          { id: 'city' },
-          { id: 'country' },
-        ],
-        count: 2,
-      };
-      $httpBackend
-        .expectGET(urlRegex)
-        .respond((method, url, data, headers, params) => {
-          expect(params['Force-Client-Host']).toBe('true');
-          expect(params.antiCache).toBeTruthy();
-
-          return [200, {
-            data: responseData,
-            success: true,
-          }];
-        });
-
-      const promiseSpy = jasmine.createSpy('promiseSpy');
-      TargetingService.getCharacteristicsIDs().then(promiseSpy);
-      $httpBackend.flush();
-
-      expect(promiseSpy).toHaveBeenCalledWith({
-        data: responseData,
-        message: 'Characteristics IDs loaded successfully',
-        success: true,
-      });
+      expectGet(
+        urlRegex,
+        'Characteristics IDs loaded successfully',
+        () => TargetingService.getCharacteristicsIDs(),
+        expectDefaultParams,
+      );
     });
 
     it('should resolve with an error response if the backend fails', () => {
-      const responseData = {};
-      $httpBackend.expectGET(urlRegex).respond(500, responseData);
-
-      const promiseSpy = jasmine.createSpy('promiseSpy');
-      TargetingService.getCharacteristicsIDs().then(promiseSpy);
-      $httpBackend.flush();
-
-      expect(promiseSpy).toHaveBeenCalledWith({
-        data: responseData,
-        message: 'Failed to load characteristics IDs',
-        reloadRequired: false,
-        success: false,
-      });
+      expectGetError(urlRegex, 'Failed to load characteristics IDs',
+        () => TargetingService.getCharacteristicsIDs());
     });
   });
 
@@ -283,51 +239,112 @@ describe('TargetingService', () => {
     const urlRegex = /targeting-rest-url\/characteristics\/(.+).*/;
 
     it('should retrieve a characteristic by id', () => {
-      const responseData = {
-        id: 'dayofweek',
-        targetGroups: [],
-        success: true,
-        message: 'OK',
-      };
-      $httpBackend
-        .expectGET(urlRegex, { Accept: 'application/json, text/plain, */*' }, ['characterId'])
-        .respond((method, url, data, headers, params) => {
-          expect(params.characterId).toBe('dayofweek');
-          expect(params['Force-Client-Host']).toBe('true');
-          expect(params.antiCache).toBeTruthy();
-
-          return [200, {
-            data: responseData,
-            message: null,
-            success: true,
-          }];
-        });
-
-      const promiseSpy = jasmine.createSpy('promiseSpy');
-      TargetingService.getCharacteristic('dayofweek').then(promiseSpy);
-      $httpBackend.flush();
-
-      expect(promiseSpy).toHaveBeenCalledWith({
-        data: responseData,
-        message: 'Characteristic "dayofweek" loaded successfully',
-        success: true,
-      });
+      expectHttp(
+        $httpBackend.expectGET(urlRegex, { Accept: 'application/json, text/plain, */*' }, ['characterId']),
+        'Characteristic "dayofweek" loaded successfully',
+        () => TargetingService.getCharacteristic('dayofweek'),
+        expectDefaultParams,
+        params => expect(params.characterId).toBe('dayofweek'),
+      );
     });
 
     it('should resolve with an error response if the backend fails', () => {
-      const responseData = {};
-      $httpBackend.expectGET(urlRegex).respond(500, responseData);
+      expectGetError(urlRegex, 'Failed to load characteristic "dayofweek"',
+        () => TargetingService.getCharacteristic('dayofweek'));
+    });
+  });
 
-      const promiseSpy = jasmine.createSpy('promiseSpy');
-      TargetingService.getCharacteristic('dayofweek').then(promiseSpy);
-      $httpBackend.flush();
+  describe('getExperiment', () => {
+    const urlRegex = /targeting-rest-url\/experiments\/component\/(.+).*/;
 
-      expect(promiseSpy).toHaveBeenCalledWith({
-        data: responseData,
-        message: 'Failed to load characteristic "dayofweek"',
-        reloadRequired: false,
-        success: false,
-      });
+    it('should retrieve the experiment for the specified component', () => {
+      expectGet(
+        urlRegex,
+        'Experiment loaded successfully for component "componentId"',
+        () => TargetingService.getExperiment('componentId'),
+        expectDefaultParams,
+        params => expect(params.locale).toBe('locale'),
+      );
+    });
+
+    it('should resolve with an error response if the backend fails', () => {
+      expectGetError(urlRegex, 'Failed to load experiment for component "componentId"',
+        () => TargetingService.getExperiment('componentId'));
+    });
+  });
+
+  describe('saveExperiment', () => {
+    const urlRegex = /targeting-rest-url\/experiments\/saveExperiment(.+).*/;
+
+    it('should save the experiment for the specified component, goal and variant', () => {
+      const checkChanges = spyOn(ChannelService, 'checkChanges');
+      const payload = {
+        componentId: 'componentId',
+        goalId: 'goalId',
+        variantId: 'variantId',
+      };
+
+      expectHttp(
+        $httpBackend.expectPOST(urlRegex, payload),
+        'Experiment saved for component "componentId" with goal "goalId" and variant "variantId"',
+        () => TargetingService.saveExperiment('componentId', 'goalId', 'variantId'),
+        expectDefaultParams,
+      );
+      expect(checkChanges).toHaveBeenCalled();
+    });
+
+    it('should resolve with an error response if the backend fails', () => {
+      expectPostError(
+        urlRegex,
+        'Failed to save experiment for component "componentId" with goal "goalId" and variant "variantId"',
+        () => TargetingService.saveExperiment('componentId', 'goalId', 'variantId'),
+      );
+    });
+  });
+
+  describe('completeExperiment', () => {
+    const urlRegex = /targeting-rest-url\/experiments\/complete(.+).*/;
+
+    it('should complete the experiment of the specified component', () => {
+      const checkChanges = spyOn(ChannelService, 'checkChanges');
+
+      expectHttp(
+        $httpBackend.expectPOST(urlRegex, 'componentId'),
+        'Experiment completed for component "componentId"',
+        () => TargetingService.completeExperiment('componentId', 'keepVariantId'),
+        expectDefaultParams,
+        params => expect(params.keepOnlyVariantId).toBe('keepVariantId'),
+      );
+      expect(checkChanges).toHaveBeenCalled();
+    });
+
+    it('should resolve with an error response if the backend fails', () => {
+      expectPostError(
+        urlRegex,
+        'Failed to complete experiment for component "componentId"',
+        () => TargetingService.completeExperiment('componentId'),
+      );
+    });
+  });
+
+  describe('getExperimentStatus', () => {
+    const urlRegex = /targeting-rest-url\/experiments\/serving(.+).*/;
+
+    it('should return the state of the specified experiment', () => {
+      expectGet(
+        urlRegex,
+        'Succesfully loaded state of experiment "experimentId"',
+        () => TargetingService.getExperimentStatus('experimentId'),
+        expectDefaultParams,
+      );
+    });
+
+    it('should resolve with an error response if the backend fails', () => {
+      expectGetError(
+        urlRegex,
+        'Failed to load state of experiment "experimentId"',
+        () => TargetingService.getExperimentStatus('experimentId'),
+      );
     });
   });
 });

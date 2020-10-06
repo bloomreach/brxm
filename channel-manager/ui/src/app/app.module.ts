@@ -16,6 +16,7 @@
 
 import { NgModule } from '@angular/core';
 
+import { ExperimentsModule } from './experiments/experiments.module';
 import { NotificationBarModule } from './notification-bar/notification-bar.module';
 import { Ng1ServicesModule } from './services/ng1/ng1-services.module';
 import { SharedModule } from './shared/shared.module';
@@ -28,6 +29,7 @@ import { VersionsModule } from './versions/versions.module';
     NotificationBarModule,
     VersionsModule,
     VariantsModule,
+    ExperimentsModule,
     Ng1ServicesModule,
   ],
   providers: [

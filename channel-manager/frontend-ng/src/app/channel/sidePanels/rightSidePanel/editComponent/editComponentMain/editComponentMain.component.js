@@ -1,5 +1,5 @@
-/*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,5 +14,19 @@
  * limitations under the License.
  */
 
-@import '~c3/c3.min.css';
-@import './app/shared/material/material';
+import './editComponentMain.scss';
+import controller from './editComponentMain.controller';
+import template from './editComponentMain.html';
+
+const editComponentMainComponent = {
+  controller,
+  template,
+  bindings: {
+    // trick to render 'flex' and 'layout' attributes on the edit-component-main
+    // element so Angular Material applies the right layout
+    flex: '@',
+    layout: '@',
+  },
+};
+
+export default editComponentMainComponent;
