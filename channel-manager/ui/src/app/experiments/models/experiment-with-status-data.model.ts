@@ -14,5 +14,7 @@
  * limitations under the License.
  */
 
-@import '~c3/c3.min.css';
-@import './app/shared/material/material';
+import { ExperimentStatusWithVisits } from './experiment-status-with-visits.model';
+import { Experiment } from './experiment.model';
+
+export type ExperimentWithStatusData = Experiment & Partial<ExperimentStatusWithVisits>;

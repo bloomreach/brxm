@@ -14,5 +14,42 @@
  * limitations under the License.
  */
 
-@import '~c3/c3.min.css';
-@import './app/shared/material/material';
+@import 'variables';
+
+:host {
+  display: block;
+}
+
+.mat-list-item {
+  font-size: $font-normal;
+
+  &:first-child {
+    height: $br-size-xl;
+  }
+
+  .experiment-goal-header {
+    font-weight: bold;
+  }
+
+  .line-header {
+    flex-basis: 110px;
+  }
+
+  .experiment-state {
+    text-transform: capitalize;
+  }
+
+  .mat-divider {
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
+}
+
+.experiment-status-wrapper {
+  padding: $br-size;
+
+  em-experiment-status-chart {
+    margin-top: $br-size;
+  }
+}

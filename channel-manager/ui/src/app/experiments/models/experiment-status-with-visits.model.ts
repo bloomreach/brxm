@@ -14,5 +14,13 @@
  * limitations under the License.
  */
 
-@import '~c3/c3.min.css';
-@import './app/shared/material/material';
+import { ExperimentStatusAtTimestamp } from './experiment-status.model';
+
+export interface ExperimentStatusAtTimestampWithVisits extends ExperimentStatusAtTimestamp {
+  visits: number;
+}
+
+export interface ExperimentStatusWithVisits {
+  statusWithVisits: ExperimentStatusAtTimestampWithVisits[];
+  totalVisits: number;
+}

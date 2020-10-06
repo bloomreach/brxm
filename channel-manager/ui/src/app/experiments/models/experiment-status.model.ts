@@ -14,5 +14,9 @@
  * limitations under the License.
  */
 
-@import '~c3/c3.min.css';
-@import './app/shared/material/material';
+export interface ExperimentStatusAtTimestamp {
+  [variantId: string]: number;
+  timestamp: number;
+}
+
+export type ExperimentStatus = ExperimentStatusAtTimestamp[];

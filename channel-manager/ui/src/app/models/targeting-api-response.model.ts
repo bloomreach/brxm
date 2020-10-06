@@ -14,5 +14,10 @@
  * limitations under the License.
  */
 
-@import '~c3/c3.min.css';
-@import './app/shared/material/material';
+export interface TargetingApiResponse<T> {
+  success: boolean;
+  message: string | null;
+  errorCode: string | null;
+  reloadRequired: boolean;
+  data: T;
+}

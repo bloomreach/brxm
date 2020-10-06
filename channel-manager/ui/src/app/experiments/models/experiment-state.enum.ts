@@ -14,5 +14,9 @@
  * limitations under the License.
  */
 
-@import '~c3/c3.min.css';
-@import './app/shared/material/material';
+export enum ExperimentState {
+  Created = 'CREATED',
+  Running = 'RUNNING',
+  Completed = 'COMPLETED',
+  Unknown = 'UNKNOWN',
+}

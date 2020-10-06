@@ -14,5 +14,16 @@
  * limitations under the License.
  */
 
-@import '~c3/c3.min.css';
-@import './app/shared/material/material';
+import { ExperimentGoal } from './experiment-goal.model';
+import { ExperimentState } from './experiment-state.enum';
+import { ExperimentVariant } from './experiment-variant.model';
+
+export interface Experiment {
+  id: string;
+  state: ExperimentState;
+  type: 'PAGE';
+  startTime: number;
+  winnerVariant: ExperimentVariant | null;
+  variants: ExperimentVariant[];
+  goal: ExperimentGoal;
+}

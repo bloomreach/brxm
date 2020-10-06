@@ -1,0 +1,52 @@
+<!--
+  Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<ng-container *ngIf="experiment$ | async as experiment">
+  <mat-list role="list">
+    <mat-list-item role="listitem">
+      <span class="experiment-goal-header">{{ experiment | experimentName }}</span>
+      <mat-divider></mat-divider>
+    </mat-list-item>
+    <mat-list-item role="listitem">
+      <span class="line-header">{{ 'EXPERIMENT_GOAL' | translate }}</span>
+      <span>{{ experiment.goal.name }}</span>
+      <mat-divider></mat-divider>
+    </mat-list-item>
+    <mat-list-item role="listitem">
+      <span class="line-header">{{ 'EXPERIMENT_PAGE' | translate }}</span>
+      <span>{{ experiment.goal.targetPage }}</span>
+      <mat-divider></mat-divider>
+    </mat-list-item>
+    <mat-list-item role="listitem">
+      <span class="line-header">{{ 'EXPERIMENT_STATE' | translate }}</span>
+      <span class="experiment-state">{{ experiment.state | lowercase }}</span>
+      <mat-divider></mat-divider>
+    </mat-list-item>
+    <mat-list-item role="listitem">
+      <span class="line-header">{{ 'EXPERIMENT_START_DATE' | translate }}</span>
+      <span>{{ experiment.startTime | moment:'LL' }}</span>
+      <mat-divider></mat-divider>
+    </mat-list-item>
+  </mat-list>
+
+  <div class="experiment-status-wrapper">
+    <em-experiment-status-message [winnerVariant]="experiment.winnerVariant"
+                                  [visits]="experiment.totalVisits"
+                                  class="qa-experiment-status-message">
+    </em-experiment-status-message>
+    <em-experiment-status-chart [experiment]="experiment"></em-experiment-status-chart>
+  </div>
+</ng-container>
