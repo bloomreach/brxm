@@ -49,12 +49,6 @@
 
     <swagger.version>2.1.4</swagger.version>
 
-    <!-- Tells Sonar to run the unit tests -->
-    <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
-    <!-- Tells Sonar to use JaCoCo as the code coverage tool -->
-    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-    <sonar.jacoco.reportPath>${basedir}/target/target/jacoco.exec</sonar.jacoco.reportPath>
-
   </properties>
   <modules>
     <module>plugin-sdk</module>
@@ -146,8 +140,6 @@
         </plugin>
       </plugins>
     </pluginManagement>
-    <plugins>
-    </plugins>
   </build>
 
   <profiles>
