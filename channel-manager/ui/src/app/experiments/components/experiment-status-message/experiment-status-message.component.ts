@@ -14,5 +14,18 @@
  * limitations under the License.
  */
 
-@import '~c3/c3.min.css';
-@import './app/shared/material/material';
+import { Component, Input } from '@angular/core';
+
+import { ExperimentVariant } from '../../models/experiment-variant.model';
+
+@Component({
+  selector: 'em-experiment-status-message',
+  templateUrl: 'experiment-status-message.component.html',
+})
+export class ExperimentStatusMessageComponent {
+  @Input()
+  winnerVariant?: ExperimentVariant;
+
+  @Input()
+  visits = 0;
+}

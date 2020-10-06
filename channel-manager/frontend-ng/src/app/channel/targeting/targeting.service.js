@@ -19,6 +19,7 @@ class TargetingService {
     $http,
     $q,
     $window,
+    ChannelService,
     ConfigService,
     HstService,
     PageStructureService,
@@ -29,6 +30,7 @@ class TargetingService {
     this.$http = $http;
     this.$q = $q;
     this.$window = $window;
+    this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
     this.HstService = HstService;
     this.PageStructureService = PageStructureService;
@@ -183,6 +185,53 @@ class TargetingService {
       return this._success(`Characteristic "${id}" loaded successfully`, result);
     } catch (e) {
       return this._failure(`Failed to load characteristic "${id}"`, e);
+    }
+  }
+
+  async getExperiment(componentId) {
+    try {
+      const { locale } = this.ConfigService;
+      const params = { ...this._getDefaultParams(), locale };
+      const result = await this._execute('GET', ['experiments', 'component', componentId], null, params);
+      return this._success(`Experiment loaded successfully for component "${componentId}"`, result);
+    } catch (e) {
+      return this._failure(`Failed to load experiment for component "${componentId}"`, e);
+    }
+  }
+
+  async saveExperiment(componentId, goalId, variantId) {
+    const description = `component "${componentId}" with goal "${goalId}" and variant "${variantId}"`;
+    try {
+      const result = await this._execute('POST', ['experiments', 'saveExperiment'], {
+        componentId,
+        goalId,
+        variantId,
+      }, this._getDefaultParams());
+      await this.ChannelService.checkChanges();
+      return this._success(`Experiment saved for ${description}`, result);
+    } catch (e) {
+      return this._failure(`Failed to save experiment for ${description}`, e);
+    }
+  }
+
+  async completeExperiment(componentId, keepOnlyVariantId) {
+    try {
+      const params = { ...this._getDefaultParams(), keepOnlyVariantId };
+      const result = await this._execute('POST', ['experiments', 'complete'], componentId, params);
+      await this.ChannelService.checkChanges();
+      return this._success(`Experiment completed for component "${componentId}"`, result);
+    } catch (e) {
+      return this._failure(`Failed to complete experiment for component "${componentId}"`, e);
+    }
+  }
+
+  async getExperimentStatus(experimentId) {
+    try {
+      const params = this._getDefaultParams();
+      const result = await this._execute('GET', ['experiments', 'serving', experimentId], null, params);
+      return this._success(`Succesfully loaded state of experiment "${experimentId}"`, result);
+    } catch (e) {
+      return this._failure(`Failed to load state of experiment "${experimentId}"`, e);
     }
   }
 

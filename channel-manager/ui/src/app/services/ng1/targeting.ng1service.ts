@@ -16,18 +16,22 @@
 
 import { InjectionToken } from '@angular/core';
 
-import { ApiResponseBody } from '../../models/api-response-body';
+import { ExperimentStatus } from '../../experiments/models/experiment-status.model';
+import { Experiment } from '../../experiments/models/experiment.model';
+import { TargetingApiResponse } from '../../models/targeting-api-response.model';
 import { Variant, VariantCharacteristicData } from '../../variants/models/variant.model';
 
 export interface Ng1TargetingService {
-  getCharacteristics(): Promise<ApiResponseBody<void>>;
-  getVariants(containerItemId: string): Promise<ApiResponseBody<Variant[]>>;
+  getCharacteristics(): Promise<TargetingApiResponse<void>>;
+  getVariants(containerItemId: string): Promise<TargetingApiResponse<Variant[]>>;
   addVariant(
     componentId: string,
     formData: any,
     personaId?: string,
     characteristics?: VariantCharacteristicData[],
-  ): Promise<ApiResponseBody<any>>;
+  ): Promise<TargetingApiResponse<any>>;
+  getExperiment(componentId: string): Promise<TargetingApiResponse<Experiment>>;
+  getExperimentStatus(experimentId: string): Promise<TargetingApiResponse<ExperimentStatus>>;
 }
 
 export const NG1_TARGETING_SERVICE = new InjectionToken<Ng1TargetingService>('NG1_TARGETING_SERVICE');

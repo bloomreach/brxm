@@ -1,5 +1,5 @@
-/*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-export interface ApiResponseBody<T> {
-  data: T;
-  errorCode: string | null;
-  message: string;
-  reloadRequired: boolean;
-  success: boolean;
+class ExperimentsWrapperCtrl {
+
 }
+
+export default ExperimentsWrapperCtrl;

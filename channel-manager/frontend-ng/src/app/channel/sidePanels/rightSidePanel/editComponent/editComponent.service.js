@@ -46,7 +46,7 @@ class EditComponentService {
     this.RightSidePanelService = RightSidePanelService;
 
     $transitions.onEnter(
-      { entering: '**.edit-component' },
+      { entering: '**.edit-component.*' },
       transition => this._loadComponent(transition.params()),
     );
 
@@ -67,15 +67,15 @@ class EditComponentService {
       return;
     }
 
-    this.$state.go('hippo-cm.channel.edit-component', {
+    this.$state.go('hippo-cm.channel.edit-component.properties', {
       componentId: componentElement.getId(),
       variantId: variantId || componentElement.getRenderVariant(),
     });
   }
 
   stopEditing() {
-    if (this.$state.is('hippo-cm.channel.edit-component')) {
-      return this.$state.go('^');
+    if (this.$state.includes('hippo-cm.channel.edit-component')) {
+      return this.$state.go('hippo-cm.channel');
     }
     return this.$q.resolve();
   }

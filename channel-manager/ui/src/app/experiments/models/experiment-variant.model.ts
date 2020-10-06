@@ -14,5 +14,11 @@
  * limitations under the License.
  */
 
-@import '~c3/c3.min.css';
-@import './app/shared/material/material';
+export interface ExperimentVariant {
+  variantId: string;
+  variantName: string;
+  confidence: number;
+  mean: number;
+  variance: number;
+  visitorSegment: string;
+}
