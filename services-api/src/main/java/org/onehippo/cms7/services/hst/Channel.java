@@ -51,6 +51,9 @@ public class Channel implements Serializable {
 
     private String url; //Probably not needed for all channels ?
 
+    // in case the channel mgr should load an SPA
+    private String spaUrl;
+
     private String hstMountPoint;
     private String hstConfigPath;
     private String contentRoot;
@@ -115,6 +118,7 @@ public class Channel implements Serializable {
         mountPath = channel.mountPath;
         channelPath = channel.channelPath;
         url = channel.url;
+        spaUrl = channel.spaUrl;
         hstMountPoint = channel.hstMountPoint;
         hstConfigPath = channel.hstConfigPath;
         contentRoot = channel.contentRoot;
@@ -235,6 +239,14 @@ public class Channel implements Serializable {
      */
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getSpaUrl() {
+        return spaUrl;
+    }
+
+    public void setSpaUrl(final String spaUrl) {
+        this.spaUrl = spaUrl;
     }
 
     public void setType(String type) {
@@ -541,6 +553,7 @@ public class Channel implements Serializable {
                 ", mountPath='" + mountPath + '\'' +
                 ", channelPath='" + channelPath + '\'' +
                 ", url='" + url + '\'' +
+                ", previewUrl ='" + spaUrl + '\'' +
                 ", hstMountPoint='" + hstMountPoint + '\'' +
                 ", hstConfigPath='" + hstConfigPath + '\'' +
                 ", contentRoot='" + contentRoot + '\'' +
