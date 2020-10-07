@@ -1,8 +1,8 @@
 {
   "id": "brxIamPlugin",
-  "name": "BRX IAM Integration",
+  "name": "BRX Unified UI Integration",
   "icon": "/essentials/feature/images/icon.png",
-  "introduction": "Prepares your project to use BRX IAM (Identity and Access Management), which provides integrated Single Sign-On and User Provisioning features for enterprise BRX customers.",
+  "introduction": "Prepares your project to use BRX Unified UI Integration, including IAM (Identity and Access Management), which provides integrated Single Sign-On and User Provisioning features for enterprise BRX customers.",
   "description": "Please note that this component is a BRX-only component. Adding this component to the community version, or in a brXM project that is not configured for the integrated BRX product, is not supported.",
   "documentationLink": "https://documentation.bloomreach.com/library/enterprise/enterprise-features/",
   "installWithParameters": false,
