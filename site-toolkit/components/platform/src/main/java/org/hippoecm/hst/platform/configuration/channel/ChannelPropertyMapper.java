@@ -40,7 +40,7 @@ import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.parameters.HstValueType;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
