@@ -33,7 +33,7 @@
     "@angular/platform-browser": "10.0.4",
     "@angular/platform-browser-dynamic": "10.0.4",
     "@angular/router": "10.0.4",
-    "@bloomreach/frontend-theme": "1.0.0-11",
+    "@bloomreach/frontend-theme": "1.0.0-12",
     "@ngx-translate/core": "13.0.0",
     "@ngx-translate/http-loader": "6.0.0",
     "c3": "0.7.20",
