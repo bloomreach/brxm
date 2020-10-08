@@ -19,5 +19,5 @@ export interface TargetingApiResponse<T> {
   message: string | null;
   errorCode: string | null;
   reloadRequired: boolean;
-  data: T;
+  data: T | null;
 }

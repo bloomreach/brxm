@@ -30,7 +30,7 @@ export class ExperimentsService {
   async getExperiment(componentId: string): Promise<ExperimentWithStatusData | undefined> {
     const response = await this.ng1TargetingService.getExperiment(componentId);
 
-    if (!response.success) {
+    if (!response.success || !response.data) {
       return;
     }
 
@@ -52,7 +52,7 @@ export class ExperimentsService {
   async getExperimentStatus(experimentId: string): Promise<ExperimentStatusWithVisits  | undefined> {
     const response = await this.ng1TargetingService.getExperimentStatus(experimentId);
 
-    if (!response.success) {
+    if (!response.success || !response.data) {
       return;
     }
 
