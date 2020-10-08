@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<ng-container *ngIf="experiment$ | async as experiment; else experimentForm">
+<div *ngIf="experiment$ | async as experiment; else startExperimentForm" class="experiment">
   <em-experiment-info [experiment]="experiment"></em-experiment-info>
 
   <div class="experiment-status-wrapper">
@@ -24,10 +24,12 @@
     </em-experiment-status-message>
     <em-experiment-status-chart [experiment]="experiment"></em-experiment-status-chart>
   </div>
-</ng-container>
+</div>
 
-<ng-template #experimentForm>
+<ng-template #startExperimentForm>
   <em-experiment-start-form [variants]="availableVariants$ | async"
-                            [goals]="availableGoals$ | async">
+                            [goals]="availableGoals$ | async"
+                            [disabled]="requestInProgress"
+                            (selected)="onVariantAndGoalSelected($event)">
   </em-experiment-start-form>
 </ng-template>
