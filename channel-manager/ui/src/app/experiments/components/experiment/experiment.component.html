@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<ng-container *ngIf="experiment$ | async as experiment">
+<ng-container *ngIf="experiment$ | async as experiment; else experimentForm">
   <mat-list role="list">
     <mat-list-item role="listitem">
       <span class="experiment-goal-header">{{ experiment | experimentName }}</span>
@@ -50,3 +50,9 @@
     <em-experiment-status-chart [experiment]="experiment"></em-experiment-status-chart>
   </div>
 </ng-container>
+
+<ng-template #experimentForm>
+  <em-experiment-start-form [variants]="availableVariants$ | async"
+                            [goals]="availableGoals$ | async">
+  </em-experiment-start-form>
+</ng-template>
