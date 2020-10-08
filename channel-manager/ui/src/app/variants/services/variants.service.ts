@@ -29,7 +29,7 @@ export class VariantsService {
 
   async getVariants(componentId: string): Promise<Variant[]> {
     const response = await this.targetingService.getVariants(componentId);
-    return response.data;
+    return response.data || [];
   }
 
   async addVariant(componentId: string, formData: any, persona?: any, characteristics?: any[]): Promise<any> {

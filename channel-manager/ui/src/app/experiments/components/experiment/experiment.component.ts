@@ -17,6 +17,7 @@
 import { Component, Inject } from '@angular/core';
 
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
+import { VariantsService } from '../../../variants/services/variants.service';
 import { ExperimentsService } from '../../services/experiments.service';
 
 @Component({
@@ -27,9 +28,12 @@ export class ExperimentComponent {
   private readonly component = this.componentEditorService.getComponent();
   private readonly componentId = this.component.getId();
   readonly experiment$ = this.experimentsService.getExperiment(this.componentId);
+  readonly availableVariants$ = this.variantsService.getVariants(this.componentId);
+  readonly availableGoals$ = this.experimentsService.getGoals();
 
   constructor(
     @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,
     private readonly experimentsService: ExperimentsService,
+    private readonly variantsService: VariantsService,
   ) {}
 }
