@@ -235,6 +235,15 @@ class TargetingService {
     }
   }
 
+  async getGoals() {
+    try {
+      const result = await this._execute('GET', ['goals'], null, this._getDefaultParams());
+      return this._success('Succesfully loaded goals', result);
+    } catch (e) {
+      return this._failure('Failed to load goals', e);
+    }
+  }
+
   _getDefaultParams() {
     return {
       'Force-Client-Host': true,
