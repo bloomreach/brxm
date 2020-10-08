@@ -22,8 +22,9 @@
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-targeting-cms-dependencies" targetPom="cms-dependencies" type="pom"/>
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-targeting-site-dependencies" targetPom="site-components" type="pom"/>
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-targeting-shared-api" targetPom="project" scope="provided"/>
-  
+
     <execute class="org.onehippo.cms7.essentials.plugins.relevance.RelevanceInstruction" />
+    <file action="copy" source="yamlFiles/visits.yaml" target="{{applicationConfig}}/targeting/datastores/visits.yaml"/>
   </instructionSet>
 
 </instructions>
