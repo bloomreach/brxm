@@ -20,6 +20,7 @@ import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/t
 import { ExperimentStatusWithVisits } from '../models/experiment-status-with-visits.model';
 import { ExperimentStatusAtTimestamp } from '../models/experiment-status.model';
 import { ExperimentWithStatusData } from '../models/experiment-with-status-data.model';
+import { ExperimentGoal } from '../models/experiment-goal.model';
 
 @Injectable({
   providedIn: 'root',
@@ -74,6 +75,35 @@ export class ExperimentsService {
       statusWithVisits,
       totalVisits,
     };
+  }
+
+  async getGoals(): Promise<ExperimentGoal[]> {
+    return Promise.resolve([
+      {
+        id: 'goal-3',
+        name: 'Goal 3',
+        type: 'PAGE',
+        readOnly: false,
+        targetPage: '/faq',
+        mountId: '64fc383e-0dc0-40c2-a657-115cde69cd67',
+      },
+      {
+        id: 'goal-2',
+        name: 'Goal 2',
+        type: 'PAGE',
+        readOnly: true,
+        targetPage: '/events',
+        mountId: '1a1a1a1a-e880-4629-9e63-bc8ed8399d2a',
+      },
+      {
+        id: 'goal-1',
+        name: 'Goal 1',
+        type: 'PAGE',
+        readOnly: true,
+        targetPage: '/news',
+        mountId: '1a1a1a1a-e880-4629-9e63-bc8ed8399d2a',
+      },
+    ]);
   }
 
   calculateVisitsPerTimestamp(point: ExperimentStatusAtTimestamp): number {
