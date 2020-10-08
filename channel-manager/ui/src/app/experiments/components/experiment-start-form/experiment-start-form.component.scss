@@ -16,8 +16,15 @@
 
 @import '~@bloomreach/frontend-theme/sizes';
 
+:host {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .form-wrapper {
-  padding: $br-size;
+  padding: $br-size-l $br-size;
+  flex: 1 1 0;
 }
 
 .mat-form-field {
@@ -26,4 +33,13 @@
   & + & {
     margin-top: $br-size-xl;
   }
+}
+
+.actions {
+  padding: $br-size-m $br-size;
+  text-align: right;
+}
+
+.save-button {
+  margin-left: $br-size;
 }

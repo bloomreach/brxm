@@ -153,6 +153,8 @@
   "EXPERIMENT_WINNER_ABSENT": "The experiment is running. No winner has been determined yet",
   "EXPERIMENT_WINNER_PRESENT": "Variant {{variantName}} is the winner of this experiment",
   "EXPERIMENT_AFTER_THIS_MANY_VISITS": "{{count}} visits so far",
+  "EXPERIMENT_SAVED": "The experiment has been saved sucessfully",
+  "EXPERIMENT_SAVE_ERROR": "An error happened while attempting to save the experiment",
   "FEEDBACK_DOCUMENT_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "The document is waiting to be published or unpublished.",
   "FEEDBACK_XPAGE_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "The page is waiting to be published or unpublished.",
   "FEEDBACK_CANCEL_REQUEST": "Cancel request",
