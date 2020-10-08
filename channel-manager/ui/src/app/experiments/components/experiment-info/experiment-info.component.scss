@@ -15,11 +15,36 @@
  */
 
 @import '~@bloomreach/frontend-theme/sizes';
+@import 'variables';
 
-.experiment-status-wrapper {
-  padding: $br-size;
+$mat-list-line-header-size-with-padding: 110px;
 
-  em-experiment-status-chart {
-    margin-top: $br-size;
+:host {
+  display: block;
+}
+
+.mat-list-item {
+  font-size: $font-normal;
+
+  .experiment-goal-header {
+    font-weight: bold;
   }
+
+  .line-header {
+    flex-basis: $mat-list-line-header-size-with-padding;
+  }
+
+  .experiment-state {
+    text-transform: capitalize;
+  }
+
+  .mat-divider {
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
+}
+
+.small-list .mat-list-item {
+  height: $br-size-xl;
 }
