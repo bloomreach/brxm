@@ -15,10 +15,13 @@
  */
 
 import { Component, Inject } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
+import { NotificationService } from '../../../services/notification.service';
 import { VariantsService } from '../../../variants/services/variants.service';
 import { ExperimentsService } from '../../services/experiments.service';
+import { SelectedVariantIdAndGoalId } from '../experiment-start-form/experiment-start-form.component';
 
 @Component({
   templateUrl: 'experiment.component.html',
@@ -27,13 +30,36 @@ import { ExperimentsService } from '../../services/experiments.service';
 export class ExperimentComponent {
   private readonly component = this.componentEditorService.getComponent();
   private readonly componentId = this.component.getId();
-  readonly experiment$ = this.experimentsService.getExperiment(this.componentId);
   readonly availableVariants$ = this.variantsService.getVariants(this.componentId);
   readonly availableGoals$ = this.experimentsService.getGoals();
+
+  experiment$ = this.experimentsService.getExperiment(this.componentId);
+
+  requestInProgress = false;
 
   constructor(
     @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,
     private readonly experimentsService: ExperimentsService,
     private readonly variantsService: VariantsService,
+    private readonly notificationService: NotificationService,
+    private readonly translateService: TranslateService,
   ) {}
+
+  async onVariantAndGoalSelected(value: SelectedVariantIdAndGoalId): Promise<void> {
+    const { variantId, goalId } = value;
+
+    try {
+      this.requestInProgress = true;
+
+      await this.experimentsService.saveExperiment(this.componentId, variantId, goalId);
+
+      this.experiment$ = this.experimentsService.getExperiment(this.componentId);
+
+      this.notificationService.showNotification(this.translateService.instant('EXPERIMENT_SAVED'));
+    } catch (e) {
+      this.notificationService.showErrorNotification(this.translateService.instant('EXPERIMENT_SAVE_ERROR'));
+    } finally {
+      this.requestInProgress = false;
+    }
+  }
 }

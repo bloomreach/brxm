@@ -17,10 +17,10 @@
 import { Inject, Injectable } from '@angular/core';
 
 import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1service';
+import { ExperimentGoal } from '../models/experiment-goal.model';
 import { ExperimentStatusWithVisits } from '../models/experiment-status-with-visits.model';
 import { ExperimentStatusAtTimestamp } from '../models/experiment-status.model';
 import { ExperimentWithStatusData } from '../models/experiment-with-status-data.model';
-import { ExperimentGoal } from '../models/experiment-goal.model';
 
 @Injectable({
   providedIn: 'root',
@@ -104,6 +104,14 @@ export class ExperimentsService {
         mountId: '1a1a1a1a-e880-4629-9e63-bc8ed8399d2a',
       },
     ]);
+  }
+
+  async saveExperiment(componentId: string, goalId: string, variantId: string): Promise<void> {
+    const result = await this.ng1TargetingService.saveExperiment(componentId, variantId, goalId);
+
+    if (!result.success) {
+      throw new Error(result.message || undefined);
+    }
   }
 
   calculateVisitsPerTimestamp(point: ExperimentStatusAtTimestamp): number {

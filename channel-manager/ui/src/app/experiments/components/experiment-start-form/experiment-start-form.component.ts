@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 
 import { Variant } from '../../../variants/models/variant.model';
 import { ExperimentGoal } from '../../models/experiment-goal.model';
+
+export interface SelectedVariantIdAndGoalId {
+  variantId: string;
+  goalId: string;
+}
 
 interface GroupedVariant {
   ids: string[];
@@ -36,12 +41,30 @@ export class ExperimentStartFormComponent implements OnChanges {
   @Input()
   goals: ExperimentGoal[] = [];
 
+  @Input()
+  disabled = false;
+
+  @Output()
+  selected = new EventEmitter<SelectedVariantIdAndGoalId>();
+
   groupedVariants: GroupedVariant[] = [];
   selectedVariant?: GroupedVariant;
-  selectedGoal: ExperimentGoal | undefined;
+  selectedGoalId: string | undefined;
 
   get againstDefault(): boolean {
     return this.selectedVariant ? this.selectedVariant.ids.length === 1 : true;
+  }
+
+  get isDiscardButtonDisabled(): boolean {
+    return this.selectedVariant === this.defaultGroupedVariant && !this.selectedGoalId;
+  }
+
+  get isSaveButtonDisabled(): boolean {
+    return !this.selectedVariant || !this.selectedGoalId;
+  }
+
+  private get defaultGroupedVariant(): GroupedVariant | undefined {
+    return this.groupedVariants.length > 0 ? this.groupedVariants[0] : undefined;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -49,10 +72,28 @@ export class ExperimentStartFormComponent implements OnChanges {
       const variantsWithoutDefault = this.filterOutDefault(this.variants);
       this.groupedVariants = this.groupVariants(variantsWithoutDefault);
 
-      if (!this.selectedVariant && this.groupedVariants.length > 0) {
-        this.selectedVariant = this.groupedVariants[0];
-      }
+      this.selectedVariant = this.selectedVariant || this.defaultGroupedVariant;
     }
+  }
+
+  onDiscard(): void {
+    this.reset();
+  }
+
+  onSave(): void {
+    if (!this.selectedVariant || !this.selectedGoalId) {
+      return;
+    }
+
+    this.selected.emit({
+      variantId: this.selectedVariant.ids[0],
+      goalId: this.selectedGoalId,
+    });
+  }
+
+  private reset(): void {
+    this.selectedVariant = this.defaultGroupedVariant;
+    this.selectedGoalId = undefined;
   }
 
   private filterOutDefault(variants: Variant[]): Variant[] {
