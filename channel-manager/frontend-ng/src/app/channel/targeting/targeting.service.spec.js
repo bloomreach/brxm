@@ -347,4 +347,22 @@ describe('TargetingService', () => {
       );
     });
   });
+
+  describe('getGoals', () => {
+    const urlRegex = /targeting-rest-url\/goals.*/;
+
+    it('should return an array of all available goals', () => {
+      expectGet(
+        urlRegex,
+        'Succesfully loaded goals',
+        () => TargetingService.getGoals(),
+        expectDefaultParams,
+      );
+    });
+
+    it('should resolve with an error response if the backend fails', () => {
+      expectGetError(urlRegex, 'Failed to load goals',
+        () => TargetingService.getGoals());
+    });
+  });
 });
