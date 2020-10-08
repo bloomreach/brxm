@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /targeting:targeting/targeting:datastores/targeting:visits:
+      targeting:storefactoryclass: com.onehippo.cms7.targeting.storage.elastic7.ElasticStoreFactory
