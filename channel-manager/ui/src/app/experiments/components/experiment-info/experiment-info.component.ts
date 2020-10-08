@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-@import '~@bloomreach/frontend-theme/sizes';
+import { Component, Input } from '@angular/core';
 
-.experiment-status-wrapper {
-  padding: $br-size;
+import { Experiment } from '../../models/experiment.model';
 
-  em-experiment-status-chart {
-    margin-top: $br-size;
-  }
+@Component({
+  selector: 'em-experiment-info',
+  templateUrl: 'experiment-info.component.html',
+  styleUrls: ['experiment-info.component.scss'],
+})
+export class ExperimentInfoComponent {
+  @Input()
+  experiment!: Experiment;
 }
