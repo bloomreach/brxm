@@ -16,6 +16,7 @@
 
 import { InjectionToken } from '@angular/core';
 
+import { ExperimentGoal } from '../../experiments/models/experiment-goal.model';
 import { ExperimentStatus } from '../../experiments/models/experiment-status.model';
 import { Experiment } from '../../experiments/models/experiment.model';
 import { TargetingApiResponse } from '../../models/targeting-api-response.model';
@@ -30,6 +31,7 @@ export interface Ng1TargetingService {
     personaId?: string,
     characteristics?: VariantCharacteristicData[],
   ): Promise<TargetingApiResponse<any>>;
+  getGoals(): Promise<TargetingApiResponse<ExperimentGoal[]>>;
   getExperiment(componentId: string): Promise<TargetingApiResponse<Experiment>>;
   getExperimentStatus(experimentId: string): Promise<TargetingApiResponse<ExperimentStatus>>;
   saveExperiment(componentId: string, goalId: string, variantId: string): Promise<TargetingApiResponse<unknown>>;

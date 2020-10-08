@@ -78,32 +78,13 @@ export class ExperimentsService {
   }
 
   async getGoals(): Promise<ExperimentGoal[]> {
-    return Promise.resolve([
-      {
-        id: 'goal-3',
-        name: 'Goal 3',
-        type: 'PAGE',
-        readOnly: false,
-        targetPage: '/faq',
-        mountId: '64fc383e-0dc0-40c2-a657-115cde69cd67',
-      },
-      {
-        id: 'goal-2',
-        name: 'Goal 2',
-        type: 'PAGE',
-        readOnly: true,
-        targetPage: '/events',
-        mountId: '1a1a1a1a-e880-4629-9e63-bc8ed8399d2a',
-      },
-      {
-        id: 'goal-1',
-        name: 'Goal 1',
-        type: 'PAGE',
-        readOnly: true,
-        targetPage: '/news',
-        mountId: '1a1a1a1a-e880-4629-9e63-bc8ed8399d2a',
-      },
-    ]);
+    const response = await this.ng1TargetingService.getGoals();
+
+    if (!response.success || !response.data) {
+      return [];
+    }
+
+    return response.data;
   }
 
   async saveExperiment(componentId: string, goalId: string, variantId: string): Promise<void> {
