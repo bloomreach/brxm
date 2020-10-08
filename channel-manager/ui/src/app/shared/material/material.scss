@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-@import '~@angular/material/theming';
 @import '~@bloomreach/frontend-theme/palettes';
+@import '~@bloomreach/frontend-theme/angular-theme';
+@import '~@bloomreach/frontend-theme/angular-material-styling';
 @import 'variables';
 
 $custom-typography: mat-typography-config(
@@ -23,18 +24,6 @@ $custom-typography: mat-typography-config(
 );
 
 @include mat-core($custom-typography);
-
-$primary: mat-palette($blue);
-$accent: mat-palette($orange);
-$warn: mat-palette($red);
-$theme: mat-light-theme((
-  color: (
-    primary: $primary,
-    accent: $accent,
-    warn: $warn,
-  ),
-));
-
 @include angular-material-theme($theme);
 
 // default body text color
