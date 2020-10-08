@@ -22,8 +22,9 @@
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-targeting-dependencies-cms" targetPom="cms" type="pom"/>
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-targeting-dependencies-site" targetPom="site" type="pom"/>
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-maxmind-geolite2" version="20161123" targetPom="site" scope="runtime"/>
-  
+
     <execute class="org.onehippo.cms7.essentials.plugins.relevance.RelevanceInstruction" />
+    <file action="copy" source="yamlFiles/visits.yaml" target="{{applicationConfig}}/targeting/datastores/visits.yaml"/>
   </instructionSet>
 
 </instructions>
