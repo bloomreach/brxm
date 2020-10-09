@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
-import org.onehippo.repository.util.JcrConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,22 +120,6 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 } else {
                     return new PackageResourceReference(getClass(), "img/restore-disabled-16.png");
                 }
-            }
-
-            @Override
-            public boolean isVisible() {
-                Node frozenNode;
-                try {
-                    frozenNode = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                    String primaryType = frozenNode.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString();
-                    String prefix = primaryType.substring(0, primaryType.indexOf(':'));
-                    if (prefix.contains("_")) {
-                        return false;
-                    }
-                } catch (RepositoryException e) {
-                    log.warn("Could not determine whether to enable restore button", e);
-                }
-                return true;
             }
 
             @Override
