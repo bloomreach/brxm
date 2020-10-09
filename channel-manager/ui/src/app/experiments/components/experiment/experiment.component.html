@@ -17,7 +17,7 @@
 <div *ngIf="experiment$ | async as experiment; else startExperimentForm" class="experiment">
   <em-experiment-info [experiment]="experiment"></em-experiment-info>
 
-  <div class="experiment-status-wrapper">
+  <div *ngIf="isExperimentRunningOrCompleted(experiment)" class="experiment-status-wrapper">
     <em-experiment-status-message [winnerVariant]="experiment.winnerVariant"
                                   [visits]="experiment.totalVisits"
                                   class="qa-experiment-status-message">

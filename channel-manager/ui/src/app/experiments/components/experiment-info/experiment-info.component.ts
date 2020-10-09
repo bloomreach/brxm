@@ -16,6 +16,7 @@
 
 import { Component, Input } from '@angular/core';
 
+import { ExperimentState } from '../../models/experiment-state.enum';
 import { Experiment } from '../../models/experiment.model';
 
 @Component({
@@ -26,4 +27,8 @@ import { Experiment } from '../../models/experiment.model';
 export class ExperimentInfoComponent {
   @Input()
   experiment!: Experiment;
+
+  get isExperimentInCreatedState(): boolean {
+    return this.experiment.state === ExperimentState.Created;
+  }
 }
