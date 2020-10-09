@@ -1,0 +1,1203 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExperimentInfoBarComponent if a goal is selected should be shown 1`] = `
+<div
+  id="root4"
+>
+  
+  
+  
+  <em-experiment-info-bar>
+     EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED 
+  </em-experiment-info-bar>
+  
+  
+  <div
+    class="form-wrapper"
+  >
+    <mat-form-field
+      appearance="outline"
+      class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label _mat-animation-noopable mat-form-field-should-float"
+    >
+      <div
+        class="mat-form-field-wrapper"
+      >
+        <div
+          class="mat-form-field-flex"
+        >
+          
+          
+          <div
+            class="mat-form-field-outline"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          <div
+            class="mat-form-field-outline mat-form-field-outline-thick"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          
+          <div
+            class="mat-form-field-infix"
+          >
+            <mat-select
+              aria-disabled="false"
+              aria-invalid="false"
+              aria-multiselectable="false"
+              aria-required="false"
+              class="qa-variants-select mat-select"
+              role="listbox"
+              tabindex="0"
+            >
+              <div
+                aria-hidden="true"
+                cdk-overlay-origin=""
+                class="mat-select-trigger"
+              >
+                <div
+                  class="mat-select-value"
+                >
+                  
+                  
+                  <span
+                    class="mat-select-value-text"
+                  >
+                    
+                    <span>
+                      Variant 1
+                    </span>
+                    
+                  </span>
+                </div>
+                <div
+                  class="mat-select-arrow-wrapper"
+                >
+                  <div
+                    class="mat-select-arrow"
+                  />
+                </div>
+              </div>
+              
+            </mat-select>
+            <span
+              class="mat-form-field-label-wrapper"
+            >
+              
+              <label
+                class="mat-form-field-label"
+              >
+                
+                
+                <mat-label
+                  class="qa-variant-select-label"
+                >
+                   VARIANTS 
+                </mat-label>
+                
+                
+              </label>
+            </span>
+          </div>
+          
+        </div>
+        
+        <div
+          class="mat-form-field-subscript-wrapper"
+        >
+          
+          
+          <div
+            class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+            style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+          >
+            
+            <div
+              class="mat-form-field-hint-spacer"
+            />
+          </div>
+        </div>
+      </div>
+    </mat-form-field>
+    <mat-form-field
+      appearance="outline"
+      class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label _mat-animation-noopable mat-form-field-should-float"
+    >
+      <div
+        class="mat-form-field-wrapper"
+      >
+        <div
+          class="mat-form-field-flex"
+        >
+          
+          
+          <div
+            class="mat-form-field-outline"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          <div
+            class="mat-form-field-outline mat-form-field-outline-thick"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          
+          <div
+            class="mat-form-field-infix"
+          >
+            <mat-select
+              aria-disabled="false"
+              aria-invalid="false"
+              aria-multiselectable="false"
+              aria-required="false"
+              class="qa-goal-select mat-select"
+              role="listbox"
+              tabindex="0"
+            >
+              <div
+                aria-hidden="true"
+                cdk-overlay-origin=""
+                class="mat-select-trigger"
+              >
+                <div
+                  class="mat-select-value"
+                >
+                  
+                  
+                  <span
+                    class="mat-select-value-text"
+                  >
+                    
+                    <span>
+                      Goal 1
+                    </span>
+                    
+                  </span>
+                </div>
+                <div
+                  class="mat-select-arrow-wrapper"
+                >
+                  <div
+                    class="mat-select-arrow"
+                  />
+                </div>
+              </div>
+              
+            </mat-select>
+            <span
+              class="mat-form-field-label-wrapper"
+            >
+              
+              <label
+                class="mat-form-field-label"
+              >
+                
+                
+                <mat-label
+                  class="qa-goal-select-label"
+                >
+                   EXPERIMENT_GOAL 
+                </mat-label>
+                
+                
+              </label>
+            </span>
+          </div>
+          
+        </div>
+        
+        <div
+          class="mat-form-field-subscript-wrapper"
+        >
+          
+          
+          <div
+            class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+            style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+          >
+            
+            <div
+              class="mat-form-field-hint-spacer"
+            />
+          </div>
+        </div>
+      </div>
+    </mat-form-field>
+  </div>
+  <mat-divider
+    aria-orientation="horizontal"
+    class="mat-divider mat-divider-horizontal"
+    role="separator"
+  />
+  <div
+    class="actions"
+  >
+    <button
+      class="mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable"
+      mat-stroked-button=""
+    >
+      <span
+        class="mat-button-wrapper"
+      >
+         DISCARD 
+      </span>
+      <div
+        class="mat-button-ripple mat-ripple"
+        matripple=""
+      />
+      <div
+        class="mat-button-focus-overlay"
+      />
+    </button>
+    <button
+      class="save-button mat-focus-indicator mat-stroked-button mat-button-base mat-primary _mat-animation-noopable"
+      color="primary"
+      mat-stroked-button=""
+    >
+      <span
+        class="mat-button-wrapper"
+      >
+         SAVE 
+      </span>
+      <div
+        class="mat-button-ripple mat-ripple"
+        matripple=""
+      />
+      <div
+        class="mat-button-focus-overlay"
+      />
+    </button>
+  </div>
+</div>
+`;
+
+exports[`ExperimentInfoBarComponent should be shown 1`] = `
+<div
+  id="root0"
+>
+  
+  
+  
+  <em-experiment-info-bar>
+     EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED 
+  </em-experiment-info-bar>
+  
+  
+  <div
+    class="form-wrapper"
+  >
+    <mat-form-field
+      appearance="outline"
+      class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label mat-form-field-hide-placeholder _mat-animation-noopable"
+    >
+      <div
+        class="mat-form-field-wrapper"
+      >
+        <div
+          class="mat-form-field-flex"
+        >
+          
+          
+          <div
+            class="mat-form-field-outline"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          <div
+            class="mat-form-field-outline mat-form-field-outline-thick"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          
+          <div
+            class="mat-form-field-infix"
+          >
+            <mat-select
+              aria-disabled="false"
+              aria-invalid="false"
+              aria-multiselectable="false"
+              aria-required="false"
+              class="qa-variants-select mat-select mat-select-empty"
+              role="listbox"
+              tabindex="0"
+            >
+              <div
+                aria-hidden="true"
+                cdk-overlay-origin=""
+                class="mat-select-trigger"
+              >
+                <div
+                  class="mat-select-value"
+                >
+                  
+                  <span
+                    class="mat-select-placeholder"
+                  >
+                     
+                  </span>
+                  
+                </div>
+                <div
+                  class="mat-select-arrow-wrapper"
+                >
+                  <div
+                    class="mat-select-arrow"
+                  />
+                </div>
+              </div>
+              
+            </mat-select>
+            <span
+              class="mat-form-field-label-wrapper"
+            >
+              
+              <label
+                class="mat-form-field-label mat-empty mat-form-field-empty"
+              >
+                
+                
+                <mat-label
+                  class="qa-variant-select-label"
+                >
+                   VARIANTS 
+                </mat-label>
+                
+                
+              </label>
+            </span>
+          </div>
+          
+        </div>
+        
+        <div
+          class="mat-form-field-subscript-wrapper"
+        >
+          
+          
+          <div
+            class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+            style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+          >
+            
+            <div
+              class="mat-form-field-hint-spacer"
+            />
+          </div>
+        </div>
+      </div>
+    </mat-form-field>
+    <mat-form-field
+      appearance="outline"
+      class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label mat-form-field-hide-placeholder _mat-animation-noopable"
+    >
+      <div
+        class="mat-form-field-wrapper"
+      >
+        <div
+          class="mat-form-field-flex"
+        >
+          
+          
+          <div
+            class="mat-form-field-outline"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          <div
+            class="mat-form-field-outline mat-form-field-outline-thick"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          
+          <div
+            class="mat-form-field-infix"
+          >
+            <mat-select
+              aria-disabled="false"
+              aria-invalid="false"
+              aria-multiselectable="false"
+              aria-required="false"
+              class="qa-goal-select mat-select mat-select-empty"
+              role="listbox"
+              tabindex="0"
+            >
+              <div
+                aria-hidden="true"
+                cdk-overlay-origin=""
+                class="mat-select-trigger"
+              >
+                <div
+                  class="mat-select-value"
+                >
+                  
+                  <span
+                    class="mat-select-placeholder"
+                  >
+                     
+                  </span>
+                  
+                </div>
+                <div
+                  class="mat-select-arrow-wrapper"
+                >
+                  <div
+                    class="mat-select-arrow"
+                  />
+                </div>
+              </div>
+              
+            </mat-select>
+            <span
+              class="mat-form-field-label-wrapper"
+            >
+              
+              <label
+                class="mat-form-field-label mat-empty mat-form-field-empty"
+              >
+                
+                
+                <mat-label
+                  class="qa-goal-select-label"
+                >
+                   EXPERIMENT_GOAL 
+                </mat-label>
+                
+                
+              </label>
+            </span>
+          </div>
+          
+        </div>
+        
+        <div
+          class="mat-form-field-subscript-wrapper"
+        >
+          
+          
+          <div
+            class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+            style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+          >
+            
+            <div
+              class="mat-form-field-hint-spacer"
+            />
+          </div>
+        </div>
+      </div>
+    </mat-form-field>
+  </div>
+  <mat-divider
+    aria-orientation="horizontal"
+    class="mat-divider mat-divider-horizontal"
+    role="separator"
+  />
+  <div
+    class="actions"
+  >
+    <button
+      class="mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable mat-button-disabled"
+      disabled="true"
+      mat-stroked-button=""
+    >
+      <span
+        class="mat-button-wrapper"
+      >
+         DISCARD 
+      </span>
+      <div
+        class="mat-button-ripple mat-ripple"
+        matripple=""
+      />
+      <div
+        class="mat-button-focus-overlay"
+      />
+    </button>
+    <button
+      class="save-button mat-focus-indicator mat-stroked-button mat-button-base mat-primary _mat-animation-noopable mat-button-disabled"
+      color="primary"
+      disabled="true"
+      mat-stroked-button=""
+    >
+      <span
+        class="mat-button-wrapper"
+      >
+         SAVE 
+      </span>
+      <div
+        class="mat-button-ripple mat-ripple"
+        matripple=""
+      />
+      <div
+        class="mat-button-focus-overlay"
+      />
+    </button>
+  </div>
+</div>
+`;
+
+exports[`ExperimentInfoBarComponent should be shown in the disabled mode 1`] = `
+<div
+  id="root2"
+>
+  
+  
+  
+  <em-experiment-info-bar>
+     EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED 
+  </em-experiment-info-bar>
+  
+  
+  <div
+    class="form-wrapper"
+  >
+    <mat-form-field
+      appearance="outline"
+      class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label _mat-animation-noopable mat-form-field-should-float mat-form-field-disabled"
+    >
+      <div
+        class="mat-form-field-wrapper"
+      >
+        <div
+          class="mat-form-field-flex"
+        >
+          
+          
+          <div
+            class="mat-form-field-outline"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          <div
+            class="mat-form-field-outline mat-form-field-outline-thick"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          
+          <div
+            class="mat-form-field-infix"
+          >
+            <mat-select
+              aria-disabled="true"
+              aria-invalid="false"
+              aria-multiselectable="false"
+              aria-required="false"
+              class="qa-variants-select mat-select mat-select-disabled"
+              role="listbox"
+              tabindex="-1"
+            >
+              <div
+                aria-hidden="true"
+                cdk-overlay-origin=""
+                class="mat-select-trigger"
+              >
+                <div
+                  class="mat-select-value"
+                >
+                  
+                  
+                  <span
+                    class="mat-select-value-text"
+                  >
+                    
+                    <span>
+                      Variant 1
+                    </span>
+                    
+                  </span>
+                </div>
+                <div
+                  class="mat-select-arrow-wrapper"
+                >
+                  <div
+                    class="mat-select-arrow"
+                  />
+                </div>
+              </div>
+              
+            </mat-select>
+            <span
+              class="mat-form-field-label-wrapper"
+            >
+              
+              <label
+                class="mat-form-field-label"
+              >
+                
+                
+                <mat-label
+                  class="qa-variant-select-label"
+                >
+                   VARIANTS 
+                </mat-label>
+                
+                
+              </label>
+            </span>
+          </div>
+          
+        </div>
+        
+        <div
+          class="mat-form-field-subscript-wrapper"
+        >
+          
+          
+          <div
+            class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+            style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+          >
+            
+            <div
+              class="mat-form-field-hint-spacer"
+            />
+          </div>
+        </div>
+      </div>
+    </mat-form-field>
+    <mat-form-field
+      appearance="outline"
+      class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label mat-form-field-hide-placeholder _mat-animation-noopable mat-form-field-disabled"
+    >
+      <div
+        class="mat-form-field-wrapper"
+      >
+        <div
+          class="mat-form-field-flex"
+        >
+          
+          
+          <div
+            class="mat-form-field-outline"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          <div
+            class="mat-form-field-outline mat-form-field-outline-thick"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          
+          <div
+            class="mat-form-field-infix"
+          >
+            <mat-select
+              aria-disabled="true"
+              aria-invalid="false"
+              aria-multiselectable="false"
+              aria-required="false"
+              class="qa-goal-select mat-select mat-select-empty mat-select-disabled"
+              role="listbox"
+              tabindex="-1"
+            >
+              <div
+                aria-hidden="true"
+                cdk-overlay-origin=""
+                class="mat-select-trigger"
+              >
+                <div
+                  class="mat-select-value"
+                >
+                  
+                  <span
+                    class="mat-select-placeholder"
+                  >
+                     
+                  </span>
+                  
+                </div>
+                <div
+                  class="mat-select-arrow-wrapper"
+                >
+                  <div
+                    class="mat-select-arrow"
+                  />
+                </div>
+              </div>
+              
+            </mat-select>
+            <span
+              class="mat-form-field-label-wrapper"
+            >
+              
+              <label
+                class="mat-form-field-label mat-empty mat-form-field-empty"
+              >
+                
+                
+                <mat-label
+                  class="qa-goal-select-label"
+                >
+                   EXPERIMENT_GOAL 
+                </mat-label>
+                
+                
+              </label>
+            </span>
+          </div>
+          
+        </div>
+        
+        <div
+          class="mat-form-field-subscript-wrapper"
+        >
+          
+          
+          <div
+            class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+            style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+          >
+            
+            <div
+              class="mat-form-field-hint-spacer"
+            />
+          </div>
+        </div>
+      </div>
+    </mat-form-field>
+  </div>
+  <mat-divider
+    aria-orientation="horizontal"
+    class="mat-divider mat-divider-horizontal"
+    role="separator"
+  />
+  <div
+    class="actions"
+  >
+    <button
+      class="mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable mat-button-disabled"
+      disabled="true"
+      mat-stroked-button=""
+    >
+      <span
+        class="mat-button-wrapper"
+      >
+         DISCARD 
+      </span>
+      <div
+        class="mat-button-ripple mat-ripple"
+        matripple=""
+      />
+      <div
+        class="mat-button-focus-overlay"
+      />
+    </button>
+    <button
+      class="save-button mat-focus-indicator mat-stroked-button mat-button-base mat-primary _mat-animation-noopable mat-button-disabled"
+      color="primary"
+      disabled="true"
+      mat-stroked-button=""
+    >
+      <span
+        class="mat-button-wrapper"
+      >
+         SAVE 
+      </span>
+      <div
+        class="mat-button-ripple mat-ripple"
+        matripple=""
+      />
+      <div
+        class="mat-button-focus-overlay"
+      />
+    </button>
+  </div>
+</div>
+`;
+
+exports[`ExperimentInfoBarComponent should be shown in the enabled mode 1`] = `
+<div
+  id="root1"
+>
+  
+  
+  
+  <em-experiment-info-bar>
+     EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED 
+  </em-experiment-info-bar>
+  
+  
+  <div
+    class="form-wrapper"
+  >
+    <mat-form-field
+      appearance="outline"
+      class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label _mat-animation-noopable mat-form-field-should-float mat-form-field-disabled"
+    >
+      <div
+        class="mat-form-field-wrapper"
+      >
+        <div
+          class="mat-form-field-flex"
+        >
+          
+          
+          <div
+            class="mat-form-field-outline"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          <div
+            class="mat-form-field-outline mat-form-field-outline-thick"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          
+          <div
+            class="mat-form-field-infix"
+          >
+            <mat-select
+              aria-disabled="true"
+              aria-invalid="false"
+              aria-multiselectable="false"
+              aria-required="false"
+              class="qa-variants-select mat-select mat-select-disabled"
+              role="listbox"
+              tabindex="-1"
+            >
+              <div
+                aria-hidden="true"
+                cdk-overlay-origin=""
+                class="mat-select-trigger"
+              >
+                <div
+                  class="mat-select-value"
+                >
+                  
+                  
+                  <span
+                    class="mat-select-value-text"
+                  >
+                    
+                    <span>
+                      Variant 1
+                    </span>
+                    
+                  </span>
+                </div>
+                <div
+                  class="mat-select-arrow-wrapper"
+                >
+                  <div
+                    class="mat-select-arrow"
+                  />
+                </div>
+              </div>
+              
+            </mat-select>
+            <span
+              class="mat-form-field-label-wrapper"
+            >
+              
+              <label
+                class="mat-form-field-label"
+              >
+                
+                
+                <mat-label
+                  class="qa-variant-select-label"
+                >
+                   VARIANTS 
+                </mat-label>
+                
+                
+              </label>
+            </span>
+          </div>
+          
+        </div>
+        
+        <div
+          class="mat-form-field-subscript-wrapper"
+        >
+          
+          
+          <div
+            class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+            style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+          >
+            
+            <div
+              class="mat-form-field-hint-spacer"
+            />
+          </div>
+        </div>
+      </div>
+    </mat-form-field>
+    <mat-form-field
+      appearance="outline"
+      class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label mat-form-field-hide-placeholder _mat-animation-noopable mat-form-field-disabled"
+    >
+      <div
+        class="mat-form-field-wrapper"
+      >
+        <div
+          class="mat-form-field-flex"
+        >
+          
+          
+          <div
+            class="mat-form-field-outline"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          <div
+            class="mat-form-field-outline mat-form-field-outline-thick"
+          >
+            <div
+              class="mat-form-field-outline-start"
+            />
+            <div
+              class="mat-form-field-outline-gap"
+            />
+            <div
+              class="mat-form-field-outline-end"
+            />
+          </div>
+          
+          <div
+            class="mat-form-field-infix"
+          >
+            <mat-select
+              aria-disabled="true"
+              aria-invalid="false"
+              aria-multiselectable="false"
+              aria-required="false"
+              class="qa-goal-select mat-select mat-select-empty mat-select-disabled"
+              role="listbox"
+              tabindex="-1"
+            >
+              <div
+                aria-hidden="true"
+                cdk-overlay-origin=""
+                class="mat-select-trigger"
+              >
+                <div
+                  class="mat-select-value"
+                >
+                  
+                  <span
+                    class="mat-select-placeholder"
+                  >
+                     
+                  </span>
+                  
+                </div>
+                <div
+                  class="mat-select-arrow-wrapper"
+                >
+                  <div
+                    class="mat-select-arrow"
+                  />
+                </div>
+              </div>
+              
+            </mat-select>
+            <span
+              class="mat-form-field-label-wrapper"
+            >
+              
+              <label
+                class="mat-form-field-label mat-empty mat-form-field-empty"
+              >
+                
+                
+                <mat-label
+                  class="qa-goal-select-label"
+                >
+                   EXPERIMENT_GOAL 
+                </mat-label>
+                
+                
+              </label>
+            </span>
+          </div>
+          
+        </div>
+        
+        <div
+          class="mat-form-field-subscript-wrapper"
+        >
+          
+          
+          <div
+            class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+            style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+          >
+            
+            <div
+              class="mat-form-field-hint-spacer"
+            />
+          </div>
+        </div>
+      </div>
+    </mat-form-field>
+  </div>
+  <mat-divider
+    aria-orientation="horizontal"
+    class="mat-divider mat-divider-horizontal"
+    role="separator"
+  />
+  <div
+    class="actions"
+  >
+    <button
+      class="mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable mat-button-disabled"
+      disabled="true"
+      mat-stroked-button=""
+    >
+      <span
+        class="mat-button-wrapper"
+      >
+         DISCARD 
+      </span>
+      <div
+        class="mat-button-ripple mat-ripple"
+        matripple=""
+      />
+      <div
+        class="mat-button-focus-overlay"
+      />
+    </button>
+    <button
+      class="save-button mat-focus-indicator mat-stroked-button mat-button-base mat-primary _mat-animation-noopable mat-button-disabled"
+      color="primary"
+      disabled="true"
+      mat-stroked-button=""
+    >
+      <span
+        class="mat-button-wrapper"
+      >
+         SAVE 
+      </span>
+      <div
+        class="mat-button-ripple mat-ripple"
+        matripple=""
+      />
+      <div
+        class="mat-button-focus-overlay"
+      />
+    </button>
+  </div>
+</div>
+`;
