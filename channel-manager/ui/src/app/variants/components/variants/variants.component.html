@@ -71,6 +71,7 @@
       <button mat-stroked-button
               matTooltip="{{ 'SEGMENT_ADD' | translate }}"
               [matTooltipShowDelay]="1000"
+              [disabled]="hasSelectedSegment()"
               (click)="addSegment()">
         <mat-icon svgIcon="plus"></mat-icon>
         {{ 'SEGMENT' | translate }}
