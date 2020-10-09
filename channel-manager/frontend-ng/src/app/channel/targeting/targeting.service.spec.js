@@ -20,17 +20,30 @@ describe('TargetingService', () => {
   let $window;
   let ChannelService;
   let ConfigService;
+  let HstService;
+  let PageStructureService;
   let TargetingService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.targeting');
 
-    inject((_$httpBackend_, _$rootScope_, _$window_, _ChannelService_, _ConfigService_, _TargetingService_) => {
+    inject((
+      _$httpBackend_,
+      _$rootScope_,
+      _$window_,
+      _ChannelService_,
+      _ConfigService_,
+      _HstService_,
+      _PageStructureService_,
+      _TargetingService_,
+    ) => {
       $httpBackend = _$httpBackend_;
       $rootScope = _$rootScope_;
       $window = _$window_;
       ChannelService = _ChannelService_;
       ConfigService = _ConfigService_;
+      HstService = _HstService_;
+      PageStructureService = _PageStructureService_;
       TargetingService = _TargetingService_;
     });
 
@@ -159,6 +172,81 @@ describe('TargetingService', () => {
 
       expectPostError('', 'Failed to load variants for container-item "container-item-id"',
         () => TargetingService.getVariants('container-item-id'));
+    });
+  });
+
+  describe('add and update Variant', () => {
+    const data = {};
+
+    beforeEach(() => {
+      spyOn(HstService, 'doPutFormWithHeaders').and.returnValue({ data });
+
+      const page = jasmine.createSpyObj('page', ['getComponentById']);
+      page.getComponentById.and.returnValue({
+        lastModified: 'last-modified',
+      });
+      spyOn(PageStructureService, 'getPage').and.returnValue(page);
+    });
+
+    describe('addVariant', () => {
+      it('should execute a PUT request on the HST', () => {
+        TargetingService.addVariant('component-id', data);
+        $rootScope.$digest();
+
+        expect(HstService.doPutFormWithHeaders).toHaveBeenCalledWith(
+          data,
+          'component-id',
+          jasmine.objectContaining({
+            lastModifiedTimestamp: 'last-modified',
+          }),
+          'hippo-new-configuration',
+        );
+      });
+
+      it('should return success response', (done) => {
+        TargetingService.addVariant('component-id', data).then((result) => {
+          expect(result).toEqual({
+            message: 'Succesfully created a new variant for component "component-id"',
+            reloadRequired: false,
+            success: true,
+            data,
+          });
+          done();
+        });
+
+        $rootScope.$digest();
+      });
+    });
+
+    describe('updateVariant', () => {
+      it('should execute a PUT request on the HST with an URI-Encoded variant ID', () => {
+        TargetingService.updateVariant('component-id', data, 'variant&id');
+        $rootScope.$digest();
+
+        expect(HstService.doPutFormWithHeaders).toHaveBeenCalledWith(
+          data,
+          'component-id',
+          jasmine.objectContaining({
+            lastModifiedTimestamp: 'last-modified',
+          }),
+          'variant%26id',
+        );
+      });
+
+      it('should return success response with the newVariantId', (done) => {
+        TargetingService.updateVariant('component-id', data, 'variant-id').then((result) => {
+          expect(result).toEqual({
+            message: 'Succesfully updated variant "variant-id" for component "component-id"',
+            reloadRequired: false,
+            success: true,
+            data,
+          });
+          expect(result.data.newVariantId).toBeDefined();
+          done();
+        });
+
+        $rootScope.$digest();
+      });
     });
   });
 

@@ -129,12 +129,10 @@ class EditComponentMainCtrl {
 
   async save(exitingState = false) {
     try {
-      const response = await this.ComponentEditor.save();
+      const { data: { id, newVariantId }, reloadRequired } = await this.ComponentEditor.save();
 
       this.form.$setPristine();
       this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent');
-
-      const { data: { id }, reloadRequired, newVariantId } = response;
 
       if (this.ConfigService.relevancePresent && !exitingState) {
         await this.$state.go('hippo-cm.channel.edit-component', {
