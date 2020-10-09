@@ -108,21 +108,21 @@ export class VariantsComponent implements OnInit {
   async addSegment(): Promise<void> {
     this.cmsService.publish('show-mask');
 
-    const ref = this.dialogService.open(SegmentsDialogComponent, { width: '400px' });
+    this.dialogService
+      .open(SegmentsDialogComponent, { width: '400px' })
+      .afterClosed().subscribe((persona: Persona) => {
+        if (persona) {
+          this.currentVariant?.expressions.push({
+            id: persona.id,
+            name: persona.segmentName,
+            type: VariantExpressionType.Persona,
+          });
 
-    ref.afterClosed().subscribe((persona: Persona) => {
-      if (persona) {
-        this.currentVariant?.expressions.push({
-          id: persona.id,
-          name: persona.name || persona.segmentName,
-          type: VariantExpressionType.Persona,
-        });
+          this.variantUpdated.emit({ variant: this.currentVariant });
+        }
 
-        this.variantUpdated.emit({ variant: this.currentVariant });
-      }
-
-      this.cmsService.publish('remove-mask');
-    });
+        this.cmsService.publish('remove-mask');
+      });
   }
 
   hasSelectedSegment(): boolean | undefined {

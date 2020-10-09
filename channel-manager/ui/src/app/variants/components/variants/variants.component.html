@@ -56,8 +56,12 @@
       </div>
 
       <div class="variant-expressions-list-item"
-           *ngFor="let expression of currentVariant?.expressions">
-        <span>{{ expression.name }}</span>
+           *ngFor="let expression of currentVariant?.expressions; let last = last;">
+        <span *ngIf="expression.type == 'persona'">
+          {{ 'EXPRESSION_SEGMENT' | translate: { segmentName: expression.name } }}
+          {{ last ? '' : ('EXPRESSION_AND' | translate) }}
+        </span>
+
         <button mat-icon-button
                 matTooltip="{{ 'VARIANT_EXPRESSION_DELETE' | translate }}"
                 [matTooltipShowDelay]="1000"
