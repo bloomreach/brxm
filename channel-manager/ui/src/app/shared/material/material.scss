@@ -52,19 +52,20 @@ $mat-dialog-spacing: 24px;
 
 .mat-dialog-title {
   background: map-get($grey, A100);
+  font-weight: 600 !important;
   margin-bottom: 0 !important;
   margin-top: -($mat-dialog-spacing) !important;
-  padding: $spacing-half !important;
+  padding: $spacing-half $spacing-full !important;
 }
 
 .mat-dialog-content {
-  min-width: 33vw;
   padding: 0 !important;
 }
 
 .mat-dialog-actions {
   background: map-get($grey, A100);
   justify-content: flex-end;
-  padding: $spacing-half !important;
+  min-height: initial !important;
+  padding: $spacing-half $spacing-full !important;
 }
 
