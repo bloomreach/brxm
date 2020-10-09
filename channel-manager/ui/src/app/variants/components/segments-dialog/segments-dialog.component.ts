@@ -15,7 +15,7 @@
  */
 
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
 
 import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1service';
@@ -34,14 +34,12 @@ export class SegmentsDialogComponent implements OnInit {
 
   constructor(
       @Inject(NG1_TARGETING_SERVICE) private readonly targetingService: Ng1TargetingService,
-      @Inject(MAT_DIALOG_DATA) public data: any,
       private readonly dialogRef: MatDialogRef<SegmentsDialogComponent>,
   ) { }
 
   async ngOnInit(): Promise<void> {
     const response = await this.targetingService.getPersonas();
-    this.personas = response.data.items
-      .filter(persona => !this.data.selectedPersonaIds.includes(persona.id));
+    this.personas = response.data.items;
   }
 
   selectPersona(): void {
@@ -49,7 +47,7 @@ export class SegmentsDialogComponent implements OnInit {
     this.dialogRef.close(selectedPersona);
   }
 
-  hasSelectedPersona(): boolean {
-    return this.selectionList?.selectedOptions.hasValue() === true;
+  hasSelectedPersona(): boolean | undefined {
+    return this.selectionList?.selectedOptions.hasValue();
   }
 }
