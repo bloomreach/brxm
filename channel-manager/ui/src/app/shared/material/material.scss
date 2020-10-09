@@ -35,6 +35,14 @@ $custom-typography: mat-typography-config(
   border-color: map-get($blue, 500);
 }
 
+.mat-stroked-button {
+  padding: 0 12px !important;
+
+  &.cdk-keyboard-focused {
+    box-shadow: 0 0 0 1px map-get($blue, 300);
+  }
+}
+
 .mat-icon-button {
   color: map-get($text-color, dim);
 }
@@ -67,4 +75,3 @@ $mat-dialog-spacing: 24px;
   min-height: initial !important;
   padding: $spacing-half $spacing-full !important;
 }
-
