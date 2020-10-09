@@ -97,6 +97,10 @@ export class VariantsComponent implements OnInit {
     .catch(error => error /* catching cancel transition error */);
   }
 
+  isDefaultVariant(): boolean {
+    return this.currentVariant?.id === 'hippo-default';
+  }
+
   removeExpression(expression: VariantExpression): void {
     if (this.currentVariant?.expressions) {
       this.currentVariant.expressions = this.currentVariant.expressions.filter(exp => exp.id !== expression.id);
