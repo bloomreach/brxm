@@ -21,11 +21,11 @@
 
   <div mat-dialog-content>
     <mat-divider></mat-divider>
-    <mat-selection-list *ngIf="!personas || personas?.length === 0">
-      <mat-list-option>
+    <mat-list *ngIf="!personas || personas?.length === 0">
+      <mat-list-item>
         {{ 'DIALOG_SEGMENTS_NO_SEGMENTS' | translate }}
-      </mat-list-option>
-    </mat-selection-list>
+      </mat-list-item>
+    </mat-list>
 
     <mat-selection-list *ngIf="personas?.length > 0"
                         color="primary"
