@@ -109,9 +109,9 @@ class TargetingService {
 
     try {
       const result = await this.HstService.doPutFormWithHeaders(formData, componentId, headers, variantId);
-      return this._success(`Succesfully created a new variant for component ${componentId}`, result);
+      return this._success(`Succesfully created a new variant for component "${componentId}"`, result);
     } catch (e) {
-      return this._failure('Failed to create', e);
+      return this._failure(`Failed to create new variant for component "${componentId}"`, e);
     }
   }
 
@@ -128,8 +128,8 @@ class TargetingService {
 
     try {
       const result = await this.HstService.doPutFormWithHeaders(formData, componentId, headers, encodedVariantId);
-      result.newVariantId = newVariantId;
-      return this._success(`Succesfully updated variant ${variantId} for component ${componentId}`, result);
+      result.data.newVariantId = newVariantId;
+      return this._success(`Succesfully updated variant "${variantId}" for component "${componentId}"`, result);
     } catch (e) {
       return this._failure('Failed to update', e);
     }
@@ -297,12 +297,12 @@ class TargetingService {
         ...defaultProperties,
         ...response,
         message,
-    }
+      }
       : {
-      ...defaultProperties,
-      data: response,
-      message,
-    };
+        ...defaultProperties,
+        data: response,
+        message,
+      };
   }
 
   _execute(method, pathElements, data, params, headers = {}) {
