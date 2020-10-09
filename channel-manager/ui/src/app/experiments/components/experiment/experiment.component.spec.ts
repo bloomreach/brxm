@@ -104,11 +104,11 @@ describe('ExperimentComponent', () => {
   const mockVariants = [
     {
       id: 'variant-1',
-      name: 'Variant 1',
+      variantName: 'Variant 1',
     },
     {
       id: 'variant-2',
-      name: 'Variant 2',
+      variantName: 'Variant 2',
     },
   ];
 
