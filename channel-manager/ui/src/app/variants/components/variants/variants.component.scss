@@ -43,6 +43,7 @@
     position: relative;
     border: 1px solid $form-field-outline-color;
     border-radius: 4px;
+    margin-bottom: $spacing-full;
     padding: $spacing-half;
 
     &-label {
@@ -62,7 +63,6 @@
   }
 
   &-actions {
-    padding-top: $spacing-full;
     display: flex;
     gap: $spacing-half;
   }
