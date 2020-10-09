@@ -33,11 +33,11 @@ class EditComponentMainCtrl {
     ChannelService,
     CmsService,
     ComponentEditor,
+    ComponentVariantsService,
     ConfigService,
     EditComponentService,
     FeedbackService,
     HippoIframeService,
-    ComponentVariantsService,
   ) {
     'ngInject';
 
@@ -49,11 +49,11 @@ class EditComponentMainCtrl {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ComponentEditor = ComponentEditor;
+    this.ComponentVariantsService = ComponentVariantsService;
+    this.ConfigService = ConfigService;
     this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
-    this.ConfigService = ConfigService;
-    this.ComponentVariantsService = ComponentVariantsService;
 
     this._onComponentMoved = this._onComponentMoved.bind(this);
     this._onDocumentSelect = this._onDocumentSelect.bind(this);
