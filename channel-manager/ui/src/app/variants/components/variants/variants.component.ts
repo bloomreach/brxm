@@ -110,13 +110,15 @@ export class VariantsComponent implements OnInit {
     const ref = this.dialogService.open(SegmentsDialogComponent);
 
     ref.afterClosed().subscribe((persona: Persona) => {
-      this.currentVariant?.expressions.push({
-        id: persona.id,
-        name: persona.name,
-        type: VariantExpressionType.Persona,
-      });
+      if (persona) {
+        this.currentVariant?.expressions.push({
+          id: persona.id,
+          name: persona.name,
+          type: VariantExpressionType.Persona,
+        });
 
-      this.variantUpdated.emit({ variant: this.currentVariant });
+        this.variantUpdated.emit({ variant: this.currentVariant });
+      }
 
       this.cmsService.publish('remove-mask');
     });

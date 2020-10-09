@@ -46,4 +46,8 @@ export class SegmentsDialogComponent implements OnInit {
     const selectedPersona = this.selectionList?.selectedOptions.selected[0].value;
     this.dialogRef.close(selectedPersona);
   }
+
+  hasSelectedPersona(): boolean {
+    return this.selectionList?.selectedOptions.hasValue() === true;
+  }
 }
