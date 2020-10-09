@@ -19,7 +19,6 @@
     <mat-form-field appearance="outline">
       <mat-label class="qa-variant-select-label">
         {{ 'VARIANT' | translate }}
-
       </mat-label>
       <mat-select [formControl]="variantSelect"
                   class="qa-variant-select"
@@ -33,12 +32,16 @@
     </mat-form-field>
 
     <button mat-icon-button
+            matTooltip="{{ 'VARIANT_COPY' | translate }}"
+            [matTooltipShowDelay]="1000"
             class="qa-variant-copy"
             (click)="addVariant()">
       <mat-icon svgIcon="copy"></mat-icon>
     </button>
 
     <button mat-icon-button
+            matTooltip="{{ 'VARIANT_DELETE' | translate }}"
+            [matTooltipShowDelay]="1000"
             class="qa-variant-delete"
             (click)="deleteVariant()">
       <mat-icon svgIcon="trash"></mat-icon>
@@ -49,13 +52,15 @@
     <div class="variant-expressions-list"
          *ngIf="currentVariant?.expressions.length > 0">
       <div class="variant-expressions-list-label">
-        Variant Expressions
+        {{ 'VARIANT_EXPRESSIONS' | translate }}
       </div>
 
       <div class="variant-expressions-list-item"
            *ngFor="let expression of currentVariant?.expressions">
         <span>{{ expression.name }}</span>
         <button mat-icon-button
+                matTooltip="{{ 'VARIANT_EXPRESSION_DELETE' | translate }}"
+                [matTooltipShowDelay]="1000"
                 (click)="removeExpression(expression)">
           <mat-icon svgIcon="close"></mat-icon>
         </button>
@@ -63,9 +68,12 @@
     </div>
 
     <div class="variant-expressions-actions">
-      <button mat-stroked-button (click)="addSegment()">
+      <button mat-stroked-button
+              matTooltip="{{ 'SEGMENT_ADD' | translate }}"
+              [matTooltipShowDelay]="1000"
+              (click)="addSegment()">
         <mat-icon svgIcon="plus"></mat-icon>
-        Add segment
+        {{ 'SEGMENT' | translate }}
       </button>
     </div>
   </div>
