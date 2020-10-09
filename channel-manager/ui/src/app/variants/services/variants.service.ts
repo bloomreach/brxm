@@ -53,9 +53,9 @@ export class VariantsService {
     return response.data;
   }
 
-  async deleteVariant(componentId: string, variantId: string): Promise<void> {
+  async deleteVariant(componentId: string, variantId: string): Promise<any> {
     const response = await this.targetingService.deleteVariant(componentId, variantId);
-    return response;
+    return response.data;
   }
 
   extractExpressions(variant?: Variant): VariantExpressions {
