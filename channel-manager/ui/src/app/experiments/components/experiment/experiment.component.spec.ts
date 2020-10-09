@@ -14,41 +14,23 @@
  * limitations under the License.
  */
 
-import { NO_ERRORS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { TranslateService } from '@ngx-translate/core';
+import { mocked } from 'ts-jest/utils';
 
 import { NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
+import { NotificationService } from '../../../services/notification.service';
+import { VariantsService } from '../../../variants/services/variants.service';
 import { ExperimentState } from '../../models/experiment-state.enum';
 import { ExperimentWithStatusData } from '../../models/experiment-with-status-data.model';
-import { Experiment } from '../../models/experiment.model';
 import { ExperimentsService } from '../../services/experiments.service';
 
 import { ExperimentComponent } from './experiment.component';
 
-@Pipe({name: 'experimentName'})
-export class ExperimentNameMockPipe implements PipeTransform {
-  transform(value: Experiment): string {
-    return value.id.toString();
-  }
-}
-
-@Pipe({name: 'translate'})
-export class TranslateMockPipe implements PipeTransform {
-  transform(value: string): string {
-    return value;
-  }
-}
-
-@Pipe({name: 'moment'})
-export class MomentMockPipe implements PipeTransform {
-  transform(value: number | string | Date, format?: string): string {
-    return `${value}`;
-  }
-}
-
 describe('ExperimentComponent', () => {
-  let fixture: ComponentFixture<ExperimentComponent>;
-  let component: ExperimentComponent;
+  let experimentsService: ExperimentsService;
+  let notificationService: NotificationService;
 
   const mockExperiment: ExperimentWithStatusData = {
     id: 'experiment-1',
@@ -100,43 +82,188 @@ describe('ExperimentComponent', () => {
     ],
   };
 
+  const mockGoals = [
+    {
+      id: 'goal-1',
+      name: 'Goal 1',
+      type: 'PAGE',
+      readOnly: false,
+      targetPage: '/target-page',
+      mountId: 'some-mount-id',
+    },
+    {
+      id: 'goal-2',
+      name: 'Goal 2',
+      type: 'PAGE',
+      readOnly: false,
+      targetPage: '/target-page',
+      mountId: 'some-mount-id',
+    },
+  ];
+
+  const mockVariants = [
+    {
+      id: 'variant-1',
+      name: 'Variant 1',
+    },
+    {
+      id: 'variant-2',
+      name: 'Variant 2',
+    },
+  ];
+
   const mockComponent = {
     getId: () => 'mockComponentId',
   };
 
-  beforeEach(fakeAsync(() => {
+  beforeEach(() => {
     const componentEditorServiceMock = {
       getComponent: () => mockComponent,
     };
 
     const experimentsServiceMock = {
       getExperiment: jest.fn(() => Promise.resolve(mockExperiment)),
+      getGoals: jest.fn().mockResolvedValue(mockGoals),
+      saveExperiment: jest.fn(),
     };
 
-    fixture = TestBed.configureTestingModule({
+    const variantsServiceMock = {
+      getVariants: jest.fn().mockResolvedValue(mockVariants),
+    };
+
+    const notificationServiceMock = {
+      showNotification: jest.fn(),
+      showErrorNotification: jest.fn(),
+    };
+
+    const translateServiceMock = {
+      instant: jest.fn(x => x),
+    };
+
+    TestBed.configureTestingModule({
       declarations: [
         ExperimentComponent,
-        ExperimentNameMockPipe,
-        TranslateMockPipe,
-        MomentMockPipe,
       ],
       providers: [
         { provide: NG1_COMPONENT_EDITOR_SERVICE, useValue: componentEditorServiceMock },
         { provide: ExperimentsService, useValue: experimentsServiceMock },
+        { provide: VariantsService, useValue: variantsServiceMock },
+        { provide: NotificationService, useValue: notificationServiceMock },
+        { provide: TranslateService, useValue: translateServiceMock },
       ],
       schemas: [
         NO_ERRORS_SCHEMA,
       ],
-    }).createComponent(ExperimentComponent);
+    });
 
-    component = fixture.componentInstance;
+    experimentsService = TestBed.inject(ExperimentsService);
+    notificationService = TestBed.inject(NotificationService);
+  });
 
-    fixture.detectChanges();
-    tick();
-    fixture.detectChanges();
-  }));
+  describe('if experiment was not saved', () => {
+    let fixture: ComponentFixture<ExperimentComponent>;
+    let component: ExperimentComponent;
 
-  it('should be shown', () => {
-    expect(fixture.nativeElement).toMatchSnapshot();
+    beforeEach(fakeAsync(() => {
+      fixture = TestBed.createComponent(ExperimentComponent);
+
+      fixture.detectChanges();
+      tick();
+      fixture.detectChanges();
+
+      component = fixture.componentInstance;
+    }));
+
+    it('should show the experiment form', fakeAsync(() => {
+      expect(fixture.nativeElement).toMatchSnapshot();
+    }));
+
+    describe('onVariantAndGoalSelected', () => {
+      const variantAndGoal = {
+        variantId: 'variant-1',
+        goalId: 'goal-1',
+      };
+
+      it('should save the experiment', () => {
+        component.onVariantAndGoalSelected(variantAndGoal);
+
+        expect(experimentsService.saveExperiment).toHaveBeenCalledWith('mockComponentId', 'variant-1', 'goal-1');
+      });
+
+      it('should load the saved experiment', async () => {
+        const mockSavedExperiment = { ...mockExperiment , state: ExperimentState.Created };
+
+        mocked(experimentsService.saveExperiment).mockResolvedValue();
+        mocked(experimentsService.getExperiment).mockResolvedValue(mockSavedExperiment);
+
+        await component.onVariantAndGoalSelected(variantAndGoal);
+        const savedExperiment = await component.experiment$;
+
+        expect(experimentsService.getExperiment).toHaveBeenCalledWith('mockComponentId');
+        expect(savedExperiment).toBe(mockSavedExperiment);
+      });
+
+      it('should show a notification after successful saving', async () => {
+        mocked(experimentsService.saveExperiment).mockResolvedValue();
+
+        await component.onVariantAndGoalSelected(variantAndGoal);
+
+        expect(notificationService.showNotification).toHaveBeenCalledWith('EXPERIMENT_SAVED');
+      });
+
+      it('should show an error notification after unsuccessful saving', async () => {
+        mocked(experimentsService.saveExperiment).mockRejectedValue(new Error());
+
+        await component.onVariantAndGoalSelected(variantAndGoal);
+
+        expect(notificationService.showErrorNotification).toHaveBeenCalledWith('EXPERIMENT_SAVE_ERROR');
+      });
+    });
+
+    describe('requestInProgress', () => {
+      const variantAndGoal = {
+        variantId: 'variant-1',
+        goalId: 'goal-1',
+      };
+
+      it('should be set to true', () => {
+        component.onVariantAndGoalSelected(variantAndGoal);
+
+        expect(component.requestInProgress).toBeTruthy();
+      });
+
+      it('should be set to false on successful experiment saving', async () => {
+        await component.onVariantAndGoalSelected(variantAndGoal);
+
+        expect(component.requestInProgress).toBeFalsy();
+      });
+
+      it('should be set to false on unsuccessful experiment saving', async () => {
+        mocked(experimentsService.saveExperiment).mockRejectedValue(new Error());
+
+        await component.onVariantAndGoalSelected(variantAndGoal);
+
+        expect(component.requestInProgress).toBeFalsy();
+      });
+    });
+  });
+
+  describe('if experiment was saved', () => {
+    let fixture: ComponentFixture<ExperimentComponent>;
+    let component: ExperimentComponent;
+
+    beforeEach(fakeAsync(() => {
+      fixture = TestBed.createComponent(ExperimentComponent);
+
+      fixture.detectChanges();
+      tick();
+      fixture.detectChanges();
+
+      component = fixture.componentInstance;
+    }));
+
+    it('should show the experiment', fakeAsync(() => {
+      expect(fixture.nativeElement).toMatchSnapshot();
+    }));
   });
 });

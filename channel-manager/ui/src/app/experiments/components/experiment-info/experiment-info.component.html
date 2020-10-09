@@ -14,6 +14,10 @@
   limitations under the License.
   -->
 
+<em-experiment-info-bar *ngIf="isExperimentInCreatedState">
+  {{ 'EXPERIMENT_INFO_PUBLISH_TO_START' | translate }}
+</em-experiment-info-bar>
+
 <mat-list role="list" class="small-list">
   <mat-list-item role="listitem">
     <span class="experiment-goal-header">{{ experiment | experimentName }}</span>
@@ -34,7 +38,7 @@
     <span class="experiment-state">{{ experiment.state | lowercase }}</span>
     <mat-divider></mat-divider>
   </mat-list-item>
-  <mat-list-item role="listitem">
+  <mat-list-item *ngIf="experiment.startTime > 0" role="listitem">
     <span class="line-header">{{ 'EXPERIMENT_START_DATE' | translate }}</span>
     <span>{{ experiment.startTime | moment:'LL' }}</span>
     <mat-divider></mat-divider>
