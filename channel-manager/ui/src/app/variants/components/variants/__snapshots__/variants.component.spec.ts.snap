@@ -127,7 +127,9 @@ exports[`VariantsComponent should create 1`] = `
         </div>
       </mat-form-field>
       <button
-        class="qa-variant-copy"
+        aria-describedby="cdk-describedby-message-0"
+        cdk-describedby-host=""
+        class="qa-variant-copy mat-tooltip-trigger"
         mat-icon-button=""
       >
         <mat-icon
@@ -137,7 +139,9 @@ exports[`VariantsComponent should create 1`] = `
         </mat-icon>
       </button>
       <button
-        class="qa-variant-delete"
+        aria-describedby="cdk-describedby-message-1"
+        cdk-describedby-host=""
+        class="qa-variant-delete mat-tooltip-trigger"
         mat-icon-button=""
       >
         <mat-icon
@@ -155,6 +159,9 @@ exports[`VariantsComponent should create 1`] = `
         class="variant-expressions-actions"
       >
         <button
+          aria-describedby="cdk-describedby-message-2"
+          cdk-describedby-host=""
+          class="mat-tooltip-trigger"
           mat-stroked-button=""
         >
           <mat-icon
@@ -162,7 +169,7 @@ exports[`VariantsComponent should create 1`] = `
           >
             plus
           </mat-icon>
-           Add segment 
+           SEGMENT 
         </button>
       </div>
     </div>
