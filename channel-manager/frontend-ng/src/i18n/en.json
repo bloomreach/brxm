@@ -162,6 +162,8 @@
   "EXPERIMENT_COMPLETED": "Experiment is completed",
   "EXPERIMENT_COMPLETION_ERROR": "An error happaned while attempting to complete the experiment",
   "EXPERIMENT_PUBLISH_TO_FINISH": "Publish the channel to stop and delete the experiment",
+  "EXPRESSION_AND": " and",
+  "EXPRESSION_SEGMENT": "matches segment '{{segmentName}}'",
   "FEEDBACK_DOCUMENT_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "The document is waiting to be published or unpublished.",
   "FEEDBACK_XPAGE_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "The page is waiting to be published or unpublished.",
   "FEEDBACK_CANCEL_REQUEST": "Cancel request",
