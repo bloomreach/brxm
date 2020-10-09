@@ -49,6 +49,7 @@
     <button mat-flat-button
             type="submit"
             color="primary"
+            [disabled]="!hasSelectedPersona()"
             (click)="selectPersona()">
       {{ 'SELECT' | translate }}
     </button>
