@@ -15,7 +15,7 @@
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -29,7 +29,6 @@ describe('SegmentsDialogComponent', () => {
 
   beforeEach(() => {
     const targetingServiceMock = {};
-    const matDialogDataMock = {};
     const matDialogRefMock = {};
 
     TestBed.configureTestingModule({
@@ -42,7 +41,6 @@ describe('SegmentsDialogComponent', () => {
       providers: [
         { provide: NG1_TARGETING_SERVICE, useValue: targetingServiceMock },
         { provide: MatDialogRef, useValue: matDialogRefMock },
-        { provide: MAT_DIALOG_DATA, useValue: matDialogDataMock },
       ],
     });
   });

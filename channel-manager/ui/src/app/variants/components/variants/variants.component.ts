@@ -108,16 +108,7 @@ export class VariantsComponent implements OnInit {
   async addSegment(): Promise<void> {
     this.cmsService.publish('show-mask');
 
-    const selectedPersonaIds = this.currentVariant?.expressions
-      .filter(exp => exp.type === VariantExpressionType.Persona)
-      .map(persona => persona.id);
-
-    const ref = this.dialogService.open(SegmentsDialogComponent, {
-      width: '400px',
-      data: {
-        selectedPersonaIds,
-      },
-    });
+    const ref = this.dialogService.open(SegmentsDialogComponent, { width: '400px' });
 
     ref.afterClosed().subscribe((persona: Persona) => {
       if (persona) {
