@@ -20,6 +20,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { NotificationService } from '../../../services/notification.service';
 import { VariantsService } from '../../../variants/services/variants.service';
+import { ExperimentState } from '../../models/experiment-state.enum';
+import { Experiment } from '../../models/experiment.model';
 import { ExperimentsService } from '../../services/experiments.service';
 import { SelectedVariantIdAndGoalId } from '../experiment-start-form/experiment-start-form.component';
 
@@ -44,6 +46,10 @@ export class ExperimentComponent {
     private readonly notificationService: NotificationService,
     private readonly translateService: TranslateService,
   ) {}
+
+  isExperimentRunningOrCompleted(experiment: Experiment): boolean {
+    return experiment.state === ExperimentState.Running || experiment.state === ExperimentState.Completed;
+  }
 
   async onVariantAndGoalSelected(value: SelectedVariantIdAndGoalId): Promise<void> {
     const { variantId, goalId } = value;

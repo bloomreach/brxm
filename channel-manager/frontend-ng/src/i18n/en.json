@@ -142,6 +142,7 @@
   "EXPERIMENT": "Experiment",
   "EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED": "Select a goal and save to create an experiment for '{{ variantName }}' against 'Default'",
   "EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED": "Select a goal and save to create an experiment involving all variants for '{{ variantName }}'",
+  "EXPERIMENT_INFO_PUBLISH_TO_START": "Publish the channel to start the experiment",
   "EXPERIMENT_PUBLISH_TO_START": "Publish the channel to start the experiment",
   "EXPERIMENT_LABEL_COMPLETED": "Experiment completed",
   "EXPERIMENT_LABEL_CREATED": "Experiment created",
