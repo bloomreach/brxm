@@ -102,5 +102,14 @@
   &-actions {
     display: flex;
     gap: $spacing-half;
+
+    mat-icon {
+      color: map-get($text-color, dim);
+      margin-top: -2px;
+    }
+
+    .mat-button-disabled mat-icon {
+      color: inherit;
+    }
   }
 }
