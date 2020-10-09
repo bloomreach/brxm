@@ -27,7 +27,7 @@ export interface Ng1TargetingService {
   getCharacteristics(): Promise<TargetingApiResponse<void>>;
   getPersonas(): Promise<TargetingApiResponse<{ items: Persona[] }>>;
   getVariants(containerItemId: string): Promise<TargetingApiResponse<Variant[]>>;
-  deleteVariant(componentId: string, variantId: string): Promise<void>;
+  deleteVariant(componentId: string, variantId: string): Promise<TargetingApiResponse<any>>;
   addVariant(
     componentId: string,
     formData: any,
