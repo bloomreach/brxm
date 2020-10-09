@@ -34,6 +34,17 @@
   grid-template-columns: 1fr auto auto;
 }
 
+.variant-default-message {
+  padding: $spacing-full 0;
+
+  > span {
+    color: map-get($text-color, dim);
+    display: inherit;
+    transform: scale(0.85);
+    transform-origin: left top;
+  }
+}
+
 .variant-expressions {
   padding-top: $spacing-full;
 

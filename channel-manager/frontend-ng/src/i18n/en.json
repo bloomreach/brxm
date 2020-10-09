@@ -393,6 +393,7 @@
   "VARIANT_COPY": "Copy variant",
   "VARIANT_DELETE": "Delete variant",
   "VARIANT_EXPRESSIONS": "Use this variant when the visitor:",
+  "VARIANT_EXPRESSIONS_DEFAULT": "Use this variant when no other variant matches",
   "VARIANT_EXPRESSION_DELETE": "Remove expression",
   "VARIANTS": "Variant(s)",
   "VERSION": "Version",
