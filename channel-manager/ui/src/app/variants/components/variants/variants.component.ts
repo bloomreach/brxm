@@ -122,7 +122,7 @@ export class VariantsComponent implements OnInit {
       if (persona) {
         this.currentVariant?.expressions.push({
           id: persona.id,
-          name: persona.name,
+          name: persona.name || persona.segmentName,
           type: VariantExpressionType.Persona,
         });
 
