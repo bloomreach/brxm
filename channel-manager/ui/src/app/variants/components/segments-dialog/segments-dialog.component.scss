@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 @import '~@bloomreach/frontend-theme/palettes';
 @import 'variables';
 
@@ -22,11 +22,13 @@
   display: block;
 }
 
-.segments-dialog-wrapper {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+.mat-list-single-selected-option {
+  background-color: map-get($blue, 50) !important;
 }
 
-.mat-list-single-selected-option {
-  background-color: map-get($blue, 50);
+mat-list-option {
+  &:focus,
+  &:hover {
+    background-color: rgba(0,0,0,0.05);
+  }
 }
