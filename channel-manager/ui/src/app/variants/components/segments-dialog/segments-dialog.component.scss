@@ -24,11 +24,16 @@
 
 .mat-list-single-selected-option {
   background-color: map-get($blue, 50) !important;
+  font-weight: 600;
+}
+
+.mat-list-base {
+  padding-top: 0;
 }
 
 mat-list-option {
   &:focus,
   &:hover {
-    background-color: rgba(0,0,0,0.05);
+    background-color: rgba(0, 0, 0, .1);
   }
 }
