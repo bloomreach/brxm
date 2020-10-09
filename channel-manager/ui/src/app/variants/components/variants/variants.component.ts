@@ -113,6 +113,7 @@ export class VariantsComponent implements OnInit {
       .map(persona => persona.id);
 
     const ref = this.dialogService.open(SegmentsDialogComponent, {
+      width: '400px',
       data: {
         selectedPersonaIds,
       },
