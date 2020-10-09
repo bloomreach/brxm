@@ -29,6 +29,7 @@ class ComponentEditorService {
     ChannelService,
     CmsService,
     CommunicationService,
+    ComponentVariantsService,
     ConfigService,
     ContainerService,
     DialogService,
@@ -36,7 +37,6 @@ class ComponentEditorService {
     HippoIframeService,
     HstComponentService,
     PageStructureService,
-    ComponentVariantsService,
     TargetingService,
   ) {
     'ngInject';
@@ -47,14 +47,14 @@ class ComponentEditorService {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.CommunicationService = CommunicationService;
+    this.ComponentVariantsService = ComponentVariantsService;
+    this.ConfigService = ConfigService;
     this.ContainerService = ContainerService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
     this.PageStructureService = PageStructureService;
-    this.ComponentVariantsService = ComponentVariantsService;
-    this.ConfigService = ConfigService;
     this.TargetingService = TargetingService;
 
     this.killed = false;
