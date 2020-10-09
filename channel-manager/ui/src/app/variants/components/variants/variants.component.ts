@@ -134,6 +134,11 @@ export class VariantsComponent implements OnInit {
     });
   }
 
+  hasSelectedSegment(): boolean | undefined {
+    return this.currentVariant?.expressions
+      .some(exp => exp.type === VariantExpressionType.Persona);
+  }
+
   private resetToStateParamsVariant(): void {
      this.currentVariant = this.variants?.find(v => v.id === this.ng1StateService.params.variantId);
      this.variantInitiated.emit({ variant: this.currentVariant });
