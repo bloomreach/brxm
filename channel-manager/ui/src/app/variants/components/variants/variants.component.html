@@ -49,7 +49,11 @@
     </button>
   </div>
 
-  <div class="variant-expressions">
+  <div class="variant-default-message" *ngIf="isDefaultVariant()">
+    <span>{{ 'VARIANT_EXPRESSIONS_DEFAULT' | translate }}</span>
+  </div>
+
+  <div class="variant-expressions" *ngIf="!isDefaultVariant()">
     <div class="variant-expressions-list"
          *ngIf="currentVariant?.expressions.length > 0">
       <div class="variant-expressions-list-label">
@@ -72,7 +76,7 @@
       </div>
     </div>
 
-    <div class="variant-expressions-actions" *ngIf="!isDefaultVariant()">
+    <div class="variant-expressions-actions">
       <button mat-stroked-button
               matTooltip="{{ 'SEGMENT_ADD' | translate }}"
               [matTooltipShowDelay]="1000"
