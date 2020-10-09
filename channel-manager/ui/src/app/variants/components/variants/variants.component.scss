@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 @import '~@bloomreach/frontend-theme/palettes';
 @import 'variables';
 
@@ -30,7 +30,7 @@
 .variant-select {
   align-items: center;
   display: grid;
-  grid-gap: $spacing-half;
+  gap: $spacing-half;
   grid-template-columns: 1fr auto auto;
 }
 
@@ -63,8 +63,7 @@
 
   &-actions {
     padding-top: $spacing-full;
-    display: grid;
-    grid-template-columns: auto auto;
-    grid-gap: $spacing-half;
+    display: flex;
+    gap: $spacing-half;
   }
 }
