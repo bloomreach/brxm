@@ -151,6 +151,8 @@ exports[`VariantsComponent should create 1`] = `
         </mat-icon>
       </button>
     </div>
+    
+    
     <div
       class="variant-expressions"
     >
