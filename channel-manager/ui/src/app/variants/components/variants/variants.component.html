@@ -42,6 +42,7 @@
     <button mat-icon-button
             matTooltip="{{ 'VARIANT_DELETE' | translate }}"
             [matTooltipShowDelay]="1000"
+            [disabled]="isDefaultVariant()"
             class="qa-variant-delete"
             (click)="deleteVariant()">
       <mat-icon svgIcon="trash"></mat-icon>
@@ -71,7 +72,7 @@
       </div>
     </div>
 
-    <div class="variant-expressions-actions">
+    <div class="variant-expressions-actions" *ngIf="!isDefaultVariant()">
       <button mat-stroked-button
               matTooltip="{{ 'SEGMENT_ADD' | translate }}"
               [matTooltipShowDelay]="1000"
