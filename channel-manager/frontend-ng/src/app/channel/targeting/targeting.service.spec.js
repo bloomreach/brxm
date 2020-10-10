@@ -303,7 +303,7 @@ describe('TargetingService', () => {
       $rootScope.$digest();
 
       expect(promiseSpy).toHaveBeenCalledWith({
-        data: { items: ['characteristic-c1', 'characteristic-c2'] },
+        data: ['characteristic-c1', 'characteristic-c2'],
         message: 'Characteristics loaded successfully',
         reloadRequired: false,
         success: true,

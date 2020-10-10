@@ -201,9 +201,7 @@ class TargetingService {
         .map(item => item.id)
         .map(id => this.getCharacteristic(id)));
 
-      return this._success('Characteristics loaded successfully', {
-        items: characteristics.map(characteristic => characteristic.data),
-      });
+      return this._success('Characteristics loaded successfully', characteristics.map(ch => ch.data));
     } catch (e) {
       return this._failure('Failed to load characteristics');
     }
