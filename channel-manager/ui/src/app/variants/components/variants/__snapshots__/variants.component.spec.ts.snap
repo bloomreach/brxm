@@ -183,6 +183,19 @@ exports[`VariantsComponent should create 1`] = `
           </mat-icon>
            SEGMENT 
         </button>
+        <button
+          aria-describedby="cdk-describedby-message-3"
+          cdk-describedby-host=""
+          class="mat-tooltip-trigger"
+          mat-stroked-button=""
+        >
+          <mat-icon
+            svgicon="plus"
+          >
+            plus
+          </mat-icon>
+           CHARACTERISTIC 
+        </button>
       </div>
     </div>
   </div>

@@ -89,6 +89,13 @@
         <mat-icon svgIcon="plus"></mat-icon>
         {{ 'SEGMENT' | translate }}
       </button>
+      <button mat-stroked-button
+              matTooltip="{{ 'CHARACTERISTIC_ADD' | translate }}"
+              [matTooltipShowDelay]="1000"
+              (click)="addCharacteristic()">
+        <mat-icon svgIcon="plus"></mat-icon>
+        {{ 'CHARACTERISTIC' | translate }}
+      </button>
     </div>
   </div>
 </div>
