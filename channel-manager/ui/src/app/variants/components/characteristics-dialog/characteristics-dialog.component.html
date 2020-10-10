@@ -20,7 +20,24 @@
   </h3>
 
   <div mat-dialog-content>
-    <div>Characteristics</div>
+    <mat-divider></mat-divider>
+    <mat-list *ngIf="!characteristics || characteristics?.length === 0">
+      <mat-list-item>
+        {{ 'DIALOG_CHARACTERISTICS_NO_CHARACTERISTICS' | translate }}
+      </mat-list-item>
+    </mat-list>
+
+    <mat-selection-list *ngIf="characteristics?.length > 0"
+                        color="primary"
+                        #characteristicsList
+                        [multiple]="false">
+      <mat-list-option *ngFor="let characteristic of characteristics"
+                       [value]="characteristic">
+        {{ characteristic.id }}
+      </mat-list-option>
+    </mat-selection-list>
+
+    <mat-divider></mat-divider>
   </div>
 
   <div mat-dialog-actions>
@@ -32,6 +49,7 @@
     <button mat-flat-button
             type="submit"
             color="primary"
+            [disabled]="!hasSelection()"
             (click)="selectCharacteristic()">
       {{ 'ADD' | translate }}
     </button>

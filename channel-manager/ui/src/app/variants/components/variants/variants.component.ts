@@ -21,6 +21,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Ng1CmsService, NG1_CMS_SERVICE } from '../../../services/ng1/cms.ng1.service';
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
+import { Characteristic } from '../../models/characteristic.model';
 import { Persona } from '../../models/persona.model';
 import { Variant, VariantExpression, VariantExpressionType } from '../../models/variant.model';
 import { VariantsService } from '../../services/variants.service';
@@ -137,7 +138,8 @@ export class VariantsComponent implements OnInit {
 
     this.dialogService
       .open(CharacteristicsDialogComponent)
-      .afterClosed().subscribe(() => {
+      .afterClosed().subscribe((characteristic: Characteristic) => {
+        console.log('picked', characteristic);
         this.cmsService.publish('remove-mask');
       });
   }
