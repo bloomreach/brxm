@@ -55,6 +55,7 @@
   "DELETE_COMPONENT": "Delete component",
   "DELETING_CHANNEL": "Deleting channel '{{channel}}'...",
   "DIALOG_CHARACTERISTICS_TITLE": "Characteristic",
+  "DIALOG_CHARACTERISTICS_NO_CHARACTERISTICS": "No characteristics",
   "DIALOG_SEGMENTS_TITLE": "Select segment",
   "DIALOG_SEGMENTS_NO_SEGMENTS": "No segments",
   "DISCARD": "Discard",

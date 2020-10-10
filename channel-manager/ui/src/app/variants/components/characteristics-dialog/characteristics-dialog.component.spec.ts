@@ -16,6 +16,7 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatListModule } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1service';
@@ -33,6 +34,7 @@ describe('SegmentsDialogComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         MatDialogModule,
+        MatListModule,
         TranslateModule.forRoot(),
       ],
       declarations: [ CharacteristicsDialogComponent ],
