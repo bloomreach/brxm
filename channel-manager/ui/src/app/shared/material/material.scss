@@ -75,3 +75,8 @@ $mat-dialog-spacing: 24px;
   min-height: initial !important;
   padding: $spacing-half $spacing-full !important;
 }
+
+.mat-list-single-selected-option {
+  background-color: map-get($blue, 50) !important;
+  font-weight: 600;
+}
