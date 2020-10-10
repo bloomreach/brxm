@@ -1,4 +1,5 @@
 {
+  "ADD": "Add",
   "ADDING_COMPONENT": "Adding {{component}}",
   "ADD_TO_PROJECT": "Add to project",
   "ADVANCED_SETTINGS": "Advanced settings",
@@ -53,6 +54,7 @@
   "DELETE": "Delete",
   "DELETE_COMPONENT": "Delete component",
   "DELETING_CHANNEL": "Deleting channel '{{channel}}'...",
+  "DIALOG_CHARACTERISTICS_TITLE": "Characteristic",
   "DIALOG_SEGMENTS_TITLE": "Select segment",
   "DIALOG_SEGMENTS_NO_SEGMENTS": "No segments",
   "DISCARD": "Discard",
