@@ -24,6 +24,7 @@ import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.
 import { Persona } from '../../models/persona.model';
 import { Variant, VariantExpression, VariantExpressionType } from '../../models/variant.model';
 import { VariantsService } from '../../services/variants.service';
+import { CharacteristicsDialogComponent } from '../characteristics-dialog/characteristics-dialog.component';
 import { SegmentsDialogComponent } from '../segments-dialog/segments-dialog.component';
 
 @Component({
@@ -132,6 +133,13 @@ export class VariantsComponent implements OnInit {
   }
 
   async addCharacteristic(): Promise<void> {
+    this.cmsService.publish('show-mask');
+
+    this.dialogService
+      .open(CharacteristicsDialogComponent)
+      .afterClosed().subscribe(() => {
+        this.cmsService.publish('remove-mask');
+      });
   }
 
   hasSelectedSegment(): boolean | undefined {
