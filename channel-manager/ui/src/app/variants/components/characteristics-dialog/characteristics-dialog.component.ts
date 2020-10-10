@@ -16,8 +16,10 @@
 
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatSelectionList } from '@angular/material/list';
 
 import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1service';
+import { Characteristic } from '../../models/characteristic.model';
 
 @Component({
   selector: 'em-characteristics-dialog',
@@ -25,15 +27,27 @@ import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../../services/ng
   styleUrls: ['./characteristics-dialog.component.scss'],
 })
 export class CharacteristicsDialogComponent implements OnInit {
+  characteristics?: Characteristic[];
+
+  @ViewChild('characteristicsList')
+  selectionList?: MatSelectionList;
+
   constructor(
       @Inject(NG1_TARGETING_SERVICE) private readonly targetingService: Ng1TargetingService,
       private readonly dialogRef: MatDialogRef<CharacteristicsDialogComponent>,
   ) { }
 
   async ngOnInit(): Promise<void> {
+    const { data } = await this.targetingService.getCharacteristics();
+    this.characteristics = data;
   }
 
   selectCharacteristic(): void {
-    this.dialogRef.close();
+    const selected = this.selectionList?.selectedOptions.selected[0].value;
+    this.dialogRef.close(selected);
+  }
+
+  hasSelection(): boolean | undefined {
+    return this.selectionList?.selectedOptions.hasValue();
   }
 }
