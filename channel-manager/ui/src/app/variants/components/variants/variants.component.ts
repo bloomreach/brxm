@@ -131,6 +131,9 @@ export class VariantsComponent implements OnInit {
       });
   }
 
+  async addCharacteristic(): Promise<void> {
+  }
+
   hasSelectedSegment(): boolean | undefined {
     return this.currentVariant?.expressions
       .some(exp => exp.type === VariantExpressionType.Persona);
