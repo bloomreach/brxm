@@ -27,16 +27,61 @@
       </mat-list-item>
     </mat-list>
 
-    <mat-selection-list *ngIf="characteristics?.length > 0"
-                        color="primary"
-                        #characteristicsList
-                        [multiple]="false">
-      <mat-list-option *ngFor="let characteristic of characteristics"
-                       [value]="characteristic">
-        {{ characteristic.id }}
-      </mat-list-option>
-    </mat-selection-list>
+    <div *ngIf="characteristics?.length > 0" class="characteristics">
+      <div class="step">
+        <div class="step-label">
+          <span class="step-label-circle">1</span>
+          {{ 'DIALOG_CHARACTERISTICS_STEP1' | translate }}
+        </div>
+        <div class="step-content">
+          <mat-selection-list color="primary"
+                              #characteristicsList
+                              [multiple]="false">
+            <mat-list-option *ngFor="let characteristic of characteristics"
+                             [value]="characteristic"
+                             class="icon-text">
+              <mat-icon svgIcon="{{ getCharacteristicIcon(characteristic) }}"></mat-icon>
+              {{ 'EXPRESSION_TARGET_GROUP_' + characteristic.id.toUpperCase() | translate: { name: 'EXPRESSION_TARGET_GROUP_' + characteristic.id.toUpperCase() + '_SUBJECT' | translate }  }}
+            </mat-list-option>
+          </mat-selection-list>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-label">
+          <span class="step-label-circle">2</span>
+          {{ 'DIALOG_CHARACTERISTICS_STEP2' | translate }}
+        </div>
+        <div class="step-content">
+          <div *ngIf="!hasSelectedCharacteristic()">
+            <mat-list>
+              <mat-list-item>
+                {{ 'DIALOG_CHARACTERISTICS_NO_TARGET_GROUPS' | translate }}
+              </mat-list-item>
+            </mat-list>
+          </div>
 
+          <div *ngIf="hasSelectedCharacteristic() && getSelectedCharacteristic()?.targetGroups.length === 0">
+            <mat-list>
+              <mat-list-item>
+                {{ 'DIALOG_CHARACTERISTICS_EMPTY_TARGET_GROUPS' | translate }}
+              </mat-list-item>
+            </mat-list>
+          </div>
+
+          <mat-selection-list color="primary"
+                              #targetGroupsList
+                              *ngIf="hasSelectedCharacteristic()"
+                              [multiple]="false">
+            <mat-list-option *ngFor="let targetGroup of getSelectedCharacteristic()?.targetGroups"
+                             [value]="targetGroup"
+                             class="text-text">
+              <span>{{ targetGroup.name }}</span>
+              <span>{{ getTargetGroupProperties(targetGroup) }}</span>
+            </mat-list-option>
+          </mat-selection-list>
+        </div>
+      </div>
+    </div>
     <mat-divider></mat-divider>
   </div>
 
@@ -49,8 +94,8 @@
     <button mat-flat-button
             type="submit"
             color="primary"
-            [disabled]="!hasSelection()"
-            (click)="selectCharacteristic()">
+            [disabled]="!hasSelectedCharacteristic() || !hasSelectedTargetGroup()"
+            (click)="addSelection()">
       {{ 'ADD' | translate }}
     </button>
   </div>
