@@ -23,7 +23,8 @@ import {
 import { ComponentModelToken } from './component';
 import { ContainerItemEvents, ContainerItemMeta, ContainerItem } from './container-item';
 import { EmitterMixin } from '../emitter';
-import { EventBusService, EventBus, PageUpdateEvent } from '../events';
+import { EventBusService } from './events';
+import { EventBus, PageUpdateEvent } from './events09';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { PageModel } from './page09';
 import { UrlBuilderService, UrlBuilder } from '../url';
