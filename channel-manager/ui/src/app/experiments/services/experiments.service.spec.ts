@@ -64,7 +64,7 @@ describe('ExperimentsService', () => {
     beforeEach(() => {
       const mockApiResponse: TargetingApiResponse<ExperimentStatus> = {
         success: true,
-        message: null,
+        message: 'Some message',
         errorCode: null,
         reloadRequired: false,
         data: mockExperimentStatusData,
@@ -120,7 +120,7 @@ describe('ExperimentsService', () => {
         message: 'some error message',
         errorCode: 'error-code',
         reloadRequired: false,
-        data: [],
+        data: null,
       };
 
       mocked(targetingService.getExperimentStatus).mockResolvedValue(mockErrorApiResponse);

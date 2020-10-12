@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-export interface TargetingApiResponse<T> {
-  success: boolean;
-  message: string | null;
-  errorCode: string | null;
+interface SuccessTargetingApiResponse<T> {
+  success: true;
+  message: string;
+  errorCode: null;
   reloadRequired: boolean;
-  data: T | null;
+  data: T;
 }
+
+interface ErroneousTargetingApiResponse {
+  success: false;
+  message: string;
+  errorCode: string;
+  reloadRequired: boolean;
+  data: null;
+}
+
+export type TargetingApiResponse<T> = SuccessTargetingApiResponse<T> | ErroneousTargetingApiResponse;
