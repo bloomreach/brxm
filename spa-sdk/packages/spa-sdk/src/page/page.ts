@@ -214,13 +214,13 @@ export class PageImpl implements Page {
     @inject(PageModelToken) protected model: PageModel,
     @inject(ComponentFactory) componentFactory: ComponentFactory,
     @inject(ContentFactory) private contentFactory: ContentFactory,
-    @inject(EventBusService) private eventBus: EventBus,
     @inject(LinkFactory) private linkFactory: LinkFactory,
     @inject(LinkRewriterService) private linkRewriter: LinkRewriter,
     @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
     @inject(CmsEventBusService) @optional() private cmsEventBus?: CmsEventBus,
+    @inject(EventBusService) @optional() eventBus?: EventBus,
   ) {
-    this.eventBus.on('page.update', this.onPageUpdate.bind(this));
+    eventBus?.on('page.update', this.onPageUpdate.bind(this));
 
     this.root = componentFactory.create(model);
   }
