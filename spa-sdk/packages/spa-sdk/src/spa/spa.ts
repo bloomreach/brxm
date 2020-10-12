@@ -34,10 +34,10 @@ export class Spa {
    * @param pageFactory Factory to produce page instances.
    */
   constructor(
-    @inject(EventBusService) protected eventBus: EventBus,
     @inject(ApiService) private api: Api,
     @inject(PageFactory) private pageFactory: PageFactory,
     @inject(CmsEventBusService) @optional() private cmsEventBus?: CmsEventBus,
+    @inject(EventBusService) @optional() private eventBus?: EventBus,
   ) {
     this.onCmsUpdate = this.onCmsUpdate.bind(this);
   }
@@ -52,7 +52,7 @@ export class Spa {
 
     const model = await this.api.getComponent(url, event.properties);
 
-    this.eventBus.emit('page.update', { page: model });
+    this.eventBus?.emit('page.update', { page: model });
   }
 
   /**
@@ -83,7 +83,7 @@ export class Spa {
    */
   destroy() {
     this.cmsEventBus?.off('cms.update', this.onCmsUpdate);
-    this.eventBus.clearListeners();
+    this.eventBus?.clearListeners();
     delete this.page;
   }
 }
