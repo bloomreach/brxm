@@ -15,7 +15,7 @@
  */
 
 import { inject, injectable } from 'inversify';
-import { EventBus, EventBusService, CmsUpdateEvent } from '../events';
+import { EventBus, EventBusService, CmsUpdateEvent } from './events';
 import { RpcClient, RpcClientService, RpcServer, RpcServerService, Procedures } from './rpc';
 
 export const CmsService = Symbol.for('CmsService');
