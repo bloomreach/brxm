@@ -50,7 +50,7 @@
   </div>
 
   <div class="variant-default-message" *ngIf="isDefaultVariant()">
-    <span>{{ 'VARIANT_EXPRESSIONS_DEFAULT' | translate }}</span>
+    <span>{{ (variants.length === 1 ? 'VARIANT_EXPRESSIONS_DEFAULT_ONLY' : 'VARIANT_EXPRESSIONS_DEFAULT') | translate }}</span>
   </div>
 
   <div class="variant-expressions" *ngIf="!isDefaultVariant()">
