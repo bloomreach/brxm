@@ -146,32 +146,33 @@ export class ExperimentStatusChartComponent implements OnInit {
   private normalizeData(points: ExperimentStatusAtTimestampWithVisits[]): ExperimentStatusAtTimestamp[] {
     return points.map(point => {
       const normalizedPoint: ExperimentStatusAtTimestamp = { timestamp: point.timestamp };
+      const keys = Object.keys(point).filter(x => x !== 'timestamp');
 
-      if (point.visits === 0) {
+      if (point.visits === 0 || keys.length === 0) {
+        keys.forEach(key => {
+          normalizedPoint[key] = point[key];
+        });
+
         return normalizedPoint;
       }
 
       let newNormalizedVisits = 0;
-      let maxKey: string | undefined;
+      let maxKey: string = keys[0];
       let maxValue = 0;
 
-      for (const key of Object.keys(point)) {
-        if (key === 'timestamp') {
-          continue;
-        }
-
-        const normalizedValue = Math.round((100 * point.key) / point.visits);
-        normalizedPoint.key = normalizedValue;
+      for (const key of keys) {
+        const normalizedValue = Math.round((100 * point[key]) / point.visits);
+        normalizedPoint[key] = normalizedValue;
         newNormalizedVisits += normalizedValue;
 
-        if (maxKey === undefined || normalizedPoint.key > maxValue) {
+        if (normalizedPoint[key] > maxValue) {
           maxKey = key;
-          maxValue = normalizedPoint.key;
+          maxValue = normalizedPoint[key];
         }
       }
 
       if (newNormalizedVisits > 100) {
-        normalizedPoint.maxKey -= (newNormalizedVisits - 100);
+        normalizedPoint[maxKey] -= (newNormalizedVisits - 100);
       }
 
       return normalizedPoint;
