@@ -53,11 +53,11 @@ function createPage(pageModel = model) {
     pageModel,
     componentFactory,
     contentFactory,
-    cmsEventBus,
     eventBus,
     linkFactory,
     linkRewriter,
     metaFactory,
+    cmsEventBus,
   );
 }
 
