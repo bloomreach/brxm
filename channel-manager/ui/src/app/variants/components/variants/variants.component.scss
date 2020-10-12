@@ -83,12 +83,17 @@
     margin-bottom: $spacing-full;
     padding: $spacing-half;
 
-    &-label {
+    &-empty {
       color: map-get($text-color, dim);
+      height: 40px;
+    }
+
+    &-label {
+      background: map-get($grey, 200);
+      color: map-get($text-color, dim);
+      font-size: 75%;
       padding: 0 3px;
       position: absolute;
-      background: map-get($grey, 200);
-      font-size: 75%;
       top: -1em;
     }
   }
