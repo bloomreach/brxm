@@ -156,7 +156,17 @@ exports[`VariantsComponent should create 1`] = `
     <div
       class="variant-expressions"
     >
-      
+      <div
+        class="variant-expressions-list"
+      >
+        <div
+          class="variant-expressions-list-label"
+        >
+           VARIANT_EXPRESSIONS 
+        </div>
+        
+        
+      </div>
       <div
         class="variant-expressions-actions"
       >
