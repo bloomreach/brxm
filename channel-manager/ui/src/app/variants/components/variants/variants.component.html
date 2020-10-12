@@ -26,7 +26,7 @@
         <mat-option *ngFor="let variant of variants"
                     class="{{ 'qa-variant-select-option-' + variant.id }}"
                     [value]="variant">
-          {{ variant.variantName }}
+          {{ variant.variantName }}<span *ngIf="isVariantDirty(variant)">*</span>
         </mat-option>
       </mat-select>
     </mat-form-field>
