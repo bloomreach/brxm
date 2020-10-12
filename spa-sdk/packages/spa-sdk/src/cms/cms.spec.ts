@@ -36,7 +36,7 @@ describe('CmsImpl', () => {
       register: jest.fn(),
       trigger: jest.fn(),
     };
-    cms = new CmsImpl(eventBus, rpcClient, rpcServer);
+    cms = new CmsImpl(rpcClient, rpcServer, eventBus);
   });
 
   describe('initialize', () => {
