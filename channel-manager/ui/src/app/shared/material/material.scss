@@ -39,7 +39,7 @@ $custom-typography: mat-typography-config(
   padding: 0 12px !important;
 
   &.cdk-keyboard-focused {
-    box-shadow: 0 0 0 1px map-get($blue, 300);
+    box-shadow: 0 0 0 2px $bloomreach-blue-darker;
   }
 }
 

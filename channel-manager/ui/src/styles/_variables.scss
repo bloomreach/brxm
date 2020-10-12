@@ -34,3 +34,6 @@ $notification-banner-height: 48px;
 $notification-banner-shadow: 0 0 4px 2px rgba(0, 0, 0, .12);
 $notification-banner-icon-color: rgba(0, 0, 0, .6);
 
+// Bloomreach theme colors
+$bloomreach-blue-light: rgba(map-get($blue, 500), .1);
+$bloomreach-blue-darker: rgba(map-get($blue, 500), .38);
