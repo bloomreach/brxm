@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { inject, injectable } from 'inversify';
+import { inject, injectable, optional } from 'inversify';
 import { ComponentFactory } from './component-factory09';
 import { ComponentMeta, Component } from './component';
 import { ComponentModel } from './component09';
@@ -67,11 +67,11 @@ export class PageImpl implements Page {
     @inject(PageModelToken) protected model: PageModel,
     @inject(ComponentFactory) componentFactory: ComponentFactory,
     @inject(ContentFactory) private contentFactory: ContentFactory,
-    @inject(CmsEventBusService) private cmsEventBus: CmsEventBus,
     @inject(EventBusService) private eventBus: EventBus,
     @inject(LinkFactory) private linkFactory: LinkFactory,
     @inject(LinkRewriterService) private linkRewriter: LinkRewriter,
     @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
+    @inject(CmsEventBusService) @optional() private cmsEventBus?: CmsEventBus,
   ) {
     this.eventBus.on('page.update', this.onPageUpdate.bind(this));
 
@@ -146,7 +146,7 @@ export class PageImpl implements Page {
   }
 
   sync() {
-    this.cmsEventBus.emit('page.ready', {});
+    this.cmsEventBus?.emit('page.ready', {});
   }
 
   toJSON() {
