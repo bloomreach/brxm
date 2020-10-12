@@ -37,8 +37,8 @@
       padding: 0.5em 0;
     }
 
-    // Remove the thick border from dropdown
-    &.mat-form-field-appearance-outline .mat-form-field-outline-thick {
+    // Remove the thick border from dropdown on hover (if not focused)
+    &.mat-form-field-appearance-outline:not(.mat-focused) .mat-form-field-flex:hover .mat-form-field-outline-thick {
       .mat-form-field-outline-start,
       .mat-form-field-outline-end,
       .mat-form-field-outline-gap {
@@ -68,6 +68,7 @@
     display: inherit;
     transform: scale(0.85);
     transform-origin: left top;
+    user-select: none;
   }
 }
 
