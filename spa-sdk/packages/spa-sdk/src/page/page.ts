@@ -22,7 +22,8 @@ import { ContainerModel } from './container';
 import { ContentFactory } from './content-factory';
 import { ContentModel } from './content';
 import { Content } from './content09';
-import { EventBusService, EventBus, PageUpdateEvent } from '../events';
+import { EventBusService as CmsEventBusService, EventBus as CmsEventBus } from '../cms';
+import { EventBusService, EventBus, PageUpdateEvent } from './events';
 import { LinkFactory } from './link-factory';
 import { LinkRewriter, LinkRewriterService } from './link-rewriter';
 import { Link, isLink } from './link';
@@ -213,6 +214,7 @@ export class PageImpl implements Page {
     @inject(PageModelToken) protected model: PageModel,
     @inject(ComponentFactory) componentFactory: ComponentFactory,
     @inject(ContentFactory) private contentFactory: ContentFactory,
+    @inject(CmsEventBusService) private cmsEventBus: CmsEventBus,
     @inject(EventBusService) private eventBus: EventBus,
     @inject(LinkFactory) private linkFactory: LinkFactory,
     @inject(LinkRewriterService) private linkRewriter: LinkRewriter,
@@ -294,7 +296,7 @@ export class PageImpl implements Page {
   }
 
   sync() {
-    this.eventBus.emit('page.ready', {});
+    this.cmsEventBus.emit('page.ready', {});
   }
 
   toJSON() {

@@ -16,6 +16,7 @@
 
 import { ContainerModule } from 'inversify';
 import { DOMParser, XMLSerializer } from 'xmldom';
+import { Typed } from 'emittery';
 
 import { ComponentFactory } from './component-factory';
 import {
@@ -31,6 +32,7 @@ import { ContainerItemImpl } from './container-item';
 import { ContentFactory } from './content-factory';
 import { DocumentImpl, DocumentModelToken, TYPE_DOCUMENT } from './document';
 import { DomParserService, LinkRewriterImpl, LinkRewriterService, XmlSerializerService } from './link-rewriter';
+import { EventBusService } from './events';
 import { ImageFactory, ImageImpl, ImageModelToken, ImageModel } from './image';
 import { ImageSetImpl, ImageSetModelToken, TYPE_IMAGE_SET } from './image-set';
 import { LinkFactory } from './link-factory';
@@ -48,6 +50,7 @@ import { UrlBuilderService, UrlBuilder } from '../url';
 
 export function PageModule() {
   return new ContainerModule((bind) => {
+    bind(EventBusService).toConstantValue(new Typed());
     bind(LinkRewriterService).to(LinkRewriterImpl).inSingletonScope();
     bind(DomParserService).toConstantValue(new DOMParser());
     bind(XmlSerializerService).toConstantValue(new XMLSerializer());

@@ -16,8 +16,8 @@
 
 import { inject, injectable } from 'inversify';
 import { ApiService, Api } from './api';
-import { CmsUpdateEvent, EventBusService, EventBus } from '../events';
-import { PageFactory, PageModel, Page } from '../page';
+import { CmsUpdateEvent, EventBusService as CmsEventBusService, EventBus as CmsEventBus } from '../cms';
+import { EventBusService, EventBus, PageFactory, PageModel, Page } from '../page';
 
 export const SpaService = Symbol.for('SpaService');
 
@@ -34,6 +34,7 @@ export class Spa {
    * @param pageFactory Factory to produce page instances.
    */
   constructor(
+    @inject(CmsEventBusService) protected cmsEventBus: CmsEventBus,
     @inject(EventBusService) protected eventBus: EventBus,
     @inject(ApiService) private api: Api,
     @inject(PageFactory) private pageFactory: PageFactory,
@@ -71,7 +72,7 @@ export class Spa {
     this.page = this.pageFactory(model);
 
     if (this.page.isPreview()) {
-      this.eventBus.on('cms.update', this.onCmsUpdate);
+      this.cmsEventBus.on('cms.update', this.onCmsUpdate);
     }
 
     return this.page;
@@ -81,7 +82,8 @@ export class Spa {
    * Destroys the integration with the SPA page.
    */
   destroy() {
-    this.eventBus.off('cms.update', this.onCmsUpdate);
+    this.cmsEventBus.off('cms.update', this.onCmsUpdate);
+    this.eventBus.clearListeners();
     delete this.page;
   }
 }
