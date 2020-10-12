@@ -144,6 +144,15 @@ export class VariantsComponent implements OnInit {
       });
   }
 
+  getExpressionTranslation(expression: VariantExpression): string {
+    if (expression.type === VariantExpressionType.Persona) {
+      return 'EXPRESSION_SEGMENT';
+    }
+
+    const [characteristic] = expression.id.split('/');
+    return `EXPRESSION_TARGET_GROUP_${characteristic.toUpperCase()}`;
+  }
+
   hasSelectedSegment(): boolean | undefined {
     return this.currentVariant?.expressions
       .some(exp => exp.type === VariantExpressionType.Persona);
