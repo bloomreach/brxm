@@ -143,11 +143,12 @@ export interface Page {
    *   For example, for link `/site/_cmsinternal/spa/about` with configuration options
    *   `cmsBaseUrl = "http://localhost:8080/site/_cmsinternal/spa"` and `spaBaseUrl = "http://example.com"`
    *   it will generate `http://example.com/about`.
+   * - If the link object type is unknown, then it will return `undefined`.
    * - If the link parameter is omitted, then the link to the current page will be returned.
    * - In other cases, the link will be returned as-is.
    * @param link The link object to generate URL.
    */
-  getUrl(link?: Link): string;
+  getUrl(link?: Link): string | undefined;
 
   /**
    * Generates an SPA URL for the path.
@@ -262,12 +263,14 @@ export class PageImpl implements Page {
     return resolve<PageRootModel>(this.model, this.model.root)?.meta?.pageTitle;
   }
 
+  getUrl(link?: Link): string | undefined;
+  getUrl(path: string): string;
   getUrl(link?: Link | string) {
-    if (!link || isLink(link) || isAbsoluteUrl(link)) {
-      return this.linkFactory.create(link as any || this.model.links.site || '');
+    if (typeof link === 'undefined' || isLink(link) || isAbsoluteUrl(link)) {
+      return this.linkFactory.create(link as Link ?? this.model.links.site ?? '');
     }
 
-    return resolveUrl(link, this.linkFactory.create(this.model.links.site) || '');
+    return resolveUrl(link, this.linkFactory.create(this.model.links.site) ?? '');
   }
 
   getVersion() {
