@@ -24,7 +24,7 @@ import {
   TYPE_COMPONENT_CONTAINER_ITEM,
 } from './component';
 import { EmitterMixin, Emitter } from '../emitter';
-import { EventBusService, EventBus, PageUpdateEvent } from '../events';
+import { EventBusService, EventBus, PageUpdateEvent } from './events';
 import { LinkFactory } from './link-factory';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { PageModel } from './page';
