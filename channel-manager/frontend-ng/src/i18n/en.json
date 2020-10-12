@@ -395,6 +395,7 @@
   "VARIANT_EXPRESSIONS": "Use this variant when the visitor:",
   "VARIANT_EXPRESSIONS_DEFAULT": "Use this variant when no other variant matches",
   "VARIANT_EXPRESSIONS_DEFAULT_ONLY": "Use this variant for all visitors",
+  "VARIANT_EXPRESSIONS_EMPTY": "Select a segment and/or characteristic(s)",
   "VARIANT_EXPRESSION_DELETE": "Remove expression",
   "VARIANTS": "Variant(s)",
   "VERSION": "Version",

@@ -54,10 +54,14 @@
   </div>
 
   <div class="variant-expressions" *ngIf="!isDefaultVariant()">
-    <div class="variant-expressions-list"
-         *ngIf="currentVariant?.expressions.length > 0">
+    <div class="variant-expressions-list">
       <div class="variant-expressions-list-label">
         {{ 'VARIANT_EXPRESSIONS' | translate }}
+      </div>
+
+      <div class="variant-expressions-list-item variant-expressions-list-empty"
+           *ngIf="currentVariant?.expressions.length === 0">
+        {{ 'VARIANT_EXPRESSIONS_EMPTY' | translate }}
       </div>
 
       <div class="variant-expressions-list-item"
