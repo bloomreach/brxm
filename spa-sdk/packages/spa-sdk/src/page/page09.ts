@@ -116,8 +116,10 @@ export class PageImpl implements Page {
     return this.model.page._meta.pageTitle;
   }
 
+  getUrl(link?: Link): string | undefined;
+  getUrl(path: string): string;
   getUrl(link?: Link | string) {
-    return this.linkFactory.create(link as any || { ...this.model._links.site, type: TYPE_LINK_INTERNAL });
+    return this.linkFactory.create(link as Link ?? { ...this.model._links.site, type: TYPE_LINK_INTERNAL });
   }
 
   getVersion() {
