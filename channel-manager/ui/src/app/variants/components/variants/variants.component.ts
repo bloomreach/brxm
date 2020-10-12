@@ -34,6 +34,8 @@ import { SegmentsDialogComponent } from '../segments-dialog/segments-dialog.comp
 export class VariantsComponent implements OnInit {
   private readonly component = this.componentEditorService.getComponent();
   private readonly componentId = this.component.getId();
+
+  dirty = false;
   variants: Variant[] = [];
   currentVariant?: Variant;
   variantSelect = new FormControl();
@@ -106,7 +108,7 @@ export class VariantsComponent implements OnInit {
       this.currentVariant.expressions = this.currentVariant.expressions.filter(exp => exp.id !== expression.id);
     }
 
-    this.variantUpdated.emit({ variant: this.currentVariant });
+    this.onChange();
   }
 
   async addSegment(): Promise<void> {
@@ -122,7 +124,7 @@ export class VariantsComponent implements OnInit {
             type: VariantExpressionType.Persona,
           });
 
-          this.variantUpdated.emit({ variant: this.currentVariant });
+          this.onChange();
         }
 
         this.cmsService.publish('remove-mask');
@@ -132,6 +134,15 @@ export class VariantsComponent implements OnInit {
   hasSelectedSegment(): boolean | undefined {
     return this.currentVariant?.expressions
       .some(exp => exp.type === VariantExpressionType.Persona);
+  }
+
+  isVariantDirty(variant: Variant): boolean {
+    return this.dirty && this.currentVariant?.id === variant.id;
+  }
+
+  private onChange(): void {
+    this.dirty = true;
+    this.variantUpdated.emit({ variant: this.currentVariant });
   }
 
   private resetToStateParamsVariant(): void {
