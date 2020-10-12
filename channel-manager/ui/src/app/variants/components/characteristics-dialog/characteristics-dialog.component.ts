@@ -19,7 +19,20 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
 
 import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1service';
-import { Characteristic } from '../../models/characteristic.model';
+import { Characteristic, TargetGroup } from '../../models/characteristic.model';
+
+function compareString(a: string, b: string): -1 | 0 | 1 {
+  const strA = a.toUpperCase();
+  const strB = b.toUpperCase();
+  if (strA < strB) {
+    return -1;
+  }
+  if (strA > strB) {
+    return 1;
+  }
+
+  return 0;
+}
 
 @Component({
   selector: 'em-characteristics-dialog',
@@ -30,7 +43,10 @@ export class CharacteristicsDialogComponent implements OnInit {
   characteristics?: Characteristic[];
 
   @ViewChild('characteristicsList')
-  selectionList?: MatSelectionList;
+  characteristicsList?: MatSelectionList;
+
+  @ViewChild('targetGroupsList')
+  targetGroupsList?: MatSelectionList;
 
   constructor(
       @Inject(NG1_TARGETING_SERVICE) private readonly targetingService: Ng1TargetingService,
@@ -40,14 +56,59 @@ export class CharacteristicsDialogComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     const { data } = await this.targetingService.getCharacteristics();
     this.characteristics = data;
+
+    this.characteristics.forEach((c: Characteristic) => c.targetGroups.sort((a, b) => compareString(a.name, b.name)));
   }
 
-  selectCharacteristic(): void {
-    const selected = this.selectionList?.selectedOptions.selected[0].value;
-    this.dialogRef.close(selected);
+  addSelection(): void {
+    this.dialogRef.close({
+      characteristic: this.getSelectedCharacteristic(),
+      targetGroup: this.getSelectedTargetGroup(),
+     });
   }
 
-  hasSelection(): boolean | undefined {
-    return this.selectionList?.selectedOptions.hasValue();
+  hasSelectedCharacteristic(): boolean {
+    return this.characteristicsList?.selectedOptions.hasValue() === true;
+  }
+
+  getSelectedCharacteristic(): Characteristic | undefined {
+    return this.characteristicsList?.selectedOptions.selected[0].value;
+  }
+
+  hasSelectedTargetGroup(): boolean {
+    return this.targetGroupsList?.selectedOptions.hasValue() === true;
+  }
+
+  getSelectedTargetGroup(): TargetGroup | undefined {
+    return this.targetGroupsList?.selectedOptions.selected[0].value;
+  }
+
+  getCharacteristicIcon(characteristic: Characteristic): string {
+    switch (characteristic.id) {
+      case 'city':
+      case 'country':
+      case 'continent':
+        return 'web';
+      case 'dayofweek':
+        return 'calendar-today';
+      case 'documenttypes':
+        return 'chart-pie';
+      case 'groups':
+        return 'account-circle-outline';
+      case 'pageviews':
+        return 'home-outline';
+      case 'referrer':
+        return 'exit-to-app';
+      case 'returningvisitor':
+        return 'face-outline';
+      case 'tracking':
+        return 'cookie-outline';
+      default:
+        return '';
+    }
+  }
+
+  getTargetGroupProperties(targetGroup: TargetGroup): string {
+    return targetGroup.properties.map(p => p.name).join(', ');
   }
 }

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
@@ -24,6 +25,17 @@ import { NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1servic
 import { CharacteristicsDialogComponent } from './characteristics-dialog.component';
 
 describe('SegmentsDialogComponent', () => {
+
+  @Component({
+    // tslint:disable-next-line:component-selector
+    selector: 'mat-icon',
+    template: '{{ svgIcon }}',
+  })
+  class MatIconMockComponent {
+    @Input()
+    svgIcon!: string;
+  }
+
   let component: CharacteristicsDialogComponent;
   let fixture: ComponentFixture<CharacteristicsDialogComponent>;
 
@@ -37,7 +49,10 @@ describe('SegmentsDialogComponent', () => {
         MatListModule,
         TranslateModule.forRoot(),
       ],
-      declarations: [ CharacteristicsDialogComponent ],
+      declarations: [
+        CharacteristicsDialogComponent,
+        MatIconMockComponent,
+      ],
       providers: [
         { provide: NG1_TARGETING_SERVICE, useValue: targetingServiceMock },
         { provide: MatDialogRef, useValue: matDialogRefMock },
