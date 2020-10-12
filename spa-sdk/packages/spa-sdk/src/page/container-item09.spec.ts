@@ -35,7 +35,7 @@ const model = {
 } as ContainerItemModel;
 
 function createContainerItem(containerItemModel = model) {
-  return new ContainerItemImpl(containerItemModel, eventBus, metaFactory, urlBuilder);
+  return new ContainerItemImpl(containerItemModel, metaFactory, urlBuilder, eventBus);
 }
 
 beforeEach(() => {

@@ -50,7 +50,10 @@ import { UrlBuilderService, UrlBuilder } from '../url';
 
 export function PageModule() {
   return new ContainerModule((bind) => {
-    bind(EventBusService).toConstantValue(new Typed());
+    bind(EventBusService)
+      .toDynamicValue(() => new Typed())
+      .inSingletonScope()
+      .when(() => typeof window !== 'undefined');
     bind(LinkRewriterService).to(LinkRewriterImpl).inSingletonScope();
     bind(DomParserService).toConstantValue(new DOMParser());
     bind(XmlSerializerService).toConstantValue(new XMLSerializer());
