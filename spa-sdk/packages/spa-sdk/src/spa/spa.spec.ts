@@ -64,7 +64,7 @@ describe('Spa', () => {
 
     spyOn(cmsEventBus, 'on').and.callThrough();
     pageFactory.mockReturnValue(page);
-    spa = new Spa(cmsEventBus, eventBus, api, pageFactory);
+    spa = new Spa(eventBus, api, pageFactory, cmsEventBus);
   });
 
   describe('initialize', () => {

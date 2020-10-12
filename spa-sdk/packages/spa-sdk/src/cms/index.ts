@@ -24,7 +24,10 @@ import { RpcClientService, RpcServerService } from './rpc';
 
 export function CmsModule() {
   return new ContainerModule((bind) => {
-    bind(EventBusService).toConstantValue(new Typed());
+    bind(EventBusService)
+      .toDynamicValue(() => new Typed())
+      .inSingletonScope()
+      .when(() => typeof window !== 'undefined');
     bind(PostMessageService).to(PostMessage).inSingletonScope();
     bind(RpcClientService).toService(PostMessageService);
     bind(RpcServerService).toService(PostMessageService);
