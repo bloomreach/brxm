@@ -15,32 +15,12 @@
  */
 
 import { Typed } from 'emittery';
-import { ContainerModule } from 'inversify';
-import { PageModel } from './page';
-
-export const EventBusService = Symbol.for('EventBusService');
+import { PageModel } from './page09';
 
 export type EventBus = Typed<Events>;
 
 export interface Events {
-  'cms.update': CmsUpdateEvent;
   'page.update': PageUpdateEvent;
-  'page.ready': PageReadyEvent;
-}
-
-/**
- * Channel Manager component update event.
- */
-export interface CmsUpdateEvent {
-  /**
-   * Component's id.
-   */
-  id: string;
-
-  /**
-   * Updated component's properties.
-   */
-  properties: object;
 }
 
 /**
@@ -51,15 +31,4 @@ export interface PageUpdateEvent {
    * Updated part of the page model.
    */
   page: PageModel;
-}
-
-/**
- * SPA page rendered event.
- */
-export interface PageReadyEvent {}
-
-export function EventsModule() {
-  return new ContainerModule((bind) => {
-    bind(EventBusService).toConstantValue(new Typed<Events>());
-  });
 }

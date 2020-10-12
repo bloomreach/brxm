@@ -15,7 +15,7 @@
  */
 
 import { injectable, inject } from 'inversify';
-import { EventBusService, EventBus } from '../events';
+import { EventBusService, EventBus } from './events';
 import { CmsOptions, Cms } from './cms';
 
 const GLOBAL_WINDOW = typeof window === 'undefined' ? undefined : window;

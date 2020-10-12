@@ -15,7 +15,7 @@
  */
 
 import { Typed } from 'emittery';
-import { EventBus, Events } from '../events';
+import { EventBus, Events } from './events';
 import { CmsImpl } from './cms';
 import { RpcClient, RpcServer } from './rpc';
 

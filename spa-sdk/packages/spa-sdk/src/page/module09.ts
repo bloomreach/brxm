@@ -16,6 +16,7 @@
 
 import { ContainerModule } from 'inversify';
 import { DOMParser, XMLSerializer } from 'xmldom';
+import { Typed } from 'emittery';
 
 import { ComponentFactory } from './component-factory09';
 import { ComponentImpl, TYPE_COMPONENT, TYPE_COMPONENT_CONTAINER, TYPE_COMPONENT_CONTAINER_ITEM } from './component09';
@@ -25,6 +26,7 @@ import { ContainerItemImpl } from './container-item09';
 import { ContentFactory } from './content-factory09';
 import { ContentImpl, ContentModelToken, ContentModel } from './content09';
 import { DomParserService, LinkRewriterImpl, LinkRewriterService, XmlSerializerService } from './link-rewriter';
+import { EventBusService } from './events';
 import { LinkFactory } from './link-factory';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionImpl, MetaCollectionModelToken, MetaCollectionModel } from './meta-collection';
@@ -39,6 +41,7 @@ import { UrlBuilderService, UrlBuilder } from '../url';
 
 export function PageModule() {
   return new ContainerModule((bind) => {
+    bind(EventBusService).toConstantValue(new Typed());
     bind(LinkRewriterService).to(LinkRewriterImpl).inSingletonScope();
     bind(DomParserService).toConstantValue(new DOMParser());
     bind(XmlSerializerService).toConstantValue(new XMLSerializer());
