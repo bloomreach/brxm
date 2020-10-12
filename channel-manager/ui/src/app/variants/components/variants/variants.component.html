@@ -66,8 +66,8 @@
 
       <div class="variant-expressions-list-item"
            *ngFor="let expression of currentVariant?.expressions; let last = last;">
-        <span *ngIf="expression.type == 'persona'">
-          {{ 'EXPRESSION_SEGMENT' | translate: { segmentName: expression.name } }}
+        <span>
+          {{ getExpressionTranslation(expression) | translate: { name: expression.name } }}
           {{ last ? '' : ('EXPRESSION_AND' | translate) }}
         </span>
 
