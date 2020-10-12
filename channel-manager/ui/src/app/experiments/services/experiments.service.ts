@@ -31,7 +31,7 @@ export class ExperimentsService {
   async getExperiment(componentId: string): Promise<ExperimentWithStatusData | undefined> {
     const response = await this.ng1TargetingService.getExperiment(componentId);
 
-    if (!response.success || !response.data) {
+    if (!response.success) {
       return;
     }
 
@@ -53,7 +53,7 @@ export class ExperimentsService {
   async getExperimentStatus(experimentId: string): Promise<ExperimentStatusWithVisits  | undefined> {
     const response = await this.ng1TargetingService.getExperimentStatus(experimentId);
 
-    if (!response.success || !response.data) {
+    if (!response.success) {
       return;
     }
 
@@ -80,7 +80,7 @@ export class ExperimentsService {
   async getGoals(): Promise<ExperimentGoal[]> {
     const response = await this.ng1TargetingService.getGoals();
 
-    if (!response.success || !response.data) {
+    if (!response.success) {
       return [];
     }
 
@@ -91,7 +91,7 @@ export class ExperimentsService {
     const result = await this.ng1TargetingService.saveExperiment(componentId, variantId, goalId);
 
     if (!result.success) {
-      throw new Error(result.message || undefined);
+      throw new Error(result.message);
     }
   }
 
