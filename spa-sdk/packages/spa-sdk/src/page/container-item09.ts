@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { inject, injectable } from 'inversify';
+import { inject, injectable, optional } from 'inversify';
 import {
   ComponentImpl,
   ComponentModel,
@@ -48,13 +48,13 @@ export class ContainerItemImpl
 {
   constructor(
     @inject(ComponentModelToken) protected model: ContainerItemModel,
-    @inject(EventBusService) eventBus: EventBus,
     @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
     @inject(UrlBuilderService) urlBuilder: UrlBuilder,
+    @inject(EventBusService) @optional() eventBus?: EventBus,
   ) {
     super(model, [], metaFactory, urlBuilder);
 
-    eventBus.on('page.update', this.onPageUpdate.bind(this));
+    eventBus?.on('page.update', this.onPageUpdate.bind(this));
   }
 
   protected onPageUpdate(event: PageUpdateEvent) {
