@@ -19,19 +19,25 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
 
 import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1service';
-import { Characteristic, TargetGroup } from '../../models/characteristic.model';
+import { Characteristic, TargetGroup, TargetGroupProperty } from '../../models/characteristic.model';
 
-function compareString(a: string, b: string): -1 | 0 | 1 {
-  const strA = a.toUpperCase();
-  const strB = b.toUpperCase();
-  if (strA < strB) {
-    return -1;
-  }
-  if (strA > strB) {
-    return 1;
-  }
+function defaultTargetGroupSort(a: TargetGroup, b: TargetGroup): number {
+  return a.name.localeCompare(b.name, undefined, { sensitivity: 'accent' });
+}
 
-  return 0;
+function sortableDayOfWeek(targetGroup: TargetGroup): number {
+  return targetGroup.properties
+    .map((property: TargetGroupProperty) => parseInt(property.name, 10))
+    .map((propertyNameAsNumber: number, index: number) => propertyNameAsNumber + (index * 10))
+    .reduce((a: number, b: number) => a + b, 0);
+}
+
+function lookup(ar: any[], value: string, prop = 'value'): string {
+  const target = ar.find(p => p[prop] === value);
+  if (!target) {
+    throw new Error(`Property "${prop}" with value "${value}" was not found in ${ar}`);
+  }
+  return target.name;
 }
 
 @Component({
@@ -55,9 +61,7 @@ export class CharacteristicsDialogComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     const { data } = await this.targetingService.getCharacteristics();
-    this.characteristics = data;
-
-    this.characteristics.forEach((c: Characteristic) => c.targetGroups.sort((a, b) => compareString(a.name, b.name)));
+    this.characteristics = this.parseCharacteristics(data);
   }
 
   addSelection(): void {
@@ -110,5 +114,81 @@ export class CharacteristicsDialogComponent implements OnInit {
 
   getPropertiesAsString(properties: TargetGroupProperty[]): string {
     return properties.map(p => p.value || p.name).join(', ');
+  }
+
+  private parseCharacteristics(characteristics: Characteristic[]): Characteristic[] {
+    if (!characteristics) {
+      return [];
+    }
+
+    characteristics.forEach((c: Characteristic) => {
+      if (c.id === 'dayofweek') {
+        this.parseDayOfWeek(c);
+      } else if (c.id === 'continent') {
+        this.parseContinent(c);
+      } else if (c.id === 'documenttypes') {
+        this.parseDocumentTypes(c);
+      } else if (c.id === 'groups') {
+        this.parseGroups(c);
+      } else if (c.id === 'referrer') {
+        this.parseReferrer(c);
+      } else if (c.id === 'returningvisitor') {
+        this.parseChoices(c);
+      } else if (c.id === 'tracking') {
+        this.parseChoices(c);
+      }
+    });
+
+    return characteristics;
+  }
+
+  private parseContinent(characteristic: Characteristic): void {
+    const { continentsMap } = this.targetingService.getCharacteristicConfig(characteristic.id);
+    this.parseProperties(characteristic, ({ name }) => continentsMap[name]);
+  }
+
+  private parseDayOfWeek(characteristic: Characteristic): void {
+    const { daysOfWeek } = this.targetingService.getCharacteristicConfig(characteristic.id);
+    this.parseProperties(
+      characteristic,
+      ({ name }) => lookup(daysOfWeek, name, 'index'),
+      (a: TargetGroup, b: TargetGroup): number => sortableDayOfWeek(a) - sortableDayOfWeek(b),
+    );
+  }
+
+  private parseDocumentTypes(characteristic: Characteristic): void {
+    const { documentTypes } = this.targetingService.getCharacteristicConfig(characteristic.id);
+    this.parseProperties(characteristic, ({ name }) => lookup(documentTypes, name, 'type'));
+  }
+
+  private parseGroups(characteristic: Characteristic): void {
+    const { groups } = this.targetingService.getCharacteristicConfig(characteristic.id);
+    this.parseProperties(characteristic, ({ name }) => lookup(groups, name));
+  }
+
+  private parseReferrer(characteristic: Characteristic): void {
+    const { renderedValuesPrefix } = this.targetingService.getCharacteristicConfig(characteristic.id);
+    this.parseProperties(characteristic, ({ name }) => `${renderedValuesPrefix}${name}`);
+  }
+
+  private parseChoices(characteristic: Characteristic): void {
+    const { choices } = this.targetingService.getCharacteristicConfig(characteristic.id);
+    this.parseProperties(characteristic, ({ name }) => {
+      const choice = lookup(choices, name);
+      return `${choice.charAt(0).toUpperCase()}${choice.substr(1)}`;
+    });
+  }
+
+  private parseProperties(
+    characteristic: Characteristic,
+    valueFn: (property: TargetGroupProperty) => string,
+    sortFn = defaultTargetGroupSort,
+  ): void {
+    characteristic.targetGroups
+      .sort(sortFn)
+      .flatMap((targetGroup: TargetGroup) => targetGroup.properties)
+      .forEach((property: TargetGroupProperty) => {
+        property.value = valueFn(property);
+      });
   }
 }
