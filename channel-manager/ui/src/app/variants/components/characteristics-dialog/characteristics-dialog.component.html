@@ -76,7 +76,7 @@
                              [value]="targetGroup"
                              class="text-text">
               <span>{{ targetGroup.name }}</span>
-              <span>{{ getTargetGroupProperties(targetGroup) }}</span>
+              <span>{{ getPropertiesAsString(targetGroup.properties) }}</span>
             </mat-list-option>
           </mat-selection-list>
         </div>

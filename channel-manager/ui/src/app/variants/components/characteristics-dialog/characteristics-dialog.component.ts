@@ -108,7 +108,7 @@ export class CharacteristicsDialogComponent implements OnInit {
     }
   }
 
-  getTargetGroupProperties(targetGroup: TargetGroup): string {
-    return targetGroup.properties.map(p => p.name).join(', ');
+  getPropertiesAsString(properties: TargetGroupProperty[]): string {
+    return properties.map(p => p.value || p.name).join(', ');
   }
 }
