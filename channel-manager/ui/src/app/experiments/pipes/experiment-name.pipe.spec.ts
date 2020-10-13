@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { VariantsService } from '../../variants/services/variants.service';
 import { Experiment } from '../models/experiment.model';
 
 import { ExperimentNamePipe } from './experiment-name.pipe';
@@ -22,7 +23,9 @@ describe('ExperimentNamePipe', () => {
   let pipe: ExperimentNamePipe;
 
   beforeEach(() => {
-    pipe = new ExperimentNamePipe();
+    const variantsService = new VariantsService({} as any);
+
+    pipe = new ExperimentNamePipe(variantsService);
   });
 
   it('should return an empty string if the provided experiment is undefined', () => {
@@ -54,9 +57,9 @@ describe('ExperimentNamePipe', () => {
   it('should group the same segment and characteristic variant names', () => {
     const experiment = {
       variants: [
-        { variantName: 'Some variant name-A' },
-        { variantName: 'Some variant name-B' },
-        { variantName: 'Some variant name-C' },
+        { variantId: 'variant-a', variantName: 'Some variant name-A' },
+        { variantId: 'variant-b', variantName: 'Some variant name-B' },
+        { variantId: 'variant-c', variantName: 'Some variant name-C' },
       ],
     } as Experiment;
 
@@ -68,8 +71,8 @@ describe('ExperimentNamePipe', () => {
   it('should return the variant name compared against the default variant', () => {
     const experiment = {
       variants: [
-        { variantName: 'Default' },
-        { variantName: 'Some variant name' },
+        { variantId: 'hippo-default', variantName: 'Default' },
+        { variantId: 'variant-1', variantName: 'Some variant name' },
       ],
     } as Experiment;
 
