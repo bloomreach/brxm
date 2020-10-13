@@ -79,4 +79,8 @@ $mat-dialog-spacing: 24px;
 .mat-list-single-selected-option {
   background-color: map-get($blue, 50) !important;
   font-weight: 600;
+
+  &.icon-text .mat-list-text mat-icon {
+    color: map-get($text-color, dark);
+  }
 }
