@@ -32,7 +32,7 @@
                 [(value)]="selectedVariant"
                 [disabled]="disabled">
       <mat-option *ngFor="let variant of groupedVariants"
-                  class="{{ 'qa-variant-select-option-' + variant.ids.join('-') }}"
+                  class="{{ 'qa-variant-select-option-' + variant.id }}"
                   [value]="variant">
         {{ variant.name }}
       </mat-option>
