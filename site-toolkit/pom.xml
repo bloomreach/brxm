@@ -59,7 +59,7 @@
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
 
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <easymock.version>4.0.2</easymock.version>
     <assertj.version>3.8.0</assertj.version>
     <!-- Make sure that powermock and easymock are compatible -->

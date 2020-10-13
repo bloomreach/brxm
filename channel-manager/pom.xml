@@ -50,7 +50,7 @@
     <yuicompressor.plugin.version>1.3.0</yuicompressor.plugin.version>
 
     <!-- test related -->
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <easymock.version>3.4</easymock.version>
     <!-- Make sure that powermock and easymock are compatible -->
     <powermock.version>1.6.5</powermock.version>
