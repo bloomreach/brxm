@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { NO_ERRORS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { mocked } from 'ts-jest/utils';
@@ -24,9 +24,17 @@ import { NotificationService } from '../../../services/notification.service';
 import { VariantsService } from '../../../variants/services/variants.service';
 import { ExperimentState } from '../../models/experiment-state.enum';
 import { ExperimentWithStatusData } from '../../models/experiment-with-status-data.model';
+import { Experiment } from '../../models/experiment.model';
 import { ExperimentsService } from '../../services/experiments.service';
 
 import { ExperimentComponent } from './experiment.component';
+
+@Pipe({name: 'translate'})
+export class TranslateMockPipe implements PipeTransform {
+  transform(value: string): string {
+    return value;
+  }
+}
 
 describe('ExperimentComponent', () => {
   let experimentsService: ExperimentsService;
@@ -125,9 +133,11 @@ describe('ExperimentComponent', () => {
       getExperiment: jest.fn(() => Promise.resolve(mockExperiment)),
       getGoals: jest.fn().mockResolvedValue(mockGoals),
       saveExperiment: jest.fn(),
+      completeExperiment: jest.fn(),
     };
 
     const variantsServiceMock = {
+      defaultVariantId: 'hippo-default',
       getVariants: jest.fn().mockResolvedValue(mockVariants),
     };
 
@@ -143,6 +153,7 @@ describe('ExperimentComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         ExperimentComponent,
+        TranslateMockPipe,
       ],
       providers: [
         { provide: NG1_COMPONENT_EDITOR_SERVICE, useValue: componentEditorServiceMock },
@@ -217,6 +228,50 @@ describe('ExperimentComponent', () => {
         await component.onVariantAndGoalSelected(variantAndGoal);
 
         expect(notificationService.showErrorNotification).toHaveBeenCalledWith('EXPERIMENT_SAVE_ERROR');
+      });
+    });
+
+    describe('onCompleteExperiment', () => {
+      const experiment = {
+        variants: [
+          { variantId: 'variant-1' },
+          { variantId: 'hippo-default' },
+        ],
+      } as Experiment;
+
+      it('should complete the experiment', () => {
+        component.onCompleteExperiment(experiment);
+
+        expect(experimentsService.completeExperiment).toHaveBeenCalledWith('mockComponentId', 'variant-1');
+      });
+
+      it('should load the completed experiment', async () => {
+        const mockSavedExperiment = { ...mockExperiment , state: ExperimentState.Created };
+
+        mocked(experimentsService.completeExperiment).mockResolvedValue();
+        mocked(experimentsService.getExperiment).mockResolvedValue(mockSavedExperiment);
+
+        await component.onCompleteExperiment(experiment);
+        const savedExperiment = await component.experiment$;
+
+        expect(experimentsService.getExperiment).toHaveBeenCalledWith('mockComponentId');
+        expect(savedExperiment).toBe(mockSavedExperiment);
+      });
+
+      it('should show a notification after successful completion', async () => {
+        mocked(experimentsService.completeExperiment).mockResolvedValue();
+
+        await component.onCompleteExperiment(experiment);
+
+        expect(notificationService.showNotification).toHaveBeenCalledWith('EXPERIMENT_COMPLETED');
+      });
+
+      it('should show an error notification after unsuccessful completion', async () => {
+        mocked(experimentsService.completeExperiment).mockRejectedValue(new Error());
+
+        await component.onCompleteExperiment(experiment);
+
+        expect(notificationService.showErrorNotification).toHaveBeenCalledWith('EXPERIMENT_COMPLETION_ERROR');
       });
     });
 

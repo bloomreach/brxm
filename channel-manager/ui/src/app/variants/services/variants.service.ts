@@ -26,6 +26,8 @@ const DEFAULT_VARIANT_ID = 'hippo-default';
   providedIn: 'root',
 })
 export class VariantsService {
+  readonly defaultVariantId = DEFAULT_VARIANT_ID;
+
   constructor(
     @Inject(NG1_TARGETING_SERVICE) private readonly targetingService: Ng1TargetingService,
   ) {}
