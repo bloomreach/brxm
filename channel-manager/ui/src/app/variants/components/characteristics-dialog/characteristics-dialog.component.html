@@ -35,6 +35,7 @@
         </div>
         <div class="step-content">
           <mat-selection-list color="primary"
+                              class="mat-list-option-horizontal"
                               #characteristicsList
                               [multiple]="false">
             <mat-list-option *ngFor="let characteristic of characteristics"
@@ -69,6 +70,7 @@
           </div>
 
           <mat-selection-list color="primary"
+                              class="mat-list-option-horizontal"
                               #targetGroupsList
                               *ngIf="hasSelectedCharacteristic()"
                               [multiple]="false">
