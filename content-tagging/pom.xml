@@ -40,7 +40,7 @@
     <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
 
     <json-lib.version>2.4</json-lib.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
   </properties>
 
   <repositories>
