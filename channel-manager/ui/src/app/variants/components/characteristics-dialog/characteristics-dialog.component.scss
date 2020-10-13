@@ -80,3 +80,9 @@ mat-list-option {
   border-radius: 4px;
   overflow: hidden;
 }
+
+.no-wrap-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

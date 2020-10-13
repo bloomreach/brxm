@@ -18,6 +18,7 @@ import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1service';
@@ -47,6 +48,7 @@ describe('SegmentsDialogComponent', () => {
       imports: [
         MatDialogModule,
         MatListModule,
+        MatTooltipModule,
         TranslateModule.forRoot(),
       ],
       declarations: [
