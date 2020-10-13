@@ -18,6 +18,20 @@ exports[`ExperimentComponent if experiment was not saved should show the experim
       />
       <em-experiment-status-chart />
     </div>
+    
+    
+    <mat-divider />
+    <div
+      class="actions"
+    >
+      <button
+        class="save-button"
+        color="primary"
+        mat-stroked-button=""
+      >
+         COMPLETE_EXPERIMENT 
+      </button>
+    </div>
   </div>
   
 </div>
@@ -25,7 +39,7 @@ exports[`ExperimentComponent if experiment was not saved should show the experim
 
 exports[`ExperimentComponent if experiment was saved should show the experiment 1`] = `
 <div
-  id="root8"
+  id="root12"
 >
   
   <div
@@ -40,6 +54,20 @@ exports[`ExperimentComponent if experiment was saved should show the experiment 
         class="qa-experiment-status-message"
       />
       <em-experiment-status-chart />
+    </div>
+    
+    
+    <mat-divider />
+    <div
+      class="actions"
+    >
+      <button
+        class="save-button"
+        color="primary"
+        mat-stroked-button=""
+      >
+         COMPLETE_EXPERIMENT 
+      </button>
     </div>
   </div>
   

@@ -24,6 +24,19 @@
     </em-experiment-status-message>
     <em-experiment-status-chart [experiment]="experiment"></em-experiment-status-chart>
   </div>
+
+  <ng-container *ngIf="isExperimentRunning(experiment)">
+    <mat-divider></mat-divider>
+
+    <div class="actions">
+      <button mat-stroked-button
+              color="primary"
+              (click)="onCompleteExperiment(experiment)"
+              class="save-button">
+        {{ 'COMPLETE_EXPERIMENT' | translate }}
+      </button>
+    </div>
+  </ng-container>
 </div>
 
 <ng-template #startExperimentForm>

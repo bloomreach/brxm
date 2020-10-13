@@ -16,7 +16,14 @@
 
 @import '~@bloomreach/frontend-theme/sizes';
 
+.experiment {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .experiment-status-wrapper {
+  flex: 1 1 0;
   padding: $br-size;
 
   em-experiment-status-chart {
@@ -27,4 +34,9 @@
 em-experiment-start-form,
 .experiment {
   flex: 1 1 0;
+}
+
+.actions {
+  padding: $br-size-m $br-size;
+  text-align: right;
 }

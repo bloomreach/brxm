@@ -28,7 +28,11 @@ export class ExperimentInfoComponent {
   @Input()
   experiment!: Experiment;
 
-  get isExperimentInCreatedState(): boolean {
+  get isExperimentCreated(): boolean {
     return this.experiment.state === ExperimentState.Created;
+  }
+
+  get isExperimentCompleted(): boolean {
+    return this.experiment.state === ExperimentState.Completed;
   }
 }

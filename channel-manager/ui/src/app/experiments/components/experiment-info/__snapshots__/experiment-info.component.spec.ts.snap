@@ -5,6 +5,11 @@ exports[`ExperimentInfoComponent COMPLETED experiment should be shown 1`] = `
   id="root2"
 >
   
+  
+  <em-experiment-info-bar>
+     EXPERIMENT_LABEL_COMPLETED. EXPERIMENT_PUBLISH_TO_FINISH
+
+  </em-experiment-info-bar>
   <mat-list
     class="small-list"
     role="list"
@@ -87,6 +92,7 @@ exports[`ExperimentInfoComponent CREATED experiment should be shown 1`] = `
      EXPERIMENT_INFO_PUBLISH_TO_START
 
   </em-experiment-info-bar>
+  
   <mat-list
     class="small-list"
     role="list"
@@ -151,6 +157,7 @@ exports[`ExperimentInfoComponent RUNNING experiment should be shown 1`] = `
 <div
   id="root1"
 >
+  
   
   <mat-list
     class="small-list"
@@ -229,6 +236,7 @@ exports[`ExperimentInfoComponent UNKNOWN experiment should be shown 1`] = `
 <div
   id="root3"
 >
+  
   
   <mat-list
     class="small-list"
