@@ -20,12 +20,12 @@ import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/t
 import { GroupedVariant } from '../models/grouped-variant.model';
 import { Variant } from '../models/variant.model';
 
+const DEFAULT_VARIANT_ID = 'hippo-default';
+
 @Injectable({
   providedIn: 'root',
 })
 export class VariantsService {
-  readonly defaultVariantId = 'hippo-default';
-
   constructor(
     @Inject(NG1_TARGETING_SERVICE) private readonly targetingService: Ng1TargetingService,
   ) {}
@@ -45,7 +45,7 @@ export class VariantsService {
     return response.data;
   }
 
-  groupVariants(variants: Variant[]): GroupedVariant[] {
+  groupVariants(variants: { id: string, name: string }[]): GroupedVariant[] {
     const suffixedVariantRegEx = /(.*)-[A-Z]$/;
     const groupedVariants = new Map<string, GroupedVariant>();
 
@@ -54,10 +54,10 @@ export class VariantsService {
     };
 
     for (const variant of variants) {
-      const match = variant.variantName.match(suffixedVariantRegEx);
+      const match = variant.name.match(suffixedVariantRegEx);
 
       if (!match) {
-        addGroupedVariant(variant.id, variant.variantName);
+        addGroupedVariant(variant.id, variant.name);
 
         continue;
       }
@@ -72,6 +72,12 @@ export class VariantsService {
       }
     }
 
-    return [...groupedVariants.values()];
+    return [...groupedVariants.values()]
+      .filter(v => v.id !== DEFAULT_VARIANT_ID || v.numberOfVariants !== 1)
+      .map(v => ({
+        id: v.id,
+        name: v.numberOfVariants > 1 ? `${v.name} (${v.numberOfVariants} variants)` : v.name,
+        numberOfVariants: v.numberOfVariants,
+      }));
   }
 }

@@ -68,8 +68,7 @@ export class ExperimentStartFormComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('variants' in changes && this.variants) {
-      const variantsWithoutDefault = this.filterOutDefault(this.variants);
-      this.groupedVariants = this.groupVariants(variantsWithoutDefault);
+      this.groupedVariants = this.groupVariants(this.variants);
 
       this.selectedVariant = this.selectedVariant || this.defaultGroupedVariant;
     }
@@ -95,11 +94,9 @@ export class ExperimentStartFormComponent implements OnChanges {
     this.selectedGoalId = undefined;
   }
 
-  private filterOutDefault(variants: Variant[]): Variant[] {
-    return variants.filter(v => !v.id.includes('default'));
-  }
-
   private groupVariants(variants: Variant[]): GroupedVariant[] {
-    return this.variantsService.groupVariants(variants).filter(v => v.id !== this.variantsService.defaultVariantId);
+    const preparedVariants = variants.map(v => ({ id: v.id, name: v.variantName }));
+
+    return this.variantsService.groupVariants(preparedVariants);
   }
 }

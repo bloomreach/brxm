@@ -1,16 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ExperimentInfoBarComponent if a goal is selected should be shown 1`] = `
+exports[`ExperimentStartFormComponent if a goal is selected should be shown 1`] = `
 <div
   id="root4"
 >
   
   
   
-  <em-experiment-info-bar>
-     EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED 
-  </em-experiment-info-bar>
   
+  <em-experiment-info-bar>
+     EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED 
+  </em-experiment-info-bar>
   
   <div
     class="form-wrapper"
@@ -81,7 +81,7 @@ exports[`ExperimentInfoBarComponent if a goal is selected should be shown 1`] = 
                   >
                     
                     <span>
-                      Variant 1
+                      Variant (2 variants)
                     </span>
                     
                   </span>
@@ -303,17 +303,17 @@ exports[`ExperimentInfoBarComponent if a goal is selected should be shown 1`] = 
 </div>
 `;
 
-exports[`ExperimentInfoBarComponent should be shown 1`] = `
+exports[`ExperimentStartFormComponent should be shown 1`] = `
 <div
   id="root0"
 >
   
   
   
-  <em-experiment-info-bar>
-     EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED 
-  </em-experiment-info-bar>
   
+  <em-experiment-info-bar>
+     EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED 
+  </em-experiment-info-bar>
   
   <div
     class="form-wrapper"
@@ -600,17 +600,17 @@ exports[`ExperimentInfoBarComponent should be shown 1`] = `
 </div>
 `;
 
-exports[`ExperimentInfoBarComponent should be shown in the disabled mode 1`] = `
+exports[`ExperimentStartFormComponent should be shown in the disabled mode 1`] = `
 <div
   id="root2"
 >
   
   
   
-  <em-experiment-info-bar>
-     EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED 
-  </em-experiment-info-bar>
   
+  <em-experiment-info-bar>
+     EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED 
+  </em-experiment-info-bar>
   
   <div
     class="form-wrapper"
@@ -681,7 +681,7 @@ exports[`ExperimentInfoBarComponent should be shown in the disabled mode 1`] = `
                   >
                     
                     <span>
-                      Variant 1
+                      Variant (2 variants)
                     </span>
                     
                   </span>
@@ -901,17 +901,17 @@ exports[`ExperimentInfoBarComponent should be shown in the disabled mode 1`] = `
 </div>
 `;
 
-exports[`ExperimentInfoBarComponent should be shown in the enabled mode 1`] = `
+exports[`ExperimentStartFormComponent should be shown in the enabled mode 1`] = `
 <div
   id="root1"
 >
   
   
   
-  <em-experiment-info-bar>
-     EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED 
-  </em-experiment-info-bar>
   
+  <em-experiment-info-bar>
+     EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED 
+  </em-experiment-info-bar>
   
   <div
     class="form-wrapper"
@@ -982,7 +982,7 @@ exports[`ExperimentInfoBarComponent should be shown in the enabled mode 1`] = `
                   >
                     
                     <span>
-                      Variant 1
+                      Variant (2 variants)
                     </span>
                     
                   </span>
