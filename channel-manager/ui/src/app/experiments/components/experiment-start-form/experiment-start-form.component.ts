@@ -16,17 +16,14 @@
 
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 
+import { GroupedVariant } from '../../../variants/models/grouped-variant.model';
 import { Variant } from '../../../variants/models/variant.model';
+import { VariantsService } from '../../../variants/services/variants.service';
 import { ExperimentGoal } from '../../models/experiment-goal.model';
 
 export interface SelectedVariantIdAndGoalId {
   variantId: string;
   goalId: string;
-}
-
-interface GroupedVariant {
-  ids: string[];
-  name: string;
 }
 
 @Component({
@@ -51,8 +48,10 @@ export class ExperimentStartFormComponent implements OnChanges {
   selectedVariant?: GroupedVariant;
   selectedGoalId: string | undefined;
 
+  constructor(private readonly variantsService: VariantsService) {}
+
   get againstDefault(): boolean {
-    return this.selectedVariant ? this.selectedVariant.ids.length === 1 : true;
+    return (this.selectedVariant?.numberOfVariants || 1) === 1;
   }
 
   get isDiscardButtonDisabled(): boolean {
@@ -86,7 +85,7 @@ export class ExperimentStartFormComponent implements OnChanges {
     }
 
     this.selected.emit({
-      variantId: this.selectedVariant.ids[0],
+      variantId: this.selectedVariant.id,
       goalId: this.selectedGoalId,
     });
   }
@@ -101,6 +100,6 @@ export class ExperimentStartFormComponent implements OnChanges {
   }
 
   private groupVariants(variants: Variant[]): GroupedVariant[] {
-    return variants.map(v => ({ ids: [v.id], name: v.variantName }));
+    return this.variantsService.groupVariants(variants).filter(v => v.id !== this.variantsService.defaultVariantId);
   }
 }
