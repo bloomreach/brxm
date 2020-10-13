@@ -39,7 +39,7 @@
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
 
     <asm.version>5.0.3</asm.version>
-    <junit.version>4.10</junit.version>
+    <junit.version>4.13.1</junit.version>
   </properties>
 
   <repositories>

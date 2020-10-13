@@ -62,7 +62,7 @@
 
     <spring-security-oauth2.version>2.3.7.RELEASE</spring-security-oauth2.version>
 
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <easymock.version>3.4</easymock.version>
 
   </properties>
