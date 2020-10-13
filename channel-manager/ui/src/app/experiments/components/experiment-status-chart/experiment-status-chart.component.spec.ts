@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ExperimentState } from '../../models/experiment-state.enum';
 import { ExperimentWithStatusData } from '../../models/experiment-with-status-data.model';
 
