@@ -60,6 +60,39 @@ class TargetingService {
 
     this._apiUrl = Targeting.HttpProxy.REST_URL || '/_targeting';
     this._collectors = Targeting.CollectorPlugins || {};
+    this._characteristicsConfig = Targeting.CharacteristicsConfig || {};
+  }
+
+  getCharacteristicConfig(id) {
+    const configKey = this._getCharacteristicConfigKey(id);
+    return this._characteristicsConfig[configKey] || null;
+  }
+
+  _getCharacteristicConfigKey(id) {
+    switch (id) {
+      case 'city':
+        return 'Hippo.Targeting.CityCharacteristicPlugin';
+      case 'country':
+        return 'Hippo.Targeting.CountryCharacteristicPlugin';
+      case 'continent':
+        return 'Hippo.Targeting.ContinentCharacteristicPlugin';
+      case 'dayofweek':
+        return 'Hippo.Targeting.DayOfWeekCharacteristicPlugin';
+      case 'documenttypes':
+        return 'Hippo.Targeting.DocumentTypeCharacteristicPlugin';
+      case 'groups':
+        return 'Hippo.Targeting.GroupsCharacteristicPlugin';
+      case 'pageviews':
+        return 'Hippo.Targeting.PageViewsCharacteristicPlugin';
+      case 'referrer':
+        return 'Hippo.Targeting.ReferrerCharacteristicPlugin';
+      case 'returningvisitor':
+        return 'Hippo.Targeting.ReturningVisitorCharacteristicPlugin';
+      case 'tracking':
+        return 'Hippo.Targeting.TrackingCookieCharacteristicPlugin';
+      default:
+        throw new Error(`Characteristic with id "${id}" is not supported`);
+    }
   }
 
   async getVariantIDs(containerItemId) {
