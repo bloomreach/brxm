@@ -51,7 +51,7 @@
 
     <!-- ant and junit versions are aligned with the versions which maven-antrun-plugin uses -->
     <ant.version>1.9.4</ant.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
 
     <docker.test.bootstrap.timeout>120000</docker.test.bootstrap.timeout>
     <maven.repo.local>${settings.localRepository}</maven.repo.local>

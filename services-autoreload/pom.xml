@@ -45,7 +45,7 @@
     <commons-lang.version>2.6</commons-lang.version>
     <easymock.version>3.0</easymock.version>
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
   </properties>
 
   <repositories>

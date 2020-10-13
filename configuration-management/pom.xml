@@ -48,7 +48,7 @@
     <lib.json.version>20160810</lib.json.version>
 
     <!-- Test dependencies  -->
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <joor.version>0.9.7</joor.version>
   </properties>
   

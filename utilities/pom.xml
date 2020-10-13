@@ -35,7 +35,7 @@
 
   <properties>
     <commons-lang.version>2.6</commons-lang.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <hippo.testutils.version>${hippo.release.version}</hippo.testutils.version>
   </properties>
 
