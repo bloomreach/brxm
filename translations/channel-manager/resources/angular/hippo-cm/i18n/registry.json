@@ -1658,6 +1658,46 @@
         "zh" : "UNRESOLVED",
         "es" : "UNRESOLVED"
       }
+    },
+    "EXPERIMENT_COMPLETION_ERROR" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "EXPERIMENT_COMPLETED" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "EXPERIMENT_PUBLISH_TO_FINISH" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "COMPLETE_EXPERIMENT" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }

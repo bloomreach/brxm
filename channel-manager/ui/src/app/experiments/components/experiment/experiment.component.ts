@@ -47,8 +47,12 @@ export class ExperimentComponent {
     private readonly translateService: TranslateService,
   ) {}
 
+  isExperimentRunning(experiment: Experiment): boolean {
+    return experiment.state === ExperimentState.Running;
+  }
+
   isExperimentRunningOrCompleted(experiment: Experiment): boolean {
-    return experiment.state === ExperimentState.Running || experiment.state === ExperimentState.Completed;
+    return this.isExperimentRunning(experiment) || experiment.state === ExperimentState.Completed;
   }
 
   async onVariantAndGoalSelected(value: SelectedVariantIdAndGoalId): Promise<void> {
@@ -64,6 +68,28 @@ export class ExperimentComponent {
       this.notificationService.showNotification(this.translateService.instant('EXPERIMENT_SAVED'));
     } catch (e) {
       this.notificationService.showErrorNotification(this.translateService.instant('EXPERIMENT_SAVE_ERROR'));
+    } finally {
+      this.requestInProgress = false;
+    }
+  }
+
+  async onCompleteExperiment(experiment: Experiment): Promise<void> {
+    const firstNonDefaultVariant = experiment.variants.find(v => v.variantId !== this.variantsService.defaultVariantId);
+
+    if (!firstNonDefaultVariant) {
+      throw new Error('Unable to find a non default variant');
+    }
+
+    try {
+      this.requestInProgress = true;
+
+      await this.experimentsService.completeExperiment(this.componentId, firstNonDefaultVariant.variantId);
+
+      this.experiment$ = this.experimentsService.getExperiment(this.componentId);
+
+      this.notificationService.showNotification(this.translateService.instant('EXPERIMENT_COMPLETED'));
+    } catch {
+      this.notificationService.showErrorNotification(this.translateService.instant('EXPERIMENT_COMPLETION_ERROR'));
     } finally {
       this.requestInProgress = false;
     }

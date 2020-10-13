@@ -95,6 +95,14 @@ export class ExperimentsService {
     }
   }
 
+  async completeExperiment(componentId: string, keepOnlyVariantId: string): Promise<void> {
+    const result = await this.ng1TargetingService.completeExperiment(componentId, keepOnlyVariantId);
+
+    if (!result.success) {
+      throw new Error(result.message);
+    }
+  }
+
   calculateVisitsPerTimestamp(point: ExperimentStatusAtTimestamp): number {
     return Object.keys(point).reduce((sum, key) => {
       return key !== 'timestamp' ? sum + point[key] : sum;
