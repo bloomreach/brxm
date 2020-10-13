@@ -41,6 +41,7 @@ export interface Ng1TargetingService {
   saveExperiment(componentId: string, goalId: string, variantId: string): Promise<TargetingApiResponse<string>>;
   completeExperiment(componentId: string, keepOnlyVariantId: string): Promise<TargetingApiResponse<void>>;
   getCharacteristics(): Promise<TargetingApiResponse<Characteristic[]>>;
+  getCharacteristicConfig(id: string): any | null;
 }
 
 export const NG1_TARGETING_SERVICE = new InjectionToken<Ng1TargetingService>('NG1_TARGETING_SERVICE');
