@@ -49,7 +49,7 @@
     <lib.json.version>20160810</lib.json.version>
 
     <!-- Test dependencies  -->
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
   </properties>
   
   <modules>
