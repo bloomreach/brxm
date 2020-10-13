@@ -44,8 +44,8 @@ describe('VariantsService', () => {
     [
       'one variant against default',
       [
-        { id: 'default', variantName: 'Default' },
-        { id: 'variant-1', variantName: 'Variant 1' },
+        { id: 'default', name: 'Default' },
+        { id: 'variant-1', name: 'Variant 1' },
       ] as Variant[],
       [
         { id: 'default', name: 'Default', numberOfVariants: 1 },
@@ -55,30 +55,30 @@ describe('VariantsService', () => {
     [
       'multiple defaults and one custom variant',
       [
-        { id: 'default-a', variantName: 'Default-A' },
-        { id: 'default-b', variantName: 'Default-B' },
-        { id: 'default-c', variantName: 'Default-C' },
-        { id: 'variant-1', variantName: 'Variant 1' },
+        { id: 'default-a', name: 'Default-A' },
+        { id: 'default-b', name: 'Default-B' },
+        { id: 'default-c', name: 'Default-C' },
+        { id: 'variant-1', name: 'Variant 1' },
       ] as Variant[],
       [
-        { id: 'default-a', name: 'Default', numberOfVariants: 3 },
+        { id: 'default-a', name: 'Default (3 variants)', numberOfVariants: 3 },
         { id: 'variant-1', name: 'Variant 1', numberOfVariants: 1 },
       ],
     ],
     [
       'multiple defaults and multiple custom variants',
       [
-        { id: 'default-a', variantName: 'Default-A' },
-        { id: 'default-b', variantName: 'Default-B' },
-        { id: 'default-c', variantName: 'Default-C' },
-        { id: 'variant-a', variantName: 'Variant-A' },
-        { id: 'variant-b', variantName: 'Variant-B' },
-        { id: 'variant-c', variantName: 'Variant-C' },
-        { id: 'default', variantName: 'Some variant' },
+        { id: 'default-a', name: 'Default-A' },
+        { id: 'default-b', name: 'Default-B' },
+        { id: 'default-c', name: 'Default-C' },
+        { id: 'variant-a', name: 'Variant-A' },
+        { id: 'variant-b', name: 'Variant-B' },
+        { id: 'variant-c', name: 'Variant-C' },
+        { id: 'default', name: 'Some variant' },
       ] as Variant[],
       [
-        { id: 'default-a', name: 'Default', numberOfVariants: 3 },
-        { id: 'variant-a', name: 'Variant', numberOfVariants: 3 },
+        { id: 'default-a', name: 'Default (3 variants)', numberOfVariants: 3 },
+        { id: 'variant-a', name: 'Variant (3 variants)', numberOfVariants: 3 },
         { id: 'default', name: 'Some variant', numberOfVariants: 1 },
       ],
     ],

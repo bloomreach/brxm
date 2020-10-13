@@ -25,6 +25,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { first } from 'rxjs/operators';
 
 import { Variant } from '../../../variants/models/variant.model';
+import { VariantsService } from '../../../variants/services/variants.service';
 import { ExperimentGoal } from '../../models/experiment-goal.model';
 
 import { ExperimentStartFormComponent, SelectedVariantIdAndGoalId } from './experiment-start-form.component';
@@ -36,18 +37,18 @@ export class TranslateMockPipe implements PipeTransform {
   }
 }
 
-describe('ExperimentInfoBarComponent', () => {
+describe('ExperimentStartFormComponent', () => {
   let fixture: ComponentFixture<ExperimentStartFormComponent>;
   let component: ExperimentStartFormComponent;
 
   const mockVariants = [
     {
       id: 'variant-1',
-      variantName: 'Variant 1',
+      variantName: 'Variant-A',
     },
     {
       id: 'variant-2',
-      variantName: 'Variant 2',
+      variantName: 'Variant-B',
     },
   ] as Variant[];
   const mockGoals: ExperimentGoal[] = [
@@ -70,6 +71,10 @@ describe('ExperimentInfoBarComponent', () => {
   ];
 
   beforeEach(async () => {
+    const variantsServiceMock = {
+      groupVariants: jest.fn(() => [{ id: 'variant-a', name: 'Variant (2 variants)', numberOfVariants: 2 }]),
+    };
+
     fixture = TestBed.configureTestingModule({
       imports: [
         FormsModule,
@@ -82,6 +87,9 @@ describe('ExperimentInfoBarComponent', () => {
       declarations: [
         ExperimentStartFormComponent,
         TranslateMockPipe,
+      ],
+      providers: [
+        { provide: VariantsService, useValue: variantsServiceMock },
       ],
       schemas: [
         NO_ERRORS_SCHEMA,
@@ -141,7 +149,7 @@ describe('ExperimentInfoBarComponent', () => {
       component.onSave();
 
       expect(result).toEqual({
-        variantId: 'variant-1',
+        variantId: 'variant-a',
         goalId: 'goal-1',
       });
     });
