@@ -76,7 +76,11 @@
                              [value]="targetGroup"
                              class="text-text">
               <span>{{ targetGroup.name }}</span>
-              <span>{{ getPropertiesAsString(targetGroup.properties) }}</span>
+              <span class="no-wrap-ellipsis"
+                    matTooltip="{{ getPropertiesAsString(targetGroup.properties) }}"
+                    [matTooltipShowDelay]="1000">
+                {{ getPropertiesAsString(targetGroup.properties) }}
+              </span>
             </mat-list-option>
           </mat-selection-list>
         </div>
