@@ -43,7 +43,7 @@
     <commons-lang.version>2.6</commons-lang.version>
 
     <!-- test dependencies -->
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <easymock.version>3.4</easymock.version>
     <powermock.version>1.6.5</powermock.version>
   </properties>
