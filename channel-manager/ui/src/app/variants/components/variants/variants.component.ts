@@ -137,7 +137,7 @@ export class VariantsComponent implements OnInit {
     this.cmsService.publish('show-mask');
 
     this.dialogService
-      .open(CharacteristicsDialogComponent, { minWidth: 800 })
+      .open(CharacteristicsDialogComponent, { minWidth: 900,  maxWidth: 900 })
       .afterClosed().subscribe((result: { characteristic: Characteristic, targetGroup: TargetGroup}) => {
         this.cmsService.publish('remove-mask');
 
