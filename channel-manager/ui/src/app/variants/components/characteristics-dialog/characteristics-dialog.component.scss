@@ -20,23 +20,27 @@
 :host {
   height: 100%;
   display: block;
-}
 
-::ng-deep {
-  .text-text .mat-list-text {
-    column-gap: 8px;
-    display: grid !important;
-    grid-template-columns: 1fr 1fr;
-  }
+  .mat-list-option-horizontal {
+    .text-text ::ng-deep .mat-list-text {
+      column-gap: 8px;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+    }
 
-  .icon-text .mat-list-text {
-    align-items: center;
-    column-gap: 16px;
-    display: grid !important;
-    grid-template-columns: 24px 1fr;
+    .icon-text ::ng-deep .mat-list-text {
+      align-items: center;
+      column-gap: 16px;
+      display: grid !important;
+      grid-template-columns: 24px 1fr;
 
-    mat-icon {
-      color: map-get($text-color, 'dim');
+      mat-icon {
+        color: map-get($text-color, 'dim');
+      }
+    }
+
+    .mat-list-single-selected-option.icon-text mat-icon {
+      color: map-get($text-color, 'dark');
     }
   }
 }
