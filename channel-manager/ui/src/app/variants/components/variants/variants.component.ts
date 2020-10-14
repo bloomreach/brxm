@@ -116,45 +116,46 @@ export class VariantsComponent implements OnInit {
   async addSegment(): Promise<void> {
     this.cmsService.publish('show-mask');
 
-    this.dialogService
+    const persona = await this.dialogService
       .open(SegmentsDialogComponent, { width: '400px' })
-      .afterClosed().subscribe((persona: Persona) => {
-        if (persona) {
-          this.currentVariant?.expressions.push({
-            id: persona.id,
-            name: persona.segmentName,
-            type: VariantExpressionType.Persona,
-          });
+      .afterClosed().toPromise<Persona>();
 
-          this.onChange();
-        }
+    this.cmsService.publish('remove-mask');
 
-        this.cmsService.publish('remove-mask');
-      });
+    if (!persona) {
+      return;
+    }
+
+    this.currentVariant?.expressions.push({
+      id: persona.id,
+      name: persona.segmentName,
+      type: VariantExpressionType.Persona,
+    });
+
+    this.onChange();
   }
 
   async addCharacteristic(): Promise<void> {
     this.cmsService.publish('show-mask');
 
-    this.dialogService
+    const result = await this.dialogService
       .open(CharacteristicsDialogComponent, { minWidth: 900,  maxWidth: 900 })
-      .afterClosed().subscribe((result: { characteristic: Characteristic, targetGroup: TargetGroup}) => {
-        this.cmsService.publish('remove-mask');
+      .afterClosed().toPromise();
 
-        if (!result) {
-          return;
-        }
+    this.cmsService.publish('remove-mask');
 
-        const { characteristic, targetGroup } = result;
-        this.currentVariant?.expressions.push({
-          id: `${characteristic.id}/${targetGroup.id}`,
-          name: targetGroup.name,
-          type: VariantExpressionType.Rule,
-        });
+    if (!result) {
+      return;
+    }
 
-        this.variantUpdated.emit({ variant: this.currentVariant });
-        this.cmsService.publish('remove-mask');
-      });
+    const { characteristic, targetGroup } = result;
+    this.currentVariant?.expressions.push({
+      id: `${characteristic.id}/${targetGroup.id}`,
+      name: targetGroup.name,
+      type: VariantExpressionType.Rule,
+    });
+
+    this.onChange();
   }
 
   getExpressionTranslation(expression: VariantExpression): string {
