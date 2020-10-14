@@ -49,17 +49,17 @@
     </button>
   </div>
 
-  <div class="variant-default-message" *ngIf="isDefaultVariant()">
+  <div class="qa-variant-default-message variant-default-message" *ngIf="isDefaultVariant()">
     <span>{{ (variants.length === 1 ? 'VARIANT_EXPRESSIONS_DEFAULT_ONLY' : 'VARIANT_EXPRESSIONS_DEFAULT') | translate }}</span>
   </div>
 
-  <div class="variant-expressions" *ngIf="!isDefaultVariant()">
+  <div class="qa-variant-expressions variant-expressions" *ngIf="!isDefaultVariant()">
     <div class="variant-expressions-list">
       <div class="variant-expressions-list-label">
         {{ 'VARIANT_EXPRESSIONS' | translate }}
       </div>
 
-      <div class="variant-expressions-list-item variant-expressions-list-empty"
+      <div class="qa-variant-expressions-list-empty variant-expressions-list-item variant-expressions-list-empty"
            *ngIf="currentVariant?.expressions.length === 0">
         {{ 'VARIANT_EXPRESSIONS_EMPTY' | translate }}
       </div>
@@ -72,6 +72,7 @@
         </span>
 
         <button mat-icon-button
+                class="qa-variant-expressions-delete"
                 matTooltip="{{ 'VARIANT_EXPRESSION_DELETE' | translate }}"
                 [matTooltipShowDelay]="1000"
                 (click)="removeExpression(expression)">
@@ -82,6 +83,7 @@
 
     <div class="variant-expressions-actions">
       <button mat-stroked-button
+              class="qa-variant-expressions-add-segment"
               matTooltip="{{ 'SEGMENT_ADD' | translate }}"
               [matTooltipShowDelay]="1000"
               [disabled]="hasSelectedSegment()"
@@ -90,6 +92,7 @@
         {{ 'SEGMENT' | translate }}
       </button>
       <button mat-stroked-button
+              class="qa-variant-expressions-add-characteristic"
               matTooltip="{{ 'CHARACTERISTIC_ADD' | translate }}"
               [matTooltipShowDelay]="1000"
               (click)="addCharacteristic()">
