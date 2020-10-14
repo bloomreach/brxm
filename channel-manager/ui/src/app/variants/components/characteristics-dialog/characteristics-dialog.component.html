@@ -27,15 +27,15 @@
       </mat-list-item>
     </mat-list>
 
-    <div *ngIf="characteristics?.length > 0" class="characteristics">
-      <div class="step">
+    <div *ngIf="characteristics?.length > 0" class="qa-characteristics characteristics">
+      <div class="step qa-characteristics-step1">
         <div class="step-label">
           <span class="step-label-circle">1</span>
           {{ 'DIALOG_CHARACTERISTICS_STEP1' | translate }}
         </div>
         <div class="step-content">
           <mat-selection-list color="primary"
-                              class="mat-list-option-horizontal"
+                              class="mat-list-option-horizontal qa-characteristics-list"
                               #characteristicsList
                               [multiple]="false">
             <mat-list-option *ngFor="let characteristic of characteristics"
@@ -47,7 +47,7 @@
           </mat-selection-list>
         </div>
       </div>
-      <div class="step">
+      <div class="step qa-characteristics-step2">
         <div class="step-label">
           <span class="step-label-circle">2</span>
           {{ 'DIALOG_CHARACTERISTICS_STEP2' | translate }}
@@ -70,7 +70,7 @@
           </div>
 
           <mat-selection-list color="primary"
-                              class="mat-list-option-horizontal"
+                              class="mat-list-option-horizontal qa-characteristics-options-list"
                               #targetGroupsList
                               *ngIf="hasSelectedCharacteristic()"
                               [multiple]="false">
@@ -93,11 +93,13 @@
 
   <div mat-dialog-actions>
     <button mat-stroked-button
+            class="qa-characteristics-close"
             type="button"
             [matDialogClose]>
       {{ 'CANCEL' | translate }}
     </button>
     <button mat-flat-button
+            class="qa-characteristics-select-characteristic"
             type="submit"
             color="primary"
             [disabled]="!hasSelectedCharacteristic() || !hasSelectedTargetGroup()"
