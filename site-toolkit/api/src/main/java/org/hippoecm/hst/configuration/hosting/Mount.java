@@ -503,4 +503,8 @@ public interface Mount {
      */
     boolean isExplicit();
 
+    /**
+     * if non-null, the name of the autocreated PMA child mount
+     */
+    String getPageModelApi();
 }
