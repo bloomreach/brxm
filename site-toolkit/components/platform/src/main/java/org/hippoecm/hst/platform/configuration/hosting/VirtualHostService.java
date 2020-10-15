@@ -453,9 +453,7 @@ public class VirtualHostService implements MutableVirtualHost {
         }
         try {
             final URI uri = new URI(host);
-            if (uri.getScheme() == null) {
-                // host is configured like //www.myhost.com without scheme which is valid
-            } else if (uri.getScheme() != null && !"http".equals(uri.getScheme()) && !"https".equals(uri.getScheme())) {
+            if (uri.getScheme() != null && !"http".equals(uri.getScheme()) && !"https".equals(uri.getScheme())) {
                 // if scheme is present it should be http or https
                 return false;
             }
