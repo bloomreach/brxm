@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, NgZone, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 
 import { Ng1CmsService, NG1_CMS_SERVICE } from '../../../services/ng1/cms.ng1.service';
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
+import { NG1_ROOT_SCOPE } from '../../../services/ng1/root-scope.service';
 import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
-import { Characteristic, TargetGroup } from '../../models/characteristic.model';
 import { Persona } from '../../models/persona.model';
 import { Variant, VariantExpression, VariantExpressionType } from '../../models/variant.model';
 import { VariantsService } from '../../services/variants.service';
@@ -33,9 +33,10 @@ import { SegmentsDialogComponent } from '../segments-dialog/segments-dialog.comp
   templateUrl: './variants.component.html',
   styleUrls: ['./variants.component.scss'],
 })
-export class VariantsComponent implements OnInit {
+export class VariantsComponent implements OnInit, OnDestroy {
   private readonly component = this.componentEditorService.getComponent();
   private readonly componentId = this.component.getId();
+  private readonly onResetCurrentVariantUnsubscribe: () => void;
 
   dirty = false;
   variants: Variant[] = [];
@@ -49,17 +50,26 @@ export class VariantsComponent implements OnInit {
   variantInitiated = new EventEmitter<{ variant: Variant | undefined }>();
 
   constructor(
+    @Inject(NG1_ROOT_SCOPE) private readonly $rootScope: ng.IRootScopeService,
     @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,
     @Inject(NG1_STATE_SERVICE) private readonly ng1StateService: Ng1StateService,
     @Inject(NG1_CMS_SERVICE) private readonly cmsService: Ng1CmsService,
+    private readonly ngZone: NgZone,
     private readonly dialogService: MatDialog,
     private readonly variantsService: VariantsService,
   ) {
+    this.onResetCurrentVariantUnsubscribe = this.$rootScope.$on('component:reset-current-variant', () => {
+      this.ngZone.run(() => this.resetCurrentVariant());
+    });
   }
 
   async ngOnInit(): Promise<void> {
     this.variants = await this.variantsService.getVariants(this.componentId);
     this.resetToStateParamsVariant();
+  }
+
+  async ngOnDestroy(): Promise<void> {
+    this.onResetCurrentVariantUnsubscribe();
   }
 
   async addVariant(): Promise<void> {
@@ -185,5 +195,14 @@ export class VariantsComponent implements OnInit {
      this.currentVariant = this.variants?.find(v => v.id === this.ng1StateService.params.variantId);
      this.variantInitiated.emit({ variant: this.currentVariant });
      this.variantSelect.setValue(this.currentVariant);
+  }
+
+  private resetCurrentVariant(): void {
+    this.variantsService.getVariants(this.componentId).then((variants: Variant[]) => {
+      this.variants = variants;
+      this.dirty = false;
+      this.currentVariant = variants.find(v => v.id === this.currentVariant?.id);
+      this.variantSelect.setValue(this.currentVariant);
+    });
   }
 }

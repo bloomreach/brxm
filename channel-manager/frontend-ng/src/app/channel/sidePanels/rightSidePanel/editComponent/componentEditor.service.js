@@ -382,7 +382,11 @@ class ComponentEditorService {
   }
 
   discardChanges() {
-    return this.HippoIframeService.reload().then(this.reopen());
+    return this.HippoIframeService.reload()
+      .then(() => {
+        this.$rootScope.$emit('component:reset-current-variant');
+        return this.reopen();
+      });
   }
 
   reopen() {
