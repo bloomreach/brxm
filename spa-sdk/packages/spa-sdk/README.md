@@ -103,6 +103,7 @@ Function | Description
 `isMenu(value): boolean` | Checks whether a value is a menu object.
 `isMeta(value): boolean` | Checks whether a value is a meta-data object.
 `isMetaComment(value): boolean` | Checks whether a value is a meta-data comment.
+`isPagination(value): boolean` | Checks whether a value is a pagination.
 `isLink(value): boolean` | Checks whether a value is a link.
 `isReference(value): boolean` | Checks whether a value is a content reference.
 
@@ -264,6 +265,31 @@ Method | Description
 --- | ---
 `getData(): string` | Returns the meta-data.
 `getPosition(): string` | Returns the meta-data position relative to the related element.
+
+##### Pagination
+The `Pagination` object holds the pagination data with all the pagination items.
+
+Method | Description
+--- | ---
+`getCurrent(): PaginationItem` | Returns the current page.
+`getFirst(): PaginationItem` | Returns the first page.
+`getItems(): Reference[]` | Returns the current page items.
+`getLast(): PaginationItem` | Returns the last page.
+<code>getNext(): PaginationItem &vert; undefined</code> | Returns the next page.
+`getOffset(): number` | Returns the number of items before the current page.
+`getPages(): PaginationItem[]` | Returns currently listed pages.
+<code>getPrevious(): PaginationItem &vert; undefined</code> | Returns the previous page.
+`getSize(): number` | Returns the number of items listed on the current page.
+`getTotal(): number` | Returns the total number of items.
+`isEnabled(): boolean` | Returns whether the pagination is enabled.
+
+##### PaginationItem
+The `PaginationItem` object holds a pagination item that is used by the `Pagination` object.
+
+Method | Description
+--- | ---
+`getNumber(): number` | Returns the page number.
+<code>getUrl(): string &vert; undefined</code> | Returns the page URL.
 
 ## Links
 - [SPA integration concept](https://documentation.bloomreach.com/library/concepts/spa-integration/introduction.html).
