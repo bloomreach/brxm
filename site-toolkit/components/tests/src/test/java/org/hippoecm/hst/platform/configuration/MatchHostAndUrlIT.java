@@ -16,10 +16,12 @@
 package org.hippoecm.hst.platform.configuration;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Session;
 
+import org.apache.logging.log4j.core.LogEvent;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -38,6 +40,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
+import org.hippoecm.hst.platform.configuration.hosting.VirtualHostService;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.request.PreviewDecoratorImpl;
@@ -53,6 +56,7 @@ import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -1339,6 +1343,57 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
             assertNotNull(vhosts.matchVirtualHost("127.0.0.9"));
+
+        } finally {
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    @Test
+    public void virtualhost_cdnhost_allowed_without_scheme() throws Exception {
+        final Session session = createSession();
+        createHstConfigBackup(session);
+
+        try {
+
+            {
+                session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost").setProperty(VIRTUALHOST_PROPERTY_CDN_HOST, "//localhost");
+                session.save();
+                invalidator.eventPaths("/hst:hst/hst:hosts/dev-localhost/localhost");
+
+                VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+                final ResolvedVirtualHost localhost = vhosts.matchVirtualHost("localhost");
+                assertEquals("//localhost", localhost.getVirtualHost().getCdnHost());
+            }
+
+            {
+                session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost").setProperty(VIRTUALHOST_PROPERTY_CDN_HOST, "https://localhost");
+                session.save();
+                invalidator.eventPaths("/hst:hst/hst:hosts/dev-localhost/localhost");
+
+                VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+                final ResolvedVirtualHost localhost = vhosts.matchVirtualHost("localhost");
+                assertEquals("https://localhost", localhost.getVirtualHost().getCdnHost());
+            }
+
+            {
+                try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(VirtualHostService.class).build()) {
+                    // invalid scheme is ignored
+                    session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost").setProperty(VIRTUALHOST_PROPERTY_CDN_HOST, "mailto://localhost");
+                    session.save();
+                    invalidator.eventPaths("/hst:hst/hst:hosts/dev-localhost/localhost");
+
+                    VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+                    final ResolvedVirtualHost localhost = vhosts.matchVirtualHost("localhost");
+                    assertNull(localhost.getVirtualHost().getCdnHost());
+
+                    final List<LogEvent> events = interceptor.getEvents();
+
+                    assertEquals("Expected 1 error log for invalid cnd host", 1L, events.size());
+                    assertTrue(events.get(0).getMessage().getFormattedMessage().contains("Ignoring invalid CDN host 'mailto://localhost'"));
+                }
+            }
 
         } finally {
             restoreHstConfigBackup(session);
