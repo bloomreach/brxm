@@ -99,6 +99,7 @@ import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPE
 import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_URL_PROPERTY_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDERING_HOST;
+import static org.hippoecm.hst.util.HstRequestUtils.createURLForMountPath;
 import static org.hippoecm.hst.util.HstRequestUtils.createURLWithExplicitSchemeForRequest;
 import static org.hippoecm.hst.util.HstRequestUtils.getClusterNodeAffinityId;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRemoteAddr;
@@ -151,6 +152,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     private String clusterNodeAffinityHeaderName;
     private String clusterNodeAffinityQueryParam;
     private boolean xForwardedHostSpoofingProtection;
+    private String endpointParam;
 
     @Override
     public void setServletContext(ServletContext servletContext) {
@@ -187,6 +189,10 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     public void setJwtTokenParam(final String jwtTokenParam) {
         this.jwtTokenParam = jwtTokenParam;
+    }
+
+    public void setEndpointParam(final String endpointParam) {
+        this.endpointParam = endpointParam;
     }
 
     public void setClusterNodeAffinityCookieName(final String clusterNodeAffinityCookieName) {
@@ -689,6 +695,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     location = location +"&" + queryParam.getKey() + "=" + value;
                 }
             }
+            // finally, check whether the PMA endpoint callbavk query param is present, if not, include it
+            location = includePmaCallbackURL(location, req, mount);
+
             res.sendRedirect(location);
         } catch (URISyntaxException e) {
             res.sendError(HttpServletResponse.SC_FORBIDDEN);
@@ -697,6 +706,51 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             res.sendError(HttpServletResponse.SC_FORBIDDEN);
             log.info("Cannot create redirect URL (token)", e.getMessage());
         }
+    }
+
+    /**
+     * Only *IF* the {@code resolvedMount} has a non-null {@link Mount#getPageModelApi()}, the PMA URL is appended,
+     * otherwise we assume the redirect is to something else than a standard SPA
+     */
+    private String includePmaCallbackURL(final String location, final HttpServletRequest req,
+                                         final Mount mount) throws URISyntaxException {
+        if (location.contains(endpointParam + "=")) {
+            log.info("Location '{}' already contains PMA endpoint callback, do not inject automatically", location);
+            return location;
+        }
+        log.info("Inject PMA endpoint callback into location");
+
+        final String currentMountUrl = createURLForMountPath(mount.getScheme(), mount,
+                req);
+
+        // current mount should have a hst:pagemodelapi configured, otherwise we do not know what the PMA callback
+        // should be: in that case we throw a IllegalStateException
+
+        final String pageModelApi = mount.getPageModelApi();
+        if (pageModelApi == null) {
+            throw new IllegalStateException("For Mount '{}' a redirect URL is ");
+        }
+
+        // include the PMA URL
+        if (location.contains("?")) {
+            return location + "&" + endpointParam + "=" + currentMountUrl + "/" + pageModelApi;
+        } else {
+            return location + "?" + endpointParam + "=" + currentMountUrl + "/" + pageModelApi;
+        }
+    }
+
+    private String addQueryString(final String location, final String query) {
+        if (location.contains("?")) {
+            return location + "&" + query;
+        }
+        return location + "?" + query;
+    }
+
+    private String getTokenAndClusterId(final HttpServletRequest req) {
+        final JwtTokenService jwtTokenService = HippoServiceRegistry.getService(JwtTokenService.class);
+        final String clusterNodeAffinityId = getClusterNodeAffinityId(req, clusterNodeAffinityCookieName, clusterNodeAffinityHeaderName);
+        return jwtTokenParam + "=" + jwtTokenService.createToken(req, emptyMap()) +
+                (isNotBlank(clusterNodeAffinityId) ? "&" + clusterNodeAffinityQueryParam + "=" + clusterNodeAffinityId : "");
     }
 
     private boolean isLocalhostIpPlatformRequest(final HstContainerRequest containerRequest, final String hostName) {
