@@ -52,6 +52,8 @@ describe('TargetingService', () => {
     ConfigService.locale = 'locale';
     ConfigService.variantsUuid = 'variantsUuid';
 
+    spyOn(ChannelService, 'checkChanges');
+
     TargetingService.init();
   });
 
@@ -216,6 +218,13 @@ describe('TargetingService', () => {
 
         $rootScope.$digest();
       });
+
+      it('should check for changes', () => {
+        TargetingService.addVariant('component-id', data);
+        $rootScope.$digest();
+
+        expect(ChannelService.checkChanges).toHaveBeenCalled();
+      });
     });
 
     describe('updateVariant', () => {
@@ -246,6 +255,13 @@ describe('TargetingService', () => {
         });
 
         $rootScope.$digest();
+      });
+
+      it('should check for changes', () => {
+        TargetingService.updateVariant('component-id', data, 'variant-id');
+        $rootScope.$digest();
+
+        expect(ChannelService.checkChanges).toHaveBeenCalled();
       });
     });
   });

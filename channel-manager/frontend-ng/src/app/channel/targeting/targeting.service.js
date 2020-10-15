@@ -145,6 +145,8 @@ class TargetingService {
       return this._success(`Succesfully created a new variant for component "${componentId}"`, result);
     } catch (e) {
       return this._failure(`Failed to create new variant for component "${componentId}"`, e);
+    } finally {
+      this.ChannelService.checkChanges();
     }
   }
 
@@ -165,6 +167,8 @@ class TargetingService {
       return this._success(`Succesfully updated variant "${variantId}" for component "${componentId}"`, result);
     } catch (e) {
       return this._failure('Failed to update', e);
+    } finally {
+      this.ChannelService.checkChanges();
     }
   }
 
@@ -197,6 +201,8 @@ class TargetingService {
       return this._success(`Successfully removed variant "${variantId}" from container-item "${componentId}"`, result);
     } catch (e) {
       return this._failure(`Failed to remove variant "${variantId}" from container-item "${componentId}"`, e);
+    } finally {
+      this.ChannelService.checkChanges();
     }
   }
 
