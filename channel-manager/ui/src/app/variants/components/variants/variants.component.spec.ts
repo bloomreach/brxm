@@ -26,6 +26,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { NG1_CMS_SERVICE } from '../../../services/ng1/cms.ng1.service';
 import { NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
+import { NG1_ROOT_SCOPE } from '../../../services/ng1/root-scope.service';
 import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
 import { Variant, VariantCharacteristicData } from '../../models/variant.model';
 import { VariantsService } from '../../services/variants.service';
@@ -116,6 +117,9 @@ describe('VariantsComponent', () => {
     const cmsServiceMock = {
       publish: jest.fn(),
     };
+    const $rootScopeMock = {
+      $on: jest.fn(() => jest.fn()),
+    };
 
     TestBed.configureTestingModule({
       imports: [
@@ -129,9 +133,10 @@ describe('VariantsComponent', () => {
       ],
       declarations: [ VariantsComponent, MatIconMockComponent ],
       providers: [
-        { provide: NG1_COMPONENT_EDITOR_SERVICE, useValue: componentEditorServiceMock },
-        { provide: NG1_STATE_SERVICE, useValue: stateServiceMock },
         { provide: NG1_CMS_SERVICE, useValue: cmsServiceMock },
+        { provide: NG1_COMPONENT_EDITOR_SERVICE, useValue: componentEditorServiceMock },
+        { provide: NG1_ROOT_SCOPE, useValue: $rootScopeMock },
+        { provide: NG1_STATE_SERVICE, useValue: stateServiceMock },
         { provide: VariantsService, useValue: variantsServiceMock },
       ],
     });
