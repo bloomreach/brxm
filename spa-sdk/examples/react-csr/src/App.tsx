@@ -24,7 +24,7 @@ export default function App(props: RouteComponentProps) {
   const configuration = {
     baseUrl: process.env.REACT_APP_BASE_URL,
     endpoint: process.env.REACT_APP_BRXM_ENDPOINT,
-    endpointQueryParameter: 'brxm',
+    endpointQueryParameter: 'endpoint',
     httpClient: axios,
     request: {
       path: `${props.location.pathname}${props.location.search}`,
