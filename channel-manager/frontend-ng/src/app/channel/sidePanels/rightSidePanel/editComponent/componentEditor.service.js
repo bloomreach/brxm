@@ -74,9 +74,8 @@ class ComponentEditorService {
       variantId = component.getRenderVariant();
     }
 
-    this.request = this.HstComponentService
-      .getProperties(componentId, variantId)
-      .then(response => this._onLoadSuccess(channel, component, page, response.properties))
+    this.request = this.HstComponentService.getProperties(componentId, variantId);
+    this.request.then(response => this._onLoadSuccess(channel, component, page, response.properties))
       .then(() => this.updatePreview())
       .catch(() => this._onLoadFailure())
       .finally(() => { delete this.request; });
