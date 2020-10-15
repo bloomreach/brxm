@@ -62,7 +62,7 @@ export class IndexComponent implements OnInit {
     this.configuration = {
       baseUrl,
       endpoint,
-      endpointQueryParameter: 'brxm',
+      endpointQueryParameter: 'endpoint',
       request: {
         connection: request?.connection,
         headers: request?.headers['x-forwarded-for']
