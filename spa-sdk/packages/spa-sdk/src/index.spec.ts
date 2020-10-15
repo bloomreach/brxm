@@ -51,8 +51,8 @@ describe('initialize', () => {
 
     const page = await initialize({
       httpClient,
-      endpointQueryParameter: 'brxm',
-      request: { path: '/?brxm=http://example.com/api' },
+      endpointQueryParameter: 'endpoint',
+      request: { path: '/?endpoint=http://example.com/api' },
     });
     destroy(page);
 
@@ -226,8 +226,8 @@ describe('initialize', () => {
   it('should use an origin from the endpoint parameter', async () => {
     const page = await initialize({
       httpClient,
-      endpointQueryParameter: 'brxm',
-      request: { path: '/?brxm=https://api.example.com/api' },
+      endpointQueryParameter: 'endpoint',
+      request: { path: '/?endpoint=https://api.example.com/api' },
     });
     const postMessageSpy = spyOn(window.parent, 'postMessage').and.callThrough();
     await page.sync();
