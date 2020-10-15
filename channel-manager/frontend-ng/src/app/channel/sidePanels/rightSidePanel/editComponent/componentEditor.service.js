@@ -78,8 +78,8 @@ class ComponentEditorService {
   }
 
   load(channel, page, component, variantId) {
-    this.request = this.HstComponentService
-      .getProperties(component.getId(), variantId || component.getRenderVariant())
+    this.request = this.HstComponentService.getProperties(component.getId(), variantId);
+    this.request
       .then(response => this._onLoadSuccess(channel, component, page, response.properties))
       .then(() => this.updatePreview())
       .catch(() => this._onLoadFailure())
