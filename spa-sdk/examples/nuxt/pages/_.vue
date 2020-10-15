@@ -63,7 +63,7 @@ const VISITOR_COOKIE_MAX_AGE_IN_SECONDS = 365 * 24 * 60 * 60;
     const configuration = {
       baseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
       endpoint: process.env.VUE_APP_BRXM_ENDPOINT,
-      endpointQueryParameter: 'brxm',
+      endpointQueryParameter: 'endpoint',
       request: {
         path: context.route.fullPath,
       },
