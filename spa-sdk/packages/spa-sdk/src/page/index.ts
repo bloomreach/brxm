@@ -105,5 +105,7 @@ export { PageFactory } from './page-factory';
 export { PageModule } from './module';
 export { PageModule as PageModule09 } from './module09';
 export { Page } from './page';
+export { PaginationItem } from './pagination-item';
+export { Pagination, isPagination } from './pagination';
 export { Reference, isReference } from './reference';
 export { Visitor, Visit } from './relevance';

@@ -44,6 +44,8 @@ import { MetaCommentImpl } from './meta-comment';
 import { MetaFactory } from './meta-factory';
 import { PageFactory } from './page-factory';
 import { PageImpl, PageModelToken, PageModel } from './page';
+import { PaginationImpl, PaginationModelToken, TYPE_PAGINATION } from './pagination';
+import { PaginationItemFactory, PaginationItemImpl, PaginationItemModelToken, PaginationItemModel } from './pagination-item';
 import { TYPE_LINK_INTERNAL } from './link';
 import { TYPE_META_COMMENT } from './meta';
 import { UrlBuilderService, UrlBuilder } from '../url';
@@ -92,6 +94,14 @@ export function PageModule() {
       return scope.get(ImageImpl);
     });
 
+    bind(PaginationItemFactory).toFactory(({ container }) => (model: PaginationItemModel) => {
+      const scope = container.createChild();
+      scope.bind(PaginationItemImpl).toSelf();
+      scope.bind(PaginationItemModelToken).toConstantValue(model);
+
+      return scope.get(PaginationItemImpl);
+    });
+
     bind(ContentFactory).toSelf().inSingletonScope().onActivation(({ container }, factory) => factory
       .register(TYPE_DOCUMENT, (model) => {
         const scope = container.createChild();
@@ -113,6 +123,13 @@ export function PageModule() {
         scope.bind(MenuModelToken).toConstantValue(model);
 
         return scope.get(MenuImpl);
+      })
+      .register(TYPE_PAGINATION, (model) => {
+        const scope = container.createChild();
+        scope.bind(PaginationImpl).toSelf();
+        scope.bind(PaginationModelToken).toConstantValue(model);
+
+        return scope.get(PaginationImpl);
       }),
     );
 
