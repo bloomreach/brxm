@@ -39,7 +39,7 @@ export class SegmentsDialogComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     const response = await this.targetingService.getPersonas();
-    this.personas = response.data.items;
+    this.personas = response.data?.items;
   }
 
   selectPersona(): void {
