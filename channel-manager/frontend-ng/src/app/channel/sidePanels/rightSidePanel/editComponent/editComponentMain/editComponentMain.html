@@ -17,7 +17,10 @@
 <form name="$ctrl.form"
   class="form-dense-layout"
   flex>
-  <component-variants ng-if="$ctrl.variantsVisible"></component-variants>
+  <component-variants on-variant-updated="$ctrl.onVariantUpdated(variant)"
+                      on-variant-initiated="$ctrl.onVariantInitiated(variant)"
+                      ng-if="$ctrl.variantsVisible">
+  </component-variants>
 
   <md-subheader md-colors="{background: 'hippo-grey-200'}"
               ng-if="$ctrl.ComponentEditor.isForeignPage()">

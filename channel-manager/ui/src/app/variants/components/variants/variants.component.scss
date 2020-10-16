@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
+@import '~@angular/material/theming';
 @import '~@bloomreach/frontend-theme/palettes';
 @import 'variables';
 
@@ -21,16 +22,100 @@
   display: block;
   background: map-get($grey, 200);
   padding: $spacing-full;
+
+  @include mat-elevation(3);
+}
+
+::ng-deep {
+  .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+
+  .mat-form-field-type-mat-select {
+    // Make the select dropdown less tall
+    .mat-form-field-infix {
+      padding: 0.5em 0;
+    }
+
+    // Remove the thick border from dropdown on hover (if not focused)
+    &.mat-form-field-appearance-outline:not(.mat-focused) .mat-form-field-flex:hover .mat-form-field-outline-thick {
+      .mat-form-field-outline-start,
+      .mat-form-field-outline-end,
+      .mat-form-field-outline-gap {
+        border-width: 1px;
+      }
+    }
+
+    .mat-select-value-text {
+      font-size: 16px;
+      font-weight: 600;
+    }
+  }
 }
 
 .variant-select {
   align-items: center;
   display: grid;
-  grid-gap: $spacing-half;
+  gap: $spacing-half;
   grid-template-columns: 1fr auto auto;
 }
 
-::ng-deep .mat-form-field-wrapper {
-  padding-bottom: 0;
+.variant-default-message {
+  padding: $spacing-full 0;
+
+  > span {
+    color: map-get($text-color, dim);
+    display: inherit;
+    transform: scale(0.85);
+    transform-origin: left top;
+    user-select: none;
+  }
 }
 
+.variant-expressions {
+  padding-top: $spacing-full;
+
+  &-list {
+    $form-field-outline-color: rgba(0, 0, 0, 0.12);
+
+    position: relative;
+    border: 1px solid $form-field-outline-color;
+    border-radius: 4px;
+    margin-bottom: $spacing-full;
+    padding: $spacing-half;
+
+    &-empty {
+      color: map-get($text-color, dim);
+      height: 40px;
+    }
+
+    &-label {
+      background: map-get($grey, 200);
+      color: map-get($text-color, dim);
+      font-size: 75%;
+      padding: 0 3px;
+      position: absolute;
+      top: -1em;
+    }
+  }
+
+  &-list-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+
+  &-actions {
+    display: flex;
+    gap: $spacing-half;
+
+    mat-icon {
+      color: map-get($text-color, dim);
+      margin-top: -2px;
+    }
+
+    .mat-button-disabled mat-icon {
+      color: inherit;
+    }
+  }
+}

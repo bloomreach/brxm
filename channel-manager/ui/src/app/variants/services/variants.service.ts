@@ -16,9 +16,10 @@
 
 import { Inject, Injectable } from '@angular/core';
 
+import { ComponentProperties } from '../../models/component-properties.model';
 import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1service';
 import { GroupedVariant } from '../models/grouped-variant.model';
-import { Variant } from '../models/variant.model';
+import { Variant, VariantCharacteristicData, VariantExpressions, VariantExpressionType } from '../models/variant.model';
 
 const DEFAULT_VARIANT_ID = 'hippo-default';
 
@@ -42,9 +43,43 @@ export class VariantsService {
     return response.data;
   }
 
-  async addVariant(componentId: string, formData: any, persona?: any, characteristics?: any[]): Promise<any> {
-    const response = await this.targetingService.addVariant(componentId, formData, persona, characteristics);
+  async addVariant(
+    componentId: string,
+    formData: ComponentProperties,
+    personaId?: string,
+    characteristics?: VariantCharacteristicData[],
+  ): Promise<any> {
+    const response = await this.targetingService.addVariant(componentId, formData, personaId, characteristics);
     return response.data;
+  }
+
+  async deleteVariant(componentId: string, variantId: string): Promise<any> {
+    const response = await this.targetingService.deleteVariant(componentId, variantId);
+    return response.data;
+  }
+
+  extractExpressions(variant?: Variant): VariantExpressions {
+    let persona = '';
+    const characteristics: any[] = [];
+
+    variant?.expressions.forEach(({ id, type }) => {
+      if (type === VariantExpressionType.Persona) {
+        persona = id;
+      } else {
+        const parts = id.split('/');
+        const characteristic = parts[0];
+        const targetGroupId = parts[1];
+
+        characteristics.push({
+          [characteristic]: targetGroupId,
+        });
+      }
+    });
+
+    return {
+      persona,
+      characteristics,
+    };
   }
 
   groupVariants(variants: { id: string, name: string }[]): GroupedVariant[] {
