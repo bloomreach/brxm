@@ -83,8 +83,8 @@ describe('TargetingService', () => {
     });
   }
 
-  function expectGet(url, message, when, verify, responseData) {
-    expectHttp($httpBackend.expectGET(url), message, when, verify, responseData);
+  function expectGet(url, message, when, expects, responseData) {
+    expectHttp($httpBackend.expectGET(url), message, when, expects, responseData);
   }
 
   function expectHttpError(responseData, message, when) {
@@ -358,7 +358,7 @@ describe('TargetingService', () => {
         urlRegex,
         'Experiment loaded successfully for component "componentId"',
         () => TargetingService.getExperiment('componentId'),
-        expectDefaultParams,
+        [expectDefaultParams],
         params => expect(params.locale).toBe('locale'),
       );
     });
@@ -384,7 +384,7 @@ describe('TargetingService', () => {
         $httpBackend.expectPOST(urlRegex, payload),
         'Experiment saved for component "componentId" with goal "goalId" and variant "variantId"',
         () => TargetingService.saveExperiment('componentId', 'goalId', 'variantId'),
-        expectDefaultParams,
+        [expectDefaultParams],
       );
       expect(checkChanges).toHaveBeenCalled();
     });
@@ -408,7 +408,7 @@ describe('TargetingService', () => {
         $httpBackend.expectPOST(urlRegex, 'componentId'),
         'Experiment completed for component "componentId"',
         () => TargetingService.completeExperiment('componentId', 'keepVariantId'),
-        expectDefaultParams,
+        [expectDefaultParams],
         params => expect(params.keepOnlyVariantId).toBe('keepVariantId'),
       );
       expect(checkChanges).toHaveBeenCalled();
@@ -431,7 +431,7 @@ describe('TargetingService', () => {
         urlRegex,
         'Succesfully loaded state of experiment "experimentId"',
         () => TargetingService.getExperimentStatus('experimentId'),
-        expectDefaultParams,
+        [expectDefaultParams],
       );
     });
 
@@ -452,7 +452,7 @@ describe('TargetingService', () => {
         urlRegex,
         'Succesfully loaded goals',
         () => TargetingService.getGoals(),
-        expectDefaultParams,
+        [expectDefaultParams],
       );
     });
 
