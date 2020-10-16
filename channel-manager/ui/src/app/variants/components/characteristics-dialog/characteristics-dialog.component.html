@@ -55,7 +55,7 @@
         <div class="step-content">
           <div *ngIf="!hasSelectedCharacteristic()">
             <mat-list>
-              <mat-list-item>
+              <mat-list-item class="help-text">
                 {{ 'DIALOG_CHARACTERISTICS_NO_TARGET_GROUPS' | translate }}
               </mat-list-item>
             </mat-list>
@@ -63,7 +63,7 @@
 
           <div *ngIf="hasSelectedCharacteristic() && getSelectedCharacteristic()?.targetGroups.length === 0">
             <mat-list>
-              <mat-list-item>
+              <mat-list-item class="help-text">
                 {{ 'DIALOG_CHARACTERISTICS_EMPTY_TARGET_GROUPS' | translate }}
               </mat-list-item>
             </mat-list>
