@@ -389,7 +389,6 @@ describe('TargetingService', () => {
     const urlRegex = /targeting-rest-url\/experiments\/saveExperiment(.+).*/;
 
     it('should save the experiment for the specified component, goal and variant', () => {
-      const checkChanges = spyOn(ChannelService, 'checkChanges');
       const payload = {
         componentId: 'componentId',
         goalId: 'goalId',
@@ -402,7 +401,7 @@ describe('TargetingService', () => {
         () => TargetingService.saveExperiment('componentId', 'goalId', 'variantId'),
         [expectDefaultParams],
       );
-      expect(checkChanges).toHaveBeenCalled();
+      expect(ChannelService.checkChanges).toHaveBeenCalled();
     });
 
     it('should resolve with an error response if the backend fails', () => {
@@ -418,8 +417,6 @@ describe('TargetingService', () => {
     const urlRegex = /targeting-rest-url\/experiments\/complete(.+).*/;
 
     it('should complete the experiment of the specified component', () => {
-      const checkChanges = spyOn(ChannelService, 'checkChanges');
-
       expectHttp(
         $httpBackend.expectPOST(urlRegex, 'componentId'),
         'Experiment completed for component "componentId"',
@@ -427,7 +424,7 @@ describe('TargetingService', () => {
         [expectDefaultParams],
         params => expect(params.keepOnlyVariantId).toBe('keepVariantId'),
       );
-      expect(checkChanges).toHaveBeenCalled();
+      expect(ChannelService.checkChanges).toHaveBeenCalled();
     });
 
     it('should resolve with an error response if the backend fails', () => {
