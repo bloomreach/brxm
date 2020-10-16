@@ -14,6 +14,16 @@
  * limitations under the License.
  */
 
+const DEFAULT_SUCCESS_RESPONSE = {
+  reloadRequired: false,
+  success: true,
+};
+
+const DEFAULT_FAILURE_RESPONSE = {
+  reloadRequired: false,
+  success: false,
+};
+
 class TargetingService {
   constructor(
     $http,
@@ -99,9 +109,29 @@ class TargetingService {
 
     try {
       const result = await this.HstService.doPutFormWithHeaders(formData, componentId, headers, variantId);
-      return this._success(`Succesfully created a new variant for component ${componentId}`, result);
+      return this._success(`Succesfully created a new variant for component "${componentId}"`, result);
     } catch (e) {
-      return this._failure('Failed to create', e);
+      return this._failure(`Failed to create new variant for component "${componentId}"`, e);
+    }
+  }
+
+  async updateVariant(componentId, formData, variantId, personaId, characteristics) {
+    const page = this.PageStructureService.getPage();
+    const component = page.getComponentById(componentId);
+
+    const encodedVariantId = encodeURIComponent(variantId);
+    const newVariantId = this._createVariantId(personaId, characteristics);
+    const headers = {
+      lastModifiedTimestamp: component.lastModified,
+      'Move-To': newVariantId,
+    };
+
+    try {
+      const result = await this.HstService.doPutFormWithHeaders(formData, componentId, headers, encodedVariantId);
+      result.data.newVariantId = newVariantId;
+      return this._success(`Succesfully updated variant "${variantId}" for component "${componentId}"`, result);
+    } catch (e) {
+      return this._failure('Failed to update', e);
     }
   }
 
@@ -112,7 +142,7 @@ class TargetingService {
 
     const encodedCharacteristics = this._encodeCharacteristics(characteristics);
     const personaVariant = `${personaId}@${abvariantId}`;
-    const personaRules = encodedCharacteristics ? `$${encodedCharacteristics}}` : '';
+    const personaRules = encodedCharacteristics ? `$${encodedCharacteristics}` : '';
     return personaVariant + personaRules;
   }
 
@@ -251,32 +281,28 @@ class TargetingService {
     };
   }
 
-  _success(message, data) {
-    if (data.hasOwnProperty('data')) {
-      data.message = data.message || message;
-      return data;
-    }
-
-    return {
-      data,
-      message,
-      reloadRequired: false,
-      success: true,
-    };
+  _success(message, response) {
+    return this._parseResponse(message, response, DEFAULT_SUCCESS_RESPONSE);
   }
 
-  _failure(message, data) {
-    if (data.hasOwnProperty('data')) {
-      data.message = data.message || message;
-      return data;
-    }
+  _failure(message, response) {
+    return this._parseResponse(message, response, DEFAULT_FAILURE_RESPONSE);
+  }
 
-    return {
-      data,
-      message,
-      reloadRequired: false,
-      success: false,
-    };
+  _parseResponse(message, response, defaultProperties) {
+    message = response.message || message;
+
+    return response.hasOwnProperty('data')
+      ? {
+        ...defaultProperties,
+        ...response,
+        message,
+      }
+      : {
+        ...defaultProperties,
+        data: response,
+        message,
+      };
   }
 
   _execute(method, pathElements, data, params, headers = {}) {

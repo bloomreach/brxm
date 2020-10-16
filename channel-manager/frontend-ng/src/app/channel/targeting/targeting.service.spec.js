@@ -20,17 +20,30 @@ describe('TargetingService', () => {
   let $window;
   let ChannelService;
   let ConfigService;
+  let HstService;
+  let PageStructureService;
   let TargetingService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.targeting');
 
-    inject((_$httpBackend_, _$rootScope_, _$window_, _ChannelService_, _ConfigService_, _TargetingService_) => {
+    inject((
+      _$httpBackend_,
+      _$rootScope_,
+      _$window_,
+      _ChannelService_,
+      _ConfigService_,
+      _HstService_,
+      _PageStructureService_,
+      _TargetingService_,
+    ) => {
       $httpBackend = _$httpBackend_;
       $rootScope = _$rootScope_;
       $window = _$window_;
       ChannelService = _ChannelService_;
       ConfigService = _ConfigService_;
+      HstService = _HstService_;
+      PageStructureService = _PageStructureService_;
       TargetingService = _TargetingService_;
     });
 
@@ -47,13 +60,12 @@ describe('TargetingService', () => {
     $httpBackend.verifyNoOutstandingExpectation();
   });
 
-  function expectHttp(backend, message, when, ...expects) {
-    const responseData = {};
-    backend.respond((method, url, data, headers, params) => {
+  function expectHttp(backend, message, when, expects = [], data = {}) {
+    backend.respond((method, url, _data, headers, params) => {
       expects.forEach(exp => exp(params));
 
       return [200, {
-        data: responseData,
+        data,
         message: null,
         success: true,
       }];
@@ -64,14 +76,15 @@ describe('TargetingService', () => {
     $httpBackend.flush();
 
     expect(promiseSpy).toHaveBeenCalledWith({
-      data: responseData,
+      data,
       message,
       success: true,
+      reloadRequired: false,
     });
   }
 
-  function expectGet(url, message, when, ...verify) {
-    expectHttp($httpBackend.expectGET(url), message, when, ...verify);
+  function expectGet(url, message, when, expects, responseData) {
+    expectHttp($httpBackend.expectGET(url), message, when, expects, responseData);
   }
 
   function expectHttpError(responseData, message, when) {
@@ -162,6 +175,81 @@ describe('TargetingService', () => {
     });
   });
 
+  describe('add and update Variant', () => {
+    const data = {};
+
+    beforeEach(() => {
+      spyOn(HstService, 'doPutFormWithHeaders').and.returnValue({ data });
+
+      const page = jasmine.createSpyObj('page', ['getComponentById']);
+      page.getComponentById.and.returnValue({
+        lastModified: 'last-modified',
+      });
+      spyOn(PageStructureService, 'getPage').and.returnValue(page);
+    });
+
+    describe('addVariant', () => {
+      it('should execute a PUT request on the HST', () => {
+        TargetingService.addVariant('component-id', data);
+        $rootScope.$digest();
+
+        expect(HstService.doPutFormWithHeaders).toHaveBeenCalledWith(
+          data,
+          'component-id',
+          jasmine.objectContaining({
+            lastModifiedTimestamp: 'last-modified',
+          }),
+          'hippo-new-configuration',
+        );
+      });
+
+      it('should return success response', (done) => {
+        TargetingService.addVariant('component-id', data).then((result) => {
+          expect(result).toEqual({
+            message: 'Succesfully created a new variant for component "component-id"',
+            reloadRequired: false,
+            success: true,
+            data,
+          });
+          done();
+        });
+
+        $rootScope.$digest();
+      });
+    });
+
+    describe('updateVariant', () => {
+      it('should execute a PUT request on the HST with an URI-Encoded variant ID', () => {
+        TargetingService.updateVariant('component-id', data, 'variant&id');
+        $rootScope.$digest();
+
+        expect(HstService.doPutFormWithHeaders).toHaveBeenCalledWith(
+          data,
+          'component-id',
+          jasmine.objectContaining({
+            lastModifiedTimestamp: 'last-modified',
+          }),
+          'variant%26id',
+        );
+      });
+
+      it('should return success response with the newVariantId', (done) => {
+        TargetingService.updateVariant('component-id', data, 'variant-id').then((result) => {
+          expect(result).toEqual({
+            message: 'Succesfully updated variant "variant-id" for component "component-id"',
+            reloadRequired: false,
+            success: true,
+            data,
+          });
+          expect(result.data.newVariantId).toBeDefined();
+          done();
+        });
+
+        $rootScope.$digest();
+      });
+    });
+  });
+
   describe('getPersonas', () => {
     const urlRegex = /targeting-rest-url\/personas.*/;
 
@@ -178,8 +266,14 @@ describe('TargetingService', () => {
         urlRegex,
         'Personas loaded successfully',
         () => TargetingService.getPersonas(),
-        expectDefaultParams,
-        params => expect(params.collectors).toBe('collector1,collector2'),
+        [
+          expectDefaultParams,
+          params => expect(params.collectors).toBe('collector1,collector2'),
+        ],
+        {
+          items: ['woot'],
+          count: 1,
+        },
       );
     });
 
@@ -225,7 +319,7 @@ describe('TargetingService', () => {
         urlRegex,
         'Characteristics IDs loaded successfully',
         () => TargetingService.getCharacteristicsIDs(),
-        expectDefaultParams,
+        [expectDefaultParams],
       );
     });
 
@@ -243,8 +337,10 @@ describe('TargetingService', () => {
         $httpBackend.expectGET(urlRegex, { Accept: 'application/json, text/plain, */*' }, ['characterId']),
         'Characteristic "dayofweek" loaded successfully',
         () => TargetingService.getCharacteristic('dayofweek'),
-        expectDefaultParams,
-        params => expect(params.characterId).toBe('dayofweek'),
+        [
+          expectDefaultParams,
+          params => expect(params.characterId).toBe('dayofweek'),
+        ],
       );
     });
 
@@ -262,7 +358,7 @@ describe('TargetingService', () => {
         urlRegex,
         'Experiment loaded successfully for component "componentId"',
         () => TargetingService.getExperiment('componentId'),
-        expectDefaultParams,
+        [expectDefaultParams],
         params => expect(params.locale).toBe('locale'),
       );
     });
@@ -288,7 +384,7 @@ describe('TargetingService', () => {
         $httpBackend.expectPOST(urlRegex, payload),
         'Experiment saved for component "componentId" with goal "goalId" and variant "variantId"',
         () => TargetingService.saveExperiment('componentId', 'goalId', 'variantId'),
-        expectDefaultParams,
+        [expectDefaultParams],
       );
       expect(checkChanges).toHaveBeenCalled();
     });
@@ -312,7 +408,7 @@ describe('TargetingService', () => {
         $httpBackend.expectPOST(urlRegex, 'componentId'),
         'Experiment completed for component "componentId"',
         () => TargetingService.completeExperiment('componentId', 'keepVariantId'),
-        expectDefaultParams,
+        [expectDefaultParams],
         params => expect(params.keepOnlyVariantId).toBe('keepVariantId'),
       );
       expect(checkChanges).toHaveBeenCalled();
@@ -335,7 +431,7 @@ describe('TargetingService', () => {
         urlRegex,
         'Succesfully loaded state of experiment "experimentId"',
         () => TargetingService.getExperimentStatus('experimentId'),
-        expectDefaultParams,
+        [expectDefaultParams],
       );
     });
 
@@ -356,7 +452,7 @@ describe('TargetingService', () => {
         urlRegex,
         'Succesfully loaded goals',
         () => TargetingService.getGoals(),
-        expectDefaultParams,
+        [expectDefaultParams],
       );
     });
 

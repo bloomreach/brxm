@@ -14,13 +14,32 @@
  * limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
-
-import { ComponentProperties } from '../../models/component-properties.model';
-
-export interface Ng1ComponentEditorService {
-  propertiesAsFormData(): ComponentProperties;
-  getComponent(): any;
+export interface PersonaAlterEgoDataPoint {
+  altered: boolean;
+  colectorId: string;
+  data: any;
 }
 
-export const NG1_COMPONENT_EDITOR_SERVICE = new InjectionToken<Ng1ComponentEditorService>('NG1_COMPONENT_EDITOR_SERVICE');
+export enum PersonaRuleType {
+  AND_RULE = 'AND_RULE',
+  OR_RULE = 'OR_RULE',
+}
+
+export interface PersonaRule {
+  characteristic: string;
+  targetGroupId: string;
+  targetGroupName: string;
+  type: PersonaRuleType;
+}
+
+export interface Persona {
+  alterEgoData: PersonaAlterEgoDataPoint[];
+  avatar: string;
+  description: string;
+  id: string;
+  name: string;
+  quote: string;
+  rules: PersonaRule[];
+  segmentDescription: string;
+  segmentName: string;
+}

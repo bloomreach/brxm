@@ -1,5 +1,5 @@
-/*
- * Copyright 2020 Bloomreach
+/*!
+ * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,30 @@
  * limitations under the License.
  */
 
-class ComponentVariantsCtrl { }
+@import '~@bloomreach/frontend-theme/palettes';
+@import 'variables';
 
-export default ComponentVariantsCtrl;
+:host {
+  height: 100%;
+  display: block;
+}
+
+.mat-list-single-selected-option {
+  background-color: map-get($blue, 50) !important;
+  font-weight: 600;
+}
+
+.mat-list-base {
+  padding-top: 0;
+}
+
+mat-list-option {
+  &:focus,
+  &:hover {
+    background-color: rgba(0, 0, 0, .1);
+  }
+}
+
+mat-selection-list {
+  min-height: 168px;
+}

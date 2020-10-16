@@ -29,12 +29,15 @@ class ComponentEditorService {
     ChannelService,
     CmsService,
     CommunicationService,
+    ComponentVariantsService,
+    ConfigService,
     ContainerService,
     DialogService,
     FeedbackService,
     HippoIframeService,
     HstComponentService,
     PageStructureService,
+    TargetingService,
   ) {
     'ngInject';
 
@@ -44,12 +47,15 @@ class ComponentEditorService {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.CommunicationService = CommunicationService;
+    this.ComponentVariantsService = ComponentVariantsService;
+    this.ConfigService = ConfigService;
     this.ContainerService = ContainerService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
     this.PageStructureService = PageStructureService;
+    this.TargetingService = TargetingService;
 
     this.killed = false;
 
@@ -323,18 +329,32 @@ class ComponentEditorService {
   }
 
   async save() {
-    const { data: { id }, reloadRequired } = await this.HstComponentService.setParameters(
-      this.component.getId(),
-      this.component.getRenderVariant(),
-      this.propertiesAsFormData(),
-    );
+    let response;
+    const componentId = this.component.getId();
+    const formData = this.propertiesAsFormData();
 
-    if (reloadRequired) {
-      await this.HippoIframeService.reload();
-      await this.open(id);
+    if (this.ConfigService.relevancePresent) {
+      const variant = this.ComponentVariantsService.getCurrentVariant();
+      const { persona, characteristics } = this.ComponentVariantsService.extractExpressions(variant);
+      const variantId = variant.id;
+      response = await this.TargetingService.updateVariant(
+        componentId,
+        formData,
+        variantId,
+        persona,
+        characteristics,
+      );
+    } else {
+      const variantId = this.component.getRenderVariant();
+      response = await this.HstComponentService.setParameters(
+        componentId,
+        variantId,
+        formData,
+      );
     }
 
-    return this.CmsService.reportUsageStatistic('CompConfigSidePanelSave');
+    this.CmsService.reportUsageStatistic('CompConfigSidePanelSave');
+    return response;
   }
 
   propertiesAsFormData() {
