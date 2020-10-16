@@ -61,7 +61,9 @@ export class CharacteristicsDialogComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     const { data } = await this.targetingService.getCharacteristics();
-    this.characteristics = this.parseCharacteristics(data);
+    if (data) {
+      this.characteristics = this.parseCharacteristics(data);
+    }
   }
 
   addSelection(): void {
