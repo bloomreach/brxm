@@ -16,6 +16,7 @@
 
 @import '~@bloomreach/frontend-theme/palettes';
 @import '~@bloomreach/frontend-theme/angular-theme';
+@import 'mdi-styles-fix';
 @import 'variables';
 
 $custom-typography: mat-typography-config(
@@ -30,8 +31,47 @@ $custom-typography: mat-typography-config(
   color: map-get($text-color, dark);
 }
 
-.mat-stroked-button:not(.mat-button-disabled) {
+.mat-stroked-button:not(.mat-button-disabled)[color="primary"] {
   border-color: map-get($blue, 500);
 }
 
-@import 'mdi-styles-fix';
+.mat-stroked-button {
+  padding: 0 12px !important;
+
+  &.cdk-keyboard-focused {
+    box-shadow: 0 0 0 2px $bloomreach-blue-darker;
+  }
+}
+
+.mat-icon-button {
+  color: map-get($text-color, dim);
+}
+
+//Override mat-dialog styling to match bloomreach styleguide
+$mat-dialog-spacing: 24px;
+
+.mat-dialog-title,
+.mat-dialog-content,
+.mat-dialog-actions {
+  margin-left: -($mat-dialog-spacing) !important;
+  margin-right: -($mat-dialog-spacing) !important;
+}
+
+.mat-dialog-title {
+  background: map-get($grey, A100);
+  font-weight: 600 !important;
+  margin-bottom: 0 !important;
+  margin-top: -($mat-dialog-spacing) !important;
+  padding: $spacing-half $spacing-full !important;
+}
+
+.mat-dialog-content {
+  padding: 0 !important;
+}
+
+.mat-dialog-actions {
+  background: map-get($grey, A100);
+  justify-content: flex-end;
+  min-height: initial !important;
+  padding: $spacing-half $spacing-full !important;
+}

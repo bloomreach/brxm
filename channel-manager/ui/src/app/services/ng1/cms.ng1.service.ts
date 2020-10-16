@@ -1,5 +1,5 @@
-/*
- * Copyright 2020 Bloomreach
+/*!
+ * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-class ComponentVariantsCtrl { }
+import { InjectionToken } from '@angular/core';
 
-export default ComponentVariantsCtrl;
+export interface Ng1CmsService {
+  publish(eventName: string): void;
+}
+
+export const NG1_CMS_SERVICE = new InjectionToken<Ng1CmsService>('NG1_CMS_SERVICE');

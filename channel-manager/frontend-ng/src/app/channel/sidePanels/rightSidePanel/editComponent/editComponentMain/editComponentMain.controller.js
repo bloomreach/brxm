@@ -29,9 +29,11 @@ class EditComponentMainCtrl {
     $q,
     $rootScope,
     $scope,
+    $state,
     ChannelService,
     CmsService,
     ComponentEditor,
+    ComponentVariantsService,
     ConfigService,
     EditComponentService,
     FeedbackService,
@@ -43,13 +45,15 @@ class EditComponentMainCtrl {
     this.$q = $q;
     this.$rootScope = $rootScope;
     this.$scope = $scope;
+    this.$state = $state;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ComponentEditor = ComponentEditor;
+    this.ComponentVariantsService = ComponentVariantsService;
+    this.ConfigService = ConfigService;
     this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
-    this.ConfigService = ConfigService;
 
     this._onComponentMoved = this._onComponentMoved.bind(this);
     this._onDocumentSelect = this._onDocumentSelect.bind(this);
@@ -70,6 +74,15 @@ class EditComponentMainCtrl {
 
   get variantsVisible() {
     return this.ConfigService.relevancePresent;
+  }
+
+  onVariantUpdated(variant) {
+    this.ComponentVariantsService.setCurrentVariant(variant);
+    this.form.$setDirty();
+  }
+
+  onVariantInitiated(variant) {
+    this.ComponentVariantsService.setCurrentVariant(variant);
   }
 
   _onComponentMoved() {
@@ -114,20 +127,34 @@ class EditComponentMainCtrl {
       .then(() => this.form.$setPristine());
   }
 
-  save() {
-    return this.ComponentEditor.save()
-      .then(() => this.form.$setPristine())
-      .then(() => this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent'))
-      .catch((error) => {
-        this.FeedbackService.showError(
-          SAVE_ERRORS[error.data.error] || SAVE_ERRORS.GENERAL_ERROR,
-          error.data.parameterMap,
-        );
-        this.HippoIframeService.reload();
-        if (error.message && error.message.startsWith('javax.jcr.ItemNotFoundException')) {
-          this.EditComponentService.killEditor();
-        }
-      });
+  async save(exitingState = false) {
+    try {
+      const { data: { id, newVariantId }, reloadRequired } = await this.ComponentEditor.save();
+
+      this.form.$setPristine();
+      this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent');
+
+      if (this.ConfigService.relevancePresent && !exitingState) {
+        await this.$state.go('hippo-cm.channel.edit-component.properties', {
+          componentId: id,
+          variantId: newVariantId,
+        });
+      }
+
+      if (reloadRequired) {
+        await this.HippoIframeService.reload();
+        await this.ComponentEditor.open(id);
+      }
+    } catch (error) {
+      this.FeedbackService.showError(
+        SAVE_ERRORS[error.data.error] || SAVE_ERRORS.GENERAL_ERROR,
+        error.data.parameterMap,
+      );
+      this.HippoIframeService.reload();
+      if (error.message && error.message.startsWith('javax.jcr.ItemNotFoundException')) {
+        this.EditComponentService.killEditor();
+      }
+    }
   }
 
   deleteComponent() {
@@ -187,7 +214,7 @@ class EditComponentMainCtrl {
       return this.ComponentEditor.confirmSaveOrDiscardChanges(this._isFormValid())
         .then((action) => {
           if (action === 'SAVE') {
-            return this.save();
+            return this.save(true);
           }
           return this.$q.resolve();
         })

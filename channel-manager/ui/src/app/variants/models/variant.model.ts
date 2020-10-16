@@ -25,7 +25,7 @@ export interface VariantExpression {
   type: VariantExpressionType;
 }
 
-export interface VariantRules {
+export interface VariantExpressions {
   persona: string;
   characteristics: VariantCharacteristicData[];
 }

@@ -16,14 +16,18 @@
 
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { NG1_CMS_SERVICE } from '../../../services/ng1/cms.ng1.service';
 import { NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
-import { Variant } from '../../models/variant.model';
+import { Variant, VariantCharacteristicData } from '../../models/variant.model';
 import { VariantsService } from '../../services/variants.service';
 
 import { VariantsComponent } from './variants.component';
@@ -45,14 +49,14 @@ describe('VariantsComponent', () => {
     svgIcon!: string;
   }
 
-  const mockRules = [
+  const mockExpressions = [
     {
       country: 'thenetherlands-1440145311193',
     },
     {
       continent: 'africa-AF',
     },
-  ];
+  ] as VariantCharacteristicData[];
 
   const mockVariants = [
    {
@@ -75,8 +79,8 @@ describe('VariantsComponent', () => {
      variantName: 'Dutch',
      expressions: [
        {type: 'persona', id: 'dirk-1440145443062', name: 'Dutch'},
-       {type: 'rule', id: `${Object.keys(mockRules[0])[0]}/${Object.values(mockRules[0])[0]}`, name: 'The Netherlands'},
-       {type: 'rule', id: `${Object.keys(mockRules[1])[0]}/${Object.values(mockRules[1])[0]}`, name: 'Africa'},
+       {type: 'rule', id: `${Object.keys(mockExpressions[0])[0]}/${Object.values(mockExpressions[0])[0]}`, name: 'The Netherlands'},
+       {type: 'rule', id: `${Object.keys(mockExpressions[1])[0]}/${Object.values(mockExpressions[1])[0]}`, name: 'Africa'},
      ],
      defaultVariant: false,
      abvariantId: '1600075014',
@@ -99,6 +103,7 @@ describe('VariantsComponent', () => {
       propertiesAsFormData: () => mockFormData,
     };
     const variantsServiceMock = {
+      extractExpressions: jest.fn(),
       addVariant: () => Promise.resolve(),
       getVariants: () => Promise.resolve(mockVariants),
     };
@@ -106,20 +111,27 @@ describe('VariantsComponent', () => {
       params: {
         variantId: mockVariants[0].id,
       },
-      go: jest.fn(),
+      go: jest.fn(() => Promise.resolve()),
+    };
+    const cmsServiceMock = {
+      publish: jest.fn(),
     };
 
     TestBed.configureTestingModule({
       imports: [
+        MatDialogModule,
         MatFormFieldModule,
         MatSelectModule,
+        MatTooltipModule,
         BrowserAnimationsModule,
         TranslateModule.forRoot(),
+        ReactiveFormsModule,
       ],
       declarations: [ VariantsComponent, MatIconMockComponent ],
       providers: [
         { provide: NG1_COMPONENT_EDITOR_SERVICE, useValue: componentEditorServiceMock },
         { provide: NG1_STATE_SERVICE, useValue: stateServiceMock },
+        { provide: NG1_CMS_SERVICE, useValue: cmsServiceMock },
         { provide: VariantsService, useValue: variantsServiceMock },
       ],
     });
@@ -141,24 +153,26 @@ describe('VariantsComponent', () => {
   });
 
   it('should set initial selected variant', () => {
-    expect(component.selectedVariant).toBe(mockVariants[0]);
+    expect(component.variantSelect.value).toBe(mockVariants[0]);
   });
 
   it('should go to edit component state of selected variant', fakeAsync(() => {
-    const variantId = 'myVariant';
+    component.selectVariant(mockVariants[1]);
 
-    component.selectVariant(variantId);
-
-    expect(stateService.go).toHaveBeenCalledWith('hippo-cm.channel.edit-component', {
+    expect(stateService.go).toHaveBeenCalledWith('hippo-cm.channel.edit-component.properties', {
       componentId: mockComponent.getId(),
-      variantId,
+      variantId: mockVariants[1].id,
     });
   }));
 
   describe('adding variant', () => {
     it('should select the newly added variant', async () => {
       jest.spyOn(variantsService, 'addVariant');
-      component.variantIdParam = mockVariants[1].id;
+      component.variantSelect.setValue(mockVariants[1]);
+      jest.spyOn(variantsService, 'extractExpressions').mockReturnValue({
+        persona: mockVariants[1].expressions[0].id,
+        characteristics: mockExpressions,
+      });
 
       await component.addVariant();
 
@@ -166,7 +180,7 @@ describe('VariantsComponent', () => {
         mockComponent.getId(),
         mockFormData,
         mockVariants[1].expressions[0].id,
-        mockRules,
+        mockExpressions,
       );
     });
 
@@ -175,10 +189,14 @@ describe('VariantsComponent', () => {
         id: 'newVariant',
       } as Variant;
       jest.spyOn(variantsService, 'getVariants').mockResolvedValue(mockVariants.concat(newVariant));
+      jest.spyOn(variantsService, 'extractExpressions').mockReturnValue({
+        persona: mockVariants[1].expressions[0].id,
+        characteristics: mockExpressions,
+      });
 
       await component.addVariant();
 
-      expect(stateService.go).toHaveBeenCalledWith('hippo-cm.channel.edit-component', {
+      expect(stateService.go).toHaveBeenCalledWith('hippo-cm.channel.edit-component.properties', {
         componentId: mockComponent.getId(),
         variantId: newVariant.id,
       });
