@@ -17,8 +17,8 @@
 class MenuItem {
   constructor(name, config = {}) {
     this.name = name;
-    this.translationKey = config.translationKey || name;
-    this.translationKeyFunction = config.translationKeyFunction;
+    this.i18nKey = config.translationKey || name;
+    this.i18nKeyFunction = config.translationKeyFunction;
 
     this.isVisible = config.isVisible || this.isVisible;
     this.isEnabled = config.isEnabled || this.isEnabled;
@@ -27,6 +27,12 @@ class MenuItem {
     this.iconSvg = config.iconSvg || undefined;
     this.iconName = config.iconName || undefined;
     this.isIconVisible = config.isIconVisible || this.isIconVisible;
+  }
+
+  get translationKey() {
+    return this.i18nKeyFunction
+      ? this.i18nKeyFunction(this.i18nKey)
+      : this.i18nKey;
   }
 
   isVisible() {
