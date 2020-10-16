@@ -25,6 +25,7 @@
     .text-text ::ng-deep .mat-list-text {
       column-gap: 8px;
       display: grid !important;
+      font-size: $font-normal;
       grid-template-columns: 1fr 1fr;
     }
 
@@ -32,6 +33,7 @@
       align-items: center;
       column-gap: 16px;
       display: grid !important;
+      font-size: $font-normal;
       grid-template-columns: 24px 1fr;
 
       mat-icon {

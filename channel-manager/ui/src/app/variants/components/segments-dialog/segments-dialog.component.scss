@@ -20,6 +20,10 @@
 :host {
   height: 100%;
   display: block;
+
+  ::ng-deep .mat-list-text {
+    font-size: $font-normal;
+  }
 }
 
 .mat-list-base {
