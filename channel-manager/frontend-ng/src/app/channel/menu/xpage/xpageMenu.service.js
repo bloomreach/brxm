@@ -176,6 +176,44 @@ class XPageMenuService extends MenuService {
     addWorkflowAction('request-schedule-publish', id => DocumentWorkflowService.requestSchedulePublication(id), {
       isEnabled: () => isEnabled('request-schedule-publish') && !isEditingCurrentPage(),
     });
+
+    menu.addDivider({
+      isVisible: () => PageService.hasSomeAction('xpage',
+        'cancel-request',
+        'accept-request',
+        'reject-request',
+        'rejected-request'),
+    });
+
+    function getRequestTranslationKey(key) {
+      const workflowRequest = PageService.getState('workflowRequest');
+      const scheduledRequest = PageService.getState('scheduledRequest');
+
+      let type = '';
+      if (workflowRequest !== null) {
+        ({ type } = workflowRequest);
+      } else if (scheduledRequest !== null) {
+        ({ type } = scheduledRequest);
+      }
+
+      return `${key}${type ? `_${type.toUpperCase()}` : ''}`;
+    }
+
+    addWorkflowAction('cancel-request', id => DocumentWorkflowService.cancelRequest(id), {
+      translationKeyFunction: getRequestTranslationKey,
+    });
+
+    addWorkflowAction('accept-request', id => DocumentWorkflowService.acceptRequest(id), {
+      translationKeyFunction: getRequestTranslationKey,
+    });
+
+    addWorkflowAction('reject-request', id => DocumentWorkflowService.rejectRequest(id), {
+      translationKeyFunction: getRequestTranslationKey,
+    });
+
+    addWorkflowAction('rejected-request', id => DocumentWorkflowService.cancelRequest(id), {
+      translationKeyFunction: getRequestTranslationKey,
+    });
   }
 }
 
