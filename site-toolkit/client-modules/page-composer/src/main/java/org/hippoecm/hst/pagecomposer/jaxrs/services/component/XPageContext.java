@@ -37,6 +37,10 @@ public class XPageContext {
     private Boolean copyAllowed;
     private Boolean moveAllowed;
     private Boolean deleteAllowed;
+    private Boolean acceptRequest;
+    private Boolean cancelRequest;
+    private Boolean rejectRequest;
+    private Boolean rejectedRequest;
 
     public String getXPageId() {
         return xPageId;
@@ -164,4 +168,51 @@ public class XPageContext {
         return this;
     }
 
+    public Optional<Boolean> isCancelRequest() {
+        return Optional.ofNullable(cancelRequest);
+    }
+
+    public void setCancelRequest(final Boolean cancelRequest) {
+        this.cancelRequest = cancelRequest;
+    }
+
+    public Optional<Boolean> isAcceptRequest() {
+        return Optional.ofNullable(acceptRequest);
+    }
+
+    public void setAcceptRequest(final Boolean acceptRequest) {
+        this.acceptRequest = acceptRequest;
+    }
+
+    public Optional<Boolean> isRejectRequest() {
+        return Optional.ofNullable(rejectRequest);
+    }
+
+    public void setRejectRequest(final Boolean rejectRequest) {
+        this.rejectRequest = rejectRequest;
+    }
+
+    public Optional<Boolean> isRejectedRequest() {
+        return Optional.ofNullable(rejectedRequest);
+    }
+
+    public void setRejectedRequest(final Boolean rejectedRequest) {
+        this.rejectedRequest = rejectedRequest;
+    }
+
+    public boolean hasBlockingRequest() {
+        if (isAcceptRequest().orElse(false)) {
+            return true;
+        }
+
+        if (isRejectRequest().orElse(false)) {
+            return true;
+        }
+
+        if (isCancelRequest().orElse(false)) {
+            return true;
+        }
+
+        return false;
+    }
 }
