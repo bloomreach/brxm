@@ -57,7 +57,7 @@
   "DIALOG_CHARACTERISTICS_TITLE": "Characteristic",
   "DIALOG_CHARACTERISTICS_NO_CHARACTERISTICS": "No characteristics",
   "DIALOG_CHARACTERISTICS_EMPTY_TARGET_GROUPS": "No target groups configured",
-  "DIALOG_CHARACTERISTICS_NO_TARGET_GROUPS": "Please select a charateristic",
+  "DIALOG_CHARACTERISTICS_NO_TARGET_GROUPS": "First, select a characteristic",
   "DIALOG_CHARACTERISTICS_STEP1": "Select a characteristic",
   "DIALOG_CHARACTERISTICS_STEP2": "Select a target group",
   "DIALOG_SEGMENTS_TITLE": "Select segment",
