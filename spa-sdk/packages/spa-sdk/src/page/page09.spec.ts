@@ -19,7 +19,8 @@ import { Component } from './component';
 import { ComponentFactory } from './component-factory09';
 import { ContentFactory } from './content-factory09';
 import { ContentModel, Content } from './content09';
-import { EventBus, Events } from '../events';
+import { EventBus as CmsEventBus } from '../cms';
+import { EventBus } from './events09';
 import { LinkFactory } from './link-factory';
 import { LinkRewriter } from './link-rewriter';
 import { TYPE_COMPONENT } from './component09';
@@ -31,6 +32,7 @@ import { Page } from './page';
 let componentFactory: jest.Mocked<ComponentFactory>;
 let content: Content;
 let contentFactory: jest.MockedFunction<ContentFactory>;
+let cmsEventBus: CmsEventBus;
 let eventBus: EventBus;
 let linkFactory: jest.Mocked<LinkFactory>;
 let linkRewriter: jest.Mocked<LinkRewriter>;
@@ -47,14 +49,24 @@ const model = {
 } as PageModel;
 
 function createPage(pageModel = model) {
-  return new PageImpl(pageModel, componentFactory, contentFactory, eventBus, linkFactory, linkRewriter, metaFactory);
+  return new PageImpl(
+    pageModel,
+    componentFactory,
+    contentFactory,
+    linkFactory,
+    linkRewriter,
+    metaFactory,
+    cmsEventBus,
+    eventBus,
+  );
 }
 
 beforeEach(() => {
   componentFactory = { create: jest.fn(() => root) } as unknown as typeof componentFactory;
   content = {} as jest.Mocked<Content>;
   contentFactory = jest.fn(() => content) as unknown as typeof contentFactory;
-  eventBus = new Typed<Events>();
+  cmsEventBus = new Typed();
+  eventBus = new Typed();
   linkFactory = { create: jest.fn() } as unknown as typeof linkFactory;
   linkRewriter = { rewrite: jest.fn() } as unknown as jest.Mocked<LinkRewriter>;
   metaFactory = jest.fn();
@@ -269,12 +281,12 @@ describe('PageImpl', () => {
 
   describe('sync', () => {
     it('should emit page.ready event', () => {
-      spyOn(eventBus, 'emit');
+      spyOn(cmsEventBus, 'emit');
 
       const page = createPage();
       page.sync();
 
-      expect(eventBus.emit).toBeCalledWith('page.ready', {});
+      expect(cmsEventBus.emit).toBeCalledWith('page.ready', {});
     });
   });
 

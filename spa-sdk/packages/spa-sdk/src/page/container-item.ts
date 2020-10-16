@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { inject, injectable } from 'inversify';
+import { inject, injectable, optional } from 'inversify';
 import {
   ComponentImpl,
   ComponentMeta,
@@ -24,7 +24,7 @@ import {
   TYPE_COMPONENT_CONTAINER_ITEM,
 } from './component';
 import { EmitterMixin, Emitter } from '../emitter';
-import { EventBusService, EventBus, PageUpdateEvent } from '../events';
+import { EventBusService, EventBus, PageUpdateEvent } from './events';
 import { LinkFactory } from './link-factory';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { PageModel } from './page';
@@ -49,8 +49,9 @@ export interface ContainerItemMeta extends ComponentMeta {
  * Model of a container item.
  */
 export interface ContainerItemModel extends ComponentModel {
-  meta: ContainerItemMeta;
+  ctype?: string;
   label?: string;
+  meta: ContainerItemMeta;
   type: typeof TYPE_COMPONENT_CONTAINER_ITEM;
 }
 
@@ -67,6 +68,13 @@ export interface ContainerItemEvents {
  * A component that can be configured in the UI.
  */
 export interface ContainerItem extends Component, Emitter<ContainerItemEvents> {
+  /**
+   * Returns the label of a container item catalogue component.
+   *
+   * @return The label of a catalogue component (e.g. "News List").
+   */
+  getLabel(): string | undefined;
+
   /**
    * Returns the type of a container item. The available types depend on which
    * container items have been configured in the backend.
@@ -91,13 +99,13 @@ export class ContainerItemImpl
 {
   constructor(
     @inject(ComponentModelToken) protected model: ContainerItemModel,
-    @inject(EventBusService) eventBus: EventBus,
     @inject(LinkFactory) linkFactory: LinkFactory,
     @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
+    @inject(EventBusService) @optional() eventBus?: EventBus,
   ) {
     super(model, [], linkFactory, metaFactory);
 
-    eventBus.on('page.update', this.onPageUpdate.bind(this));
+    eventBus?.on('page.update', this.onPageUpdate.bind(this));
   }
 
   protected onPageUpdate(event: PageUpdateEvent) {
@@ -112,8 +120,12 @@ export class ContainerItemImpl
     this.emit('update', {});
   }
 
-  getType() {
+  getLabel() {
     return this.model.label;
+  }
+
+  getType() {
+    return this.model.ctype ?? this.model.label;
   }
 
   isHidden() {

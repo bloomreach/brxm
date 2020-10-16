@@ -77,7 +77,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
     public void modifying_live_or_draft_variants_not_allowed() throws Exception {
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-        final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+        final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/oldstyle-testitem");
 
         final String containerId = getNodeId(admin,publishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
 
@@ -100,23 +100,24 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
     @Test
     public void create_and_delete_container_item_as_admin() throws Exception {
-        createAndDeleteItemAs(ADMIN_CREDENTIALS, true, false);
+        createAndDeleteItemAs(ADMIN_CREDENTIALS, true, false, "oldstyle-testitem");
+        createAndDeleteItemAs(ADMIN_CREDENTIALS, true, false, "newstyle-testitem");
     }
 
 
     @Test
     public void create_and_delete_container_item_as_admin_for_VERSIONED_XPage() throws Exception {
-        createAndDeleteItemAs(ADMIN_CREDENTIALS, true, true);
+        createAndDeleteItemAs(ADMIN_CREDENTIALS, true, true, "oldstyle-testitem");
     }
 
     @Test
     public void create_and_delete_container_item_as_editor() throws Exception {
-        createAndDeleteItemAs(EDITOR_CREDENTIALS, true, false);
+        createAndDeleteItemAs(EDITOR_CREDENTIALS, true, false, "oldstyle-testitem");
     }
 
     @Test
     public void create_and_delete_container_item_as_editor_for_VERSIONED_XPage() throws Exception {
-        createAndDeleteItemAs(EDITOR_CREDENTIALS, true, true);
+        createAndDeleteItemAs(EDITOR_CREDENTIALS, true, true, "oldstyle-testitem");
     }
 
     /**
@@ -125,14 +126,14 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
     @Test
     public void create_and_delete_container_item_as_author() throws Exception {
         // author is not allowed to do a GET on ContainerItemComponentResource.getVariant()
-        createAndDeleteItemAs(AUTHOR_CREDENTIALS, true, false);
+        createAndDeleteItemAs(AUTHOR_CREDENTIALS, true, false, "oldstyle-testitem");
     }
 
 
     @Test
     public void create_and_delete_container_item_as_author_for_VERSIONED_XPage() throws Exception {
         // author is not allowed to do a GET on ContainerItemComponentResource.getVariant()
-        createAndDeleteItemAs(AUTHOR_CREDENTIALS, true, true);
+        createAndDeleteItemAs(AUTHOR_CREDENTIALS, true, true, "oldstyle-testitem");
     }
 
     /**
@@ -152,7 +153,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         try {
             // since author does not have privilege hippo:author anymore, expect a FORBIDDEN
-            createAndDeleteItemAs(AUTHOR_CREDENTIALS, false, false);
+            createAndDeleteItemAs(AUTHOR_CREDENTIALS, false, false, "oldstyle-testitem");
         } finally {
             // restore privileges
             admin.getNode("/hippo:configuration/hippo:roles/author").setProperty("hipposys:privileges", before);
@@ -177,7 +178,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         try {
             // since author does not have privilege hippo:author anymore, expect a FORBIDDEN
-            createAndDeleteItemAs(AUTHOR_CREDENTIALS, false, true);
+            createAndDeleteItemAs(AUTHOR_CREDENTIALS, false, true, "oldstyle-testitem");
         } finally {
             // restore privileges
             admin.getNode("/hippo:configuration/hippo:roles/author").setProperty("hipposys:privileges", before);
@@ -190,7 +191,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
      * publish)
      */
     private void createAndDeleteItemAs(final SimpleCredentials creds, final boolean allowed,
-                                       final boolean versionedXPageTest) throws Exception {
+                                       final boolean versionedXPageTest, final String catalogItemNodeName) throws Exception {
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
@@ -203,7 +204,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
         }
 
-        final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+        final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/" + catalogItemNodeName);
 
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
         // since document got published and nothing yet changed, should not be published
@@ -239,24 +240,40 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         final String createdUUID = map.get("id").toString();
 
         // assertion on newly created item
-        assertTrue(admin.nodeExists(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/testitem"));
+        assertTrue(admin.nodeExists(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/" + catalogItemNodeName));
 
         final Node newContainerItem = admin.getNodeByIdentifier(createdUUID);
 
         // assert newly created container item does not have the catalog item copied (old style) but keeps a
         // hst:componentdefinition reference
-        assertThat(admin.getNode("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem")
+        assertThat(admin.getNode("/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/" + catalogItemNodeName)
                 .hasProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME))
                 .as("Catalog item expected to have classname")
                 .isTrue();
-        assertThat(newContainerItem.hasProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME))
-                .as("Component item referencing catalog item expected not to have classname")
-                .isFalse();
 
-        assertThat(JcrUtils.getStringProperty(newContainerItem, COMPONENT_PROPERTY_COMPONENTDEFINITION, null))
-                .as("Expected newly created container item to have hst:componentdefinition property pointing " +
-                        "to catalog item")
-                .isEqualTo("hst:components/testpackage/testitem");
+        if (catalogItemNodeName.equals("oldstyle-testitem")) {
+            // old-style is expected to copy the hst:componentclassname
+            assertThat(newContainerItem.hasProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME))
+                    .as("Component item referencing catalog item expected not to have classname")
+                    .isTrue();
+
+            // old-style is not expected to contain hst:componentdefinition backreference
+            assertThat(newContainerItem.hasProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION))
+                    .as("Component backreference not expected for oldstyle item")
+                    .isFalse();
+
+        } else if (catalogItemNodeName.equals("newstyle-testitem")) {
+            // new-style is expected to NOT copy the hst:componentclassname
+            assertThat(newContainerItem.hasProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME))
+                    .as("Component item referencing catalog item expected not to have classname")
+                    .isFalse();
+
+            // new-style is expected to contain hst:componentdefinition backreference
+            assertThat(JcrUtils.getStringProperty(newContainerItem, COMPONENT_PROPERTY_COMPONENTDEFINITION, null))
+                    .as("Expected newly created container item to have hst:componentdefinition property pointing " +
+                            "to catalog item")
+                    .isEqualTo("hst:components/testpackage/" + catalogItemNodeName);
+        }
 
 
         // assert document can now be published
@@ -269,7 +286,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         // now publish the document,
         documentWorkflow.publish();
         // assert that published variant now has extra container item 'testitem'
-        assertTrue(admin.nodeExists(publishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/testitem"));
+        assertTrue(admin.nodeExists(publishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/" + catalogItemNodeName));
 
 
         // now delete : for versioned XPage tests, the containerId from above can be one from version history but since
@@ -311,7 +328,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         }
 
         // published variant still has the container item
-        assertTrue(admin.nodeExists(publishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/testitem"));
+        assertTrue(admin.nodeExists(publishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/" + catalogItemNodeName));
 
         // after delete, the unpublished has become publishable again
         assertEquals("Unpublished has changes, publication should be enabled",
@@ -320,7 +337,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         documentWorkflow.publish();
 
         // published variant should not have the container item any more
-        assertFalse(admin.nodeExists(publishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/testitem"));
+        assertFalse(admin.nodeExists(publishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/" + catalogItemNodeName));
 
         // now assert an existing component item (or catalog) not from the current XPAGE cannot be deleted via
         // the container id
@@ -348,7 +365,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
         final String containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
-        final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+        final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/oldstyle-testitem");
 
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + containerId + "./" + catalogId, null,
@@ -371,7 +388,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
         final String containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
         final String beforeItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
-        final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+        final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/oldstyle-testitem");
 
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + containerId + "./" + catalogId + "/" + beforeItemId, null,
@@ -384,8 +401,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         final Node container = admin.getNodeByIdentifier(containerId);
 
         final NodeIterator nodes = container.getNodes();
-        assertEquals("Expected testitem to be created before banner", "testitem", nodes.nextNode().getName());
-        assertEquals("Expected testitem to be created before banner", "banner", nodes.nextNode().getName());
+        assertEquals("Expected oldstyle-testitem to be created before banner", "oldstyle-testitem", nodes.nextNode().getName());
+        assertEquals("Expected oldstyle-testitem to be created before banner", "banner", nodes.nextNode().getName());
 
 
         assertRequiresReload(createResponse, false);
@@ -401,7 +418,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         assertThat(unpublishedExpPageVariant.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
 
         final String beforeItemId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
-        final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+        final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/oldstyle-testitem");
 
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + containerId + "./" + catalogId + "/" + beforeItemId, null,
@@ -419,8 +436,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
                 unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6"));
 
         final NodeIterator nodes = container.getNodes();
-        assertEquals("Expected testitem to be created before banner", "testitem", nodes.nextNode().getName());
-        assertEquals("Expected testitem to be created before banner", "banner", nodes.nextNode().getName());
+        assertEquals("Expected oldstyle-testitem to be created before banner", "oldstyle-testitem", nodes.nextNode().getName());
+        assertEquals("Expected oldstyle-testitem to be created before banner", "banner", nodes.nextNode().getName());
 
         // versioned XPage was modified
         assertRequiresReload(createResponse, true);
@@ -492,7 +509,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         }
 
 
-        final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+        final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/oldstyle-testitem");
 
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + containerId + "./" + catalogId + "/" + beforeItemId, null,
@@ -831,7 +848,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
             final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
             final String containerId = getNodeId(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
-            final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/testitem");
+            final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/oldstyle-testitem");
 
             final RequestResponseMock createRequestResponse = mockGetRequestResponse(
                     "http", "localhost", "/_rp/" + containerId + "./" + catalogId, null,

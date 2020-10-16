@@ -21,10 +21,9 @@ export class Container extends ComponentEntityMixin(BaseContainer) {
   // For no-markup containers we can not depend on the built-in CSS class .hst-container-item to indicate non-emptiness,
   // instead we simply fallback to checking if there is *any* child element present
   isEmptyInDom() {
-    const box = this.getBoxElement();
     const items = this.isXTypeNoMarkup()
-      ? box.children()
-      : box.find('.hst-container-item');
+      ? this.getComponents()
+      : this.getBoxElement().find('.hst-container-item');
 
     return !items.length;
   }

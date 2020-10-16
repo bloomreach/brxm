@@ -486,6 +486,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     private void doArchive(final Node handle, final String atticPath) throws RepositoryException {
         rootSession.move(handle.getPath(), atticPath + "/" + atticName(atticPath, handle));
+        // make sure to save the changes, otherwise the an InvalidItemStateException is thrown by
+        // versionManager.checkpoint below
+        rootSession.save();
         try {
             if (handle.isNodeType(NT_HANDLE)) {
                 for (final Node child : new NodeIterable(handle.getNodes(handle.getName()))) {

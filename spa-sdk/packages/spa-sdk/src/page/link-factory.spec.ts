@@ -15,7 +15,7 @@
  */
 
 import { LinkFactory } from './link-factory';
-import { TYPE_LINK_EXTERNAL, TYPE_LINK_INTERNAL, TYPE_LINK_RESOURCE } from './link';
+import { TYPE_LINK_EXTERNAL, TYPE_LINK_INTERNAL, TYPE_LINK_RESOURCE, TYPE_LINK_UNKNOWN } from './link';
 
 describe('LinkFactory', () => {
   describe('create', () => {
@@ -38,8 +38,12 @@ describe('LinkFactory', () => {
       expect(builder2).toBeCalledWith('link2');
     });
 
-    it('should return link as-is on unknown link type', () => {
+    it('should return link as-is on the unregistered link type', () => {
       expect(factory.create({ href: 'link', type: TYPE_LINK_RESOURCE })).toBe('link');
+    });
+
+    it('should return undefined on the unknown link type', () => {
+      expect(factory.create({ type: TYPE_LINK_UNKNOWN })).toBeUndefined();
     });
 
     it('should return link as-is when there is no type specified', () => {

@@ -15,9 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
+import java.util.Objects;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.usagestatistics.events.HandleIdentifierStrategy;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class BrowseState implements IClusterable {
 
@@ -26,6 +35,7 @@ public class BrowseState implements IClusterable {
     private boolean tabChanged;
     private boolean listingChanged;
     private boolean expandChanged;
+    private boolean navLocationChanged;
 
     // render actions
     private boolean expandDefault;
@@ -42,6 +52,7 @@ public class BrowseState implements IClusterable {
     private String section;
     private boolean expanded;
     private Selection last;
+    private NavLocation navLocation;
 
     public void onSectionChanged(final String newSection) {
         sectionChanged = true;
@@ -49,12 +60,42 @@ public class BrowseState implements IClusterable {
     }
 
     public void onTabChanged(final String newTab) {
+        if (tab != null && newTab == null) {
+            onLastTabClosed(tab);
+        }
         tabChanged = true;
         tab = newTab;
     }
 
+    private void onLastTabClosed(final String path) {
+        if (navLocation != null && path.equals(navLocation.getPath())) {
+            JcrNodeModel documentModel = new JcrNodeModel(path);
+            final Node documentNode = documentModel.getNode();
+
+            try {
+                if (!documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    final HandleIdentifierStrategy identifierStrategy = new HandleIdentifierStrategy();
+                    final String nodeId = identifierStrategy.getIdentifier(documentNode);
+                    if (nodeId != null) {
+                        documentModel = new JcrNodeModel(documentNode.getSession().getNodeByIdentifier(nodeId));
+                    }
+                }
+            } catch (RepositoryException ignored) {
+            }
+
+            onNavLocationChanged(NavLocation.folder(documentModel.getParentModel(), NavLocation.Mode.ADD));
+        }
+    }
+
     public void onListingChanged() {
         listingChanged = true;
+    }
+
+    public void onNavLocationChanged(final NavLocation newNavLocation) {
+        if (!Objects.equals(navLocation, newNavLocation)) {
+            navLocationChanged = true;
+            navLocation = newNavLocation;
+        }
     }
 
     public void onExpand() {
@@ -130,7 +171,7 @@ public class BrowseState implements IClusterable {
 
     private boolean renderStateIsDirty() {
         return expandDefault || collapseAll || collapseListing || expandListing || focusTabs || blurTabs ||
-                restoreSelection || shelveSelection;
+                restoreSelection || shelveSelection || navLocationChanged;
     }
 
     private boolean currentSectionMatchesLastSection() {
@@ -138,7 +179,7 @@ public class BrowseState implements IClusterable {
     }
 
     public boolean isDirty() {
-        return sectionChanged || tabChanged || listingChanged || expandChanged;
+        return sectionChanged || tabChanged || listingChanged || expandChanged || navLocationChanged;
     }
 
     public void reset() {
@@ -146,6 +187,7 @@ public class BrowseState implements IClusterable {
         tabChanged = false;
         listingChanged = false;
         expandChanged = false;
+        navLocationChanged = false;
 
         expandDefault = false;
         collapseAll = false;
@@ -163,6 +205,10 @@ public class BrowseState implements IClusterable {
 
     public String getTab() {
         return last == null ? null : last.tab;
+    }
+
+    public NavLocation getNavLocation() {
+        return navLocation;
     }
 
     // Render state
@@ -198,25 +244,31 @@ public class BrowseState implements IClusterable {
         return restoreSelection;
     }
 
+    public boolean isUpdateNavLocation() {
+        return navLocationChanged;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).
-                append("expandChanged", expandChanged).
-                append("sectionChanged", sectionChanged).
-                append("listingChanged", listingChanged).
-                append("tabChanged", tabChanged).
-                append("tab", tab).
-                append("section", section).
-                append("expanded", isExpanded()).
-                append("last", last).
-                append("expandDefault", expandDefault).
-                append("expandListing", expandListing).
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).
+                append("blurTabs", blurTabs).
                 append("collapseAll", collapseAll).
                 append("collapseListing", collapseListing).
+                append("expandChanged", expandChanged).
+                append("expandDefault", expandDefault).
+                append("expanded", isExpanded()).
+                append("expandListing", expandListing).
                 append("focusTabs", focusTabs).
-                append("blurTabs", blurTabs).
-                append("shelveSelection", shelveSelection).
+                append("last", last).
+                append("listingChanged", listingChanged).
+                append("navLocation", navLocation).
+                append("navLocationChanged", navLocationChanged).
                 append("restoreSelection", restoreSelection).
+                append("section", section).
+                append("sectionChanged", sectionChanged).
+                append("shelveSelection", shelveSelection).
+                append("tab", tab).
+                append("tabChanged", tabChanged).
                 toString();
     }
 

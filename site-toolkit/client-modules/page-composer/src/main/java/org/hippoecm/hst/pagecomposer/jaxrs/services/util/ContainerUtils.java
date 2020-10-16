@@ -33,6 +33,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
@@ -70,6 +71,25 @@ public class ContainerUtils {
         }
         log.debug("New child name '{}' for parent '{}'", newName, parent.getPath());
         return newName;
+    }
+
+    public static Node createComponentItem(final Node containerNode, final Node catalogItem,
+                                           final HstComponentConfiguration componentDefinition) throws RepositoryException {
+
+        // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
+        // containerNode. Find a correct newName and create a new node.
+        final String newItemNodeName = findNewName(catalogItem.getName(), containerNode);
+
+        final Session session = containerNode.getSession();
+        final Node newItem;
+        if (catalogItem.getPrimaryNodeType().getName().equals(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+            //If it is a legacy catalog item, i.e. it's type is hst:containeritemcomponent, copy the whole catalog item node
+            newItem = JcrUtils.copy(session, catalogItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
+        } else {
+            newItem = containerNode.addNode(newItemNodeName, NODETYPE_HST_CONTAINERITEMCOMPONENT);
+            newItem.setProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION, componentDefinition.getId());
+        }
+        return newItem;
     }
 
 

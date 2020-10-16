@@ -24,8 +24,8 @@ import { VersionsInfo } from '../../models/versions-info.model';
 
 @Component({
   selector: 'em-versions-info',
-  templateUrl: './versions-info.component.html',
-  styleUrls: ['./versions-info.component.scss'],
+  templateUrl: 'versions-info.component.html',
+  styleUrls: ['versions-info.component.scss'],
 })
 export class VersionsInfoComponent implements OnInit, OnDestroy {
   @Input()
@@ -74,6 +74,10 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
   }
 
   async selectVersion(versionUUID: string): Promise<void> {
+    if (this.isVersionSelected(versionUUID)) {
+      return;
+    }
+
     this.actionInProgress = true;
     const newPath = this.createVersionPath(versionUUID);
     await this.ng1IframeService.load(newPath);
@@ -92,6 +96,10 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
     const renderPath = this.getRenderPath();
     await this.ng1IframeService.load(renderPath);
     await this.getVersionsInfo();
+  }
+
+  isVersionSelected(versionUUID: string): boolean {
+    return this.unpublishedVariantId === versionUUID;
   }
 
   private getRenderPath(): string {

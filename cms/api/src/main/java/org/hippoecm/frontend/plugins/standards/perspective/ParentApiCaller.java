@@ -42,24 +42,28 @@ public class ParentApiCaller implements ParentApi {
     }
 
     @Override
-    public void updateNavLocation(final String path, final String breadcrumbLabel) {
+    public void updateNavLocation(final String path, final String breadcrumbLabel, final boolean addHistory) {
         final IPartialPageRequestHandler target = targetSupplier.get();
 
         if (target == null) {
             return;
         }
 
-        String script = this.prepareJS(path, breadcrumbLabel);
+        String script = this.prepareJS(path, breadcrumbLabel, addHistory);
 
         target.appendJavaScript(script);
     }
 
-    private String prepareJS(final String path, final String breadcrumbLabel) {
+    private String prepareJS(final String path, final String breadcrumbLabel, final boolean addHistory) {
         final JSONObject params = new JSONObject();
         params.put("path", path);
 
         if (breadcrumbLabel != null && breadcrumbLabel.length() > 0) {
             params.put("breadcrumbLabel", breadcrumbLabel);
+        }
+
+        if (addHistory) {
+            params.put("addHistory", true);
         }
 
         return String.format(JAVA_SCRIPT_TEMPLATE, params);

@@ -34,7 +34,7 @@
     <maven.shared.dependency.tree.version>3.0.1</maven.shared.dependency.tree.version>
     <commons-lang.version>2.6</commons-lang.version>
     <maven.plugin-annotations.version>3.5.2</maven.plugin-annotations.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
   </properties>
 
   <dependencies>

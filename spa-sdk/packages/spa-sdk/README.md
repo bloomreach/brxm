@@ -103,6 +103,7 @@ Function | Description
 `isMenu(value): boolean` | Checks whether a value is a menu object.
 `isMeta(value): boolean` | Checks whether a value is a meta-data object.
 `isMetaComment(value): boolean` | Checks whether a value is a meta-data comment.
+`isPagination(value): boolean` | Checks whether a value is a pagination.
 `isLink(value): boolean` | Checks whether a value is a link.
 `isReference(value): boolean` | Checks whether a value is a content reference.
 
@@ -131,7 +132,7 @@ Method | Description
 <code>getDocument<T>(): T &vert; undefined</code> | Gets the page root document. This option is available only along with the Experience Pages feature.
 `getMeta(meta): MetaCollection` | Generates a meta-data collection from the provided `meta` model.
 <code>getTitle(): string &vert; undefined</code> | Gets the title of the page, or `undefined` if not configured.
-`getUrl(link?: Link): string` | Generates a URL for a link object.<br> - If the link object type is internal, then it will prepend `spaBaseUrl` or `baseUrl`. In case when the link starts with the same path as in `cmsBaseUrl`, this part will be removed.<br> - If the link parameter is omitted, then the link to the current page will be returned.<br> - In other cases, the link will be returned as-is.
+`getUrl(link?: Link): string` | Generates a URL for a link object.<br> - If the link object type is internal, then it will prepend `spaBaseUrl` or `baseUrl`. In case when the link starts with the same path as in `cmsBaseUrl`, this part will be removed.<br> - If the link object type is unknown, then it will return `undefined`.<br> - If the link parameter is omitted, then the link to the current page will be returned.<br> - In other cases, the link will be returned as-is.
 `getUrl(path: string): string` | Generates an SPA URL for the path.<br> - If it is a relative path and `cmsBaseUrl` is present, then it will prepend `spaBaseUrl`.<br> - If it is an absolute path and `cmsBaseUrl` is present, then the behavior will be similar to internal link generation.<br> - If it is a relative path and `endpoint` is present, then it will resolve this link relative to the current page URL.<br> - If it is an absolute path and `endpoint` is present, then it will resolve this link relative to the `baseUrl` option.
 <code> getVersion(): string &vert; undefined</code> | Returns the Page Model version.
 <code>getVisitor(): Visitor &vert; undefined</code> | Gets the current visitor information, or undefined if the [Relevance Module](https://documentation.bloomreach.com/library/enterprise/enterprise-features/targeting/targeting.html) is not enabled. The `Visitor` object consists of the following properties:<br> - `id: string` - the current visitor identifier;<br> - `header: string` - an HTTP-header using to pass the visitor identifier to the Page Model API.
@@ -168,6 +169,7 @@ The `ContainerItem` objects are usually visible on the page and interact with th
 
 Method | Description
 --- | ---
+<code>getLabel(): string &vert; undefined</code> | Returns the label of a container item catalogue component.
 <code>getType(): string &vert; undefined</code> | Returns the type of a container item. The available types depend on which container items have been configured in the backend (e.g. "Banner").
 `isHidden(): boolean` | Returns whether the component should not render anything. Hiding components is only possible with the Relevance feature.
 `on(eventName: string, listener: Function): Function` | Subscribes for an event and returns the unsubscribe function.
@@ -263,6 +265,31 @@ Method | Description
 --- | ---
 `getData(): string` | Returns the meta-data.
 `getPosition(): string` | Returns the meta-data position relative to the related element.
+
+##### Pagination
+The `Pagination` object holds the pagination data with all the pagination items.
+
+Method | Description
+--- | ---
+`getCurrent(): PaginationItem` | Returns the current page.
+`getFirst(): PaginationItem` | Returns the first page.
+`getItems(): Reference[]` | Returns the current page items.
+`getLast(): PaginationItem` | Returns the last page.
+<code>getNext(): PaginationItem &vert; undefined</code> | Returns the next page.
+`getOffset(): number` | Returns the number of items before the current page.
+`getPages(): PaginationItem[]` | Returns currently listed pages.
+<code>getPrevious(): PaginationItem &vert; undefined</code> | Returns the previous page.
+`getSize(): number` | Returns the number of items listed on the current page.
+`getTotal(): number` | Returns the total number of items.
+`isEnabled(): boolean` | Returns whether the pagination is enabled.
+
+##### PaginationItem
+The `PaginationItem` object holds a pagination item that is used by the `Pagination` object.
+
+Method | Description
+--- | ---
+`getNumber(): number` | Returns the page number.
+<code>getUrl(): string &vert; undefined</code> | Returns the page URL.
 
 ## Links
 - [SPA integration concept](https://documentation.bloomreach.com/library/concepts/spa-integration/introduction.html).

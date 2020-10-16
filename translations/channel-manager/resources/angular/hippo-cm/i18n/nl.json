@@ -217,7 +217,6 @@
   "UNPUBLISHED_CHANGES": "niet-gepubliceerde wijzigingen",
   "ERROR_NAME_ALREADY_EXISTS": "Kan document niet maken. De naam wordt al gebruikt.",
   "ERROR_NOT_A_DOCUMENT": "Geselecteerd element is geen document.",
-  "VERSIONS_LIST_HEADER": "Datum en tijd, gebruiker",
   "VALIDATION_ILLEGAL_CHARACTERS": "Eén of meer ongeldige karakters zijn ingevoerd ({{characters}}).",
   "ERROR_DOES_NOT_EXIST": "Kan document niet ophalen.",
   "NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE": "Pagina '{{pageName}}': offline",
