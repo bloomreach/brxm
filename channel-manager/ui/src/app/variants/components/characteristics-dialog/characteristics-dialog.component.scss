@@ -65,6 +65,11 @@ mat-list-option {
   margin: 16px;
 }
 
+.step {
+  display: flex;
+  flex-flow: column;
+}
+
 .step-label {
   margin-bottom: 20px;
 }
@@ -84,6 +89,7 @@ mat-list-option {
 .step-content {
   border: 1px solid map-get($text-color, 'disabled');
   border-radius: 4px;
+  flex-grow: 1;
   overflow: hidden;
 }
 
