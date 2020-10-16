@@ -154,7 +154,7 @@ exports[`VariantsComponent should create 1`] = `
     
     
     <div
-      class="variant-expressions"
+      class="qa-variant-expressions variant-expressions"
     >
       <div
         class="variant-expressions-list"
@@ -173,7 +173,7 @@ exports[`VariantsComponent should create 1`] = `
         <button
           aria-describedby="cdk-describedby-message-2"
           cdk-describedby-host=""
-          class="mat-tooltip-trigger"
+          class="qa-variant-expressions-add-segment mat-tooltip-trigger"
           mat-stroked-button=""
         >
           <mat-icon
@@ -182,6 +182,19 @@ exports[`VariantsComponent should create 1`] = `
             plus
           </mat-icon>
            SEGMENT 
+        </button>
+        <button
+          aria-describedby="cdk-describedby-message-3"
+          cdk-describedby-host=""
+          class="qa-variant-expressions-add-characteristic mat-tooltip-trigger"
+          mat-stroked-button=""
+        >
+          <mat-icon
+            svgicon="plus"
+          >
+            plus
+          </mat-icon>
+           CHARACTERISTIC 
         </button>
       </div>
     </div>

@@ -20,11 +20,11 @@ import { ExperimentGoal } from '../../experiments/models/experiment-goal.model';
 import { ExperimentStatus } from '../../experiments/models/experiment-status.model';
 import { Experiment } from '../../experiments/models/experiment.model';
 import { TargetingApiResponse } from '../../models/targeting-api-response.model';
+import { Characteristic } from '../../variants/models/characteristic.model';
 import { Persona } from '../../variants/models/persona.model';
 import { Variant, VariantCharacteristicData } from '../../variants/models/variant.model';
 
 export interface Ng1TargetingService {
-  getCharacteristics(): Promise<TargetingApiResponse<void>>;
   getPersonas(): Promise<TargetingApiResponse<{ items: Persona[] }>>;
   getVariants(containerItemId: string): Promise<TargetingApiResponse<Variant[]>>;
   deleteVariant(componentId: string, variantId: string): Promise<TargetingApiResponse<any>>;
@@ -39,6 +39,8 @@ export interface Ng1TargetingService {
   getExperimentStatus(experimentId: string): Promise<TargetingApiResponse<ExperimentStatus>>;
   saveExperiment(componentId: string, goalId: string, variantId: string): Promise<TargetingApiResponse<string>>;
   completeExperiment(componentId: string, keepOnlyVariantId: string): Promise<TargetingApiResponse<void>>;
+  getCharacteristics(): Promise<TargetingApiResponse<Characteristic[]>>;
+  getCharacteristicConfig(id: string): any | null;
 }
 
 export const NG1_TARGETING_SERVICE = new InjectionToken<Ng1TargetingService>('NG1_TARGETING_SERVICE');

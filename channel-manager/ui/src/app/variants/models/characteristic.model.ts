@@ -14,29 +14,18 @@
  * limitations under the License.
  */
 
-@import '~@bloomreach/frontend-theme/palettes';
-@import 'variables';
-
-:host {
-  height: 100%;
-  display: block;
-
-  ::ng-deep .mat-list-text {
-    font-size: $font-normal;
-  }
+export interface Characteristic {
+  id: string;
+  targetGroups: TargetGroup[];
 }
 
-.mat-list-base {
-  padding-top: 0;
+export interface TargetGroup {
+  id: string;
+  name: string;
+  properties: TargetGroupProperty[];
 }
 
-mat-list-option {
-  &:focus,
-  &:hover {
-    background-color: rgba(0, 0, 0, .1);
-  }
-}
-
-mat-selection-list {
-  min-height: 168px;
+export interface TargetGroupProperty {
+  name: string;
+  value: string;
 }

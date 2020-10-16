@@ -15,19 +15,27 @@
  */
 
 // tslint:disable:match-default-export-name
+import accountCircleOutline from '!!raw-loader!./icons/account-circle-outline.svg';
 import alertCircleOutline from '!!raw-loader!./icons/alert-circle-outline.svg';
 import alertOutline from '!!raw-loader!./icons/alert-outline.svg';
 import calendarClock from '!!raw-loader!./icons/calendar-clock.svg';
+import calendarToday from '!!raw-loader!./icons/calendar-today.svg';
+import chartPie from '!!raw-loader!./icons/chart-pie.svg';
 import close from '!!raw-loader!./icons/close.svg';
 import commentCheckOutline from '!!raw-loader!./icons/comment-check-outline.svg';
 import commentProcessingOutline from '!!raw-loader!./icons/comment-processing-outline.svg';
 import commentRemoveOutline from '!!raw-loader!./icons/comment-remove-outline.svg';
+import cookieOutline from '!!raw-loader!./icons/cookie-outline.svg';
 import copy from '!!raw-loader!./icons/copy.svg';
+import exitToApp from '!!raw-loader!./icons/exit-to-app.svg';
+import faceOutline from '!!raw-loader!./icons/face-outline.svg';
+import homeOutline from '!!raw-loader!./icons/home-outline.svg';
 import lockOutline from '!!raw-loader!./icons/lock-outline.svg';
 import minusCircleOutline from '!!raw-loader!./icons/minus-circle-outline.svg';
 import plus from '!!raw-loader!./icons/plus.svg';
 import trash from '!!raw-loader!./icons/trash.svg';
-import xpageIcon from '!!raw-loader!./icons/xpage.svg';
+import web from '!!raw-loader!./icons/web.svg';
+import xpage from '!!raw-loader!./icons/xpage.svg';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -36,17 +44,25 @@ export function registerSvgIcons(iconRegistry: MatIconRegistry, donSanitizer: Do
     iconRegistry.addSvgIconLiteral(name, donSanitizer.bypassSecurityTrustHtml(svg));
   };
 
-  registerIcon('xpage', xpageIcon);
-  registerIcon('minus-circle-outline', minusCircleOutline);
+  registerIcon('account-circle-outline', accountCircleOutline);
+  registerIcon('alert-circle-outline', alertCircleOutline);
   registerIcon('alert-outline', alertOutline);
+  registerIcon('calendar-clock', calendarClock);
+  registerIcon('calendar-today', calendarToday);
+  registerIcon('chart-pie', chartPie);
+  registerIcon('close', close);
+  registerIcon('comment-check-outline', commentCheckOutline);
   registerIcon('comment-processing-outline', commentProcessingOutline);
   registerIcon('comment-remove-outline', commentRemoveOutline);
-  registerIcon('calendar-clock', calendarClock);
-  registerIcon('alert-circle-outline', alertCircleOutline);
-  registerIcon('lock-outline', lockOutline);
-  registerIcon('comment-check-outline', commentCheckOutline);
-  registerIcon('plus', plus);
+  registerIcon('cookie-outline', cookieOutline);
   registerIcon('copy', copy);
-  registerIcon('close', close);
+  registerIcon('exit-to-app', exitToApp);
+  registerIcon('face-outline', faceOutline);
+  registerIcon('home-outline', homeOutline);
+  registerIcon('lock-outline', lockOutline);
+  registerIcon('minus-circle-outline', minusCircleOutline);
+  registerIcon('plus', plus);
   registerIcon('trash', trash);
+  registerIcon('web', web);
+  registerIcon('xpage', xpage);
 }
