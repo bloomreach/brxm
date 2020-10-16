@@ -34,7 +34,7 @@
   <version>14.4.0-cm-extjs-removal-SNAPSHOT</version>
 
   <properties>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
   </properties>
 
   <dependencies>

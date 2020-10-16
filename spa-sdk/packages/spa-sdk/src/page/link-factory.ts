@@ -22,7 +22,7 @@ type LinkBuilder = (link: string) => string;
 
 @injectable()
 export class LinkFactory extends SimpleFactory<LinkType, LinkBuilder> {
-  create(link: Link): string;
+  create(link: Link): string | undefined;
   create(path: string): string;
   create(link: Link | string) {
     if (isLink(link)) {
@@ -33,7 +33,7 @@ export class LinkFactory extends SimpleFactory<LinkType, LinkBuilder> {
   }
 
   private createLink(link: Link) {
-    if (!link.type || !this.mapping.has(link.type)) {
+    if (!link.type || typeof link.href === 'undefined' || !this.mapping.has(link.type)) {
       return link.href;
     }
 

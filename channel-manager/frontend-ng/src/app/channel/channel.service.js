@@ -15,7 +15,7 @@
  */
 
 const PROPERTY_URL = 'url';
-const PROPERTY_SPA_URL = 'org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo_url';
+const PROPERTY_SPA_URL = 'spaUrl';
 
 class ChannelService {
   constructor(
@@ -381,10 +381,8 @@ class ChannelService {
   }
 
   getOrigin() {
-    const properties = this.getProperties();
     const channel = this.getChannel();
-    const url = (properties && properties[PROPERTY_SPA_URL]) || (channel && channel[PROPERTY_URL]);
-
+    const url = channel && (channel[PROPERTY_SPA_URL] || channel[PROPERTY_URL]);
     if (!url) {
       return;
     }
@@ -394,7 +392,9 @@ class ChannelService {
 
       // eslint-disable-next-line consistent-return
       return origin;
-    } catch (error) {} // eslint-disable-line no-empty
+    } catch (error) {
+      this.$log.error(`Invalid url for '${channel.id}'.`, error.message);
+    }
   }
 }
 

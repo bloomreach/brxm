@@ -24,5 +24,5 @@ package org.hippoecm.frontend.plugins.standards.perspective;
  */
 public interface ParentApi {
 
-    void updateNavLocation(String path, String breadcrumbLabel);
+    void updateNavLocation(String path, String breadcrumbLabel, boolean addHistory);
 }

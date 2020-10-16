@@ -47,7 +47,7 @@ describe('initialize', () => {
   });
 
   it('should initialize a reverse proxy-based setup', async () => {
-    page = await initialize({
+    const page = await initialize({
       httpClient,
       window,
       request: { path: '/?bloomreach-preview=true' },
@@ -61,6 +61,7 @@ describe('initialize', () => {
         },
       },
     });
+    destroy(page);
 
     expect(page.getTitle()).toBe('Homepage');
   });
@@ -236,6 +237,7 @@ describe('initialize', () => {
     });
     const postMessageSpy = spyOn(window.parent, 'postMessage').and.callThrough();
     await page.sync();
+    destroy(page);
 
     expect(postMessageSpy).toBeCalledWith(expect.anything(), 'https://api.example.com');
   });
@@ -250,6 +252,7 @@ describe('initialize', () => {
     });
     const postMessageSpy = spyOn(window.parent, 'postMessage').and.callThrough();
     await page.sync();
+    destroy(page);
 
     expect(postMessageSpy).toBeCalledWith(expect.anything(), 'http://localhost:12345');
   });

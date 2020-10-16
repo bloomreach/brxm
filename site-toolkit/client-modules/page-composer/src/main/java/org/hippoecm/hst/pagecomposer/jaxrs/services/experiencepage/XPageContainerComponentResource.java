@@ -50,6 +50,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,7 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageU
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getInternalWorkflowSession;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getWorkspaceNode;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.validateTimestamp;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.createComponentItem;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.findNewName;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.getCatalogItem;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
@@ -129,15 +131,10 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
             // TODO validate in integration test, including version history checked out branches
             validateTimestamp(versionStamp, containerNode, userSession.getUserID());
 
-            // now we have the catalogItem that contains 'how' to create the new containerItem and we have the
-            // containerNode. Find a correct newName and create a new node.
-            final String newItemNodeName = findNewName(catalogItem.getName(), containerNode);
-
-            final Node newItem = containerNode.addNode(newItemNodeName, NODETYPE_HST_CONTAINERITEMCOMPONENT);
-
             final HstComponentConfiguration componentDefinition = getCatalogItem(pageComposerContextService, catalogItem);
 
-            newItem.setProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION, componentDefinition.getId());
+
+            final Node newItem = createComponentItem(containerNode, catalogItem, componentDefinition);
 
             if (siblingItemUUID != null) {
                 try {

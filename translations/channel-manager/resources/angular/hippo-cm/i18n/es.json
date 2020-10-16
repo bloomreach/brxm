@@ -217,7 +217,6 @@
   "UNPUBLISHED_CHANGES": "cambios no publicados",
   "ERROR_NAME_ALREADY_EXISTS": "No se pudo crear el documento. El nombre ya está siendo utilizado",
   "ERROR_NOT_A_DOCUMENT": "El elemento seleccionado no es un documento",
-  "VERSIONS_LIST_HEADER": "Fecha y hora, usuario",
   "VALIDATION_ILLEGAL_CHARACTERS": "Se han introducido uno o más caracteres no válidos ({{characters}})",
   "ERROR_DOES_NOT_EXIST": "No se pudo recuperar el documento.",
   "NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE": "Página '{{pageName}}': desactivada",

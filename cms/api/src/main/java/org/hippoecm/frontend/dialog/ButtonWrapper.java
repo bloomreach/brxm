@@ -15,17 +15,19 @@
  */
 package org.hippoecm.frontend.dialog;
 
+import java.util.Optional;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.ajax.AjaxDisableComponentListener;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.ajax.PreventDoubleClickListener;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.buttons.ButtonStyle;
 import org.hippoecm.frontend.buttons.ButtonType;
@@ -92,7 +94,7 @@ public class ButtonWrapper implements IClusterable {
                 protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
                     super.updateAjaxAttributes(attributes);
 
-                    attributes.getAjaxCallListeners().add(new AjaxDisableComponentListener());
+                    attributes.getAjaxCallListeners().add(new PreventDoubleClickListener());
 
                     ButtonWrapper.this.onUpdateAjaxAttributes(attributes);
                 }
