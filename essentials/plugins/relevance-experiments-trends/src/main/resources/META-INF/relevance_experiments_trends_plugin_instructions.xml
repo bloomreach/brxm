@@ -20,6 +20,7 @@
 
   <instructionSet>
     <execute class="org.onehippo.cms7.essentials.plugins.relevance.RelevanceExperimentsTrendsInstruction" />
+    <file action="copy" source="yamlFiles/visits.yaml" target="{{applicationConfig}}/targeting/datastores/visits.yaml"/>
   </instructionSet>
 
 </instructions>

@@ -48,7 +48,7 @@
     <jsp-api.version>2.2</jsp-api.version>
 
     <hippo.testutils.version>${hippo.release.version}</hippo.testutils.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <easymock.version>3.0</easymock.version>
   </properties>
 

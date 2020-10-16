@@ -217,7 +217,6 @@
   "UNPUBLISHED_CHANGES": "未发布的更改",
   "ERROR_NAME_ALREADY_EXISTS": "创建文档失败。此名称已被使用",
   "ERROR_NOT_A_DOCUMENT": "选定的元素不是文档",
-  "VERSIONS_LIST_HEADER": "日期和时间，用户",
   "VALIDATION_ILLEGAL_CHARACTERS": "已输入一个或多个无效字符({{characters}})",
   "ERROR_DOES_NOT_EXIST": "检索文档失败",
   "NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE": "页面 '{{pageName}}'：离线",

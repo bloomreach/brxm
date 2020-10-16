@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@
     let totalDelayInMs = 0;
 
     const timer = setInterval(() => {
-      if (Hippo.openDocumentById) {
+      if (Hippo.openById) {
         resolve();
       }
 
@@ -153,11 +153,11 @@
         pathElements.shift();
         const documentPath = `/${pathElements.join('/')}`;
         await contentPerspectiveLoaded;
-        Hippo.openDocumentByPath(documentPath, 'view');
+        Hippo.openByPath(documentPath, 'view');
       } else {
         const documentId = pathElements[1];
         await contentPerspectiveLoaded;
-        Hippo.openDocumentById(documentId, 'view');
+        Hippo.openById(documentId, 'view');
       }
     }
 

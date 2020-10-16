@@ -267,6 +267,7 @@
       }
     },
     "uid5" : {
+      "type" : "pagination",
       "offset" : 50,
       "items" : [ {
         "$ref" : "/page/udbdbdbdb5fa848a8b03b4524373d992a"

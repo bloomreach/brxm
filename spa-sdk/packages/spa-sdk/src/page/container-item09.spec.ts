@@ -18,7 +18,7 @@ import { Typed } from 'emittery';
 import { ComponentImpl, TYPE_COMPONENT_CONTAINER_ITEM } from './component09';
 import { ContainerItemImpl, ContainerItemModel, isContainerItem } from './container-item09';
 import { ContainerItem } from './container-item';
-import { EventBus, Events } from '../events';
+import { EventBus, Events } from './events09';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollection } from './meta-collection';
 import { PageModel } from './page09';
@@ -35,7 +35,7 @@ const model = {
 } as ContainerItemModel;
 
 function createContainerItem(containerItemModel = model) {
-  return new ContainerItemImpl(containerItemModel, eventBus, metaFactory, urlBuilder);
+  return new ContainerItemImpl(containerItemModel, metaFactory, urlBuilder, eventBus);
 }
 
 beforeEach(() => {
@@ -45,8 +45,22 @@ beforeEach(() => {
 });
 
 describe('ContainerItemImpl', () => {
+  describe('getLabel', () => {
+    it('should return a label', () => {
+      const containerItem = createContainerItem({ ...model, ctype: 'NewsList', label: 'News List' });
+
+      expect(containerItem.getLabel()).toBe('News List');
+    });
+  });
+
   describe('getType', () => {
-    it('should return a type', () => {
+    it('should return a component type', () => {
+      const containerItem = createContainerItem({ ...model, ctype: 'NewsList', label: 'News List' });
+
+      expect(containerItem.getType()).toBe('NewsList');
+    });
+
+    it('should fall back to the label', () => {
       const containerItem = createContainerItem({ ...model, label: 'Banner' });
 
       expect(containerItem.getType()).toBe('Banner');

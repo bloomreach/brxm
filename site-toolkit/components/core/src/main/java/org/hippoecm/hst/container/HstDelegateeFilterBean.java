@@ -49,6 +49,7 @@ import org.hippoecm.hst.container.security.TokenException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ContainerNotFoundException;
@@ -68,11 +69,11 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.core.sitemapitemhandler.FilterChainAwareHstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
+import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.hst.util.PathUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
@@ -87,15 +88,16 @@ import static java.lang.Boolean.TRUE;
 import static java.util.Collections.emptyMap;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
-import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_URL_PROPERTY_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMSSESSIONCONTEXT_BINDING_PATH;
 import static org.hippoecm.hst.core.container.ContainerConstants.FORWARD_RECURSION_ERROR;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR;
 import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
+import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_URL_PROPERTY_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDERING_HOST;
 import static org.hippoecm.hst.util.HstRequestUtils.createURLWithExplicitSchemeForRequest;
 import static org.hippoecm.hst.util.HstRequestUtils.getClusterNodeAffinityId;
@@ -148,6 +150,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     private String clusterNodeAffinityCookieName;
     private String clusterNodeAffinityHeaderName;
     private String clusterNodeAffinityQueryParam;
+    private boolean xForwardedHostSpoofingProtection;
 
     @Override
     public void setServletContext(ServletContext servletContext) {
@@ -195,6 +198,10 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     }
     public void setClusterNodeAffinityQueryParam(final String clusterNodeAffinityQueryParam) {
         this.clusterNodeAffinityQueryParam = clusterNodeAffinityQueryParam;
+    }
+
+    public void setxForwardedHostSpoofingProtection(final boolean xForwardedHostSpoofingProtection) {
+        this.xForwardedHostSpoofingProtection = xForwardedHostSpoofingProtection;
     }
 
     @Override
@@ -332,15 +339,37 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 return;
             }
 
-            final String requestHostName = getRequestHosts(containerRequest, false)[0];
-            if (!requestHostName.equals(hostName) && vHosts.matchVirtualHost(requestHostName) == null) {
-                // There are several causes why this might happen:
-                // - hst host and reverse proxy configuration mismatch
-                // - forwarded host header spoofing (either by a developer or a malicious attacker)
-                log.warn("Request host '{}' for {} does not match any virtual host, skip hst request processing and return status {} (NOT_FOUND) now",
-                        requestHostName, containerRequest, HttpServletResponse.SC_NOT_FOUND);
-                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return;
+            if (xForwardedHostSpoofingProtection) {
+                final String requestHostName = getRequestHosts(containerRequest, false)[0];
+                if (!requestHostName.equals(hostName)) {
+                    // requestHostName.equals(hostName) is typically only true if there is a rendering host matched for a CM page request
+                    // since a rending host (from query param or http session) is used, validate the actual browser host
+                    // CAN be match at all in either the current HST Model OR the model from hst:platform : The latter model
+                    // must be used to check whether the current browser host name is actually a configured CMS Host in hst host config.
+                    // A typical request that ends up here is for example:
+                    //
+                    // http://cms.example.com:8080/site/_cmsinternal/?org.hippoecm.hst.container.render_host=dev.example.com
+                    //
+                    // The matched hostname now is dev.example.com, but the above request is ONLY allowed if cms.example.com
+                    // can also be matched in *either the current model* or the platform model!
+
+                    if (vHosts.matchVirtualHost(requestHostName) != null) {
+                        log.debug("Request host '{}' is legit since can be matched in the site model", requestHostName);
+                    } else if (HstRequestUtils.getPlatformHstModel().getVirtualHosts().matchVirtualHost(requestHostName) != null) {
+                        log.debug("Request host '{}' is legit since can be matched in the platform model", requestHostName);
+                    } else {
+                        // There are several causes why this might happen:
+                        // - hst host and reverse proxy configuration mismatch
+                        // - forwarded host header spoofing (either by a developer or a malicious attacker)
+                        log.warn("Request host '{}' for {} does not match any virtual host, skip hst request processing " +
+                                        "and return status {} (NOT_FOUND) now. To avoid this 404, eg in case " +
+                                        "If X-Forwarded-Host spoofing most be supported, set site webapp hst-config " +
+                                        "property 'x.forwarded.host.spoofing.protection = false'",
+                                requestHostName, containerRequest, HttpServletResponse.SC_NOT_FOUND);
+                        res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        return;
+                    }
+                }
             }
 
             log.debug("{} matched to host '{}'", containerRequest, resolvedVirtualHost.getVirtualHost());
@@ -462,10 +491,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                         && !requestContext.isPageModelApiRequest()) {
 
                     final Channel channel = hstSite.getChannel();
-                    if (isNotBlank((String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME))) {
+                    if (channel.getSpaUrl() != null) {
 
-                        final String previewURL = (String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME);
-                        doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), hstContainerUrl.getParameterMap(), previewURL);
+                        doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), hstContainerUrl.getParameterMap(), channel.getSpaUrl());
                         return;
                     }
                 }

@@ -42,7 +42,7 @@
 
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <easymock.version>3.4</easymock.version>
 
     <commons-lang.version>2.6</commons-lang.version>

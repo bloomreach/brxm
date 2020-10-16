@@ -16,60 +16,7 @@ exports[`VersionsInfoComponent create version should show version button for fir
 </div>
 `;
 
-exports[`VersionsInfoComponent progress indicator should show when action is being performed that takes a while to complete 1`] = `
-<h3
-  class="qa-version-list-header mat-subheader"
-  matsubheader=""
->
-   VERSIONS_LIST_HEADER 
-  
-  <mat-progress-bar
-    aria-valuemax="100"
-    aria-valuemin="0"
-    class="mat-progress-bar mat-primary"
-    mode="indeterminate"
-    role="progressbar"
-  >
-    <svg
-      class="mat-progress-bar-background mat-progress-bar-element"
-      focusable="false"
-      height="4"
-      width="100%"
-    >
-      <defs>
-        <pattern
-          height="4"
-          patternUnits="userSpaceOnUse"
-          width="8"
-          x="4"
-          y="0"
-        >
-          <circle
-            cx="2"
-            cy="2"
-            r="2"
-          />
-        </pattern>
-      </defs>
-      <rect
-        fill="url('/@angular-cli-builders#mat-progress-bar-1')"
-        height="100%"
-        width="100%"
-      />
-    </svg>
-    <div
-      class="mat-progress-bar-buffer mat-progress-bar-element"
-    />
-    <div
-      class="mat-progress-bar-primary mat-progress-bar-fill mat-progress-bar-element"
-      style="transform: scaleX(0);"
-    />
-    <div
-      class="mat-progress-bar-secondary mat-progress-bar-fill mat-progress-bar-element"
-    />
-  </mat-progress-bar>
-</h3>
-`;
+exports[`VersionsInfoComponent progress indicator should show when action is being performed that takes a while to complete 1`] = `null`;
 
 exports[`VersionsInfoComponent restoring a version should not show restore button for first version when selected 1`] = `
 <div
@@ -81,140 +28,84 @@ exports[`VersionsInfoComponent restoring a version should not show restore butto
   >
     
     
-    <mat-selection-list
-      aria-disabled="false"
-      aria-multiselectable="false"
-      class="qa-version-list mat-selection-list mat-list-base"
-      color="primary"
-      role="listbox"
-      tabindex="0"
+    <div
+      class="versions-list qa-version-list"
     >
-      <h3
-        class="qa-version-list-header mat-subheader"
-        matsubheader=""
-      >
-         VERSIONS_LIST_HEADER 
-        
-      </h3>
-      <mat-divider
-        aria-orientation="horizontal"
-        class="mat-divider mat-divider-horizontal"
-        role="separator"
-      />
       
-      <mat-list-option
-        aria-disabled="false"
-        aria-selected="true"
-        class="qa-version-testId mat-primary mat-list-single-selected-option"
-        role="option"
-        tabindex="-1"
+      <div
+        class="qa-version-testId selected"
+        matripple=""
       >
         <div
-          class="mat-list-item-content mat-list-item-content-reverse"
+          class="description"
         >
-          <div
-            class="mat-list-item-ripple mat-ripple"
-            mat-ripple=""
-          />
           
-          <div
-            class="mat-list-text"
+          <p
+            class="timestamp qa-latest-version"
           >
-            
-            <p
-              class="qa-latest-version mat-line"
-              matline=""
-            >
-               LATEST_VERSION 
-            </p>
-            
-            
-            <div
-              class="version-actions mat-line"
-              matline=""
-            >
-              
-              <button
-                class="qa-new-version-action"
-                color="primary"
-                mat-stroked-button=""
-              >
-                <mat-icon
-                  aria-hidden="true"
-                  class="mat-icon notranslate mat-icon-no-color"
-                  role="img"
-                  svgicon="plus"
-                >
-                  <svg
-                    class="fake-testing-svg"
-                    fit=""
-                    focusable="false"
-                    height="100%"
-                    preserveAspectRatio="xMidYMid meet"
-                    width="100%"
-                  />
-                </mat-icon>
-                 VERSION 
-              </button>
-              
-            </div>
-            <mat-divider
-              aria-orientation="horizontal"
-              class="mat-divider mat-divider-horizontal"
-              role="separator"
-            />
-          </div>
+             LATEST_VERSION 
+          </p>
+          
+          
         </div>
-      </mat-list-option>
-      <mat-list-option
-        aria-disabled="false"
-        aria-selected="false"
-        class="qa-version-testVariantId mat-primary"
-        role="option"
-        tabindex="-1"
+        <div
+          class="actions"
+        >
+          
+          <button
+            class="qa-new-version-action"
+            color="primary"
+            mat-stroked-button=""
+          >
+            <mat-icon
+              aria-hidden="true"
+              class="mat-icon notranslate mat-icon-no-color"
+              role="img"
+              svgicon="plus"
+            >
+              <svg
+                class="fake-testing-svg"
+                fit=""
+                focusable="false"
+                height="100%"
+                preserveAspectRatio="xMidYMid meet"
+                width="100%"
+              />
+            </mat-icon>
+             VERSION 
+          </button>
+          
+        </div>
+      </div>
+      <div
+        class="qa-version-testVariantId"
+        matripple=""
       >
         <div
-          class="mat-list-item-content mat-list-item-content-reverse"
+          class="description"
         >
-          <div
-            class="mat-list-item-ripple mat-ripple"
-            mat-ripple=""
-          />
           
-          <div
-            class="mat-list-text"
+          
+          <p
+            class="timestamp qa-version-timestamp"
           >
-            
-            
-            <p
-              class="qa-version-timestamp mat-line"
-              matline=""
-            >
-               1604847780000 
-            </p>
-            
-            <p
-              class="qa-version-username mat-line"
-              matline=""
-            >
-               testUserName2 
-            </p>
-            <div
-              class="version-actions mat-line"
-              matline=""
-            >
-              
-              
-            </div>
-            <mat-divider
-              aria-orientation="horizontal"
-              class="mat-divider mat-divider-horizontal"
-              role="separator"
-            />
-          </div>
+             1604847780000 
+          </p>
+          
+          <p
+            class="qa-version-username"
+          >
+             testUserName2 
+          </p>
         </div>
-      </mat-list-option>
-    </mat-selection-list>
+        <div
+          class="actions"
+        >
+          
+          
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -229,229 +120,56 @@ exports[`VersionsInfoComponent restoring a version should show restore button fo
   >
     
     
-    <mat-selection-list
-      aria-disabled="false"
-      aria-multiselectable="false"
-      class="qa-version-list mat-selection-list mat-list-base"
-      color="primary"
-      role="listbox"
-      tabindex="0"
-    >
-      <h3
-        class="qa-version-list-header mat-subheader"
-        matsubheader=""
-      >
-         VERSIONS_LIST_HEADER 
-        
-      </h3>
-      <mat-divider
-        aria-orientation="horizontal"
-        class="mat-divider mat-divider-horizontal"
-        role="separator"
-      />
-      
-      <mat-list-option
-        aria-disabled="false"
-        aria-selected="false"
-        class="qa-version-testId mat-primary"
-        role="option"
-        tabindex="-1"
-      >
-        <div
-          class="mat-list-item-content mat-list-item-content-reverse"
-        >
-          <div
-            class="mat-list-item-ripple mat-ripple"
-            mat-ripple=""
-          />
-          
-          <div
-            class="mat-list-text"
-          >
-            
-            <p
-              class="qa-latest-version mat-line"
-              matline=""
-            >
-               LATEST_VERSION 
-            </p>
-            
-            
-            <div
-              class="version-actions mat-line"
-              matline=""
-            >
-              
-              
-            </div>
-            <mat-divider
-              aria-orientation="horizontal"
-              class="mat-divider mat-divider-horizontal"
-              role="separator"
-            />
-          </div>
-        </div>
-      </mat-list-option>
-      <mat-list-option
-        aria-disabled="false"
-        aria-selected="true"
-        class="qa-version-testVariantId mat-primary mat-list-single-selected-option"
-        role="option"
-        tabindex="-1"
-      >
-        <div
-          class="mat-list-item-content mat-list-item-content-reverse"
-        >
-          <div
-            class="mat-list-item-ripple mat-ripple"
-            mat-ripple=""
-          />
-          
-          <div
-            class="mat-list-text"
-          >
-            
-            
-            <p
-              class="qa-version-timestamp mat-line"
-              matline=""
-            >
-               1604847780000 
-            </p>
-            
-            <p
-              class="qa-version-username mat-line"
-              matline=""
-            >
-               testUserName2 
-            </p>
-            <div
-              class="version-actions mat-line"
-              matline=""
-            >
-              
-              
-              <button
-                class="qa-restore-version-action"
-                color="primary"
-                mat-stroked-button=""
-              >
-                 RESTORE 
-              </button>
-            </div>
-            <mat-divider
-              aria-orientation="horizontal"
-              class="mat-divider mat-divider-horizontal"
-              role="separator"
-            />
-          </div>
-        </div>
-      </mat-list-option>
-    </mat-selection-list>
-  </div>
-</div>
-`;
-
-exports[`VersionsInfoComponent selecting version should show the selected version 1`] = `
-<mat-selection-list
-  aria-disabled="false"
-  aria-multiselectable="false"
-  class="qa-version-list mat-selection-list mat-list-base"
-  color="primary"
-  role="listbox"
-  tabindex="0"
->
-  <h3
-    class="qa-version-list-header mat-subheader"
-    matsubheader=""
-  >
-     VERSIONS_LIST_HEADER 
-    
-  </h3>
-  <mat-divider
-    aria-orientation="horizontal"
-    class="mat-divider mat-divider-horizontal"
-    role="separator"
-  />
-  
-  <mat-list-option
-    aria-disabled="false"
-    aria-selected="false"
-    class="qa-version-testId mat-primary"
-    role="option"
-    tabindex="-1"
-  >
     <div
-      class="mat-list-item-content mat-list-item-content-reverse"
+      class="versions-list qa-version-list"
     >
-      <div
-        class="mat-list-item-ripple mat-ripple"
-        mat-ripple=""
-      />
       
       <div
-        class="mat-list-text"
+        class="qa-version-testId"
+        matripple=""
       >
-        
-        <p
-          class="qa-latest-version mat-line"
-          matline=""
-        >
-           LATEST_VERSION 
-        </p>
-        
-        
         <div
-          class="version-actions mat-line"
-          matline=""
+          class="description"
+        >
+          
+          <p
+            class="timestamp qa-latest-version"
+          >
+             LATEST_VERSION 
+          </p>
+          
+          
+        </div>
+        <div
+          class="actions"
         >
           
           
         </div>
-        <mat-divider
-          aria-orientation="horizontal"
-          class="mat-divider mat-divider-horizontal"
-          role="separator"
-        />
       </div>
-    </div>
-  </mat-list-option>
-  <mat-list-option
-    aria-disabled="false"
-    aria-selected="true"
-    class="qa-version-testVariantId mat-primary mat-list-single-selected-option"
-    role="option"
-    tabindex="-1"
-  >
-    <div
-      class="mat-list-item-content mat-list-item-content-reverse"
-    >
       <div
-        class="mat-list-item-ripple mat-ripple"
-        mat-ripple=""
-      />
-      
-      <div
-        class="mat-list-text"
+        class="qa-version-testVariantId selected"
+        matripple=""
       >
-        
-        
-        <p
-          class="qa-version-timestamp mat-line"
-          matline=""
-        >
-           1604847780000 
-        </p>
-        
-        <p
-          class="qa-version-username mat-line"
-          matline=""
-        >
-           testUserName2 
-        </p>
         <div
-          class="version-actions mat-line"
-          matline=""
+          class="description"
+        >
+          
+          
+          <p
+            class="timestamp qa-version-timestamp"
+          >
+             1604847780000 
+          </p>
+          
+          <p
+            class="qa-version-username"
+          >
+             testUserName2 
+          </p>
+        </div>
+        <div
+          class="actions"
         >
           
           
@@ -463,15 +181,76 @@ exports[`VersionsInfoComponent selecting version should show the selected versio
              RESTORE 
           </button>
         </div>
-        <mat-divider
-          aria-orientation="horizontal"
-          class="mat-divider mat-divider-horizontal"
-          role="separator"
-        />
       </div>
     </div>
-  </mat-list-option>
-</mat-selection-list>
+  </div>
+</div>
+`;
+
+exports[`VersionsInfoComponent selecting version should show the selected version 1`] = `
+<div
+  class="versions-list qa-version-list"
+>
+  
+  <div
+    class="qa-version-testId"
+    matripple=""
+  >
+    <div
+      class="description"
+    >
+      
+      <p
+        class="timestamp qa-latest-version"
+      >
+         LATEST_VERSION 
+      </p>
+      
+      
+    </div>
+    <div
+      class="actions"
+    >
+      
+      
+    </div>
+  </div>
+  <div
+    class="qa-version-testVariantId selected"
+    matripple=""
+  >
+    <div
+      class="description"
+    >
+      
+      
+      <p
+        class="timestamp qa-version-timestamp"
+      >
+         1604847780000 
+      </p>
+      
+      <p
+        class="qa-version-username"
+      >
+         testUserName2 
+      </p>
+    </div>
+    <div
+      class="actions"
+    >
+      
+      
+      <button
+        class="qa-restore-version-action"
+        color="primary"
+        mat-stroked-button=""
+      >
+         RESTORE 
+      </button>
+    </div>
+  </div>
+</div>
 `;
 
 exports[`VersionsInfoComponent showing versions should show header indicating no versions are available 1`] = `
@@ -492,140 +271,84 @@ exports[`VersionsInfoComponent showing versions should show list of versions 1`]
   >
     
     
-    <mat-selection-list
-      aria-disabled="false"
-      aria-multiselectable="false"
-      class="qa-version-list mat-selection-list mat-list-base"
-      color="primary"
-      role="listbox"
-      tabindex="0"
+    <div
+      class="versions-list qa-version-list"
     >
-      <h3
-        class="qa-version-list-header mat-subheader"
-        matsubheader=""
-      >
-         VERSIONS_LIST_HEADER 
-        
-      </h3>
-      <mat-divider
-        aria-orientation="horizontal"
-        class="mat-divider mat-divider-horizontal"
-        role="separator"
-      />
       
-      <mat-list-option
-        aria-disabled="false"
-        aria-selected="true"
-        class="qa-version-testId mat-primary mat-list-single-selected-option"
-        role="option"
-        tabindex="-1"
+      <div
+        class="qa-version-testId selected"
+        matripple=""
       >
         <div
-          class="mat-list-item-content mat-list-item-content-reverse"
+          class="description"
         >
-          <div
-            class="mat-list-item-ripple mat-ripple"
-            mat-ripple=""
-          />
           
-          <div
-            class="mat-list-text"
+          <p
+            class="timestamp qa-latest-version"
           >
-            
-            <p
-              class="qa-latest-version mat-line"
-              matline=""
-            >
-               LATEST_VERSION 
-            </p>
-            
-            
-            <div
-              class="version-actions mat-line"
-              matline=""
-            >
-              
-              <button
-                class="qa-new-version-action"
-                color="primary"
-                mat-stroked-button=""
-              >
-                <mat-icon
-                  aria-hidden="true"
-                  class="mat-icon notranslate mat-icon-no-color"
-                  role="img"
-                  svgicon="plus"
-                >
-                  <svg
-                    class="fake-testing-svg"
-                    fit=""
-                    focusable="false"
-                    height="100%"
-                    preserveAspectRatio="xMidYMid meet"
-                    width="100%"
-                  />
-                </mat-icon>
-                 VERSION 
-              </button>
-              
-            </div>
-            <mat-divider
-              aria-orientation="horizontal"
-              class="mat-divider mat-divider-horizontal"
-              role="separator"
-            />
-          </div>
+             LATEST_VERSION 
+          </p>
+          
+          
         </div>
-      </mat-list-option>
-      <mat-list-option
-        aria-disabled="false"
-        aria-selected="false"
-        class="qa-version-testVariantId mat-primary"
-        role="option"
-        tabindex="-1"
+        <div
+          class="actions"
+        >
+          
+          <button
+            class="qa-new-version-action"
+            color="primary"
+            mat-stroked-button=""
+          >
+            <mat-icon
+              aria-hidden="true"
+              class="mat-icon notranslate mat-icon-no-color"
+              role="img"
+              svgicon="plus"
+            >
+              <svg
+                class="fake-testing-svg"
+                fit=""
+                focusable="false"
+                height="100%"
+                preserveAspectRatio="xMidYMid meet"
+                width="100%"
+              />
+            </mat-icon>
+             VERSION 
+          </button>
+          
+        </div>
+      </div>
+      <div
+        class="qa-version-testVariantId"
+        matripple=""
       >
         <div
-          class="mat-list-item-content mat-list-item-content-reverse"
+          class="description"
         >
-          <div
-            class="mat-list-item-ripple mat-ripple"
-            mat-ripple=""
-          />
           
-          <div
-            class="mat-list-text"
+          
+          <p
+            class="timestamp qa-version-timestamp"
           >
-            
-            
-            <p
-              class="qa-version-timestamp mat-line"
-              matline=""
-            >
-               1604847780000 
-            </p>
-            
-            <p
-              class="qa-version-username mat-line"
-              matline=""
-            >
-               testUserName2 
-            </p>
-            <div
-              class="version-actions mat-line"
-              matline=""
-            >
-              
-              
-            </div>
-            <mat-divider
-              aria-orientation="horizontal"
-              class="mat-divider mat-divider-horizontal"
-              role="separator"
-            />
-          </div>
+             1604847780000 
+          </p>
+          
+          <p
+            class="qa-version-username"
+          >
+             testUserName2 
+          </p>
         </div>
-      </mat-list-option>
-    </mat-selection-list>
+        <div
+          class="actions"
+        >
+          
+          
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `;

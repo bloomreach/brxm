@@ -317,6 +317,7 @@
       }
     },
     "uid4" : {
+      "type" : "pagination",
       "offset" : 50,
       "items" : [ {
         "$ref" : "/page/ud993b0a1585944febf4b017cda163364"

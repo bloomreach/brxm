@@ -44,7 +44,7 @@ beforeEach(() => {
   metaFactory = jest.fn();
 });
 
-describe('MenuItemImpl', () => {
+describe('MenuImpl', () => {
   describe('getItems', () => {
     it('should return menu items', () => {
       const item = {} as MenuItem;

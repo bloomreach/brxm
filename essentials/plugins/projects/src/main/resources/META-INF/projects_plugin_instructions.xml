@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-wpm-cms-dependencies" targetPom="cms-dependencies" type="pom"/>
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-wpm-site-dependencies" targetPom="site-components" type="pom"/>
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-enterprise-services" targetPom="project" scope="provided"/>
-    <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-wpm-camunda" targetPom="project" type="war" scope="provided"/>
   
     <execute class="org.onehippo.cms7.essentials.plugins.projects.ProjectsInstruction" />
   </instructionSet>
