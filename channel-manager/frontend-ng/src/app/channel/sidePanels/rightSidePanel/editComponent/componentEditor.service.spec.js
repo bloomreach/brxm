@@ -856,9 +856,20 @@ describe('ComponentEditorService', () => {
 
     it('reopens the component editor to discard changes', () => {
       spyOn(ComponentEditor, 'reopen').and.returnValue($q.resolve());
+
       ComponentEditor.discardChanges();
+      $rootScope.$digest();
 
       expect(ComponentEditor.reopen).toHaveBeenCalled();
+    });
+
+    it('emits event "component:reset-current-variant" to discard variant changes', () => {
+      spyOn($rootScope, '$emit');
+
+      ComponentEditor.discardChanges();
+      $rootScope.$digest();
+
+      expect($rootScope.$emit).toHaveBeenCalledWith('component:reset-current-variant');
     });
 
     it('reloads the page when discarding changes succeeded', () => {

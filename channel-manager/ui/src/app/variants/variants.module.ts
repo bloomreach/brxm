@@ -21,13 +21,15 @@ import { createCustomElement } from '@angular/elements';
 import { SharedModule } from '../shared/shared.module';
 import { TranslationsModule } from '../translations/translations.module';
 
+import { CharacteristicsDialogComponent } from './components/characteristics-dialog/characteristics-dialog.component';
 import { SegmentsDialogComponent } from './components/segments-dialog/segments-dialog.component';
 import { VariantsComponent } from './components/variants/variants.component';
 
 @NgModule({
   declarations: [
-    VariantsComponent,
+    CharacteristicsDialogComponent,
     SegmentsDialogComponent,
+    VariantsComponent,
   ],
   imports: [
     CommonModule,
@@ -35,8 +37,9 @@ import { VariantsComponent } from './components/variants/variants.component';
     TranslationsModule,
   ],
   entryComponents: [
-    VariantsComponent,
+    CharacteristicsDialogComponent,
     SegmentsDialogComponent,
+    VariantsComponent,
   ],
 })
 export class VariantsModule {

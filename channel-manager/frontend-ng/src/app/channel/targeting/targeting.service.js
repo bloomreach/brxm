@@ -60,6 +60,39 @@ class TargetingService {
 
     this._apiUrl = Targeting.HttpProxy.REST_URL || '/_targeting';
     this._collectors = Targeting.CollectorPlugins || {};
+    this._characteristicsConfig = Targeting.CharacteristicsConfig || {};
+  }
+
+  getCharacteristicConfig(id) {
+    const configKey = this._getCharacteristicConfigKey(id);
+    return this._characteristicsConfig[configKey] || null;
+  }
+
+  _getCharacteristicConfigKey(id) {
+    switch (id) {
+      case 'city':
+        return 'Hippo.Targeting.CityCharacteristicPlugin';
+      case 'country':
+        return 'Hippo.Targeting.CountryCharacteristicPlugin';
+      case 'continent':
+        return 'Hippo.Targeting.ContinentCharacteristicPlugin';
+      case 'dayofweek':
+        return 'Hippo.Targeting.DayOfWeekCharacteristicPlugin';
+      case 'documenttypes':
+        return 'Hippo.Targeting.DocumentTypeCharacteristicPlugin';
+      case 'groups':
+        return 'Hippo.Targeting.GroupsCharacteristicPlugin';
+      case 'pageviews':
+        return 'Hippo.Targeting.PageViewsCharacteristicPlugin';
+      case 'referrer':
+        return 'Hippo.Targeting.ReferrerCharacteristicPlugin';
+      case 'returningvisitor':
+        return 'Hippo.Targeting.ReturningVisitorCharacteristicPlugin';
+      case 'tracking':
+        return 'Hippo.Targeting.TrackingCookieCharacteristicPlugin';
+      default:
+        throw new Error(`Characteristic with id "${id}" is not supported`);
+    }
   }
 
   async getVariantIDs(containerItemId) {
@@ -112,6 +145,8 @@ class TargetingService {
       return this._success(`Succesfully created a new variant for component "${componentId}"`, result);
     } catch (e) {
       return this._failure(`Failed to create new variant for component "${componentId}"`, e);
+    } finally {
+      this.ChannelService.checkChanges();
     }
   }
 
@@ -132,6 +167,8 @@ class TargetingService {
       return this._success(`Succesfully updated variant "${variantId}" for component "${componentId}"`, result);
     } catch (e) {
       return this._failure('Failed to update', e);
+    } finally {
+      this.ChannelService.checkChanges();
     }
   }
 
@@ -164,6 +201,8 @@ class TargetingService {
       return this._success(`Successfully removed variant "${variantId}" from container-item "${componentId}"`, result);
     } catch (e) {
       return this._failure(`Failed to remove variant "${variantId}" from container-item "${componentId}"`, e);
+    } finally {
+      this.ChannelService.checkChanges();
     }
   }
 
@@ -201,9 +240,7 @@ class TargetingService {
         .map(item => item.id)
         .map(id => this.getCharacteristic(id)));
 
-      return this._success('Characteristics loaded successfully', {
-        items: characteristics.map(characteristic => characteristic.data),
-      });
+      return this._success('Characteristics loaded successfully', characteristics.map(ch => ch.data));
     } catch (e) {
       return this._failure('Failed to load characteristics');
     }

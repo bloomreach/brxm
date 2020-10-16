@@ -29,6 +29,7 @@
 
     <mat-selection-list *ngIf="personas?.length > 0"
                         color="primary"
+                        class="qa-segments"
                         #personasList
                         [multiple]="false">
       <mat-list-option *ngFor="let persona of personas"
@@ -42,11 +43,13 @@
 
   <div mat-dialog-actions>
     <button mat-stroked-button
+            class="qa-segments-close"
             type="button"
             [matDialogClose]>
       {{ 'CANCEL' | translate }}
     </button>
     <button mat-flat-button
+            class="qa-segments-select-persona"
             type="submit"
             color="primary"
             [disabled]="!hasSelectedPersona()"

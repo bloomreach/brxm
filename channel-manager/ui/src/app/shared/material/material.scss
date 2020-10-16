@@ -43,6 +43,10 @@ $custom-typography: mat-typography-config(
   }
 }
 
+.mat-flat-button.cdk-keyboard-focused {
+  box-shadow: 0 0 0 2px $bloomreach-blue-darker;
+}
+
 .mat-icon-button {
   color: map-get($text-color, dim);
 }
@@ -74,4 +78,9 @@ $mat-dialog-spacing: 24px;
   justify-content: flex-end;
   min-height: initial !important;
   padding: $spacing-half $spacing-full !important;
+}
+
+.mat-list-single-selected-option {
+  background-color: map-get($blue, 50) !important;
+  font-weight: 600;
 }
