@@ -28,6 +28,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.Documen
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.DocumentStateUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequest;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequestType;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
@@ -37,6 +38,11 @@ import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 import static java.lang.Boolean.TRUE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequestType.ACCEPT;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequestType.CANCEL;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequestType.REJECT;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequestType.REJECTED;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequestType.UNKNOWN;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
@@ -77,7 +83,39 @@ final class XPageContextFactory {
                 .setMoveAllowed(TRUE.equals(hints.get("move")))
                 .setDeleteAllowed(TRUE.equals(hints.get("delete")));
 
+        final Map<String, Map<String, Serializable>> requestsMap = (Map<String, Map<String, Serializable>>) hints.get("requests");
+        if (requestsMap != null && !requestsMap.isEmpty()) {
+            requestsMap.values().stream().findFirst().ifPresent(requests -> {
+                requests.entrySet().stream()
+                    .filter(entry -> TRUE.equals(entry.getValue()))
+                    .forEach(entry -> {
+                       switch (getWorkflowRequestType(workflowRequest, entry.getKey())) {
+                           case ACCEPT:
+                               xPageContext.setAcceptRequest(true);
+                               break;
+                           case CANCEL:
+                               xPageContext.setCancelRequest(true);
+                               break;
+                           case REJECT:
+                               xPageContext.setRejectRequest(true);
+                               break;
+                           case REJECTED:
+                               xPageContext.setRejectedRequest(true);
+                               break;
+                       }
+                    });
+            });
+        }
+
         if (!BranchConstants.MASTER_BRANCH_ID.equals(xPageBranchId)) {
+            return xPageContext;
+        }
+
+        if (hints.containsKey("inUseBy")) {
+            xPageContext.setLockedBy((String) hints.get("inUseBy"));
+        }
+
+        if (xPageContext.hasBlockingRequest()) {
             return xPageContext;
         }
 
@@ -93,10 +131,23 @@ final class XPageContextFactory {
             xPageContext.setRequestDepublication(TRUE.equals(hints.get("requestDepublication")));
         }
 
-        if (hints.containsKey("inUseBy")) {
-            xPageContext.setLockedBy((String) hints.get("inUseBy"));
+        return xPageContext;
+    }
+
+    private static WorkflowRequestType getWorkflowRequestType(final WorkflowRequest workflowRequest, final String key) {
+        if (key.equals("cancelRequest") && workflowRequest != null && workflowRequest.getType().equals("rejected")) {
+            return REJECTED;
         }
 
-        return xPageContext;
+        switch (key) {
+            case "acceptRequest":
+                return ACCEPT;
+            case "cancelRequest":
+                return CANCEL;
+            case "rejectRequest":
+                return REJECT;
+            default:
+                return UNKNOWN;
+        }
     }
 }
