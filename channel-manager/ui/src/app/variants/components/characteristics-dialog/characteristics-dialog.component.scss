@@ -92,3 +92,9 @@ mat-list-option {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.help-text {
+  color: map-get($text-color, 'dim');
+  font-size: $font-normal;
+  font-style: italic;
+}
