@@ -135,7 +135,7 @@ class EditComponentMainCtrl {
       this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent');
 
       if (this.ConfigService.relevancePresent && !exitingState) {
-        await this.$state.go('hippo-cm.channel.edit-component', {
+        await this.$state.go('hippo-cm.channel.edit-component.properties', {
           componentId: id,
           variantId: newVariantId,
         });

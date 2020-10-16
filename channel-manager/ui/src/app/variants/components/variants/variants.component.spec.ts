@@ -159,7 +159,7 @@ describe('VariantsComponent', () => {
   it('should go to edit component state of selected variant', fakeAsync(() => {
     component.selectVariant(mockVariants[1]);
 
-    expect(stateService.go).toHaveBeenCalledWith('hippo-cm.channel.edit-component', {
+    expect(stateService.go).toHaveBeenCalledWith('hippo-cm.channel.edit-component.properties', {
       componentId: mockComponent.getId(),
       variantId: mockVariants[1].id,
     });
@@ -196,7 +196,7 @@ describe('VariantsComponent', () => {
 
       await component.addVariant();
 
-      expect(stateService.go).toHaveBeenCalledWith('hippo-cm.channel.edit-component', {
+      expect(stateService.go).toHaveBeenCalledWith('hippo-cm.channel.edit-component.properties', {
         componentId: mockComponent.getId(),
         variantId: newVariant.id,
       });

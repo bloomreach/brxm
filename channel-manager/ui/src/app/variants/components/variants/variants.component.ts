@@ -87,12 +87,12 @@ export class VariantsComponent implements OnInit {
   }
 
   async selectVariant(variant: Variant): Promise<void> {
-    // when selecing a variant a user might have changes
+    // when selecting a variant a user might have changes
     // user might cancel, discard changes or save those changes
     // this visually restores the previous value in the select so it does not switch back and forth
     this.resetToStateParamsVariant();
 
-    return this.ng1StateService.go('hippo-cm.channel.edit-component', {
+    return this.ng1StateService.go('hippo-cm.channel.edit-component.properties', {
       componentId: this.componentId,
       variantId: variant.id,
     })
