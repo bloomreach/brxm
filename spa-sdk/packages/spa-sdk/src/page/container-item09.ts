@@ -80,8 +80,8 @@ export class ContainerItemImpl
     return this.model._meta.params?.[PARAMETER_HIDDEN] === 'on';
   }
 
-  getParameters(): ReturnType<ContainerItem['getParameters']> {
-    return this.model._meta.paramsInfo || {};
+  getParameters<T>(): T {
+    return (this.model._meta.paramsInfo ?? {}) as T;
   }
 }
 
