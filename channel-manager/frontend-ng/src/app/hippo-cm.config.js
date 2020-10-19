@@ -69,22 +69,21 @@ function config(
           }
         }
         $translateProvider
-          .registerAvailableLanguageKeys([language, FALLBACK_LOCALE], {
-            [`${language}_*`]: language,
+          .useStaticFilesLoader({
+            prefix: 'i18n/',
+            suffix: `.json?antiCache=${ConfigService.antiCache}`,
+          })
+          .registerAvailableLanguageKeys([FALLBACK_LOCALE, language], {
             [`${FALLBACK_LOCALE}_*`]: FALLBACK_LOCALE,
+            [`${language}_*`]: language,
           })
           .fallbackLanguage(FALLBACK_LOCALE);
 
-        $translateProvider.useStaticFilesLoader({
-          prefix: 'i18n/',
-          suffix: `.json?antiCache=${ConfigService.antiCache}`,
-        });
-
-        return $translate.use(language)
-          .catch(() => {
-            $log.warn(`Failed to load translations for locale "${locale}", using "${FALLBACK_LOCALE}" instead`);
-            return $translate.use($translate.fallbackLanguage());
-          });
+        return $translate.use(FALLBACK_LOCALE)
+          .then(fallbackData => $translate.use(language).catch(() => {
+            $log.warn(`Failed to load "${locale}" translations,  using "${FALLBACK_LOCALE}" instead`);
+            return fallbackData;
+          }));
       },
       dateLocale: (ConfigService) => {
         'ngInject';
