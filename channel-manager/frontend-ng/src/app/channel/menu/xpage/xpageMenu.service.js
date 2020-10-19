@@ -131,17 +131,60 @@ class XPageMenuService extends MenuService {
       .addAction('versions', {
         onClick: () => showVersions(),
         translationKey: 'TOOLBAR_MENU_XPAGE_VERSIONS',
-      })
-      .addDivider({
-        isVisible: () => PageService.hasSomeAction('xpage',
-          'unpublish',
-          'schedule-unpublish',
-          'request-unpublish',
-          'publish',
-          'schedule-publish',
-          'request-publish',
-          'request-schedule-publish'),
       });
+
+    menu.addDivider({
+      isVisible: () => PageService.hasSomeAction('xpage',
+        'cancel',
+        'accept',
+        'reject',
+        'rejected'),
+    });
+
+    function getRequestTranslationKey(key) {
+      const workflowRequest = PageService.getState('workflowRequest');
+      if (workflowRequest !== null) {
+        return `${key}_REQUEST_${workflowRequest.type.toUpperCase()}`;
+      }
+
+      const scheduledRequest = PageService.getState('scheduledRequest');
+      if (scheduledRequest !== null) {
+        return `${key}_SCHEDULED_${scheduledRequest.type.toUpperCase()}`;
+      }
+
+      return key;
+    }
+
+    addWorkflowAction('cancel', id => DocumentWorkflowService.cancelRequest(id), {
+      iconName: 'mdi-comment-processing-outline',
+      translationKeyFunction: getRequestTranslationKey,
+    });
+
+    addWorkflowAction('accept', id => DocumentWorkflowService.acceptRequest(id), {
+      iconName: 'mdi-check',
+      translationKeyFunction: getRequestTranslationKey,
+    });
+
+    addWorkflowAction('reject', id => DocumentWorkflowService.rejectRequest(id), {
+      iconName: 'mdi-close',
+      translationKeyFunction: getRequestTranslationKey,
+    });
+
+    addWorkflowAction('rejected', id => DocumentWorkflowService.cancelRequest(id), {
+      iconName: 'mdi-comment-remove-outline',
+      translationKeyFunction: getRequestTranslationKey,
+    });
+
+    menu.addDivider({
+      isVisible: () => PageService.hasSomeAction('xpage',
+        'unpublish',
+        'schedule-unpublish',
+        'request-unpublish',
+        'publish',
+        'schedule-publish',
+        'request-publish',
+        'request-schedule-publish'),
+    });
 
     addEditorAwareWorkflowAction('unpublish', id => DocumentWorkflowService.unpublish(id), {
       iconName: 'mdi-minus-circle',
@@ -175,44 +218,6 @@ class XPageMenuService extends MenuService {
 
     addWorkflowAction('request-schedule-publish', id => DocumentWorkflowService.requestSchedulePublication(id), {
       isEnabled: () => isEnabled('request-schedule-publish') && !isEditingCurrentPage(),
-    });
-
-    menu.addDivider({
-      isVisible: () => PageService.hasSomeAction('xpage',
-        'cancel-request',
-        'accept-request',
-        'reject-request',
-        'rejected-request'),
-    });
-
-    function getRequestTranslationKey(key) {
-      const workflowRequest = PageService.getState('workflowRequest');
-      const scheduledRequest = PageService.getState('scheduledRequest');
-
-      let type = '';
-      if (workflowRequest !== null) {
-        ({ type } = workflowRequest);
-      } else if (scheduledRequest !== null) {
-        ({ type } = scheduledRequest);
-      }
-
-      return `${key}${type ? `_${type.toUpperCase()}` : ''}`;
-    }
-
-    addWorkflowAction('cancel-request', id => DocumentWorkflowService.cancelRequest(id), {
-      translationKeyFunction: getRequestTranslationKey,
-    });
-
-    addWorkflowAction('accept-request', id => DocumentWorkflowService.acceptRequest(id), {
-      translationKeyFunction: getRequestTranslationKey,
-    });
-
-    addWorkflowAction('reject-request', id => DocumentWorkflowService.rejectRequest(id), {
-      translationKeyFunction: getRequestTranslationKey,
-    });
-
-    addWorkflowAction('rejected-request', id => DocumentWorkflowService.cancelRequest(id), {
-      translationKeyFunction: getRequestTranslationKey,
     });
   }
 }
