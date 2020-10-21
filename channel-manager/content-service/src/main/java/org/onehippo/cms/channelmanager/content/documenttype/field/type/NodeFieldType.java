@@ -26,6 +26,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
@@ -164,7 +165,7 @@ public abstract class NodeFieldType extends AbstractFieldType implements BaseFie
      * <p>In most cases {@link CompoundContext#getDocument()} and {@link CompoundContext#getNode()} reference
      * the same node, the document node.</p>
      *
-     * @param values {@Link List} of {@link FieldValue}'s
+     * @param values  {@Link List} of {@link FieldValue}'s
      * @param context context of this field
      * @return The number of values that have an invalid value
      */
@@ -172,8 +173,8 @@ public abstract class NodeFieldType extends AbstractFieldType implements BaseFie
     public int validate(final List<FieldValue> values, final CompoundContext context) {
         final String valueName = getId();
         try {
-            final Node node = getCompoundOrDocument(context, valueName);
-            final NodeIterator children = node.getNodes(valueName);
+            final Node compoundOrDocument = getCompoundOrDocument(context.getNode(), context.getDocument());
+            final NodeIterator children = compoundOrDocument.getNodes(valueName);
             final long count = children.getSize();
 
             // additional cardinality check to prevent creating new values or remove a subset of the old values
@@ -202,25 +203,13 @@ public abstract class NodeFieldType extends AbstractFieldType implements BaseFie
         }
     }
 
-    private Node getCompoundOrDocument(final CompoundContext context, final String valueName) throws RepositoryException {
-        final Node node = context.getNode();
+    private Node getCompoundOrDocument(final Node node, final Node document) throws RepositoryException {
         if (node == null) {
             throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
         }
-
-        final Node document = context.getDocument();
-        if (document == null) {
+        if (node.isNodeType(HippoNodeType.NT_COMPOUND) || document == null) {
             return node;
         }
-
-        if (document.getIdentifier().equals(node.getIdentifier())) {
-            return node;
-        }
-
-        if (!node.getName().equals(valueName)) {
-            return node;
-        }
-
         return document;
     }
 
