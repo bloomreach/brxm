@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>13.4.6-SNAPSHOT</version>
+    <version>13.4.7-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <groupId>org.onehippo</groupId>
   <artifactId>ui-extension</artifactId>
   <name>Bloomreach Open UI SDK</name>
-  <version>13.4.6-SNAPSHOT</version>
+  <version>13.4.7-SNAPSHOT</version>
 
   <inceptionYear>2018</inceptionYear>
 
