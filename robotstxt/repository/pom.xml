@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-plugin-robotstxt</artifactId>
-    <version>12.6.13-SNAPSHOT</version>
+    <version>12.6.13</version>
   </parent>
 
   <artifactId>hippo-plugin-robotstxt-addon-repository</artifactId>

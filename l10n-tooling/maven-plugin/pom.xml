@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms.l10n</groupId>
     <artifactId>hippo-cms-l10n-tooling-project</artifactId>
-    <version>12.6.13-SNAPSHOT</version>
+    <version>12.6.13</version>
   </parent>
   
   <artifactId>hippo-cms-l10n-maven-plugin</artifactId>
