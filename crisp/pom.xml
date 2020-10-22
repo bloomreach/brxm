@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>12.6.13-SNAPSHOT</version>
+    <version>12.6.14-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Addon CRISP</name>
   <description>Hippo Addon CRISP</description>
   <artifactId>hippo-addon-crisp</artifactId>
-  <version>12.6.13-SNAPSHOT</version>
+  <version>12.6.14-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://www.onehippo.org/</url>
   <inceptionYear>2017</inceptionYear>
