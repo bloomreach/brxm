@@ -16,7 +16,9 @@
 package org.hippoecm.hst.pagemodelapi.v10.core.container;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +27,15 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -59,14 +67,10 @@ import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadata
 import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 import org.hippoecm.hst.util.ParametersInfoUtils;
 import org.onehippo.cms7.services.hst.Channel;
+import org.hippoecm.hst.util.QueryStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SELF;
@@ -468,13 +472,29 @@ public class PageModelAggregationValve extends AggregationValve {
             }
         }
 
-        // include query string if present
-        String queryString = servletRequest.getQueryString();
-        if (isNotBlank(queryString)) {
-            hrefSelf += "?" + queryString;
-            hrefSite += "?" + queryString;
-        }
+        // servletRequest.getQueryString() can have encoded parts like '%3A' instead of ':' so cannot be used
+        // therefore use QueryStringBuilder which is encoding aware
+        final QueryStringBuilder queryStringBuilder = new QueryStringBuilder(servletRequest.getCharacterEncoding());
 
+        servletRequest.getParameterMap().entrySet().forEach(entry -> {
+            final String[] values = entry.getValue();
+            if (values != null) {
+                Arrays.stream(values).forEach(value -> {
+                    try {
+                        queryStringBuilder.append(entry.getKey(), value);
+                    } catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        });
+
+        final String queryString = queryStringBuilder.toString();
+
+        if (isNotBlank(queryString)) {
+            hrefSelf += queryString;
+            hrefSite += queryString;
+        }
 
         pageModel.putLink(LINK_NAME_SELF, new LinkModel(hrefSelf, EXTERNAL));
         pageModel.putLink(ContainerConstants.LINK_NAME_SITE, new LinkModel(hrefSite, INTERNAL));
