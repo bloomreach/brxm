@@ -214,7 +214,7 @@ public class NodeLinkFieldTypeTest {
     public void writeMissingValues() throws Exception {
         linkFieldType.setId("my:documentlink");
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("1234"));
-        linkFieldType.validate(fieldValues, new CompoundContext(null, documentNode, null, null));
+        linkFieldType.validate(fieldValues, new CompoundContext(documentNode, documentNode, null, null));
         linkFieldType.writeValues(documentNode, Optional.of(fieldValues));
     }
 
