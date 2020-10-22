@@ -19,7 +19,7 @@
   <parent>
     <artifactId>hippo-cms</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>12.6.13-SNAPSHOT</version>
+    <version>12.6.14-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
