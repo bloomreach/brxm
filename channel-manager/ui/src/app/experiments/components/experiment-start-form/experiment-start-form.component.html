@@ -60,14 +60,15 @@
 <div class="actions">
   <button mat-stroked-button
           [disabled]="isDiscardButtonDisabled || disabled"
-          (click)="onDiscard()">
+          (click)="onDiscard()"
+          class="qa-discard">
     {{ 'DISCARD' | translate }}
   </button>
   <button mat-stroked-button
           color="primary"
           [disabled]="isSaveButtonDisabled || disabled"
           (click)="onSave()"
-          class="save-button">
+          class="save-button qa-save">
     {{ 'SAVE' | translate }}
   </button>
 </div>
