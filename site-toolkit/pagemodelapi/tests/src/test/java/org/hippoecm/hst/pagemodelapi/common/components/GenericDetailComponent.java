@@ -98,7 +98,16 @@ public class GenericDetailComponent extends GenericHstComponent {
                 final int itemCount = 105;
                 List<HippoBean> beans = new ArrayList<>(itemCount);
                 IntStream.rangeClosed(1, itemCount).forEach(r -> beans.add(requestContext.getContentBean()));
-                Pagination<HippoBean> pagination = HippoBeanPaginationUtils.createPagination(beans, 6, 10);
+
+                final int currentPage;
+                if (request.getParameter("page") != null) {
+                    currentPage = Integer.valueOf(request.getParameter("page"));
+                } else {
+                    // just a random default
+                    currentPage = 6;
+                }
+
+                Pagination<HippoBean> pagination = HippoBeanPaginationUtils.createPagination(beans, currentPage, 10);
                 request.setModel("pageable", pagination);
 
                 break;
