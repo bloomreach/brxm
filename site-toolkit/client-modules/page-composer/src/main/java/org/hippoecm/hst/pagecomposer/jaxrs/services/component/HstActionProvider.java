@@ -100,7 +100,6 @@ public final class HstActionProvider {
             actions.add(HstAction.XPAGE_REQUEST_SCHEDULE_UNPUBLICATION.toAction(requestDepublication));
         });
 
-
         xPageContext.isAcceptRequest().ifPresent(acceptRequest -> actions.add(HstAction.XPAGE_REQUEST_ACCEPT
                 .toAction(acceptRequest)));
 
