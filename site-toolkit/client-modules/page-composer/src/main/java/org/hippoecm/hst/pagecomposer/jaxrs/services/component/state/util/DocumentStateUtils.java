@@ -16,6 +16,10 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -75,23 +79,25 @@ public class DocumentStateUtils {
         return DocumentState.UNKNOWN;
     }
 
-    public static WorkflowRequest getWorkflowRequest(final Node handle) {
+    public static List<WorkflowRequest> getWorkflowRequests(final Node handle) {
         if (!isValidHandle(handle)) {
-            return null;
+            return Collections.emptyList();
         }
 
+        final List<WorkflowRequest> requests = new LinkedList<>();
         try {
             final NodeIterator requestNodes = handle.getNodes(HippoNodeType.HIPPO_REQUEST);
             while (requestNodes.hasNext()) {
                 final Node requestNode = requestNodes.nextNode();
                 if (requestNode.isNodeType(NT_HIPPOSTDPUBWF_REQUEST)) {
-                    return new WorkflowRequest(requestNode);
+                    requests.add(new WorkflowRequest(requestNode));
                 }
             }
         } catch (RepositoryException e) {
-            log.warn("Could not retrieve workflow request of document '{}'", JcrUtils.getNodePathQuietly(handle), e);
+            log.warn("Error retrieving workflow request(s) for document '{}'", JcrUtils.getNodePathQuietly(handle), e);
         }
-        return null;
+
+        return requests;
     }
 
     public static ScheduledRequest getScheduledRequest(final Node handle) {
@@ -118,5 +124,4 @@ public class DocumentStateUtils {
                 .filter(type -> !type.equals(HippoNodeType.NT_DELETED))
                 .isPresent();
     }
-
 }

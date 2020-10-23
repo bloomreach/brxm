@@ -23,7 +23,7 @@ public enum HstCategory implements Category {
     CHANNEL("channel"),
     PAGE("page"),
     XPAGE("xpage"),
-    WORKFLOW_REQUEST("workflowRequest"),
+    WORKFLOW("workflow"),
     SCHEDULED_REQUEST("scheduledRequest");
 
     private final String name;
@@ -32,7 +32,6 @@ public enum HstCategory implements Category {
         Objects.requireNonNull(name);
         this.name = name;
     }
-
 
     @Override
     public String getName() {
