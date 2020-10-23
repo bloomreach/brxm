@@ -142,9 +142,11 @@ class XPageMenuService extends MenuService {
     });
 
     function getRequestTranslationKey(key) {
-      const workflowRequest = PageService.getState('workflowRequest');
-      if (workflowRequest !== null) {
-        return `${key}_REQUEST_${workflowRequest.type.toUpperCase()}`;
+      const workflow = PageService.getState('workflow') || {};
+      const { requests = [] } = workflow;
+      const request = requests.find(r => r.type !== 'rejected');
+      if (request) {
+        return `${key}_REQUEST_${request.type.toUpperCase()}`;
       }
 
       const scheduledRequest = PageService.getState('scheduledRequest');
@@ -154,6 +156,10 @@ class XPageMenuService extends MenuService {
 
       return key;
     }
+
+    addWorkflowAction('rejected', id => DocumentWorkflowService.cancelRequest(id), {
+      iconName: 'mdi-comment-remove-outline',
+    });
 
     addWorkflowAction('cancel', id => DocumentWorkflowService.cancelRequest(id), {
       iconName: 'mdi-comment-processing-outline',
@@ -167,11 +173,6 @@ class XPageMenuService extends MenuService {
 
     addWorkflowAction('reject', id => DocumentWorkflowService.rejectRequest(id), {
       iconName: 'mdi-close',
-      translationKeyFunction: getRequestTranslationKey,
-    });
-
-    addWorkflowAction('rejected', id => DocumentWorkflowService.cancelRequest(id), {
-      iconName: 'mdi-comment-remove-outline',
       translationKeyFunction: getRequestTranslationKey,
     });
 
