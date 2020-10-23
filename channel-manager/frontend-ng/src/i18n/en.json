@@ -353,7 +353,7 @@
   "TOOLBAR_MENU_XPAGE_REJECT_REQUEST_DEPUBLISH": "Reject take offline request",
   "TOOLBAR_MENU_XPAGE_REJECT_REQUEST_SCHEDULEDDEPUBLISH": "Reject scheduled take offline request",
   "TOOLBAR_MENU_XPAGE_REJECT_REQUEST_SCHEDULEDPUBLISH": "Reject scheduled publication request",
-  "TOOLBAR_MENU_XPAGE_REJECTED_REQUEST_REJECTED": "Show rejection feedback",
+  "TOOLBAR_MENU_XPAGE_REJECTED": "Show rejection feedback",
   "TOOLBAR_MENU_XPAGE_REQUEST_PUBLISH": "Publish (request)",
   "TOOLBAR_MENU_XPAGE_REQUEST_PUBLISH_ERROR": "Failed to request publication of page '{{documentName}}'",
   "TOOLBAR_MENU_XPAGE_REQUEST_SCHEDULE_PUBLISH": "Schedule publication (request)...",
@@ -370,8 +370,6 @@
   "TOOLBAR_MENU_XPAGE_UNPUBLISH": "Take offline",
   "TOOLBAR_MENU_XPAGE_UNPUBLISH_ERROR": "Failed to take page '{{documentName}}' offline",
   "TOOLBAR_MENU_XPAGE_VERSIONS": "Versions",
-
-
   "TOOLBAR_PROJECT_LABEL":"For project:",
   "TOOLBAR_SWITCH_VIEWER_MODE": "Viewer mode",
   "TOOLBAR_SWITCH_VIEWER_MODE_EDIT": "Edit",
