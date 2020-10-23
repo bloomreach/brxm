@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequest;
 import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 
 import static java.util.stream.Collectors.toMap;
@@ -39,8 +38,8 @@ final class HstStateProvider {
         if (context.isExperiencePageRequest()) {
             final XPageContext xPageContext = context.getXPageContext();
             states.addAll(xPageStates(xPageContext));
-            states.addAll(workflowRequestStates(xPageContext));
             states.addAll(scheduledRequestStates(xPageContext));
+            states.add(HstState.WORKFLOW_REQUESTS.toState(xPageContext.getWorkflowRequests()));
         }
 
         return states;
@@ -57,24 +56,6 @@ final class HstStateProvider {
             states.add(HstState.XPAGE_LOCKED_BY.toState(xPageContext.getLockedBy()));
         }
 
-        return states;
-    }
-
-    private Set<State> workflowRequestStates(XPageContext xPageContext) {
-        final WorkflowRequest workflowRequest = xPageContext.getWorkflowRequest();
-        if (workflowRequest == null) {
-            return Collections.emptySet();
-        }
-        final Set<State> states = new HashSet<>();
-        states.add(HstState.WORKFLOWREQUEST_CREATION_DATE.toState(workflowRequest.getCreationDate()));
-        if (workflowRequest.getRequestDate() != null) {
-            states.add(HstState.WORKFLOWREQUEST_REQUEST_DATE.toState(workflowRequest.getRequestDate()));
-        }
-        states.add(HstState.WORKFLOWREQUEST_TYPE.toState(workflowRequest.getType()));
-        states.add(HstState.WORKFLOWREQUEST_USERNAME.toState(workflowRequest.getUsername()));
-        if (workflowRequest.getReason() != null) {
-            states.add(HstState.WORKFLOWREQUEST_REASON.toState(workflowRequest.getReason()));
-        }
         return states;
     }
 
