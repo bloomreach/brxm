@@ -16,6 +16,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
@@ -27,7 +28,7 @@ public class XPageContext {
     private String xPageLockedBy;
     private String xPageName;
     private String xPageState;
-    private WorkflowRequest workflowRequest;
+    private List<WorkflowRequest> workflowRequests;
     private ScheduledRequest scheduledRequest;
     private String branchId;
     private Boolean publishable;
@@ -69,12 +70,12 @@ public class XPageContext {
         return this;
     }
 
-    public WorkflowRequest getWorkflowRequest() {
-        return workflowRequest;
+    public List<WorkflowRequest> getWorkflowRequests() {
+        return workflowRequests;
     }
 
-    XPageContext setWorkflowRequest(final WorkflowRequest workflowRequest) {
-        this.workflowRequest = workflowRequest;
+    public XPageContext setWorkflowRequests(final List<WorkflowRequest> workflowRequests) {
+        this.workflowRequests = workflowRequests;
         return this;
     }
 
