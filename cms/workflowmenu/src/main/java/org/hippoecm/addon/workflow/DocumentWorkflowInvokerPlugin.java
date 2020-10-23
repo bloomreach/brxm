@@ -71,7 +71,7 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
                 return;
             }
 
-            final ActionDescription actionDescription = publicationMenu.getAction(action);
+            final ActionDescription actionDescription = publicationMenu.getOldestAction(action);
             if (actionDescription == null) {
                 log.warn("Failed to retrieve workflow action {}.{} for document {}", category, action, uuid);
                 return;
