@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>hst</artifactId>
-    <version>14.3.3-SNAPSHOT</version>
+    <version>14.3.3</version>
   </parent>
   
   <artifactId>pagemodelapi</artifactId>

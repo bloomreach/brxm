@@ -23,13 +23,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.3.3-SNAPSHOT</version>
+    <version>14.3.3</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo CMS7 Services - validation</name>
   <artifactId>hippo-services-validation</artifactId>
-  <version>14.3.3-SNAPSHOT</version>
+  <version>14.3.3</version>
 
   <inceptionYear>2019</inceptionYear>
 

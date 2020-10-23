@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
     <artifactId>toolkit-cnd</artifactId>
-    <version>14.3.3-SNAPSHOT</version>
+    <version>14.3.3</version>
   </parent>
 
   <name>Hippo Site Toolkit CND Addon Resources</name>

@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-testsuite-repository-data</artifactId>
-    <version>14.3.3-SNAPSHOT</version>
+    <version>14.3.3</version>
   </parent>
 
   <name>Hippo Test Suite Repository Data For Site</name>

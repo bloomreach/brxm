@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.3.3-SNAPSHOT</version>
+    <version>14.3.3</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <groupId>org.onehippo</groupId>
   <artifactId>spa-sdk</artifactId>
   <name>Bloomreach SPA SDK</name>
-  <version>14.3.3-SNAPSHOT</version>
+  <version>14.3.3</version>
 
   <inceptionYear>2019</inceptionYear>
 

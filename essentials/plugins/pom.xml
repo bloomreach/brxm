@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-essentials</artifactId>
-    <version>14.3.3-SNAPSHOT</version>
+    <version>14.3.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <name>Hippo Essentials Plugins</name>

@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-plugin-poll</artifactId>
-    <version>14.3.3-SNAPSHOT</version>
+    <version>14.3.3</version>
   </parent>
 
   <artifactId>hippo-plugin-poll-addon-hcm-site</artifactId>

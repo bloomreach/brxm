@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst.toolkit-resources</groupId>
     <artifactId>addon</artifactId>
-    <version>14.3.3-SNAPSHOT</version>
+    <version>14.3.3</version>
   </parent>
 
   <name>Hippo Site Toolkit Addon Resources Default Spring Test Config</name>
