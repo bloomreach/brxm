@@ -175,12 +175,10 @@ class MenuHierarchy implements Serializable {
         return submenus.get(category);
     }
 
-    public ActionDescription getAction(final String action) {
-        for (final ActionDescription actionDescription : items) {
-            if (actionDescription.getId().equals(action)) {
-                return actionDescription;
-            }
-        }
-        return null;
+    public ActionDescription getOldestAction(final String action) {
+        return items.stream()
+                .filter(component -> component.isVisible() && component.getId().equals(action))
+                .reduce((first, second) -> second)
+                .orElse(null);
     }
 }
