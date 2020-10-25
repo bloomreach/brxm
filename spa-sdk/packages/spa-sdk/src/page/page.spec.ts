@@ -38,6 +38,11 @@ let metaFactory: jest.MockedFunction<MetaCollectionFactory>;
 let root: Component;
 
 const model = {
+  channel: {
+    info: {
+      props: {},
+    },
+  },
   links: {
     self: { href: 'self-url', type: TYPE_LINK_EXTERNAL },
     site: { href: 'site-url', type: TYPE_LINK_INTERNAL },
@@ -75,6 +80,14 @@ beforeEach(() => {
 });
 
 describe('PageImpl', () => {
+  describe('getChannelParameters', () => {
+    it('should return channel info parameters', () => {
+      const page = createPage();
+
+      expect(page.getChannelParameters()).toBe(model.channel.info.props);
+    });
+  });
+
   describe('getComponent', () => {
     it('should forward a call to the root component', () => {
       const page = createPage();

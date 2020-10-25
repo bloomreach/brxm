@@ -35,7 +35,22 @@ import { isAbsoluteUrl, resolveUrl } from '../url';
 
 export const PageModelToken = Symbol.for('PageModelToken');
 
+type ChannelParameters = Record<string, any>;
 type PageLinks = 'self' | 'site';
+
+/**
+ * Current channel info.
+ */
+interface ChannelInfoModel {
+  props: ChannelParameters;
+}
+
+/**
+ * Current channel of a page.
+ */
+interface ChannelModel {
+  info: ChannelInfoModel;
+}
 
 /**
  * Meta-data of a page root component.
@@ -82,6 +97,7 @@ interface PageMeta {
  * Model of a page.
  */
 export interface PageModel {
+  channel: ChannelModel;
   document?: Reference;
   links: Record<PageLinks, Link>;
   meta: PageMeta;
@@ -93,6 +109,12 @@ export interface PageModel {
  * The current page to render.
  */
 export interface Page {
+  /**
+   * Gets current channel parameters.
+   * @returns The channel parameters.
+   */
+  getChannelParameters<T extends ChannelParameters = ChannelParameters>(): T;
+
   /**
    * Gets a root component in the page.
    * @return The root component.
@@ -227,6 +249,10 @@ export class PageImpl implements Page {
 
   protected onPageUpdate(event: PageUpdateEvent) {
     Object.assign(this.model.page, event.page.page);
+  }
+
+  getChannelParameters<T>(): T {
+    return this.model.channel.info.props as T;
   }
 
   getComponent<T extends Component>(): T;
