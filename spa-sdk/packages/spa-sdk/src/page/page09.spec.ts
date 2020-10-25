@@ -74,6 +74,21 @@ beforeEach(() => {
 });
 
 describe('PageImpl', () => {
+  describe('getChannelParameters', () => {
+    it('should return empty object if there is no channel', () => {
+      const page = createPage();
+
+      expect(page.getChannelParameters()).toStrictEqual({});
+    });
+
+    it('should return channel info parameters', () => {
+      const props = {};
+      const page = createPage({ ...model, channel: { info: { props } } });
+
+      expect(page.getChannelParameters()).toBe(props);
+    });
+  });
+
   describe('getComponent', () => {
     it('should forward a call to the root component', () => {
       const page = createPage();

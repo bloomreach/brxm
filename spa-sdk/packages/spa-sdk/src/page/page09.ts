@@ -53,6 +53,7 @@ interface PageRootModel {
 export interface PageModel {
   _links: PageModel10['links'];
   _meta: PageModel10['meta'];
+  channel?: PageModel10['channel'];
   content?: { [reference: string]: ContentModel };
   page: (ComponentModel | ContainerItemModel | ContainerModel) & PageRootModel;
 }
@@ -91,6 +92,10 @@ export class PageImpl implements Page {
 
   private static getContentReference(reference: Reference) {
     return  reference.$ref.split('/', 3)[2] || '';
+  }
+
+  getChannelParameters<T>(): T {
+    return (this.model.channel?.info.props ?? {}) as T;
   }
 
   getComponent<T extends Component>(): T;

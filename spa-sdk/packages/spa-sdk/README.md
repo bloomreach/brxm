@@ -127,6 +127,7 @@ The `Page` class represents the brXM page to render. This is the main entry poin
 
 Method | Description
 --- | ---
+`getChannelParameters(): object` | Gets current channel parameters.
 <code>getComponent(...componentNames): Component &vert; undefined</code> | Gets a component in the page (e.g. `getComponent('main', 'right')`). If `componentNames` is omitted, then the page root component will be returned.
 <code>getContent<T>(reference: Reference &vert; string): Content &vert; T &vert; undefined</code> | Gets a content item used on the page.
 <code>getDocument<T>(): T &vert; undefined</code> | Gets the page root document. This option is available only along with the Experience Pages feature.
