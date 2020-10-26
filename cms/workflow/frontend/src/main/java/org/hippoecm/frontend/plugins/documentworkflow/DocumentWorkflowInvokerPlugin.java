@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.addon.workflow;
+package org.hippoecm.frontend.plugins.documentworkflow;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -31,6 +31,9 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.template.PackageTextTemplate;
+import org.hippoecm.addon.workflow.AbstractWorkflowManagerPlugin;
+import org.hippoecm.addon.workflow.ActionDescription;
+import org.hippoecm.addon.workflow.MenuHierarchy;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
