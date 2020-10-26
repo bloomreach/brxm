@@ -41,6 +41,6 @@ definitions:
         plugin.class: org.onehippo.cms7.channelmanager.channeleditor.PlainComponentVariantAdder
       /document-workflow:
         jcr:primaryType: frontend:plugin
-        plugin.class: org.hippoecm.addon.workflow.DocumentWorkflowInvokerPlugin
+        plugin.class: org.hippoecm.frontend.plugins.documentworkflow.DocumentWorkflowInvokerPlugin
         wicket.id: ${cluster.id}.workflows
         workflow.categories: default
