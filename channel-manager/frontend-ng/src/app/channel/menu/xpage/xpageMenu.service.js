@@ -157,7 +157,7 @@ class XPageMenuService extends MenuService {
       return key;
     }
 
-    addWorkflowAction('rejected', id => DocumentWorkflowService.cancelRequest(id), {
+    addWorkflowAction('rejected', id => DocumentWorkflowService.showRequestRejected(id), {
       iconName: 'mdi-comment-remove-outline',
     });
 
