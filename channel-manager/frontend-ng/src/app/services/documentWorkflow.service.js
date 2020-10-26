@@ -80,6 +80,10 @@ class DocumentWorkflowService {
   rejectRequest(documentId) {
     return this._invoke(documentId, 'request', 'reject');
   }
+
+  showRequestRejected(documentId) {
+    return this._invoke(documentId, 'request', 'rejected');
+  }
 }
 
 export default DocumentWorkflowService;
