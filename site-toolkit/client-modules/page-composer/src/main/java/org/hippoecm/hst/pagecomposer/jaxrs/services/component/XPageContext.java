@@ -42,6 +42,7 @@ public class XPageContext {
     private Boolean cancelRequest;
     private Boolean rejectRequest;
     private Boolean rejectedRequest;
+    private Boolean publishableBranch;
 
     public String getXPageId() {
         return xPageId;
@@ -215,5 +216,13 @@ public class XPageContext {
         }
 
         return false;
+    }
+
+    public Boolean getPublishableBranch() {
+        return publishableBranch;
+    }
+
+    public void setPublishableBranch(final Boolean publishableBranch) {
+        this.publishableBranch = publishableBranch;
     }
 }
