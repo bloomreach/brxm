@@ -106,6 +106,10 @@ final class XPageContextFactory {
             xPageContext.setRequestDepublication(TRUE.equals(hints.get("requestDepublication")));
         }
 
+        if (hints.containsKey("publishBranch")) {
+            xPageContext.setPublishableBranch(TRUE.equals(hints.get("publishBranch")));
+        }
+
         return xPageContext;
     }
 
