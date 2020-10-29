@@ -13,8 +13,8 @@
     "typescript": "^4.0"
   },
   "scripts": {
-    "build": "react-scripts build",
-    "dev": "react-scripts start",
+    "build": "SKIP_PREFLIGHT_CHECK=true react-scripts build",
+    "dev": "SKIP_PREFLIGHT_CHECK=true react-scripts start",
     "lint": "eslint --ext js,ts,tsx src",
     "start": "node server.js"
   },
