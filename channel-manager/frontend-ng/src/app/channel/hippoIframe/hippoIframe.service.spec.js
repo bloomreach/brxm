@@ -186,6 +186,19 @@ describe('HippoIframeService', () => {
     expect($log.warn).not.toHaveBeenCalled();
   });
 
+  it('should perform force iframe reload', () => {
+    HippoIframeService.pageLoaded = true;
+    spyOn(HippoIframeService, 'getSrc').and.returnValue('something');
+
+    HippoIframeService.reload(true);
+    $rootScope.$digest();
+
+    expect(CommunicationService.reload).not.toHaveBeenCalled();
+    expect(HippoIframeService.iframeJQueryElement.attr('src')).toBe('something');
+
+    $rootScope.$emit('page:change', { initial: true });
+  });
+
   it('logs a warning upon a reload request when a reload is already ongoing', () => {
     spyOn($log, 'warn');
 
