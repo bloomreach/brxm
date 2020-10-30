@@ -29,7 +29,6 @@ import javax.jcr.Session;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.wicket.Application;
-import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.string.PrependingStringBuffer;
@@ -38,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Model for JCR {@link Item}s.  The model tracks the Item as well as it can, using the first referenceable ancestor
+ * Model for JCR {@link Item}s.  The model tracks the Item as well as it can, using the first referencable ancestor
  * plus a relative path as the identification/retrieval method. When the Item (or one of its ancestors) is moved, this
  * is transparent.
  * <p>
@@ -62,22 +61,37 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     // recursion detection
     private transient boolean detaching = false;
 
+    /**
+     * Variable to store constructor stacktrace to simplify fixing "undetached model" warning. Is only used when the
+     * {@link TraceMonitor} is enabled.
+     */
+    private String stacktrace;
+
     public JcrItemModel(final T item) {
         super(item);
 
         userId = UserSession.get().getJcrSession().getUserID();
 
         if (item != null) {
-            TraceMonitor.track(item);
             isProperty = !item.isNode();
             doSave();
         }
+
+        trace();
     }
 
     public JcrItemModel(final String path, final boolean property) {
         absPath = path;
         isProperty = property;
         userId = UserSession.get().getJcrSession().getUserID();
+
+        trace();
+    }
+
+    private void trace() {
+        if (TraceMonitor.isEnabled()) {
+            stacktrace = TraceMonitor.getStackTrace();
+        }
     }
 
     /**
@@ -166,11 +180,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     @Override
     protected T load() {
-        final T object = loadModel();
-        if (object != null) {
-            TraceMonitor.track(object);
-        }
-        return object;
+        return loadModel();
     }
 
     @SuppressWarnings("unchecked")
@@ -227,12 +237,6 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     @Override
     public void detach() {
-        if (isAttached()) {
-            final T object = this.getObject();
-            if (object != null) {
-                TraceMonitor.release(object);
-            }
-        }
         detaching = true;
         save();
         super.detach();
@@ -318,14 +322,11 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     private void writeObject(final ObjectOutputStream output) throws IOException {
         if (isAttached()) {
-            log.warn("Undetached JcrItemModel " + getPath());
-            final T object = this.getObject();
-            if (object != null) {
-                TraceMonitor.trace(object);
+            log.warn("Undetached JcrItemModel {}", this);
+            if (TraceMonitor.isEnabled()) {
+                log.warn("Call stack when JcrItemModel was created:\n" + stacktrace);
             }
-            if (RuntimeConfigurationType.DEPLOYMENT.equals(Application.get().getConfigurationType())) {
-                detach();
-            }
+            detach();
         }
         output.defaultWriteObject();
     }
@@ -399,6 +400,9 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     }
 
     private boolean isValidSession() {
+        if (!Application.exists()) {
+            return false;
+        }
         final Session session = UserSession.get().getJcrSession();
         return session.getUserID().equals(userId);
     }

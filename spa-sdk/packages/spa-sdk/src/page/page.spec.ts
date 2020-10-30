@@ -19,7 +19,8 @@ import { Component, TYPE_COMPONENT } from './component';
 import { ComponentFactory } from './component-factory';
 import { ContentFactory } from './content-factory';
 import { ContentModel } from './content';
-import { EventBus, Events } from '../events';
+import { EventBus as CmsEventBus } from '../cms';
+import { EventBus } from './events';
 import { LinkFactory } from './link-factory';
 import { LinkRewriter } from './link-rewriter';
 import { Link, TYPE_LINK_INTERNAL, TYPE_LINK_EXTERNAL, isLink } from './link';
@@ -29,6 +30,7 @@ import { PageImpl, PageModel, Page, isPage } from './page';
 let componentFactory: jest.Mocked<ComponentFactory>;
 let content: unknown;
 let contentFactory: jest.Mocked<ContentFactory>;
+let cmsEventBus: CmsEventBus;
 let eventBus: EventBus;
 let linkFactory: jest.Mocked<LinkFactory>;
 let linkRewriter: jest.Mocked<LinkRewriter>;
@@ -36,6 +38,11 @@ let metaFactory: jest.MockedFunction<MetaCollectionFactory>;
 let root: Component;
 
 const model = {
+  channel: {
+    info: {
+      props: {},
+    },
+  },
   links: {
     self: { href: 'self-url', type: TYPE_LINK_EXTERNAL },
     site: { href: 'site-url', type: TYPE_LINK_INTERNAL },
@@ -48,14 +55,24 @@ const model = {
 } as PageModel;
 
 function createPage(pageModel = model) {
-  return new PageImpl(pageModel, componentFactory, contentFactory, eventBus, linkFactory, linkRewriter, metaFactory);
+  return new PageImpl(
+    pageModel,
+    componentFactory,
+    contentFactory,
+    linkFactory,
+    linkRewriter,
+    metaFactory,
+    cmsEventBus,
+    eventBus,
+  );
 }
 
 beforeEach(() => {
   componentFactory = { create: jest.fn(() => root) } as unknown as typeof componentFactory;
   content = {};
   contentFactory = { create: jest.fn(() => content) } as unknown as typeof contentFactory;
-  eventBus = new Typed<Events>();
+  cmsEventBus = new Typed();
+  eventBus = new Typed();
   linkFactory = { create: jest.fn() } as unknown as typeof linkFactory;
   linkRewriter = { rewrite: jest.fn() } as unknown as jest.Mocked<LinkRewriter>;
   metaFactory = jest.fn();
@@ -63,6 +80,14 @@ beforeEach(() => {
 });
 
 describe('PageImpl', () => {
+  describe('getChannelParameters', () => {
+    it('should return channel info parameters', () => {
+      const page = createPage();
+
+      expect(page.getChannelParameters()).toBe(model.channel.info.props);
+    });
+  });
+
   describe('getComponent', () => {
     it('should forward a call to the root component', () => {
       const page = createPage();
@@ -181,7 +206,9 @@ describe('PageImpl', () => {
           site: { ...model.links.site, href: base },
         },
       });
-      linkFactory.create.mockImplementationOnce((link: Link | string) => isLink(link) ? link.href : link);
+      linkFactory.create.mockImplementationOnce(
+        ((link?: Link | string) => isLink(link) ? link.href : link) as typeof linkFactory.create,
+      );
 
       expect(page.getUrl(link)).toBe(expected);
     });
@@ -303,12 +330,12 @@ describe('PageImpl', () => {
 
   describe('sync', () => {
     it('should emit page.ready event', () => {
-      spyOn(eventBus, 'emit');
+      spyOn(cmsEventBus, 'emit');
 
       const page = createPage();
       page.sync();
 
-      expect(eventBus.emit).toBeCalledWith('page.ready', {});
+      expect(cmsEventBus.emit).toBeCalledWith('page.ready', {});
     });
   });
 

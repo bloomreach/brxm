@@ -327,7 +327,6 @@ public class HippoNodeTypeRegistry extends NodeTypeRegistry {
      * @throws InvalidNodeTypeDefException if the node type definition is invalid
      */
     public void externalRegistered(Collection<QNodeTypeDefinition> ntDefs) throws RepositoryException, InvalidNodeTypeDefException {
-        super.externalRegistered(ntDefs);
         // save current threadlocal value
         Boolean currentIgnoreNextPersistCustomNodeTypeDefs = ignoreNextPersistCustomNodeTypeDefs.get();
         try {

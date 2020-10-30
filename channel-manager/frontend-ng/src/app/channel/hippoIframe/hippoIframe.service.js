@@ -61,7 +61,7 @@ class HippoIframeService {
     // When another project became active the page reload will trigger a channel switch.
     this.ProjectService.afterChange('iframeReload', (projectIdIdentical) => {
       if (!projectIdIdentical) {
-        this.reload();
+        this.reload(true);
       }
     });
 
@@ -127,7 +127,7 @@ class HippoIframeService {
     return this.renderPathInfo;
   }
 
-  async reload() {
+  async reload(force = false) {
     if (!this.isPageLoaded()) {
       return;
     }
@@ -142,7 +142,11 @@ class HippoIframeService {
     this._deferredReload = this.$q.defer();
 
     await this.ScrollService.savePosition();
-    await this.CommunicationService.reload();
+    if (force) {
+      this.iframeJQueryElement.attr('src', this.getSrc());
+    } else {
+      await this.CommunicationService.reload();
+    }
 
     // eslint-disable-next-line consistent-return
     return this._deferredReload.promise;

@@ -48,11 +48,13 @@ describe('initialize', () => {
 
   it('should initialize using endpoint from the query string', async () => {
     httpClient.mockClear();
-    page = await initialize({
+
+    const page = await initialize({
       httpClient,
       endpointQueryParameter: 'brxm',
       request: { path: '/?brxm=http://example.com/api' },
     });
+    destroy(page);
 
     expect(httpClient).toBeCalled();
     expect(httpClient.mock.calls[0]).toMatchSnapshot();
@@ -229,6 +231,7 @@ describe('initialize', () => {
     });
     const postMessageSpy = spyOn(window.parent, 'postMessage').and.callThrough();
     await page.sync();
+    destroy(page);
 
     expect(postMessageSpy).toBeCalledWith(expect.anything(), 'https://api.example.com');
   });
@@ -243,6 +246,7 @@ describe('initialize', () => {
     });
     const postMessageSpy = spyOn(window.parent, 'postMessage').and.callThrough();
     await page.sync();
+    destroy(page);
 
     expect(postMessageSpy).toBeCalledWith(expect.anything(), 'http://localhost:12345');
   });

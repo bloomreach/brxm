@@ -15,7 +15,7 @@
  */
 
 import { Typed } from 'emittery';
-import { EventBus, Events } from '../events';
+import { EventBus, Events } from './events';
 import { CmsImpl } from './cms';
 import { RpcClient, RpcServer } from './rpc';
 
@@ -36,7 +36,7 @@ describe('CmsImpl', () => {
       register: jest.fn(),
       trigger: jest.fn(),
     };
-    cms = new CmsImpl(eventBus, rpcClient, rpcServer);
+    cms = new CmsImpl(rpcClient, rpcServer, eventBus);
   });
 
   describe('initialize', () => {

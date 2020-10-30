@@ -17,7 +17,7 @@
 import { Typed } from 'emittery';
 import { ComponentImpl, TYPE_COMPONENT_CONTAINER_ITEM } from './component';
 import { ContainerItemImpl, ContainerItemModel, ContainerItem, isContainerItem } from './container-item';
-import { EventBus, Events } from '../events';
+import { EventBus, Events } from './events';
 import { LinkFactory } from './link-factory';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollection } from './meta-collection';
@@ -34,7 +34,7 @@ const model = {
 } as ContainerItemModel;
 
 function createContainerItem(containerItemModel = model) {
-  return new ContainerItemImpl(containerItemModel, eventBus, linkFactory, metaFactory);
+  return new ContainerItemImpl(containerItemModel, linkFactory, metaFactory, eventBus);
 }
 
 beforeEach(() => {
