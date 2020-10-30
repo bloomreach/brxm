@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.plugins.documentworkflow;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -41,14 +43,33 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableMap;
 
 public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin {
     private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowInvokerPlugin.class);
 
     private static final String JS_FILE = "document-workflow-invoker-plugin.js";
     private static final List<String> REQUEST_ACTIONS = Arrays.asList( "cancel", "rejected");
+    private static final Map<String, String> ACTIONS_TO_HINTS = ImmutableMap.<String, String>builder()
+            .put("PUB", "publish")
+            .put("SCHED_PUB", "publish")
+            .put("REQ_PUB", "requestPublication")
+            .put("REQ_SCHED_PUB", "requestPublication")
+            .put("DEPUB", "depublish")
+            .put("SCHED_DEPUB", "depublish")
+            .put("REQ_DEPUB", "requestDepublication")
+            .put("REQ_SCHED_DEPUB", "requestDepublication")
+            .put("copy", "copy")
+            .put("move", "move")
+            .put("delete", "delete")
+            .build();
 
     private final Ajax ajax;
 
@@ -61,40 +82,16 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
     private class Ajax extends AbstractDefaultAjaxBehavior {
 
         @Override
-        protected void respond(final AjaxRequestTarget ajaxRequestTarget) {
+        protected void respond(final AjaxRequestTarget target) {
             final Request request = RequestCycle.get().getRequest();
             final IRequestParameters requestParameters = request.getRequestParameters();
             final String uuid = requestParameters.getParameterValue("documentId").toString();
             final String category = requestParameters.getParameterValue("category").toString();
             final String action = requestParameters.getParameterValue("action").toString();
 
-            final Node documentNode = getDocumentHandle(uuid);
-            final MenuHierarchy menu = buildMenu(Collections.singleton(documentNode), getPluginConfig());
-
-            final MenuHierarchy publicationMenu = menu.getSubmenu(category);
-            if (publicationMenu == null) {
-                log.warn("Failed to retrieve workflow category {} for document {}", category, uuid);
-                return;
+            if (isValidWorkflowRequest(action, uuid, target)) {
+                executeWorkflowRequest(uuid, category, action, target);
             }
-
-            final List<ActionDescription> items = publicationMenu.getItems();
-            final ActionDescription actionDescription = items.stream()
-                    .filter(component -> representsAction(component, action))
-                    .reduce((first, second) -> second)
-                    .orElse(null);
-
-            if (actionDescription == null) {
-                log.warn("Failed to retrieve workflow action {}.{} for document {}", category, action, uuid);
-                return;
-            }
-
-            try {
-                actionDescription.invokeAsPromise();
-            } catch (final Exception e) {
-                log.error("Failed to invoke workflow action {}.{} on document {}", category, action, uuid, e);
-            }
-
-            ajaxRequestTarget.add(DocumentWorkflowInvokerPlugin.this);
         }
 
         @Override
@@ -102,6 +99,65 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
             super.renderHead(component, response);
             response.render(OnLoadHeaderItem.forScript(createScript()));
         }
+    }
+
+    private boolean isValidWorkflowRequest(final String action, final String uuid, final AjaxRequestTarget target) {
+        if (!ACTIONS_TO_HINTS.containsKey(action)) {
+            log.warn("Unknown workflow action '{}'", action);
+            target.prependJavaScript(String.format("Hippo.Workflow.reject('Unknown workflow action %s');", action));
+            return false;
+        }
+
+        final HippoSession userSession = UserSession.get().getJcrSession();
+        try {
+            final Node handle = userSession.getNodeByIdentifier(uuid);
+            final HippoWorkspace workspace = userSession.getWorkspace();
+            final WorkflowManager workflowManager = workspace.getWorkflowManager();
+            final Workflow wf = workflowManager.getWorkflow("default", handle);
+            final Map<String, Serializable> hints = wf.hints();
+            final String hint = ACTIONS_TO_HINTS.get(action);
+            if (!Boolean.TRUE.equals(hints.get(hint))) {
+                log.warn("Workflow hint '{}' is no allowed on document '{}'", hint, uuid);
+                target.prependJavaScript("Hippo.Workflow.reject();");
+                return false;
+            }
+        } catch (RepositoryException | RemoteException | WorkflowException e) {
+            log.error("Error validating workflow request", e);
+            target.prependJavaScript(String.format("Hippo.Workflow.reject('%s');", e.getMessage()));
+            return false;
+        }
+
+        return true;
+    }
+
+    private void executeWorkflowRequest(final String uuid, final String category, final String action, final AjaxRequestTarget target) {
+        final Node documentNode = getDocumentHandle(uuid);
+        final MenuHierarchy menu = buildMenu(Collections.singleton(documentNode), getPluginConfig());
+
+        final MenuHierarchy publicationMenu = menu.getSubmenu(category);
+        if (publicationMenu == null) {
+            log.warn("Failed to retrieve workflow category {} for document {}", category, uuid);
+            return;
+        }
+
+        final List<ActionDescription> items = publicationMenu.getItems();
+        final ActionDescription actionDescription = items.stream()
+                .filter(component -> representsAction(component, action))
+                .reduce((first, second) -> second)
+                .orElse(null);
+
+        if (actionDescription == null) {
+            log.warn("Failed to retrieve workflow action {}.{} for document {}", category, action, uuid);
+            return;
+        }
+
+        try {
+            actionDescription.invokeAsPromise();
+        } catch (final Exception e) {
+            log.error("Failed to invoke workflow action {}.{} on document {}", category, action, uuid, e);
+        }
+
+        target.add(DocumentWorkflowInvokerPlugin.this);
     }
 
     private Node getDocumentHandle(final String uuid) {
