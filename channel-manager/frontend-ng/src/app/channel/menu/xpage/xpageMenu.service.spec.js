@@ -229,8 +229,8 @@ describe('XPageMenuService', () => {
     expect(FeedbackService.showError).toHaveBeenCalledWith(
       `${action.translationKey}_ERROR`,
       {
-        msg: result,
         documentName: 'xpage-document-name',
+        reason: result,
       },
     );
   }
