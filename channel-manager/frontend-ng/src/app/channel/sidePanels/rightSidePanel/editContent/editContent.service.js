@@ -125,7 +125,7 @@ class EditContentService {
       this.ContentService.getDocument(documentId, selectedProjectId).then(
         (document) => {
           if (selectedProjectId && document.branchId !== selectedProjectId) {
-            this._showDocumentTitle(document);
+            this._showDocumentTitle(document.displayName);
             this._setDocumentContext();
             this.$state.go('hippo-cm.channel.add-to-project', { documentId });
           } else {
@@ -152,12 +152,10 @@ class EditContentService {
     this.RightSidePanelService.startLoading();
 
     const document = await this.ContentEditor.open(documentId);
-
     if (document) {
       this.documentId = documentId;
-      this._showDocumentTitle(document);
     }
-
+    this._showDocumentTitle(this.ContentEditor.getDocumentDisplayName());
     this._setDocumentContext();
     this.RightSidePanelService.stopLoading();
   }
@@ -174,8 +172,8 @@ class EditContentService {
     this.RightSidePanelService.setContext(documentLabel);
   }
 
-  _showDocumentTitle(document) {
-    this.RightSidePanelService.setTitle(document.displayName);
+  _showDocumentTitle(documentTitle) {
+    this.RightSidePanelService.setTitle(documentTitle);
   }
 
   _onCloseChannel() {

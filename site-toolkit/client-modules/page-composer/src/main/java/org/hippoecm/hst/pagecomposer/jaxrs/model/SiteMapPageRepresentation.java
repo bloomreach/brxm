@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -57,14 +58,17 @@ public class SiteMapPageRepresentation {
         pageTitle = item.getPageTitle();
         pathInfo =  HstSiteMapUtils.getPath(item, null);
 
-        if (pathInfo.equals(homePagePathInfo)) {
+        if (StringUtils.isBlank(pathInfo)) {
             pathInfo = "/";
-            renderPathInfo = mountPath;
+            renderPathInfo = StringUtils.isBlank(mountPath) ? "/" : mountPath;
+        } else if (pathInfo.equals(homePagePathInfo)) {
+            pathInfo = "/";
+            renderPathInfo = StringUtils.isBlank(mountPath) ? "/" : mountPath;
         } else {
             if (pathInfo.startsWith("/")){
                 renderPathInfo = mountPath + pathInfo;
             } else {
-                renderPathInfo = mountPath + "/" + pathInfo;
+               renderPathInfo = mountPath + "/" + pathInfo;
             }
         }
 
@@ -84,7 +88,12 @@ public class SiteMapPageRepresentation {
         // from the pathInfo, remove the 'Mount path part' just like SiteMapPageRepresentation for a sitemap item above
         final Mount mount = hstLink.getMount();
         pathInfo = hstLink.getPath();
-        renderPathInfo = mount == null ? "/" + pathInfo : mount.getMountPath() + "/" + pathInfo;
+        if (StringUtils.isBlank(pathInfo)) {
+            renderPathInfo = mount == null ? "/" : mount.getMountPath();
+        } else {
+            renderPathInfo = mount == null ? "/" + pathInfo : mount.getMountPath() + "/" + pathInfo;
+        }
+
         experiencePage = XPageUtils.isXPageDocument(handleNode);
         return this;
     }

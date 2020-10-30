@@ -16,6 +16,8 @@
 package org.hippoecm.hst.pagemodelapi.common;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -54,7 +55,6 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
-import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -225,6 +225,8 @@ public abstract class AbstractPageModelApiITCases {
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
 
+        request.setCharacterEncoding("utf-8");
+
         String host = hostAndPort.split(":")[0];
         if (hostAndPort.split(":").length > 1) {
             int port = Integer.parseInt(hostAndPort.split(":")[1]);
@@ -249,9 +251,15 @@ public abstract class AbstractPageModelApiITCases {
         if (queryString != null) {
             request.setQueryString(queryString);
 
-            // for some reason queryString does not end up as parameters so set those explicitly
             Arrays.stream(queryString.split("&"))
-                    .forEach(paramKeyVal -> request.setParameter(substringBefore(paramKeyVal, "="), substringAfter(paramKeyVal, "=")));
+                    .forEach(paramKeyVal -> {
+                        try {
+                            request.setParameter(
+                                    URLDecoder.decode(substringBefore(paramKeyVal, "="), "utf-8"), substringAfter(paramKeyVal, "="));
+                        } catch (UnsupportedEncodingException e) {
+                            throw new IllegalStateException(e);
+                        }
+                    });
 
         }
         return new RequestResponseMock(request, response);

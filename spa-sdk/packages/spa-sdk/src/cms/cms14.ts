@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { injectable, inject } from 'inversify';
-import { EventBusService, EventBus } from '../events';
+import { injectable, inject, optional } from 'inversify';
+import { EventBusService, EventBus } from './events';
 import { CmsOptions, Cms } from './cms';
 
 const GLOBAL_WINDOW = typeof window === 'undefined' ? undefined : window;
@@ -40,7 +40,7 @@ export class Cms14Impl implements Cms {
   private api?: CmsApi;
   private postponed: Function[] = [];
 
-  constructor(@inject(EventBusService) protected eventBus: EventBus) {}
+  constructor(@inject(EventBusService) @optional() protected eventBus?: EventBus) {}
 
   private async flush() {
     this.postponed
@@ -63,7 +63,7 @@ export class Cms14Impl implements Cms {
       return;
     }
 
-    this.eventBus.on('page.ready', this.postpone(this.sync));
+    this.eventBus?.on('page.ready', this.postpone(this.sync));
 
     window.SPA = {
       init: this.onInit.bind(this),
@@ -77,7 +77,7 @@ export class Cms14Impl implements Cms {
   }
 
   protected onRenderComponent(id: string, properties: object) {
-    this.eventBus.emit('cms.update', { id, properties });
+    this.eventBus?.emit('cms.update', { id, properties });
   }
 
   protected sync() {

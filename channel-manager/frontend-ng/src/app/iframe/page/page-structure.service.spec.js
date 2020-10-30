@@ -174,8 +174,8 @@ describe('PageStructureService', () => {
 
   const registerEmptyNoMarkupContainer = () => registerNoMarkupContainer(undefined, '#container-no-markup-empty');
 
-  const registerLowercaseNoMarkupContainer = () => registerNoMarkupContainer(
-    undefined,
+  const registerLowercaseNoMarkupContainer = callback => registerNoMarkupContainer(
+    callback,
     '#container-no-markup-lowercase',
   );
 
@@ -187,8 +187,8 @@ describe('PageStructureService', () => {
     registerNoMarkupContainer(undefined, '#container-no-markup-without-text-nodes-after-end-comment');
   };
 
-  const registerNoMarkupComponent = (callback) => {
-    const component = $j('#component-no-markup', $document)[0];
+  const registerNoMarkupComponent = (callback, id = '#component-no-markup') => {
+    const component = $j(id, $document)[0];
     registerParsedElement(previousComment(component));
     if (callback) {
       callback();
@@ -201,6 +201,11 @@ describe('PageStructureService', () => {
   const registerEmptyNoMarkupComponent = () => {
     registerParsedElement(nextComment(childComment($j('#container-no-markup', $document)[0])));
   };
+
+  const registerLowercaseNoMarkupComponent = callback => registerNoMarkupComponent(
+    callback,
+    '#component-no-markup-lowercase',
+  );
 
   const registerEmbeddedLink = (selector) => {
     registerParsedElement(childComment($j(selector, $document)[0]));
@@ -705,8 +710,8 @@ describe('PageStructureService', () => {
   describe('can move to entities specs', () => {
     it('detects if a container contains DOM elements that represent a container-item', () => {
       registerVBoxContainer();
-      registerNoMarkupContainer();
-      registerLowercaseNoMarkupContainer();
+      registerNoMarkupContainer(() => registerNoMarkupComponent());
+      registerLowercaseNoMarkupContainer(() => registerLowercaseNoMarkupComponent());
       PageStructureService.parseElements();
 
       const containers = PageStructureService.getPage().getContainers();

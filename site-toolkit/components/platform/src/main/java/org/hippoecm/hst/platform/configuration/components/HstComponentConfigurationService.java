@@ -1003,6 +1003,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.referenceComponent = child.referenceComponent;
         copy.pageErrorHandlerClassName = child.pageErrorHandlerClassName;
         copy.xtype = child.xtype;
+        copy.ctype = child.ctype;
         copy.type = child.type;
         copy.canonicalStoredLocation = child.canonicalStoredLocation;
         copy.canonicalIdentifier = child.canonicalIdentifier;
@@ -1381,6 +1382,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (this.xtype == null) {
                     this.xtype = referencedComp.xtype;
                 }
+                if (this.ctype == null) {
+                    this.ctype = referencedComp.ctype;
+                }
                 if (this.componentFilterTag == null) {
                     this.componentFilterTag = referencedComp.componentFilterTag;
                 }
@@ -1574,6 +1578,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.xtype == null) {
             this.xtype = childToMerge.xtype;
+        }
+        if (this.ctype == null) {
+            this.ctype = childToMerge.ctype;
         }
         if (this.componentFilterTag == null) {
             this.componentFilterTag = childToMerge.componentFilterTag;

@@ -15,13 +15,19 @@
  */
 
 import { ContainerModule } from 'inversify';
+import { Typed } from 'emittery';
 import { CmsImpl, CmsService } from './cms';
 import { Cms14Impl } from './cms14';
+import { EventBusService } from './events';
 import { PostMessageService, PostMessage } from './post-message';
 import { RpcClientService, RpcServerService } from './rpc';
 
 export function CmsModule() {
   return new ContainerModule((bind) => {
+    bind(EventBusService)
+      .toDynamicValue(() => new Typed())
+      .inSingletonScope()
+      .when(() => typeof window !== 'undefined');
     bind(PostMessageService).to(PostMessage).inSingletonScope();
     bind(RpcClientService).toService(PostMessageService);
     bind(RpcServerService).toService(PostMessageService);
@@ -31,5 +37,6 @@ export function CmsModule() {
 }
 
 export { CmsOptions, CmsService, Cms } from './cms';
+export { CmsUpdateEvent, EventBusService, EventBus } from './events';
 export { PostMessageOptions, PostMessageService, PostMessage } from './post-message';
 export { RpcClientService, RpcClient, RpcServerService, RpcServer } from './rpc';
