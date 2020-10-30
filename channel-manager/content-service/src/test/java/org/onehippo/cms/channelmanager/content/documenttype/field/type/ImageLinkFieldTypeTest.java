@@ -239,7 +239,7 @@ public class ImageLinkFieldTypeTest {
         imageLink.setId("my:imagelink");
         final MockNode documentNode = MockNode.root();
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("1234"));
-        CompoundContext compoundContext = new CompoundContext(null, documentNode, null, null);
+        CompoundContext compoundContext = new CompoundContext(documentNode, documentNode, null, null);
         imageLink.validate(fieldValues, compoundContext);
         imageLink.writeValues(documentNode, Optional.of(fieldValues));
     }

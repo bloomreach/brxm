@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { inject, injectable } from 'inversify';
+import { inject, injectable, optional } from 'inversify';
 import {
   ComponentImpl,
   ComponentMeta,
@@ -24,7 +24,7 @@ import {
   TYPE_COMPONENT_CONTAINER_ITEM,
 } from './component';
 import { EmitterMixin, Emitter } from '../emitter';
-import { EventBusService, EventBus, PageUpdateEvent } from '../events';
+import { EventBusService, EventBus, PageUpdateEvent } from './events';
 import { LinkFactory } from './link-factory';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { PageModel } from './page';
@@ -99,13 +99,13 @@ export class ContainerItemImpl
 {
   constructor(
     @inject(ComponentModelToken) protected model: ContainerItemModel,
-    @inject(EventBusService) eventBus: EventBus,
     @inject(LinkFactory) linkFactory: LinkFactory,
     @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
+    @inject(EventBusService) @optional() eventBus?: EventBus,
   ) {
     super(model, [], linkFactory, metaFactory);
 
-    eventBus.on('page.update', this.onPageUpdate.bind(this));
+    eventBus?.on('page.update', this.onPageUpdate.bind(this));
   }
 
   protected onPageUpdate(event: PageUpdateEvent) {
@@ -132,8 +132,8 @@ export class ContainerItemImpl
     return this.model.meta.params?.[PARAMETER_HIDDEN] === 'on';
   }
 
-  getParameters(): ContainerItemParameters {
-    return this.model.meta.paramsInfo || {};
+  getParameters<T>(): T {
+    return (this.model.meta.paramsInfo ?? {}) as T;
   }
 }
 

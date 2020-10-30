@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { inject, injectable } from 'inversify';
-import { EventBus, EventBusService, CmsUpdateEvent } from '../events';
+import { inject, injectable, optional } from 'inversify';
+import { EventBus, EventBusService, CmsUpdateEvent } from './events';
 import { RpcClient, RpcClientService, RpcServer, RpcServerService, Procedures } from './rpc';
 
 export const CmsService = Symbol.for('CmsService');
@@ -61,12 +61,12 @@ export class CmsImpl implements Cms {
   private window?: Window;
 
   constructor(
-    @inject(EventBusService) protected eventBus: EventBus,
     @inject(RpcClientService) protected rpcClient: RpcClient<CmsProcedures, CmsEvents>,
     @inject(RpcServerService) protected rpcServer: RpcServer<SpaProcedures, SpaEvents>,
+    @inject(EventBusService) @optional() protected eventBus?: EventBus,
   ) {
     this.onStateChange = this.onStateChange.bind(this);
-    this.eventBus.on('page.ready', this.onPageReady.bind(this));
+    this.eventBus?.on('page.ready', this.onPageReady.bind(this));
     this.rpcClient.on('update', this.onUpdate.bind(this));
     this.rpcServer.register('inject', this.inject.bind(this));
   }
@@ -103,7 +103,7 @@ export class CmsImpl implements Cms {
   }
 
   protected onUpdate(event: CmsUpdateEvent) {
-    this.eventBus.emit('cms.update', event);
+    this.eventBus?.emit('cms.update', event);
   }
 
   protected inject(resource: string) {

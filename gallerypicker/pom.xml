@@ -37,7 +37,7 @@
     <hippo.cms.version>${hippo.release.version}</hippo.cms.version>
     <hippo.services.validation.version>${hippo.release.version}</hippo.services.validation.version>
 
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
 
     <!-- Make sure that easymock and powermock are compatible -->
     <easymock.version>4.0.2</easymock.version>
