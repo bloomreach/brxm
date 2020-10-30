@@ -54,34 +54,34 @@
     "last 1 edge version"
   ],
   "devDependencies": {
-    "@babel/core": "^7.9",
-    "@babel/plugin-proposal-class-properties": "^7.8",
-    "@babel/plugin-proposal-object-rest-spread": "^7.9",
-    "@babel/plugin-transform-object-assign": "^7.8",
-    "@babel/polyfill": "^7.8",
-    "@babel/preset-env": "^7.9",
-    "@types/jest": "^25.2",
+    "@babel/core": "^7.12",
+    "@babel/plugin-proposal-class-properties": "^7.12",
+    "@babel/plugin-proposal-object-rest-spread": "^7.12",
+    "@babel/plugin-transform-object-assign": "^7.12",
+    "@babel/polyfill": "^7.12",
+    "@babel/preset-env": "^7.12",
+    "@rollup/plugin-babel": "^5.2",
+    "@types/jest": "^26.0",
     "@types/xmldom": "^0.1",
     "babel-plugin-transform-async-to-promises": "^0.8",
-    "jest": "^26.0",
-    "jest-junit": "^11.1",
-    "js-beautify": "^1.11",
-    "rollup": "^2.10",
-    "rollup-plugin-babel": "^4.4",
+    "jest": "^26.6",
+    "jest-junit": "^12.0",
+    "js-beautify": "^1.13",
+    "rollup": "^2.32",
     "rollup-plugin-dts": "^1.4",
-    "rollup-plugin-terser": "^5.3",
-    "rollup-plugin-typescript2": "^0.27",
-    "ts-jest": "^26.0",
+    "rollup-plugin-terser": "^7.0",
+    "rollup-plugin-typescript2": "^0.28",
+    "ts-jest": "^26.4",
     "tslint": "^6.1",
     "tslint-config-airbnb": "^5.11",
-    "typedoc": "^0.17",
+    "typedoc": "^0.19",
     "typedoc-plugin-external-module-map": "^1.2",
-    "typescript": "^3.8"
+    "typescript": "^4.0"
   },
   "dependencies": {
     "emittery": "^0.7",
     "inversify": "^5.0",
     "reflect-metadata": "^0.1",
-    "xmldom": "^0.3"
+    "xmldom": "^0.4"
   }
 }
