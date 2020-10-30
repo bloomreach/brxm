@@ -19,6 +19,7 @@ import MenuService from '../menu.service';
 export default class XPageMenuService extends MenuService {
   constructor(
     $log,
+    $translate,
     DocumentWorkflowService,
     EditComponentService,
     EditContentService,
@@ -32,6 +33,7 @@ export default class XPageMenuService extends MenuService {
     super();
 
     this.$log = $log;
+    this.$translate = $translate;
     this.DocumentWorkflowService = DocumentWorkflowService;
     this.EditComponentService = EditComponentService;
     this.EditContentService = EditContentService;
@@ -209,19 +211,18 @@ export default class XPageMenuService extends MenuService {
     return key;
   }
 
-  _failure(key, msg) {
+  _failure(key, reason = 'ERROR_WORKFLOW_GENERIC_REASON') {
     try {
-      msg = JSON.parse(msg);
-    // eslint-disable-next-line no-empty
+      if (JSON.parse(reason).cancelled === true) {
+        return;
+      }
+      // eslint-disable-next-line no-empty
     } catch (error) {}
 
-    if (msg && msg.cancelled === true) {
-      return;
-    }
-
-    this.$log.error(`Failed to execute workflow "${key}" on document[${this._getDocumentId()}]: ${msg}`);
+    reason = reason.startsWith('ERROR_') ? this.$translate.instant(reason) : reason;
+    this.$log.error(`Failed to execute workflow "${key}" on document[${this._getDocumentId()}]: ${reason}`);
     this.FeedbackService.showError(`${key}_ERROR`, {
-      msg,
+      reason,
       documentName: this._getDocumentName(),
     });
 
