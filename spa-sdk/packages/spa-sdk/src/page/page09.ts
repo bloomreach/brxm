@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { inject, injectable } from 'inversify';
+import { inject, injectable, optional } from 'inversify';
 import { ComponentFactory } from './component-factory09';
 import { ComponentMeta, Component } from './component';
 import { ComponentModel } from './component09';
@@ -22,10 +22,12 @@ import { ContainerItemModel } from './container-item09';
 import { ContainerModel } from './container09';
 import { ContentFactory } from './content-factory09';
 import { ContentModel, Content } from './content09';
+import { EventBusService as CmsEventBusService, EventBus as CmsEventBus } from '../cms';
+import { EventBusService } from './events';
+import { EventBus, PageUpdateEvent } from './events09';
 import { LinkFactory } from './link-factory';
 import { LinkRewriter, LinkRewriterService } from './link-rewriter';
 import { Link, TYPE_LINK_INTERNAL } from './link';
-import { EventBusService, EventBus, PageUpdateEvent } from '../events';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionModel } from './meta-collection';
 import { PageModelToken, PageModel as PageModel10, Page } from './page';
@@ -51,6 +53,7 @@ interface PageRootModel {
 export interface PageModel {
   _links: PageModel10['links'];
   _meta: PageModel10['meta'];
+  channel?: PageModel10['channel'];
   content?: { [reference: string]: ContentModel };
   page: (ComponentModel | ContainerItemModel | ContainerModel) & PageRootModel;
 }
@@ -65,12 +68,13 @@ export class PageImpl implements Page {
     @inject(PageModelToken) protected model: PageModel,
     @inject(ComponentFactory) componentFactory: ComponentFactory,
     @inject(ContentFactory) private contentFactory: ContentFactory,
-    @inject(EventBusService) private eventBus: EventBus,
     @inject(LinkFactory) private linkFactory: LinkFactory,
     @inject(LinkRewriterService) private linkRewriter: LinkRewriter,
     @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
+    @inject(CmsEventBusService) @optional() private cmsEventBus?: CmsEventBus,
+    @inject(EventBusService) @optional() eventBus?: EventBus,
   ) {
-    this.eventBus.on('page.update', this.onPageUpdate.bind(this));
+    eventBus?.on('page.update', this.onPageUpdate.bind(this));
 
     this.root = componentFactory.create(model.page);
     this.content = new Map(
@@ -88,6 +92,10 @@ export class PageImpl implements Page {
 
   private static getContentReference(reference: Reference) {
     return  reference.$ref.split('/', 3)[2] || '';
+  }
+
+  getChannelParameters<T>(): T {
+    return (this.model.channel?.info.props ?? {}) as T;
   }
 
   getComponent<T extends Component>(): T;
@@ -116,8 +124,10 @@ export class PageImpl implements Page {
     return this.model.page._meta.pageTitle;
   }
 
+  getUrl(link?: Link): string | undefined;
+  getUrl(path: string): string;
   getUrl(link?: Link | string) {
-    return this.linkFactory.create(link as any || { ...this.model._links.site, type: TYPE_LINK_INTERNAL });
+    return this.linkFactory.create(link as Link ?? { ...this.model._links.site, type: TYPE_LINK_INTERNAL });
   }
 
   getVersion() {
@@ -141,7 +151,7 @@ export class PageImpl implements Page {
   }
 
   sync() {
-    this.eventBus.emit('page.ready', {});
+    this.cmsEventBus?.emit('page.ready', {});
   }
 
   toJSON() {

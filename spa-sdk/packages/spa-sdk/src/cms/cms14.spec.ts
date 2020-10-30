@@ -15,7 +15,7 @@
  */
 
 import { Typed } from 'emittery';
-import { EventBus, Events } from '../events';
+import { EventBus, Events } from './events';
 import { Cms14Impl } from './cms14';
 
 describe('Cms', () => {

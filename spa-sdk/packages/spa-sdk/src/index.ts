@@ -38,7 +38,6 @@ import {
   isConfigurationWithJwt09,
   isConfigurationWithProxy,
 } from './configuration';
-import { EventsModule } from './events';
 import {
   UrlModule09,
   UrlModule,
@@ -55,7 +54,7 @@ const DEFAULT_SERVER_ID_PARAMETER = 'server-id';
 const container = new Container({ skipBaseClassChecks: true });
 const pages = new WeakMap<Page, Container>();
 
-container.load(EventsModule(), CmsModule(), UrlModule());
+container.load(CmsModule(), UrlModule());
 
 function onReady<T>(value: T | Promise<T>, callback: (value: T) => unknown): T | Promise<T> {
   const wrapper = (result: T) => (callback(result), result);
@@ -212,6 +211,8 @@ export {
   Meta,
   PageModel,
   Page,
+  PaginationItem,
+  Pagination,
   Reference,
   isComponent,
   isContainerItem,
@@ -224,6 +225,7 @@ export {
   isMetaComment,
   isMeta,
   isPage,
+  isPagination,
   isReference,
   META_POSITION_BEGIN,
   META_POSITION_END,

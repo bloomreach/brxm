@@ -370,7 +370,7 @@ describe('ContentEditorService', () => {
         expect(ContentEditor.getDocumentErrorMessages()).toEqual([]);
         expect(ContentEditor.getPublicationState()).toBe('new');
         expect(ContentEditor.getError()).toEqual({
-          titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+          titleKey: 'FEEDBACK_DOCUMENT_NOT_EDITABLE_TITLE',
           messageKey: 'FEEDBACK_DOCUMENT_REQUEST_PENDING_MESSAGE',
           messageParams: {
             displayName: 'Display Name',
@@ -1278,7 +1278,7 @@ describe('ContentEditorService', () => {
         expect(ContentEditor.document).toBeUndefined();
         expect(FeedbackService.showError).not.toHaveBeenCalled();
         expect(ContentEditor.getError()).toEqual({
-          titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+          titleKey: 'FEEDBACK_DOCUMENT_NOT_EDITABLE_TITLE',
           messageKey: 'FEEDBACK_DOCUMENT_REQUEST_PENDING_MESSAGE',
           messageParams: {
             displayName: 'Display Name',

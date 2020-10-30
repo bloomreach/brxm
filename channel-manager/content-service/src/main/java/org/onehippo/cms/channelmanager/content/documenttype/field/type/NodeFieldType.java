@@ -172,7 +172,7 @@ public abstract class NodeFieldType extends AbstractFieldType implements BaseFie
     public int validate(final List<FieldValue> values, final CompoundContext context) {
         final String valueName = getId();
         try {
-            final Node node = getCompoundOrDocument(context, valueName);
+            final Node node = context.getNode();
             final NodeIterator children = node.getNodes(valueName);
             final long count = children.getSize();
 
