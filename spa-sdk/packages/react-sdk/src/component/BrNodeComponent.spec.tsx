@@ -53,7 +53,7 @@ describe('BrNodeComponent', () => {
       // @see https://github.com/airbnb/enzyme/issues/1553
       /// @ts-ignore
       BrNodeComponent.contextTypes = { test: () => null };
-      delete BrNodeComponent.contextType;
+      delete (BrNodeComponent as Partial<typeof BrNodeComponent>).contextType;
     });
 
     it('should fallback when there is no mapping', () => {
