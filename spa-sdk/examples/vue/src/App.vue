@@ -83,7 +83,7 @@ export default class App extends Vue {
   $route!: Route;
 
   @Watch('$route', { immediate: true, deep: true })
-  navigate() {
+  navigate(): void {
     this.$set(this.configuration, 'request', { path: this.$route.fullPath });
   }
 }
