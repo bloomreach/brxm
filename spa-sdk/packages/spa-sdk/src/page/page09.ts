@@ -146,7 +146,7 @@ export class PageImpl implements Page {
     return !!this.model._meta.preview;
   }
 
-  rewriteLinks(content: string, type: SupportedType = 'text/html') {
+  rewriteLinks(content: string, type = 'text/html') {
     return this.linkRewriter.rewrite(content, type);
   }
 
