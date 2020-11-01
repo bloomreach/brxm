@@ -18,6 +18,10 @@
     "prettier"
   ],
   "rules": {
-    "nuxt/no-cjs-in-config": "off"
+    "@typescript-eslint/no-use-before-define": ["error"],
+    "nuxt/no-cjs-in-config": "off",
+    "vue/no-v-html": "off",
+    "no-undef": "off",
+    "no-use-before-define": "off"
   }
 }
