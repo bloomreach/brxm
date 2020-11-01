@@ -22,7 +22,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 export default class BrContainerBox extends Vue {
   @Prop() page!: Page;
 
-  render(createElement: Vue.CreateElement) {
+  render(createElement: Vue.CreateElement): Vue.VNode {
     return createElement(
       'div',
       { class: { 'hst-container': this.page.isPreview() } },

@@ -22,7 +22,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 export default class BrContainerOrderedList extends Vue {
   @Prop() page!: Page;
 
-  render(createElement: Vue.CreateElement) {
+  render(createElement: Vue.CreateElement): Vue.VNode {
     return createElement(
       'ol',
       { class: { 'hst-container': this.page.isPreview() } },

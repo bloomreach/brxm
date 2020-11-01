@@ -14,8 +14,10 @@
     "ecmaVersion": 2020
   },
   "rules": {
+    "@typescript-eslint/no-use-before-define": ["error"],
     "import/prefer-default-export": "off",
-    "no-unused-expressions": "off"
+    "no-unused-expressions": "off",
+    "no-use-before-define": "off"
   },
   "overrides": [
     {

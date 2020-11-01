@@ -69,7 +69,7 @@ export default class BrComponent extends Vue {
     return component ? [component] : [];
   }
 
-  render(createElement: Vue.CreateElement) {
+  render(createElement: Vue.CreateElement): Vue.VNode {
     const components = this.getComponents().map((component) =>
       createElement(
         BrNodeComponent,
