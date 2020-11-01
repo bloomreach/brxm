@@ -68,19 +68,19 @@ export default class BrPage extends Vue {
     return this.state;
   }
 
-  async serverPrefetch() {
+  async serverPrefetch(): Promise<void> {
     await this.loading;
   }
 
-  destroyed() {
+  destroyed(): void {
     this.destroy();
   }
 
-  mounted() {
+  mounted(): void {
     this.state?.sync();
   }
 
-  updated() {
+  updated(): void {
     this.state?.sync();
   }
 

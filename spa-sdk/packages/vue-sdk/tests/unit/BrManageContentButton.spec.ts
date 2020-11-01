@@ -33,14 +33,14 @@ describe('BrManageContentButton', () => {
   const meta = {} as MetaCollection;
   let content: jest.Mocked<Document>;
   let page: jest.Mocked<Page>;
-  let provide: Function;
+  let provide: () => unknown;
 
   beforeAll(() => {
     content = ({ getMeta: jest.fn(() => meta) } as unknown) as typeof content;
     page = ({ isPreview: jest.fn() } as unknown) as typeof page;
 
     const wrapper = shallowMount(BrPage, { propsData: { page } });
-    provide = (wrapper.vm.$options.provide as Function).bind(wrapper.vm);
+    provide = (wrapper.vm.$options.provide as typeof provide).bind(wrapper.vm);
   });
 
   describe('render', () => {
