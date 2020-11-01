@@ -34,5 +34,8 @@
     "node_modules",
     ".nuxt",
     "dist"
+  ],
+  "types": [
+    "@nuxt/types"
   ]
 }
