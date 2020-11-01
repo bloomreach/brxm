@@ -18,7 +18,6 @@ const ARG_PORT = '--port';
 const port = process.argv.find((arg) => arg.startsWith(`${ARG_PORT}=`));
 
 module.exports = {
-  mode: 'universal',
   head: {
     title: 'brXM + Nuxt.js = ♥️',
     meta: [
@@ -49,6 +48,9 @@ module.exports = {
   plugins: ['~/plugins/brxm'],
   server: {
     port: port && port.substring(ARG_PORT.length + 1),
+  },
+  typescript: {
+    typeCheck: false,
   },
   build: {
     babel: {
