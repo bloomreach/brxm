@@ -15,7 +15,7 @@
  */
 
 /* eslint-disable import/no-extraneous-dependencies */
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 import pkg from './package.json';
@@ -55,6 +55,7 @@ export default [
     plugins: [
       typescript({
         cacheRoot: './node_modules/.cache/rpt2',
+        clean: true,
         useTsconfigDeclarationDir: true,
       }),
       babel({ extensions: ['.ts'] }),
@@ -75,6 +76,7 @@ export default [
     plugins: [
       typescript({
         cacheRoot: './node_modules/.cache/rpt2',
+        clean: true,
         tsconfigOverride: {
           compilerOptions: {
             declaration: false,
