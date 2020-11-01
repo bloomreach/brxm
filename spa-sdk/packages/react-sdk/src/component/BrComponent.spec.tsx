@@ -37,7 +37,7 @@ describe('BrComponent', () => {
       getChildren: () => null,
       getComponent: () => null,
     };
-    delete BrComponent.contextType;
+    delete (BrComponent as Partial<typeof BrComponent>).contextType;
   });
 
   it('should render children if path is not set', () => {

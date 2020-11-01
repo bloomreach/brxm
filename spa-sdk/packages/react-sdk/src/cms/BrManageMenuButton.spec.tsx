@@ -20,6 +20,7 @@ import { shallow } from 'enzyme';
 import { Menu, MetaCollection, Page, isMenu } from '@bloomreach/spa-sdk';
 import { BrManageMenuButton } from './BrManageMenuButton';
 import { BrMeta } from '../meta';
+import { BrNodeComponent } from '../component';
 
 jest.mock('@bloomreach/spa-sdk');
 
@@ -41,7 +42,7 @@ describe('BrManageMenuButton', () => {
       isPreview: () => null,
       getMeta: () => null,
     };
-    delete BrManageMenuButton.contextType;
+    delete (BrManageMenuButton as Partial<typeof BrManageMenuButton>).contextType;
   });
 
   it('should only render in preview mode', () => {
