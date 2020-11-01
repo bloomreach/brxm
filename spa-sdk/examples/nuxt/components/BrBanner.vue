@@ -19,12 +19,9 @@
     <br-manage-content-button :content="document" />
     <h1 v-if="data.title">{{ data.title }}</h1>
     <img v-if="image" class="img-fluid" :src="image.getOriginal().getUrl()" :alt="data.title" />
-    <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-if="data.content" v-html="page.rewriteLinks(data.content.value)" />
     <p v-if="link" className="lead">
-      <nuxt-link :to="link.getUrl()" class="btn btn-primary btn-lg" role="button">
-        Learn more
-      </nuxt-link>
+      <nuxt-link :to="link.getUrl()" class="btn btn-primary btn-lg" role="button">Learn more</nuxt-link>
     </p>
   </div>
 </template>
