@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Directive, Input } from '@angular/core';
+import { Directive, Input, OnChanges } from '@angular/core';
 import { Content, Document } from '@bloomreach/spa-sdk';
 import { BrMetaDirective } from './br-meta.directive';
 
@@ -22,13 +22,13 @@ import { BrMetaDirective } from './br-meta.directive';
  * The button direcrtive that opens for editing a content.
  */
 @Directive({ selector: '[brManageContentButton]' })
-export class BrManageContentButtonDirective extends BrMetaDirective {
+export class BrManageContentButtonDirective extends BrMetaDirective implements OnChanges {
   /**
    * The content entity to open for editing.
    */
   @Input('brManageContentButton') content!: Content | Document;
 
-  protected get meta() {
-    return this.content.getMeta();
+  ngOnChanges(): void {
+    this.meta = this.content.getMeta();
   }
 }
