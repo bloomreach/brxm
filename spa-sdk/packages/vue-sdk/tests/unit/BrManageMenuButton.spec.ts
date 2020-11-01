@@ -35,7 +35,7 @@ class BrPage extends Vue {
 describe('BrManageMenuButton', () => {
   const meta = {} as MetaCollection;
   let page: jest.Mocked<Page>;
-  let provide: Function;
+  let provide: () => unknown;
 
   beforeAll(() => {
     page = ({
@@ -44,7 +44,7 @@ describe('BrManageMenuButton', () => {
     } as unknown) as typeof page;
 
     const wrapper = shallowMount(BrPage, { propsData: { page } });
-    provide = (wrapper.vm.$options.provide as Function).bind(wrapper.vm);
+    provide = (wrapper.vm.$options.provide as typeof provide).bind(wrapper.vm);
   });
 
   describe('render', () => {
