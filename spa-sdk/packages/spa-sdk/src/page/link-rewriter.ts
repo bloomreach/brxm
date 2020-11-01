@@ -31,7 +31,7 @@ export interface LinkRewriter {
    * @param content The HTML content to rewrite links.
    * @param type The content type.
    */
-  rewrite(content: string, type?: SupportedType): string;
+  rewrite(content: string, type?: string): string;
 }
 
 @injectable()
@@ -42,7 +42,7 @@ export class LinkRewriterImpl implements LinkRewriter {
     @inject(XmlSerializerService) private xmlSerializer: XMLSerializer,
   ) {}
 
-  rewrite(content: string, type: SupportedType = 'text/html') {
+  rewrite(content: string, type = 'text/html') {
     const document = this.domParser.parseFromString(`<body>${content}</body>`, type);
 
     this.rewriteAnchors(document);
