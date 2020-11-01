@@ -41,7 +41,7 @@ describe('BrNode', () => {
     // @see https://github.com/airbnb/enzyme/issues/1553
     /// @ts-ignore
     BrNode.contextTypes = { test: () => null };
-    delete BrNode.contextType;
+    delete (BrNode as Partial<typeof BrNode>).contextType;
   });
 
   it('should set a component context', () => {
