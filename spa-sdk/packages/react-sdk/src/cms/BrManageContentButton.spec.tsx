@@ -32,7 +32,7 @@ describe('BrManageContentButton', () => {
     // @see https://github.com/airbnb/enzyme/issues/1553
     /// @ts-ignore
     BrManageContentButton.contextTypes = { isPreview: () => null };
-    delete BrManageContentButton.contextType;
+    delete (BrManageContentButton as Partial<typeof BrManageContentButton>).contextType;
   });
 
   it('should only render in preview mode', () => {
