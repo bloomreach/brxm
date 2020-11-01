@@ -21,9 +21,7 @@
     <img v-if="image" class="img-fluid" :src="image.getOriginal().getUrl()" :alt="data.title" />
     <div v-if="data.content" v-html="page.rewriteLinks(data.content.value)" />
     <p v-if="link" className="lead">
-      <router-link :to="link.getUrl()" class="btn btn-primary btn-lg" role="button">
-        Learn more
-      </router-link>
+      <router-link :to="link.getUrl()" class="btn btn-primary btn-lg" role="button">Learn more</router-link>
     </p>
   </div>
 </template>
