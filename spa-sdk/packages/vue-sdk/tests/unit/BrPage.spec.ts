@@ -31,6 +31,10 @@ describe('BrPage', () => {
     } as unknown) as typeof page;
   });
 
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   describe('update', () => {
     it('should render nothing if the page was not initialized', async () => {
       const wrapper = shallowMount(BrPage);
@@ -120,7 +124,7 @@ describe('BrPage', () => {
       const wrapper = shallowMount(BrPage, { propsData: { configuration: {} } });
       await new Promise(process.nextTick);
 
-      mocked(initialize).mockResolvedValueOnce(page);
+      mocked(initialize).mockResolvedValue(page);
       wrapper.setProps({ configuration: {} });
       await new Promise(process.nextTick);
 
