@@ -18,7 +18,9 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -54,7 +56,7 @@ final class XPageContextFactory {
         final DocumentState documentState = DocumentStateUtils.getPublicationStateFromHandle(handle);
         final String name = DocumentUtils.getDisplayName(handle).orElse(handle.getName());
         final ScheduledRequest scheduledRequest = DocumentStateUtils.getScheduledRequest(handle);
-        final WorkflowRequest workflowRequest = DocumentStateUtils.getWorkflowRequest(handle);
+        final List<WorkflowRequest> workflowRequests = DocumentStateUtils.getWorkflowRequests(handle);
         final DocumentWorkflow workflow = XPageUtils.getDocumentWorkflow(userSession, contextService);
         final Node unpublished = userSession.getNodeByIdentifier(contextService.getExperiencePageUnpublishedVariantUUID());
         final String unpublishedBranchId = JcrUtils.getStringProperty(unpublished, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
@@ -72,12 +74,23 @@ final class XPageContextFactory {
                 .setXPageName(name)
                 .setXPageState(documentState.name().toLowerCase())
                 .setScheduledRequest(scheduledRequest)
-                .setWorkflowRequest(workflowRequest)
+                .setWorkflowRequests(workflowRequests)
                 .setCopyAllowed(TRUE.equals(hints.get("copy")))
                 .setMoveAllowed(TRUE.equals(hints.get("move")))
                 .setDeleteAllowed(TRUE.equals(hints.get("delete")));
 
+        final Map<String, Map<String, Serializable>> requestsHints = (Map<String, Map<String, Serializable>>) hints.get("requests");
+        parseRequestsHints(requestsHints, workflowRequests, xPageContext);
+
         if (!BranchConstants.MASTER_BRANCH_ID.equals(xPageBranchId)) {
+            return xPageContext;
+        }
+
+        if (hints.containsKey("inUseBy")) {
+            xPageContext.setLockedBy((String) hints.get("inUseBy"));
+        }
+
+        if (xPageContext.hasBlockingRequest()) {
             return xPageContext;
         }
 
@@ -93,10 +106,46 @@ final class XPageContextFactory {
             xPageContext.setRequestDepublication(TRUE.equals(hints.get("requestDepublication")));
         }
 
-        if (hints.containsKey("inUseBy")) {
-            xPageContext.setLockedBy((String) hints.get("inUseBy"));
+        return xPageContext;
+    }
+
+    private static void parseRequestsHints(final Map<String, Map<String, Serializable>> requestsMap,
+                                           final List<WorkflowRequest> workflowRequests,
+                                           final XPageContext xPageContext) {
+        if (requestsMap == null || requestsMap.isEmpty()) {
+            return;
         }
 
-        return xPageContext;
+        requestsMap.forEach((requestId, actionsMap) -> {
+            final Optional<WorkflowRequest> workflowRequest = workflowRequests.stream()
+                    .filter(request -> request.getId().equals(requestId))
+                    .findFirst();
+
+            if (!workflowRequest.isPresent()) {
+                return;
+            }
+
+            actionsMap.forEach((action, status) -> {
+                if (!TRUE.equals(status)) {
+                    return;
+                }
+
+                switch (action) {
+                    case "cancelRequest":
+                        if (workflowRequest.get().getType().equals("rejected")) {
+                            xPageContext.setRejectedRequest(true);
+                        } else {
+                            xPageContext.setCancelRequest(true);
+                        }
+                        break;
+                    case "acceptRequest":
+                        xPageContext.setAcceptRequest(true);
+                        break;
+                    case "rejectRequest":
+                        xPageContext.setRejectRequest(true);
+                        break;
+                }
+            });
+        });
     }
 }

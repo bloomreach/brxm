@@ -13,10 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.addon.workflow;
+package org.hippoecm.frontend.plugins.documentworkflow;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -31,6 +33,9 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.template.PackageTextTemplate;
+import org.hippoecm.addon.workflow.AbstractWorkflowManagerPlugin;
+import org.hippoecm.addon.workflow.ActionDescription;
+import org.hippoecm.addon.workflow.MenuHierarchy;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
@@ -43,6 +48,7 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
     private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowInvokerPlugin.class);
 
     private static final String JS_FILE = "document-workflow-invoker-plugin.js";
+    private static final List<String> REQUEST_ACTIONS = Arrays.asList("accept", "reject", "cancel", "rejected");
 
     private final Ajax ajax;
 
@@ -71,7 +77,13 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
                 return;
             }
 
-            final ActionDescription actionDescription = publicationMenu.getAction(action);
+            final List<ActionDescription> items = publicationMenu.getItems();
+            final ActionDescription actionDescription = items.stream()
+                    .filter(Component::isVisible)
+                    .filter(component -> representsAction(component, action))
+                    .reduce((first, second) -> second)
+                    .orElse(null);
+
             if (actionDescription == null) {
                 log.warn("Failed to retrieve workflow action {}.{} for document {}", category, action, uuid);
                 return;
@@ -120,5 +132,38 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
             log.warn("Resource {} could not be closed.", JS_FILE, e);
             return null;
         }
+    }
+
+    private static boolean representsAction(final Component component, final String action) {
+        if (!REQUEST_ACTIONS.contains(action)) {
+            return component.getId().equals(action);
+        }
+
+        final org.hippoecm.frontend.plugins.reviewedactions.model.Request request = parentObjectAsRequest(component);
+        if (request == null) {
+            throw new IllegalStateException("Expected parent to contain a workflow request object");
+        }
+
+        switch (action) {
+            case "accept":
+                return request.getAccept();
+            case "reject":
+                return request.getReject();
+            case "cancel":
+                return request.getCancel() && !request.getState().equals("request-rejected");
+            case "rejected":
+                return request.getCancel() && request.getState().equals("request-rejected");
+        }
+
+        log.warn("Workflow action '{}' was not found on component {}", action, component.getPath());
+        return false;
+    }
+
+    private static org.hippoecm.frontend.plugins.reviewedactions.model.Request parentObjectAsRequest(final Component component) {
+        final Object parentObject = component.getParent().getDefaultModelObject();
+        if (parentObject instanceof org.hippoecm.frontend.plugins.reviewedactions.model.Request) {
+            return (org.hippoecm.frontend.plugins.reviewedactions.model.Request) parentObject;
+        }
+        return null;
     }
 }

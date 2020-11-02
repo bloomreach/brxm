@@ -72,6 +72,7 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.X
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_UNPUBLISH;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.CHANNEL;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.PAGE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.WORKFLOW;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.XPAGE;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
@@ -203,6 +204,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(XPAGE, HstState.XPAGE_STATE), "live")
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.emptyMap())
+                .put(key(WORKFLOW, HstState.WORKFLOW_REQUESTS), Collections.emptyList())
                 .build();
         Assertions.assertThat(states)
                 .describedAs("A published xpage request contains xpage and channel states")
