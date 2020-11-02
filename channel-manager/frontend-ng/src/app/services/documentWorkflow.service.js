@@ -68,6 +68,22 @@ class DocumentWorkflowService {
   requestScheduleUnpublication(documentId) {
     return this._invoke(documentId, 'publication', 'REQ_SCHED_DEPUB');
   }
+
+  cancelRequest(documentId) {
+    return this._invoke(documentId, 'request', 'cancel');
+  }
+
+  acceptRequest(documentId) {
+    return this._invoke(documentId, 'request', 'accept');
+  }
+
+  rejectRequest(documentId) {
+    return this._invoke(documentId, 'request', 'reject');
+  }
+
+  showRequestRejected(documentId) {
+    return this._invoke(documentId, 'request', 'rejected');
+  }
 }
 
 export default DocumentWorkflowService;

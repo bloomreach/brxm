@@ -161,7 +161,9 @@ describe('PageService', () => {
       'PublicationRequest',
       {
         xpage: { name: 'page name', state: DocumentState.Unpublished, branchId: 'master' },
-        workflowRequest: { type: WorkflowRequestType.Publish, name: 'page name' },
+        workflow: {
+          requests: [{ type: WorkflowRequestType.Publish, name: 'page name' }],
+        },
       },
       undefined,
       new XPageStatusInfo(
@@ -174,7 +176,9 @@ describe('PageService', () => {
       'TakeOfflineRequest',
       {
         xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
-        workflowRequest: { type: WorkflowRequestType.Depublish, name: 'page name' },
+        workflow: {
+          requests: [{ type: WorkflowRequestType.Depublish, name: 'page name' }],
+        },
       },
       undefined,
       new XPageStatusInfo(
@@ -187,7 +191,9 @@ describe('PageService', () => {
       'RejectedRequest',
       {
         xpage: { name: 'page name', state: DocumentState.Changed, branchId: 'master' },
-        workflowRequest: { type: WorkflowRequestType.Rejected },
+        workflow: {
+          requests: [{ type: WorkflowRequestType.Rejected }],
+        },
       },
       undefined,
       new XPageStatusInfo(
@@ -200,7 +206,9 @@ describe('PageService', () => {
       'ScheduledPublish',
       {
         xpage: { name: 'page name', state: DocumentState.Unpublished, branchId: 'master' },
-        workflowRequest: { type: WorkflowRequestType.ScheduledPublish, requestDate: 1596811323 },
+        workflow: {
+          requests: [{ type: WorkflowRequestType.ScheduledPublish, requestDate: 1596811323 }],
+        },
       },
       undefined,
       new XPageStatusInfo(
@@ -214,7 +222,9 @@ describe('PageService', () => {
       'ScheduledDepublish',
       {
         xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
-        workflowRequest: { type: WorkflowRequestType.ScheduledDepublish, requestDate: 1596811323 },
+        workflow: {
+          requests: [{ type: WorkflowRequestType.ScheduledDepublish, requestDate: 1596811323 }],
+        },
       },
       undefined,
       new XPageStatusInfo(
@@ -484,7 +494,7 @@ describe('PageService', () => {
   });
 
   describe('getXPageState', () => {
-    it('shoudl get xpage state', () => {
+    it('should get xpage state', () => {
       expect(service.getXPageState()).toEqual(xPageState);
     });
   });

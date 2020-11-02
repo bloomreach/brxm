@@ -41,6 +41,11 @@ public enum HstAction {
     XPAGE_REQUEST_UNPUBLICATION("request-unpublish", HstCategory.XPAGE),
     XPAGE_REQUEST_SCHEDULE_UNPUBLICATION("request-schedule-unpublish", HstCategory.XPAGE),
 
+    XPAGE_REQUEST_ACCEPT("accept", HstCategory.XPAGE),
+    XPAGE_REQUEST_CANCEL("cancel", HstCategory.XPAGE),
+    XPAGE_REQUEST_REJECT("reject", HstCategory.XPAGE),
+    XPAGE_REQUEST_REJECTED("rejected", HstCategory.XPAGE),
+
     XPAGE_COPY("copy", HstCategory.XPAGE),
     XPAGE_MOVE("move", HstCategory.XPAGE),
     XPAGE_DELETE("delete", HstCategory.XPAGE),

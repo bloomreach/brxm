@@ -100,6 +100,18 @@ public final class HstActionProvider {
             actions.add(HstAction.XPAGE_REQUEST_SCHEDULE_UNPUBLICATION.toAction(requestDepublication));
         });
 
+        xPageContext.isAcceptRequest().ifPresent(acceptRequest -> actions.add(HstAction.XPAGE_REQUEST_ACCEPT
+                .toAction(acceptRequest)));
+
+        xPageContext.isCancelRequest().ifPresent(cancelRequest -> actions.add(HstAction.XPAGE_REQUEST_CANCEL
+                .toAction(cancelRequest)));
+
+        xPageContext.isRejectRequest().ifPresent(rejectRequest -> actions.add(HstAction.XPAGE_REQUEST_REJECT
+                .toAction(rejectRequest)));
+
+        xPageContext.isRejectedRequest().ifPresent(rejectedRequest -> actions.add(HstAction.XPAGE_REQUEST_REJECTED
+                .toAction(rejectedRequest)));
+
         actions.add(HstAction.XPAGE_COPY.toAction(xPageContext.isCopyAllowed()));
         actions.add(HstAction.XPAGE_MOVE.toAction(xPageContext.isMoveAllowed()));
         actions.add(HstAction.XPAGE_DELETE.toAction(xPageContext.isDeleteAllowed()));

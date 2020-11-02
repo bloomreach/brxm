@@ -131,17 +131,61 @@ class XPageMenuService extends MenuService {
       .addAction('versions', {
         onClick: () => showVersions(),
         translationKey: 'TOOLBAR_MENU_XPAGE_VERSIONS',
-      })
-      .addDivider({
-        isVisible: () => PageService.hasSomeAction('xpage',
-          'unpublish',
-          'schedule-unpublish',
-          'request-unpublish',
-          'publish',
-          'schedule-publish',
-          'request-publish',
-          'request-schedule-publish'),
       });
+
+    menu.addDivider({
+      isVisible: () => PageService.hasSomeAction('xpage',
+        'cancel',
+        'accept',
+        'reject',
+        'rejected'),
+    });
+
+    function getRequestTranslationKey(key) {
+      const workflow = PageService.getState('workflow') || {};
+      const { requests = [] } = workflow;
+      const request = requests.find(r => r.type !== 'rejected');
+      if (request) {
+        return `${key}_REQUEST_${request.type.toUpperCase()}`;
+      }
+
+      const scheduledRequest = PageService.getState('scheduledRequest');
+      if (scheduledRequest !== null) {
+        return `${key}_SCHEDULED_${scheduledRequest.type.toUpperCase()}`;
+      }
+
+      return key;
+    }
+
+    addWorkflowAction('rejected', id => DocumentWorkflowService.showRequestRejected(id), {
+      iconName: 'mdi-comment-remove-outline',
+    });
+
+    addWorkflowAction('cancel', id => DocumentWorkflowService.cancelRequest(id), {
+      iconName: 'mdi-comment-processing-outline',
+      translationKeyFunction: getRequestTranslationKey,
+    });
+
+    addWorkflowAction('accept', id => DocumentWorkflowService.acceptRequest(id), {
+      iconName: 'mdi-check',
+      translationKeyFunction: getRequestTranslationKey,
+    });
+
+    addWorkflowAction('reject', id => DocumentWorkflowService.rejectRequest(id), {
+      iconName: 'mdi-close',
+      translationKeyFunction: getRequestTranslationKey,
+    });
+
+    menu.addDivider({
+      isVisible: () => PageService.hasSomeAction('xpage',
+        'unpublish',
+        'schedule-unpublish',
+        'request-unpublish',
+        'publish',
+        'schedule-publish',
+        'request-publish',
+        'request-schedule-publish'),
+    });
 
     addEditorAwareWorkflowAction('unpublish', id => DocumentWorkflowService.unpublish(id), {
       iconName: 'mdi-minus-circle',
