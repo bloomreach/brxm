@@ -37,6 +37,7 @@ import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.TextDialog;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.reviewedactions.model.Request;
@@ -224,7 +225,7 @@ public class RequestsView extends RepeatingView {
                         reason = new StringResourceModel("rejected-request-unavailable", RequestsView.this);
                     }
                     final StdWorkflow cancelAction = this;
-                    return new ConfirmDialog(
+                    final ConfirmDialog confirmDialog = new ConfirmDialog(
                             new StringResourceModel("rejected-request-title", RequestsView.this),
                             new StringResourceModel("rejected-request-text", RequestsView.this),
                             reason,
@@ -235,6 +236,8 @@ public class RequestsView extends RepeatingView {
                             cancelAction.invokeWorkflow();
                         }
                     };
+                    confirmDialog.add(ClassAttribute.append("rejected-request-dialog"));
+                    return confirmDialog;
                 } else {
                     return super.createRequestDialog();
                 }
