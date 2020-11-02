@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
+public abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
 
@@ -143,7 +143,7 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
         super.onDetach();
     }
 
-    MenuHierarchy buildMenu(Set<Node> nodeSet, IPluginConfig config) {
+    protected MenuHierarchy buildMenu(Set<Node> nodeSet, IPluginConfig config) {
         Form form = getForm();
 
         final MenuHierarchy menu = new MenuHierarchy(Arrays.asList(categories), Arrays.asList(menuOrder), form, config);

@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-import { WorkflowRequestType } from './workflow-request-type.enum';
+import { WorkflowRequest } from './workflow-request.model';
 
-export interface WorkflowRequest {
-  id: string;
-  reason: string;
-  requestDate: number;
-  creationDate: number;
-  type: WorkflowRequestType;
-  username: string;
+export interface Workflow {
+  requests?: WorkflowRequest[];
 }
