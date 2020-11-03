@@ -48,7 +48,7 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
     private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowInvokerPlugin.class);
 
     private static final String JS_FILE = "document-workflow-invoker-plugin.js";
-    private static final List<String> REQUEST_ACTIONS = Arrays.asList("accept", "reject", "cancel", "rejected");
+    private static final List<String> REQUEST_ACTIONS = Arrays.asList( "cancel", "rejected");
 
     private final Ajax ajax;
 
@@ -145,10 +145,6 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
         }
 
         switch (action) {
-            case "accept":
-                return request.getAccept();
-            case "reject":
-                return request.getReject();
             case "cancel":
                 return request.getCancel() && !request.getState().equals("request-rejected");
             case "rejected":
