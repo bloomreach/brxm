@@ -79,7 +79,6 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
 
             final List<ActionDescription> items = publicationMenu.getItems();
             final ActionDescription actionDescription = items.stream()
-                    .filter(Component::isVisible)
                     .filter(component -> representsAction(component, action))
                     .reduce((first, second) -> second)
                     .orElse(null);

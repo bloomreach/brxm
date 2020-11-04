@@ -217,12 +217,4 @@ public class XPageContext {
 
         return false;
     }
-
-    public Boolean getPublishableBranch() {
-        return publishableBranch;
-    }
-
-    public void setPublishableBranch(final Boolean publishableBranch) {
-        this.publishableBranch = publishableBranch;
-    }
 }
