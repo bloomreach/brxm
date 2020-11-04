@@ -1,5 +1,5 @@
 {
-  "root": "examples/angular/dist/browser/",
+  "root": "dist/browser/",
   "routes": {
     "/**": "index.html"
   }
