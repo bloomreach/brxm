@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +70,10 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
             .put("copy", "copy")
             .put("move", "move")
             .put("delete", "delete")
+            .put("accept", "acceptRequest")
+            .put("reject", "rejectRequest")
+            .put("cancel", "cancelRequest")
+            .put("rejected", "cancelRequest")
             .build();
 
     private final Ajax ajax;
@@ -116,8 +121,22 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
             final Workflow wf = workflowManager.getWorkflow("default", handle);
             final Map<String, Serializable> hints = wf.hints();
             final String hint = ACTIONS_TO_HINTS.get(action);
-            if (!Boolean.TRUE.equals(hints.get(hint))) {
-                log.warn("Workflow hint '{}' is no allowed on document '{}'", hint, uuid);
+
+            final Map<String, Serializable> requestsHints = new HashMap<>();
+            if (hints.containsKey("requests")) {
+                final Map<String, Serializable> requests = (Map<String, Serializable>) hints.get("requests");
+                requests.values().forEach(serializable -> {
+                    final Map<String, Serializable> requestHints = (Map<String, Serializable>) serializable;
+                    requestHints.forEach((hintId, hintValue) -> {
+                        if (Boolean.TRUE.equals(hintValue)) {
+                            requestsHints.put(hintId, hintValue);
+                        }
+                    });
+                });
+            }
+
+            if (!Boolean.TRUE.equals(hints.get(hint)) && !Boolean.TRUE.equals(requestsHints.get(hint))) {
+                log.warn("Workflow hint '{}' is not allowed on document '{}'", hint, uuid);
                 target.prependJavaScript("Hippo.Workflow.reject();");
                 return false;
             }
