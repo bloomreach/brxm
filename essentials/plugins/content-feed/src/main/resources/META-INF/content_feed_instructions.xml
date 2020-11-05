@@ -19,7 +19,6 @@
   <instructionSet>
     <mavenDependency targetPom="cms-dependencies" groupId="com.onehippo.cms7" artifactId="hippo-addon-content-feed-dependencies-cms" type="pom" />
     <mavenDependency targetPom="site-components" groupId="com.onehippo.cms7" artifactId="hippo-addon-content-feed-dependencies-site" type="pom" />
-    <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-content-feed-search-api" targetPom="project" scope="provided"/>
     <execute class="org.onehippo.cms7.essentials.plugin.contentfeed.ContentFeedInstruction"/>
   </instructionSet>
 </instructions>
