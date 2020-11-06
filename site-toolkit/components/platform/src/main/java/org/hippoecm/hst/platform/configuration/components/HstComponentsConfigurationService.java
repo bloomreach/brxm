@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -68,7 +69,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private Map<String, HstComponentConfiguration> prototypePages = new HashMap<>();
 
 
-    private Map<String, HstComponentConfiguration> xPages = new HashMap<>();
+    private Map<String, HstComponentConfiguration> xPages;
 
     /*
      * The Map of all containter items. These are the hst:containeritemcomponent's that are configured as child of hst:containeritemcomponent's
@@ -76,7 +77,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private List<HstComponentConfiguration> availableContainerItems = new ArrayList<>();
 
     private final Set<String> usedReferenceNames = new HashSet<>();
-    private int autoCreatedCounter = 0;
+    private AtomicInteger autoCreatedCounter = new AtomicInteger(0);
 
     /**
      * Map from template node name to Template
@@ -289,16 +290,29 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
     private void autocreateReferenceNames(final HstComponentConfiguration componentConfiguration) {
 
-        if (componentConfiguration.getReferenceName() == null || "".equals(componentConfiguration.getReferenceName())) {
+        final String referenceName = componentConfiguration.getReferenceName();
+        if (StringUtils.isBlank(referenceName)) {
 
-            String autoRefName = "r" + (++autoCreatedCounter);
-            while (usedReferenceNames.contains(autoRefName)) {
-                autoRefName = "r" + (++autoCreatedCounter);
-            }
-            ((HstComponentConfigurationService) componentConfiguration).setReferenceName(StringPool.get(autoRefName));
+            setAutocreatedReference((HstComponentConfigurationService) componentConfiguration, usedReferenceNames, autoCreatedCounter);
+        } else if (usedReferenceNames.contains(referenceName)){
+            log.error("componentConfiguration '{}' contains invalid explicit reference '{}' since already in use. " +
+                    "Autocreating a new one now.", componentConfiguration.getCanonicalStoredLocation(), referenceName);
+            setAutocreatedReference((HstComponentConfigurationService) componentConfiguration, usedReferenceNames, autoCreatedCounter);
+        } else {
+            usedReferenceNames.add(referenceName);
         }
 
         ((HstComponentConfigurationService) componentConfiguration).autocreateReferenceNames();
+    }
+
+    public static void setAutocreatedReference(final HstComponentConfigurationService componentConfiguration,
+                                               Set<String> usedReferenceNames,
+                                               final AtomicInteger autoCreatedCounter) {
+        String autoRefName = "r" + (autoCreatedCounter.incrementAndGet());
+        while (usedReferenceNames.contains(autoRefName)) {
+            autoRefName = "r" + (autoCreatedCounter.incrementAndGet());
+        }
+        componentConfiguration.setReferenceName(StringPool.get(autoRefName));
     }
 
     /*
@@ -312,10 +326,6 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
         for (HstNode child : node.getCompositeChildren().values()) {
             if (isHstComponentType(child)) {
-                if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
-                    // add to the used referencenames set
-                    usedReferenceNames.add(StringPool.get(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
-                }
                 try {
                     HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child,
                             null, rootNodeName, referableContainers, rootConfigurationPathPrefix);
