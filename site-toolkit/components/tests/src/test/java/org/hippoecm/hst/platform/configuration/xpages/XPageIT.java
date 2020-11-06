@@ -124,7 +124,7 @@ public class XPageIT extends AbstractTestConfigurations {
 
     /**
      * <p>
-     *     XPages are NOT inherited from super config BUT an XPage can inherit from super config
+     *     XPage inheriting from abstract page
      * </p>
      * @throws Exception
      */
@@ -187,7 +187,7 @@ public class XPageIT extends AbstractTestConfigurations {
 
 
     @Test
-    public void xpage_hst_model_is_not_inherited_from_super_config_or_default_config() throws Exception {
+    public void xpage_hst_model_does_inherit_from_super_config_or_default_config() throws Exception {
 
         // move xpages to 'common' inherited config and confirm they are not inherited
         session.move("/hst:hst/hst:configurations/unittestproject/hst:xpages",
@@ -201,7 +201,7 @@ public class XPageIT extends AbstractTestConfigurations {
         {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
             final Map<String, HstComponentConfiguration> xPages = mount.getMount().getHstSite().getComponentsConfiguration().getXPages();
-            assertThat(xPages.size()).isEqualTo(0);
+            assertThat(xPages.size()).isEqualTo(1);
         }
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:xpages",
                 "/hst:hst/hst:configurations/hst:default/hst:xpages");
@@ -213,7 +213,7 @@ public class XPageIT extends AbstractTestConfigurations {
         {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
             final Map<String, HstComponentConfiguration> xPages = mount.getMount().getHstSite().getComponentsConfiguration().getXPages();
-            assertThat(xPages.size()).isEqualTo(0);
+            assertThat(xPages.size()).isEqualTo(1);
         }
     }
 

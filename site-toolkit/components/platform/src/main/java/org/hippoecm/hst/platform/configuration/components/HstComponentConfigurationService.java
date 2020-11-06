@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -74,6 +75,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINER
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_XPAGE;
 import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
+import static org.hippoecm.hst.platform.configuration.components.HstComponentsConfigurationService.setAutocreatedReference;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_IDENTIFIER;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
@@ -131,8 +133,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private String pageErrorHandlerClassName;
 
-    private List<String> usedChildReferenceNames = new ArrayList<String>();
-    private int autocreatedCounter = 0;
+    private Set<String> usedChildReferenceNames = new HashSet<>();
+    private AtomicInteger autocreatedCounter = new AtomicInteger(0);
 
     private Map<String, String> parameters = new LinkedHashMap<String, String>();
 
@@ -170,7 +172,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private boolean prototype;
 
     /**
-     * true if this hst component configuration is the root hst:xpage node below hst:xpages
+     * true if this hst component configuration root is an hst:xpage node
      */
     private boolean xpage;
 
@@ -563,9 +565,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 log.warn("Component child of type '{}' are not allowed in a prototype page. Skipping component '{}'.",
                         child.getNodeTypeName(), child.getValueProvider().getPath());
                 return null;
-            }
-            if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
-                usedChildReferenceNames.add(StringPool.get(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
             }
             try {
                 if (HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(child.getNodeTypeName())) {
@@ -1020,7 +1019,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.parameterNamePrefixSet = new HashSet<String>(child.parameterNamePrefixSet);
         // localParameters have no merging, but for copy, the localParameters are copied
         copy.localParameters = new LinkedHashMap<String, String>(child.localParameters);
-        copy.usedChildReferenceNames = new ArrayList<String>(child.usedChildReferenceNames);
+        copy.usedChildReferenceNames = new HashSet<>(child.usedChildReferenceNames);
         copy.variants = new ArrayList<>(variants);
         copy.mountVariants = new ArrayList<>(mountVariants);
         copy.lockedBy = child.lockedBy;
@@ -1850,7 +1849,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
 
         if (usedChildReferenceNames.isEmpty()) {
-            usedChildReferenceNames = Collections.emptyList();
+            usedChildReferenceNames = Collections.emptySet();
         }
     }
 
@@ -1858,12 +1857,15 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.autocreateReferenceNames();
-            if (child.getReferenceName() == null || "".equals(child.getReferenceName())) {
-                String autoRefName = "r" + (++autocreatedCounter);
-                while (usedChildReferenceNames.contains(autoRefName)) {
-                    autoRefName = "r" + (++autocreatedCounter);
-                }
-                child.setReferenceName(StringPool.get(autoRefName));
+            final String referenceName = child.getReferenceName();
+            if (StringUtils.isBlank(referenceName)) {
+                setAutocreatedReference(child, usedChildReferenceNames, autocreatedCounter);
+            } else if (usedChildReferenceNames.contains(referenceName)){
+                log.error("componentConfiguration '{}' contains invalid explicit reference '{}' since already in use. " +
+                        "Autocreating a new one now.", child.getCanonicalStoredLocation(), referenceName);
+                setAutocreatedReference(child, usedChildReferenceNames, autocreatedCounter);
+            } else {
+                usedChildReferenceNames.add(referenceName);
             }
         }
     }
