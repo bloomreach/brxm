@@ -90,6 +90,7 @@ describe('XPageMenuService', () => {
     spyOn(DocumentWorkflowService, 'requestUnpublication').and.returnValue($q.resolve());
     spyOn(DocumentWorkflowService, 'requestScheduleUnpublication').and.returnValue($q.resolve());
     spyOn(EditContentService, 'startEditing').and.returnValue($q.resolve());
+    spyOn(EditContentService, 'reloadEditor');
 
     spyOn(HippoIframeService, 'reload');
 
@@ -238,6 +239,7 @@ describe('XPageMenuService', () => {
     expectWorkflowSuccess(actionId, spy);
 
     spy.calls.reset();
+    EditContentService.reloadEditor.calls.reset();
     HippoIframeService.reload.calls.reset();
 
     expectWorkflowFailed(actionId, spy);
@@ -246,9 +248,8 @@ describe('XPageMenuService', () => {
   function expectEditorAwareWorkflow(actionId, spy) {
     spyOn(EditComponentService, 'stopEditing');
 
-    spyOn(EditContentService, 'ensureEditorIsPristine');
-    spyOn(EditContentService, 'reloadEditor');
     spyOn(EditContentService, 'isEditing').and.returnValue(false);
+    spyOn(EditContentService, 'isEditorPristine').and.returnValue(true);
 
     expectWorkflow(actionId, spy);
     expect(EditContentService.isEditing).toHaveBeenCalledWith('xpage-document-id');
@@ -269,24 +270,26 @@ describe('XPageMenuService', () => {
 
     // Document is being edited
     EditContentService.isEditing.and.returnValue(true);
-    // Ensure pristine dialog is cancelled
-    EditContentService.ensureEditorIsPristine.and.returnValue($q.reject('CANCELLED'));
+    EditContentService.isEditorPristine.and.returnValue(false);
+    // Save/discard changes dialog is cancelled
+    EditContentService.reloadEditor.and.returnValue($q.reject());
 
     action.onClick();
     $rootScope.$digest();
 
     expect(spy).not.toHaveBeenCalled();
-    expect(EditContentService.reloadEditor).not.toHaveBeenCalled();
+    expect(EditContentService.reloadEditor).toHaveBeenCalledTimes(1);
+    EditContentService.reloadEditor.calls.reset();
 
     // Ensure pristine dialog is resolved
     spy.and.returnValue($q.resolve());
-    EditContentService.ensureEditorIsPristine.and.returnValue($q.resolve());
+    EditContentService.reloadEditor.and.returnValue($q.resolve());
 
     action.onClick();
     $rootScope.$digest();
 
     expect(spy).toHaveBeenCalled();
-    expect(EditContentService.reloadEditor).toHaveBeenCalled();
+    expect(EditContentService.reloadEditor).toHaveBeenCalledTimes(2);
   }
 
   describe('publish', () => {
