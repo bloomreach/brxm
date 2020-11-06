@@ -116,7 +116,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
     @Test
     public void homepage_api_URL_non_encoded_request_queryString_for_current_page() throws Exception {
 
-        String actual = getActualJson("/spa/resourceapi", "1.0", "r27:page=4&c2_c1:page=6");
+        String actual = getActualJson("/spa/resourceapi", "1.0", "c1:page=4&c2_c1:page=6");
 
         InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_current_root_component_page_4.json");
 
@@ -132,7 +132,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         // in the PMA output, the '%3A' should be replaced with ':'
         final String encoded = URLEncoder.encode(":", "utf-8");
 
-        String actual = getActualJson("/spa/resourceapi", "1.0", "r27" + encoded + "page=4&c2_c1" +encoded + "page=6");
+        String actual = getActualJson("/spa/resourceapi", "1.0", "c1" + encoded + "page=4&c2_c1" +encoded + "page=6");
 
         InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_current_root_component_page_4.json");
 
