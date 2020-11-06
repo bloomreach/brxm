@@ -33,7 +33,6 @@ describe('EditContentService', () => {
     ContentEditor = jasmine.createSpyObj('ContentEditor', [
       'confirmClose',
       'close',
-      'confirmPristine',
       'confirmSaveOrDiscardChanges',
       'discardChanges',
       'getDocument',
@@ -325,21 +324,6 @@ describe('EditContentService', () => {
 
       expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page.content',
         { documentId: 'documentId', lastModified: jasmine.any(Number) });
-    });
-  });
-
-  describe('ensureEditorIsPristine', () => {
-    it('should ensure document is pristine', () => {
-      EditContentService.ensureEditorIsPristine();
-
-      expect(ContentEditor.confirmPristine).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
-    });
-
-    it('should ensure xpage is pristine', () => {
-      ContentEditor.isDocumentXPage = true;
-      EditContentService.ensureEditorIsPristine();
-
-      expect(ContentEditor.confirmPristine).toHaveBeenCalledWith('SAVE_CHANGES_TO_XPAGE');
     });
   });
 });

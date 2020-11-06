@@ -170,10 +170,15 @@ export default class XPageMenuService extends MenuService {
     const isEditing = this.EditContentService.isEditing(documentId);
 
     try {
-      if (isEditing) {
-        await this.EditContentService.ensureEditorIsPristine();
+      if (isEditing && !this.EditContentService.isEditorPristine()) {
+        await this.EditContentService.reloadEditor();
       }
+    } catch (error) {
+      // The save/discard dialog was cancelled
+      return;
+    }
 
+    try {
       await onClick(documentId);
 
       if (isEditing) {
