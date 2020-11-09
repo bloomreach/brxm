@@ -152,16 +152,20 @@ export default class XPageMenuService extends MenuService {
 
   _addWorkflowAction(id, onClick, config = {}) {
     const translationKey = `TOOLBAR_MENU_XPAGE_${id.replace(/-/g, '_').toUpperCase()}`;
+    const onFailure = (msg) => {
+      const menuItem = this._menu.findAction(id);
+      return this._failure((menuItem && menuItem.translationKey) || translationKey, msg);
+    };
     this._menu.addAction(id, {
       isEnabled: () => this._isEnabled(id),
       isVisible: () => this._isVisible(id),
-      onClick: this._invokeWorkflow.bind(this, onClick, translationKey),
+      onClick: this._invokeWorkflow.bind(this, onClick, onFailure),
       translationKey,
       ...config,
     });
   }
 
-  async _invokeWorkflow(onClick, translationKey) {
+  async _invokeWorkflow(onClick, onFailure) {
     try {
       await this.EditComponentService.stopEditing();
     } catch (error) {
@@ -190,7 +194,7 @@ export default class XPageMenuService extends MenuService {
       this.HippoIframeService.reload();
     } catch (message) {
       if (message !== 'CANCELLED') {
-        this._failure(translationKey, message);
+        onFailure(message);
       }
     }
   }
