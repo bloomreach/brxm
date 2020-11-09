@@ -66,7 +66,8 @@ public class SiteMapTreeItem {
             SiteMapTreeItem next;
             int total = elements.length;
             // skip i = 0 since pathInfo always starts with '/' so first element is ""
-            for (int i = 1; i < total; i++) {
+            int start =  page.getPathInfo().startsWith("/") ? 1 : 0;
+            for (int i = start; i < total; i++) {
                 final String itemId = elements[i];
                 next = current.children.get(itemId);
                 if (next == null) {
