@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class SiteMapTreeItem {
 
+    private String id;
     private String name;
     private String pageTitle;
     private String pathInfo;
@@ -48,6 +50,7 @@ public class SiteMapTreeItem {
                 // home page
                 root.pathInfo = page.getPathInfo();
                 root.renderPathInfo = page.getRenderPathInfo();
+                root.id = "/";
                 root.name = page.getName();
                 root.pageTitle = page.getPageTitle();
                 root.experiencePage = page.isExperiencePage();
@@ -64,23 +67,25 @@ public class SiteMapTreeItem {
             int total = elements.length;
             // skip i = 0 since pathInfo always starts with '/' so first element is ""
             for (int i = 1; i < total; i++) {
-                next = current.children.get(elements[i]);
+                final String itemId = elements[i];
+                next = current.children.get(itemId);
                 if (next == null) {
                     // if last element, create SiteMapTreeItem for 'page', if not last element, create a
                     // structural place holder SiteMapTreeItem and continue
                     if (i == total - 1 ) {
                         // last element
-                        current.children.put(elements[i], new SiteMapTreeItem(page));
+                        current.children.put(itemId, new SiteMapTreeItem(itemId, page));
                     } else {
                         // structural element
-                        SiteMapTreeItem siteMapTreeItem = new SiteMapTreeItem(elements[i]);
-                        current.children.put(elements[i], siteMapTreeItem);
+                        SiteMapTreeItem siteMapTreeItem = new SiteMapTreeItem(itemId);
+                        current.children.put(itemId, siteMapTreeItem);
                         current = siteMapTreeItem;
                     }
                 } else {
                     if (i == total - 1 ) {
                         // last element
                         // this item might have been added earlier as structural, now set the pathInfo, title, etc
+                        next.id = itemId;
                         next.name = page.getName();
                         next.pageTitle = page.getPageTitle();
                         next.pathInfo = page.getPathInfo();
@@ -98,10 +103,12 @@ public class SiteMapTreeItem {
 
     // structural item only, without pathInfo meaning not a clickable sitemap item
     private SiteMapTreeItem(final String name) {
+        this.id = name;
         this.name = name;
     }
 
-    private SiteMapTreeItem(final SiteMapPageRepresentation siteMapPageRepresentation) {
+    private SiteMapTreeItem(final String id, final SiteMapPageRepresentation siteMapPageRepresentation) {
+        this.id = id;
         this.name = siteMapPageRepresentation.getName();
         this.pageTitle = siteMapPageRepresentation.getPageTitle();
         this.pathInfo = siteMapPageRepresentation.getPathInfo();
@@ -109,18 +116,8 @@ public class SiteMapTreeItem {
         this.experiencePage = siteMapPageRepresentation.isExperiencePage();
     }
 
-    private SiteMapTreeItem addChild(String name) {
-        SiteMapTreeItem child = new SiteMapTreeItem(name);
-        if (pathInfo.endsWith("/")) {
-            children.put(pathInfo + name, child);
-        } else {
-            children.put(pathInfo + "/" + name, child);
-        }
-        return child;
-    }
-
-    private void addChild(SiteMapTreeItem child) {
-        children.put(child.pathInfo, child);
+    public String getId() {
+        return id;
     }
 
     public String getName() {
@@ -143,7 +140,7 @@ public class SiteMapTreeItem {
         return experiencePage;
     }
 
-    public LinkedHashMap<String, SiteMapTreeItem> getChildren() {
-        return children;
+    public Collection<SiteMapTreeItem> getChildren() {
+        return children.values();
     }
 }
