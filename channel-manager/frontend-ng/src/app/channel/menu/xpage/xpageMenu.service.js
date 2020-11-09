@@ -20,6 +20,7 @@ export default class XPageMenuService extends MenuService {
   constructor(
     $log,
     DocumentWorkflowService,
+    EditComponentService,
     EditContentService,
     FeedbackService,
     HippoIframeService,
@@ -32,6 +33,7 @@ export default class XPageMenuService extends MenuService {
 
     this.$log = $log;
     this.DocumentWorkflowService = DocumentWorkflowService;
+    this.EditComponentService = EditComponentService;
     this.EditContentService = EditContentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
@@ -159,6 +161,12 @@ export default class XPageMenuService extends MenuService {
 
   _addEditorAwareWorkflowAction(id, onClick, config) {
     this._addWorkflowAction(id, async (documentId) => {
+      try {
+        await this.EditComponentService.stopEditing();
+      } catch (error) {
+        return 'NO-RELOAD';
+      }
+
       if (!this.EditContentService.isEditing(documentId)) {
         return onClick(documentId);
       }

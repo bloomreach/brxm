@@ -22,6 +22,7 @@ describe('XPageMenuService', () => {
   let $rootScope;
   let $state;
   let DocumentWorkflowService;
+  let EditComponentService;
   let EditContentService;
   let FeedbackService;
   let HippoIframeService;
@@ -61,6 +62,7 @@ describe('XPageMenuService', () => {
       _$rootScope_,
       _$state_,
       _DocumentWorkflowService_,
+      _EditComponentService_,
       _EditContentService_,
       _FeedbackService_,
       _HippoIframeService_,
@@ -71,6 +73,7 @@ describe('XPageMenuService', () => {
       $rootScope = _$rootScope_;
       $state = _$state_;
       DocumentWorkflowService = _DocumentWorkflowService_;
+      EditComponentService = _EditComponentService_;
       EditContentService = _EditContentService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
@@ -241,6 +244,8 @@ describe('XPageMenuService', () => {
   }
 
   function expectEditorAwareWorkflow(actionId, spy) {
+    spyOn(EditComponentService, 'stopEditing');
+
     spyOn(EditContentService, 'ensureEditorIsPristine');
     spyOn(EditContentService, 'reloadEditor');
     spyOn(EditContentService, 'isEditing').and.returnValue(false);
@@ -251,12 +256,22 @@ describe('XPageMenuService', () => {
 
     spy.calls.reset();
 
+    const action = addAction(actionId);
+
+    EditComponentService.stopEditing.and.returnValue($q.reject());
+
+    action.onClick();
+    $rootScope.$digest();
+
+    expect(spy).not.toHaveBeenCalled();
+
+    EditComponentService.stopEditing.and.returnValue($q.resolve());
+
     // Document is being edited
     EditContentService.isEditing.and.returnValue(true);
     // Ensure pristine dialog is cancelled
     EditContentService.ensureEditorIsPristine.and.returnValue($q.reject('CANCELLED'));
 
-    const action = addAction(actionId);
     action.onClick();
     $rootScope.$digest();
 
