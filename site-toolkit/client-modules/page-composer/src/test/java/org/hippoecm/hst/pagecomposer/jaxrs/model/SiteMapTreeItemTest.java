@@ -33,7 +33,7 @@ public class SiteMapTreeItemTest {
             SiteMapPageRepresentation page = new SiteMapPageRepresentation();
             page.setName(input[0]);
             page.setPathInfo(input[1]);
-            page.setRenderPathInfo(input[1]);
+            page.setRenderPathInfo(input[2]);
             page.setExperiencePage(false);
             page.setPageTitle(input[0]);
             pages.add(page);
@@ -48,14 +48,14 @@ public class SiteMapTreeItemTest {
     public void test_transformation_from_pages_to_tree() {
 
         SiteMapPagesRepresentation pages = createPages(
-                new String[]{"root", "/"},
-                new String[]{"News", "/news"},
-                new String[]{"2019", "/news/2019"},
-                new String[]{"2020", "/news/2020"},
-                new String[]{"About","/about"},
-                new String[]{"Address","/contact/address"},
-                new String[]{"Contact","/contact"}
-                );
+                new String[]{"root", "/", "/"},
+                new String[]{"News", "/news", "/news"},
+                new String[]{"2019", "/news/2019", "/news/2019"},
+                new String[]{"2020", "/news/2020", "/news/2020"},
+                new String[]{"About", "/about", "/about"},
+                new String[]{"Address","/contact/address","/contact/address"},
+                new String[]{"Contact","/contact","/contact"}
+        );
 
         SiteMapTreeItem rootItem = SiteMapTreeItem.transform(pages);
         assertThat(rootItem.getPathInfo()).isEqualTo("/");
@@ -82,11 +82,53 @@ public class SiteMapTreeItemTest {
     }
 
     @Test
+    public void test_transformation_from_pages_to_tree_for_submount() {
+
+        SiteMapPagesRepresentation pages = createPages(
+                new String[]{"root", "/", "/foo"},
+                new String[]{"News", "news", "/foo/news"},
+                new String[]{"2019", "news/2019", "/foo/news/2019"},
+                new String[]{"2020", "news/2020", "/foo/news/2020"},
+                new String[]{"About", "about","/foo/about"},
+                new String[]{"Address", "contact/address","/foo/contact/address"},
+                new String[]{"Contact", "contact","/foo/contact"}
+        );
+
+        SiteMapTreeItem rootItem = SiteMapTreeItem.transform(pages);
+        assertThat(rootItem.getPathInfo()).isEqualTo("/");
+
+        {
+            List<String> childPathInfos = getChildPathInfos(rootItem);
+            assertThat(childPathInfos).containsExactly("news", "about", "contact");
+
+            List<String> childNames = getChildNames(rootItem);
+            assertThat(childNames).containsExactly("News", "About", "Contact");
+        }
+
+        {
+            List<String> childPathInfos = getChildRenderPathInfos(rootItem);
+            assertThat(childPathInfos).containsExactly("/foo/news", "/foo/about", "/foo/contact");
+        }
+
+        {
+            SiteMapTreeItem newsItem = findChild(rootItem, "news");
+            List<String> childPathInfos = getChildPathInfos(newsItem);
+            assertThat(childPathInfos).containsExactly("news/2019", "news/2020");
+        }
+
+        {
+            SiteMapTreeItem contactItem = findChild(rootItem, "contact");
+            List<String> childPathInfos = getChildPathInfos(contactItem);
+            assertThat(childPathInfos).containsExactly("contact/address");
+        }
+    }
+
+    @Test
     public void test_transformation_from_pages_to_tree_with_structural_items() {
         SiteMapPagesRepresentation pages = createPages(
-                new String[]{"root", "/"},
-                new String[]{"03", "/news/2019/12/03"},
-                new String[]{"Uk","/contact/address/uk"}
+                new String[]{"root", "/", "/"},
+                new String[]{"03", "news/2019/12/03", "/news/2019/12/03"},
+                new String[]{"Uk","contact/address/uk","/contact/address/uk"}
         );
 
         SiteMapTreeItem siteMapTreeItem = SiteMapTreeItem.transform(pages);
@@ -111,21 +153,21 @@ public class SiteMapTreeItemTest {
             SiteMapTreeItem yearItem = findChild(newsItem, "2019");
             SiteMapTreeItem monthItem = findChild(yearItem, "12");
             SiteMapTreeItem dayItem = findChild(monthItem, "03");
-            assertThat(dayItem.getPathInfo()).isEqualTo("/news/2019/12/03");
+            assertThat(dayItem.getPathInfo()).isEqualTo("news/2019/12/03");
         }
 
         SiteMapTreeItem contact = findChild(siteMapTreeItem, "contact");
         SiteMapTreeItem address = findChild(contact, "address");
         SiteMapTreeItem uk = findChild(address, "uk");
-        assertThat(uk.getPathInfo()).isEqualTo("/contact/address/uk");
+        assertThat(uk.getPathInfo()).isEqualTo("contact/address/uk");
     }
 
     @Test
     public void test_transformation_from_pages_to_tree_when_root_page_misses() {
         SiteMapPagesRepresentation pages = createPages(
-                new String[]{"News", "/news"},
-                new String[]{"2019", "/news/2019"},
-                new String[]{"Uk","/contact/address/uk"}
+                new String[]{"News", "news", "/news"},
+                new String[]{"2019", "news/2019", "/news/2019"},
+                new String[]{"Uk", "contact/address/uk", "/contact/address/uk"}
         );
         SiteMapTreeItem siteMapTreeItem = SiteMapTreeItem.transform(pages);
 
@@ -141,8 +183,8 @@ public class SiteMapTreeItemTest {
     @Test
     public void test_transformation_from_pages_to_tree_with_null_pathInfo() {
         SiteMapPagesRepresentation pages = createPages(
-                new String[]{"root", "/"},
-                new String[]{"News", null}
+                new String[]{"root", "/", "/"},
+                new String[]{"News", null, null}
         );
         SiteMapTreeItem siteMapTreeItem = SiteMapTreeItem.transform(pages);
 
@@ -166,6 +208,12 @@ public class SiteMapTreeItemTest {
     private static List<String> getChildPathInfos(final SiteMapTreeItem item) {
         return item.getChildren().stream()
                 .map(SiteMapTreeItem::getPathInfo)
+                .collect(Collectors.toList());
+    }
+
+    private static List<String> getChildRenderPathInfos(final SiteMapTreeItem item) {
+        return item.getChildren().stream()
+                .map(SiteMapTreeItem::getRenderPathInfo)
                 .collect(Collectors.toList());
     }
 }
