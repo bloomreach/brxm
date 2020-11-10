@@ -40,6 +40,11 @@
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  height: 100%
+}
+
+.taxonomy-tree-picker .taxonomy-tree-picker-left {
+  border-right: 1px solid rgba(0, 0, 0, .38);
 }
 
 .taxonomy-tree-picker .section-search-input {
@@ -60,21 +65,13 @@
 }
 
 .taxonomy-tree-popup {
-  height: 385px;
-  width: 340px;
-  overflow: auto;
-  border-bottom: 1px solid #e3e3e3;
-  border-right: 1px solid #e3e3e3;
-
-  /* copied from hippo theme's .solid-child */
-  -webkit-flex: 0 0 auto;
-  -ms-flex: 0 0 auto;
   flex: 0 0 auto;
+  height: calc(100% - 60px);
+  overflow: auto;
+  width: 400px;
 }
 
 .taxonomy-tree-popup .wicket-tree {
-  border: 1px solid #cccccc;
-  white-space: nowrap;
   width: 100%;
   height: auto;
   margin: 10px 0;
@@ -89,25 +86,21 @@
 }
 
 .taxonomy-container {
-  height: 385px;
-  overflow: auto;
-  border-bottom: 1px solid #e3e3e3;
-  background-color: #eeeeee;
-
-  /* copied from hippo theme's .flex-child */
-  -webkit-flex: 1 1 auto;
-  -ms-flex: 1 1 auto;
+  display: flex;
+  height: 100%;
   flex: 1 1 auto;
+  flex-flow: column;
 }
 
 .taxonomy-container h3 {
   font-size: 16px;
-  margin-bottom: 10px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  margin-top: 4px;
 }
 
 .taxonomy-details {
-  background-color: #e3e3e3;
-  padding: 15px 16px 15px 15px;
+  padding: 16px;
 }
 
 .clearfix::after {
@@ -120,16 +113,31 @@ div.taxonomy-details a {
   float: right;
 }
 
+.taxonomy-details table {
+  width: 100%;
+}
+
+.taxonomy-details tr {
+  height: 24px;
+}
+
 .taxonomy-details td {
+  padding-right: 4px;
   text-align: left;
-  vertical-align: top;
-  padding-bottom: 3px;
-  padding-right: 3px;
+}
+
+.taxonomy-details td:first-child {
+  width: 110px;
+}
+
+.taxonomy-details td label {
+  color: rgba(0, 0, 0, .6);
 }
 
 .taxonomy-selected {
-  padding: 15px 5px 5px 15px;
-  border-top: solid 1px #6A747D;
+  border-top: solid 1px rgba(0, 0, 0, .38);
+  overflow: auto;
+  padding: 16px;
 }
 
 .taxonomy-selected .remove {
@@ -140,7 +148,7 @@ div.taxonomy-details a {
 }
 
 .taxonomy-selected li {
-  padding-bottom: 5px;
+  line-height: 24px;
 }
 
 .taxonomy-container table {
@@ -201,6 +209,11 @@ div.taxonomy-details a {
 .taxonomy-current-canon {
   padding-bottom: 8px;
   display: block;
+}
+
+.taxonomy-picker-form,
+.taxonomy-picker-form .taxonomy-tree-picker {
+  height: 100%;
 }
 
 .taxonomy-picker-form .hippo-dialog-feedback ul.feedbackPanel {
