@@ -2,6 +2,7 @@ definitions:
   config:
     /hippo:configuration/hippo:frontend/cms/hippo-channel-manager:
       jcr:primaryType: frontend:plugincluster
+      frontend:references: [browser.id]
       /channel-manager-perspective:
         jcr:primaryType: frontend:plugin
         jcr:mixinTypes: ['frontend:navigationitem']
