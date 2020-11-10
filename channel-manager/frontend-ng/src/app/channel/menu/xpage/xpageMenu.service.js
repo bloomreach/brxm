@@ -20,13 +20,17 @@ export default class XPageMenuService extends MenuService {
   constructor(
     $log,
     $translate,
+    ChannelService,
     DocumentWorkflowService,
     EditComponentService,
     EditContentService,
     FeedbackService,
     HippoIframeService,
+    HstService,
     PageService,
+    PageStructureService,
     PageToolsService,
+    SiteMapService,
   ) {
     'ngInject';
 
@@ -34,13 +38,17 @@ export default class XPageMenuService extends MenuService {
 
     this.$log = $log;
     this.$translate = $translate;
+    this.ChannelService = ChannelService;
     this.DocumentWorkflowService = DocumentWorkflowService;
     this.EditComponentService = EditComponentService;
     this.EditContentService = EditContentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.HstService = HstService;
     this.PageService = PageService;
+    this.PageStructureService = PageStructureService;
     this.PageToolsService = PageToolsService;
+    this.SiteMapService = SiteMapService;
 
     this._getRequestTranslationKey = this._getRequestTranslationKey.bind(this);
     this._initialize();
@@ -147,6 +155,36 @@ export default class XPageMenuService extends MenuService {
       'request-schedule-publish',
       id => this.DocumentWorkflowService.requestSchedulePublication(id),
       { isEnabled: () => this._isEnabled('request-schedule-publish') && !this._isEditingCurrentPage() },
+    );
+
+    this._menu.addDivider({
+      isVisible: () => this.PageService.hasSomeAction('xpage',
+        'copy',
+        'move',
+        'delete'),
+    });
+
+    this._addWorkflowAction(
+      'move',
+      id => this.DocumentWorkflowService.move(id).then(documentId => this._navigateToDocument(documentId)),
+    );
+
+    this._addWorkflowAction(
+      'copy',
+      id => this.DocumentWorkflowService.copy(id).then(documentId => this._navigateToDocument(documentId)),
+      { iconName: 'mdi-content-copy' },
+    );
+
+    this._addWorkflowAction(
+      'delete',
+      id => this.DocumentWorkflowService.delete(id)
+        .then(() => this.SiteMapService.load(this.ChannelService.getSiteMapId()))
+        .then(() => {
+          const siteMap = this.SiteMapService.get();
+          const firstPage = siteMap[0];
+          return this.HippoIframeService.load(firstPage.renderPathInfo);
+        }),
+      { iconName: 'mdi-delete' },
     );
   }
 
@@ -259,5 +297,20 @@ export default class XPageMenuService extends MenuService {
 
   _showContent() {
     this.EditContentService.startEditing(this._getDocumentId(), 'hippo-cm.channel.edit-page.content');
+  }
+
+  async _navigateToDocument(documentId) {
+    try {
+      const { data: { renderPathInfo } } = await this.HstService.doGet(documentId, 'representation');
+      const pageMeta = this.PageStructureService.getPage().getMeta();
+      if (pageMeta.getPathInfo() !== renderPathInfo) {
+        this.HippoIframeService.load(renderPathInfo);
+      }
+
+      const siteMapId = this.ChannelService.getSiteMapId();
+      this.SiteMapService.load(siteMapId); // reload sitemap (left side panel)
+    } catch (e) {
+      this.$log.error(`Failed to navigate to document '${documentId}'`, e);
+    }
   }
 }
