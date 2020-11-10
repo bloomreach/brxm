@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,19 +15,26 @@
  */
 package org.onehippo.taxonomy.plugin;
 
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.swing.tree.TreeNode;
 
+import org.ahocorasick.trie.Trie;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Fragment;
@@ -35,10 +42,16 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.form.PostOnlyForm;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.widgets.SubmittingTextField;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
+import org.hippoecm.frontend.skin.Icon;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
 import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
@@ -47,15 +60,20 @@ import org.onehippo.taxonomy.plugin.model.Classification;
 import org.onehippo.taxonomy.plugin.model.TaxonomyModel;
 import org.onehippo.taxonomy.plugin.tree.CategoryNameComparator;
 import org.onehippo.taxonomy.plugin.tree.CategoryNode;
+import org.onehippo.taxonomy.plugin.tree.CategoryState;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTree;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTreeModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TaxonomyBrowser panel which is rendered in the right panel in the taxonomy picker dialog.
  * @version $Id$
  */
 public class TaxonomyBrowser extends Panel {
+
+    private static final Logger log = LoggerFactory.getLogger(TaxonomyBrowser.class);
 
     TaxonomyModel taxonomyModel;
     WebMarkupContainer container;
@@ -64,6 +82,14 @@ public class TaxonomyBrowser extends Panel {
     private String currentCategoryKey;
     private boolean taxonomyRootSelected = true;
     private boolean detailsReadOnly;
+
+    private final TaxonomyTree tree;
+    private final TaxonomyTreeModel treeModel;
+
+    private String query = StringUtils.EMPTY;
+    private final Map<String, CategoryState> categoryStates = new HashMap<>();
+    private final Form<Void> searchForm;
+    private boolean clearSearchBox;
 
     /**
      * Constructor which organizes the UI components in this panel.
@@ -86,8 +112,12 @@ public class TaxonomyBrowser extends Panel {
 
         final Locale treeLocale = getPreferredLocale();
         final Comparator<Category> categoryComparator = getCategoryComparator(taxonomyModel.getPluginConfig(), treeLocale);
-        final TaxonomyTreeModel treeModel = new TaxonomyTreeModel(taxonomyModel, treeLocale, categoryComparator);
-        final TaxonomyTree tree = new TaxonomyTree("tree", treeModel, treeLocale, iconProvider) {
+        treeModel = new TaxonomyTreeModel(taxonomyModel, treeLocale, categoryComparator);
+
+        searchForm = new PostOnlyForm<>("form");
+        searchForm.setOutputMarkupId(true);
+
+        tree = new TaxonomyTree("tree", treeModel, treeLocale, iconProvider) {
 
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode node) {
@@ -104,8 +134,46 @@ public class TaxonomyBrowser extends Panel {
                 target.add(container);
                 super.onNodeLinkClicked(target, node);
             }
+
+            @Override
+            protected CategoryState getCategoryState(final Category category) {
+                if (StringUtils.isBlank(query)) {
+                    return CategoryState.VISIBLE;
+                }
+
+                if (categoryStates.isEmpty() || !categoryStates.containsKey(category.getPath())) {
+                    return CategoryState.HIDDEN;
+                }
+
+                return categoryStates.get(category.getPath());
+            }
         };
         add(tree);
+
+        final TextField<String> searchBox = new SubmittingTextField("searchBox", PropertyModel.of(this, "query")) {
+            @Override
+            public void onEnter(final AjaxRequestTarget target) {
+                executeSearch(target);
+            }
+        };
+        searchBox.setLabel(Model.of(getString("placeholder")));
+        searchForm.add(searchBox);
+
+        add(searchForm);
+
+        final AjaxSubmitLink searchBoxIconLink = new AjaxSubmitLink("toggle") {
+            @Override
+            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                if (clearSearchBox) {
+                    query = StringUtils.EMPTY;
+                }
+                executeSearch(target);
+            }
+        };
+
+        searchBoxIconLink.add(HippoIcon.fromSprite("search-icon", ReadOnlyModel
+                .of(() -> StringUtils.isNotBlank(query) ? Icon.TIMES : Icon.SEARCH)));
+        searchForm.add(searchBoxIconLink);
 
         container = new WebMarkupContainer("container");
         container.setOutputMarkupId(true);
@@ -292,6 +360,67 @@ public class TaxonomyBrowser extends Panel {
 
     private boolean isCanonised() {
         return getModelObject().isCanonised();
+    }
+
+    private void executeSearch(final AjaxRequestTarget target) {
+        final TaxonomyNode root  = (TaxonomyNode) treeModel.getRoot();
+        if (root == null) {
+            log.warn("Taxonomy root is null, can not perform search for '{}'", query);
+            return;
+        }
+
+        clearSearchBox = false;
+        categoryStates.clear();
+        target.add(tree, searchForm);
+
+        if (StringUtils.isBlank(query)) {
+            return;
+        }
+
+        clearSearchBox = true;
+        tree.getTreeState().collapseAll();
+        tree.expandAllToNode(root);
+
+        final List<String> keywords = Arrays.asList(query.trim().split("\\s+"));
+        final Trie trie = Trie.builder()
+                .ignoreCase()
+                .ignoreOverlaps()
+                .addKeywords(keywords)
+                .build();
+
+        root.getChildren().forEach(node -> search(trie, node));
+    }
+
+    private void search(final Trie trie, final CategoryNode node) {
+        final Category category = node.getCategory();
+        final CategoryInfo info = category.getInfo(treeModel.getLocale());
+        if (containsMatch(trie, info)) {
+            categoryStates.put(category.getPath(), CategoryState.VISIBLE);
+            tree.expandAllToNode(node);
+            category.getAncestors().forEach(ancestor -> {
+                if (!categoryStates.containsKey(ancestor.getPath())) {
+                    categoryStates.put(ancestor.getPath(), CategoryState.DISABLED);
+                }
+            });
+        }
+
+        node.getChildren().forEach(childNode -> search(trie, childNode));
+    }
+
+    private boolean containsMatch(final Trie trie, final CategoryInfo info) {
+        if (trie.containsMatch(info.getName())) {
+            return true;
+        }
+
+        if (trie.containsMatch(info.getDescription())) {
+            return true;
+        }
+
+        if (trie.containsMatch(String.join(" ", info.getSynonyms()))) {
+            return true;
+        }
+
+        return false;
     }
 
     class EmptyDetails extends Fragment {
