@@ -19,6 +19,7 @@
   window.Hippo = window.Hippo || {};
   window.Hippo.Workflow = window.Hippo.Workflow || {
     _active: null,
+    _payload: null,
   };
 
   Hippo.Workflow.invoke = function(documentId, category, action) {
@@ -45,6 +46,10 @@
 
     const { resolve } = Hippo.Workflow._active;
     delete Hippo.Workflow._active;
+
+    payload = Hippo.Workflow._payload || payload;
+    delete Hippo.Workflow._payload;
+
     resolve(payload);
   }
 
@@ -55,7 +60,15 @@
 
     const { reject } = Hippo.Workflow._active;
     delete Hippo.Workflow._active;
+
+    payload = Hippo.Workflow._payload || payload;
+    delete Hippo.Workflow._payload;
+
     reject(payload);
+  }
+
+  Hippo.Workflow.setPayload = function(payload) {
+    Hippo.Workflow._payload = payload;
   }
 
 }());
