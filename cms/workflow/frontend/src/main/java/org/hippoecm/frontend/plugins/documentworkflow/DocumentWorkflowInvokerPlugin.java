@@ -32,6 +32,7 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -41,6 +42,7 @@ import org.hippoecm.addon.workflow.ActionDescription;
 import org.hippoecm.addon.workflow.MenuHierarchy;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -53,7 +55,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
 
-public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin {
+public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin implements IBrowseService<IModel<Node>> {
     private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowInvokerPlugin.class);
 
     private static final String JS_FILE = "document-workflow-invoker-plugin.js";
@@ -82,6 +84,22 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
         super(context, config);
 
         add(ajax = new Ajax());
+
+        final String browserServiceId = config.getString(IBrowseService.BROWSER_ID, IBrowseService.class.getName());
+        context.registerService(this, browserServiceId);
+    }
+
+    @Override
+    public void browse(final IModel<Node> model) {
+        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (target != null) {
+            try {
+                final String identifier = model.getObject().getIdentifier();
+                target.prependJavaScript(String.format("Hippo.Workflow.setPayload('%s');", identifier));
+            } catch (RepositoryException e) {
+                log.warn("Can not set workflow payload without node identifier", e);
+            }
+        }
     }
 
     private class Ajax extends AbstractDefaultAjaxBehavior {
