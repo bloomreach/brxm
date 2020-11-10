@@ -16,7 +16,7 @@
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
     <div class="taxonomy-tree-picker">
-      <div>
+      <div class="taxonomy-tree-picker-left">
         <form wicket:id="form">
           <div class="section-search-input">
             <input type="text" wicket:id="searchBox" />
@@ -31,8 +31,8 @@
       <div class="taxonomy-container" wicket:id="container">
         <div class="taxonomy-details clearfix" wicket:id="details"/>
         <div class="taxonomy-selected">
-          <h3>
-            <span wicket:id="selected-categories-label">Selected Categories</span>
+          <h3 wicket:id="selected-categories-label">
+            Selected Categories
           </h3>
           <span class="taxonomy-canon" wicket:id="canon">No canonical category selected</span>
           <ul>
