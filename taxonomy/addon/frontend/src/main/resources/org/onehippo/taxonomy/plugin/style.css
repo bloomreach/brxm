@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,23 @@
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+}
+
+.taxonomy-tree-picker .section-search-input {
+  padding: 12px 16px;
+  white-space: nowrap;
+}
+
+.taxonomy-tree-picker .section-search-input > input {
+  height: 36px;
+}
+
+.taxonomy-tree-picker .taxonomy-tree-popup .taxonomy-item-hidden {
+  display: none;
+}
+
+.taxonomy-tree-picker .taxonomy-tree-popup .taxonomy-item-disabled .hippo-tree-node-link {
+  color: rgba(0, 0, 0, .38);
 }
 
 .taxonomy-tree-popup {
