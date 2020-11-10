@@ -25,6 +25,7 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.DocumentState;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.DocumentStateUtils;
@@ -94,14 +95,15 @@ final class XPageContextFactory {
             return xPageContext;
         }
 
+        final boolean pageIsUnlocked = StringUtils.isBlank(xPageContext.getLockedBy());
         if (hints.containsKey("publishBranch")) {
-            xPageContext.setPublishable(TRUE.equals(hints.get("publishBranch")));
+            xPageContext.setPublishable(TRUE.equals(hints.get("publishBranch")) && pageIsUnlocked);
         } else if (hints.containsKey("requestPublication")) {
             xPageContext.setRequestPublication(TRUE.equals(hints.get("requestPublication")));
         }
 
         if (hints.containsKey("depublishBranch")) {
-            xPageContext.setUnpublishable(TRUE.equals(hints.get("depublishBranch")));
+            xPageContext.setUnpublishable(TRUE.equals(hints.get("depublishBranch")) && pageIsUnlocked);
         } else if (hints.containsKey("requestDepublication")) {
             xPageContext.setRequestDepublication(TRUE.equals(hints.get("requestDepublication")));
         }
