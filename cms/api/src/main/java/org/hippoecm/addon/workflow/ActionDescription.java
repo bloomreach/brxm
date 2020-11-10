@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -115,7 +115,13 @@ public abstract class ActionDescription extends Panel implements IWorkflowInvoke
             promise = false;
 
             final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
+            if (target == null) {
+                return;
+            }
+
+            if (result == null || result.equals("null")) {
+                target.appendJavaScript("Hippo.Workflow.resolve();");
+            } else {
                 target.appendJavaScript(String.format("Hippo.Workflow.resolve('%s');", result));
             }
         }
