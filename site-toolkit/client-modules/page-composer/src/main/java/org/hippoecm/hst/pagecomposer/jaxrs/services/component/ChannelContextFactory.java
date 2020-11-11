@@ -27,12 +27,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
-import org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.hst.Channel;
@@ -84,6 +83,9 @@ final class ChannelContextFactory implements ComponentManagerAware {
 
     private Map<String, String> getXPageTemplateQueries(final String channelId, final String contentRootPath,
                                                         final Session session) throws RepositoryException {
+        // channelId can be for -preview or for a branch, but the content folder node is always for the live master,
+        // hence take channelId before the '-'
+        final String masterLiveChannelId = StringUtils.substringBefore(channelId, "-");
         final Node contentRoot = session.getNode(contentRootPath);
         final NodeIterator nodes = contentRoot.getNodes();
         while (nodes.hasNext()) {
@@ -94,7 +96,7 @@ final class ChannelContextFactory implements ComponentManagerAware {
 
             final Property channelIdProperty = JcrUtils.getPropertyIfExists(child,
                     HippoStdNodeType.HIPPOSTD_CHANNEL_ID);
-            if (channelIdProperty == null || !channelId.equals(channelIdProperty.getString())) {
+            if (channelIdProperty == null || !masterLiveChannelId.equals(channelIdProperty.getString())) {
                 continue;
             }
 
