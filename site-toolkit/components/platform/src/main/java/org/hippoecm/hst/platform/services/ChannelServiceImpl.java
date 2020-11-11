@@ -27,8 +27,6 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.jcr.RepositoryException;
@@ -50,13 +48,15 @@ import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurat
 import org.hippoecm.hst.platform.configuration.hosting.PageModelApiMount;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
-import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
 import org.onehippo.cms7.services.hst.Channel;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.PREFER_RENDER_BRANCH_ID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
+import static org.onehippo.cms7.services.context.HippoWebappContext.CMS_OR_PLATFORM;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 /**
@@ -243,12 +243,25 @@ public class ChannelServiceImpl implements ChannelService {
     public Map<String, XPageLayout> getXPageLayouts(final String channelId) {
 
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
+
+            HippoWebappContext context = HippoWebappContextRegistry.get().getContext(hstModel.getVirtualHosts().getContextPath());
+
+            if (context == null) {
+                continue;
+            }
+            if (CMS_OR_PLATFORM.contains(context.getType())) {
+                continue;
+            }
+
             final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
 
             // just find the first Mount which have a matching channel id, and create the XPageLayout from that
             // channel (it doesn't matter through which hostgroup the channel is found
 
+            // note that 'channelId' can be for a branch as well!
+
             final Optional<Map<String, HstComponentConfiguration>> xPageLayoutComponents = virtualHosts.getHostGroupNames().stream()
+                    .filter(hostgroupName -> virtualHosts.getChannelById(hostgroupName, channelId) != null)
                     .flatMap(hostgroupName -> virtualHosts.getMountsByHostGroup(hostgroupName).stream()).collect(Collectors.toList())
                     .stream()
                     .filter(mount -> mount.getChannel() != null && channelId.equals(mount.getChannel().getId()))
