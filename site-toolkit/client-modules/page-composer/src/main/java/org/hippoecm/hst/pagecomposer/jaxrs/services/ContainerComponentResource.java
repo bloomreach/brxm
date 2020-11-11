@@ -37,7 +37,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
+import static org.hippoecm.hst.platform.utils.UUIDUtils.isValidUUID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 @Path("/hst:containercomponent/")

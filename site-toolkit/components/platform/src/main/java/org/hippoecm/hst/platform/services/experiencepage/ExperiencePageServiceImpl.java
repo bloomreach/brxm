@@ -35,6 +35,9 @@ import org.hippoecm.hst.configuration.experiencepage.ExperiencePageService;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeImpl;
 import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.platform.configuration.components.HstComponentsConfigurationService;
+import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.platform.utils.UUIDUtils;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,13 +75,13 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
             // Note that the 'hstPage' node can be a frozen node from version history for Experience Pages!!
-            final HstNodeImpl hstNode = getHstNode(hstPage);
+            final HstNodeImpl hstPageNode = getHstNode(hstPage);
 
-            final String pageref = hstNode.getValueProvider().getString(XPAGE_PROPERTY_PAGEREF);
+            final String pageref = hstPageNode.getValueProvider().getString(XPAGE_PROPERTY_PAGEREF);
 
             if (StringUtils.isBlank(pageref)) {
                 throw new ExperiencePageLoadingException(String.format("Cannot load XPage since '%s' misses property value " +
-                        "for '%s'", hstNode.getValueProvider().getPath(), XPAGE_PROPERTY_PAGEREF));
+                        "for '%s'", hstPageNode.getValueProvider().getPath(), XPAGE_PROPERTY_PAGEREF));
             }
 
             final HstComponentsConfigurationService componentsConfiguration = (HstComponentsConfigurationService) hstSite.getComponentsConfiguration();
@@ -87,41 +90,52 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
 
             if (xPageLayout == null) {
                 throw new ExperiencePageLoadingException(String.format("Cannot load XPage '%s' because XPage " +
-                                "'%s' not found below at '%s'", hstNode.getValueProvider().getPath(),
+                                "'%s' not found below at '%s'", hstPageNode.getValueProvider().getPath(),
                         pageref, hstSite.getConfigurationPath() + "/" + NODENAME_HST_PAGES));
             }
 
-            final HstComponentConfigurationService copy = xPageLayout.copy(hstNode.getValueProvider().getIdentifier(),
-                    hstNode.getValueProvider().getPath(), false);
+            final HstComponentConfigurationService copy = xPageLayout.copy(hstPageNode.getValueProvider().getIdentifier(),
+                    hstPageNode.getValueProvider().getPath(), false);
 
 
             // the root configuration prefix is *JUST* the path to the hstPage itself (hstPage is typically a
             // node of type hst:component below a document variant
-            final String rootConfigurationPrefix = hstNode.getValueProvider().getPath();
+            final String rootConfigurationPrefix = hstPageNode.getValueProvider().getPath();
 
 
-            final Map<String, HstNode> documentContainersNodes = hstNode.getChildren();
+            final Map<String, HstNode> xPageDocChildNodes = hstPageNode.getChildren();
 
             // get the hst containers of an XPage below a document variant in isolation!
             // the 'keys' are the node names of 'containers' below the XPage document variant which MAP to the
             // hippo:identifier in the hst:containercomponent in the XPage hst configuration!
-            //final Map<String, HstComponentConfigurationService> containerConfigurations = containers.entrySet().stream()
+            // final Map<String, HstComponentConfigurationService> containerConfigurations = containers.entrySet().stream()
+            //
+            // since there *could* be an HST container below hst:xpage which is only present in the XPage Doc and has been
+            // added explicitly, we assume that these HST containers never has a nodename which is an identifier, hence
+            // we also validate that the nodename is an identifier: if it isn't, then it will be added to the XPage
+            // component configuration later below
 
-            final Map<String, HstComponentConfigurationService> documentContainers = documentContainersNodes.entrySet().stream()
+            final Map<String, HstComponentConfigurationService> documentXPageLayoutContainers = xPageDocChildNodes.entrySet().stream()
                     .filter(entry -> {
-                        final boolean container = NODETYPE_HST_CONTAINERCOMPONENT.equals(entry.getValue().getNodeTypeName());
-                        if (!container) {
-                            log.info("Skip Node : only container node types allowed below hst:xpage document but found node of type " +
-                                    "'{}' for '{}'", entry.getValue().getNodeTypeName(), entry.getValue().getValueProvider().getPath());
+                        final boolean isContainer = NODETYPE_HST_CONTAINERCOMPONENT.equals(entry.getValue().getNodeTypeName());
+                        if (!isContainer) {
+                            // Only loading now containers which are for an XPage Layout container
+                            return false;
                         }
-                        return container;
+                        String nodeName = entry.getKey();
+                        if (UUIDUtils.isValidUUID(nodeName)) {
+                            return true;
+                        }
+                        // not a container for an XPage Layout container since those have a nodename which matched a UUID
+                        // since must match hippo:identifier property from XPage Layout container
+                       return false;
                     })
                     .collect(Collectors.toMap(entry -> entry.getKey(), entry ->
                             new HstComponentConfigurationService(entry.getValue(), null, ROOT_EXPERIENCE_PAGES_NAME, Collections.emptyMap(), rootConfigurationPrefix)));
 
 
             // mark the container items as experience page components
-            documentContainers.values().forEach(config -> config.flattened().forEach(c ->
+            documentXPageLayoutContainers.values().forEach(config -> config.flattened().forEach(c ->
                     ((HstComponentConfigurationService) c).setExperiencePageComponent(true)));
 
             // into the 'copy' of the xpage, now glue the 'containerConfigurations' from the XPage document variant:
@@ -161,13 +175,14 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                 if (hippoIdentifier == null) {
                     // check whether the page layout container was coming from, say, abstractpages or from an
                     // Experience Page
-                    log.warn("Experience Page Container component should have property '{}' but is missing. Remove " +
-                            "container from request time XPage configuration", pageLayoutContainer.getCanonicalStoredLocation());
+                    log.warn("Experience Page Container component '{}' should have property '{}' but is missing. Remove " +
+                            "container from request time XPage configuration", pageLayoutContainer.getCanonicalStoredLocation(),
+                            HippoNodeType.HIPPO_IDENTIFIER);
                     ((HstComponentConfigurationService) pageLayoutContainer.getParent()).removeChild(pageLayoutContainer);
                 }
 
 
-                final HstComponentConfigurationService documentContainer = documentContainers.get(hippoIdentifier);
+                final HstComponentConfigurationService documentContainer = documentXPageLayoutContainers.get(hippoIdentifier);
                 if (documentContainer == null) {
                     log.debug("XPage Document container for component '{}' does not exist, use the container " +
                             "from the HST Page layout config so items can be added via CM still", pageLayoutContainer.getCanonicalStoredLocation());
@@ -189,14 +204,69 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
             }
 
             if (log.isInfoEnabled()) {
-                mergedDocumentContainers.forEach(hippoIdentifier -> documentContainers.remove(hippoIdentifier));
+                mergedDocumentContainers.forEach(hippoIdentifier -> documentXPageLayoutContainers.remove(hippoIdentifier));
 
-                // any left documentContainers are container that are not present (any more) in the XPAge Layout. Log an
+                // any left documentContainers are container that are not present (any more) in the XPage Layout. Log an
                 // info message about these
-                documentContainers.values().forEach(config -> log.info("Document XPage contains container '{}' which " +
+                documentXPageLayoutContainers.values().forEach(config -> log.info("Document XPage contains container '{}' which " +
                                 "is not represented by any hippo:identifier in XPage Layout '{}' and will as a result be ignored",
                         config.getCanonicalStoredLocation(), xPageLayout.getCanonicalStoredLocation()));
             }
+
+
+
+            // now merge all the child nodes from the XPage document its hst:xpage which are not the containers from the
+            // XPage layout but the static components or containers for the XPage Doc explicitly
+            // --- LOAD --- (and MERGE) ALL OTHER COMPONENTS FROM XPAGE DOC
+            final Map<String, HstNode> otherComponents = xPageDocChildNodes.entrySet().stream()
+                    .filter(entry -> {
+                        final boolean isContainer = NODETYPE_HST_CONTAINERCOMPONENT.equals(entry.getValue().getNodeTypeName());
+                        if (!isContainer) {
+                            // Only loading now containers which are for an XPage Layout container
+                            return true;
+                        }
+                        String nodeName = entry.getKey();
+                        if (UUIDUtils.isValidUUID(nodeName)) {
+                            // this is a container for an XPage Layout container and already processed earlier
+                            return false;
+                        }
+                        return true;
+                    }).collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
+
+            for (Map.Entry<String, HstNode> entry : otherComponents.entrySet()) {
+                // do not include the parent 'copy' yet since this can incorrectly result in that the xpageDocComponent
+                // is considered to be a child of the XPageLayout storage which is never the case: in copy.addXPageDocChild
+                // we do set the parent afterward to 'copy' which admittedly a bit tricky.
+                final HstComponentConfigurationService xpageDocComponent = new HstComponentConfigurationService(entry.getValue(),
+                        null, ROOT_EXPERIENCE_PAGES_NAME, Collections.emptyMap(), rootConfigurationPrefix);
+
+                List<HstComponentConfiguration> canonicalComponents = xpageDocComponent.flattened().collect(Collectors.toList());
+
+                componentsConfiguration.populateComponentReferences(canonicalComponents, websiteClassLoader);
+                componentsConfiguration.enhanceComponentTree(canonicalComponents, false);
+
+                // mark the items stored below the xpage document as experience page component : note that due to
+                // referencing this does not have to hold for every component
+                xpageDocComponent.flattened()
+                        .filter(c -> c.getCanonicalStoredLocation().startsWith(hstPageNode.getValueProvider().getCanonicalPath()))
+                        .forEach(c -> ((HstComponentConfigurationService) c).setExperiencePageComponent(true));
+
+                final HstComponentConfiguration childByName = copy.getChildByName(entry.getKey());
+                if (childByName == null) {
+                    // no merging needed, the Component is not represented at all in the XPage Layout
+                    copy.addXPageDocChild(xpageDocComponent);
+                } else {
+                    // finegrained merging where the same properties FROM the hst configuration have PRECEDENCE
+                    // over the same properies of the XPage Document: For example if 'header' component is present
+                    // from the hst config but also below on XPage doc, then for example the value
+                    // hst:parameternames is used from the hst config, even if XPage document its 'header' defines
+                    // its own hst:parameternames : in practice, this finegrained merging is never used any more any
+                    // way and this is in line with CMS-14104.
+                    copy.merge(xpageDocComponent);
+                }
+            }
+            // --- END --- LOAD (and MERGE) ALL OTHER COMPONENTS FROM XPAGE DOC
+
 
             // reset all the reference names to get reference names stable for this specific XPage document (so next
             // request has same stable reference names (namespaces)
@@ -216,6 +286,12 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
             copy.getMountVariants().addAll(copy.getVariants());
 
             return copy;
+        } catch (ModelLoadingException e) {
+            String msg = String.format("Exception trying to load Experience Page for '%s' : %s", hstPage, e.getMessage());
+            if (log.isDebugEnabled()) {
+                log.debug(msg, e);
+            }
+            throw new ExperiencePageLoadingException(msg);
         } finally {
             Thread.currentThread().setContextClassLoader(currentClassLoader);
         }
