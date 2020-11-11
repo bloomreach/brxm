@@ -4,4 +4,5 @@ definitions:
       jcr:primaryType: hst:pages
       /homepage:
         jcr:primaryType: hst:component
+        hst:referencename: c1
         hst:referencecomponent: hst:abstractpages/basepage
