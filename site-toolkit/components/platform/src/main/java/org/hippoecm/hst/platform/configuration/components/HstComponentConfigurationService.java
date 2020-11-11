@@ -1008,8 +1008,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.canonicalIdentifier = child.canonicalIdentifier;
         copy.componentFilterTag = child.componentFilterTag;
         copy.inherited = child.inherited;
-        // a copy is always shared
-        copy.shared = true;
+        // a copy is always shared unless the child IS an XPage Document Component: in that case it is never shared
+        if (child.isExperiencePageComponent()) {
+            copy.shared = false;
+        } else {
+            copy.shared = true;
+        }
         copy.standalone = child.standalone;
         copy.async = child.async;
         copy.asyncMode = child.asyncMode;
@@ -1028,6 +1032,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.markedDeleted = child.markedDeleted;
         copy.fieldGroups = child.fieldGroups;
         copy.hstDynamicComponentParameters = child.hstDynamicComponentParameters;
+        copy.xpageLayoutComponent = child.xpageLayoutComponent;
+        copy.experiencePageComponent = child.experiencePageComponent;
 
         if (type != Type.CONTAINER_COMPONENT || includeContainerItems) {
             for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
@@ -1314,7 +1320,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private boolean referencesPopulated = false;
 
     protected void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations) {
-        if (referencesPopulated) {
+        if (referencesPopulated || rootComponentConfigurations == null) {
             return;
         }
         referencesPopulated = true;
@@ -1621,12 +1627,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             mergeResidualDynamicParameters(childToMerge.hstDynamicComponentParameters, this.hstDynamicComponentParameters);
         }
 
-        // debatable however not really relevant whether when fine grained merged the component is shared or not, since
-        // merging is not allowed for container and container items any way and for this the marker 'shared' is the most
-        // relevant
-        this.shared = childToMerge.shared;
-
-        // inherited flag not needed to merge
+        // Note we do NOT set this.shared = childToMerge.shared  : For XPages namely, an HstComponent can defined on the
+        // XPage doc as well as on, say, the inherited abstract page: in that case, the abstract inherited page has
+        // precedence
 
         if (!childToMerge.parameters.isEmpty()) {
             // as we already have parameters, add only the once we do not yet have
@@ -1920,6 +1923,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         componentConfigurations = xPageDocumentContainer.componentConfigurations;
         childConfByName = xPageDocumentContainer.childConfByName;
 
+        // set the parent of the xPageDocumentContainer to the parent of the XPage Layout container such that
+        // if you request the getParent#getParent on a container item, you get the parent of the XPage Layout container
+        // since the parent of a container item will give the container of the XPage Document
+        xPageDocumentContainer.parent = parent;
     }
 
 
@@ -1944,6 +1951,26 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         orderedListConfigs = Collections.emptyList();
         componentConfigurations = Collections.emptyMap();
         childConfByName = Collections.emptyMap();
+    }
+
+
+    public void addXPageDocChild(final HstComponentConfigurationService child) {
+        child.parent = this;
+        // xpage doc never contains 'xpageLayoutComponent' : to be sure, set it explicitly to false
+        child.xpageLayoutComponent = false;
+        componentConfigurations.put(child.getId(), child);
+        orderedListConfigs.add(child);
+        childConfByName.put(child.getName(), child);
+    }
+
+
+    public void merge(final HstComponentConfigurationService xpageDocComponent) {
+        HstComponentConfigurationService component = (HstComponentConfigurationService)getChildByName(xpageDocComponent.getName());
+        if (component ==null) {
+            throw new ExperiencePageLoadingException(String.format("Cannot merge XPage Doc component '%s' since does not exist for" +
+                    "'%s'", xpageDocComponent.getName(), this.getCanonicalStoredLocation()));
+        }
+        component.combine(xpageDocComponent, null);
     }
 
     @Override

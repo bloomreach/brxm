@@ -211,7 +211,10 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
                         experiencePage = true;
                         return;
                     }
-                } catch (RepositoryException e) {
+                } catch (Exception e) {
+                    if (e instanceof ExperiencePageLoadingException) {
+                        throw (ExperiencePageLoadingException)e;
+                    }
                     throw new ExperiencePageLoadingException("Failed to load HstPage" , e);
                 }
             }
