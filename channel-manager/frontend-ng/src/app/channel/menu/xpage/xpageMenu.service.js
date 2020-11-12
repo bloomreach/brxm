@@ -105,7 +105,7 @@ export default class XPageMenuService extends MenuService {
         'request-schedule-publish'),
     });
 
-    this._addEditorAwareWorkflowAction('unpublish', id => this.DocumentWorkflowService.unpublish(id), {
+    this._addWorkflowAction('unpublish', id => this.DocumentWorkflowService.unpublish(id), {
       iconName: 'mdi-minus-circle',
     });
 
@@ -124,7 +124,7 @@ export default class XPageMenuService extends MenuService {
       { isEnabled: () => this._isEnabled('request-schedule-unpublish') && !this._isEditingCurrentPage() },
     );
 
-    this._addEditorAwareWorkflowAction('publish', id => this.DocumentWorkflowService.publish(id), {
+    this._addWorkflowAction('publish', id => this.DocumentWorkflowService.publish(id), {
       iconName: 'mdi-check-circle',
     });
 
@@ -159,40 +159,32 @@ export default class XPageMenuService extends MenuService {
     });
   }
 
-  _addEditorAwareWorkflowAction(id, onClick, config) {
-    this._addWorkflowAction(id, async (documentId) => {
-      try {
-        await this.EditComponentService.stopEditing();
-      } catch (error) {
-        return 'NO-RELOAD';
-      }
-
-      if (!this.EditContentService.isEditing(documentId)) {
-        return onClick(documentId);
-      }
-
-      try {
-        await this.EditContentService.ensureEditorIsPristine();
-        await onClick(documentId);
-        return await this.EditContentService.reloadEditor();
-      } catch (error) {
-        if (error === 'CANCELLED') {
-          return 'NO-RELOAD';
-        }
-
-        throw error;
-      }
-    }, config);
-  }
-
   async _invokeWorkflow(onClick, translationKey) {
     try {
-      const result = await onClick(this._getDocumentId());
-      if (result !== 'NO-RELOAD') {
-        this.HippoIframeService.reload();
+      await this.EditComponentService.stopEditing();
+    } catch (error) {
+      return;
+    }
+
+    const documentId = this._getDocumentId();
+    const isEditing = this.EditContentService.isEditing(documentId);
+
+    try {
+      if (isEditing) {
+        await this.EditContentService.ensureEditorIsPristine();
       }
+
+      await onClick(documentId);
+
+      if (isEditing) {
+        await this.EditContentService.reloadEditor();
+      }
+
+      this.HippoIframeService.reload();
     } catch (message) {
-      this._failure(translationKey, message);
+      if (message !== 'CANCELLED') {
+        this._failure(translationKey, message);
+      }
     }
   }
 
