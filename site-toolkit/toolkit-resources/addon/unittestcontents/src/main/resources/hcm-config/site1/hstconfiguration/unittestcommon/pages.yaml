@@ -4,42 +4,51 @@ definitions:
       jcr:primaryType: hst:pages
       /homepage:
         jcr:primaryType: hst:component
+        hst:referencename: c1
         hst:referencecomponent: hst:abstractpages/basepage
       /pagenotfound:
         jcr:primaryType: hst:component
+        hst:referencename: c2
         hst:referencecomponent: hst:abstractpages/basepage
       /standardoverview:
         jcr:primaryType: hst:component
+        hst:referencename: c3
         hst:referencecomponent: hst:abstractpages/basepage
         /body:
           jcr:primaryType: hst:component
           hst:referencecomponent: hst:components/overview
       /standarddetail:
         jcr:primaryType: hst:component
+        hst:referencename: c4
         hst:referencecomponent: hst:abstractpages/basepage
         /body:
           jcr:primaryType: hst:component
           hst:referencecomponent: hst:components/detail
       /newsoverview:
         jcr:primaryType: hst:component
+        hst:referencename: c5
         hst:referencecomponent: hst:pages/standardoverview
       /productsview:
         jcr:primaryType: hst:component
+        hst:referencename: c6
         hst:referencecomponent: hst:pages/standardoverview
       /contactpage:
         jcr:primaryType: hst:component
+        hst:referencename: c7
         hst:referencecomponent: hst:abstractpages/basepage
         /body:
           jcr:primaryType: hst:component
           hst:referencecomponent: hst:components/contactform
       /searchpage:
         jcr:primaryType: hst:component
+        hst:referencename: c8
         hst:referencecomponent: hst:abstractpages/basepage
         /body:
           jcr:primaryType: hst:component
           hst:referencecomponent: hst:components/simplesearch
       /uniquelinkspage:
         jcr:primaryType: hst:component
+        hst:referencename: c9
         hst:referencecomponent: hst:abstractpages/basepage
         /body:
           jcr:primaryType: hst:component
@@ -48,24 +57,28 @@ definitions:
           hst:template: uniquelinks
       /contactspringpage:
         jcr:primaryType: hst:component
+        hst:referencename: c10
         hst:referencecomponent: hst:abstractpages/basepage
         /body:
           jcr:primaryType: hst:component
           hst:referencecomponent: hst:components/contactspringform
       /contactdispatchpage:
         jcr:primaryType: hst:component
+        hst:referencename: c11
         hst:referencecomponent: hst:abstractpages/basepage
         /body:
           jcr:primaryType: hst:component
           hst:referencecomponent: hst:components/contactdispatchform
       /contactspringmvcpage:
         jcr:primaryType: hst:component
+        hst:referencename: c12
         hst:referencecomponent: hst:abstractpages/basepage
         /body:
           jcr:primaryType: hst:component
           hst:referencecomponent: hst:components/contactspringmvcform
       /thankyou:
         jcr:primaryType: hst:component
+        hst:referencename: c13
         hst:referencecomponent: hst:abstractpages/basepage
         /body:
           jcr:primaryType: hst:component
