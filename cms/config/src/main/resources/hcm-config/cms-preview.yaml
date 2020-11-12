@@ -24,4 +24,5 @@ definitions:
         wicket.model: ${model.compareTo}
         workflow.categories: [default, translation, committype]
         workflow.menuorder: [publication, request, document, miscellaneous]
+        workflow.xpage.categories: [default, committype]
         workflow.version.categories: versioning
