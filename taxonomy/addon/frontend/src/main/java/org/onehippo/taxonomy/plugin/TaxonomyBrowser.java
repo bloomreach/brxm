@@ -388,23 +388,30 @@ public class TaxonomyBrowser extends Panel {
                 .addKeywords(keywords)
                 .build();
 
-        root.getChildren().forEach(node -> search(trie, node));
+        root.getChildren().forEach(node -> search(trie, node, false));
     }
 
-    private void search(final Trie trie, final CategoryNode node) {
+    private void search(final Trie trie, final CategoryNode node, boolean ancestorHasMatch) {
         final Category category = node.getCategory();
         final CategoryInfo info = category.getInfo(treeModel.getLocale());
         if (containsMatch(trie, info)) {
             categoryStates.put(category.getPath(), CategoryState.VISIBLE);
             tree.expandAllToNode(node);
+            tree.getTreeState().collapseNode(node);
+
             category.getAncestors().forEach(ancestor -> {
                 if (!categoryStates.containsKey(ancestor.getPath())) {
                     categoryStates.put(ancestor.getPath(), CategoryState.DISABLED);
                 }
             });
+            ancestorHasMatch = true;
+        } else if (ancestorHasMatch) {
+            categoryStates.put(category.getPath(), CategoryState.DISABLED);
         }
 
-        node.getChildren().forEach(childNode -> search(trie, childNode));
+        for (CategoryNode childNode : node.getChildren()) {
+            search(trie, childNode, ancestorHasMatch);
+        }
     }
 
     private boolean containsMatch(final Trie trie, final CategoryInfo info) {
@@ -412,11 +419,11 @@ public class TaxonomyBrowser extends Panel {
             return true;
         }
 
-        if (trie.containsMatch(info.getDescription())) {
+        if (trie.containsMatch(String.join(" ", info.getSynonyms()))) {
             return true;
         }
 
-        if (trie.containsMatch(String.join(" ", info.getSynonyms()))) {
+        if (trie.containsMatch(info.getDescription())) {
             return true;
         }
 
