@@ -63,6 +63,7 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageU
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getObtainEditableInstanceWorkflow;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getInternalWorkflowSession;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getWorkspaceNode;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.updateTimestamp;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.validateTimestamp;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.createComponentItem;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.findNewName;
@@ -166,14 +167,6 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
 
         return handleAction(createContainerItem);
     }
-
-    private Calendar updateTimestamp(final Node containerNode) throws RepositoryException {
-        // update last modified for optimistic locking
-        final Calendar updatedTimestamp = Calendar.getInstance();
-        containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, updatedTimestamp);
-        return updatedTimestamp;
-    }
-
 
     @PUT
     @Path("/")
