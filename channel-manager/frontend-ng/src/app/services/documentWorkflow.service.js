@@ -25,6 +25,10 @@ class DocumentWorkflowService {
     return this.$window.parent.Hippo.Workflow.invoke(documentId, category, action);
   }
 
+  rename(documentId) {
+    return this._invoke(documentId, 'document', 'rename');
+  }
+
   copy(documentId) {
     return this._invoke(documentId, 'document', 'copy');
   }
