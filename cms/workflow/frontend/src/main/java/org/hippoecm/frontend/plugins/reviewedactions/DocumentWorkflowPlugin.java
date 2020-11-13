@@ -200,7 +200,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
                     @Override
                     public void invokeWorkflow() throws Exception {
-                        copyAction.invokeWorkflow();
+                        copyAction.invokeWorkflowNoReject();
                     }
 
                     @Override
@@ -268,7 +268,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                         getPluginContext(), getPluginConfig()) {
                     @Override
                     public void invokeWorkflow() throws Exception {
-                        moveAction.invokeWorkflow();
+                        moveAction.invokeWorkflowNoReject();
                     }
 
                     @Override
