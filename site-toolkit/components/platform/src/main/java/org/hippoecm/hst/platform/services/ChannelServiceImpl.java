@@ -38,6 +38,7 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -272,15 +273,29 @@ public class ChannelServiceImpl implements ChannelService {
                 log.info("Cannot find any XPageLayouts for channel '{}'", channelId);
                 continue;
             } else {
-                return xPageLayoutComponents.get().values().stream()
-                        .map(componentConfiguration -> new XPageLayout(componentConfiguration.getId(),
-                                componentConfiguration.getLabel(),
-                                ((HstComponentConfigurationService)componentConfiguration).getJcrTemplateNode()))
-                        .filter(xPageLayout -> xPageLayout.getJcrTemplateNode() != null)
-                        .collect(Collectors.toMap(xpageLayout -> xpageLayout.getKey(), xpageLayout -> xpageLayout));
+                return getXPageLayouts(xPageLayoutComponents.get());
             }
         }
 
         return Collections.emptyMap();
+    }
+
+    @Override
+    public Map<String, XPageLayout> getXPageLayouts(final Mount mount) {
+        final HstSite hstSite = mount.getHstSite();
+        if (hstSite == null) {
+            return Collections.emptyMap();
+        }
+        final Map<String, HstComponentConfiguration> xPageLayoutComponents = hstSite.getComponentsConfiguration().getXPages();
+        return getXPageLayouts(xPageLayoutComponents);
+    }
+
+    private Map<String, XPageLayout> getXPageLayouts(final Map<String, HstComponentConfiguration> xPageLayoutComponents) {
+        return xPageLayoutComponents.values().stream()
+                .map(componentConfiguration -> new XPageLayout(componentConfiguration.getId(),
+                        componentConfiguration.getLabel(),
+                        ((HstComponentConfigurationService)componentConfiguration).getJcrTemplateNode()))
+                .filter(xPageLayout -> xPageLayout.getJcrTemplateNode() != null)
+                .collect(Collectors.toMap(xpageLayout -> xpageLayout.getKey(), xpageLayout -> xpageLayout));
     }
 }
