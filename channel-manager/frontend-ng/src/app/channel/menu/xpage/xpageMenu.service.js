@@ -168,17 +168,19 @@ export default class XPageMenuService extends MenuService {
     this._addWorkflowAction(
       'rename',
       id => this.DocumentWorkflowService.rename(id).then(() => this._navigateToDocument(id)),
-    );
-
-    this._addWorkflowAction(
-      'move',
-      id => this.DocumentWorkflowService.move(id).then(documentId => this._navigateToDocument(documentId)),
+      { iconName: 'mdi-form-textbox' },
     );
 
     this._addWorkflowAction(
       'copy',
       id => this.DocumentWorkflowService.copy(id).then(documentId => this._navigateToDocument(documentId)),
       { iconName: 'mdi-content-copy' },
+    );
+
+    this._addWorkflowAction(
+      'move',
+      id => this.DocumentWorkflowService.move(id).then(documentId => this._navigateToDocument(documentId)),
+      { iconName: 'mdi-file-move-outline' },
     );
 
     this._addWorkflowAction(
