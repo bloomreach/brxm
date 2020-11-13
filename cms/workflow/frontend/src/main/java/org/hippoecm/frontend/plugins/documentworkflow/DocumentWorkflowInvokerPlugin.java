@@ -69,6 +69,7 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
             .put("SCHED_DEPUB", "depublishBranch")
             .put("REQ_DEPUB", "requestDepublication")
             .put("REQ_SCHED_DEPUB", "requestDepublication")
+            .put("rename", "rename")
             .put("copy", "copy")
             .put("move", "move")
             .put("delete", "delete")
