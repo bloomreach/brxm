@@ -76,6 +76,7 @@ final class XPageContextFactory {
                 .setXPageState(documentState.name().toLowerCase())
                 .setScheduledRequest(scheduledRequest)
                 .setWorkflowRequests(workflowRequests)
+                .setRenameAllowed(TRUE.equals(hints.get("rename")))
                 .setCopyAllowed(TRUE.equals(hints.get("copy")))
                 .setMoveAllowed(TRUE.equals(hints.get("move")))
                 .setDeleteAllowed(TRUE.equals(hints.get("delete")));
