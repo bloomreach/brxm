@@ -266,6 +266,15 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         }
     }
 
+    public void invokeWorkflowNoReject() throws Exception {
+        try {
+            execute();
+            resolve(null);
+        } catch (final Exception e) {
+            throw e;
+        }
+    }
+
     @Override
     protected void onDetach() {
         name.detach();
