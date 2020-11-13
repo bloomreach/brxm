@@ -17,6 +17,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage;
 
 import java.rmi.RemoteException;
+import java.util.Calendar;
 import java.util.Optional;
 
 import javax.jcr.ItemNotFoundException;
@@ -248,22 +249,22 @@ public class XPageUtils {
 
 
     /**
-     * Returns the WORKSPACE container item for {@code identifier}
+     * Returns the WORKSPACE node for {@code identifier}
      *
      * Note that 'pageComposerContextService.getRequestConfigIdentifier()' can return a frozen node : this method returns
      * the 'workspace' version of that node, and if not found, a ItemNotFoundException will be thrown
      */
     static Node getWorkspaceNode(final Session session, final String identifier) throws RepositoryException {
         // note this can be a frozen node
-        final Node containerItem = session.getNodeByIdentifier(identifier);
+        final Node node = session.getNodeByIdentifier(identifier);
 
-        if (containerItem.isNodeType(JcrConstants.NT_FROZENNODE)) {
+        if (node.isNodeType(JcrConstants.NT_FROZENNODE)) {
             // get hold of the workspace container item! Since 'checkoutCorrectBranch' did already do the checkout,
             // and a restore from version history restores the frozen uuid, we can safely get hold of that one
-            final String workspaceUUID = containerItem.getProperty(JcrConstants.JCR_FROZENUUID).getString();
+            final String workspaceUUID = node.getProperty(JcrConstants.JCR_FROZENUUID).getString();
             return session.getNodeByIdentifier(workspaceUUID);
         } else {
-            return containerItem;
+            return node;
         }
     }
 
@@ -315,5 +316,13 @@ public class XPageUtils {
         }
 
         return getXPageUnpublishedVariant(node.getParent());
+    }
+
+
+    public static Calendar updateTimestamp(final Node containerNode) throws RepositoryException {
+        // update last modified for optimistic locking
+        final Calendar updatedTimestamp = Calendar.getInstance();
+        containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, updatedTimestamp);
+        return updatedTimestamp;
     }
 }

@@ -435,6 +435,7 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
             adminSession.save();
 
 
+
             final GenericHttpServletRequestWrapper containerRequest = createContainerRequest("expPage1");
             initContext(pathToExperiencePage, null);
             final ResolvedSiteMapItem resolvedSiteMapItem = resolve(containerRequest);
@@ -452,11 +453,21 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
                     .isEqualTo("/hst:hst/hst:configurations/unittestproject/hst:xpages/xpage1/main/container1");
 
             assertThat(container1.getChildren().size())
-            .as("Execpted that the banner item was removed from the XPage Layout container represented in a " +
+            .as("Expected that the banner item was removed from the XPage Layout container represented in a " +
                     "request based XPage config").isEqualTo(0);
+
+            // assert that the backing XPage Layout *really* had a child below the container1
+            final Map<String, HstComponentConfiguration> xPages = resolvedSiteMapItem.getResolvedMount().getMount().getHstSite().getComponentsConfiguration().getXPages();
+
+            assertThat(xPages.get("xpage1").getChildByName("main").getChildByName("container1").getChildren().size())
+                    .as("The XPage Layout really had 1 container item which is REMOVED in the XPage Doc " +
+                            "config model")
+                    .isEqualTo(1);
+
+
             assertThat(container1.isExperiencePageComponent())
                     .as("Even though config from XPage layout hst config, still expected to be marked as " +
-                            "experiece component")
+                            "experience component")
                     .isTrue();
 
             assertThat(container1.isShared())
@@ -464,6 +475,12 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
                             "the request is that the container is NOT SHARED since a CM webmaster should be able to add " +
                             "a new container item in it")
                     .isFalse();
+
+
+            assertThat(container1.isUnresolvedXpageLayoutContainer()).
+                    as("container1 is unresolved since the XPage Doc does NOT have the 'container equivalent' ")
+                    .isTrue();
+
 
 
             // container should never be marked as inherited because would mean not editable
@@ -477,6 +494,10 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
             assertThat(container2.getCanonicalStoredLocation())
                     .as("Expected container from XPage document")
                     .isEqualTo("/unittestcontent/documents/unittestproject/experiences/expPage1/expPage1/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c7");
+
+            assertThat(container2.isUnresolvedXpageLayoutContainer()).
+                    as("container2 is resolved since the XPage Doc DOES have the 'container equivalent' ")
+                    .isFalse();
 
         } finally {
             adminSession.getNode(pathToExperiencePage).remove();
