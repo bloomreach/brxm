@@ -159,10 +159,16 @@ export default class XPageMenuService extends MenuService {
 
     this._menu.addDivider({
       isVisible: () => this.PageService.hasSomeAction('xpage',
-        'copy',
+        'rename',
         'move',
+        'copy',
         'delete'),
     });
+
+    this._addWorkflowAction(
+      'rename',
+      id => this.DocumentWorkflowService.rename(id).then(() => this._navigateToDocument(id)),
+    );
 
     this._addWorkflowAction(
       'move',

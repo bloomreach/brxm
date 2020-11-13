@@ -35,6 +35,7 @@ public class XPageContext {
     private Boolean unpublishable;
     private Boolean requestPublication;
     private Boolean requestDepublication;
+    private Boolean renameAllowed;
     private Boolean copyAllowed;
     private Boolean moveAllowed;
     private Boolean deleteAllowed;
@@ -140,6 +141,15 @@ public class XPageContext {
 
     public XPageContext setRequestDepublication(final Boolean requestDepublication) {
         this.requestDepublication = requestDepublication;
+        return this;
+    }
+
+    public Boolean isRenameAllowed() {
+        return renameAllowed;
+    }
+
+    public XPageContext setRenameAllowed(final Boolean renameAllowed) {
+        this.renameAllowed = renameAllowed;
         return this;
     }
 
