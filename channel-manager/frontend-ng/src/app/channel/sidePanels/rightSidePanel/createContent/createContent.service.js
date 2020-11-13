@@ -121,7 +121,7 @@ class CreateContentService {
     const siteMapId = this.ChannelService.getSiteMapId();
     this.SiteMapService.load(siteMapId); // reload sitemap (left side panel)
 
-    this.$state.go('hippo-cm.channel.edit-page.content', { documentId });
+    this.EditContentService.startEditing(documentId, 'hippo-cm.channel.edit-page.content');
   }
 
   stop() {

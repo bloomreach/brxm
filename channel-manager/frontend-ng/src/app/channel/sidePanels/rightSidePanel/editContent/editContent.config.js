@@ -21,6 +21,7 @@ function config($stateProvider) {
     name: 'hippo-cm.channel.add-to-project',
     params: {
       documentId: '',
+      nextState: '',
     },
     views: {
       main: {
