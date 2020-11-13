@@ -74,7 +74,9 @@ final class ChannelContextFactory implements ComponentManagerAware {
         return channelContext
                 .setChannel(channel)
                 .setDeletable(channelService.canChannelBeDeleted(channel) && channelService.isMaster(channel))
-                .setXPageLayouts(channelService.getXPageLayouts(channelContext.getChannelId()))
+                // in the context of the page composer, actionContext.getContextService().getEditingMount()
+                // returns the correct (preview) Mount taking branches into account
+                .setXPageLayouts(channelService.getXPageLayouts(actionContext.getContextService().getEditingMount()))
                 .setXPageTemplateQueries(
                         getXPageTemplateQueries(channelContext.getChannelId(), channel.getContentRoot(), session))
                 .setConfigurationLocked(channel.isConfigurationLocked());
