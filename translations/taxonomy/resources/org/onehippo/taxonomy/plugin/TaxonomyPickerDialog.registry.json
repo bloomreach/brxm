@@ -2,16 +2,28 @@
   "bundleType" : "WICKET",
   "keyData" : {
     "category-details-header" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "category-details-synonyms" : {
       "status" : "CLEAN",
       "locales" : null
     },
     "taxonomy-selected-header" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "category-details-name" : {
       "status" : "CLEAN",
@@ -26,8 +38,14 @@
       "locales" : null
     },
     "category-add" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "taxonomy-picker" : {
       "status" : "CLEAN",
@@ -42,8 +60,14 @@
       "locales" : null
     },
     "category-details-no-item-selected" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
