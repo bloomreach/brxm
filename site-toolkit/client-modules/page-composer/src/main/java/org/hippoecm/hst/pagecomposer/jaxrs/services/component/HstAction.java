@@ -46,6 +46,7 @@ public enum HstAction {
     XPAGE_REQUEST_REJECT("reject", HstCategory.XPAGE),
     XPAGE_REQUEST_REJECTED("rejected", HstCategory.XPAGE),
 
+    XPAGE_RENAME("rename", HstCategory.XPAGE),
     XPAGE_COPY("copy", HstCategory.XPAGE),
     XPAGE_MOVE("move", HstCategory.XPAGE),
     XPAGE_DELETE("delete", HstCategory.XPAGE),
