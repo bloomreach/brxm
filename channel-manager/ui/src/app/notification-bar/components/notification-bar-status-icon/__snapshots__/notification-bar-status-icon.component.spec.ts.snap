@@ -2,7 +2,7 @@
 
 exports[`NotificationBarStatusIconComponent if xpage status is EditingSharedContainers should render alert-circle-outline 1`] = `
 <div
-  id="root31"
+  id="root33"
 >
   <mat-icon>
     alert-circle-outline
@@ -12,10 +12,20 @@ exports[`NotificationBarStatusIconComponent if xpage status is EditingSharedCont
 
 exports[`NotificationBarStatusIconComponent if xpage status is Locked should render lock-outline 1`] = `
 <div
-  id="root35"
+  id="root37"
 >
   <mat-icon>
     lock-outline
+  </mat-icon>
+</div>
+`;
+
+exports[`NotificationBarStatusIconComponent if xpage status is NotPartOfProject should render xpage 1`] = `
+<div
+  id="root21"
+>
+  <mat-icon>
+    xpage
   </mat-icon>
 </div>
 `;
@@ -32,7 +42,7 @@ exports[`NotificationBarStatusIconComponent if xpage status is Offline should re
 
 exports[`NotificationBarStatusIconComponent if xpage status is PreviousVersion should render alert-circle-outline 1`] = `
 <div
-  id="root33"
+  id="root35"
 >
   <mat-icon>
     alert-circle-outline
@@ -42,7 +52,7 @@ exports[`NotificationBarStatusIconComponent if xpage status is PreviousVersion s
 
 exports[`NotificationBarStatusIconComponent if xpage status is ProjectInProgress should render minus-circle-outline 1`] = `
 <div
-  id="root21"
+  id="root23"
 >
   <mat-icon>
     minus-circle-outline
@@ -52,7 +62,7 @@ exports[`NotificationBarStatusIconComponent if xpage status is ProjectInProgress
 
 exports[`NotificationBarStatusIconComponent if xpage status is ProjectInReview should render comment-processing-outline 1`] = `
 <div
-  id="root23"
+  id="root25"
 >
   <mat-icon>
     comment-processing-outline
@@ -62,7 +72,7 @@ exports[`NotificationBarStatusIconComponent if xpage status is ProjectInReview s
 
 exports[`NotificationBarStatusIconComponent if xpage status is ProjectPageApproved should render comment-check-outline 1`] = `
 <div
-  id="root25"
+  id="root27"
 >
   <mat-icon>
     comment-check-outline
@@ -72,7 +82,7 @@ exports[`NotificationBarStatusIconComponent if xpage status is ProjectPageApprov
 
 exports[`NotificationBarStatusIconComponent if xpage status is ProjectPageRejected should render comment-remove-outline 1`] = `
 <div
-  id="root27"
+  id="root29"
 >
   <mat-icon>
     comment-remove-outline
@@ -82,7 +92,7 @@ exports[`NotificationBarStatusIconComponent if xpage status is ProjectPageReject
 
 exports[`NotificationBarStatusIconComponent if xpage status is ProjectRunning should render xpage 1`] = `
 <div
-  id="root29"
+  id="root31"
 >
   <mat-icon>
     xpage
