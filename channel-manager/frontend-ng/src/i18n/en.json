@@ -216,6 +216,7 @@
   "NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_REJECTED": "Page '{{pageName}}' for project '{{projectName}}': rejected",
   "NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IS_RUNNING": "Page '{{pageName}}' for project '{{projectName}}': live",
   "NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERS": "Editing shared containers. This may affect other pages.",
+  "NOTIFICATION_BAR_XPAGE_LABEL_NOT_PART_OF_PROJECT": "Page '{{pageName}}': {{status}}, not part of project '{{projectName}}'",
   "NOTIFICATION_DOCUMENT_PUBLISHED": "Published '{{documentName}}'",
   "NOTIFICATION_DOCUMENT_SAVED": "Document saved",
   "NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT": "Document selected for '{{componentName}}'",

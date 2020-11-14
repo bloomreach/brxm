@@ -57,6 +57,7 @@ describe('NotificationBarStatusIconComponent', () => {
     ['ScheduledToTakeOffline', XPageStatus.ScheduledToTakeOffline, 'calendar-clock'],
     ['ScheduledPublicationRequest', XPageStatus.ScheduledPublicationRequest, 'comment-processing-outline'],
     ['ScheduledToTakeOfflineRequest', XPageStatus.ScheduledToTakeOfflineRequest, 'comment-processing-outline'],
+    ['NotPartOfProject', XPageStatus.NotPartOfProject, 'xpage'],
     ['ProjectInProgress', XPageStatus.ProjectInProgress, 'minus-circle-outline'],
     ['ProjectInReview', XPageStatus.ProjectInReview, 'comment-processing-outline'],
     ['ProjectPageApproved', XPageStatus.ProjectPageApproved, 'comment-check-outline'],

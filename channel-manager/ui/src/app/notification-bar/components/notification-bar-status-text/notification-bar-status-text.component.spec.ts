@@ -117,6 +117,13 @@ describe('NotificationBarStatusTextComponent', () => {
       'some page',
       1596811323,
     ), 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTED'],
+    ['NotPartOfProject', new XPageStatusInfo(
+      XPageStatus.NotPartOfProject,
+      DocumentState.Live,
+      'some page',
+      undefined,
+      'project name',
+    ), 'NOTIFICATION_BAR_XPAGE_LABEL_NOT_PART_OF_PROJECT'],
     ['ProjectInProgress', new XPageStatusInfo(
       XPageStatus.ProjectInProgress,
       DocumentState.Live,
