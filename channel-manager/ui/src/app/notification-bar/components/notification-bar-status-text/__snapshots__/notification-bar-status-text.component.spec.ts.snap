@@ -2,7 +2,7 @@
 
 exports[`NotificationBarStatusTextComponent if xpage status is EditingSharedContainers should render NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERS label 1`] = `
 <div
-  id="root31"
+  id="root33"
 >
   
   
@@ -13,11 +13,22 @@ exports[`NotificationBarStatusTextComponent if xpage status is EditingSharedCont
 
 exports[`NotificationBarStatusTextComponent if xpage status is Locked should render NOTIFICATION_BAR_XPAGE_LABEL_LOCKED_BY_USER label 1`] = `
 <div
-  id="root35"
+  id="root37"
 >
   
   
    NOTIFICATION_BAR_XPAGE_LABEL_LOCKED_BY_USERsome pageLIVEundefined
+
+</div>
+`;
+
+exports[`NotificationBarStatusTextComponent if xpage status is NotPartOfProject should render NOTIFICATION_BAR_XPAGE_LABEL_NOT_PART_OF_PROJECT label 1`] = `
+<div
+  id="root21"
+>
+  
+  
+   NOTIFICATION_BAR_XPAGE_LABEL_NOT_PART_OF_PROJECTsome pageLIVEundefined
 
 </div>
 `;
@@ -35,7 +46,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is Offline should re
 
 exports[`NotificationBarStatusTextComponent if xpage status is PreviousVersion should render NOTIFICATION_BAR_XPAGE_LABEL_PREVIOUS_VERSION label 1`] = `
 <div
-  id="root33"
+  id="root35"
 >
   
   
@@ -46,7 +57,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is PreviousVersion s
 
 exports[`NotificationBarStatusTextComponent if xpage status is ProjectInProgress should render NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_PROGRESS label 1`] = `
 <div
-  id="root21"
+  id="root23"
 >
   
   
@@ -57,7 +68,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is ProjectInProgress
 
 exports[`NotificationBarStatusTextComponent if xpage status is ProjectInReview should render NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_REVIEW label 1`] = `
 <div
-  id="root23"
+  id="root25"
 >
   
   
@@ -68,7 +79,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is ProjectInReview s
 
 exports[`NotificationBarStatusTextComponent if xpage status is ProjectPageApproved should render NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_APPROVED label 1`] = `
 <div
-  id="root25"
+  id="root27"
 >
   
   
@@ -79,7 +90,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is ProjectPageApprov
 
 exports[`NotificationBarStatusTextComponent if xpage status is ProjectPageRejected should render NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_REJECTED label 1`] = `
 <div
-  id="root27"
+  id="root29"
 >
   
   
@@ -90,7 +101,7 @@ exports[`NotificationBarStatusTextComponent if xpage status is ProjectPageReject
 
 exports[`NotificationBarStatusTextComponent if xpage status is ProjectRunning should render NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IS_RUNNING label 1`] = `
 <div
-  id="root29"
+  id="root31"
 >
   
   
