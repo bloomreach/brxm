@@ -279,9 +279,11 @@ describe('PageService', () => {
       { xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' } },
       { id: '123', name: 'some project name', state: ProjectState.Running },
       new XPageStatusInfo(
-        XPageStatus.Published,
+        XPageStatus.NotPartOfProject,
         DocumentState.Live,
         'page name',
+        undefined,
+        'some project name',
       ),
     ],
     [
@@ -313,9 +315,11 @@ describe('PageService', () => {
       { xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master'  } },
       { id: '123', name: 'some project name', state: ProjectState.Unapproved },
       new XPageStatusInfo(
-        XPageStatus.Published,
+        XPageStatus.NotPartOfProject,
         DocumentState.Live,
         'page name',
+        undefined,
+        'some project name',
       ),
     ],
     [
@@ -339,9 +343,11 @@ describe('PageService', () => {
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
-        XPageStatus.UnpublishedChanges,
+        XPageStatus.NotPartOfProject,
         DocumentState.Changed,
         'page name',
+        undefined,
+        'some project name',
       ),
     ],
     [
@@ -365,9 +371,11 @@ describe('PageService', () => {
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
-        XPageStatus.UnpublishedChanges,
+        XPageStatus.NotPartOfProject,
         DocumentState.Changed,
         'page name',
+        undefined,
+        'some project name',
       ),
     ],
     [
@@ -391,9 +399,11 @@ describe('PageService', () => {
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
-        XPageStatus.UnpublishedChanges,
+        XPageStatus.NotPartOfProject,
         DocumentState.Changed,
         'page name',
+        undefined,
+        'some project name',
       ),
     ],
     [
@@ -434,9 +444,11 @@ describe('PageService', () => {
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
-        XPageStatus.Published,
+        XPageStatus.NotPartOfProject,
         DocumentState.Live,
         'page name',
+        undefined,
+        'some project name',
       ),
     ],
     [
