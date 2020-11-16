@@ -445,4 +445,10 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     public void setDynamicComponentParameters(List<DynamicParameter> dynamicComponentParameters) {
         this.dynamicComponentParameters = dynamicComponentParameters;
     }
+
+    @Override
+    public boolean isUnresolvedXpageLayoutContainer() {
+        return false;
+    }
+
 }
