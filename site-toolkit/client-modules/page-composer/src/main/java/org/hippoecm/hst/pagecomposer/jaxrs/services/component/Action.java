@@ -23,9 +23,9 @@ public final class Action {
 
     private final String name;
     private final String category;
-    private final Boolean enabled;
+    private final boolean enabled;
 
-    public Action(final String name, final String category, final Boolean enabled) {
+    public Action(final String name, final String category, final boolean enabled) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(category);
         this.name = name;
@@ -41,7 +41,7 @@ public final class Action {
         return category;
     }
 
-    public Boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled;
     }
 
@@ -54,20 +54,4 @@ public final class Action {
                 .toString();
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Action action = (Action) o;
-        return name.equals(action.name) && category.equals(action.category);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, category);
-    }
 }
