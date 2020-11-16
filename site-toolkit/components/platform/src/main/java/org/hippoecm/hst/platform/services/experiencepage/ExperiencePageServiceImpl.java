@@ -20,7 +20,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -213,12 +216,10 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                         config.getCanonicalStoredLocation(), xPageLayout.getCanonicalStoredLocation()));
             }
 
-
-
             // now merge all the child nodes from the XPage document its hst:xpage which are not the containers from the
             // XPage layout but the static components or containers for the XPage Doc explicitly
             // --- LOAD --- (and MERGE) ALL OTHER COMPONENTS FROM XPAGE DOC
-            final Map<String, HstNode> otherComponents = xPageDocChildNodes.entrySet().stream()
+            xPageDocChildNodes.entrySet().stream()
                     .filter(entry -> {
                         final boolean isContainer = NODETYPE_HST_CONTAINERCOMPONENT.equals(entry.getValue().getNodeTypeName());
                         if (!isContainer) {
@@ -231,40 +232,38 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                             return false;
                         }
                         return true;
-                    }).collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
+                    }).forEach(entry -> {
+                        // do not include the parent 'copy' yet since this can incorrectly result in that the xpageDocComponent
+                        // is considered to be a child of the XPageLayout storage which is never the case: in copy.addXPageDocChild
+                        // we do set the parent afterward to 'copy' which admittedly a bit tricky.
+                        final HstComponentConfigurationService xpageDocComponent = new HstComponentConfigurationService(entry.getValue(),
+                                null, ROOT_EXPERIENCE_PAGES_NAME, Collections.emptyMap(), rootConfigurationPrefix);
 
-            for (Map.Entry<String, HstNode> entry : otherComponents.entrySet()) {
-                // do not include the parent 'copy' yet since this can incorrectly result in that the xpageDocComponent
-                // is considered to be a child of the XPageLayout storage which is never the case: in copy.addXPageDocChild
-                // we do set the parent afterward to 'copy' which admittedly a bit tricky.
-                final HstComponentConfigurationService xpageDocComponent = new HstComponentConfigurationService(entry.getValue(),
-                        null, ROOT_EXPERIENCE_PAGES_NAME, Collections.emptyMap(), rootConfigurationPrefix);
+                        List<HstComponentConfiguration> canonicalComponents = xpageDocComponent.flattened().collect(Collectors.toList());
 
-                List<HstComponentConfiguration> canonicalComponents = xpageDocComponent.flattened().collect(Collectors.toList());
+                        componentsConfiguration.populateComponentReferences(canonicalComponents, websiteClassLoader);
+                        componentsConfiguration.enhanceComponentTree(canonicalComponents, false);
 
-                componentsConfiguration.populateComponentReferences(canonicalComponents, websiteClassLoader);
-                componentsConfiguration.enhanceComponentTree(canonicalComponents, false);
+                        // mark the items stored below the xpage document as experience page component : note that due to
+                        // referencing this does not have to hold for every component
+                        xpageDocComponent.flattened()
+                                .filter(c -> c.getCanonicalStoredLocation().startsWith(hstPageNode.getValueProvider().getCanonicalPath()))
+                                .forEach(c -> ((HstComponentConfigurationService) c).setExperiencePageComponent(true));
 
-                // mark the items stored below the xpage document as experience page component : note that due to
-                // referencing this does not have to hold for every component
-                xpageDocComponent.flattened()
-                        .filter(c -> c.getCanonicalStoredLocation().startsWith(hstPageNode.getValueProvider().getCanonicalPath()))
-                        .forEach(c -> ((HstComponentConfigurationService) c).setExperiencePageComponent(true));
-
-                final HstComponentConfiguration childByName = copy.getChildByName(entry.getKey());
-                if (childByName == null) {
-                    // no merging needed, the Component is not represented at all in the XPage Layout
-                    copy.addXPageDocChild(xpageDocComponent);
-                } else {
-                    // finegrained merging where the same properties FROM the hst configuration have PRECEDENCE
-                    // over the same properies of the XPage Document: For example if 'header' component is present
-                    // from the hst config but also below on XPage doc, then for example the value
-                    // hst:parameternames is used from the hst config, even if XPage document its 'header' defines
-                    // its own hst:parameternames : in practice, this finegrained merging is never used any more any
-                    // way and this is in line with CMS-14104.
-                    copy.merge(xpageDocComponent);
-                }
-            }
+                        final HstComponentConfiguration childByName = copy.getChildByName(entry.getKey());
+                        if (childByName == null) {
+                            // no merging needed, the Component is not represented at all in the XPage Layout
+                            copy.addXPageDocChild(xpageDocComponent);
+                        } else {
+                            // finegrained merging where the same properties FROM the hst configuration have PRECEDENCE
+                            // over the same properies of the XPage Document: For example if 'header' component is present
+                            // from the hst config but also below on XPage doc, then for example the value
+                            // hst:parameternames is used from the hst config, even if XPage document its 'header' defines
+                            // its own hst:parameternames : in practice, this finegrained merging is never used any more any
+                            // way and this is in line with CMS-14104.
+                            copy.merge(xpageDocComponent);
+                        }
+            });
             // --- END --- LOAD (and MERGE) ALL OTHER COMPONENTS FROM XPAGE DOC
 
 
