@@ -36,6 +36,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.component.Action;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ActionState;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ActionStateContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ActionStateService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.NamedCategory;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.State;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -85,13 +86,27 @@ public class ComponentResource extends AbstractConfigResource {
                     hostGroup
             );
             final ActionState actionState = actionStateService.getActionState(context);
-            final Map<String, Set<Action>> actionsByCategory = actionState.getActions().stream()
-                    .filter(action -> action.isEnabled() != null)
+            final Map<String, Set<Action>> actionsByCategory = actionState.getActions().entrySet().stream()
+                    .filter(e -> e.getValue() != null)
+                    .map(this::toAction)
                     .collect(groupingBy(Action::getCategory, toSet()));
-            final Map<String, Set<State>> statesByCategory = actionState.getStates().stream()
-                    .filter(state -> state.getValue() != null)
+            final Map<String, Set<State>> statesByCategory = actionState.getStates().entrySet().stream()
+                    .filter(e -> e.getValue() != null)
+                    .map(this::toState)
                     .collect(groupingBy(State::getCategory, toSet()));
             return ok("", ActionsAndStatesRepresentation.represent(actionsByCategory, statesByCategory), false);
         });
+    }
+
+    private Action toAction(Map.Entry<NamedCategory, Boolean> entry) {
+        final NamedCategory namedCategory = entry.getKey();
+        final Boolean enabled = entry.getValue();
+        return new Action(namedCategory.getName(), namedCategory.getCategory().getName(), enabled);
+    }
+
+    private State toState(Map.Entry<NamedCategory, Object> entry) {
+        final NamedCategory namedCategory = entry.getKey();
+        final Object value = entry.getValue();
+        return new State(namedCategory.getName(), namedCategory.getCategory().getName(), value);
     }
 }
