@@ -17,8 +17,8 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
@@ -28,45 +28,45 @@ import static java.util.stream.Collectors.toMap;
 
 final class HstStateProvider {
 
-    Set<State> getStates(final ActionStateProviderContext context) {
-        final Set<State> states = new HashSet<>();
+    Map<NamedCategory, Object> getStates(final ActionStateProviderContext context) {
+        final Map<NamedCategory, Object> states = new HashMap<>();
         final ChannelContext channelContext = context.getChannelContext();
-        states.add(HstState.CHANNEL_XPAGE_LAYOUTS.toState(channelContext.getXPageLayouts().stream()
-                .collect(toMap(XPageLayout::getKey, XPageLayout::getLabel))));
-        states.add(HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES.toState(channelContext.getXPageTemplateQueries()));
+        states.put(HstState.CHANNEL_XPAGE_LAYOUTS, channelContext.getXPageLayouts().stream()
+                .collect(toMap(XPageLayout::getKey, XPageLayout::getLabel)));
+        states.put(HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES, channelContext.getXPageTemplateQueries());
 
         if (context.isExperiencePageRequest()) {
             final XPageContext xPageContext = context.getXPageContext();
-            states.addAll(xPageStates(xPageContext));
-            states.addAll(scheduledRequestStates(xPageContext));
-            states.add(HstState.WORKFLOW_REQUESTS.toState(xPageContext.getWorkflowRequests()));
+            states.putAll(xPageStates(xPageContext));
+            states.putAll(scheduledRequestStates(xPageContext));
+            states.put(HstState.WORKFLOW_REQUESTS, xPageContext.getWorkflowRequests());
         }
 
         return states;
     }
 
-    private Set<State> xPageStates(XPageContext xPageContext) {
-        final Set<State> states = new HashSet<>();
-        states.add(HstState.XPAGE_BRANCH_ID.toState(xPageContext.getBranchId()));
-        states.add(HstState.XPAGE_ID.toState(xPageContext.getXPageId()));
-        states.add(HstState.XPAGE_NAME.toState(xPageContext.getXPageName()));
-        states.add(HstState.XPAGE_STATE.toState(xPageContext.getXPageState()));
+    private Map<NamedCategory, Object> xPageStates(XPageContext xPageContext) {
+        final Map<NamedCategory, Object> states = new HashMap<>();
+        states.put(HstState.XPAGE_BRANCH_ID, xPageContext.getBranchId());
+        states.put(HstState.XPAGE_ID, xPageContext.getXPageId());
+        states.put(HstState.XPAGE_NAME, xPageContext.getXPageName());
+        states.put(HstState.XPAGE_STATE, xPageContext.getXPageState());
 
         if (!StringUtils.isEmpty(xPageContext.getLockedBy())) {
-            states.add(HstState.XPAGE_LOCKED_BY.toState(xPageContext.getLockedBy()));
+            states.put(HstState.XPAGE_LOCKED_BY, xPageContext.getLockedBy());
         }
 
         return states;
     }
 
-    private Set<State> scheduledRequestStates(XPageContext xPageContext) {
+    private Map<NamedCategory, Object> scheduledRequestStates(XPageContext xPageContext) {
         final ScheduledRequest scheduledRequest = xPageContext.getScheduledRequest();
         if (scheduledRequest == null) {
-            return Collections.emptySet();
+            return Collections.emptyMap();
         }
-        final Set<State> states = new HashSet<>();
-        states.add(HstState.SCHEDULEDREQUEST_SCHEDULED_DATE.toState(scheduledRequest.getScheduledDate()));
-        states.add(HstState.SCHEDULEDREQUEST_TYPE.toState(scheduledRequest.getType()));
+        final Map<NamedCategory, Object> states = new HashMap<>();
+        states.put(HstState.SCHEDULEDREQUEST_SCHEDULED_DATE, scheduledRequest.getScheduledDate());
+        states.put(HstState.SCHEDULEDREQUEST_TYPE, scheduledRequest.getType());
         return states;
     }
 
