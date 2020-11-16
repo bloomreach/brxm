@@ -379,7 +379,7 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     boolean isExperiencePageComponent();
 
     /**
-     * @return {@code true} if this component is a container is part of a request based XPage config but comes
+     * @return {@code true} if this is a container component AND is part of a request based XPage config but comes
      * from an XPage Layout since the XPage document does not have a representation of the container : in that case,
      * very specific Channel Mgr behavior and page-composer behavior is needed: when an item is added to the container,
      * the container should be CREATED in the XPage document
