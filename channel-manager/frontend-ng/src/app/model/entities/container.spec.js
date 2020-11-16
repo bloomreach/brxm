@@ -341,4 +341,18 @@ describe('Container', () => {
       expect(container.isXPageEditable()).toBe(false);
     });
   });
+
+  describe('isXPagelayoutComponent', () => {
+    it('should return true', () => {
+      const container = new Container({ 'HST-Experience-Page-LayoutComponent': 'true' });
+
+      expect(container.isXPageLayoutComponent()).toBe(true);
+    });
+
+    it('should return false', () => {
+      const container = new Container({ 'HST-Experience-Page-LayoutComponent': 'false' });
+
+      expect(container.isXPageLayoutComponent()).toBe(false);
+    });
+  });
 });
