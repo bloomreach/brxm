@@ -94,11 +94,11 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
     }
 
     @Test
-    public void plain_spa_url() throws Exception {
+    public void plain_redirect_UR() throws Exception {
 
         request = createRequest();
 
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, true,null, new HashMap<>(),
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, null, new HashMap<>(),
                 "https://spa.example.com", mount);
 
 
@@ -113,25 +113,10 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
             assertEquals("http://localhost/site/resourceapi", parameters.get("endpoint")[0]);
         }
 
-        // live redirect
-        request = createRequest();
-        response = new MockHttpServletResponse();
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, false,null, new HashMap<>(),
-                "https://spa.example.com", mount);
-
-        {
-            final String redirectedUrl = response.getRedirectedUrl();
-            final URI uri = new URI(redirectedUrl);
-            assertEquals("spa.example.com", uri.getHost());
-            assertEquals("", uri.getPath());
-            final Map<String, String[]> parameters = HstRequestUtils.parseQueryString(uri, "UTF-8");
-            assertEquals(1L, parameters.size());
-            assertEquals("http://localhost/site/resourceapi", parameters.get("endpoint")[0]);
-        }
     }
 
     @Test
-    public void sub_mount_spa_url() throws Exception {
+    public void sub_mount_preview_URL() throws Exception {
 
         request = createRequest();
         request.setRequestURI("/site/submount");
@@ -144,7 +129,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
         expect(mount.getMountPath()).andStubReturn("/submount");
         replay(mount);
 
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, true,null, new HashMap<>(),
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, null, new HashMap<>(),
                 "https://spa.example.com", mount);
 
 
@@ -159,40 +144,24 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
             assertEquals("http://localhost/site/submount/resourceapi", parameters.get("endpoint")[0]);
         }
 
-        // live redirect
-        request = createRequest();
-        request.setRequestURI("/site/submount");
-        response = new MockHttpServletResponse();
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, false,null, new HashMap<>(),
-                "https://spa.example.com", mount);
-
-        {
-            final String redirectedUrl = response.getRedirectedUrl();
-            final URI uri = new URI(redirectedUrl);
-            assertEquals("spa.example.com", uri.getHost());
-            assertEquals("", uri.getPath());
-            final Map<String, String[]> parameters = HstRequestUtils.parseQueryString(uri, "UTF-8");
-            assertEquals(1L, parameters.size());
-            assertEquals("http://localhost/site/submount/resourceapi", parameters.get("endpoint")[0]);
-        }
     }
 
     @Test
-    public void invalid_spa_url() throws Exception {
+    public void invalid_redirect_UR() throws Exception {
         request = createRequest();
 
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, true,null, new HashMap<>(),
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, null, new HashMap<>(),
                 "12spa:example&com", mount);
         assertEquals(SC_FORBIDDEN, response.getStatus());
     }
 
 
     @Test
-    public void spa_url_with_cluster_node_affinity() throws Exception {
+    public void preview_URL_with_cluster_node_affinity() throws Exception {
 
         request = createRequest();
         request.addHeader("Server-Id", "my-server");
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, true,null, new HashMap<>(),
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, null, new HashMap<>(),
                 "https://spa.example.com", mount);
 
 
@@ -208,32 +177,15 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
             assertEquals("http://localhost/site/resourceapi", parameters.get("endpoint")[0]);
         }
 
-        // live redirect
-
-        request = createRequest();
-        request = new MockHttpServletRequest();
-        response = new MockHttpServletResponse();
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, false,null, new HashMap<>(),
-                "https://spa.example.com", mount);
-
-        {
-            final String redirectedUrl = response.getRedirectedUrl();
-            final URI uri = new URI(redirectedUrl);
-            assertEquals("spa.example.com", uri.getHost());
-            assertEquals("", uri.getPath());
-            final Map<String, String[]> parameters = HstRequestUtils.parseQueryString(uri, "UTF-8");
-            assertEquals(1L, parameters.size());
-            assertEquals("http://localhost/site/resourceapi", parameters.get("endpoint")[0]);
-        }
     }
 
     @Test
-    public void spa_url_with_cluster_node_affinity_with_pathInfo() throws Exception {
+    public void redirect_URL_with_cluster_node_affinity() throws Exception {
 
         request = createRequest();
         request.addHeader("Server-Id", "my-server");
 
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response,true, "/my/path", new HashMap<>(),
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", new HashMap<>(),
                 "https://spa.example.com", mount);
         {
             final String redirectedUrl = response.getRedirectedUrl();
@@ -251,7 +203,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
 
         request = createRequest();
         response = new MockHttpServletResponse();
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, false,"/my/path", new HashMap<>(),
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", new HashMap<>(),
                 "https://spa.example.com", mount);
 
         {
@@ -260,18 +212,18 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
             assertEquals("spa.example.com", uri.getHost());
             assertEquals("/my/path", uri.getPath());
             final Map<String, String[]> parameters = HstRequestUtils.parseQueryString(uri, "UTF-8");
-            assertEquals(1L, parameters.size());
+            assertEquals(2L, parameters.size());
             assertEquals("http://localhost/site/resourceapi", parameters.get("endpoint")[0]);
         }
     }
 
     @Test
-    public void spa_url_with_queryString_with_cluster_node_affinity_with_pathInfo() throws Exception {
+    public void redirect_URL_with_queryString_with_cluster_node_affinity_with_pathInfo() throws Exception {
 
         request = createRequest();
         request.addHeader("Server-Id", "my-server");
 
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, true,"/my/path", new HashMap<>(),
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", new HashMap<>(),
                 "https://spa.example.com?foo=bar", mount);
 
         {
@@ -289,7 +241,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
 
         request = createRequest();
         response = new MockHttpServletResponse();
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, false,"/my/path", new HashMap<>(),
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", new HashMap<>(),
                 "https://spa.example.com?foo=bar", mount);
 
         {
@@ -298,19 +250,19 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
             assertEquals("spa.example.com", uri.getHost());
             assertEquals("/my/path", uri.getPath());
             final Map<String, String[]> parameters = HstRequestUtils.parseQueryString(uri, "UTF-8");
-            assertEquals(2L, parameters.size());
+            assertEquals(3L, parameters.size());
             assertEquals("bar", parameters.get("foo")[0]);
             assertEquals("http://localhost/site/resourceapi", parameters.get("endpoint")[0]);
         }
     }
 
     @Test
-    public void spa_url_with_port_queryString_with_cluster_node_affinity_with_pathInfo() throws Exception {
+    public void redirect_URL_with_port_queryString_with_cluster_node_affinity_with_pathInfo() throws Exception {
 
         request = createRequest();
         request.addHeader("Server-Id", "my-server");
 
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, true,"/my/path", new HashMap<>(),
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", new HashMap<>(),
                 "https://spa.example.com:3000?foo=bar", mount);
 
         final String redirectedUrl = response.getRedirectedUrl();
@@ -320,7 +272,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
     }
 
     @Test
-    public void spa_url_with_port_queryString_with_cluster_node_affinity_with_pathInfo_with_queryParameters() throws Exception {
+    public void redirect_URL_with_port_queryString_with_cluster_node_affinity_with_pathInfo_with_queryParameters() throws Exception {
 
         final HashMap<String, String[]> queryParameters = new HashMap<>();
         queryParameters.put("foo", new String[]{"bar"});
@@ -329,7 +281,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
         request = createRequest();
         request.addHeader("Server-Id", "my-server");
 
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, true,"/my/path", queryParameters,
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", queryParameters,
                 "https://spa.example.com:3000?test=test1", mount);
 
         {
@@ -352,7 +304,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
 
         request = createRequest();
         response = new MockHttpServletResponse();
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, false,"/my/path", queryParameters,
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", queryParameters,
                 "https://spa.example.com:3000?test=test1", mount);
 
         {
@@ -362,7 +314,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
             assertEquals("spa.example.com", uri.getHost());
             assertEquals("/my/path", uri.getPath());
             final Map<String, String[]> parameters = HstRequestUtils.parseQueryString(uri, "UTF-8");
-            assertEquals("Expect also 'foo' and 'lux'", 4L, parameters.size());
+            assertEquals("Expect also 'foo' and 'lux'", 5L, parameters.size());
             assertEquals("test1", parameters.get("test")[0]);
             assertEquals("bar", parameters.get("foo")[0]);
             assertEquals("flux", parameters.get("lux")[0]);
@@ -376,13 +328,13 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
     public void redirect_fails_without_valid_cms_session_context() throws Exception {
         request = createRequest();
         request.getSession().invalidate();
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response,true,"", new HashMap<>(),
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response,"", new HashMap<>(),
                 "https://spa.example.com", mount);
         assertEquals(SC_FORBIDDEN, response.getStatus());
     }
 
     @Test
-    public void spa_url_explicit_PMA_ENDPOINT_overrides_automatic_endpoint_injection() throws Exception {
+    public void redirect_URL_explicit_PMA_ENDPOINT_overrides_automatic_endpoint_injection() throws Exception {
 
         final HashMap<String, String[]> queryParameters = new HashMap<>();
         queryParameters.put("foo", new String[]{"bar"});
@@ -391,7 +343,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
         request = createRequest();
         request.addHeader("Server-Id", "my-server");
 
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, true,"/my/path", queryParameters,
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", queryParameters,
                 "https://spa.example.com:3000?test=test1&endpoint=https://brx.example.com/api/resourceapi", mount);
 
         {
@@ -414,7 +366,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
 
         request = createRequest();
         response = new MockHttpServletResponse();
-        hstDelegateeFilterBean.doRedirectSpaUrl(request, response, false,"/my/path", queryParameters,
+        hstDelegateeFilterBean.doRedirectPreviewURL(request, response, "/my/path", queryParameters,
                 "https://spa.example.com:3000?test=test1&endpoint=https://brx.example.com/api/resourceapi", mount);
 
         {
@@ -424,7 +376,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
             assertEquals("spa.example.com", uri.getHost());
             assertEquals("/my/path", uri.getPath());
             final Map<String, String[]> parameters = HstRequestUtils.parseQueryString(uri, "UTF-8");
-            assertEquals("Expect also 'foo' and 'lux'", 4L, parameters.size());
+            assertEquals("Expect also 'foo' and 'lux'", 5L, parameters.size());
             assertEquals("test1", parameters.get("test")[0]);
             assertEquals("bar", parameters.get("foo")[0]);
             assertEquals("flux", parameters.get("lux")[0]);
