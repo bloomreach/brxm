@@ -63,13 +63,11 @@ public final class State {
             return false;
         }
         final State state = (State) o;
-        return name.equals(state.name) &&
-                category.equals(state.category) &&
-                Objects.equals(value, state.value);
+        return name.equals(state.name) && category.equals(state.category);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, category, value);
+        return Objects.hash(name, category);
     }
 }
