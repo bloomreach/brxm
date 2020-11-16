@@ -16,7 +16,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
-public enum HstState {
+public enum HstState implements NamedCategory {
 
     CHANNEL_XPAGE_LAYOUTS("xPageLayouts", HstCategory.CHANNEL),
     CHANNEL_XPAGE_TEMPLATE_QUERIES("xPageTemplateQueries", HstCategory.CHANNEL),
@@ -41,14 +41,12 @@ public enum HstState {
         this.category = category;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
-    public State toState(Object value) {
-        return new State(name, category.getName(), value);
-    }
-
+    @Override
     public Category getCategory() {
         return category;
     }
