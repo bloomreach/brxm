@@ -86,8 +86,10 @@ public class ComponentResource extends AbstractConfigResource {
             );
             final ActionState actionState = actionStateService.getActionState(context);
             final Map<String, Set<Action>> actionsByCategory = actionState.getActions().stream()
+                    .filter(action -> action.isEnabled() != null)
                     .collect(groupingBy(Action::getCategory, toSet()));
             final Map<String, Set<State>> statesByCategory = actionState.getStates().stream()
+                    .filter(state -> state.getValue() != null)
                     .collect(groupingBy(State::getCategory, toSet()));
             return ok("", ActionsAndStatesRepresentation.represent(actionsByCategory, statesByCategory), false);
         });

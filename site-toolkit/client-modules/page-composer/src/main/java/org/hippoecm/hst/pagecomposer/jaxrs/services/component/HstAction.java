@@ -72,4 +72,8 @@ public enum HstAction {
         return category;
     }
 
+    public Action removeAction() {
+        return new Action(name, category.getName(), null);
+    }
+
 }

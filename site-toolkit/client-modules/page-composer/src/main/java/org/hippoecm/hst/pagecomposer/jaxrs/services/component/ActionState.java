@@ -41,9 +41,23 @@ public final class ActionState {
 
     static ActionState merge(final ActionState si1, final ActionState si2) {
         final Set<Action> actions = new HashSet<>(si1.actions);
-        actions.addAll(si2.getActions());
+        si2.actions.forEach(a2 -> {
+            if (actions.contains(a2)) {
+                actions.remove(a2);
+                if (a2.isEnabled() != null) {
+                    actions.add(a2);
+                }
+            }
+        });
         final Set<State> states = new HashSet<>(si1.states);
-        states.addAll(si2.getStates());
+        si2.states.forEach(s2 -> {
+            if (states.contains(s2)) {
+                states.remove(s2);
+                if (s2.getValue() != null) {
+                    states.add(s2);
+                }
+            }
+        });
         return new ActionState(actions, states);
     }
 
