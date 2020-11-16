@@ -499,7 +499,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     final Channel channel = hstSite.getChannel();
                     if (channel.getSpaUrl() != null) {
 
-                        doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), hstContainerUrl.getParameterMap(), channel.getSpaUrl());
+                        doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), hstContainerUrl.getParameterMap(),
+                                channel.getSpaUrl(), resolvedMount.getMount());
                         return;
                     }
                 }
@@ -662,7 +663,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                               final HttpServletResponse res,
                               final String pathInfo,
                               final Map<String, String[]> queryParameters,
-                              final String previewURL) throws IOException {
+                              final String previewURL,
+                              final Mount mount) throws IOException {
 
         try {
             // parse the preview url
@@ -713,7 +715,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
      * otherwise we assume the redirect is to something else than a standard SPA
      */
     private String includePmaCallbackURL(final String location, final HttpServletRequest req,
-                                         final Mount mount) throws URISyntaxException {
+                                         final Mount mount) {
         if (location.contains(endpointParam + "=")) {
             log.info("Location '{}' already contains PMA endpoint callback, do not inject automatically", location);
             return location;
@@ -737,20 +739,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         } else {
             return location + "?" + endpointParam + "=" + currentMountUrl + "/" + pageModelApi;
         }
-    }
-
-    private String addQueryString(final String location, final String query) {
-        if (location.contains("?")) {
-            return location + "&" + query;
-        }
-        return location + "?" + query;
-    }
-
-    private String getTokenAndClusterId(final HttpServletRequest req) {
-        final JwtTokenService jwtTokenService = HippoServiceRegistry.getService(JwtTokenService.class);
-        final String clusterNodeAffinityId = getClusterNodeAffinityId(req, clusterNodeAffinityCookieName, clusterNodeAffinityHeaderName);
-        return jwtTokenParam + "=" + jwtTokenService.createToken(req, emptyMap()) +
-                (isNotBlank(clusterNodeAffinityId) ? "&" + clusterNodeAffinityQueryParam + "=" + clusterNodeAffinityId : "");
     }
 
     private boolean isLocalhostIpPlatformRequest(final HstContainerRequest containerRequest, final String hostName) {
