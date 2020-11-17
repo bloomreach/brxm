@@ -15,14 +15,20 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
 
+import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static java.lang.Boolean.FALSE;
 import static javax.ws.rs.core.Response.Status.CREATED;
@@ -32,23 +38,67 @@ import static org.junit.Assert.assertTrue;
 
 public class XPageResourceTest extends AbstractXPageComponentResourceTest {
 
-    @Test
-    public void create_container_item_when_container_missing_in_xpage() throws Exception {
+    private String containerNodeName;
+    private Node hstXpageDocNode;
+    private String mountId;
 
+    @Before
+    public void setup() throws Exception {
         // the containerNodeName is the equivalent of the 'hippo:identifier' on the XPage Layout container
-        final String containerNodeName = "430df2da-3dc8-40b5-bed5-bdc44b8445c6";
+        containerNodeName = "430df2da-3dc8-40b5-bed5-bdc44b8445c6";
 
         // first delete the container from the XPage : this is for the fixture: this mimics the situation that to an
         // existing XPage Layout a new container gets added which does not have its equivalent container on existing
         // XPage Docs
 
-        Node hstXpageDocNode = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage");
+        hstXpageDocNode = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage");
 
         admin.getNode(hstXpageDocNode.getPath() + "/" + containerNodeName).remove();
         admin.save();
 
-        final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
+
+    }
+
+    @Test
+    public void move_container_item_to_container_missing_in_xpage() throws Exception {
+
+        //  try to move the container item from /430df2da-3dc8-40b5-bed5-bdc44b8445c7/banner to 'containerNodeName'
+        // container which does not exist any more: as a result, it should be created
+
+        // the 'endpoint' is against the hst:xpage node
+        final RequestResponseMock updateRequestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + hstXpageDocNode.getIdentifier(), null,
+                "PUT");
+
+        final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
+
+        // this container does not yet exist for the hst:xpage and should gete created as a result
+        containerRepresentation.setId(containerNodeName);
+
+        final String itemToMove = hstXpageDocNode.getNode("430df2da-3dc8-40b5-bed5-bdc44b8445c7/banner").getIdentifier();
+
+        containerRepresentation.setChildren(Collections.singletonList(itemToMove));
+
+        updateRequestResponse.getRequest().setContent(new ObjectMapper().writeValueAsBytes(containerRepresentation));
+        updateRequestResponse.getRequest().setContentType("application/json;charset=UTF-8");
+
+        final MockHttpServletResponse updateResponse = render(mountId, updateRequestResponse, ADMIN_CREDENTIALS);
+
+        assertEquals(Response.Status.OK.getStatusCode(), updateResponse.getStatus());
+
+        // assert container has been created and item has been moved
+        assertTrue("Expected new container with name equal to 'containerNodeName' to have been created", hstXpageDocNode.hasNode(containerNodeName));
+
+        final Node container = hstXpageDocNode.getNode(containerNodeName);
+
+        assertTrue("Expected the banner item was moved",container.hasNode("banner"));
+
+    }
+
+    @Test
+    public void create_container_item_when_container_missing_in_xpage() throws Exception {
 
         final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/newstyle-testitem");
 
@@ -78,7 +128,6 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
          *
          * With the above info, the backend can know which container node to created and which item to inject into it
          */
-
 
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + hstXpageDocNode.getIdentifier() + "./" + containerNodeName + "/" + catalogId, null,
