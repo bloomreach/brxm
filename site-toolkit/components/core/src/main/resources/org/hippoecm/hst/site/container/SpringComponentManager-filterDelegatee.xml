@@ -28,6 +28,7 @@
     <property name="hstRequestProcessor" ref="org.hippoecm.hst.core.container.HstRequestProcessor" />
     <property name="jwtTokenAuthorizationHeader" value="${jwt.token.authorization.header}"/>
     <property name="jwtTokenParam" value="${jwt.token.param}" />
+    <property name="endpointParam" value="${pagemodel.callback.param}"/>
     <property name="clusterNodeAffinityCookieName" value="${cluster.node.affinity.cookie.name}"/>
     <property name="clusterNodeAffinityHeaderName" value="${cluster.node.affinity.header.name}"/>
     <property name="clusterNodeAffinityQueryParam" value="${cluster.node.affinity.query.param}"/>
