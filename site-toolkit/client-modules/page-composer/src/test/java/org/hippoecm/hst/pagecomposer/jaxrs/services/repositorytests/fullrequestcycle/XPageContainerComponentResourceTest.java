@@ -47,6 +47,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -690,6 +691,98 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
                 TRUE, documentWorkflow.hints().get("publish"));
 
 
+    }
+
+    /**
+     * The unit test document expPage-with-static-components contains a container which is not backed by the XPage
+     * Layout at hst:xpage/extra/extra-container-xpage-doc-only
+     * This test is to assert that we can modify those containers as well without problem
+     * @throws Exception
+     */
+    @Test
+    public void move_to_and_create_container_item_in_NON_XPAGE_LAYOUT_container() throws Exception {
+        try {
+            // ******* SETUP FIXTURE ************ //
+            JcrUtils.copy(admin, EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH, "/backupXPage");
+            admin.save();
+
+            // make sure the unpublished variant exists (just by depublishing for now....)
+            final WorkflowManager workflowManager = ((HippoSession) admin).getWorkspace().getWorkflowManager();
+
+            handle = admin.getNode(EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH);
+            final DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
+            documentWorkflow.depublish();
+            // and publish again such that there is a live variant
+            documentWorkflow.publish();
+
+            // ******* END SETUP FIXTURE ************ //
+
+            Node unpublished = getVariant(handle, "unpublished");
+
+            // ********** MOVE ***********
+
+            final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            final String targetContainerId = getNodeId(admin, unpublished.getPath() + "/hst:xpage/extra/extra-container-xpage-doc-only");
+            final String itemId = getNodeId(admin, unpublished.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner");
+
+            final RequestResponseMock updateRequestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + targetContainerId, null,
+                    "PUT");
+
+            final ContainerRepresentation containerRepresentation = new ContainerRepresentation();
+
+            containerRepresentation.setId(targetContainerId);
+            // move item to other container
+            containerRepresentation.setChildren(Stream.of(itemId).collect(Collectors.toList()));
+
+            updateRequestResponse.getRequest().setContent(objectMapper.writeValueAsBytes(containerRepresentation));
+            updateRequestResponse.getRequest().setContentType("application/json;charset=UTF-8");
+
+            final Node sourceContainer = admin.getNode(unpublished.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6");
+            // banner container items expected
+            assertEquals(1l, sourceContainer.getNodes().getSize());
+
+            final MockHttpServletResponse updateResponse = render(mountId, updateRequestResponse, ADMIN_CREDENTIALS);
+
+            assertEquals(Response.Status.OK.getStatusCode(), updateResponse.getStatus());
+
+            // assert  second container now has the item
+            final Node targetContainer = admin.getNodeByIdentifier(targetContainerId);
+
+            final NodeIterator children = targetContainer.getNodes();
+            assertEquals(1l, children.getSize());
+            // the container already got an item 'banner'
+            assertEquals("banner", children.nextNode().getName());
+
+            // banner should have been moved
+            assertEquals(0l, sourceContainer.getNodes().getSize());
+
+            // ********** END MOVE **********
+
+            // ********** CREATE AN ITEM (as author) ******
+
+            final String catalogId = getNodeId(admin, "/hst:hst/hst:configurations/hst:default/hst:catalog/testpackage/newstyle-testitem");
+
+            final RequestResponseMock createRequestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/" + targetContainerId + "./" + catalogId, null,
+                    "POST");
+
+
+            final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, AUTHOR_CREDENTIALS);
+            final ExtResponseRepresentation extResponseRepresentation = mapper.readerFor(ExtResponseRepresentation.class).readValue(createResponse.getContentAsString());
+
+            assertEquals(CREATED.getStatusCode(), createResponse.getStatus());
+            // assertion on newly created item
+            assertTrue(admin.nodeExists(unpublished.getPath() + "/hst:xpage/extra/extra-container-xpage-doc-only/newstyle-testitem"));
+            // ********** END CREATE AN ITEM  ******
+        } finally {
+            if (admin.nodeExists("/backupXPage")) {
+                admin.getNode(EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH).remove();
+                admin.move("/backupXPage", EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH);
+                admin.save();
+            }
+        }
     }
 
 

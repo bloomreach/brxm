@@ -289,6 +289,77 @@ definitions:
                       hst:template: banner
                   /430df2da-3dc8-40b5-bed5-bdc44b8445c7:
                     jcr:primaryType: hst:containercomponent
+            /expPage-with-static-components:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /expPage-with-static-components:
+                jcr:primaryType: unittestproject:newspage
+                jcr:mixinTypes: ['mix:versionable', 'hst:xpagemixin']
+                hippo:availability: [live, preview]
+                hippostd:holder: admin
+                hippostd:state: published
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                unittestproject:summary: Summary about Experience Page
+                unittestproject:title: My Experience Page 1
+                /unittestproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: My Experience Page 1
+                /hst:xpage:
+                  jcr:primaryType: hst:xpage
+                  hst:pageref: xpage1
+                  /430df2da-3dc8-40b5-bed5-bdc44b8445c6:
+                    jcr:primaryType: hst:containercomponent
+                    /banner:
+                      jcr:primaryType: hst:containeritemcomponent
+                      hst:componentclassname: org.hippoecm.hst.test.BannerComponent
+                      hst:parameternameprefixes: ['', variant1]
+                      hst:parameternames: [path, path]
+                      hst:parametervalues: [common/aboutfolder/about-us, common/aboutfolder/about-us-2]
+                      hst:template: banner
+                  /430df2da-3dc8-40b5-bed5-bdc44b8445c7:
+                    jcr:primaryType: hst:containercomponent
+                  /main:
+                    jcr:primaryType: hst:component
+                    ## some arbitrary extra property
+                    hst:page_errorhandlerclassname: Example.java
+                    /main-container-xpage-doc-only:
+                      jcr:primaryType: hst:containercomponent
+                      hst:xtype: HST.vBox
+                  ## header is also already present via the abstract page so is expected to be a shared component in tests
+                  /header:
+                    jcr:primaryType: hst:component
+                    /title:
+                      ## title should get merged
+                      jcr:primaryType: hst:component
+                      ## hst:template is already defined on /hst:hst/hst:configurations/unittestcommon/hst:components/header/title
+                      ## and should not be overridden
+                      hst:template: thankyou
+                      ## new property
+                      hst:page_errorhandlerclassname: Foo.java
+                      /subtitle:
+                        ## subtitle should get copied below 'title'
+                        jcr:primaryType: hst:component
+                        ## merging should still work!
+                        hst:page_errorhandlerclassname: Foo.java
+                        hst:referencecomponent: hst:components/detail
+                    /header-container-xpage-doc-only:
+                      jcr:primaryType: hst:containercomponent
+                      hst:xtype: HST.vBox
+                      ## component item with hst:componentdefinition should also work
+                      /banner-new-style:
+                        jcr:primaryType: hst:containeritemcomponent
+                        hst:componentdefinition: hst:components/unittestpackage/banner-new-style
+                  /extra:
+                    jcr:primaryType: hst:component
+                    ## assert referencing works
+                    hst:referencecomponent: hst:components/detail
+                    /extra-container-xpage-doc-only:
+                      jcr:primaryType: hst:containercomponent
+                      hst:xtype: HST.vBox
           /News:
             jcr:primaryType: hippostd:folder
             jcr:mixinTypes: ['mix:referenceable']
