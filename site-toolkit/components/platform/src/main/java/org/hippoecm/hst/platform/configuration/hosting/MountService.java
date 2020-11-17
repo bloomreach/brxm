@@ -234,6 +234,9 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     private String hstLinkUrlPrefix;
 
+    // if non-null, the name of the autocreated PMA child mount
+    private String pageModelApi;
+
     public MountService(final HstNode mount,
                         final Mount parent,
                         final VirtualHost virtualHost,
@@ -633,7 +636,7 @@ public class MountService implements ContextualizableMount, MutableMount {
             }
         }
 
-        String pageModelApi = mount.getValueProvider().getString(GENERAL_PROPERTY_PAGE_MODEL_API);
+        pageModelApi = mount.getValueProvider().getString(GENERAL_PROPERTY_PAGE_MODEL_API);
         if (pageModelApi == null) {
             pageModelApi = ((VirtualHostService) virtualHost).getPageModelApi();
         }
@@ -1018,4 +1021,8 @@ public class MountService implements ContextualizableMount, MutableMount {
         return true;
     }
 
+    @Override
+    public String getPageModelApi() {
+        return pageModelApi;
+    }
 }
