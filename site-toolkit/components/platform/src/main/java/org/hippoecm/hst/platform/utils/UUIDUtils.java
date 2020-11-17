@@ -15,7 +15,7 @@
  *
  */
 
-package org.hippoecm.hst.pagecomposer.jaxrs.util;
+package org.hippoecm.hst.platform.utils;
 
 import java.util.regex.Pattern;
 

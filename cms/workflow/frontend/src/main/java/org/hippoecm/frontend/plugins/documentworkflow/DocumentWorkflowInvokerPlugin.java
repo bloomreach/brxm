@@ -59,12 +59,12 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
     private static final String JS_FILE = "document-workflow-invoker-plugin.js";
     private static final List<String> REQUEST_ACTIONS = Arrays.asList( "cancel", "rejected");
     private static final Map<String, String> ACTIONS_TO_HINTS = ImmutableMap.<String, String>builder()
-            .put("PUB", "publish")
-            .put("SCHED_PUB", "publish")
+            .put("PUB", "publishBranch")
+            .put("SCHED_PUB", "publishBranch")
             .put("REQ_PUB", "requestPublication")
             .put("REQ_SCHED_PUB", "requestPublication")
-            .put("DEPUB", "depublish")
-            .put("SCHED_DEPUB", "depublish")
+            .put("DEPUB", "depublishBranch")
+            .put("SCHED_DEPUB", "depublishBranch")
             .put("REQ_DEPUB", "requestDepublication")
             .put("REQ_SCHED_DEPUB", "requestDepublication")
             .put("copy", "copy")

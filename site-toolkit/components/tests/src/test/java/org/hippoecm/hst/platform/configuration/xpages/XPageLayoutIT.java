@@ -39,7 +39,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_XPAGE_MI
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-public class XPageIT extends AbstractTestConfigurations {
+public class XPageLayoutIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
     private Session session;
