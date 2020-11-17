@@ -582,7 +582,7 @@ describe('PageStructureService', () => {
 
       PageStructureService.addComponentToContainer(component, container)
         .then(({ reloadRequired, newComponentId }) => {
-          expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
+          expect(HstService.addHstComponent).toHaveBeenCalledWith(component, container, undefined);
           expect(reloadRequired).toBe(false);
           expect(newComponentId).toBe('new-component');
           done();
@@ -649,7 +649,7 @@ describe('PageStructureService', () => {
 
       PageStructureService.addComponentToContainer(component, container)
         .catch((errorMessage) => {
-          expect(HstService.addHstComponent).toHaveBeenCalledWith(component, 'mock-container', undefined);
+          expect(HstService.addHstComponent).toHaveBeenCalledWith(component, container, undefined);
           expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED', {
             lockedBy: 'another-user',
             lockedOn: 1234,

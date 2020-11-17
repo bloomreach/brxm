@@ -17,6 +17,7 @@ package org.hippoecm.hst.platform.configuration.xpages;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.Repository;
@@ -24,6 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.assertj.core.api.SoftAssertions;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -49,7 +51,6 @@ import org.hippoecm.hst.test.HeaderComponentInfo;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
@@ -61,6 +62,8 @@ import org.junit.runner.RunWith;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -78,7 +81,6 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_IDENTIFIER;
 import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -219,7 +221,7 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
 
     }
 
-    private void assertionsForExperiencePage(final String pathToExperiencePage, final String handleName, final String branch) throws Exception {
+    private HstComponentConfigurationService assertionsForExperiencePage(final String pathToExperiencePage, final String handleName, final String branch) throws Exception {
 
         final GenericHttpServletRequestWrapper containerRequest = createContainerRequest(handleName);
 
@@ -321,6 +323,12 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
 
         // container should be marked Experience Page Component
         assertThat(container1.isExperiencePageComponent()).isTrue();
+
+        assertThat(((HstComponentConfigurationService)container1).isXpageLayoutComponent())
+                .as("The container1 is stored below the XPage Layout so apart from begin an experience page " +
+                        "component it is also a XPage Layout container ")
+                .isTrue();
+
         // quite subtle, but a Container Item from an XPage is not marked as shared since it has a 'non-shared'
         // representative in the XPage document
         assertThat(container1.isShared()).isFalse();
@@ -349,6 +357,22 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
             assertThat(banner.isExperiencePageComponent()).isTrue();
             assertThat(banner.isShared()).isFalse();
             assertThat(banner.getReferenceName()).startsWith("p");
+
+            HstComponentConfiguration parent = banner.getParent();
+            assertThat(parent.isExperiencePageComponent()).isTrue();
+            assertThat(parent.getCanonicalStoredLocation()).startsWith("/unittestcontent/documents/unittestproject/experiences/expPage1");
+
+            HstComponentConfiguration grandParent = parent.getParent();
+            assertThat(grandParent)
+                    .as("The parent of the XPage Document container should result in the parent of the " +
+                            "XPage Layout container")
+                    .isNotNull();
+
+            assertThat(grandParent.getCanonicalStoredLocation())
+                    .as("Expected parent of the XPage Doc container to be of the XPage Layout")
+                    .startsWith("/hst:hst/hst:configurations");
+            System.out.println(grandParent.getCanonicalStoredLocation());
+
         } else if (handleName.equals("articleAsExpPage")) {
             // articleAsExpPage does not have a banner item
             assertThat(container1.getChildByName("banner"))
@@ -362,6 +386,7 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
         assertThat(container2.isShared()).isFalse();
         assertThat(container2.getReferenceName()).startsWith("p");
 
+        return root;
     }
 
     private ResolvedSiteMapItem resolve(final GenericHttpServletRequestWrapper containerRequest) throws ContainerException {
@@ -647,6 +672,305 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
         for (HstComponentConfiguration aChild : a.getChildren().values()) {
             HstComponentConfiguration bChild = b.getChildByName(aChild.getName());
             compareReferenceNamesComponentOrderAndIds(aChild, bChild);
+        }
+    }
+
+
+    /**
+     * This integration test very carefully tests the merging of components related to XPage Layout and XPage doc
+     * components: it is very important to carefully understand the UI CM impact if for example
+     * isExperiencePageComponent() or isXPageLayoutComponent() behavior is changed : This directly has impact on the
+     * CM UI wrt WHICH user role can modify for example the container
+     */
+    @Test
+    public void xpage_document_containing_other_components_than_layout_containers() throws Exception {
+
+        final String pathToExperiencePage = "/unittestcontent/documents/unittestproject/experiences/expPage-with-static-components";
+
+        final GenericHttpServletRequestWrapper containerRequest = createContainerRequest("expPage-with-static-components");
+        initContext(pathToExperiencePage, null);
+        final ResolvedSiteMapItem resolvedSiteMapItem = resolve(containerRequest);
+
+        final HstComponentConfiguration root = resolvedSiteMapItem.getHstComponentConfiguration();
+
+        /**
+         * expectations for expPage-with-static-components :
+         *
+         * in hst-unittestcontent.yaml, see the fixture for expPage-with-static-components
+         *
+         */
+
+        assertThat(root.getChildren().values().stream().map(config -> config.getName()).collect(Collectors.toSet()))
+                .containsExactlyInAnyOrder("header", "main", "leftmenu", "extra");
+
+        // assertions on header merged, main merged, footer inherited, extra
+        // Only component 'extra' should be marked as 'experience page component' ALTHOUGH 'main' and 'header' are
+        // also present on the XPage Document! However, configuration from hst-config has wrt merging PRECEDENCE over
+        // configuration of an XPage Document wrt merging!!
+
+        final HstComponentConfigurationService extra = (HstComponentConfigurationService)root.getChildByName("extra");
+        assertThat(extra.isExperiencePageComponent()).isTrue();
+        assertThat(extra.isXpageLayoutComponent()).isFalse();
+        assertThat(extra.isShared()).isFalse();
+        assertThat(extra.getHstTemplate())
+                .as("extra references /hst:components/detail and should get that merged in")
+                .isEqualTo("detail");
+
+        final HstComponentConfigurationService extraContainer = (HstComponentConfigurationService) extra.getChildByName("extra-container-xpage-doc-only");
+
+        assertThat(extraContainer.isExperiencePageComponent()).isTrue();
+        assertThat(extraContainer.isXpageLayoutComponent()).isFalse();
+
+        // inherited so it is not an experience page component
+        final HstComponentConfigurationService leftmenu = (HstComponentConfigurationService)root.getChildByName("leftmenu");
+
+        // leftmenu is inherited from base page which is not an xpage layout and not an xpage doc component
+        assertThat(leftmenu.isExperiencePageComponent()).isFalse();
+        assertThat(leftmenu.isXpageLayoutComponent()).isFalse();
+        assertThat(leftmenu.isShared())
+                .as("leftmenu expected from inherited base page")
+                .isTrue();
+
+        // main is part of the XPage Layout but ALSO defined in the XPage Doc: The XPage Layout properties MUST have
+        // precedence as by design, properties only on the main xpage doc should be present AND children merged with the
+        // same precedence strategy
+        HstComponentConfiguration main = root.getChildByName("main");
+        assertThat(main.isExperiencePageComponent()).isFalse();
+        assertThat(main.isShared())
+                .as("Main is expected to be shared although defined on the XPage doc as well")
+                .isTrue();
+        assertThat(main.getPageErrorHandlerClassName())
+                .as("Expected page error handler name to be merged in through the xpage doc main component which configures that and " +
+                        "it is not present on the parent yet")
+                .isEqualTo("Example.java");
+        assertThat(main.getChildren().size())
+                .as("Expected 'container1' and 'container2' from XPage Layout and 'main-container-xpage-doc-only'")
+                .isEqualTo(3);
+
+        final HstComponentConfigurationService container1 = (HstComponentConfigurationService) main.getChildByName("container1");
+
+        assertThat(container1.isExperiencePageComponent())
+                .as("Even though config from XPage layout hst config, still expected to be marked as " +
+                        "experiece component")
+                .isTrue();
+
+        assertThat(container1.isShared())
+                .as("Even though config from XPage layout hst config, the purpose in the Xpage config for " +
+                        "the request is that the container is NOT SHARED since a CM webmaster should be able to add " +
+                        "a new container item in it")
+                .isFalse();
+
+        assertThat(container1.isXpageLayoutComponent()).isTrue();
+
+        final HstComponentConfigurationService mainContainerXpageDocOnly = (HstComponentConfigurationService) main.getChildByName("main-container-xpage-doc-only");
+
+        assertThat(mainContainerXpageDocOnly.isExperiencePageComponent()).isTrue();
+        assertThat(mainContainerXpageDocOnly.isXpageLayoutComponent()).isFalse();
+
+        final HstComponentConfigurationService header = (HstComponentConfigurationService) root.getChildByName("header");
+
+        assertThat(header.isExperiencePageComponent())
+                .as("header is present on both XPage Layout via inheritance of abstract basepage as well as " +
+                        "on the XPage Doc : The XPage Doc properties have lower precedence and the component is considered " +
+                        "to not be an experience page component: possible merged in children can be experience page" +
+                        "components though")
+                .isFalse();
+
+        assertThat(header.isXpageLayoutComponent())
+                .as("Header is from abstract page and thus not an xpage layout component")
+                .isFalse();
+
+        assertThat(header.isShared())
+                .as("Although header also defined in the XPage Doc, it is already coming from abstract base page " +
+                        "which should have precedence wrt being shared or not")
+                .isTrue();
+
+        // header references /hst:hst/hst:configurations/unittestcommon/hst:components/header which results in 'title'
+        // being added: this title its properties must have precedence over the title properties of the XPAge Doc header/title
+        final HstComponentConfiguration title = header.getChildByName("title");
+        assertThat(title.isExperiencePageComponent())
+                .as("Even though also in XPage Doc, it is merged into a non-xpage-component which has precedence " +
+                        "wrt whether the component is an xpage component or not")
+                .isFalse();
+
+        assertThat(title.getHstTemplate())
+                .as("property from hst config should have precedence over the same property of merged " +
+                        "XPage Doc Component")
+                .isEqualTo("title");
+
+        assertThat(title.getPageErrorHandlerClassName())
+                .as("Non-existing hst config properties should be loaded from XPage Doc component if present")
+                .isEqualTo("Foo.java");
+
+        assertThat(title.isShared())
+                .as("although also define on the XPage Doc, title should still be shared because comes from abstract page")
+                .isTrue();
+
+        assertThat(title.getCanonicalStoredLocation())
+                .isEqualTo("/hst:hst/hst:configurations/unittestcommon/hst:components/header/title");
+
+        // subtitle should be merged in from the XPage Doc
+        final HstComponentConfigurationService subtitle = (HstComponentConfigurationService) title.getChildByName("subtitle");
+        assertThat(subtitle.isExperiencePageComponent())
+                .as("Subtitle component comes from the XPage Doc")
+                .isTrue();
+        assertThat(subtitle.isXpageLayoutComponent())
+                .isFalse();
+
+        assertThat(subtitle.getPageErrorHandlerClassName())
+                .isEqualTo("Foo.java");
+
+        assertThat(subtitle.getHstTemplate())
+                .as("subtitle component references /hst:components/detail which should result in the hst template " +
+                        "equal to 'detail' ")
+                .isEqualTo("detail");
+
+        assertThat(subtitle.isShared())
+                .as("subtitle is only defined on the XPage document, hence, should not be marked as shared")
+                .isFalse();
+
+        assertThat(subtitle.getCanonicalStoredLocation())
+                .isEqualTo("/unittestcontent/documents/unittestproject/experiences/expPage-with-static-components/expPage-with-static-components/hst:xpage/header/title/subtitle");
+
+        final HstComponentConfiguration headerContainerXPageDocOnly = header.getChildByName("header-container-xpage-doc-only");
+        assertThat(headerContainerXPageDocOnly.isExperiencePageComponent()).isTrue();
+
+        // new style merging should just work normally
+        final HstComponentConfiguration bannerNewStyle = headerContainerXPageDocOnly.getChildByName("banner-new-style");
+
+        assertThat(bannerNewStyle.isExperiencePageComponent()).isTrue();
+        assertThat(bannerNewStyle.getComponentClassName())
+                .as("component definition should had resulted in classname")
+                .isEqualTo("org.hippoecm.hst.test.BannerComponent");
+
+
+        // lastly assert that ALL components are having a component reference name starting with "p" which is done for
+        // the component tree of XPage Document Page component
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+
+            root.flattened().forEach(c -> softAssertions
+                    .assertThat(c.getReferenceName())
+                    .as("Expected component reference name to start with 'p' because Experience Page Doc but " +
+                            "for component %s it was %s", c.getName(), c.getReferenceName())
+                    .startsWith("p")
+            );
+
+        });
+
+    }
+
+    @Test
+    public void xpage_doc_is_not_allowed_to_redefine_container_which_exists_already_in_hst_config() throws Exception {
+
+        final String pathToExperiencePage = "/unittestcontent/documents/unittestproject/experiences/expPage-with-static-components";
+        try {
+            JcrUtils.copy(adminSession, pathToExperiencePage, "/backupExpPage");
+
+            final String mainPath = pathToExperiencePage + "/expPage-with-static-components/hst:xpage/main";
+
+            // first remove the 'container1' relation between XPage Layout and XPage Document
+            adminSession.getNode(pathToExperiencePage + "/expPage-with-static-components/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6").remove();
+
+            final String[] contents = {
+                    mainPath + "/container1", "hst:containercomponent",
+                    "hst:xtype", "HST.Span",
+                    "hst:page_errorhandlerclassname", "Override.java"
+            };
+
+            RepositoryTestCase.build(contents, adminSession);
+            adminSession.save();
+
+
+            final GenericHttpServletRequestWrapper containerRequest = createContainerRequest("expPage-with-static-components");
+            initContext(pathToExperiencePage, null);
+            final ResolvedSiteMapItem resolvedSiteMapItem = resolve(containerRequest);
+
+            try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(HstComponentConfigurationService.class).build()) {
+                final HstComponentConfiguration root = resolvedSiteMapItem.getHstComponentConfiguration();
+
+                HstComponentConfiguration container = root.getChildByName("main").getChildByName("container1");
+
+                assertThat(container.isExperiencePageComponent())
+                        .as("The '430df2da-3dc8-40b5-bed5-bdc44b8445c6' container got removed from the XPage doc " +
+                                "but even then the container should still be marked as a 'experience page component' since " +
+                                "in the CM UI, someone with author privilege should be add the container")
+                        .isTrue();
+
+                assertThat(container.getPageErrorHandlerClassName())
+                        .as("Containers are not allowed to be merged")
+                        .isNotEqualTo("Override.java");
+                assertThat(container.getPageErrorHandlerClassName())
+                        .as("Containers are not allowed to be merged")
+                        .isNotEqualTo("HST.Span");
+
+                assertThat(interceptor.getEvents().size())
+                        .as("Expected a model loading warning wrt container merging which is not allowed")
+                        .isEqualTo(1);
+
+                String msg = interceptor.getEvents().get(0).getMessage().getFormattedMessage();
+
+                assertThat(msg)
+                        .startsWith("Incorrect component configuration: *Container* Components are not allowed");
+
+            }
+        } finally {
+
+            adminSession.getNode(pathToExperiencePage).remove();
+            adminSession.move("/backupExpPage", pathToExperiencePage);
+            adminSession.save();
+        }
+    }
+
+    @Test
+    public void  xpage_document_containing_static_components_from_version_history() throws Exception {
+
+        final String pathToExperiencePage = "/unittestcontent/documents/unittestproject/experiences/expPage-with-static-components";
+
+        try {
+
+            // backup expPage1 before changing it with workflow
+            JcrUtils.copy(adminSession, pathToExperiencePage, "/expPageBackup");
+            adminSession.save();
+
+            final Node handle = adminSession.getNode(pathToExperiencePage);
+            final DocumentWorkflow workflow = (DocumentWorkflow) adminSession.getWorkspace().getWorkflowManager().getWorkflow("default", handle);
+
+            // now the 'workspace version is branch 'foo', but 'assertionsForExperiencePage' will load the master, which
+            // will be loaded from VERSION HISTORY!
+            workflow.branch("foo", "Foo");
+
+            // publish foo branch
+            workflow.publishBranch("foo");
+
+            // render branch 'foo': Because the published variant is for 'live', it is
+            // a version history XPage that will be loaded
+            HstComponentConfigurationService root = assertionsForExperiencePage(pathToExperiencePage, "expPage-with-static-components", "foo");
+
+            HstComponentConfiguration title = root.getChildByName("header").getChildByName("title");
+
+            HstComponentConfiguration subtitle = title.getChildByName("subtitle");
+
+            assertThat(title.getCanonicalStoredLocation())
+                    .isEqualTo("/hst:hst/hst:configurations/unittestcommon/hst:components/header/title");
+
+            assertThat(subtitle.getCanonicalStoredLocation())
+                    .as("Even though subtitle component comes from version history, the canonical stored location " +
+                            "should return the jcr workspace path")
+                    .isEqualTo("/unittestcontent/documents/unittestproject/experiences/expPage-with-static-components/expPage-with-static-components/hst:xpage/header/title/subtitle");
+
+
+            assertThat(adminSession.getNodeByIdentifier(subtitle.getCanonicalIdentifier()).getPath())
+                    .as("The backing node for the subtitle is expected to come from version history")
+                    .startsWith("/jcr:system/jcr:versionStorage");
+
+            assertThat(title.isShared()).isTrue();
+            assertThat(subtitle.isShared()).isFalse();
+
+        } finally {
+            adminSession.getNode(pathToExperiencePage).remove();
+            adminSession.move("/expPageBackup", pathToExperiencePage);
+            adminSession.save();
         }
     }
 
