@@ -16,6 +16,21 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.ActionState
 
 public class ActionStateTest {
 
+    @Test
+    public void test_merge_adding_an_action() {
+
+        final Map<NamedCategory, Boolean> a2 = new HashMap<>();
+        a2.put(HstAction.XPAGE_PUBLISH, false);
+
+        final Map<String, Boolean> actions = merge(new ActionState(emptyMap(), emptyMap()), new ActionState(a2, emptyMap()))
+                .getActions().entrySet().stream()
+                .collect(toMap(e -> e.getKey().getName(), Map.Entry::getValue));
+
+        assertThat(actions).hasSize(1);
+        assertThat(actions.get("publish")).isFalse();
+
+    }
+
 
     @Test
     public void test_merge_replacing_an_action() {
