@@ -50,6 +50,14 @@ export class Container extends ComponentEntity {
     return this._meta[HstConstants.XPAGE_EDITABLE] === 'true';
   }
 
+  isXPageLayoutComponent() {
+    return this._meta[HstConstants.XPAGE_LAYOUT_COMPONENT] === 'true';
+  }
+
+  getXPageLayoutHippoIdentifier() {
+    return this._meta[HstConstants.XPAGE_LAYOUT_HIPPO_ID];
+  }
+
   getDragDirection() {
     return this._meta[HstConstants.XTYPE] === HstConstants.XTYPE_SPAN ? 'horizontal' : 'vertical';
   }
