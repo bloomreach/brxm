@@ -49,13 +49,11 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
-import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.checkoutCorrectBranch;
@@ -66,9 +64,8 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageU
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.updateTimestamp;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.validateTimestamp;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.createComponentItem;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.findNewName;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.getCatalogItem;
-import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
+import static org.hippoecm.hst.platform.utils.UUIDUtils.isValidUUID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
 
 @Path("/experiencepage/hst:containercomponent/")

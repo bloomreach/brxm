@@ -166,8 +166,14 @@ class HstService {
     return str.join('&');
   }
 
-  addHstComponent(catalogComponent, containerId, nextComponentId) {
-    return this.doPost(null, containerId, catalogComponent.id, nextComponentId);
+  addHstComponent(catalogComponent, container, nextComponentId) {
+    const containerId = container.getId();
+    const pathElements = [catalogComponent.id];
+    if (container.isXPageLayoutComponent()) {
+      pathElements.unshift(container.getXPageLayoutHippoIdentifier());
+    }
+
+    return this.doPost(null, containerId, ...pathElements, nextComponentId);
   }
 
   updateHstContainer(containerId, containerRepresentation) {

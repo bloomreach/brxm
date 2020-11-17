@@ -433,6 +433,10 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             return false;
         }
 
+        @Override
+        public String getPageModelApi() {
+            return null;
+        }
     }
 
 }

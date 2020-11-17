@@ -366,6 +366,8 @@ public class PageModelApiMount implements ContextualizableMount {
         return builder.toString();
     }
 
-
-
+    @Override
+    public String getPageModelApi() {
+        return null;
+    }
 }
