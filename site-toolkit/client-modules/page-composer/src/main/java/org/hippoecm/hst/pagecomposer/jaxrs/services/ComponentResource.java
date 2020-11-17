@@ -39,7 +39,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ActionStateService
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.State;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils;
+import org.hippoecm.hst.platform.utils.UUIDUtils;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
 import static java.util.stream.Collectors.groupingBy;
