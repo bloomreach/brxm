@@ -98,6 +98,7 @@
   "CREATE_XPAGE": "New page",
   "TOOLBAR_MENU_XPAGE_UNPUBLISH": "Take offline",
   "SAVE_AND_PUBLISH": "Save and publish",
+  "NOTIFICATION_BAR_XPAGE_LABEL_NOT_PART_OF_PROJECT": "Page '{{pageName}}': {{status}}, not part of project '{{projectName}}'",
   "FEEDBACK_DOCUMENT_HELD_BY_CORE_PROJECT_MESSAGE": "Document has been edited on core",
   "SUBPAGE_PAGE_PROPERTIES_LABEL_ASSIGN_NEW_TEMPLATE": "Apply new template",
   "EXPERIMENT_LABEL_COMPLETED": "Experiment completed",
