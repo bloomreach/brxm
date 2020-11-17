@@ -217,7 +217,7 @@ class PageStructureService {
   }
 
   addComponentToContainer(catalogComponent, container, nextComponentId) {
-    return this.HstService.addHstComponent(catalogComponent, container.getId(), nextComponentId)
+    return this.HstService.addHstComponent(catalogComponent, container, nextComponentId)
       .then(
         (response) => {
           this.ChannelService.checkChanges();
