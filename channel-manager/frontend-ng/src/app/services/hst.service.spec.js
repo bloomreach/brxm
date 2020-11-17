@@ -296,18 +296,38 @@ describe('HstService', () => {
 
     it('adds a new component from catalog toolkit', () => {
       spyOn(hstService, 'doPost').and.returnValue($q.when({ id: 'cafebabe' }));
+      const container = jasmine.createSpyObj('container', ['getId', 'isXPageLayoutComponent']);
+      container.getId.and.returnValue('container1');
+      container.isXPageLayoutComponent.and.returnValue(false);
 
-      hstService.addHstComponent({ id: '123456' }, 'container1').then((response) => {
+      hstService.addHstComponent({ id: '123456' }, container).then((response) => {
         expect(response).toEqual({ id: 'cafebabe' });
       });
 
       expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', '123456', undefined);
     });
 
+    it('adds a new layout component from catalog toolkit', () => {
+      spyOn(hstService, 'doPost').and.returnValue($q.when({ id: 'cafebabe' }));
+      const container = jasmine.createSpyObj('container', ['getId', 'isXPageLayoutComponent',
+        'getXPageLayoutHippoIdentifier']);
+      container.getId.and.returnValue('container1');
+      container.isXPageLayoutComponent.and.returnValue(true);
+      container.getXPageLayoutHippoIdentifier.and.returnValue('hippoId');
+
+      hstService.addHstComponent({ id: '123456' }, container).then((response) => {
+        expect(response).toEqual({ id: 'cafebabe' });
+      });
+
+      expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', 'hippoId', '123456', undefined);
+    });
+
     it('adds a new component from catalog toolkit before another component', () => {
       spyOn(hstService, 'doPost').and.returnValue($q.when({ id: 'cafebabe' }));
+      const container = jasmine.createSpyObj('container', ['getId', 'isXPageLayoutComponent']);
+      container.getId.and.returnValue('container1');
 
-      hstService.addHstComponent({ id: '123456' }, 'container1', '654321').then((response) => {
+      hstService.addHstComponent({ id: '123456' }, container, '654321').then((response) => {
         expect(response).toEqual({ id: 'cafebabe' });
       });
 
