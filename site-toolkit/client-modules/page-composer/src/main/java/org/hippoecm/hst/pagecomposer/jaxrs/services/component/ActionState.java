@@ -54,14 +54,13 @@ public final class ActionState {
         return states;
     }
 
-    private static  <T> Map<NamedCategory, T> mergeMaps(final Map<NamedCategory, T> m1, final Map<NamedCategory, T> m2) {
+    private static <T> Map<NamedCategory, T> mergeMaps(final Map<? extends NamedCategory, T> m1, final Map<? extends NamedCategory, T> m2) {
         final Map<NamedCategory, T> merged = new HashMap<>(m1);
-        m2.forEach( (s, v) -> {
-            if (merged.containsKey(s)) {
+        m2.forEach((s, v) -> {
+            if (v == null) {
                 merged.remove(s);
-                if (v != null) {
-                    merged.put(s, v);
-                }
+            } else {
+                merged.put(s, v);
             }
         });
         return merged;
