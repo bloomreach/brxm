@@ -67,6 +67,7 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.X
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_DELETE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_MOVE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_PUBLISH;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_RENAME;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_SCHEDULE_PUBLICATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_SCHEDULE_UNPUBLICATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_UNPUBLISH;
@@ -187,6 +188,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(XPAGE, XPAGE_DELETE), false)
                 .put(key(XPAGE, XPAGE_MOVE), false)
                 .put(key(XPAGE, XPAGE_PUBLISH), false)
+                .put(key(XPAGE, XPAGE_RENAME), false)
                 .put(key(XPAGE, XPAGE_SCHEDULE_PUBLICATION), false)
                 .put(key(XPAGE, XPAGE_SCHEDULE_UNPUBLICATION), true)
                 .put(key(XPAGE, XPAGE_UNPUBLISH), true)
