@@ -17,7 +17,9 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.ItemNotFoundException;
@@ -47,9 +49,11 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.String.format;
 import static org.apache.jackrabbit.JcrConstants.JCR_FROZENUUID;
 import static org.apache.jackrabbit.JcrConstants.NT_FROZENNODE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED;
+import static org.hippoecm.hst.platform.utils.UUIDUtils.isValidUUID;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
@@ -268,6 +272,21 @@ public class XPageUtils {
         }
     }
 
+    // returns the UUIDs of the workspace version for children in case children belong to versioned nodes
+    public static List<String> getWorkspaceChildrenIds(final Session session, final List<String> childIds) throws RepositoryException {
+        final List<String> workspaceChildren = new ArrayList<>(childIds.size());
+        for (String childId : childIds) {
+            if (!isValidUUID(childId)) {
+                throw new ClientException(format("Invalid child id '%s'", childId), ClientError.INVALID_UUID);
+            }
+            try {
+                workspaceChildren.add(getWorkspaceNode(session, childId).getIdentifier());
+            } catch (ItemNotFoundException e) {
+                throw new ClientException(format("Could not find workspace node for child id '%s'", childId), ClientError.INVALID_UUID);
+            }
+        }
+        return workspaceChildren;
+    }
 
     /**
      * if belongs to XPage, returns the unpublished variant. If it is an XPage but there is no unpublished variant,
