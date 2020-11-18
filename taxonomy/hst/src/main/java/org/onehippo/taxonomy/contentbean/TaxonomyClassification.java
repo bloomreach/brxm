@@ -18,13 +18,16 @@ package org.onehippo.taxonomy.contentbean;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.dynamic.InterceptorEntity;
 import org.hippoecm.hst.content.beans.standard.KeyLabelPathValue;
@@ -36,7 +39,7 @@ import org.onehippo.taxonomy.api.Taxonomy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TaxonomyClassification implements InterceptorEntity{
+public class TaxonomyClassification implements InterceptorEntity {
 
     private static final Logger log = LoggerFactory.getLogger(TaxonomyClassification.class);
 
@@ -44,7 +47,7 @@ public class TaxonomyClassification implements InterceptorEntity{
     private final Property documentProperty;
     private final Taxonomy taxonomy;
     private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-    private static final String PATH_SEPERATOR = "/";
+    private static final String PATH_SEPARATOR = "/";
 
     public TaxonomyClassification(final Property documentProperty, final Taxonomy taxonomy) {
         this.documentProperty = documentProperty;
@@ -57,31 +60,43 @@ public class TaxonomyClassification implements InterceptorEntity{
     }
 
     public List<KeyLabelPathValue> getTaxonomyValues() {
-        final String[] keys = getKeys();
+        return getKeyLabelPathValues(getKeys());
+    }
 
-        return Arrays.stream(keys).map(key -> {
-            final Category category = taxonomy.getCategoryByKey(key);
-            final String keyPath = category != null
-                    ? (String.format("%s/%s/", category.getAncestors().size(), category.getPath()))
-                    : null;
-            final CategoryInfo categoryInfo = category.getInfo(locale);
-            if (category == null || categoryInfo == null) {
-                log.warn("Label is missing for key {} and locale {}", key, locale);
-                return new KeyLabelPathValue(key, null, keyPath, null);
-            }
-            final StringBuilder labelPath = new StringBuilder().append(category.getAncestors().size())
-                    .append(PATH_SEPERATOR);
-            for (Category ancestorCategory : category.getAncestors()) {
-                final CategoryInfo ancestorCategoryInfo = ancestorCategory.getInfo(locale);
-                if (ancestorCategoryInfo == null) {
-                    log.warn("Label is missing for key {} and locale {}", ancestorCategory.getKey(), locale);
-                }
-                labelPath.append(ancestorCategoryInfo != null ? ancestorCategoryInfo.getName() : null)
-                        .append(PATH_SEPERATOR);
-            }
-            labelPath.append(categoryInfo.getName()).append(PATH_SEPERATOR);
-            return new KeyLabelPathValue(key, categoryInfo.getName(), keyPath, labelPath.toString());
-        }).collect(Collectors.toList());
+    public List<KeyLabelPathValue> getTaxonomyAllValues() {
+        return getKeyLabelPathValues(getEffectiveKeys(getKeys()));
+    }
+
+    private List<KeyLabelPathValue> getKeyLabelPathValues(final String[] keys) {
+        return Arrays.stream(keys)
+                .filter(StringUtils::isNotBlank)
+                .map(key -> {
+                    final Category category = taxonomy.getCategoryByKey(key);
+                    if (category == null) {
+                        log.warn("Could not locate category for key '{}'", key);
+                        return new KeyLabelPathValue(key, null, null, null);
+                    }
+
+                    final String keyPath = (String.format("%s/%s/", category.getAncestors().size(), category.getPath()));
+                    final CategoryInfo categoryInfo = category.getInfo(locale);
+                    if (categoryInfo == null) {
+                        log.warn("Label is missing for key '{}' and locale '{}'", key, locale);
+                        return new KeyLabelPathValue(key, null, keyPath, null);
+                    }
+
+                    final StringBuilder labelPath = new StringBuilder().append(category.getAncestors().size())
+                            .append(PATH_SEPARATOR);
+                    for (Category ancestorCategory : category.getAncestors()) {
+                        final CategoryInfo ancestorCategoryInfo = ancestorCategory.getInfo(locale);
+                        if (ancestorCategoryInfo == null) {
+                            log.warn("Label is missing for key '{}' and locale '{}'", ancestorCategory.getKey(), locale);
+                        }
+                        labelPath.append(ancestorCategoryInfo != null ? ancestorCategoryInfo.getName() : null)
+                                .append(PATH_SEPARATOR);
+                    }
+                    labelPath.append(categoryInfo.getName()).append(PATH_SEPARATOR);
+                    return new KeyLabelPathValue(key, categoryInfo.getName(), keyPath, labelPath.toString());
+                }).collect(Collectors.toList());
     }
 
     private String[] getKeys() {
@@ -96,6 +111,22 @@ public class TaxonomyClassification implements InterceptorEntity{
         }
 
         return new String[0];
+    }
+
+    /**
+     * Creates an array consisting of the input keys plus all their ancestors keys. For each assigned key, find its
+     * ancestors and add them to the returned array. A distinct() is done before returning the array with all the keys
+     *
+     * @param keys an array with the assigned keys of a document field
+     * @return an array with all the assigned keys plus all their ancestor keys
+     */
+    private String[] getEffectiveKeys(final String[] keys) {
+        return Stream.concat(
+                Arrays.stream(keys),
+                Arrays.stream(keys).map(taxonomy::getCategoryByKey).filter(Objects::nonNull)
+                        .flatMap(category -> category.getAncestors().stream().map(Category::getKey)))   
+                .distinct()
+                .toArray(String[]::new);
     }
 
     private String getValue(final Value value) {
