@@ -15,7 +15,7 @@
  */
 
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Input, NgZone, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, Input, NgZone, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, pluck } from 'rxjs/operators';
@@ -33,7 +33,7 @@ interface SiteMapItemNode extends SiteMapItem {
   templateUrl: './site-map.component.html',
   styleUrls: ['./site-map.component.scss'],
 })
-export class SiteMapComponent implements OnChanges, OnDestroy {
+export class SiteMapComponent implements OnChanges, OnDestroy, AfterViewChecked {
   @Input() siteMap: SiteMapItem[] = [];
   @Input() renderPathInfo?: string;
 
@@ -61,6 +61,7 @@ export class SiteMapComponent implements OnChanges, OnDestroy {
   constructor(
     private readonly iframeService: IframeService,
     private readonly zone: NgZone,
+    private readonly elementRef: ElementRef,
   ) {
     this.search$
       .pipe(
@@ -79,6 +80,11 @@ export class SiteMapComponent implements OnChanges, OnDestroy {
     }
 
     this.expandSelected();
+  }
+
+  ngAfterViewChecked(): void {
+    const selectedNode = this.elementRef.nativeElement.querySelector('.selected');
+    selectedNode?.scrollIntoView();
   }
 
   ngOnDestroy(): void {
