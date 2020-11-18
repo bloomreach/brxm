@@ -190,7 +190,7 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                     log.debug("XPage Document container for component '{}' does not exist, use the container " +
                             "from the HST Page layout config so items can be added via CM still", pageLayoutContainer.getCanonicalStoredLocation());
 
-                    pageLayoutContainer.transformXpageLayoutContainer();
+                    pageLayoutContainer.transformUnresolvedXpageLayoutContainer();
                 } else {
                     mergedDocumentContainers.add(hippoIdentifier);
                     // Replace the UUID and canonical stored location of the container and add the XPage document
