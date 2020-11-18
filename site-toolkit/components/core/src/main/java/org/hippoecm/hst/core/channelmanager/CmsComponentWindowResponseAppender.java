@@ -201,8 +201,13 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             try {
                 handlePath = request.getRequestContext().getContentBean().getNode().getParent().getPath();
                 if (!compConfig.getCanonicalStoredLocation().startsWith(handlePath)) {
-                    log.error("Component '{}' for XPage '{}' expected to be a descendant of handle but was not the case, return " +
-                            "false for user in role", compConfig.getCanonicalStoredLocation(), handlePath);
+                    if (compConfig.isUnresolvedXpageLayoutContainer()) {
+                        log.info("Component '{}' for XPage '{}' has been most likely added later on to the XPage Layout, " +
+                                "on usage, the container should be created in the XPage document", compConfig.getCanonicalStoredLocation(), handlePath);
+                    } else {
+                        log.error("Component '{}' for XPage '{}' expected to be a descendant of handle but was not the case, return " +
+                                "false for user in role", compConfig.getCanonicalStoredLocation(), handlePath);
+                    }
                 }
                 return isInRole(cmsUser, handlePath, XPAGE_REQUIRED_PRIVILEGE_NAME);
             } catch (RepositoryException e) {

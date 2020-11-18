@@ -35,7 +35,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.jackrabbit.JcrConstants;
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
@@ -60,7 +59,9 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.R
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.checkoutCorrectBranch;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getObtainEditableInstanceWorkflow;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getInternalWorkflowSession;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getWorkspaceChildrenIds;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getWorkspaceNode;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.updateTimestamp;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.validateTimestamp;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.createComponentItem;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.util.ContainerUtils.getCatalogItem;
@@ -164,14 +165,6 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
         return handleAction(createContainerItem);
     }
 
-    private Calendar updateTimestamp(final Node containerNode) throws RepositoryException {
-        // update last modified for optimistic locking
-        final Calendar updatedTimestamp = Calendar.getInstance();
-        containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, updatedTimestamp);
-        return updatedTimestamp;
-    }
-
-
     @PUT
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -196,9 +189,9 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
             // TODO validate in integration test, including version history checked out branches
             validateTimestamp(container.getLastModifiedTimestamp(), containerNode, userSession.getUserID());
 
-            final List<String> children = getWorkspaceChildren(workflowSession, container.getChildren());
+            final List<String> children = getWorkspaceChildrenIds(workflowSession, container.getChildren());
 
-            validateContainerItems(workflowSession, children);
+            validateContainerItems(getPageComposerContextService(), workflowSession, children);
 
             ContainerUtils.updateContainerOrder(workflowSession, children, containerNode, node -> {
                 // no locking needed for XPages;
@@ -216,21 +209,6 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
         return handleAction(updateContainer);
     }
 
-    // returns the UUIDs of the workspace version for children in case children belong to versioned nodes
-    private List<String> getWorkspaceChildren(final Session session, final List<String> childIds) throws RepositoryException {
-        final List<String> workspaceChildren = new ArrayList<>(childIds.size());
-        for (String childId : childIds) {
-            if (!isValidUUID(childId)) {
-                throw new ClientException(format("Invalid child id '%s'", childId), ClientError.INVALID_UUID);
-            }
-            try {
-                workspaceChildren.add(getWorkspaceNode(session, childId).getIdentifier());
-            } catch (ItemNotFoundException e) {
-                throw new ClientException(format("Could not find workspace node for child id '%s'", childId), ClientError.INVALID_UUID);
-            }
-        }
-        return workspaceChildren;
-    }
 
     /**
      * assert all children are of type 'hst:containeritemcomponent' and that they are ALL descendants of the currently
@@ -238,9 +216,10 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
      *
      * @throws ClientException in case the {@code childsIds} are not valid
      */
-    private void validateContainerItems(final Session workflowSession, final List<String> childIds) throws RepositoryException, ClientException {
+    public static void validateContainerItems(final PageComposerContextService pageComposerContextService,
+                                              final Session workflowSession, final List<String> childIds) throws RepositoryException, ClientException {
 
-        final String unpublishedId = (String) getPageComposerContextService().getRequestContext().getAttribute(REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE);
+        final String unpublishedId = (String) pageComposerContextService.getRequestContext().getAttribute(REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE);
 
         final Node unpublished = workflowSession.getNodeByIdentifier(unpublishedId);
         final String pathPrefix = unpublished.getPath() + "/";
