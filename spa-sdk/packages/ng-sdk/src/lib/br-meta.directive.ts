@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { DoCheck, OnDestroy, Optional, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, DoCheck, OnDestroy, Optional, TemplateRef, ViewContainerRef } from '@angular/core';
 import { MetaCollection } from '@bloomreach/spa-sdk';
 
+@Directive()
 export abstract class BrMetaDirective implements DoCheck, OnDestroy {
   protected meta?: MetaCollection | undefined;
   private rendered?: MetaCollection;
