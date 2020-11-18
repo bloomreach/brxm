@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package org.hippoecm.frontend.plugins.jquery.upload.multiple;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.IBehaviorListener;
@@ -28,13 +30,14 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
-import org.apache.commons.fileupload.FileItem;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.jquery.upload.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.AjaxCallbackUploadDoneBehavior;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.AjaxFileUploadBehavior;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
+import org.hippoecm.frontend.plugins.yui.upload.model.UploadedFile;
+import org.hippoecm.frontend.plugins.yui.upload.processor.FileUploadPreProcessorService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,8 +64,10 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
     protected void onFileUploadResponse(final ServletWebRequest request, final Map<String, FileUploadInfo> uploadedFiles) {
     }
 
-    public FileUploadWidget(final String uploadPanel, final IPluginConfig pluginConfig, final FileUploadValidationService validator) {
-        super(uploadPanel, pluginConfig, validator);
+    public FileUploadWidget(final String uploadPanel, final IPluginConfig pluginConfig,
+                            final FileUploadValidationService validator,
+                            final FileUploadPreProcessorService fileUploadPreProcessorService) {
+        super(uploadPanel, pluginConfig, validator, fileUploadPreProcessorService);
 
         createComponents();
     }
@@ -98,6 +103,16 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
 
             protected void onUploadError(final FileUploadInfo fileUploadInfo) {
                 FileUploadWidget.this.onUploadError(fileUploadInfo);
+            }
+
+            @Override
+            protected void validate(final FileUpload fileUpload) throws FileUploadViolationException {
+                FileUploadWidget.this.validate(fileUpload);
+            }
+
+            @Override
+            protected void preProcess(final UploadedFile uploadedFile) {
+                FileUploadWidget.this.preProcess(uploadedFile);
             }
 
         });

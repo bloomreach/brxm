@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/fileUploadPreProcessorService:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.hippoecm.frontend.plugins.yui.upload.processor.DefaultFileUploadPreProcessorPlugin
+      pre.processor.id: service.upload.pre.processor
+      /preProcessors:
+        jcr:primaryType: frontend:pluginconfig
