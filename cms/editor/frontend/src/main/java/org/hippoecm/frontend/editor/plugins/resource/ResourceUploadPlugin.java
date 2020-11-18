@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.single.FileUploadPanel;
+import org.hippoecm.frontend.plugins.yui.upload.processor.DefaultFileUploadPreProcessorService;
+import org.hippoecm.frontend.plugins.yui.upload.processor.FileUploadPreProcessorService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.service.IEditor;
@@ -39,8 +41,8 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_TEXT;
 
 /**
- * Plugin for uploading resources into the JCR repository.
- * This plugin can be configured with specific types, so not all file types are allowed to be uploaded.
+ * Plugin for uploading resources into the JCR repository. This plugin can be configured with specific types, so not all
+ * file types are allowed to be uploaded.
  */
 public class ResourceUploadPlugin extends RenderPlugin {
 
@@ -57,9 +59,10 @@ public class ResourceUploadPlugin extends RenderPlugin {
     }
 
     private FileUploadPanel createFileUploadPanel() {
-        final FileUploadPanel panel = new FileUploadPanel("fileUpload", getPluginConfig(), getValidationService()) {
+        final FileUploadPanel panel = new FileUploadPanel("fileUpload", getPluginConfig(), getValidationService(),
+                getPreProcessorService()) {
             @Override
-            public void onFileUpload ( final FileUpload fileUpload) throws FileUploadViolationException {
+            public void onFileUpload(final FileUpload fileUpload) throws FileUploadViolationException {
                 handleUpload(fileUpload);
             }
         };
@@ -70,6 +73,10 @@ public class ResourceUploadPlugin extends RenderPlugin {
     private FileUploadValidationService getValidationService() {
         return DefaultUploadValidationService.getValidationService(getPluginContext(), getPluginConfig(),
                 DEFAULT_ASSET_VALIDATION_SERVICE_ID);
+    }
+
+    private FileUploadPreProcessorService getPreProcessorService() {
+        return DefaultFileUploadPreProcessorService.getPreProcessorService(getPluginContext(), getPluginConfig());
     }
 
     /**
