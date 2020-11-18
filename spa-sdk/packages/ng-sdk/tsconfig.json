@@ -9,7 +9,7 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "module": "esnext",
+    "module": "es2020",
     "moduleResolution": "node",
     "importHelpers": true,
     "inlineSources": true,
@@ -22,7 +22,6 @@
     ]
   },
   "angularCompilerOptions": {
-    "disableTypeScriptVersionCheck": true,
     "enableIvy": false,
     "skipTemplateCodegen": true,
     "strictInjectionParameters": true,
