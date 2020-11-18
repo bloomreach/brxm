@@ -33,6 +33,9 @@ describe('SiteMapComponent', () => {
   let fixture: ComponentFixture<SiteMapComponent>;
   let iframeService: IframeService;
 
+  const scrollIntoViewMock = jest.fn();
+  window.HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;
+
   const mockRenderPathInfo = '/idTest2/idTest3';
 
   const mockSiteMapTree = [
@@ -134,6 +137,18 @@ describe('SiteMapComponent', () => {
       fixture.detectChanges();
 
       expect(componentEl.querySelector('mat-tree')).toMatchSnapshot();
+    });
+
+    it('should scroll selected node into view', () => {
+      scrollIntoViewMock.mockClear();
+
+      component.renderPathInfo = '/idTest4';
+      component.ngOnChanges({
+        renderPathInfo: {  } as SimpleChange,
+      });
+      fixture.detectChanges();
+
+      expect(scrollIntoViewMock).toHaveBeenCalled();
     });
 
     it('should load page on node click', () => {
