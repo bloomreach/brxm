@@ -105,8 +105,12 @@ export class Container extends ComponentEntity {
   }
 
   getHstRepresentation() {
+    const id = this.isXPageLayoutComponent()
+      ? this.getXPageLayoutHippoIdentifier()
+      : this.getId();
+
     return {
-      id: this.getId(),
+      id,
       lastModifiedTimestamp: this.getLastModified(),
       children: this._items.map(item => item.getId()),
     };
