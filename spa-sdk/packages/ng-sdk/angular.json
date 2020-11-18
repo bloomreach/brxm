@@ -10,15 +10,10 @@
       "prefix": "br",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "tsconfig.json",
             "project": "ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "tsconfig.prod.json"
-            }
           }
         },
         "test": {
