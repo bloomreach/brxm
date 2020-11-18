@@ -2,5 +2,5 @@ definitions:
   config:
     /unittestcontent/documents/unittestproject/dynamiccontent/dynamiccontent:
       pagemodelapitest:taxonomyClassificationField: stats
-      pagemodelapitest:taxonomyClassificationField2: [stats, tasks, tasklevel1, tasklevel2]
+      pagemodelapitest:taxonomyClassificationField2: [stats, tasks, tasklevel2]
       pagemodelapitest:taxonomyClassificationField3: [stats2, tasks2]
