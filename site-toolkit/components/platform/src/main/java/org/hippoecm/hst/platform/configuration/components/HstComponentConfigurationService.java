@@ -185,6 +185,15 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     // true if this is an explicit xpage layout component (aka not inherited component but directly below the hst:xpage
     private boolean xpageLayoutComponent;
 
+    // in case the config is transformed to an XPage but the XPage document does not have a container for the
+    // container from the XPAge Layout
+    private boolean unresolvedXpageLayoutContainer;
+
+    /**
+     * See {@link #isExperiencePageComponent()}
+     */
+    private boolean experiencePageComponent;
+
     /**
      * hst:component of type 'xpage' or 'containercomponent' are expected to have a hippo:identifier
      * (auto created property). Can be null
@@ -258,7 +267,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private Calendar lockedOn;
     private Calendar lastModified;
     private Boolean markedDeleted;
-    private boolean experiencePageComponent;
 
     /**
      * detached is true for components returned from {@link #copy(String, String, boolean)} implying that the
@@ -944,6 +952,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     @Override
     public boolean isHidden() {
         return hidden;
+    }
+
+    @Override
+    public boolean isUnresolvedXpageLayoutContainer() {
+        return unresolvedXpageLayoutContainer;
     }
 
     /**
@@ -1937,9 +1950,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * XPage Layout : When in the CM someone adds a container item to it, we make sure the correct container gets added
      * to the Xpage in the Document!
      */
-    public void transformXpageLayoutContainer() {
+    public void transformUnresolvedXpageLayoutContainer() {
 
-        // mark the component to be an exp page container (even though this is a copy config from Xpage Config!
+        // mark the component to be an exp page container (even though this is a copy config from Xpage Config!)
+        // the reason: in the CM UI, an author should be able to add a container item to this container still!
         experiencePageComponent = true;
 
         // shared FALSE because the CM needs to be able to interact with the component as PART OF an Xpage Document!
@@ -1947,6 +1961,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         // even when the container comes from inherited common configuration, an XPage Document can hijack it via the
         // hippo:identifier making it effectively a non-inherited and non-shared container!
         inherited = false;
+
+        if (xpageLayoutComponent) {
+            unresolvedXpageLayoutContainer = true;
+        }
+
         // remove any child items present in Xpage Layout
         orderedListConfigs = Collections.emptyList();
         componentConfigurations = Collections.emptyMap();
