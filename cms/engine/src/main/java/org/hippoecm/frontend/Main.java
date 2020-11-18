@@ -862,6 +862,10 @@ public class Main extends PluginApplication {
         return PluginUserSession.get().getApplicationName().equals(PLUGIN_APPLICATION_VALUE_CMS);
     }
 
+    public static boolean isConsoleApplication() {
+        return PluginUserSession.get().getApplicationName().equals(PLUGIN_APPLICATION_VALUE_CONSOLE);
+    }
+
     public static boolean hasNoIFrameParameter() {
         final RequestCycle requestCycle = RequestCycle.get();
         if (requestCycle == null) {
