@@ -16,10 +16,18 @@
 
 package org.hippoecm.frontend.plugins.jquery.upload.behaviors;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wicket.Application;
@@ -39,11 +47,9 @@ import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.util.file.FileCleanerTrackerAdapter;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.Strings;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.TemporaryFileItem;
+import org.hippoecm.frontend.plugins.yui.upload.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,9 +74,17 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
     public static final String JQUERY_FILEUPLOAD_SIZE = "size";
     public static final String JQUERY_FILEUPLOAD_ERROR = "error";
     private final WebMarkupContainer container;
+    private final DiskFileItemFactory diskFileItemFactory;
 
     public AjaxFileUploadBehavior(final WebMarkupContainer container) {
         this.container = container;
+        this.diskFileItemFactory = new DiskFileItemFactory() {
+            @Override
+            public FileItem createItem(String fieldName, String contentType, boolean isFormField, String fileName) {
+                FileItem item = super.createItem(fieldName, contentType, isFormField, fileName);
+                return new TemporaryFileItem(item);
+            }
+        };
     }
 
     @Override
@@ -87,10 +101,16 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
                     // save file info prior uploading because temporary files may be deleted,
                     // thus their file sizes won't be correct.
                     FileUploadInfo fileUploadInfo = new FileUploadInfo(file.getName(), file.getSize());
+
                     onBeforeUpload(fileUploadInfo);
                     try {
+                        FileUpload fileUpload = new FileUpload(file);
+                        log.debug("Validating file: {}", file.getName());
+                        validate(fileUpload);
+                        log.debug("Pre-processing file: {}", file.getName());
+                        fileUpload = preProcess(file, fileUpload);
                         log.debug("Processed a file: {}", file.getName());
-                        process(new FileUpload(file));
+                        process(fileUpload);
                     } catch (FileUploadViolationException e) {
                         e.getViolationMessages().forEach(errorMsg -> fileUploadInfo.addErrorMessage(errorMsg));
                         if (log.isDebugEnabled()) {
@@ -98,6 +118,9 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
                                     StringUtils.join(fileUploadInfo.getErrorMessages().toArray(), ";"), e);
                         }
                         onUploadError(fileUploadInfo);
+                    } catch (Exception e) {
+                        log.error(String.format("There was a problem processing the file %s, the file couldn't be " +
+                                "uploaded", file.getName()), e);
                     } finally {
                         // remove from cache
                         file.delete();
@@ -115,12 +138,46 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
     }
 
     /**
+     * Since the fileItem is not modifiable (its OutputStream is already closed), this internal method creates a
+     * temporary file where we will load the Byte[] from the fileItem. The different pre-processors will be able to
+     * update that file and in the end we will generate a new FileItem using the Byte[] from the temporary file.
+     * @param fileItem
+     * @param originalFileUpload
+     * @return
+     * @throws IOException
+     */
+    private FileUpload preProcess(FileItem fileItem, final FileUpload originalFileUpload) throws Exception {
+        File tempFile = null;
+        try {
+            tempFile = originalFileUpload.writeToTempFile();
+            UploadedFile uploadedFile = new UploadedFile(tempFile, fileItem);
+            preProcess(uploadedFile);
+
+            fileItem = diskFileItemFactory.createItem(uploadedFile.getFieldName(), uploadedFile.getContentType(),
+                    uploadedFile.isFormField(), uploadedFile.getFileName());
+            OutputStream outputStream = fileItem.getOutputStream();
+            outputStream.write(Files.readAllBytes(tempFile.toPath()));
+            return new FileUpload(fileItem);
+        } finally {
+            if (tempFile != null) {
+                tempFile.delete();
+            }
+        }
+    }
+
+    /**
      * Event is fired before processing the uploaded file.
      */
     protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {
     }
 
     protected void onUploadError(final FileUploadInfo fileUploadInfo) {
+    }
+
+    protected void validate(final FileUpload fileUpload) throws FileUploadViolationException {
+    }
+
+    protected void preProcess(final UploadedFile uploadedFile) {
     }
 
     protected abstract void process(final FileUpload fileUpload) throws FileUploadViolationException;
@@ -133,13 +190,6 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
      * @throws FileUploadException
      */
     private MultipartServletWebRequest createMultipartWebRequest(final ServletWebRequest request) throws FileUploadException {
-        DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory() {
-            @Override
-            public FileItem createItem(String fieldName, String contentType, boolean isFormField, String fileName) {
-                FileItem item = super.createItem(fieldName, contentType, isFormField, fileName);
-                return new TemporaryFileItem(item);
-            }
-        };
         diskFileItemFactory.setFileCleaningTracker(new FileCleanerTrackerAdapter(Application.get().getResourceSettings().getFileCleaner()));
         
         try {
@@ -250,4 +300,5 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
     protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {}
 
     protected void onResponse(final ServletWebRequest request, final Map<String, FileUploadInfo> uploadedFiles) {}
+
 }
