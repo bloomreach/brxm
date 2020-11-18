@@ -27,7 +27,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.DocumentState;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.DocumentStateUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequest;
@@ -35,12 +34,13 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.DocumentUtils;
-import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.branch.BranchConstants;
+import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 import static java.lang.Boolean.TRUE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
+import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 final class XPageContextFactory {
@@ -51,40 +51,51 @@ final class XPageContextFactory {
             return null;
         }
 
+
         final String experiencePageHandleUUID = contextService.getExperiencePageHandleUUID();
         final HippoSession userSession = (HippoSession) contextService.getRequestContext().getSession();
         final Node handle = userSession.getNodeByIdentifier(experiencePageHandleUUID);
-        final DocumentState documentState = DocumentStateUtils.getPublicationStateFromHandle(handle);
         final String name = DocumentUtils.getDisplayName(handle).orElse(handle.getName());
         final ScheduledRequest scheduledRequest = DocumentStateUtils.getScheduledRequest(handle);
         final List<WorkflowRequest> workflowRequests = DocumentStateUtils.getWorkflowRequests(handle);
         final DocumentWorkflow workflow = XPageUtils.getDocumentWorkflow(userSession, contextService);
-        final Node unpublished = userSession.getNodeByIdentifier(contextService.getExperiencePageUnpublishedVariantUUID());
-        final String unpublishedBranchId = JcrUtils.getStringProperty(unpublished, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
-        // Only if the unpublished variant branchId is equal to the one selected in XM
-        // we select it as the xPage branch id.
-        // Otherwise the user would see x-page state of a non-selected branch.
-        final String xPageBranchId = contextService.getSelectedBranchId().equals(unpublishedBranchId)
-                ? unpublishedBranchId
-                : MASTER_BRANCH_ID;
-        final Map<String, Serializable> hints = workflow.hints(xPageBranchId);
 
-        final XPageContext xPageContext = new XPageContext()
-                .setBranchId(xPageBranchId)
+
+        final String selectedBranchId = contextService.getSelectedBranchId();
+        final String useXPageDocBranch;
+        if (workflow.listBranches().contains(selectedBranchId)) {
+            // xpage doc branch exists for currently selectedBranchId (in Channel mgr)
+            useXPageDocBranch = selectedBranchId;
+        } else {
+            // xpage doc branch does not exist for selectedBranchId, use master
+            useXPageDocBranch = MASTER_BRANCH_ID;
+        }
+        final String documentState = getStringProperty(new BranchHandleImpl(useXPageDocBranch, handle).getUnpublished(), HIPPOSTD_STATESUMMARY,
+                "unknown").toLowerCase();
+
+        // note the select branch can not exist for 'selectedBranchId' for the document. That is not a problem as the
+        // workflow hints just supports that (but gives only few allowed options back which is fine)
+        final Map<String, Serializable> hints = workflow.hints(selectedBranchId);
+
+        // the XPageContext is for branchId and documentState uses the actual USED branch (branch or in case missing)
+        // master. The available actions *really* uses the hints of the currently viewed channel branch, regardless
+        // whether the XPage Doc is branched for that branch.
+        final XPageContext xPageContext = new XPageContext().setBranchId(useXPageDocBranch)
                 .setXPageId(experiencePageHandleUUID)
                 .setXPageName(name)
-                .setXPageState(documentState.name().toLowerCase())
+                .setXPageState(documentState)
                 .setScheduledRequest(scheduledRequest)
                 .setWorkflowRequests(workflowRequests)
                 .setRenameAllowed(TRUE.equals(hints.get("rename")))
-                .setCopyAllowed(TRUE.equals(hints.get("copy")))
+                // NOTE: SCXML currently always allows copy so that is why it is also allowed for branched xpages
+                .setCopyAllowed(TRUE.equals(hints.get("copy")) && useXPageDocBranch.equals(MASTER_BRANCH_ID))
                 .setMoveAllowed(TRUE.equals(hints.get("move")))
                 .setDeleteAllowed(TRUE.equals(hints.get("delete")));
 
         final Map<String, Map<String, Serializable>> requestsHints = (Map<String, Map<String, Serializable>>) hints.get("requests");
         parseRequestsHints(requestsHints, workflowRequests, xPageContext);
 
-        if (!BranchConstants.MASTER_BRANCH_ID.equals(xPageBranchId)) {
+        if (!BranchConstants.MASTER_BRANCH_ID.equals(selectedBranchId)) {
             return xPageContext;
         }
 
