@@ -16,7 +16,7 @@
 
 import { mocked } from 'ts-jest/utils';
 import { Component, Input, NgModule } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
 import { ContainerItem } from '@bloomreach/spa-sdk';
 import {
@@ -73,7 +73,7 @@ describe('BrNodeContainerItemDirective', () => {
     } as unknown as typeof page;
   });
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TestComponent, BrNodeContainerItemDirective ],
       imports: [ TestModule ],

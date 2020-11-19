@@ -16,7 +16,7 @@
 
 import { mocked } from 'ts-jest/utils';
 import { Component, Input } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
 import { Menu, MetaCollection, Page, isMenu } from '@bloomreach/spa-sdk';
 import { BrManageMenuButtonDirective } from './br-manage-menu-button.directive';
@@ -46,7 +46,7 @@ describe('BrManageMenuButtonDirective', () => {
     } as unknown as typeof page;
   });
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BrManageMenuButtonDirective, TestComponent ],
       providers: [
