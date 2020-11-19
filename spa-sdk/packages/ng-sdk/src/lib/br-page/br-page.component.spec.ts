@@ -17,7 +17,7 @@
 import { mocked } from 'ts-jest/utils';
 import * as angular from '@angular/common';
 import { SimpleChange, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, getTestBed, ComponentFixture, TestBed } from '@angular/core/testing';
+import { getTestBed, ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { TransferState } from '@angular/platform-browser';
 import { destroy, initialize, isPage, Component, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
@@ -36,7 +36,7 @@ describe('BrPageComponent', () => {
   let page: jest.Mocked<Page>;
   let transferState: jest.Mocked<TransferState>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BrNodeTypePipe, BrPageComponent ],
       imports: [ HttpClientTestingModule ],
@@ -47,7 +47,7 @@ describe('BrPageComponent', () => {
   }));
 
   beforeEach(() => {
-    httpMock = getTestBed().get(HttpTestingController);
+    httpMock = getTestBed().inject(HttpTestingController);
     isPlatformBrowserSpy = spyOn(angular, 'isPlatformBrowser').and.callThrough();
     isPlatformServerSpy = spyOn(angular, 'isPlatformServer').and.callThrough();
     transferState = {
