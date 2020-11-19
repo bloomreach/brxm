@@ -29,7 +29,10 @@ import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.After;
 import org.junit.Before;
@@ -289,5 +292,107 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
                 .containsExactly("three", "four");
         assertThat(componentHeaderConfig.getParameters().values())
                 .containsExactly("val3", "val4");
+    }
+
+    /**
+     * During this test, we make sure to match the sitemap item
+     *       /_default_:
+     *         jcr:primaryType: hst:sitemapitem
+     *         hst:componentconfigurationid: hst:pages/pagenotfound
+     *         hst:parameternames: [testparam]
+     *         hst:parametervalues: ['${1}']
+     *  As a result, in component parameter values, we should support ${1} and also ${testparam} as property placeholders
+     *  Note that default values should support this just as well
+     */
+    @Test
+    public void component_parameter_values_including_default_values_support_property_placeholders() throws Exception {
+        final Node baseHeader = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header");
+        baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[] {"prop"});
+        baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"${1}"});
+        session.save();
+
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header"});
+
+        assertPropertyPlaceHolderReplaced("prop");
+
+        baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[] {"prop"});
+        baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"${testparam}"});
+        session.save();
+
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header"});
+
+        assertPropertyPlaceHolderReplaced("prop");
+
+        baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[] {"prop"});
+        // non existing property place holder ${23} should result in 'null' replacement
+        baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"${23}"});
+        session.save();
+
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header"});
+
+        {
+            final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
+            final String sitemapPath = "somepathXYX";
+            final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(sitemapPath);
+            final HstComponentConfiguration header = mount.getMount().getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/basepage/header");
+            final ComponentConfigurationImpl componentConfiguration = new ComponentConfigurationImpl(header);
+            final String value = componentConfiguration.getParameter("prop", resolvedSiteMapItem);
+            assertThat(value)
+                    .as("Expected that ${23} to be 'nullified' because does not exist")
+                    .isNull();
+        }
+
+
+        // now validate that Parameter Component Info default value substituted in case they are a property placeholder
+
+        // PropertyPlaceHolderComponentInfo has  @Parameter(name = "placeholderprop", defaultValue = "${1}") and
+        // ${1} should be replaced with a runtime sitemap wildcard matched value
+        baseHeader.setProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME, "org.hippoecm.hst.test.PropertyPlaceHolderComponent");
+        session.save();
+
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header"});
+
+        assertPropertyPlaceHolderReplaced("placeholderprop");
+
+
+
+        // now validate that dynamic parameters also get there default value substituted in case they are a property placeholder
+
+        session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:components/header/container/banner-new-style").setProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION,
+                "hst:components/unittestpackage/testcatalogitem");
+
+        // set default value to ${1} and assert it gets replaced
+        session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/testcatalogitem/paramWithDefaultValue")
+                .setProperty("hst:defaultvalue", "${1}");
+        session.save();
+
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header/container/banner-new-style",
+        "/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/testcatalogitem/paramWithDefaultValue"});
+
+        {
+            final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
+            final String sitemapPath = "somepathXYX";
+            final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(sitemapPath);
+            final HstComponentConfiguration banner = mount.getMount().getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/basepage/header/container/banner-new-style");
+            final ComponentConfigurationImpl componentConfiguration = new ComponentConfigurationImpl(banner);
+            final String value = componentConfiguration.getParameter("paramWithDefaultValue", resolvedSiteMapItem);
+            assertThat(value)
+                    .as("Expected that ${1} to be replaced with somepathXYX")
+                    .isEqualTo("somepathXYX");
+        }
+
+    }
+
+    private void assertPropertyPlaceHolderReplaced(final String parameterName) throws ContainerException {
+        final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
+        final String sitemapPath = "somepathXYX";
+        final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(sitemapPath);
+        final HstComponentConfiguration header = mount.getMount().getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/basepage/header");
+        final ComponentConfigurationImpl componentConfiguration = new ComponentConfigurationImpl(header);
+
+        final String value = componentConfiguration.getParameter(parameterName, resolvedSiteMapItem);
+        assertThat(value)
+                .as("Expected that ${1} got replaced with the value from the matched sitemap item wildcard")
+                .isEqualTo(sitemapPath);
     }
 }
