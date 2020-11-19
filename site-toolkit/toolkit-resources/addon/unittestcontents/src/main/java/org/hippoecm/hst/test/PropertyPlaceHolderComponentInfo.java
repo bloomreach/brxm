@@ -17,9 +17,11 @@ package org.hippoecm.hst.test;
 
 import org.hippoecm.hst.core.parameters.Parameter;
 
-public interface HeaderComponentInfo {
+public interface PropertyPlaceHolderComponentInfo {
 
-    @Parameter(name = "header", defaultValue = "Yes My Header")
+    // default value is in this case ${1} and should be substituted if possible just like if a parameter value
+    // as ${1} as value
+    @Parameter(name = "placeholderprop", defaultValue = "${1}")
     String getHeader();
 
 }
