@@ -20,6 +20,7 @@
 
 .mat-icon {
   transition: transform $transition-small-area-speed;
+  color: map-get($text-color, dim);
 }
 
 .mat-icon.expanded {
@@ -36,6 +37,7 @@
   }
 
   &.selected {
+    font-weight: 600;
     background: map-get($blue, 50);
   }
 

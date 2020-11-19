@@ -14,19 +14,25 @@
   limitations under the License.
   -->
 
-<mat-form-field floatLabel="never" class="mat-elevation-z2 searchbar" appearance="none">
-  <input
-    matInput
-    class="qa-sitemap-search-input"
-    [placeholder]="'PLACEHOLDER_SEARCH' | translate "
-    [ngModel]="search$ | async"
-    (ngModelChange)="search$.next($event)"
-  />
-  <button mat-icon-button matPrefix disabled>
-    <mat-icon matPrefix fontIcon="mdi-magnify"></mat-icon>
+<mat-form-field floatLabel="never"
+                class="mat-elevation-z2 searchbar"
+                appearance="none">
+  <input matInput
+         class="qa-sitemap-search-input"
+         [placeholder]="'PLACEHOLDER_SEARCH' | translate "
+         [ngModel]="search$ | async"
+         (ngModelChange)="search$.next($event)" />
+  <button mat-icon-button
+          matPrefix
+          disabled>
+    <mat-icon matPrefix
+              fontIcon="mdi-magnify"></mat-icon>
   </button>
-  <button *ngIf="search$ | async" mat-icon-button matSuffix>
-    <mat-icon fontIcon="mdi-close" (click)="search$.next('')"></mat-icon>
+  <button *ngIf="search$ | async"
+          mat-icon-button
+          matSuffix>
+    <mat-icon fontIcon="mdi-close"
+              (click)="search$.next('')"></mat-icon>
   </button>
 </mat-form-field>
 
@@ -35,24 +41,20 @@
           [treeControl]="treeControl">
   <mat-tree-node *matTreeNodeDef="let node"
                  matTreeNodePadding
+                 matTreeNodePaddingIndent="24"
                  (click)="selectNode(node)"
                  class="mat-tree-node {{ 'qa-tree-node-name-' + node.name }}"
                  [class.selected]="isSelected(node)"
                  [class.hidden]="!isMatched(node) && !isVisible(node)"
                  [class.disabled]="!isMatched(node)">
     <!-- Trick to get extra padding equal to other nodes with icons -->
-    <button mat-icon-button
-            *ngIf="!node.expandable"
-            disabled>
-    </button>
+    <mat-icon *ngIf="!node.expandable"></mat-icon>
 
-    <button mat-icon-button
-            *ngIf="node.expandable"
-            matTreeNodeToggle>
-      <mat-icon svgIcon="chevron-right"
-                [class.expanded]="treeControl.isExpanded(node)">
-      </mat-icon>
-    </button>
+    <mat-icon svgIcon="chevron-right"
+              *ngIf="node.expandable"
+              matTreeNodeToggle
+              [class.expanded]="treeControl.isExpanded(node)">
+    </mat-icon>
 
     {{ node.name }}
   </mat-tree-node>
