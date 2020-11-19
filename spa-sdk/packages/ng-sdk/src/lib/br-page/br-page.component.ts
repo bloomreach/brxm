@@ -23,9 +23,9 @@ import {
   ContentChild,
   Inject,
   Input,
+  NgZone,
   OnChanges,
   OnDestroy,
-  OnInit,
   Output,
   Optional,
   PLATFORM_ID,
@@ -96,6 +96,7 @@ export class BrPageComponent implements AfterContentChecked, AfterViewInit, OnCh
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private httpClient: HttpClient,
+    zone: NgZone,
     @Inject(PLATFORM_ID) private platform: any,
     @Optional() private transferState?: TransferState,
   ) {
@@ -112,7 +113,7 @@ export class BrPageComponent implements AfterContentChecked, AfterViewInit, OnCh
       filter(isPage),
       switchMap((page) => this.afterContentChecked$.pipe(take(1), mapTo(page))),
     )
-    .subscribe((page) => page.sync());
+    .subscribe((page) => zone.runOutsideAngular(() => page.sync()));
 
     this.state.pipe(
       filter(() => isPlatformServer(this.platform)),
