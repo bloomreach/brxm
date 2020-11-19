@@ -15,7 +15,7 @@
  */
 
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Container, Page } from '@bloomreach/spa-sdk';
 import { BrContainerInlineComponent } from './br-container-inline.component';
 
@@ -25,7 +25,7 @@ describe('BrContainerInlineComponent', () => {
   let container: Container;
   let page: jest.Mocked<Page>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BrContainerInlineComponent ],
       schemas: [ NO_ERRORS_SCHEMA ],
