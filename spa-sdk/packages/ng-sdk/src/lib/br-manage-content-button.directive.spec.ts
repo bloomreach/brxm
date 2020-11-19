@@ -15,7 +15,7 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Document, MetaCollection } from '@bloomreach/spa-sdk';
 import { BrManageContentButtonDirective } from './br-manage-content-button.directive';
 
@@ -39,7 +39,7 @@ describe('BrManageContentButtonDirective', () => {
     } as unknown as typeof meta;
   });
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BrManageContentButtonDirective, TestComponent ],
     })
