@@ -16,7 +16,6 @@
 
 import {
   AfterContentChecked,
-  AfterViewInit,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
   Component,
@@ -37,7 +36,7 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { makeStateKey, StateKey, TransferState } from '@angular/platform-browser';
-import { from, of, BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
+import { from, of, BehaviorSubject, Subject } from 'rxjs';
 import { filter, map, mapTo, pairwise, pluck, switchMap, take } from 'rxjs/operators';
 import { destroy, initialize, isPage, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
 import { BrComponentContext } from '../br-component.directive';
@@ -55,7 +54,7 @@ interface BrNodeContext extends BrComponentContext {
   selector: 'br-page',
   templateUrl: './br-page.component.html',
 })
-export class BrPageComponent implements AfterContentChecked, AfterViewInit, OnChanges, OnDestroy {
+export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestroy {
   /**
    * The configuration of the SPA SDK.
    * @see https://www.npmjs.com/package/@bloomreach/spa-sdk#configuration
@@ -85,13 +84,11 @@ export class BrPageComponent implements AfterContentChecked, AfterViewInit, OnCh
    */
   @Output() state = new BehaviorSubject<Page | undefined>(undefined);
 
-  @ViewChild('brNode') node!: TemplateRef<BrNodeContext>;
+  @ViewChild('brNode', { static: true }) node!: TemplateRef<BrNodeContext>;
 
-  @ContentChild(TemplateRef) private template?: TemplateRef<BrComponentContext>;
+  @ContentChild(TemplateRef, { static: true }) private template?: TemplateRef<BrComponentContext>;
 
   private afterContentChecked$ = new Subject();
-
-  private afterViewInit$ = new ReplaySubject();
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
@@ -159,15 +156,10 @@ export class BrPageComponent implements AfterContentChecked, AfterViewInit, OnCh
     this.afterContentChecked$.next();
   }
 
-  ngAfterViewInit(): void {
-    this.afterViewInit$.next();
-  }
-
   ngOnDestroy(): void {
     this.state.next(undefined);
     this.state.complete();
     this.afterContentChecked$.complete();
-    this.afterViewInit$.complete();
   }
 
   private initialize(page: Page | PageModel | undefined): void {
@@ -181,10 +173,7 @@ export class BrPageComponent implements AfterContentChecked, AfterViewInit, OnCh
       ? of(initialize(configuration, page))
       : from(initialize(configuration));
 
-    observable.pipe(
-      switchMap(state => this.afterViewInit$.pipe(take(1), mapTo(state))),
-    )
-    .subscribe(state => {
+    observable.subscribe(state => {
       this.state.next(state);
       this.changeDetectorRef.detectChanges();
     });
