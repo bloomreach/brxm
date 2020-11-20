@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public abstract class AbstractUserManager implements HippoUserManager {
     /**
      * Number of dir levels: /u/s/user etc.
      */
-    private int dirLevels = 0;
+    protected int dirLevels = 0;
 
     /**
      * Don't use queries for now. It's too slow :(
