@@ -70,8 +70,11 @@ final class XPageContextFactory {
             // xpage doc branch does not exist for selectedBranchId, use master
             useXPageDocBranch = MASTER_BRANCH_ID;
         }
-        final String documentState = getStringProperty(new BranchHandleImpl(useXPageDocBranch, handle).getUnpublished(), HIPPOSTD_STATESUMMARY,
+        final BranchHandleImpl branchHandle = new BranchHandleImpl(useXPageDocBranch, handle);
+        final String documentState = getStringProperty(branchHandle.getUnpublished(), HIPPOSTD_STATESUMMARY,
                 "unknown").toLowerCase();
+        final String unpublishedBranchId = branchHandle.getBranchId();
+
 
         // note the select branch can not exist for 'selectedBranchId' for the document. That is not a problem as the
         // workflow hints just supports that (but gives only few allowed options back which is fine)
@@ -80,15 +83,19 @@ final class XPageContextFactory {
         // the XPageContext is for branchId and documentState uses the actual USED branch (branch or in case missing)
         // master. The available actions *really* uses the hints of the currently viewed channel branch, regardless
         // whether the XPage Doc is branched for that branch.
-        final XPageContext xPageContext = new XPageContext().setBranchId(useXPageDocBranch)
+        final XPageContext xPageContext = new XPageContext()
+                .setBranchId(useXPageDocBranch)
                 .setXPageId(experiencePageHandleUUID)
                 .setXPageName(name)
                 .setXPageState(documentState)
                 .setScheduledRequest(scheduledRequest)
                 .setWorkflowRequests(workflowRequests)
                 .setRenameAllowed(TRUE.equals(hints.get("rename")))
-                // NOTE: SCXML currently always allows copy so that is why it is also allowed for branched xpages
-                .setCopyAllowed(TRUE.equals(hints.get("copy")) && useXPageDocBranch.equals(MASTER_BRANCH_ID))
+                // NOTE: SCXML currently always allows copy but in the channel manager we have the requirement
+                // to disallow copy if the selected branch is different from the xpage branch the user is
+                // looking at. If we would allow it the user might not realize that the copy has a different
+                // branchId (belongs to another project) than is currently selected.
+                .setCopyAllowed(TRUE.equals(hints.get("copy")) && unpublishedBranchId.equals(selectedBranchId))
                 .setMoveAllowed(TRUE.equals(hints.get("move")))
                 .setDeleteAllowed(TRUE.equals(hints.get("delete")));
 
