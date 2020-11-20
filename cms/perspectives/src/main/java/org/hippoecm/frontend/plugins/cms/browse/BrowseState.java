@@ -73,7 +73,7 @@ public class BrowseState implements IClusterable {
             final Node documentNode = documentModel.getNode();
 
             try {
-                if (!documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                if (documentNode != null && !documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                     final HandleIdentifierStrategy identifierStrategy = new HandleIdentifierStrategy();
                     final String nodeId = identifierStrategy.getIdentifier(documentNode);
                     if (nodeId != null) {
