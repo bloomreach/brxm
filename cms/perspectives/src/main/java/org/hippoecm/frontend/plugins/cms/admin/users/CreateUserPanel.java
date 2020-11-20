@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,15 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.validation.validator.RfcCompliantEmailAddressValidator;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -55,6 +59,10 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
     private String passwordCheck;
 
     private final String defaultUserSecurityProviderName;
+
+    private final List<String> selectableUserSecurityProviderNames;
+    private String selectedUserSecurityProviderName;
+
     private final IPasswordValidationService passwordValidationService;
 
     public CreateUserPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IPluginContext context, final IPluginConfig config) {
@@ -64,6 +72,9 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
                 IPasswordValidationService.class);
 
         defaultUserSecurityProviderName = config.getString(ListUsersPlugin.DEFAULT_USER_SECURITY_PROVIDER_KEY);
+
+        final String[] configuredNames =  config.getStringArray(ListUsersPlugin.SELECTABLE_USER_SECURITY_PROVIDERS_KEY);
+        selectableUserSecurityProviderNames = (configuredNames != null) ? Arrays.asList(configuredNames) : new ArrayList<>();
 
         // add form with markup id setter so it can be updated via ajax
         final User user = new User();
@@ -123,6 +134,11 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
         passwordCheckField.setResetPassword(false);
         form.add(passwordCheckField);
 
+        final DropDownChoice providers = new DropDownChoice<>("provider", new PropertyModel<>(this, "selectedProvider"),
+                selectableUserSecurityProviderNames);
+        providers.setVisible(!selectableUserSecurityProviderNames.isEmpty());
+        form.add(providers);
+
         form.add(new EqualPasswordInputValidator(passwordField, passwordCheckField));
 
         final AjaxButton createButton = new AjaxButton("create-button", form) {
@@ -132,7 +148,10 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
                 final String username = user.getUsername();
                 try {
-                    user.create(defaultUserSecurityProviderName);
+                    final String userSecurityProviderName =
+                            StringUtils.isNotBlank(selectedUserSecurityProviderName) ? selectedUserSecurityProviderName
+                                    : defaultUserSecurityProviderName;
+                    user.create(userSecurityProviderName);
                     user.savePassword(password);
 
                     EventBusUtils.post("create-user", HippoEventConstants.CATEGORY_USER_MANAGEMENT,
@@ -186,8 +205,13 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
     }
 
     @SuppressWarnings("unused")
-    public void setPasswordCheck(String passwordCheck) {
-        this.passwordCheck = passwordCheck;
+    public void setSelectedProvider(String selectedUserSecurityProviderName) {
+        this.selectedUserSecurityProviderName = selectedUserSecurityProviderName;
+    }
+
+    @SuppressWarnings("unused")
+    public String getSelectedProvider() {
+        return selectedUserSecurityProviderName;
     }
 
 }
