@@ -13,7 +13,7 @@
             "enabled":false
           },
           "copy":{
-            "enabled":false
+            "enabled":true
           },
           "delete":{
             "enabled":false
