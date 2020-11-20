@@ -273,11 +273,11 @@ describe('ComponentEditorService', () => {
   describe('reopening the editor', () => {
     it('opens the editor for the component it was opened for originally', () => {
       openComponentEditor();
-      spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
+      spyOn(ComponentEditor, 'load').and.returnValue($q.resolve());
 
       ComponentEditor.reopen();
 
-      expect(ComponentEditor.open).toHaveBeenCalledWith('componentId');
+      expect(ComponentEditor.load).toHaveBeenCalledWith(mockChannel, mockPage, mockComponent);
     });
   });
 
