@@ -57,13 +57,21 @@ class ComponentEditorService {
   }
 
   open(componentId) {
-    this.close();
-    this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
-
     const channel = this.ChannelService.getChannel();
     const page = this.PageStructureService.getPage();
     const component = page.getComponentById(componentId);
 
+    this.close();
+    this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
+
+    return this.load(channel, page, component);
+  }
+
+  reopen() {
+    return this.load(this.channel, this.page, this.component);
+  }
+
+  load(channel, page, component) {
     this.request = this.HstComponentService
       .getProperties(component.getId(), component.getRenderVariant())
       .then(response => this._onLoadSuccess(channel, component, page, response.properties))
@@ -353,12 +361,12 @@ class ComponentEditorService {
     return this.DialogService.show(confirm);
   }
 
-  discardChanges() {
-    return this.HippoIframeService.reload().then(this.reopen());
-  }
+  async discardChanges() {
+    await this.reopen();
 
-  reopen() {
-    return this.open(this.component.getId());
+    if (!this.isForeignPage()) {
+      await this.HippoIframeService.reload();
+    }
   }
 
   close() {
