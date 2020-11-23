@@ -173,7 +173,8 @@ export default class XPageMenuService extends MenuService {
 
     this._addWorkflowAction(
       'copy',
-      id => this.DocumentWorkflowService.copy(id).then(documentId => this._navigateToDocument(documentId)),
+      id => this.DocumentWorkflowService.copy(id, this._getBranchId())
+        .then(documentId => this._navigateToDocument(documentId)),
       { iconName: 'mdi-content-copy' },
     );
 
@@ -285,6 +286,15 @@ export default class XPageMenuService extends MenuService {
 
   _isVisible(action) {
     return this.PageService.hasAction('xpage', action);
+  }
+
+  _getBranchId() {
+    const xpage = this.PageService.getState('xpage');
+    if (xpage === null) {
+      return null;
+    }
+
+    return xpage.branchId;
   }
 
   _getDocumentId() {
