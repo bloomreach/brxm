@@ -205,6 +205,11 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
     }
 
     @SuppressWarnings("unused")
+    public void setPasswordCheck(String passwordCheck) {
+        this.passwordCheck = passwordCheck;
+    }
+
+    @SuppressWarnings("unused")
     public void setSelectedProvider(String selectedUserSecurityProviderName) {
         this.selectedUserSecurityProviderName = selectedUserSecurityProviderName;
     }
