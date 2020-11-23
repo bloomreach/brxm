@@ -21,16 +21,16 @@ class DocumentWorkflowService {
     this.$window = $window;
   }
 
-  _invoke(documentId, category, action) {
-    return this.$window.parent.Hippo.Workflow.invoke(documentId, category, action);
+  _invoke(documentId, category, action, branchId) {
+    return this.$window.parent.Hippo.Workflow.invoke(documentId, category, action, branchId);
   }
 
   rename(documentId) {
     return this._invoke(documentId, 'document', 'rename');
   }
 
-  copy(documentId) {
-    return this._invoke(documentId, 'document', 'copy');
+  copy(documentId, branchId) {
+    return this._invoke(documentId, 'document', 'copy', branchId);
   }
 
   move(documentId) {

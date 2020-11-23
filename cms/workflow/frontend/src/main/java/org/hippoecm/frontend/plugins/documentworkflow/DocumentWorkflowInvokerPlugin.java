@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -42,6 +43,7 @@ import org.hippoecm.addon.workflow.ActionDescription;
 import org.hippoecm.addon.workflow.MenuHierarchy;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.reviewedactions.AbstractDocumentWorkflowPlugin;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -59,7 +61,7 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
     private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowInvokerPlugin.class);
 
     private static final String JS_FILE = "document-workflow-invoker-plugin.js";
-    private static final List<String> REQUEST_ACTIONS = Arrays.asList( "cancel", "rejected");
+    private static final List<String> REQUEST_ACTIONS = Arrays.asList("cancel", "rejected");
     private static final Map<String, String> ACTIONS_TO_HINTS = ImmutableMap.<String, String>builder()
             .put("PUB", "publishBranch")
             .put("SCHED_PUB", "publishBranch")
@@ -112,9 +114,10 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
             final String uuid = requestParameters.getParameterValue("documentId").toString();
             final String category = requestParameters.getParameterValue("category").toString();
             final String action = requestParameters.getParameterValue("action").toString();
+            final String branchId = requestParameters.getParameterValue("branchId").toString();
 
             if (isValidWorkflowRequest(action, uuid, target)) {
-                executeWorkflowRequest(uuid, category, action, target);
+                executeWorkflowRequest(uuid, category, action, branchId, target);
             }
         }
 
@@ -168,7 +171,12 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
         return true;
     }
 
-    private void executeWorkflowRequest(final String uuid, final String category, final String action, final AjaxRequestTarget target) {
+    private void executeWorkflowRequest(final String uuid,
+                                        final String category,
+                                        final String action,
+                                        final String branchId,
+                                        final AjaxRequestTarget target) {
+
         final Node documentNode = getDocumentHandle(uuid);
         final MenuHierarchy menu = buildMenu(Collections.singleton(documentNode), getPluginConfig());
 
@@ -187,6 +195,11 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
         if (actionDescription == null) {
             log.warn("Failed to retrieve workflow action {}.{} for document {}", category, action, uuid);
             return;
+        }
+
+        final Component parent = actionDescription.getParent();
+        if (StringUtils.isNotBlank(branchId) && parent instanceof AbstractDocumentWorkflowPlugin) {
+            ((AbstractDocumentWorkflowPlugin) parent).getBranchIdModel().setBranchInfo(branchId, StringUtils.EMPTY);
         }
 
         try {
