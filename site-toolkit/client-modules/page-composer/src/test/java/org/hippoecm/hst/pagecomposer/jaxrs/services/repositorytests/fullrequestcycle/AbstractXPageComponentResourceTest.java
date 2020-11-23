@@ -194,13 +194,4 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
 
         Assertions.assertThat(responseMap.get("reloadRequired")).isEqualTo(expected);
     }
-
-    protected static class TestBranchSelectionService implements BranchSelectionService {
-
-        @Override
-        public String getSelectedBranchId(final Map<String, Serializable> contextPayload) {
-            return (String)contextPayload.get("testBranchId");
-        }
-
-    }
 }
