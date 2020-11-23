@@ -22,7 +22,7 @@
     _payload: null,
   };
 
-  Hippo.Workflow.invoke = function(documentId, category, action) {
+  Hippo.Workflow.invoke = function(documentId, category, action, branchId) {
     const CALLBACK_URL = '${callbackUrl}';
 
     return new Promise((resolve, reject) => {
@@ -33,6 +33,7 @@
           documentId,
           category,
           action,
+          branchId,
         },
         fh: [(settings, xhr, {message}) => Hippo.Workflow.reject(message)],
       });
