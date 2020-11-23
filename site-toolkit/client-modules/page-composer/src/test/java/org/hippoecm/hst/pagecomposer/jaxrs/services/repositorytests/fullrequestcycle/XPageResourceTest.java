@@ -28,17 +28,14 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.json.JSONException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
-import org.powermock.api.easymock.PowerMock;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -47,17 +44,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static java.lang.Boolean.FALSE;
 import static javax.ws.rs.core.Response.Status.CREATED;
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-// TODO: Fix power mocking and re-enabled ignored tests
-//  powermock causes issues I can't explain when this test runs after other tests
-//@RunWith(PowerMockRunner.class)
-//@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
-//@PrepareForTest(HstRequestUtils.class)
 public class XPageResourceTest extends AbstractXPageComponentResourceTest {
 
     private String containerNodeName;
@@ -186,8 +176,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
     @Test
     public void action_and_state_for_master_channel_and_master_xpage() throws Exception {
 
-        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin.json");
-        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author.json");
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin.json", "master");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author.json", "master");
 
     }
 
@@ -201,8 +191,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         admin.save();
         documentWorkflow.commitEditableInstance();
 
-        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin_modified.json");
-        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author_modified.json");
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin_modified.json", "master");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author_modified.json", "master");
 
         // make sure that the unpublished version in jcr workspace is for a branch, and then validate the 'master' again
         // now master comes from version history and should have the same result
@@ -214,8 +204,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
 
         // even though master in version history, we expect the exact same states and actions for master since not
         // changed
-        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin_modified.json");
-        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author_modified.json");
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin_modified.json", "master");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author_modified.json", "master");
 
     }
 
@@ -238,40 +228,30 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         assertTrue("Expected that 'foo' branch has changes", (Boolean) documentWorkflow.hints("foo").get("publishBranch"));
 
         // expected same fixture as for action_and_state_for_master_channel_and_master_xpage
-        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin.json");
-        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author.json");
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin.json", "master");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author.json", "master");
 
     }
 
 
     @Test
-    @Ignore
     public void action_and_state_for_channel_foo_and_NO_EXISTING_xpage_for_branch_foo() throws Exception {
-        // Mock that the right branch is loaded!
-        PowerMock.mockStaticPartial(HstRequestUtils.class, "getCmsSessionActiveBranchId");
-        expect(HstRequestUtils.getCmsSessionActiveBranchId(anyObject())).andStubReturn("foo");
-        PowerMock.replay(HstRequestUtils.class);
 
         // both admin and author are expected to get the very same result if branch does not exist
-        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_NO_EXISTING_xpage_for_branch_foo.json");
-        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_NO_EXISTING_xpage_for_branch_foo.json");
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_NO_EXISTING_xpage_for_branch_foo.json", "foo");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_NO_EXISTING_xpage_for_branch_foo.json", "foo");
 
     }
 
     @Test
-    @Ignore
     public void action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo() throws Exception {
-        // Mock that the right branch is loaded!
-        PowerMock.mockStaticPartial(HstRequestUtils.class, "getCmsSessionActiveBranchId");
-        expect(HstRequestUtils.getCmsSessionActiveBranchId(anyObject())).andStubReturn("foo");
-        PowerMock.replay(HstRequestUtils.class);
 
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
 
         documentWorkflow.branch("foo", "Foo");
 
-        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo.json");
-        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo.json");
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo.json", "foo");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo.json", "foo");
 
         // make sure branch 'foo' moves to version history, this should not impact the actions on it
 
@@ -280,8 +260,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         assertTrue("expect foo unpublished to be in version history",
                 new BranchHandleImpl("foo", handle).getUnpublished().getPath().startsWith("/jcr:system/jcr:versionStorage"));
 
-        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo.json");
-        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo.json");
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo.json", "foo");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo.json", "foo");
 
         // trigger a change in the 'foo' variant to
         documentWorkflow.obtainEditableInstance("foo");
@@ -290,24 +270,24 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         admin.save();
         documentWorkflow.commitEditableInstance();
 
-        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo_modified.json");
-        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo_modified.json");
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo_modified.json", "foo");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo_modified.json", "foo");
 
 
         documentWorkflow.checkoutBranch(BranchConstants.MASTER_BRANCH_ID);
 
         // also when in version history, modified is picked up correctly
-        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo_modified.json");
-        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo_modified.json");
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo_modified.json", "foo");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo_modified.json", "foo");
 
     }
 
-    private void assertions(final SimpleCredentials creds, String fixtureFileName) throws Exception {
+    private void assertions(final SimpleCredentials creds, String fixtureFileName, final String branchId) throws Exception {
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + hstXpageDocNode.getIdentifier() + "./item/" + experienceSiteMapItemId, null,
                 "GET");
 
-        final MockHttpServletResponse get = render(mountId, createRequestResponse, creds);
+        final MockHttpServletResponse get = render(mountId, createRequestResponse, creds, branchId);
         InputStream expected = XPageResourceTest.class.getResourceAsStream(fixtureFileName);
         assertions(get.getContentAsString(), expected);
     }
