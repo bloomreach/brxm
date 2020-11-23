@@ -84,7 +84,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         }
     }
 
-    protected BranchIdModel getBranchIdModel() {
+    public BranchIdModel getBranchIdModel() {
         return branchIdModel;
     }
 
