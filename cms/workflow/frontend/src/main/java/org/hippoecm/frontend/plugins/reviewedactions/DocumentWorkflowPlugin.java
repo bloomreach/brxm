@@ -80,7 +80,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     private StdWorkflow whereUsedAction;
     private StdWorkflow historyAction;
 
-
     public DocumentWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
