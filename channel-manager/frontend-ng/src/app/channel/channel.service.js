@@ -209,7 +209,7 @@ class ChannelService {
     let renderPathInfo = path.slice(this.channelPrefix.length);
 
     // remove trailing slash if any, HST's siteMapItem.renderPathInfo never has a trailing slash.
-    if (renderPathInfo.endsWith('/')) {
+    if (renderPathInfo !== '/' && renderPathInfo.endsWith('/')) {
       renderPathInfo = renderPathInfo.slice(0, renderPathInfo.length - 1);
     }
 

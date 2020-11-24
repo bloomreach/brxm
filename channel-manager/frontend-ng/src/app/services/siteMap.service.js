@@ -29,9 +29,9 @@ class SiteMapService {
   }
 
   load(siteMapId) {
-    return this.HstService.getSiteMap(siteMapId)
+    return this.HstService.getSiteMapTree(siteMapId)
       .then((siteMap) => {
-        this.siteMap = siteMap;
+        this.siteMap = [siteMap];
       })
       .catch(() => {
         this.siteMap = [];
