@@ -1,0 +1,59 @@
+<!--
+  Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<mat-form-field floatLabel="never" class="mat-elevation-z2 searchbar" appearance="none">
+  <input
+    matInput
+    class="qa-sitemap-search-input"
+    [placeholder]="'PLACEHOLDER_SEARCH' | translate "
+    [ngModel]="search$ | async"
+    (ngModelChange)="search$.next($event)"
+  />
+  <button mat-icon-button matPrefix disabled>
+    <mat-icon matPrefix fontIcon="mdi-magnify"></mat-icon>
+  </button>
+  <button *ngIf="search$ | async" mat-icon-button matSuffix>
+    <mat-icon fontIcon="mdi-close" (click)="search$.next('')"></mat-icon>
+  </button>
+</mat-form-field>
+
+<mat-tree #tree
+          [dataSource]="dataSource"
+          [treeControl]="treeControl">
+  <mat-tree-node *matTreeNodeDef="let node"
+                 matTreeNodePadding
+                 (click)="selectNode(node)"
+                 class="mat-tree-node {{ 'qa-tree-node-name-' + node.name }}"
+                 [class.selected]="isSelected(node)"
+                 [class.hidden]="!isMatched(node) && !isVisible(node)"
+                 [class.disabled]="!isMatched(node)">
+    <!-- Trick to get extra padding equal to other nodes with icons -->
+    <button mat-icon-button
+            *ngIf="!node.expandable"
+            disabled>
+    </button>
+
+    <button mat-icon-button
+            *ngIf="node.expandable"
+            matTreeNodeToggle>
+      <mat-icon svgIcon="chevron-right"
+                [class.expanded]="treeControl.isExpanded(node)">
+      </mat-icon>
+    </button>
+
+    {{ node.name }}
+  </mat-tree-node>
+</mat-tree>
