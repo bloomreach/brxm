@@ -89,12 +89,12 @@ class DocumentWorkflowService {
     return this._invoke(documentId, 'request', 'rejected');
   }
 
-  acceptBranch(documentId) {
-    return this._invoke(documentId, 'document', 'accept-branch');
+  acceptBranch(documentId, branchId) {
+    return this._invoke(documentId, 'project', 'accept-branch', branchId);
   }
 
-  rejectBranch(documentId) {
-    return this._invoke(documentId, 'document', 'reject-branch');
+  rejectBranch(documentId, branchId) {
+    return this._invoke(documentId, 'project', 'reject-branch', branchId);
   }
 }
 
