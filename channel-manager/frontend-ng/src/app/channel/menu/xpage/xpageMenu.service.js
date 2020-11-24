@@ -108,11 +108,13 @@ export default class XPageMenuService extends MenuService {
 
     this._addWorkflowAction('accept-branch', id => this.DocumentWorkflowService.acceptBranch(id), {
       iconName: 'mdi-check',
+      translationKey: 'TOOLBAR_MENU_XPAGE_ACCEPT',
       translationKeyFunction: this._getRequestTranslationKey,
     });
 
     this._addWorkflowAction('reject-branch', id => this.DocumentWorkflowService.rejectBranch(id), {
       iconName: 'mdi-close',
+      translationKey: 'TOOLBAR_MENU_XPAGE_REJECT',
       translationKeyFunction: this._getRequestTranslationKey,
     });
 
