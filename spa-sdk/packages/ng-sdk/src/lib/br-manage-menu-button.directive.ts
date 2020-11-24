@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Directive, Input, OnChanges, Optional, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, Input, OnChanges, Optional, SimpleChanges, TemplateRef, ViewContainerRef } from '@angular/core';
 import { Menu, isMenu } from '@bloomreach/spa-sdk';
 import { BrMetaDirective } from './br-meta.directive';
 import { BrPageComponent } from './br-page/br-page.component';
@@ -37,9 +37,11 @@ export class BrManageMenuButtonDirective extends BrMetaDirective implements OnCh
     super(container, template);
   }
 
-  ngOnChanges(): void {
+  ngOnChanges(changes: SimpleChanges): void {
     this.meta = isMenu(this.menu)
       ? this.menu.getMeta()
       : this.menu._meta && this.page?.state.getValue()?.getMeta(this.menu._meta);
+
+    super.ngOnChanges(changes);
   }
 }

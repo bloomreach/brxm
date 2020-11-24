@@ -61,6 +61,7 @@ class TestComponent {
 }
 
 describe('BrNodeComponentDirective', () => {
+  let clear: jest.Mocked<ReturnType<MetaCollection['render']>>;
   let component: jest.Mocked<SpaComponent>;
   let meta: jest.Mocked<MetaCollection>;
   let node: BrNodeDirective;
@@ -69,10 +70,8 @@ describe('BrNodeComponentDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
 
   beforeEach(() => {
-    meta = {
-      render: jest.fn(),
-      clear: jest.fn(),
-    } as unknown as typeof meta;
+    clear = jest.fn();
+    meta = { render: jest.fn(() => clear) } as unknown as typeof meta;
     component = {
       getChildren: jest.fn(() => []),
       getMeta: jest.fn(() => meta),
@@ -160,7 +159,7 @@ describe('BrNodeComponentDirective', () => {
       fixture.destroy();
 
       expect(fixture.nativeElement).toMatchSnapshot();
-      expect(meta.clear).toBeCalled();
+      expect(clear).toBeCalled();
     });
   });
 });
