@@ -90,14 +90,15 @@ final class XPageContextFactory {
                 .setXPageState(documentState)
                 .setScheduledRequest(scheduledRequest)
                 .setWorkflowRequests(workflowRequests)
-                .setRenameAllowed(TRUE.equals(hints.get("rename")))
                 // NOTE: SCXML currently always allows copy but in the channel manager we have the requirement
                 // to disallow copy if the selected branch is different from the xpage branch the user is
                 // looking at. If we would allow it the user might not realize that the copy has a different
                 // branchId (belongs to another project) than is currently selected.
                 .setCopyAllowed(TRUE.equals(hints.get("copy")) && unpublishedBranchId.equals(selectedBranchId))
-                .setMoveAllowed(TRUE.equals(hints.get("move")))
-                .setDeleteAllowed(TRUE.equals(hints.get("delete")));
+                // We also disallow these actions if the branches are different
+                .setRenameAllowed(TRUE.equals(hints.get("rename")) && unpublishedBranchId.equals(selectedBranchId))
+                .setMoveAllowed(TRUE.equals(hints.get("move")) && unpublishedBranchId.equals(selectedBranchId))
+                .setDeleteAllowed(TRUE.equals(hints.get("delete")) && unpublishedBranchId.equals(selectedBranchId));
 
         final Map<String, Map<String, Serializable>> requestsHints = (Map<String, Map<String, Serializable>>) hints.get("requests");
         parseRequestsHints(requestsHints, workflowRequests, xPageContext);

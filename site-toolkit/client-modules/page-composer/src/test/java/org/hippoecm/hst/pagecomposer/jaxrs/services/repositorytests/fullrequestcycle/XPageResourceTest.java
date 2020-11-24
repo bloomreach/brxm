@@ -282,6 +282,18 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
 
     }
 
+    @Test
+    public void action_and_state_for_channel_foo_and_EXISTING_unpublished_xpage_for_branch_foo() throws Exception {
+
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
+        documentWorkflow.depublish();
+
+        documentWorkflow.branch("foo", "Foo");
+
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_unpublished_xpage_for_branch_foo.json", "foo");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_unpublished_xpage_for_branch_foo.json", "foo");
+    }
+
     private void assertions(final SimpleCredentials creds, String fixtureFileName, final String branchId) throws Exception {
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/" + hstXpageDocNode.getIdentifier() + "./item/" + experienceSiteMapItemId, null,
