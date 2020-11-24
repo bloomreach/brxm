@@ -14,44 +14,63 @@
  * limitations under the License.
  */
 
+@import 'variables';
 @import 'mixins';
 @import 'material-theme';
 
-.no-versions {
-  height: 72px;
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  font-size: 16px;
+.mat-icon {
+  transition: transform $transition-small-area-speed;
 }
 
-.version {
-  @include mat-divider-border($theme);
+.mat-icon.expanded {
+  transform: rotate(90deg);
+}
 
-  height: 88px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px;
-  cursor: pointer;
-
-  &:first-child {
-    height: 72px;
+.mat-tree-node {
+  &.disabled {
+    color: $dark-disabled-text;
   }
 
-  &:hover {
-    @include mat-hover-background($theme);
+  &.hidden {
+    display: none;
   }
 
   &.selected {
-    background-color: #e7f1f9;
-
-    .timestamp {
-      font-weight: 800;
-    }
+    background: map-get($blue, 50);
   }
 
-  p {
-    margin: 0;
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:not(.selected):hover {
+    @include mat-hover-background($theme);
+  }
+}
+
+.searchbar {
+  width: 100%;
+
+  .mat-icon-button {
+    color: mat-color($grey, 600);
+  }
+
+  ::ng-deep {
+    .mat-form-field-wrapper {
+      padding: .5em 1em;
+    }
+
+    .mat-form-field-flex {
+      align-items: center;
+    }
+
+    .mat-form-field-infix {
+      border-top: none;
+      padding: 0;
+    }
+
+    .mat-input-element {
+      height: 20px;
+    }
   }
 }
