@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import static org.powermock.api.easymock.PowerMock.verify;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DigestBundleResolver.class)
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*"})
 public class ConfigurationConfigServiceBundleTest {
 
     private ConfigurationBaselineService baselineService;
