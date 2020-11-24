@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Directive, Input, OnChanges } from '@angular/core';
+import { Directive, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Content, Document } from '@bloomreach/spa-sdk';
 import { BrMetaDirective } from './br-meta.directive';
 
@@ -28,7 +28,9 @@ export class BrManageContentButtonDirective extends BrMetaDirective implements O
    */
   @Input('brManageContentButton') content!: Content | Document;
 
-  ngOnChanges(): void {
+  ngOnChanges(changes: SimpleChanges): void {
     this.meta = this.content.getMeta();
+
+    super.ngOnChanges(changes);
   }
 }
