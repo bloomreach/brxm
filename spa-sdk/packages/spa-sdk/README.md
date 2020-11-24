@@ -257,7 +257,7 @@ Method | Description
 Method | Description
 --- | ---
 `clear(): void` | Clears previously rendered meta-data objects.
-`render(head: HTMLElement, tail: HTMLElement): void;` | Renders meta-data objects on the page.
+`render(head: HTMLElement, tail: HTMLElement): () => void;` | Renders meta-data objects on the page and returns the callback clearing rendered objects.
 
 ##### Meta
 The `Meta` objects are being used by the brXM to page and its components.
