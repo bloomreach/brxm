@@ -24,7 +24,7 @@ import {
   Type,
   ViewContainerRef,
 } from '@angular/core';
-import { Component } from '@bloomreach/spa-sdk';
+import { Component, MetaCollection } from '@bloomreach/spa-sdk';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
 import { BrProps } from './br-props.model';
@@ -36,6 +36,8 @@ import { BrProps } from './br-props.model';
 export class BrNodeComponentDirective<T extends Component> implements OnChanges, OnDestroy {
   component!: T;
 
+  private clear?: ReturnType<MetaCollection['render']>;
+
   constructor(
     private container: ViewContainerRef,
     private injector: Injector,
@@ -45,16 +47,12 @@ export class BrNodeComponentDirective<T extends Component> implements OnChanges,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    changes.component?.previousValue?.getMeta().clear();
+    this.clear?.();
     this.container.clear();
 
     const { head, tail } = this.render();
 
-    if (!head || !tail) {
-      return;
-    }
-
-    this.component.getMeta().render(head, tail);
+    this.clear = head && tail && this.component.getMeta().render(head, tail);
   }
 
   protected getMapping(): Type<BrProps> | undefined {
@@ -117,7 +115,7 @@ export class BrNodeComponentDirective<T extends Component> implements OnChanges,
   }
 
   ngOnDestroy(): void {
-    this.component.getMeta().clear();
+    this.clear?.();
     this.container.clear();
   }
 }
