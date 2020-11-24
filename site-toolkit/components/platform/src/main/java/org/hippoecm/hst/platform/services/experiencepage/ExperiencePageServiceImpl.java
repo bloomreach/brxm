@@ -137,9 +137,13 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                             new HstComponentConfigurationService(entry.getValue(), null, ROOT_EXPERIENCE_PAGES_NAME, Collections.emptyMap(), rootConfigurationPrefix)));
 
 
-            // mark the container items as experience page components
-            documentXPageLayoutContainers.values().forEach(config -> config.flattened().forEach(c ->
-                    ((HstComponentConfigurationService) c).setExperiencePageComponent(true)));
+            // mark the container items as experience page components *except* the containers which are of type
+            // hst:containercomponentreference : those are never containers which are part of the XPage Layout since
+            // their actual storage is below hst:workspace/hst:contaiers
+            documentXPageLayoutContainers.values().forEach(config -> config.flattened()
+                    .map(c -> (HstComponentConfigurationService) c)
+                    .filter(c -> !c.isContainerComponentReference())
+                    .forEach(c -> c.setExperiencePageComponent(true)));
 
             // into the 'copy' of the xpage, now glue the 'containerConfigurations' from the XPage document variant:
             // it is however not a full replacement since all configuration from the 'hst config containers' should be
@@ -167,6 +171,9 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
                     continue;
                 }
 
+                if (pageLayoutContainer.isContainerComponentReference()) {
+                    continue;
+                }
 
                 // found a container in the XPage hst configuration : Replace it with the 'container' from the
                 // XPAGE document variant. If the XPage document variant DOES not (yet) have the container (since
