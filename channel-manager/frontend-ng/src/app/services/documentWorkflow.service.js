@@ -88,6 +88,14 @@ class DocumentWorkflowService {
   showRequestRejected(documentId) {
     return this._invoke(documentId, 'request', 'rejected');
   }
+
+  acceptBranch(documentId) {
+    return this._invoke(documentId, 'document', 'accept-branch');
+  }
+
+  rejectBranch(documentId) {
+    return this._invoke(documentId, 'document', 'reject-branch');
+  }
 }
 
 export default DocumentWorkflowService;

@@ -82,7 +82,9 @@ export default class XPageMenuService extends MenuService {
         'cancel',
         'accept',
         'reject',
-        'rejected'),
+        'rejected',
+        'accept-branch',
+        'reject-branch'),
     });
 
     this._addWorkflowAction('rejected', id => this.DocumentWorkflowService.showRequestRejected(id), {
@@ -100,6 +102,16 @@ export default class XPageMenuService extends MenuService {
     });
 
     this._addWorkflowAction('reject', id => this.DocumentWorkflowService.rejectRequest(id), {
+      iconName: 'mdi-close',
+      translationKeyFunction: this._getRequestTranslationKey,
+    });
+
+    this._addWorkflowAction('accept-branch', id => this.DocumentWorkflowService.acceptBranch(id), {
+      iconName: 'mdi-check',
+      translationKeyFunction: this._getRequestTranslationKey,
+    });
+
+    this._addWorkflowAction('reject-branch', id => this.DocumentWorkflowService.rejectBranch(id), {
       iconName: 'mdi-close',
       translationKeyFunction: this._getRequestTranslationKey,
     });
