@@ -79,6 +79,8 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
             .put("reject", "rejectRequest")
             .put("cancel", "cancelRequest")
             .put("rejected", "cancelRequest")
+            .put("accept-branch", "approve")
+            .put("reject-branch", "reject")
             .build();
 
     private final Ajax ajax;
