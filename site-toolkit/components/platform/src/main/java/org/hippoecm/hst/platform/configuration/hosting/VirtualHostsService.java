@@ -23,8 +23,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -905,7 +909,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     @Override
     public ResourceBundle getResourceBundle(final Channel channel, final Locale locale) {
-        final List<ResourceBundle> bundles = new ArrayList<ResourceBundle>();
 
         final HippoWebappContext webappContext = HippoWebappContextRegistry.get().getContext(channel.getContextPath());
         if (webappContext == null) {
@@ -913,17 +916,25 @@ public class VirtualHostsService implements MutableVirtualHosts {
             return null;
         }
         final String channelInfoClassName = channel.getChannelInfoClassName();
-        ResourceBundle bundle = loadResourceBundle(channelInfoClassName, webappContext.getServletContext().getClassLoader(), locale);
 
-        if (bundle != null) {
-            bundles.add(bundle);
-        }
+        final ClassLoader classLoader = webappContext.getServletContext().getClassLoader();
+
+        final List<ResourceBundle> bundles = Stream.of(channelInfoClassName)
+                .map(className -> getClass(classLoader, className))
+                .filter(Objects::nonNull)
+                .flatMap(this::appendInterfaces)
+                .distinct()
+                .map(Class::getName)
+                .map(className -> loadResourceBundle(className, classLoader, locale))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         final List<String> channelInfoMixinNames = channel.getChannelInfoMixinNames();
 
         if (channelInfoMixinNames != null) {
+            ResourceBundle bundle;
             for (String channelInfoMixinName : channelInfoMixinNames) {
-                bundle = loadResourceBundle(channelInfoMixinName, webappContext.getServletContext().getClassLoader(), locale);
+                bundle = loadResourceBundle(channelInfoMixinName, classLoader, locale);
 
                 if (bundle != null) {
                     bundles.add(bundle);
@@ -942,6 +953,31 @@ public class VirtualHostsService implements MutableVirtualHosts {
         ArrayUtils.reverse(bundlesArray);
 
         return new CompositeResourceBundle(bundlesArray);
+    }
+
+    private Class<?> getClass(final ClassLoader classLoader, final String className) {
+        try {
+            return classLoader.loadClass(className);
+        } catch (ClassNotFoundException cnfe) {
+            log.error(String.format("The class %s couldn't be loaded. The channel info class hierarchy could be " +
+                    "incomplete", className),cnfe);
+            return null;
+        }
+    }
+
+    private Stream<Class<?>> appendInterfaces(final Class<?> clazz) {
+        final List<Class<?>> classes = new ArrayList<>();
+        final Stack<Class<?>> pendingClassNames = new Stack<>();
+        pendingClassNames.push(clazz);
+
+        while (!pendingClassNames.isEmpty()) {
+            final Class<?> current = pendingClassNames.pop();
+            classes.add(current);
+            for (final Class<?> anInterface : current.getInterfaces()) {
+                pendingClassNames.push(anInterface);
+            }
+        }
+        return classes.stream();
     }
 
     @SuppressWarnings("unchecked")
