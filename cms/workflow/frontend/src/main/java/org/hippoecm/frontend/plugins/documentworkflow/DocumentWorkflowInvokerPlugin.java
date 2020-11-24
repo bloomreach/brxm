@@ -81,8 +81,13 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
             .put("reject", "rejectRequest")
             .put("cancel", "cancelRequest")
             .put("rejected", "cancelRequest")
-            .put("accept-branch", "approve")
-            .put("reject-branch", "reject")
+            .put("accept-branch", "com.onehippo.repository.wpm.project.documentworkflow.WpmDocumentWorkflowAction.approve")
+            .put("reject-branch", "com.onehippo.repository.wpm.project.documentworkflow.WpmDocumentWorkflowAction.reject")
+            .build();
+
+    private static final Map<String, String> CATEGORY_ACTION_TO_ACTION_DESCRIPTION = ImmutableMap.<String, String>builder()
+            .put("project-accept-branch", "accept")
+            .put("project-reject-branch", "reject")
             .build();
 
     private final Ajax ajax;
@@ -201,7 +206,7 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
 
         final List<ActionDescription> items = publicationMenu.getItems();
         final ActionDescription actionDescription = items.stream()
-                .filter(component -> representsAction(component, action))
+                .filter(component -> representsAction(component, category, action))
                 .reduce((first, second) -> second)
                 .orElse(null);
 
@@ -253,7 +258,9 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
         }
     }
 
-    private static boolean representsAction(final Component component, final String action) {
+    private static boolean representsAction(final Component component, final String category, String action) {
+        action = CATEGORY_ACTION_TO_ACTION_DESCRIPTION.getOrDefault(category + "-" + action, action);
+
         if (!REQUEST_ACTIONS.contains(action)) {
             return component.getId().equals(action);
         }
