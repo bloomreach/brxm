@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
+import { createCustomElement } from '@angular/elements';
 
-import { NotificationBarModule } from './notification-bar/notification-bar.module';
-import { Ng1ServicesModule } from './services/ng1/ng1-services.module';
-import { SharedModule } from './shared/shared.module';
-import { SiteMapModule } from './site-map/site-map.module';
-import { VersionsModule } from './versions/versions.module';
+import { SharedModule } from '../shared/shared.module';
+
+import { SiteMapComponent } from './components/site-map/site-map.component';
 
 @NgModule({
   imports: [
     SharedModule,
-    NotificationBarModule,
-    VersionsModule,
-    Ng1ServicesModule,
-    SiteMapModule,
   ],
-  providers: [
+  declarations: [
+    SiteMapComponent,
+  ],
+  entryComponents: [
+    SiteMapComponent,
   ],
 })
-export class AppModule {
-  ngDoBootstrap(): void { }
+export class SiteMapModule {
+  constructor(readonly injector: Injector) {
+    const el = createCustomElement(SiteMapComponent, { injector });
+    customElements.define('em-site-map', el);
+  }
 }

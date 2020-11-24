@@ -1,3 +1,4 @@
+
 /*!
  * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
@@ -14,25 +15,17 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+@mixin mat-divider-border($config-or-theme) {
+  $config: mat-get-color-config($config-or-theme);
+  $foreground: map-get($config, foreground);
 
-import { NotificationBarModule } from './notification-bar/notification-bar.module';
-import { Ng1ServicesModule } from './services/ng1/ng1-services.module';
-import { SharedModule } from './shared/shared.module';
-import { SiteMapModule } from './site-map/site-map.module';
-import { VersionsModule } from './versions/versions.module';
-
-@NgModule({
-  imports: [
-    SharedModule,
-    NotificationBarModule,
-    VersionsModule,
-    Ng1ServicesModule,
-    SiteMapModule,
-  ],
-  providers: [
-  ],
-})
-export class AppModule {
-  ngDoBootstrap(): void { }
+  border-bottom: 1px solid mat-color($foreground, divider);
 }
+
+@mixin mat-hover-background($config-or-theme) {
+  $config: mat-get-color-config($config-or-theme);
+  $background: map-get($config, background);
+
+  background: mat-color($background, hover);
+}
+

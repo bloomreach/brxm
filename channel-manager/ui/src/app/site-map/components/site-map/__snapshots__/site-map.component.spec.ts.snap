@@ -1,0 +1,216 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SiteMapComponent no tree items should display empty tree 1`] = `
+<mat-tree
+  class="mat-tree"
+  role="tree"
+>
+  
+</mat-tree>
+`;
+
+exports[`SiteMapComponent tree behavior should indicate selected node 1`] = `
+<mat-tree
+  class="mat-tree"
+  role="tree"
+>
+  
+  <mat-tree-node
+    aria-expanded="true"
+    class="mat-tree-node qa-tree-node-name-root hidden disabled"
+    mattreenodepadding=""
+    role="group"
+    style="padding-left: 0px;"
+  >
+    
+    
+    <button
+      mat-icon-button=""
+      mattreenodetoggle=""
+    >
+      <mat-icon
+        aria-hidden="true"
+        class="mat-icon notranslate expanded mat-icon-no-color"
+        role="img"
+        svgicon="chevron-right"
+      >
+        <svg
+          class="fake-testing-svg"
+          fit=""
+          focusable="false"
+          height="100%"
+          preserveAspectRatio="xMidYMid meet"
+          width="100%"
+        />
+      </mat-icon>
+    </button>
+     root 
+  </mat-tree-node>
+  <mat-tree-node
+    aria-expanded="true"
+    class="mat-tree-node qa-tree-node-name-nameTest2 hidden disabled"
+    mattreenodepadding=""
+    role="group"
+    style="padding-left: 40px;"
+  >
+    
+    
+    <button
+      mat-icon-button=""
+      mattreenodetoggle=""
+    >
+      <mat-icon
+        aria-hidden="true"
+        class="mat-icon notranslate expanded mat-icon-no-color"
+        role="img"
+        svgicon="chevron-right"
+      >
+        <svg
+          class="fake-testing-svg"
+          fit=""
+          focusable="false"
+          height="100%"
+          preserveAspectRatio="xMidYMid meet"
+          width="100%"
+        />
+      </mat-icon>
+    </button>
+     nameTest2 
+  </mat-tree-node>
+  <mat-tree-node
+    aria-expanded="true"
+    aria-level="2"
+    class="mat-tree-node qa-tree-node-name-nameTest3 hidden disabled"
+    mattreenodepadding=""
+    role="treeitem"
+    style="padding-left: 80px;"
+  >
+    
+    <button
+      disabled=""
+      mat-icon-button=""
+    />
+    
+     nameTest3 
+  </mat-tree-node>
+  <mat-tree-node
+    aria-expanded="true"
+    aria-level="1"
+    class="mat-tree-node qa-tree-node-name-nameTest4 hidden disabled selected"
+    mattreenodepadding=""
+    role="treeitem"
+    style="padding-left: 40px;"
+  >
+    
+    <button
+      disabled=""
+      mat-icon-button=""
+    />
+    
+     nameTest4 
+  </mat-tree-node>
+</mat-tree>
+`;
+
+exports[`SiteMapComponent tree behavior should show the tree when loaded 1`] = `
+<mat-tree
+  class="mat-tree"
+  role="tree"
+>
+  
+  <mat-tree-node
+    aria-expanded="true"
+    class="mat-tree-node qa-tree-node-name-root hidden disabled"
+    mattreenodepadding=""
+    role="group"
+    style="padding-left: 0px;"
+  >
+    
+    
+    <button
+      mat-icon-button=""
+      mattreenodetoggle=""
+    >
+      <mat-icon
+        aria-hidden="true"
+        class="mat-icon notranslate expanded mat-icon-no-color"
+        role="img"
+        svgicon="chevron-right"
+      >
+        <svg
+          class="fake-testing-svg"
+          fit=""
+          focusable="false"
+          height="100%"
+          preserveAspectRatio="xMidYMid meet"
+          width="100%"
+        />
+      </mat-icon>
+    </button>
+     root 
+  </mat-tree-node>
+  <mat-tree-node
+    aria-expanded="true"
+    class="mat-tree-node qa-tree-node-name-nameTest2 hidden disabled"
+    mattreenodepadding=""
+    role="group"
+    style="padding-left: 40px;"
+  >
+    
+    
+    <button
+      mat-icon-button=""
+      mattreenodetoggle=""
+    >
+      <mat-icon
+        aria-hidden="true"
+        class="mat-icon notranslate expanded mat-icon-no-color"
+        role="img"
+        svgicon="chevron-right"
+      >
+        <svg
+          class="fake-testing-svg"
+          fit=""
+          focusable="false"
+          height="100%"
+          preserveAspectRatio="xMidYMid meet"
+          width="100%"
+        />
+      </mat-icon>
+    </button>
+     nameTest2 
+  </mat-tree-node>
+  <mat-tree-node
+    aria-expanded="true"
+    aria-level="2"
+    class="mat-tree-node qa-tree-node-name-nameTest3 selected hidden disabled"
+    mattreenodepadding=""
+    role="treeitem"
+    style="padding-left: 80px;"
+  >
+    
+    <button
+      disabled=""
+      mat-icon-button=""
+    />
+    
+     nameTest3 
+  </mat-tree-node>
+  <mat-tree-node
+    aria-expanded="false"
+    aria-level="1"
+    class="mat-tree-node qa-tree-node-name-nameTest4 hidden disabled"
+    mattreenodepadding=""
+    role="treeitem"
+    style="padding-left: 40px;"
+  >
+    
+    <button
+      disabled=""
+      mat-icon-button=""
+    />
+    
+     nameTest4 
+  </mat-tree-node>
+</mat-tree>
+`;
