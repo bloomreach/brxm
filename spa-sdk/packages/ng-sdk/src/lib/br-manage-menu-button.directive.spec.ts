@@ -37,13 +37,8 @@ describe('BrManageMenuButtonDirective', () => {
 
   beforeEach(() => {
     menu = { _meta: {} } as unknown as typeof menu;
-    meta = {
-      clear: jest.fn(),
-      render: jest.fn(),
-    } as unknown as typeof meta;
-    page = {
-      getMeta: jest.fn(() => meta),
-    } as unknown as typeof page;
+    meta = { render: jest.fn() } as unknown as typeof meta;
+    page = { getMeta: jest.fn(() => meta) } as unknown as typeof page;
   });
 
   beforeEach(waitForAsync(() => {
