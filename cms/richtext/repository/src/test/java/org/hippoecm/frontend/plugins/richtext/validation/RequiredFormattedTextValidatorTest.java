@@ -15,40 +15,24 @@
  */
 package org.hippoecm.frontend.plugins.richtext.validation;
 
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Violation;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorService;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertFalse;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.mockStatic;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
+import static org.junit.Assert.assertTrue;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*"})
-@PrepareForTest({HippoServiceRegistry.class})
 public class RequiredFormattedTextValidatorTest {
-
-    @Before
-    public void setUp() {
-        mockStatic(HippoServiceRegistry.class);
-    }
 
     @Test(expected = ValidationContextException.class)
     public void throwsIfHtmlProcessorServiceIsNull() {
-        expect(HippoServiceRegistry.getService(HtmlProcessorService.class)).andReturn(null);
-        replayAll();
 
         final RequiredFormattedTextValidator validator = new RequiredFormattedTextValidator();
         validator.validate(null, null);
@@ -56,28 +40,41 @@ public class RequiredFormattedTextValidatorTest {
 
     @Test
     public void validInput() {
-        final ValidationContext context = createMock(ValidationContext.class);
-        final HtmlProcessorService htmlProcessorService = createMock(HtmlProcessorService.class);
-        expect(HippoServiceRegistry.getService(HtmlProcessorService.class)).andReturn(htmlProcessorService);
-        expect(htmlProcessorService.isVisible("<html></html>")).andReturn(true);
-        replayAll();
+        final ValidationContext context = createNiceMock(ValidationContext.class);
+        final HtmlProcessorService htmlProcessorService = createNiceMock(HtmlProcessorService.class);
 
-        final RequiredFormattedTextValidator validator = new RequiredFormattedTextValidator();
-        assertFalse(validator.validate(context, "<html></html>").isPresent());
-        verifyAll();
+        try {
+            HippoServiceRegistry.register(htmlProcessorService, HtmlProcessorService.class);
+
+            expect(htmlProcessorService.isVisible("<html></html>")).andReturn(true);
+            replay(htmlProcessorService, context);
+
+            final RequiredFormattedTextValidator validator = new RequiredFormattedTextValidator();
+            assertFalse(validator.validate(context, "<html></html>").isPresent());
+            verify(htmlProcessorService, context);
+        } finally {
+            HippoServiceRegistry.unregister(htmlProcessorService, HtmlProcessorService.class);
+        }
     }
+
 
     @Test
     public void invalidInput() {
-        final ValidationContext context = createMock(ValidationContext.class);
-        final HtmlProcessorService htmlProcessorService = createMock(HtmlProcessorService.class);
-        expect(HippoServiceRegistry.getService(HtmlProcessorService.class)).andReturn(htmlProcessorService);
-        expect(htmlProcessorService.isVisible("<html></html>")).andReturn(false);
-        expect(context.createViolation()).andReturn(createMock(Violation.class));
-        replayAll();
+        final ValidationContext context = createNiceMock(ValidationContext.class);
+        final HtmlProcessorService htmlProcessorService = createNiceMock(HtmlProcessorService.class);
 
-        final RequiredFormattedTextValidator validator = new RequiredFormattedTextValidator();
-        Assert.assertTrue(validator.validate(context, "<html></html>").isPresent());
-        verifyAll();
+        try {
+            HippoServiceRegistry.register(htmlProcessorService, HtmlProcessorService.class);
+            expect(htmlProcessorService.isVisible("<html></html>")).andReturn(false);
+            expect(context.createViolation()).andReturn(createNiceMock(Violation.class));
+            replay(htmlProcessorService, context);
+
+            final RequiredFormattedTextValidator validator = new RequiredFormattedTextValidator();
+            assertTrue(validator.validate(context, "<html></html>").isPresent());
+            verify(htmlProcessorService, context);
+        } finally {
+            HippoServiceRegistry.unregister(htmlProcessorService, HtmlProcessorService.class);
+        }
+
     }
 }

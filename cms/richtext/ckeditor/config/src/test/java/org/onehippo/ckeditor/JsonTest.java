@@ -18,37 +18,24 @@ package org.onehippo.ckeditor;
 
 import java.io.IOException;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
-
-import static org.easymock.EasyMock.anyString;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.easymock.PowerMock.replayAll;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*"})
 public class JsonTest {
 
     private ObjectNode object;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         object = Json.object();
     }
 
@@ -339,18 +326,4 @@ public class JsonTest {
         );
     }
 
-    @Test
-    @PrepareForTest({Json.class})
-    public void prettyStringFallsBackToUglyStringOnError() throws Exception {
-        final ObjectWriter prettyPrinter = createMock(ObjectWriter.class);
-
-        Whitebox.setInternalState(Json.class, "prettyPrinter", prettyPrinter);
-
-        expect(prettyPrinter.writeValueAsString(anyString())).andThrow(createMock(JsonProcessingException.class));
-        replayAll(prettyPrinter);
-
-        assertEquals("{}", Json.prettyString(Json.object()));
-
-        verify(prettyPrinter);
-    }
 }
