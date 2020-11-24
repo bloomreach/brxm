@@ -373,7 +373,7 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
             final String sitemapPath = "somepathXYX";
             final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(sitemapPath);
-            final HstComponentConfiguration banner = mount.getMount().getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/basepage/header/container/banner-new-style");
+            final HstComponentConfiguration banner = mount.getMount().getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:components/header/container/banner-new-style");
             final ComponentConfigurationImpl componentConfiguration = new ComponentConfigurationImpl(banner);
             final String value = componentConfiguration.getParameter("paramWithDefaultValue", resolvedSiteMapItem);
             assertThat(value)
