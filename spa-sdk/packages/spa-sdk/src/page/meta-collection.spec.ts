@@ -169,5 +169,21 @@ describe('MetaCollectionImpl', () => {
 
       expect(document.body).toMatchSnapshot();
     });
+
+    it('should return a callback clearing rendered comments', () => {
+      const clear = collection.render(a, a);
+      clear();
+
+      expect(clear).toBeInstanceOf(Function);
+      expect(document.body).toMatchSnapshot();
+    });
+
+    it('should return a callback clearing only rendered comments during the call', () => {
+      const clear = collection.render(a, a);
+      collection.render(b, b);
+      clear();
+
+      expect(document.body).toMatchSnapshot();
+    });
   });
 });

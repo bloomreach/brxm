@@ -30,6 +30,24 @@ exports[`MetaCollectionImpl render should not render on document node 1`] = `
 </body>
 `;
 
+exports[`MetaCollectionImpl render should return a callback clearing only rendered comments during the call 1`] = `
+<body>
+  <a />
+  <!--meta1-->
+  <!--meta2-->
+  <b />
+  <!--meta3-->
+  <!--meta4-->
+</body>
+`;
+
+exports[`MetaCollectionImpl render should return a callback clearing rendered comments 1`] = `
+<body>
+  <a />
+  <b />
+</body>
+`;
+
 exports[`MetaCollectionImpl render should surround an element with comments 1`] = `
 <body>
   <!--meta1-->
