@@ -29,14 +29,13 @@ class TestComponent {
 }
 
 describe('BrMetaDirective', () => {
+  let clear: jest.Mocked<ReturnType<MetaCollection['render']>>;
   let meta: jest.Mocked<MetaCollection>;
   let fixture: ComponentFixture<TestComponent>;
 
   beforeEach(() => {
-    meta = {
-      clear: jest.fn(),
-      render: jest.fn(),
-    } as unknown as typeof meta;
+    clear = jest.fn();
+    meta = { render: jest.fn(() => clear) } as unknown as typeof meta;
   });
 
   beforeEach(waitForAsync(() => {
@@ -50,7 +49,7 @@ describe('BrMetaDirective', () => {
     fixture.detectChanges();
   }));
 
-  describe('ngDoCheck', () => {
+  describe('ngOnChanges', () => {
     describe('when there is no template', () => {
       beforeAll(() => {
         Component({ template: '<a [brMeta]="meta"></a>' })(TestComponent);
@@ -67,13 +66,13 @@ describe('BrMetaDirective', () => {
         fixture.componentInstance.meta = { ...meta };
         fixture.detectChanges();
 
-        expect(meta.clear).toBeCalled();
+        expect(clear).toBeCalled();
       });
 
       it('should not rerender if the meta was not changed', () => {
         fixture.detectChanges();
 
-        expect(meta.clear).not.toBeCalled();
+        expect(clear).not.toBeCalled();
       });
     });
 
@@ -122,7 +121,7 @@ describe('BrMetaDirective', () => {
     });
 
     it('should clear the meta', () => {
-      expect(meta.clear).toBeCalled();
+      expect(clear).toBeCalled();
     });
   });
 });

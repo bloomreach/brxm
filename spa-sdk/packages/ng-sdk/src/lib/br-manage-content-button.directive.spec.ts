@@ -30,13 +30,8 @@ describe('BrManageContentButtonDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
 
   beforeEach(() => {
-    content = {
-      getMeta: jest.fn(() => meta),
-    } as unknown as typeof content;
-    meta = {
-      clear: jest.fn(),
-      render: jest.fn(),
-    } as unknown as typeof meta;
+    content = { getMeta: jest.fn(() => meta) } as unknown as typeof content;
+    meta = { render: jest.fn() } as unknown as typeof meta;
   });
 
   beforeEach(waitForAsync(() => {
