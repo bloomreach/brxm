@@ -52,6 +52,8 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.onehippo.repository.branch.BranchConstants;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,9 +118,12 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
             final String uuid = requestParameters.getParameterValue("documentId").toString();
             final String category = requestParameters.getParameterValue("category").toString();
             final String action = requestParameters.getParameterValue("action").toString();
-            final String branchId = requestParameters.getParameterValue("branchId").toString();
+            String branchId = requestParameters.getParameterValue("branchId").toString();
+            if (StringUtils.isBlank(branchId)) {
+                branchId = BranchConstants.MASTER_BRANCH_ID;
+            }
 
-            if (isValidWorkflowRequest(action, uuid, target)) {
+            if (isValidWorkflowRequest(action, uuid, branchId, target)) {
                 executeWorkflowRequest(uuid, category, action, branchId, target);
             }
         }
@@ -130,7 +135,7 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
         }
     }
 
-    private boolean isValidWorkflowRequest(final String action, final String uuid, final AjaxRequestTarget target) {
+    private boolean isValidWorkflowRequest(final String action, final String uuid, final String branchId, final AjaxRequestTarget target) {
         if (!ACTIONS_TO_HINTS.containsKey(action)) {
             log.warn("Unknown workflow action '{}'", action);
             target.prependJavaScript(String.format("Hippo.Workflow.reject('Unknown workflow action %s');", action));
@@ -143,7 +148,13 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
             final HippoWorkspace workspace = userSession.getWorkspace();
             final WorkflowManager workflowManager = workspace.getWorkflowManager();
             final Workflow wf = workflowManager.getWorkflow("default", handle);
-            final Map<String, Serializable> hints = wf.hints();
+            final Map<String, Serializable> hints;
+            if (wf instanceof DocumentWorkflow && branchId != null) {
+                hints =  ((DocumentWorkflow)wf).hints(branchId);
+            } else {
+                hints = wf.hints();
+            }
+
             final String hint = ACTIONS_TO_HINTS.get(action);
 
             final Map<String, Serializable> requestsHints = new HashMap<>();
