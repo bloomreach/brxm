@@ -1,12 +1,12 @@
 /*
  *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,46 +49,46 @@ public interface HippoStdNodeType {
      * defer to the other documents.
      */
     String NT_HTML = "hippostd:html";
-    
+
     /**
      * The hippostd:date JCR primary type is used to contain dates, separated out in their constituent fields (year, month, etcetera).
      * It is typically used within documents to allow for faceted navigation using the individual fields, or even fields derived from
      * them (e.g. week number, quarter).
      */
     String NT_DATE = "hippostd:date";
-    
+
     /**
      * The hippostd:languageable is a JCR mix-in type that can be added to documents indicating that the document can have multiple
      * variants for different languages.  This adds a field to the documents indicating the language the document variant is in,
      * and is used in the work-flow process to add logic for the language process.
      */
     String NT_LANGUAGEABLE = "hippostd:languageable";
-    
+
     /**
      * The hippostd:publishable is a JCR mix-in type that can be added to documents indicating that the document can be in different
      * publication state, meaning whether documents should appear on all web-sites, just preview and/or are being edited.
      */
     String NT_PUBLISHABLE = "hippostd:publishable";
-    
+
     /**
      * The hippostd:publishableSummary is a JCR mix-in type that can be placed on documents that are already hippostd:publishable
      * and provides a human-readable description of the overall state of all related document states.
      */
     String NT_PUBLISHABLESUMMARY = "hippostd:publishableSummary";
-    
+
     /**
      * The hippostd:translations is a JCR mix-in type that can be added some other node types amongst which documents, indicating
      * that besides the node name itself, a number of internationalized, personalized, or otherwise sub-classed names are available
      * for human consumption.  The actual translated names are properties of child-nodes that introduced by this mix-in type.
      */
     String NT_TRANSLATIONS = "hippostd:translations";
-    
+
     /**
      * The hippostd:container is a JCR mix-in type that can be added to document variants which allows the document to contain
      * unstructured child nodes with either date (hippostd:date) or HTML (hippostd:html) content.
      */
     String NT_CONTAINER = "hippostd:container";
-    
+
     /**
      * The hippostd:relaxed is a JCR mix-in type that can be added to document variants which allows the document to contain\
      * unstructured properties of any name and type.
@@ -144,13 +144,13 @@ public interface HippoStdNodeType {
      * The property in a hippostd:html node instance that hold the HTML fragment.
      */
     String HIPPOSTD_CONTENT = "hippostd:content";
-    
+
     /**
      * The user-id that currently holds the document.  Holding a document can have various meaning, depending on the document
      * type and variant.  The most common case is the user editing a document.
      */
     String HIPPOSTD_HOLDER = "hippostd:holder";
-    
+
     /**
      * The property holding the language code as defined by ISO-639-1, used for instance in a hippostd:languageable node type.
      */
@@ -170,7 +170,7 @@ public interface HippoStdNodeType {
     String HIPPOSTD_MODIFY = "hippostd:modify";
 
     String HIPPOSTD_EXCLUDE_PRIMARY_TYPES = "hippostd:excludePrimaryTypes";
-    
+
     /**
      * The child node name defined by a hippostd:translated containing the translated names.  Multiple translations,
      * due to internationalization or other diversification of the name are placed as same-name-siblings below the
@@ -184,12 +184,12 @@ public interface HippoStdNodeType {
      * fields, like month, year, etcetera are autocomputed from the date set to this property of the hippostd:date node.
      */
     String HIPPOSTD_DATE = "hippostd:date";
-    
+
     /**
      * The property in a hippostd:date that contains the month as an integer representation according to #java.util.Calendar.
      */
     String HIPPOSTD_MONTH = "hippostd:month";
-    
+
     /**
      * The property in a hippostd:date that contains the year as an integer (normally four digits), also according to #java.util.Calendar.
      */
@@ -199,12 +199,12 @@ public interface HippoStdNodeType {
      * The property in a hippostd:date that contains the day-of-the-year as an integer according to #java.util.Calendar rules.
      */
     String HIPPOSTD_DAYOFYEAR = "hippostd:dayofyear";
-    
+
     /**
      * The property in a hippostd:date that contains the week-of-the-year as an integer according to #java.util.Calendar.
      */
     String HIPPOSTD_WEEKOFYEAR = "hippostd:weekofyear";
-    
+
     /**
      * The property in a hippostd:date that contains the day-of-the-week as an integer according to #java.util.Calendar.
      */
@@ -219,7 +219,7 @@ public interface HippoStdNodeType {
      * The multivalued property on a folder or directory node that contains the template query node names.
      */
     String HIPPOSTD_FOLDERTYPE = "hippostd:foldertype";
-    
+
     /**
      * The property defining the type of this hippostd:gallery
      */
@@ -230,19 +230,19 @@ public interface HippoStdNodeType {
      * on a live web-site and possibly a preview web-site when no specific document variant is available.
      */
     String PUBLISHED = "published";
-    
+
     /**
      * One of the possible values a hippostd:state property can hold, indicating a document variant is to be made available
      * on a preview web-site only.
      */
     String UNPUBLISHED = "unpublished";
-    
+
     /**
      * One of the possible values a hippostd:state property can hold, indicating a document variant is being edited and
      * should not be available for web-sites.
      */
     String DRAFT = "draft";
-    
+
     String NEW = "new";
     /**
      * <p>A transferable document allows to transfer the holder.</p>
@@ -261,6 +261,13 @@ public interface HippoStdNodeType {
      * mixin to mark a folder to be an XPage folder (containing XPage documents)
      */
     String NT_XPAGE_FOLDER = "hippostd:xpagefolder";
+
+    /**
+     * mixin to mark a folder to be the root XPage folder (containing XPage folders and documents)
+     * Can be used to configure a subfolder to be the root. Note that the node must also have mixin
+     * hippostd:xpagefolder. Only one node per channel in the contentRoot must have this mixin.
+     */
+    String NT_ROOT_XPAGE_FOLDER = "hippostd:rootxpagefolder";
 
     /**
      * A property for an {@link #NT_XPAGE_FOLDER} to indicate for which channel the xpage folder is
