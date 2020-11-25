@@ -15,17 +15,29 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.SimpleCredentials;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.IOUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.branch.BranchConstants;
+import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +53,7 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
     private String containerNodeName;
     private Node hstXpageDocNode;
     private String mountId;
+    private String experienceSiteMapItemId;
 
     @Before
     public void setup() throws Exception {
@@ -57,7 +70,7 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         admin.save();
 
         mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
-
+        experienceSiteMapItemId = getNodeId(admin, "/hst:hst/hst:configurations/unittestproject/hst:sitemap/experiences/_any_.html");
 
     }
 
@@ -93,7 +106,7 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
 
         final Node container = hstXpageDocNode.getNode(containerNodeName);
 
-        assertTrue("Expected the banner item was moved",container.hasNode("banner"));
+        assertTrue("Expected the banner item was moved", container.hasNode("banner"));
 
     }
 
@@ -150,7 +163,6 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         final String createdUUID = map.get("id").toString();
 
 
-
         assertTrue(admin.nodeExists(unpublishedExpPageVariant.getPath() + "/hst:xpage/" + containerNodeName));
 
         final Node newlyCreatedContainer = admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/" + containerNodeName);
@@ -159,5 +171,142 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         // assert the createdUUID is for the created container ITEM, not the container!
         assertEquals(createdUUID, newlyCreatedContainer.getNode("newstyle-testitem").getIdentifier());
 
+    }
+
+    @Test
+    public void action_and_state_for_master_channel_and_master_xpage() throws Exception {
+
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin.json", "master");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author.json", "master");
+
+    }
+
+    @Test
+    public void action_and_state_for_master_channel_and_master_xpage_with_changes() throws Exception {
+
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
+        documentWorkflow.obtainEditableInstance();
+        final Node draftNode = getVariant(handle, HippoStdNodeType.DRAFT);
+        draftNode.setProperty(HippoNodeType.HIPPO_NAME, "TEST");
+        admin.save();
+        documentWorkflow.commitEditableInstance();
+
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin_modified.json", "master");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author_modified.json", "master");
+
+        // make sure that the unpublished version in jcr workspace is for a branch, and then validate the 'master' again
+        // now master comes from version history and should have the same result
+
+        documentWorkflow.branch("foo", "Foo");
+
+        assertTrue("expect master unpublished to be in version history",
+                new BranchHandleImpl("master", handle).getUnpublished().getPath().startsWith("/jcr:system/jcr:versionStorage"));
+
+        // even though master in version history, we expect the exact same states and actions for master since not
+        // changed
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin_modified.json", "master");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author_modified.json", "master");
+
+    }
+
+    @Test
+    public void action_and_state_for_master_channel_and_master_xpage_in_version_history() throws Exception {
+
+        // as a result of branching, unpublished will be for 'foo' and 'master' will be loaded from version history,
+        // the states and actions for master however should still be the same as before
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
+
+        documentWorkflow.branch("foo", "Foo");
+
+        // trigger a change in the 'foo' variant, this should not result the master to have 'request-publish'
+        documentWorkflow.obtainEditableInstance("foo");
+        final Node draftNode = getVariant(handle, HippoStdNodeType.DRAFT);
+        draftNode.setProperty(HippoNodeType.HIPPO_NAME, "TEST");
+        admin.save();
+        documentWorkflow.commitEditableInstance();
+
+        assertTrue("Expected that 'foo' branch has changes", (Boolean) documentWorkflow.hints("foo").get("publishBranch"));
+
+        // expected same fixture as for action_and_state_for_master_channel_and_master_xpage
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin.json", "master");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author.json", "master");
+
+    }
+
+
+    @Test
+    public void action_and_state_for_channel_foo_and_NO_EXISTING_xpage_for_branch_foo() throws Exception {
+
+        // both admin and author are expected to get the very same result if branch does not exist
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_NO_EXISTING_xpage_for_branch_foo.json", "foo");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_NO_EXISTING_xpage_for_branch_foo.json", "foo");
+
+    }
+
+    @Test
+    public void action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo() throws Exception {
+
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
+
+        documentWorkflow.branch("foo", "Foo");
+
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo.json", "foo");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo.json", "foo");
+
+        // make sure branch 'foo' moves to version history, this should not impact the actions on it
+
+        documentWorkflow.checkoutBranch(BranchConstants.MASTER_BRANCH_ID);
+
+        assertTrue("expect foo unpublished to be in version history",
+                new BranchHandleImpl("foo", handle).getUnpublished().getPath().startsWith("/jcr:system/jcr:versionStorage"));
+
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo.json", "foo");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo.json", "foo");
+
+        // trigger a change in the 'foo' variant to
+        documentWorkflow.obtainEditableInstance("foo");
+        final Node draftNode = getVariant(handle, HippoStdNodeType.DRAFT);
+        draftNode.setProperty(HippoNodeType.HIPPO_NAME, "TEST");
+        admin.save();
+        documentWorkflow.commitEditableInstance();
+
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo_modified.json", "foo");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo_modified.json", "foo");
+
+
+        documentWorkflow.checkoutBranch(BranchConstants.MASTER_BRANCH_ID);
+
+        // also when in version history, modified is picked up correctly
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo_modified.json", "foo");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo_modified.json", "foo");
+
+    }
+
+    @Test
+    public void action_and_state_for_channel_foo_and_EXISTING_unpublished_xpage_for_branch_foo() throws Exception {
+
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
+        documentWorkflow.depublish();
+
+        documentWorkflow.branch("foo", "Foo");
+
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_unpublished_xpage_for_branch_foo.json", "foo");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_unpublished_xpage_for_branch_foo.json", "foo");
+    }
+
+    private void assertions(final SimpleCredentials creds, String fixtureFileName, final String branchId) throws Exception {
+        final RequestResponseMock createRequestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + hstXpageDocNode.getIdentifier() + "./item/" + experienceSiteMapItemId, null,
+                "GET");
+
+        final MockHttpServletResponse get = render(mountId, createRequestResponse, creds, branchId);
+        InputStream expected = XPageResourceTest.class.getResourceAsStream(fixtureFileName);
+        assertions(get.getContentAsString(), expected);
+    }
+
+
+    private void assertions(final String actual, final InputStream expectedStream) throws IOException, JSONException {
+        String expected = IOUtils.toString(expectedStream, StandardCharsets.UTF_8);
+        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
     }
 }
