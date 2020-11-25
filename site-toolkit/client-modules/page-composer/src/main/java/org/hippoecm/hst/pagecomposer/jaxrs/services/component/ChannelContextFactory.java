@@ -19,13 +19,11 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -34,6 +32,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.hst.Channel;
 
 import static org.apache.commons.lang3.StringUtils.substringBefore;
@@ -65,7 +64,7 @@ final class ChannelContextFactory implements ComponentManagerAware {
                 .setHasPrototypes(!hasPrototypes(contextService));
 
         final Optional<Channel> channelOptional = channelService.getChannelByMountId(actionContext.getMountId(),
-                                                                                     actionContext.getHostGroup());
+                actionContext.getHostGroup());
         if (!channelOptional.isPresent()) {
             return channelContext;
         }
@@ -97,33 +96,27 @@ final class ChannelContextFactory implements ComponentManagerAware {
         final String masterLiveChannelId = substringBefore(masterChannelId, "-preview");
 
         final Node contentRoot = session.getNode(contentRootPath);
-        final NodeIterator nodes = contentRoot.getNodes();
-        while (nodes.hasNext()) {
-            final Node child = nodes.nextNode();
-            if (!child.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER)) {
-                continue;
-            }
-
-            final Property channelIdProperty = JcrUtils.getPropertyIfExists(child,
-                    HippoStdNodeType.HIPPOSTD_CHANNEL_ID);
-            if (channelIdProperty == null || !masterLiveChannelId.equals(channelIdProperty.getString())) {
-                continue;
-            }
-
-            final Property folderType = JcrUtils.getPropertyIfExists(child, HippoStdNodeType.HIPPOSTD_FOLDERTYPE);
-            if (folderType == null) {
-                continue;
-            }
-
-            for (final Value folderTypeValue : folderType.getValues()) {
-                final String folderTypeString = folderTypeValue.getString();
-                if (StringUtils.endsWith(folderTypeString, "-document")) {
-                    return Collections.singletonMap(folderTypeString, child.getPath());
+        for (Node child : new NodeIterable(contentRoot.getNodes())) {
+            if (child.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER)) {
+                final String channelIdProperty = JcrUtils.getStringProperty(child, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, null);
+                if (masterLiveChannelId.equals(channelIdProperty)) {
+                    return getTemplateQueryMap(child);
                 }
             }
         }
-
         return Collections.emptyMap();
+    }
+
+    private Map<String, String> getTemplateQueryMap(final Node xPageRootFolderNode) throws RepositoryException {
+        final String[] folderTypes = JcrUtils.getMultipleStringProperty(xPageRootFolderNode, HippoStdNodeType.HIPPOSTD_FOLDERTYPE, new String[0]);
+        final Optional<String> folderType = Stream.of(folderTypes)
+                .filter(t -> StringUtils.endsWith(t, "-document"))
+                .findFirst();
+        if (folderType.isPresent()) {
+            return Collections.singletonMap(folderType.get(), xPageRootFolderNode.getPath());
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     private boolean hasPrototypes(final PageComposerContextService contextService) {
