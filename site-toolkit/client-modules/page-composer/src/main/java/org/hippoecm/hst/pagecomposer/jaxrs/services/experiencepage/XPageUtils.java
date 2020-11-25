@@ -292,7 +292,7 @@ public class XPageUtils {
      * if belongs to XPage, returns the unpublished variant. If it is an XPage but there is no unpublished variant,
      * we throw an ClientException for now, see CMS-13262.
      * Note that the {@code node} can also be a frozen XPage node: In that case we try to get hold of the
-     * unpubished variant from the frozen node.
+     * unpublished WORKSPACE variant from the frozen node.
      */
     public static Node getXPageUnpublishedVariant(Node node) throws RepositoryException {
         if (node.getSession().getRootNode().isSame(node)) {
