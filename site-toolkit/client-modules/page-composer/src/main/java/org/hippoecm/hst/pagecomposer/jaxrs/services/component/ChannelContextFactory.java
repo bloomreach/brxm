@@ -16,31 +16,43 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.onehippo.cms7.services.hst.Channel;
 
 import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_CHANNEL_ID;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_FOLDERTYPE;
+import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
+import static org.hippoecm.repository.HippoStdNodeType.NT_ROOT_XPAGE_FOLDER;
+import static org.hippoecm.repository.HippoStdNodeType.NT_XPAGE_FOLDER;
 
 final class ChannelContextFactory implements ComponentManagerAware {
+
+    private static final Logger log = LoggerFactory.getLogger(ChannelContextFactory.class);
 
     private final ChannelService channelService;
     private boolean crossChannelPageCopySupported;
@@ -95,10 +107,23 @@ final class ChannelContextFactory implements ComponentManagerAware {
         // if -preview is not found, we already have the live channel id (substringBefore returns same string if -preview not found)
         final String masterLiveChannelId = substringBefore(masterChannelId, "-preview");
 
+        final NodeIterator rootXPageFolders = queryRootXPageFolders(masterLiveChannelId, contentRootPath, session);
+        if (rootXPageFolders.getSize() > 0) {
+            final Node rootXPageFolder = rootXPageFolders.nextNode();
+            final List<String> additionalRootXPageFolderPaths = new ArrayList<>();
+            while (rootXPageFolders.hasNext()) {
+                additionalRootXPageFolderPaths.add(rootXPageFolders.nextNode().getPath());
+            }
+            if (!additionalRootXPageFolderPaths.isEmpty()) {
+                log.warn("Root xpage folder for channel {} not unique, using '{}'. Additional root xpage folder paths: {}",
+                        masterLiveChannelId, rootXPageFolder.getPath(), additionalRootXPageFolderPaths);
+            }
+            return getTemplateQueryMap(rootXPageFolder);
+        }
         final Node contentRoot = session.getNode(contentRootPath);
         for (Node child : new NodeIterable(contentRoot.getNodes())) {
-            if (child.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER)) {
-                final String channelIdProperty = JcrUtils.getStringProperty(child, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, null);
+            if (child.isNodeType(NT_XPAGE_FOLDER)) {
+                final String channelIdProperty = JcrUtils.getStringProperty(child, HIPPOSTD_CHANNEL_ID, null);
                 if (masterLiveChannelId.equals(channelIdProperty)) {
                     return getTemplateQueryMap(child);
                 }
@@ -107,8 +132,18 @@ final class ChannelContextFactory implements ComponentManagerAware {
         return Collections.emptyMap();
     }
 
+    private NodeIterator queryRootXPageFolders(String channelId, String contentRootPath, Session session) throws RepositoryException {
+        final String statement = String.format(
+                "/%s//element(*, %s)[@jcr:mixinTypes='%s', @jcr:mixinTypes='%s', @%s='%s', @%s]",
+                contentRootPath, NT_FOLDER, NT_XPAGE_FOLDER, NT_ROOT_XPAGE_FOLDER, HIPPOSTD_CHANNEL_ID, channelId, HIPPOSTD_FOLDERTYPE);
+        return session.getWorkspace().getQueryManager()
+                .createQuery(statement, Query.XPATH)
+                .execute()
+                .getNodes();
+    }
+
     private Map<String, String> getTemplateQueryMap(final Node xPageRootFolderNode) throws RepositoryException {
-        final String[] folderTypes = JcrUtils.getMultipleStringProperty(xPageRootFolderNode, HippoStdNodeType.HIPPOSTD_FOLDERTYPE, new String[0]);
+        final String[] folderTypes = JcrUtils.getMultipleStringProperty(xPageRootFolderNode, HIPPOSTD_FOLDERTYPE, new String[0]);
         final Optional<String> folderType = Stream.of(folderTypes)
                 .filter(t -> StringUtils.endsWith(t, "-document"))
                 .findFirst();
