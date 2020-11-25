@@ -175,12 +175,12 @@ class HippoIframeService {
 
     const renderPathInfo = await this._determineRenderPathInfo();
     if (renderPathInfo !== this.renderPathInfo) {
-      this.renderPathInfo = renderPathInfo;
+      this.$rootScope.$evalAsync(() => { this.renderPathInfo = renderPathInfo; });
       this._editSharedContainers = false;
     }
 
     if (this.ConfigService.isDevMode()) {
-      sessionStorage.channelPath = this.renderPathInfo;
+      sessionStorage.channelPath = renderPathInfo;
     }
   }
 
