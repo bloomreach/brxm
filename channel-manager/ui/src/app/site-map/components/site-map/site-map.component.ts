@@ -91,8 +91,8 @@ export class SiteMapComponent implements OnChanges, OnDestroy, AfterViewChecked 
     this.search$.complete();
   }
 
-  isSelected(node: SiteMapItem): boolean {
-    return node.renderPathInfo === this.renderPathInfo;
+  isSelected({ pathInfo, renderPathInfo }: SiteMapItem): boolean {
+    return renderPathInfo === this.renderPathInfo || `${pathInfo === '/' ? '' : '/'}${pathInfo}` === this.renderPathInfo;
   }
 
   async selectNode(node: SiteMapItemNode): Promise<void> {
@@ -106,7 +106,7 @@ export class SiteMapComponent implements OnChanges, OnDestroy, AfterViewChecked 
   }
 
   private expandSelected(): void {
-    const node = this.treeControl.dataNodes.find(({ renderPathInfo }) => renderPathInfo === this.renderPathInfo);
+    const node = this.treeControl.dataNodes.find(this.isSelected.bind(this));
 
     if (node) {
       this.treeControl.expand(node);
