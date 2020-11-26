@@ -20,11 +20,16 @@ import java.io.File;
 
 import org.apache.commons.fileupload.FileItem;
 
+/**
+ * This class represents the file that is being uploaded. It contains the file and some extra information. This object
+ * is initialized with the data from the original object being uploaded and can be transformed during the execution of
+ * {@link IUploadPreProcessor#process(UploadedFile)}, so the data can be transformed before being persisted.
+ */
 public class UploadedFile {
 
     private final String fieldName;
-    private String contentType;
     private final boolean isFormField;
+    private String contentType;
     private String fileName;
     private File file;
 
@@ -37,7 +42,7 @@ public class UploadedFile {
     }
 
     public File getFile() {
-        return  file;
+        return file;
     }
 
     public String getFieldName() {
