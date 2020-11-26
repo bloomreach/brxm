@@ -21,6 +21,11 @@ import { MetaCollectionModel, MetaCollection } from './meta-collection';
 
 export const MenuModelToken = Symbol.for('MenuModelToken');
 
+/**
+ * A manage menu button.
+ */
+export const TYPE_MANAGE_MENU_BUTTON = 'EDIT_MENU_LINK';
+
 export const TYPE_MENU = 'menu';
 
 interface MenuDataModel {
