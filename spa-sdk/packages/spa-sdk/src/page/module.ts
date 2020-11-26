@@ -18,6 +18,7 @@ import { ContainerModule } from 'inversify';
 import { DOMParser, XMLSerializer } from 'xmldom';
 import { Typed } from 'emittery';
 
+import { ButtonFactory } from './button-factory';
 import { ComponentFactory } from './component-factory';
 import {
   ComponentChildrenToken,
@@ -59,6 +60,8 @@ export function PageModule() {
     bind(LinkRewriterService).to(LinkRewriterImpl).inSingletonScope();
     bind(DomParserService).toConstantValue(new DOMParser());
     bind(XmlSerializerService).toConstantValue(new XMLSerializer());
+
+    bind(ButtonFactory).toSelf().inSingletonScope();
 
     bind(LinkFactory).toSelf().inSingletonScope().onActivation(({ container }, factory) => {
       const url = container.get<UrlBuilder>(UrlBuilderService);
