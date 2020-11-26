@@ -15,11 +15,12 @@
  */
 package org.hippoecm.hst.test;
 
-import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.component.GenericHstComponent;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 
-public interface HeaderComponentInfo {
-
-    @Parameter(name = "header", defaultValue = "Yes My Header")
-    String getHeader();
+@ParametersInfo(type = PropertyPlaceHolderComponentInfo.class)
+public class PropertyPlaceHolderComponent extends GenericHstComponent {
 
 }
+
+
