@@ -28,6 +28,7 @@ import { EventBusService, EventBus, PageUpdateEvent } from './events';
 import { LinkFactory } from './link-factory';
 import { LinkRewriter, LinkRewriterService } from './link-rewriter';
 import { Link, isLink } from './link';
+import { Menu, TYPE_MANAGE_MENU_BUTTON } from './menu';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionModel, MetaCollection } from './meta-collection';
 import { Reference, isReference, resolve } from './reference';
@@ -110,6 +111,12 @@ export interface PageModel {
  * The current page to render.
  */
 export interface Page {
+  /**
+   * Generates a manage menu button.
+   * @return The menu button meta-data.
+   */
+  getButton(type: typeof TYPE_MANAGE_MENU_BUTTON, menu: Menu): MetaCollection;
+
   /**
    * Generates a meta-data collection for the Experience Manager buttons.
    * @return The button meta-data.
