@@ -15,6 +15,7 @@
  */
 
 import { inject, injectable, optional } from 'inversify';
+import { ButtonFactory } from './button-factory';
 import { ComponentFactory } from './component-factory09';
 import { ComponentMeta, Component } from './component';
 import { ComponentModel } from './component09';
@@ -66,6 +67,7 @@ export class PageImpl implements Page {
 
   constructor(
     @inject(PageModelToken) protected model: PageModel,
+    @inject(ButtonFactory) private buttonFactory: ButtonFactory,
     @inject(ComponentFactory) componentFactory: ComponentFactory,
     @inject(ContentFactory) private contentFactory: ContentFactory,
     @inject(LinkFactory) private linkFactory: LinkFactory,
@@ -92,6 +94,10 @@ export class PageImpl implements Page {
 
   private static getContentReference(reference: Reference) {
     return  reference.$ref.split('/', 3)[2] || '';
+  }
+
+  getButton(type: string, ...params: unknown[]) {
+    return this.buttonFactory.create(type, ...params);
   }
 
   getChannelParameters<T>(): T {
