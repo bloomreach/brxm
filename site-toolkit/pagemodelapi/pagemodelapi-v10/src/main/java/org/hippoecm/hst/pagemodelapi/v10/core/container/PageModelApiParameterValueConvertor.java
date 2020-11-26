@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagemodelapi.v10.core.container;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.DynamicParameterConfig;
 import org.hippoecm.hst.configuration.components.JcrPathParameterConfig;
@@ -52,6 +53,9 @@ public class PageModelApiParameterValueConvertor extends DefaultHstParameterValu
     public Object convert(final String parameterName, final String parameterValue,
                           ParameterConfiguration parameterConfiguration, Class<?> returnType) throws HstParameterValueConversionException {
 
+        if (StringUtils.isBlank(parameterValue)) {
+            return convert(parameterValue, returnType);
+        }
 
         if (parameterConfiguration instanceof ComponentConfiguration) {
             final ComponentConfiguration componentConfiguration = (ComponentConfiguration) parameterConfiguration;
@@ -88,7 +92,7 @@ public class PageModelApiParameterValueConvertor extends DefaultHstParameterValu
                         } else {
                             log.info("Referenced bean is not a HippoDocumentBean, HippoAssetBean or HippoGalleryImageSet, " +
                                     "return original value");
-                            return parameterValue;
+                            return convert(parameterValue, returnType);
                         }
                     } catch (ObjectBeanManagerException e) {
                         log.info("could not create bean for path '{}', return original value", absPath, e);
