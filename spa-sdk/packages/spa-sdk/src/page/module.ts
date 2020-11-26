@@ -37,7 +37,7 @@ import { EventBusService } from './events';
 import { ImageFactory, ImageImpl, ImageModelToken, ImageModel } from './image';
 import { ImageSetImpl, ImageSetModelToken, TYPE_IMAGE_SET } from './image-set';
 import { LinkFactory } from './link-factory';
-import { MenuImpl, MenuModelToken, TYPE_MENU } from './menu';
+import { MenuImpl, MenuModelToken, Menu, TYPE_MANAGE_MENU_BUTTON, TYPE_MENU } from './menu';
 import { MenuItemFactory, MenuItemImpl, MenuItemModelToken, MenuItemModel } from './menu-item';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionImpl, MetaCollectionModelToken, MetaCollectionModel } from './meta-collection';
@@ -61,7 +61,9 @@ export function PageModule() {
     bind(DomParserService).toConstantValue(new DOMParser());
     bind(XmlSerializerService).toConstantValue(new XMLSerializer());
 
-    bind(ButtonFactory).toSelf().inSingletonScope();
+    bind(ButtonFactory).toSelf().inSingletonScope().onActivation((context, factory) => factory
+      .register(TYPE_MANAGE_MENU_BUTTON, (menu: Menu) => menu.getMeta()),
+    );
 
     bind(LinkFactory).toSelf().inSingletonScope().onActivation(({ container }, factory) => {
       const url = container.get<UrlBuilder>(UrlBuilderService);
