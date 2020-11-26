@@ -26,27 +26,15 @@ import org.hippoecm.frontend.plugins.yui.upload.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The default implementation of {@link FileUploadPreProcessorService}. This implementation contains a list of {@link
+ * IUploadPreProcessor} and executes them all when the method process is invoked.
+ */
 public class DefaultFileUploadPreProcessorService implements FileUploadPreProcessorService {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultFileUploadPreProcessorService.class);
 
     private List<IUploadPreProcessor> preProcessors = new LinkedList<>();
-
-    protected final void addPreProcessor(IUploadPreProcessor preProcessor) {
-        preProcessors.add(preProcessor);
-    }
-
-    @Override
-    public void process(final UploadedFile uploadedFile) {
-        preProcessors.forEach(preProcessor -> {
-            try {
-                preProcessor.process(uploadedFile);
-            } catch (Exception exception) {
-                log.error(String.format("There was an error when executing the file upload pre processor %s",
-                        preProcessor.getClass().getName()), exception);
-            }
-        });
-    }
 
     public static FileUploadPreProcessorService getPreProcessorService(final IPluginContext pluginContext,
                                                                        final IPluginConfig pluginConfig) {
@@ -66,6 +54,22 @@ public class DefaultFileUploadPreProcessorService implements FileUploadPreProces
                     serviceId, preProcessorService.getClass().getName());
         }
         return preProcessorService;
+    }
+
+    protected final void addPreProcessor(IUploadPreProcessor preProcessor) {
+        preProcessors.add(preProcessor);
+    }
+
+    @Override
+    public void process(final UploadedFile uploadedFile) {
+        preProcessors.forEach(preProcessor -> {
+            try {
+                preProcessor.process(uploadedFile);
+            } catch (Exception exception) {
+                log.error(String.format("There was an error when executing the file upload pre processor %s",
+                        preProcessor.getClass().getName()), exception);
+            }
+        });
     }
 
 }

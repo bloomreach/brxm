@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,14 +64,12 @@ import org.slf4j.LoggerFactory;
  * </ul>
  */
 public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
-    private static final Logger log = LoggerFactory.getLogger(AjaxFileUploadBehavior.class);
-
     public static final String APPLICATION_JSON = "application/json";
-
     public static final String JQUERY_FILEUPLOAD_FILES = "files";
     public static final String JQUERY_FILEUPLOAD_NAME = "name";
     public static final String JQUERY_FILEUPLOAD_SIZE = "size";
     public static final String JQUERY_FILEUPLOAD_ERROR = "error";
+    private static final Logger log = LoggerFactory.getLogger(AjaxFileUploadBehavior.class);
     private final WebMarkupContainer container;
     private final DiskFileItemFactory diskFileItemFactory;
 
@@ -141,6 +138,7 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
      * Since the fileItem is not modifiable (its OutputStream is already closed), this internal method creates a
      * temporary file where we will load the Byte[] from the fileItem. The different pre-processors will be able to
      * update that file and in the end we will generate a new FileItem using the Byte[] from the temporary file.
+     *
      * @param fileItem
      * @param originalFileUpload
      * @return
@@ -148,6 +146,7 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
      */
     private FileUpload preProcess(FileItem fileItem, final FileUpload originalFileUpload) throws Exception {
         File tempFile = null;
+        OutputStream outputStream = null;
         try {
             tempFile = originalFileUpload.writeToTempFile();
             UploadedFile uploadedFile = new UploadedFile(tempFile, fileItem);
@@ -155,12 +154,15 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
 
             fileItem = diskFileItemFactory.createItem(uploadedFile.getFieldName(), uploadedFile.getContentType(),
                     uploadedFile.isFormField(), uploadedFile.getFileName());
-            OutputStream outputStream = fileItem.getOutputStream();
+            outputStream = fileItem.getOutputStream();
             outputStream.write(Files.readAllBytes(tempFile.toPath()));
             return new FileUpload(fileItem);
         } finally {
             if (tempFile != null) {
                 tempFile.delete();
+            }
+            if (outputStream != null) {
+                outputStream.close();
             }
         }
     }
@@ -191,11 +193,12 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
      */
     private MultipartServletWebRequest createMultipartWebRequest(final ServletWebRequest request) throws FileUploadException {
         diskFileItemFactory.setFileCleaningTracker(new FileCleanerTrackerAdapter(Application.get().getResourceSettings().getFileCleaner()));
-        
+
         try {
             long contentLength = Long.valueOf(request.getHeader("Content-Length"));
             if (contentLength > 0) {
-                return request.newMultipartWebRequest(Bytes.bytes(contentLength), container.getPage().getId(), diskFileItemFactory);
+                return request.newMultipartWebRequest(Bytes.bytes(contentLength), container.getPage().getId(),
+                        diskFileItemFactory);
             } else {
                 throw new FileUploadException("Invalid file upload content length");
             }
@@ -286,8 +289,8 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
     }
 
     /**
-     * Decides what should be the response's content type depending on the 'Accept' request header. HTML5 browsers
-     * work with "application/json", older ones use IFrame to make the upload and the response should be HTML. Read
+     * Decides what should be the response's content type depending on the 'Accept' request header. HTML5 browsers work
+     * with "application/json", older ones use IFrame to make the upload and the response should be HTML. Read
      * http://blueimp.github.com/jQuery-File-Upload/ docs for more info.
      *
      * @param request
@@ -297,8 +300,10 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
         return !Strings.isEmpty(acceptHeader) && acceptHeader.contains("text/html");
     }
 
-    protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {}
+    protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {
+    }
 
-    protected void onResponse(final ServletWebRequest request, final Map<String, FileUploadInfo> uploadedFiles) {}
+    protected void onResponse(final ServletWebRequest request, final Map<String, FileUploadInfo> uploadedFiles) {
+    }
 
 }
