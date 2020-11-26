@@ -185,6 +185,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     // true if this is an explicit xpage layout component (aka not inherited component but directly below the hst:xpage
     private boolean xpageLayoutComponent;
 
+    /**
+     * if true, this component is build from a jcr node of type 'hst:containercomponentreference'
+     */
+    private boolean containerComponentReference;
+
     // in case the config is transformed to an XPage but the XPage document does not have a container for the
     // container from the XPAge Layout
     private boolean unresolvedXpageLayoutContainer;
@@ -583,8 +588,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     // use the referencedContainerNode to build the hst component but use current child nodename as
                     // the name of the component node
                     String explicitName = child.getValueProvider().getName();
-                    return new HstComponentConfigurationService(referencedContainerNode,
+                    HstComponentConfigurationService childComponent = new HstComponentConfigurationService(referencedContainerNode,
                             this, rootNodeName, false, referenceableContainers, rootConfigurationPathPrefix, explicitName);
+                    // keep track of that the child component was loaded via a container component reference: these
+                    // need special handling in case of an XPage Layout since are not like XPage Layout container but
+                    // more like inherited components
+                    childComponent.containerComponentReference = true;
+                    return childComponent;
                 } else {
                     return new HstComponentConfigurationService(child, this, rootNodeName, false, referenceableContainers, rootConfigurationPathPrefix, null);
                 }
@@ -935,6 +945,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return xpageLayoutComponent;
     }
 
+    public boolean isContainerComponentReference() {
+        return containerComponentReference;
+    }
+
     @Override
     public String getHippoIdentifier() {
         return hippoIdentifier;
@@ -1047,6 +1061,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.hstDynamicComponentParameters = child.hstDynamicComponentParameters;
         copy.xpageLayoutComponent = child.xpageLayoutComponent;
         copy.experiencePageComponent = child.experiencePageComponent;
+        copy.containerComponentReference = child.containerComponentReference;
 
         if (type != Type.CONTAINER_COMPONENT || includeContainerItems) {
             for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
@@ -1638,6 +1653,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             this.hstDynamicComponentParameters = childToMerge.hstDynamicComponentParameters;
         } else {
             mergeResidualDynamicParameters(childToMerge.hstDynamicComponentParameters, this.hstDynamicComponentParameters);
+        }
+
+        if (!this.containerComponentReference) {
+            this.containerComponentReference = childToMerge.containerComponentReference;
         }
 
         // Note we do NOT set this.shared = childToMerge.shared  : For XPages namely, an HstComponent can defined on the
