@@ -28,6 +28,7 @@ const component = new class implements Component {
   getComponentById = jest.fn();
 };
 const page = new class implements Page {
+  getButton = jest.fn();
   getChannelParameters = jest.fn();
   getComponent = jest.fn(() => component);
   getContent = jest.fn();

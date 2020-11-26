@@ -15,6 +15,7 @@
  */
 
 import { inject, injectable, optional } from 'inversify';
+import { ButtonFactory } from './button-factory';
 import { ComponentFactory } from './component-factory';
 import { ComponentMeta, ComponentModel, Component } from './component';
 import { ContainerItemModel } from './container-item';
@@ -110,6 +111,12 @@ export interface PageModel {
  */
 export interface Page {
   /**
+   * Generates a meta-data collection for the Experience Manager buttons.
+   * @return The button meta-data.
+   */
+  getButton(type: string, ...params: any[]): MetaCollection;
+
+  /**
    * Gets current channel parameters.
    * @returns The channel parameters.
    */
@@ -151,6 +158,7 @@ export interface Page {
   /**
    * Generates a meta-data collection from the provided meta-data model.
    * @param meta The meta-data collection model as returned by the page-model-api.
+   * @deprecated Use `getButton` method to create buttons.
    */
   getMeta(meta: MetaCollectionModel): MetaCollection;
 
@@ -234,6 +242,7 @@ export class PageImpl implements Page {
 
   constructor(
     @inject(PageModelToken) protected model: PageModel,
+    @inject(ButtonFactory) private buttonFactory: ButtonFactory,
     @inject(ComponentFactory) componentFactory: ComponentFactory,
     @inject(ContentFactory) private contentFactory: ContentFactory,
     @inject(LinkFactory) private linkFactory: LinkFactory,
@@ -249,6 +258,10 @@ export class PageImpl implements Page {
 
   protected onPageUpdate(event: PageUpdateEvent) {
     Object.assign(this.model.page, event.page.page);
+  }
+
+  getButton(type: string, ...params: unknown[]) {
+    return this.buttonFactory.create(type, ...params);
   }
 
   getChannelParameters<T>(): T {
