@@ -45,6 +45,8 @@ import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 final class XPageContextFactory {
 
+    public static final String DOCUMENT_STATE_UNKNOWN = "unknown";
+
     XPageContext make(final PageComposerContextService contextService) throws RepositoryException, WorkflowException, RemoteException {
 
         if (!contextService.isExperiencePageRequest()) {
@@ -71,8 +73,7 @@ final class XPageContextFactory {
             useXPageDocBranch = MASTER_BRANCH_ID;
         }
         final BranchHandleImpl branchHandle = new BranchHandleImpl(useXPageDocBranch, handle);
-        final String documentState = getStringProperty(branchHandle.getUnpublished(), HIPPOSTD_STATESUMMARY,
-                "unknown").toLowerCase();
+        final String documentState = getDocumentState(branchHandle);
         final String unpublishedBranchId = branchHandle.getBranchId();
 
 
@@ -129,6 +130,15 @@ final class XPageContextFactory {
         }
 
         return xPageContext;
+    }
+
+    private static String getDocumentState(final BranchHandleImpl branchHandle) throws RepositoryException {
+        final Node unpublished = branchHandle.getUnpublished();
+        if (unpublished == null) {
+            return DOCUMENT_STATE_UNKNOWN;
+        }
+
+        return getStringProperty(unpublished, HIPPOSTD_STATESUMMARY, DOCUMENT_STATE_UNKNOWN);
     }
 
     private static void parseRequestsHints(final Map<String, Map<String, Serializable>> requestsMap,
