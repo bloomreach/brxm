@@ -111,3 +111,11 @@ export class MetaCollectionImpl extends Array<Meta> implements MetaCollection {
     return this.clear.bind(this, comments);
   }
 }
+
+/**
+ * Checks whether a value is a meta-data collection.
+ * @param value The value to check.
+ */
+export function isMetaCollection(value: any): value is MetaCollection {
+  return value instanceof MetaCollectionImpl;
+}
