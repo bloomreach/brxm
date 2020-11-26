@@ -37,8 +37,8 @@ import static org.hippoecm.frontend.plugins.yui.upload.processor.FileUploadPrePr
  */
 public class DefaultFileUploadPreProcessorPlugin extends Plugin {
 
-    private static final String PRE_PROCESSORS_NODE_KEY = "preProcessors";
-    private static final String CLASS_NAME_KEY = "className";
+    public static final String PRE_PROCESSORS_NODE_KEY = "preProcessors";
+    public static final String CLASS_NAME_KEY = "className";
     private static final Logger log = LoggerFactory.getLogger(DefaultFileUploadPreProcessorPlugin.class);
 
     /**
