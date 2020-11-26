@@ -110,6 +110,7 @@ public final class HstActionProvider {
         xPageContext.isRejectedRequest().ifPresent(rejectedRequest -> actions.put(HstAction.XPAGE_REQUEST_REJECTED
                 , rejectedRequest));
 
+        actions.put(HstAction.XPAGE_RENAME, xPageContext.isRenameAllowed());
         actions.put(HstAction.XPAGE_COPY, xPageContext.isCopyAllowed());
         actions.put(HstAction.XPAGE_MOVE, xPageContext.isMoveAllowed());
         actions.put(HstAction.XPAGE_DELETE, xPageContext.isDeleteAllowed());
