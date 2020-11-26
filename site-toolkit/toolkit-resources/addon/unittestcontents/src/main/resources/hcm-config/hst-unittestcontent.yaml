@@ -207,7 +207,7 @@ definitions:
                         page
           /experiences:
             jcr:primaryType: hippostd:folder
-            jcr:mixinTypes: ['mix:referenceable', 'hippostd:xpagefolder', 'hippostd:rootxpagefolder']
+            jcr:mixinTypes: ['mix:referenceable', 'hippostd:xpagefolder']
             hippostd:channelid: unittestproject
             hippostd:foldertype: [new-folder, new-document]
             /expPage1:
@@ -363,9 +363,9 @@ definitions:
                       hst:xtype: HST.vBox
             /experiences-subfolder:
               jcr:primaryType: hippostd:folder
-              jcr:mixinTypes: ['mix:referenceable', 'hippostd:xpagefolder', 'hippostd:rootxpagefolder']
+              jcr:mixinTypes: ['mix:referenceable', 'hippostd:xpagefolder']
               hippostd:channelid: unittestproject
-              hippostd:foldertype: [new-folder, new-subfolderdocument]
+              hippostd:foldertype: [new-folder, new-subfolder-document]
 
           /News:
             jcr:primaryType: hippostd:folder

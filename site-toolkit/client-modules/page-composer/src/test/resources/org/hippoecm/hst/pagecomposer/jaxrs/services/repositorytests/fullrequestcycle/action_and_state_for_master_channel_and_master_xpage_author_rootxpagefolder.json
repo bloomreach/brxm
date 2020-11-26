@@ -9,11 +9,23 @@
           "move":{
             "enabled":false
           },
+          "request-publish":{
+            "enabled":false
+          },
           "rename":{
             "enabled":false
           },
-          "copy":{
+          "request-schedule-unpublish":{
+            "enabled":true
+          },
+          "request-unpublish":{
+            "enabled":true
+          },
+          "request-schedule-publish":{
             "enabled":false
+          },
+          "copy":{
+            "enabled":true
           },
           "delete":{
             "enabled":false
@@ -26,6 +38,9 @@
             "enabled":true
           },
           "manage-changes":{
+            "enabled":false
+          },
+          "publish":{
             "enabled":false
           },
           "discard-changes":{
@@ -48,7 +63,7 @@
       },
       "channel":{
         "xPageTemplateQueries":{
-          "new-document":"/unittestcontent/documents/unittestproject/experiences"
+          "new-subfolder-document":"/unittestcontent/documents/unittestproject/experiences/experiences-subfolder"
         },
         "xPageLayouts":{
           "hst:xpages/xpage1":"XPage 1"
