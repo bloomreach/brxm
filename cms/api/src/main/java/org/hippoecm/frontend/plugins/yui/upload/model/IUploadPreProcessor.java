@@ -18,6 +18,16 @@ package org.hippoecm.frontend.plugins.yui.upload.model;
 
 import org.apache.wicket.util.io.IClusterable;
 
+/**
+ * Custom Upload Processor interface. It's used by the CMS editor to perform custom user-defined transformations when a
+ * file is uploaded to the system.
+ */
 public interface IUploadPreProcessor extends IClusterable {
+    /**
+     * If this interface is implemented, the logic inside this method will be executed before persisting the uploaded
+     * file. Any modification to the provided {@link UploadedFile} object will be persisted
+     *
+     * @param uploadedFile
+     */
     void process(final UploadedFile uploadedFile);
 }

@@ -28,6 +28,13 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.frontend.plugins.yui.upload.processor.FileUploadPreProcessorService.DEFAULT_ID;
 
+/**
+ * This plugin is loaded from configuration. Its purpose is to initialize a {@link DefaultFileUploadPreProcessorService}
+ * which will contain a set of preprocessors (specified on that configuration).
+ * There is a default {@link DefaultFileUploadPreProcessorPlugin} configured in
+ * '/hippo:configuration/hippo:frontend/cms/cms-services/fileUploadPreProcessorService', but additional instances of
+ * this plugin can be configured as well.
+ */
 public class DefaultFileUploadPreProcessorPlugin extends Plugin {
 
     private static final String PRE_PROCESSORS_NODE_KEY = "preProcessors";
