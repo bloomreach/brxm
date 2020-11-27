@@ -121,7 +121,8 @@ public final class HstActionProvider {
     }
 
     private Set<Action> pageActions(final ActionStateProviderContext context) {
-        return context.getChannelContext().isConfigurationLocked()
+        return   !context.getChannelContext().isChannelWebmaster()
+                || context.getChannelContext().isConfigurationLocked()
                 || context.isExperiencePageRequest()
                 ? Collections.emptySet()
                 : getPageActions(context);
