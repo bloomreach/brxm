@@ -976,15 +976,17 @@ public class VirtualHostsService implements MutableVirtualHosts {
     public ResourceBundle getResourceBundle(final Channel channel, final Locale locale) {
         final String channelInfoClassName = channel.getChannelInfoClassName();
 
-        final List<ResourceBundle> bundles = Stream.of(channelInfoClassName)
-                .map(className -> getClass(className))
-                .filter(Objects::nonNull)
-                .flatMap(this::appendInterfaces)
-                .distinct()
-                .map(Class::getName)
-                .map(className -> loadResourceBundle(className, locale))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        final List<ResourceBundle> bundles = channelInfoClassName != null ?
+                Stream.of(channelInfoClassName)
+                    .map(className -> getClass(className))
+                    .filter(Objects::nonNull)
+                    .flatMap(this::appendInterfaces)
+                    .distinct()
+                    .map(Class::getName)
+                    .map(className -> loadResourceBundle(className, locale))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList())
+                : new ArrayList<>();
 
         final List<String> channelInfoMixinNames = channel.getChannelInfoMixinNames();
 
