@@ -62,7 +62,7 @@
 [hippostd:xpagefolder] mixin
 - hippostd:channelid (string)
 
-[hippostd:rootxpagefolder] mixin
+[hippostd:cmxpagefolder] > hippostd:xpagefolder mixin
 
 [hippostd:templatequery] > nt:query
 - hippostd:icon (string)
