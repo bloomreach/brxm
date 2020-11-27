@@ -38,6 +38,7 @@ import { PageFactory } from './page-factory';
 import { PageImpl, PageModel } from './page09';
 import { PageModelToken } from './page';
 import { TYPE_LINK_INTERNAL } from './link';
+import { TYPE_MANAGE_CONTENT_BUTTON, createManageContentButton } from './button-manage-content';
 import { TYPE_MANAGE_MENU_BUTTON } from './menu';
 import { TYPE_META_COMMENT } from './meta';
 import { UrlBuilderService, UrlBuilder } from '../url';
@@ -53,6 +54,7 @@ export function PageModule() {
     bind(XmlSerializerService).toConstantValue(new XMLSerializer());
 
     bind(ButtonFactory).toSelf().inSingletonScope().onActivation((context, factory) => factory
+      .register(TYPE_MANAGE_CONTENT_BUTTON, createManageContentButton)
       .register(TYPE_MANAGE_MENU_BUTTON, ({ _meta }: Menu) => _meta ?? {}),
     );
 

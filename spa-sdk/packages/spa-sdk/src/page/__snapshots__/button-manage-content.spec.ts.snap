@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createManageContentButton should generate add content button when there are no content parameters 1`] = `
+Object {
+  "beginNodeSpan": Array [
+    Object {
+      "data": "{\\"HST-Type\\":\\"MANAGE_CONTENT_LINK\\",\\"documentTemplateQuery\\":\\"new-content-document\\",\\"folderTemplateQuery\\":\\"new-content-folder\\",\\"rootPath\\":\\"content\\"}",
+      "type": "comment",
+    },
+  ],
+}
+`;
+
+exports[`createManageContentButton should merge custom parameters 1`] = `
+Object {
+  "beginNodeSpan": Array [
+    Object {
+      "data": "{\\"HST-Type\\":\\"MANAGE_CONTENT_LINK\\",\\"uuid\\":\\"id\\",\\"defaultPath\\":\\"2020/11\\",\\"documentTemplateQuery\\":\\"new-news-document\\",\\"folderTemplateQuery\\":\\"new-news-folder\\",\\"rootPath\\":\\"news\\",\\"parameterName\\":\\"document\\"}",
+      "type": "comment",
+    },
+  ],
+  "endNodeSpan": Array [],
+}
+`;
+
+exports[`createManageContentButton should not set relative parameter flag 1`] = `
+Object {
+  "beginNodeSpan": Array [
+    Object {
+      "data": "{\\"HST-Type\\":\\"MANAGE_CONTENT_LINK\\",\\"uuid\\":\\"id\\",\\"defaultPath\\":\\"content\\"}",
+      "type": "comment",
+    },
+  ],
+  "endNodeSpan": Array [],
+}
+`;
+
+exports[`createManageContentButton should not set relative parameter flag 2`] = `
+Object {
+  "beginNodeSpan": Array [
+    Object {
+      "data": "{\\"HST-Type\\":\\"MANAGE_CONTENT_LINK\\",\\"uuid\\":\\"id\\",\\"defaultPath\\":\\"content\\"}",
+      "type": "comment",
+    },
+  ],
+  "endNodeSpan": Array [],
+}
+`;
+
+exports[`createManageContentButton should set relative parameter flag 1`] = `
+Object {
+  "beginNodeSpan": Array [
+    Object {
+      "data": "{\\"HST-Type\\":\\"MANAGE_CONTENT_LINK\\",\\"uuid\\":\\"id\\",\\"parameterValueIsRelativePath\\":\\"true\\"}",
+      "type": "comment",
+    },
+  ],
+  "endNodeSpan": Array [],
+}
+`;
