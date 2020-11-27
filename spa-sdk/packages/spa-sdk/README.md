@@ -121,6 +121,7 @@ Constant | Description
 `TYPE_LINK_INTERNAL` | Link to a page inside the current application.
 `TYPE_LINK_RESOURCE` | Link to a CMS resource.
 `TYPE_MANAGE_MENU_BUTTON` | A manage menu button.
+`TYPE_MANAGE_CONTENT_BUTTON` | A manage content button.
 
 #### Objects
 ##### Page
