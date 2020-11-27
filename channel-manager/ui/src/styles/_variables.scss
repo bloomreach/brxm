@@ -24,6 +24,8 @@ $font-medium: 16px;
 $font-normal: 14px;
 $font-small: 12px;
 
+$transition-small-area-speed: 100ms;
+
 // Notification banner
 $notification-banner-bgcolor: map-get($blue, 50);
 $notification-banner-danger-bgcolor: map-get($red, 50);

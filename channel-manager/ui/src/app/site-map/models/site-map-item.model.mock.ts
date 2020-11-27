@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+import { SiteMapItem } from './site-map-item.model';
 
-import { NotificationBarModule } from './notification-bar/notification-bar.module';
-import { Ng1ServicesModule } from './services/ng1/ng1-services.module';
-import { SharedModule } from './shared/shared.module';
-import { SiteMapModule } from './site-map/site-map.module';
-import { VersionsModule } from './versions/versions.module';
+export class SiteMapItemMock implements SiteMapItem {
+  [key: string]: any;
 
-@NgModule({
-  imports: [
-    SharedModule,
-    NotificationBarModule,
-    VersionsModule,
-    Ng1ServicesModule,
-    SiteMapModule,
-  ],
-  providers: [
-  ],
-})
-export class AppModule {
-  ngDoBootstrap(): void { }
+  experiencePage = false;
+  id = '/';
+  name = 'root';
+  pageTitle = null;
+  pathInfo = '/';
+  renderPathInfo = '/';
+  children = [];
+
+  constructor(initObject: any = {}) {
+    Object
+    .keys(initObject)
+    .forEach(key => {
+      this[key] = initObject[key];
+    });
+  }
 }
