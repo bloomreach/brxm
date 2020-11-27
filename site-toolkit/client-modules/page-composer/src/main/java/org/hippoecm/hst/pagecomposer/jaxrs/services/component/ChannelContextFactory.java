@@ -32,11 +32,13 @@ import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.hst.Channel;
 
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
 
 final class ChannelContextFactory implements ComponentManagerAware {
@@ -58,6 +60,7 @@ final class ChannelContextFactory implements ComponentManagerAware {
         final PageComposerContextService contextService = actionContext.getContextService();
         final ChannelContext channelContext = new ChannelContext()
                 .setChannelAdmin(isChannelAdmin(contextService))
+                .setChannelWebmaster(isWebmaster(contextService))
                 .setCrossChannelPageCopySupported(crossChannelPageCopySupported)
                 .setHasPrototypes(!hasPrototypes(contextService));
 
@@ -77,6 +80,7 @@ final class ChannelContextFactory implements ComponentManagerAware {
                         getXPageTemplateQueries(channelContext.getChannelId(), channel.getContentRoot(), session))
                 .setConfigurationLocked(channel.isConfigurationLocked());
     }
+
 
     private Map<String, String> getXPageTemplateQueries(final String channelId, final String contentRootPath,
                                                         final Session session) throws RepositoryException {
@@ -115,11 +119,20 @@ final class ChannelContextFactory implements ComponentManagerAware {
     }
 
     private boolean isChannelAdmin(PageComposerContextService contextService) {
+        return doIsInRole(contextService, CHANNEL_ADMIN_PRIVILEGE_NAME);
+    }
+
+
+    private boolean isWebmaster(final PageComposerContextService contextService) {
+        return doIsInRole(contextService, CHANNEL_WEBMASTER_PRIVILEGE_NAME);
+    }
+
+    public boolean doIsInRole(PageComposerContextService contextService, final String inRole) {
         try {
             final Session session = contextService.getRequestContext().getSession(false);
-            final boolean inRoleLive = isInRole(session, contextService.getEditingLiveConfigurationPath(), CHANNEL_ADMIN_PRIVILEGE_NAME);
+            final boolean inRoleLive = isInRole(session, contextService.getEditingLiveConfigurationPath(), inRole);
             if (contextService.hasPreviewConfiguration()) {
-                return inRoleLive && isInRole(session, contextService.getEditingPreviewConfigurationPath(), CHANNEL_ADMIN_PRIVILEGE_NAME);
+                return inRoleLive && isInRole(session, contextService.getEditingPreviewConfigurationPath(), inRole);
             }
             return inRoleLive;
         } catch (RepositoryException e) {
