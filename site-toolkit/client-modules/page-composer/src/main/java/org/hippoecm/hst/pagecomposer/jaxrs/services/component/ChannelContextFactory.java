@@ -47,7 +47,7 @@ import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_CHANNEL_ID;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_FOLDERTYPE;
 import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
-import static org.hippoecm.repository.HippoStdNodeType.NT_ROOT_XPAGE_FOLDER;
+import static org.hippoecm.repository.HippoStdNodeType.NT_CM_XPAGE_FOLDER;
 import static org.hippoecm.repository.HippoStdNodeType.NT_XPAGE_FOLDER;
 
 final class ChannelContextFactory implements ComponentManagerAware {
@@ -107,18 +107,20 @@ final class ChannelContextFactory implements ComponentManagerAware {
         // if -preview is not found, we already have the live channel id (substringBefore returns same string if -preview not found)
         final String masterLiveChannelId = substringBefore(masterChannelId, "-preview");
 
-        final NodeIterator rootXPageFolders = queryRootXPageFolders(masterLiveChannelId, contentRootPath, session);
-        if (rootXPageFolders.getSize() > 0) {
-            final Node rootXPageFolder = rootXPageFolders.nextNode();
-            final List<String> additionalRootXPageFolderPaths = new ArrayList<>();
-            while (rootXPageFolders.hasNext()) {
-                additionalRootXPageFolderPaths.add(rootXPageFolders.nextNode().getPath());
+        final NodeIterator cmXPageFolders = queryCmXPageFolders(channelId, contentRootPath, session);
+        if (cmXPageFolders.getSize() > 0) {
+            final Node cmXPageFolder = cmXPageFolders.nextNode();
+            final List<String> additionalCmXPageFolderPaths = new ArrayList<>();
+            while (cmXPageFolders.hasNext()) {
+                additionalCmXPageFolderPaths.add(cmXPageFolders.nextNode().getPath());
             }
-            if (!additionalRootXPageFolderPaths.isEmpty()) {
+            if (!additionalCmXPageFolderPaths.isEmpty()) {
+                // At the moment only one node per channel in the contentRoot may have this mixin.
+                // This requirement can be removed later if the UI supports multiple cm xpage folders.
                 log.warn("Root xpage folder for channel {} not unique, using '{}'. Additional root xpage folder paths: {}",
-                        masterLiveChannelId, rootXPageFolder.getPath(), additionalRootXPageFolderPaths);
+                        masterLiveChannelId, cmXPageFolder.getPath(), additionalCmXPageFolderPaths);
             }
-            return getTemplateQueryMap(rootXPageFolder);
+            return getTemplateQueryMap(cmXPageFolder);
         }
         final Node contentRoot = session.getNode(contentRootPath);
         for (Node child : new NodeIterable(contentRoot.getNodes())) {
@@ -132,10 +134,10 @@ final class ChannelContextFactory implements ComponentManagerAware {
         return Collections.emptyMap();
     }
 
-    private NodeIterator queryRootXPageFolders(String channelId, String contentRootPath, Session session) throws RepositoryException {
+    private NodeIterator queryCmXPageFolders(String channelId, String contentRootPath, Session session) throws RepositoryException {
         final String statement = String.format(
-                "/%s//element(*, %s)[@jcr:mixinTypes='%s', @jcr:mixinTypes='%s', @%s='%s', @%s]",
-                contentRootPath, NT_FOLDER, NT_XPAGE_FOLDER, NT_ROOT_XPAGE_FOLDER, HIPPOSTD_CHANNEL_ID, channelId, HIPPOSTD_FOLDERTYPE);
+                "/%s//element(*, %s)[@jcr:mixinTypes='%s', @%s='%s', @%s]",
+                contentRootPath, NT_FOLDER, NT_CM_XPAGE_FOLDER, HIPPOSTD_CHANNEL_ID, channelId, HIPPOSTD_FOLDERTYPE);
         return session.getWorkspace().getQueryManager()
                 .createQuery(statement, Query.XPATH)
                 .execute()
