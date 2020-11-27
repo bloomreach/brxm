@@ -300,12 +300,18 @@ Variable | Description
 `page` | The current page instance.
 
 #### br-manage-content-button
-This component places a button on the page that opens the linked content in the document editor.
+This component places a button on the page that opens the linked content in the document editor or opens a document editor to create a new one.
 The button will only be shown in preview mode.
 
 Property | Required | Description
 --- | :---: | ---
-`content` | _yes_ | The content entity to open for editing.
+`content` | _no_ | The content entity to open for editing.
+`document-template-query` | _no_ | Template query to use for creating new documents.
+`folder-template-query` | _no_ | Template query to use in case folders specified by `path` do not yet exist and must be created.
+`path` | _no_ | Initial location of a new document, relative to the `root`.
+`parameter` | _no_ | Name of the component parameter in which the document path is stored.
+`relative` | _no_ | Flag indicating that the picked value should be stored as a relative path.
+`root` | _no_ | Path to the root folder of selectable document locations.
 
 #### br-manage-menu-button
 This directive places a button on the page that opens the linked menu in the menu editor.

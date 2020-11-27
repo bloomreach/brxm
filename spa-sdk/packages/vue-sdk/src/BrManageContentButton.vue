@@ -15,11 +15,11 @@
   -->
 
 <template>
-  <br-meta v-if="page && page.isPreview()" :meta="content.getMeta()" />
+  <br-meta v-if="page && page.isPreview()" :meta="meta" />
 </template>
 
 <script lang="ts">
-import { Content, Document, Page } from '@bloomreach/spa-sdk';
+import { ManageContentButton, Page, TYPE_MANAGE_CONTENT_BUTTON } from '@bloomreach/spa-sdk';
 import { Component, Inject, Prop, Vue } from 'vue-property-decorator';
 import BrMeta from './BrMeta.vue';
 
@@ -29,17 +29,32 @@ import BrMeta from './BrMeta.vue';
 @Component({
   components: { BrMeta },
   computed: {
+    meta(this: BrManageContentButton) {
+      return this.page?.getButton(TYPE_MANAGE_CONTENT_BUTTON, this.$props);
+    },
+
     page(this: BrManageContentButton) {
       return this.page$?.();
     },
   },
   name: 'br-manage-content-button',
 })
-export default class BrManageContentButton extends Vue {
-  /**
-   * The content entity to open for editing.
-   */
-  @Prop() content!: Content | Document;
+export default class BrManageContentButton extends Vue implements ManageContentButton {
+  @Prop() content?: ManageContentButton['content'];
+
+  @Prop() documentTemplateQuery?: ManageContentButton['documentTemplateQuery'];
+
+  @Prop() folderTemplateQuery?: ManageContentButton['folderTemplateQuery'];
+
+  @Prop() path?: ManageContentButton['path'];
+
+  @Prop() parameter?: ManageContentButton['parameter'];
+
+  @Prop() relative?: ManageContentButton['relative'];
+
+  @Prop() root?: ManageContentButton['root'];
+
+  page?: Page;
 
   @Inject() private page$?: () => Page;
 }

@@ -14,22 +14,40 @@
  * limitations under the License.
  */
 
-import { Directive, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Content, Document } from '@bloomreach/spa-sdk';
+import { Directive, Input, OnChanges, Optional, SimpleChanges, TemplateRef, ViewContainerRef } from '@angular/core';
+import { ManageContentButton, TYPE_MANAGE_CONTENT_BUTTON } from '@bloomreach/spa-sdk';
 import { BrMetaDirective } from './br-meta.directive';
+import { BrPageComponent } from './br-page/br-page.component';
 
 /**
  * The button direcrtive that opens for editing a content.
  */
 @Directive({ selector: '[brManageContentButton]' })
-export class BrManageContentButtonDirective extends BrMetaDirective implements OnChanges {
-  /**
-   * The content entity to open for editing.
-   */
-  @Input('brManageContentButton') content!: Content | Document;
+export class BrManageContentButtonDirective extends BrMetaDirective implements OnChanges, ManageContentButton {
+  @Input('brManageContentButton') content?: ManageContentButton['content'];
+
+  @Input() documentTemplateQuery?: ManageContentButton['documentTemplateQuery'];
+
+  @Input() folderTemplateQuery?: ManageContentButton['folderTemplateQuery'];
+
+  @Input() path?: ManageContentButton['path'];
+
+  @Input() parameter?: ManageContentButton['parameter'];
+
+  @Input() relative?: ManageContentButton['relative'];
+
+  @Input() root?: ManageContentButton['root'];
+
+  constructor(
+    container: ViewContainerRef,
+    @Optional() template?: TemplateRef<never>,
+    @Optional() private page?: BrPageComponent,
+  ) {
+    super(container, template);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.meta = this.content.getMeta();
+    this.meta = this.page?.state.getValue()?.getButton(TYPE_MANAGE_CONTENT_BUTTON, this);
 
     super.ngOnChanges(changes);
   }
