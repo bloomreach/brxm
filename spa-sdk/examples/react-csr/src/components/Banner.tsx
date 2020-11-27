@@ -33,7 +33,14 @@ export function Banner(props: BrProps) {
 
   return (
     <div className={`jumbotron mb-3 ${props.page.isPreview() ? 'has-edit-button' : ''}`}>
-      <BrManageContentButton content={document} />
+      <BrManageContentButton
+        content={document}
+        documentTemplateQuery="new-banner-document"
+        folderTemplateQuery="new-banner-folder"
+        parameter="document"
+        root="banners"
+        relative
+      />
       { title && <h1>{title}</h1> }
       { image && <img className="img-fluid" src={image.getOriginal()?.getUrl()} alt={title} /> }
       { content && <div dangerouslySetInnerHTML={{ __html: props.page.rewriteLinks(content.value) }} /> }

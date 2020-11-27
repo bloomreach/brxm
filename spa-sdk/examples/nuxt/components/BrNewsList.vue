@@ -17,6 +17,13 @@
 <template>
   <div v-if="pageable">
     <br-news-list-item v-for="(item, key) in pageable.items" :key="key" :item="page.getContent(item)" :page="page" />
+    <div v-if="page.isPreview()" class="has-edit-button float-right">
+      <br-manage-content-button
+        document-template-query="new-news-document"
+        folder-template-query="new-news-folder"
+        root="news"
+      />
+    </div>
     <br-news-list-pagination v-if="pageable.showPagination" :pageable="pageable" :page="page" />
   </div>
 </template>
