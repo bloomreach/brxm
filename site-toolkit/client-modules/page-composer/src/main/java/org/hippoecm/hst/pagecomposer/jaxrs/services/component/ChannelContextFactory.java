@@ -86,8 +86,8 @@ final class ChannelContextFactory implements ComponentManagerAware {
     private Map<String, String> getXPageTemplateQueries(final String channelId, final String contentRootPath,
                                                         final Session session) throws RepositoryException {
         // channelId can be for -preview or for a branch, but the content folder node is always for the live master,
-        // hence take channelId before the '-'
-        final String masterLiveChannelId = StringUtils.substringBefore(channelId, "-");
+        // hence take channelId before the last '-'
+        final String masterLiveChannelId = StringUtils.substringBeforeLast(channelId, "-");
         final Node contentRoot = session.getNode(contentRootPath);
         final NodeIterator nodes = contentRoot.getNodes();
         while (nodes.hasNext()) {
