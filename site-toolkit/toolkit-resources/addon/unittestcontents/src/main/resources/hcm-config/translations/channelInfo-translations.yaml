@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:hst/channelparameters:
+      jcr:primaryType: hipposys:resourcebundles
+      /org:
+        jcr:primaryType: hipposys:resourcebundles
+        /hippoecm:
+          jcr:primaryType: hipposys:resourcebundles
+          /hst:
+            jcr:primaryType: hipposys:resourcebundles
+            /test:
+              jcr:primaryType: hipposys:resourcebundles
+              /channel:
+                jcr:primaryType: hipposys:resourcebundles
+                /BaseChannelInfo:
+                  jcr:primaryType: hipposys:resourcebundles
+                  /en:
+                    jcr:primaryType: hipposys:resourcebundle
+                    baseParameter: Base Parameter
+                /DefaultSiteChannelInfo:
+                  jcr:primaryType: hipposys:resourcebundles
+                  /en:
+                    jcr:primaryType: hipposys:resourcebundle
+                    channelName: Channel Name
