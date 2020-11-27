@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -152,6 +154,9 @@ public class OpenInContentPerspectiveBehavior extends AbstractDefaultAjaxBehavio
     private static Node getNodeByPath(final String path) {
         try {
             return UserSession.get().getJcrSession().getNode(path);
+        } catch (PathNotFoundException e) {
+            log.warn("Failed to navigate to non-existing node '{}'", path);
+            return null;
         } catch (RepositoryException e) {
             log.warn("Failed to find node with path '{}'", path, e);
             return null;
@@ -161,6 +166,9 @@ public class OpenInContentPerspectiveBehavior extends AbstractDefaultAjaxBehavio
     private static Node getNodeById(final String identifier) {
         try {
             return UserSession.get().getJcrSession().getNodeByIdentifier(identifier);
+        } catch (ItemNotFoundException e) {
+            log.warn("Failed to navigate to non-existing node with uuid '{}'", identifier);
+            return null;
         } catch (RepositoryException e) {
             log.warn("Failed to find node with uuid '{}'", identifier, e);
             return null;
