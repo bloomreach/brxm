@@ -534,7 +534,7 @@ describe('ChannelService', () => {
     loadChannel();
 
     expect(ChannelService.extractRenderPathInfo('/testContextPath/_cmsinternal/test/pa.th')).toBe('/test/pa.th');
-    expect(ChannelService.extractRenderPathInfo('/testContextPath/_cmsinternal/')).toBe('');
+    expect(ChannelService.extractRenderPathInfo('/testContextPath/_cmsinternal/')).toBe('/');
     expect(ChannelService.extractRenderPathInfo('/testContextPath/_cmsinternal')).toBe('');
   });
 
@@ -543,7 +543,7 @@ describe('ChannelService', () => {
 
     expect(ChannelService.extractRenderPathInfo('/testContextPath/test/render.path'))
       .toBe('/test/render.path');
-    expect(ChannelService.extractRenderPathInfo('/testContextPath/')).toBe('');
+    expect(ChannelService.extractRenderPathInfo('/testContextPath/')).toBe('/');
   });
 
   it('uses the channel\'s mount path to generate the homepage renderPathInfo', () => {
