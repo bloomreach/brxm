@@ -850,7 +850,7 @@ describe('OverlayService', () => {
       describe('shows disabled buttons when locked by another user', () => {
         function eventHandlerCount(jqueryElement, event) {
           const eventHandlers = $._data(jqueryElement[0], 'events');
-          return eventHandlers && eventHandlers.hasOwnProperty(event) ? eventHandlers[event].length : 0;
+          return eventHandlers && eventHandlers[event] ? eventHandlers[event].length : 0;
         }
 
         it('Scenario 4', async () => {
