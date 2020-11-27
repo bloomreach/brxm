@@ -927,15 +927,17 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         final ClassLoader classLoader = webappContext.getServletContext().getClassLoader();
 
-        final List<ResourceBundle> bundles = Stream.of(channelInfoClassName)
-                .map(className -> getClass(classLoader, className))
-                .filter(Objects::nonNull)
-                .flatMap(this::appendInterfaces)
-                .distinct()
-                .map(Class::getName)
-                .map(className -> loadResourceBundle(className, classLoader, locale))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        final List<ResourceBundle> bundles = channelInfoClassName != null ?
+                Stream.of(channelInfoClassName)
+                    .map(className -> getClass(classLoader, className))
+                    .filter(Objects::nonNull)
+                    .flatMap(this::appendInterfaces)
+                    .distinct()
+                    .map(Class::getName)
+                    .map(className -> loadResourceBundle(className, classLoader, locale))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList())
+                : new ArrayList<>();
 
         final List<String> channelInfoMixinNames = channel.getChannelInfoMixinNames();
 
