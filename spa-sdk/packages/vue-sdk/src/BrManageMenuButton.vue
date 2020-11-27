@@ -15,11 +15,11 @@
   -->
 
 <template>
-  <br-meta v-if="page && page.isPreview() && meta" :meta="meta" />
+  <br-meta v-if="page && page.isPreview()" :meta="meta" />
 </template>
 
 <script lang="ts">
-import { Menu, Page, isMenu } from '@bloomreach/spa-sdk';
+import { Menu, TYPE_MANAGE_MENU_BUTTON, Page } from '@bloomreach/spa-sdk';
 import { Component, Inject, Prop, Vue } from 'vue-property-decorator';
 import BrMeta from './BrMeta.vue';
 
@@ -30,8 +30,7 @@ import BrMeta from './BrMeta.vue';
   components: { BrMeta },
   computed: {
     meta(this: BrManageMenuButton) {
-      // eslint-disable-next-line no-underscore-dangle
-      return isMenu(this.menu) ? this.menu.getMeta() : this.menu._meta && this.page?.getMeta(this.menu._meta);
+      return this.page?.getButton(TYPE_MANAGE_MENU_BUTTON, this.menu);
     },
 
     page(this: BrManageMenuButton) {
