@@ -27,6 +27,7 @@ public class ChannelContext {
     private Channel channel;
     private String channelId;
     private boolean channelAdmin;
+    private boolean channelWebmaste;
     private boolean deletable;
     private boolean configurationLocked;
     private boolean hasCustomProperties;
@@ -43,6 +44,10 @@ public class ChannelContext {
 
     public boolean isChannelAdmin() {
         return channelAdmin;
+    }
+
+    public boolean isChannelWebmaster() {
+        return channelWebmaste;
     }
 
     public Channel getChannel() {
@@ -90,6 +95,11 @@ public class ChannelContext {
         return this;
     }
 
+    public ChannelContext setChannelWebmaster(final boolean channelWebmaste) {
+        this.channelWebmaste = channelWebmaste;
+        return this;
+    }
+
     ChannelContext setChannel(final Channel channel) {
         this.channel = channel;
         this.channelId = channel.getId();
@@ -131,4 +141,6 @@ public class ChannelContext {
         this.xPageTemplateQueries = xPageTemplateQueries;
         return this;
     }
+
+
 }
