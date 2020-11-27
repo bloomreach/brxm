@@ -1,5 +1,5 @@
 <!--
-  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -12,8 +12,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
--->
-
-<em-site-map ng-prop-site_map="$ctrl.items"
-             ng-prop-render_path_info="$ctrl.getCurrentRenderPathInfo()">
-</em-site-map>
+  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"  width="24" height="24" viewBox="0 0 24 24">
+   <path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+</svg>
