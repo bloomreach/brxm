@@ -95,8 +95,8 @@ public class ChannelContext {
         return this;
     }
 
-    public ChannelContext setChannelWebmaster(final boolean channelWebmaste) {
-        this.channelWebmaste = channelWebmaste;
+    public ChannelContext setChannelWebmaster(final boolean channelWebmaster) {
+        this.channelWebmaste = channelWebmaster;
         return this;
     }
 
