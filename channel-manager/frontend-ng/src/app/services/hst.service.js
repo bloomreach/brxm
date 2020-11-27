@@ -68,9 +68,9 @@ class HstService {
     }
   }
 
-  getSiteMap(id) {
-    return this.doGet(id, 'pages')
-      .then(response => response.data.pages);
+  getSiteMapTree(id) {
+    return this.doGet(id, 'pagetree')
+      .then(response => response.data);
   }
 
   doGet(uuid, ...pathElements) {

@@ -18,8 +18,11 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTreeModule } from '@angular/material/tree';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { registerSvgIcons } from './register-svg-icons';
@@ -27,14 +30,19 @@ import { registerSvgIcons } from './register-svg-icons';
 @NgModule({
   exports: [
     MatButtonModule,
+    MatDividerModule,
+    MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
     MatProgressBarModule,
     MatRippleModule,
-    MatDividerModule,
+    MatTreeModule,
   ],
 })
 export class MaterialModule {
   constructor(private readonly iconRegistry: MatIconRegistry, private readonly domSanitizer: DomSanitizer) {
+    this.iconRegistry.registerFontClassAlias('materialdesignicons', 'mdi');
+    this.iconRegistry.setDefaultFontSetClass('mdi');
     this.registerCustomIcons();
   }
 

@@ -67,6 +67,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapTreeItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.SiteMapTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -133,64 +134,76 @@ public class SiteMapResource extends AbstractConfigResource {
     @Path("/pages")
     @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response getSiteMapPages(@Context HttpServletRequest servletRequest) {
-        return tryGet(new Callable<Response>() {
-            @Override
-            public Response call() throws Exception {
-                final HstSite site = getPageComposerContextService().getEditingPreviewSite();
-                final HstSiteMap siteMap = site.getSiteMap();
-                final Mount editingMount = getPageComposerContextService().getEditingMount();
-                final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(siteMap,
-                        editingMount, getPreviewConfigurationPath());
-
-                if (hideXPages) {
-                    return ok("Sitemap loaded successfully", pages);
-                }
-
-                if (servletRequest == null) {
-                    // unit testing
-                    return ok("Sitemap loaded successfully", pages);
-                }
-
-                // append the XPages for the current channel which are readable for the current CMS user. Note, no paging, just
-                // all the available XPages. Note that adding them is not allowed in SiteMapPagesRepresentation.represent()
-                // since that presentation is also used for creating a *new* hst configuration page (sitemap item)
-
-                // we need a preview security delegate to make sure that we get to see the PREVIEW XPages which are
-                // readable by the current cms user *or* by the HST preview user
-
-                try {
-                    final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(servletRequest.getSession());
-
-                    final SessionSecurityDelegation sessionSecurityDelegation = HstServices.getComponentManager().getComponent(SessionSecurityDelegation.class.getName());
-
-                    final Session previewSecurityDelegate = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsSessionContext.getRepositoryCredentials(), true);
-
-                    List<SiteMapPageRepresentation> xpages = getXPageRepresentations(editingMount, previewSecurityDelegate,
-                            getPageComposerContextService().getRequestContext());
-
-
-                    // from xpages, filter out the XPages that are already represented by an explicit sitemap item whic
-                    // can happen : We can filter them out on the 'renderPathInfo' since there is no point in including
-                    // to sitemap pages with the exact same link (and thus a duplicate)
-
-                    final List<SiteMapPageRepresentation> filteredDuplicates = xpages.stream().filter(xpage ->
-                        // only if there is NO hst config sitemap page representation for the XPage include the xpage
-                        !pages.getPages().stream().filter(page -> page.getRenderPathInfo().equals(xpage.getRenderPathInfo())).findFirst().isPresent()
-                    ).collect(Collectors.toList());
-
-                    pages.getPages().addAll(filteredDuplicates);
-
-                    // sort now the XPage have been added again on pathInfo
-                    Collections.sort(pages.getPages(), Comparator.comparing(SiteMapPageRepresentation::getPathInfo));
-
-                } catch (Exception e) {
-                    log.warn("Exception occured while trying to load XPage Documents for the sitemap. Only the SiteMap " +
-                            "Pages are returned" , e);
-                }
-
-                return ok("Sitemap loaded successfully", pages);
-            }
+        return tryGet(() -> {
+            final SiteMapPagesRepresentation pages = getPages(servletRequest);
+            return ok("Sitemap loaded successfully", pages);
         });
+    }
+
+    @GET
+    @Path("/pagetree")
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
+    public Response getPageTree(@Context HttpServletRequest servletRequest) {
+        return tryGet(() -> {
+            final SiteMapPagesRepresentation pages = getPages(servletRequest);
+
+            return ok("Page tree loaded successfully", SiteMapTreeItem.transform(pages));
+        });
+    }
+
+    private SiteMapPagesRepresentation getPages(final HttpServletRequest servletRequest) {
+        final HstSite site = getPageComposerContextService().getEditingPreviewSite();
+        final HstSiteMap siteMap = site.getSiteMap();
+        final Mount editingMount = getPageComposerContextService().getEditingMount();
+        final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(siteMap,
+                editingMount, getPreviewConfigurationPath());
+
+        if (hideXPages) {
+            return pages;
+        }
+
+        if (servletRequest == null) {
+            // unit testing
+            return pages;
+        }
+
+        // append the XPages for the current channel which are readable for the current CMS user. Note, no paging, just
+        // all the available XPages. Note that adding them is not allowed in SiteMapPagesRepresentation.represent()
+        // since that presentation is also used for creating a *new* hst configuration page (sitemap item)
+
+        // we need a preview security delegate to make sure that we get to see the PREVIEW XPages which are
+        // readable by the current cms user *or* by the HST preview user
+
+        try {
+            final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(servletRequest.getSession());
+
+            final SessionSecurityDelegation sessionSecurityDelegation = HstServices.getComponentManager().getComponent(SessionSecurityDelegation.class.getName());
+
+            final Session previewSecurityDelegate = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsSessionContext.getRepositoryCredentials(), true);
+
+            List<SiteMapPageRepresentation> xpages = getXPageRepresentations(editingMount, previewSecurityDelegate,
+                    getPageComposerContextService().getRequestContext());
+
+
+            // from xpages, filter out the XPages that are already represented by an explicit sitemap item whic
+            // can happen : We can filter them out on the 'renderPathInfo' since there is no point in including
+            // to sitemap pages with the exact same link (and thus a duplicate)
+
+            final List<SiteMapPageRepresentation> filteredDuplicates = xpages.stream().filter(xpage ->
+                    // only if there is NO hst config sitemap page representation for the XPage include the xpage
+                    !pages.getPages().stream().filter(page -> page.getRenderPathInfo().equals(xpage.getRenderPathInfo())).findFirst().isPresent()
+            ).collect(Collectors.toList());
+
+            pages.getPages().addAll(filteredDuplicates);
+
+            // sort now the XPage have been added again on pathInfo
+            Collections.sort(pages.getPages(), Comparator.comparing(SiteMapPageRepresentation::getPathInfo));
+
+        } catch (Exception e) {
+            log.warn("Exception occured while trying to load XPage Documents for the sitemap. Only the SiteMap " +
+                    "Pages are returned" , e);
+        }
+        return pages;
     }
 
     private List<SiteMapPageRepresentation> getXPageRepresentations(final Mount editingMount, final Session session,
