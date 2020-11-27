@@ -36,6 +36,7 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.hst.Channel;
 
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
@@ -78,16 +79,23 @@ final class ChannelContextFactory implements ComponentManagerAware {
                 // returns the correct (preview) Mount taking branches into account
                 .setXPageLayouts(channelService.getXPageLayouts(actionContext.getContextService().getEditingMount()))
                 .setXPageTemplateQueries(
-                        getXPageTemplateQueries(channelContext.getChannelId(), channel.getContentRoot(), session))
+                        getXPageTemplateQueries(channel, channel.getContentRoot(), session))
                 .setConfigurationLocked(channel.isConfigurationLocked());
     }
 
-
-    private Map<String, String> getXPageTemplateQueries(final String channelId, final String contentRootPath,
+    /**
+     *
+     * @param channel the current Channel, which can be also the channel for a branch
+     */
+    private Map<String, String> getXPageTemplateQueries(final Channel channel, final String contentRootPath,
                                                         final Session session) throws RepositoryException {
-        // channelId can be for -preview or for a branch, but the content folder node is always for the live master,
-        // hence take channelId before the last '-'
-        final String masterLiveChannelId = StringUtils.substringBeforeLast(channelId, "-");
+        final String branchOf = channel.getBranchOf();
+
+        // if branchOf not null, the value branchOf points to the (live) master channel id
+        final String masterChannelId = branchOf == null ? channel.getId() : branchOf;
+        // if -preview is not found, we already have the live channel id (substringBefore returns same string if -preview not found)
+        final String masterLiveChannelId = substringBefore(masterChannelId, "-preview");
+
         final Node contentRoot = session.getNode(contentRootPath);
         final NodeIterator nodes = contentRoot.getNodes();
         while (nodes.hasNext()) {
