@@ -17,6 +17,16 @@
 <ng-template [ngIf]="pagination">
   <br-news-item *ngFor="let reference of pagination.items" [item]="page.getContent(reference)"></br-news-item>
 
+  <div *ngIf="page.isPreview()" class="has-edit-button float-right">
+    <ng-container
+      [brManageContentButton]
+      documentTemplateQuery="new-news-document"
+      folderTemplateQuery="new-news-folder"
+      root="news"
+    >
+    </ng-container>
+  </div>
+
   <nav *ngIf="pagination.showPagination" aria-label="News List Pagination">
     <ul class="pagination">
       <li class="page-item" [ngClass]="{ disabled: !pagination.previous }">
