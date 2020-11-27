@@ -263,11 +263,11 @@ public interface HippoStdNodeType {
     String NT_XPAGE_FOLDER = "hippostd:xpagefolder";
 
     /**
-     * mixin to mark a folder to be the root XPage folder (containing XPage folders and documents)
-     * Can be used to configure a subfolder to be the root. Note that the node must also have mixin
-     * hippostd:xpagefolder. Only one node per channel in the contentRoot must have this mixin.
+     * mixin to mark a folder to be a special kind of XPage folder (containing XPage folders and documents)
+     * For example to indicate which xpage folders to show in a xpage document picker.
+     * Note that the node must also have mixin hippostd:xpagefolder.
      */
-    String NT_ROOT_XPAGE_FOLDER = "hippostd:rootxpagefolder";
+    String NT_CM_XPAGE_FOLDER = "hippostd:cmxpagefolder";
 
     /**
      * A property for an {@link #NT_XPAGE_FOLDER} to indicate for which channel the xpage folder is
