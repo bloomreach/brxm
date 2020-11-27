@@ -16,7 +16,14 @@
 
 <template>
   <div v-if="document" class="jumbotron mb-3" :class="{ 'has-edit-button': page.isPreview() }">
-    <br-manage-content-button :content="document" />
+    <br-manage-content-button
+      :content="document"
+      document-template-query="new-banner-document"
+      folder-template-query="new-banner-folder"
+      parameter="document"
+      root="banners"
+      :relative="true"
+    />
     <h1 v-if="data.title">{{ data.title }}</h1>
     <img v-if="image" class="img-fluid" :src="image.getOriginal().getUrl()" :alt="data.title" />
     <div v-if="data.content" v-html="page.rewriteLinks(data.content.value)" />
