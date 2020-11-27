@@ -96,6 +96,7 @@ export { EventBusService } from './events';
 export { ImageSet, TYPE_IMAGE_SET, isImageSet } from './image-set';
 export { Image } from './image';
 export { Link, TYPE_LINK_EXTERNAL, TYPE_LINK_INTERNAL, TYPE_LINK_RESOURCE, isLink } from './link';
+export { ManageContentButton, TYPE_MANAGE_CONTENT_BUTTON } from './button-manage-content';
 export { MenuItem } from './menu-item';
 export { TYPE_MANAGE_MENU_BUTTON, TYPE_MENU, isMenu } from './menu';
 export { MetaCollection } from './meta-collection';
