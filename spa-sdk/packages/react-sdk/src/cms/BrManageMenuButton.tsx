@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { Menu, isMenu } from '@bloomreach/spa-sdk';
+import { Menu, TYPE_MANAGE_MENU_BUTTON } from '@bloomreach/spa-sdk';
 import { BrMeta } from '../meta';
 import { BrPageContext } from '../page/BrPageContext';
 
@@ -34,16 +34,8 @@ export class BrManageMenuButton extends React.Component<BrManageMenuButtonProps>
   context: React.ContextType<typeof BrPageContext>;
 
   render() {
-    if (!this.context?.isPreview()) {
-      return null;
-    }
-
-    const meta = isMenu(this.props.menu)
-      ? this.props.menu.getMeta()
-      : this.props.menu._meta && this.context.getMeta(this.props.menu._meta);
-
-    return meta
-      ? <BrMeta meta={meta} />
+    return this.context?.isPreview()
+      ? <BrMeta meta={this.context.getButton(TYPE_MANAGE_MENU_BUTTON, this.props.menu)} />
       : null;
   }
 }
