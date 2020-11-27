@@ -347,12 +347,12 @@ describe('HstService', () => {
 
     it('extracts the sitemap from the returned pages response', () => {
       const promiseSpy = jasmine.createSpy('promiseSpy');
-      const siteMap = ['dummy'];
+      const siteMap = { dummy: 'test' };
       const siteMapId = 'testSiteMapId';
-      const url = `${cmsContextPath}${apiUrlPrefix}/${siteMapId}./pages`;
-      $httpBackend.expectGET(url).respond(200, { data: { pages: siteMap } });
+      const url = `${cmsContextPath}${apiUrlPrefix}/${siteMapId}./pagetree`;
+      $httpBackend.expectGET(url).respond(200, { data: siteMap });
 
-      hstService.getSiteMap('testSiteMapId').then(promiseSpy);
+      hstService.getSiteMapTree('testSiteMapId').then(promiseSpy);
       $httpBackend.flush();
 
       expect(promiseSpy).toHaveBeenCalledWith(siteMap);
@@ -361,10 +361,10 @@ describe('HstService', () => {
     it('rejects the promise when retrieving the sitemap fails', () => {
       const catchSpy = jasmine.createSpy('catchSpy');
       const siteMapId = 'testSiteMapId';
-      const url = `${cmsContextPath}${apiUrlPrefix}/${siteMapId}./pages`;
+      const url = `${cmsContextPath}${apiUrlPrefix}/${siteMapId}./pagetree`;
       $httpBackend.expectGET(url).respond(500);
 
-      hstService.getSiteMap('testSiteMapId').catch(catchSpy);
+      hstService.getSiteMapTree('testSiteMapId').catch(catchSpy);
       $httpBackend.flush();
 
       expect(catchSpy).toHaveBeenCalled();

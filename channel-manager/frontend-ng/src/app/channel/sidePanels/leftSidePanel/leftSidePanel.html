@@ -31,6 +31,7 @@
            class="qa-sidenav-tabs">
     <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_SITEMAP' | translate }}">
       <site-map-listing items="$ctrl.getSiteMapItems()"
+                        ng-if="$ctrl.isOpen"
                         flex
                         layout="column">
       </site-map-listing>

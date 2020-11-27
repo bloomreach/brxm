@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+import { InjectionToken } from '@angular/core';
 
-import { NotificationBarModule } from './notification-bar/notification-bar.module';
-import { Ng1ServicesModule } from './services/ng1/ng1-services.module';
-import { SharedModule } from './shared/shared.module';
-import { SiteMapModule } from './site-map/site-map.module';
-import { VersionsModule } from './versions/versions.module';
+import { SiteMapItem } from '../../site-map/models/site-map-item.model';
 
-@NgModule({
-  imports: [
-    SharedModule,
-    NotificationBarModule,
-    VersionsModule,
-    Ng1ServicesModule,
-    SiteMapModule,
-  ],
-  providers: [
-  ],
-})
-export class AppModule {
-  ngDoBootstrap(): void { }
+export interface Ng1SiteMapService {
+  get(): SiteMapItem[];
 }
+
+export const NG1_SITE_MAP_SERVICE = new InjectionToken<Ng1SiteMapService>('NG1_SITE_MAP_SERVICE');
