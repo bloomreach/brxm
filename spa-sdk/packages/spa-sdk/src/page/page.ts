@@ -28,6 +28,7 @@ import { EventBusService, EventBus, PageUpdateEvent } from './events';
 import { LinkFactory } from './link-factory';
 import { LinkRewriter, LinkRewriterService } from './link-rewriter';
 import { Link, isLink } from './link';
+import { ManageContentButton, TYPE_MANAGE_CONTENT_BUTTON } from './button-manage-content';
 import { Menu, TYPE_MANAGE_MENU_BUTTON } from './menu';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionModel, MetaCollection } from './meta-collection';
@@ -111,6 +112,12 @@ export interface PageModel {
  * The current page to render.
  */
 export interface Page {
+  /**
+   * Generates a manage content button.
+   * @return The manage content button meta-data.
+   */
+  getButton(type: typeof TYPE_MANAGE_CONTENT_BUTTON, button: ManageContentButton): MetaCollection;
+
   /**
    * Generates a manage menu button.
    * @return The menu button meta-data.
