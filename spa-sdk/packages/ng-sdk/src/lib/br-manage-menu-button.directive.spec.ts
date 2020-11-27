@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-import { mocked } from 'ts-jest/utils';
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
-import { Menu, MetaCollection, Page, isMenu } from '@bloomreach/spa-sdk';
+import { Menu, MetaCollection, Page } from '@bloomreach/spa-sdk';
 import { BrManageMenuButtonDirective } from './br-manage-menu-button.directive';
 import { BrPageComponent } from './br-page/br-page.component';
-
-jest.mock('@bloomreach/spa-sdk');
 
 @Component({ template: '<a [brManageMenuButton]="menu"></a>' })
 class TestComponent {
@@ -36,9 +33,9 @@ describe('BrManageMenuButtonDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
 
   beforeEach(() => {
-    menu = { _meta: {} } as unknown as typeof menu;
+    menu = {} as typeof menu;
     meta = { render: jest.fn() } as unknown as typeof meta;
-    page = { getMeta: jest.fn(() => meta) } as unknown as typeof page;
+    page = { getButton: jest.fn(() => meta) } as unknown as typeof page;
   });
 
   beforeEach(waitForAsync(() => {
@@ -56,22 +53,8 @@ describe('BrManageMenuButtonDirective', () => {
   }));
 
   describe('ngOnChanges', () => {
-    it('should create a meta entity', () => {
-      expect(page.getMeta).toBeCalledWith(menu._meta);
-    });
-
     it('should use a menu meta entity', () => {
-      fixture.componentInstance.menu = { getMeta: jest.fn(() => meta) } as unknown as typeof menu;
-      mocked(isMenu).mockReturnValueOnce(true);
-      fixture.detectChanges();
-
-      expect(meta.render).toBeCalledWith(
-        fixture.nativeElement.querySelector('a'),
-        fixture.nativeElement.querySelector('a'),
-      );
-    });
-
-    it('should render a meta', () => {
+      expect(page.getButton).toBeCalledWith(expect.any(String), menu);
       expect(meta.render).toBeCalledWith(
         fixture.nativeElement.querySelector('a'),
         fixture.nativeElement.querySelector('a'),
