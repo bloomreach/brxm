@@ -21,31 +21,39 @@ import { BrManageContentButton } from './BrManageContentButton';
 import { BrMeta } from '../meta';
 
 describe('BrManageContentButton', () => {
-  const context = { isPreview: jest.fn() } as unknown as jest.Mocked<Page>;
-  const meta = {} as MetaCollection;
-  const content = { getMeta: jest.fn(() => meta) } as unknown as jest.Mocked<Content>;
-  const props = { content };
+  const context = {
+    isPreview: jest.fn(),
+    getButton: jest.fn(),
+  } as unknown as jest.Mocked<Page>;
 
   beforeEach(() => {
     jest.restoreAllMocks();
 
     // @see https://github.com/airbnb/enzyme/issues/1553
     /// @ts-ignore
-    BrManageContentButton.contextTypes = { isPreview: () => null };
+    BrManageContentButton.contextTypes = {
+      isPreview: () => null,
+      getButton: () => null,
+    };
     delete (BrManageContentButton as Partial<typeof BrManageContentButton>).contextType;
   });
 
   it('should only render in preview mode', () => {
     context.isPreview.mockReturnValueOnce(false);
-    const wrapper = shallow(<BrManageContentButton {...props} />, { context });
+    const wrapper = shallow(<BrManageContentButton />, { context });
 
     expect(wrapper.html()).toBe(null);
   });
 
   it('should render manage-content-button meta-data', () => {
-    context.isPreview.mockReturnValueOnce(true);
-    const wrapper = shallow(<BrManageContentButton {...props} />, { context });
+    const meta = {} as MetaCollection;
+    const content = {} as Content;
 
+    context.isPreview.mockReturnValueOnce(true);
+    context.getButton.mockReturnValueOnce(meta);
+    const wrapper = shallow(<BrManageContentButton content={content} root="content" />, { context });
+
+    expect(context.getButton).toBeCalledWith(expect.any(String), { content, root: 'content' });
     expect(
       wrapper
         .find(BrMeta)

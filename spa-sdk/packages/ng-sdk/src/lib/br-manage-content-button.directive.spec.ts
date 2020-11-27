@@ -16,8 +16,10 @@
 
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { Document, MetaCollection } from '@bloomreach/spa-sdk';
+import { BehaviorSubject } from 'rxjs';
+import { Document, MetaCollection, Page } from '@bloomreach/spa-sdk';
 import { BrManageContentButtonDirective } from './br-manage-content-button.directive';
+import { BrPageComponent } from './br-page/br-page.component';
 
 @Component({ template: '<a [brManageContentButton]="content"></a>' })
 class TestComponent {
@@ -27,16 +29,21 @@ class TestComponent {
 describe('BrManageContentButtonDirective', () => {
   let content: Document;
   let meta: jest.Mocked<MetaCollection>;
+  let page: jest.Mocked<Page>;
   let fixture: ComponentFixture<TestComponent>;
 
   beforeEach(() => {
-    content = { getMeta: jest.fn(() => meta) } as unknown as typeof content;
+    content = {} as typeof content;
     meta = { render: jest.fn() } as unknown as typeof meta;
+    page = { getButton: jest.fn(() => meta) } as unknown as typeof page;
   });
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BrManageContentButtonDirective, TestComponent ],
+      providers: [
+        { provide: BrPageComponent, useValue: { state: new BehaviorSubject(page) } },
+      ],
     })
     .compileComponents();
 
