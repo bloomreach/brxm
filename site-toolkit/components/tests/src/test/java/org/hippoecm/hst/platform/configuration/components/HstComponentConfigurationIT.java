@@ -306,12 +306,12 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
      */
     @Test
     public void component_parameter_values_including_default_values_support_property_placeholders() throws Exception {
-        final Node baseHeader = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header");
+        final Node baseHeader = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header");
         baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[] {"prop"});
         baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"${1}"});
         session.save();
 
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header"});
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
 
         assertPropertyPlaceHolderReplaced("prop");
 
@@ -319,7 +319,7 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"${testparam}"});
         session.save();
 
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header"});
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
 
         assertPropertyPlaceHolderReplaced("prop");
 
@@ -328,13 +328,13 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"${23}"});
         session.save();
 
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header"});
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:xpages/basepage/header"});
 
         {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
             final String sitemapPath = "somepathXYX";
             final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(sitemapPath);
-            final HstComponentConfiguration header = mount.getMount().getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/basepage/header");
+            final HstComponentConfiguration header = mount.getMount().getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:abstractpages/basepage/header");
             final ComponentConfigurationImpl componentConfiguration = new ComponentConfigurationImpl(header);
             final String value = componentConfiguration.getParameter("prop", resolvedSiteMapItem);
             assertThat(value)
@@ -350,7 +350,7 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         baseHeader.setProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME, "org.hippoecm.hst.test.PropertyPlaceHolderComponent");
         session.save();
 
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header"});
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
 
         assertPropertyPlaceHolderReplaced("placeholderprop");
 
@@ -366,7 +366,7 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
                 .setProperty("hst:defaultvalue", "${1}");
         session.save();
 
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header/container/banner-new-style",
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header/container/banner-new-style",
         "/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/testcatalogitem/paramWithDefaultValue"});
 
         {
@@ -387,7 +387,7 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final String sitemapPath = "somepathXYX";
         final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(sitemapPath);
-        final HstComponentConfiguration header = mount.getMount().getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/basepage/header");
+        final HstComponentConfiguration header = mount.getMount().getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:abstractpages/basepage/header");
         final ComponentConfigurationImpl componentConfiguration = new ComponentConfigurationImpl(header);
 
         final String value = componentConfiguration.getParameter(parameterName, resolvedSiteMapItem);
