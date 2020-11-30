@@ -36,6 +36,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.component.Action;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ActionState;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ActionStateContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.ActionStateService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.NamedCategory;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.State;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -43,6 +44,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.platform.utils.UUIDUtils;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toSet;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
@@ -90,6 +92,12 @@ public class ComponentResource extends AbstractConfigResource {
                     .filter(e -> e.getValue() != null)
                     .map(this::toAction)
                     .collect(groupingBy(Action::getCategory, toSet()));
+
+            if (!getPageComposerContextService().isExperiencePageRequest() && !actionsByCategory.containsKey(HstCategory.PAGE.getName())) {
+                // we at least need the 'page' section since the CM can otherwise not inject FE only items like eg 'Tools'
+                actionsByCategory.put(HstCategory.PAGE.getName(), emptySet());
+            }
+
             final Map<String, Set<State>> statesByCategory = actionState.getStates().entrySet().stream()
                     .filter(e -> e.getValue() != null)
                     .map(this::toState)
