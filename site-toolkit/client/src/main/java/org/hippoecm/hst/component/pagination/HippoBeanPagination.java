@@ -19,6 +19,7 @@ package org.hippoecm.hst.component.pagination;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
@@ -47,7 +48,7 @@ public class HippoBeanPagination<T extends HippoBean> extends AbstractPagination
      * eg: when HstQuery is used to get the beans, both HstQuery#setLimit and HstQuery#setOffset has been used.
      */
     public HippoBeanPagination(final HippoBeanIterator beans, final int totalSize, final int pageSize, final int currentPage, final int limit) {
-        super(totalSize, currentPage, pageSize);
+        super(totalSize, currentPage, pageSize, limit);
 
         // add all from iterator; assuming that paging is done beforehand
         processItems(beans);
@@ -129,6 +130,11 @@ public class HippoBeanPagination<T extends HippoBean> extends AbstractPagination
     @Override
     public List<T> getItems() {
         return items;
+    }
+
+    @Override
+    public int getSize() {
+        return CollectionUtils.isEmpty(items) ? 0 : items.size();
     }
 
     public void setItems(List<T> items) {

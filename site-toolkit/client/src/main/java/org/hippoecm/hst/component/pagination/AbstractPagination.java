@@ -30,7 +30,8 @@ public abstract class AbstractPagination<T> implements Pagination<T> {
     private static final int DEFAULT_NUMBER = 1;
     private static final int DEFAULT_LIMIT = 10;
 
-    private int size;
+    // maximum number of items in a page
+    private int pageSize;
     private int current;
     private int limit;
     private long total;
@@ -48,13 +49,13 @@ public abstract class AbstractPagination<T> implements Pagination<T> {
         this(total, current, DEFAULT_SIZE);
     }
 
-    public AbstractPagination(long total, int current, int size) {
-        this(total, current, size, DEFAULT_LIMIT);
+    public AbstractPagination(long total, int current, int pageSize) {
+        this(total, current, pageSize, DEFAULT_LIMIT);
     }
 
-    public AbstractPagination(long total, int current, int size, int limit) {
+    public AbstractPagination(long total, int current, int pageSize, int limit) {
         this.total = total;
-        this.size = (size <= 0) ? DEFAULT_SIZE : size;
+        this.pageSize = (pageSize <= 0) ? DEFAULT_SIZE : pageSize;
         this.limit = (limit <= 0) ? DEFAULT_LIMIT : limit;
         this.current = (current > getCount() || current <= 0) ? 1 : current;
         this.enabled = true;
@@ -86,11 +87,6 @@ public abstract class AbstractPagination<T> implements Pagination<T> {
     }
 
     @Override
-    public int getSize() {
-        return size;
-    }
-
-    @Override
     public int getLimit() {
         return limit;
     }
@@ -107,7 +103,7 @@ public abstract class AbstractPagination<T> implements Pagination<T> {
 
     @Override
     public int getOffset() {
-        int start = (current - 1) * size;
+        int start = (current - 1) * pageSize;
         if (start >= total) {
             start = 0;
         }
@@ -151,7 +147,12 @@ public abstract class AbstractPagination<T> implements Pagination<T> {
      * @return total number of pages
      */
     private int getCount() {
-        return (int) ((total - (total % size)) / size) + 1;
+        long modulo = total % pageSize;
+        if (modulo == 0) {
+            return  (int) total / pageSize;
+        }
+
+        return (int) ((total - modulo) / pageSize) + 1;
     }
 
     /**
@@ -160,7 +161,7 @@ public abstract class AbstractPagination<T> implements Pagination<T> {
      * @param size
      */
     public void setSize(int size) {
-        this.size = (size <= 0) ? DEFAULT_SIZE : size;
+        this.pageSize = (size <= 0) ? DEFAULT_SIZE : size;
     }
 
     /**
