@@ -72,6 +72,18 @@ describe('overlayToggle component', () => {
       $ctrl.$onChanges({ channel: 'testChannel' });
       expect($ctrl.initiateOverlay).toHaveBeenCalled();
     });
+
+    it('saves the new state as the persistent state', () => {
+      $ctrl.$onInit();
+      $ctrl.state = false;
+      $ctrl.$onChanges({
+        state: {
+          previousValue: false,
+          currentValue: true,
+        },
+      });
+      expect(localStorageService.set).toHaveBeenCalledWith(testStorageKey, true);
+    });
   });
 
   describe('initOverlay', () => {
