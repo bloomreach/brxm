@@ -296,9 +296,9 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
         final JsonNode root = mapper.readTree(actual);
 
-        final int pageSize = root.path("page").path("uid7").path("size")
+        final int size = root.path("page").path("uid7").path("size")
                 .asInt();
-        assertEquals("Field 'size' does not contain expected value", 10, pageSize);
+        assertEquals("Field 'size' does not contain expected value", 6, size);
 
         final int currentPage = root.path("page").path("uid7").path("current").path("number")
                 .asInt();
@@ -333,7 +333,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         assertEquals("Field 'previous' does not contain expected value", 0, previousPage);
 
         final int pageCount = root.path("page").path("uid7").path("size").asInt();
-        assertEquals("Number of elements inside pages", 10, pageCount);
+        assertEquals("Number of elements inside pages", 6, pageCount);
 
         final int contentItemLength = root.path("page").path("uid7").path("items").size();
         assertEquals("Number of elements inside items", 6, contentItemLength);
