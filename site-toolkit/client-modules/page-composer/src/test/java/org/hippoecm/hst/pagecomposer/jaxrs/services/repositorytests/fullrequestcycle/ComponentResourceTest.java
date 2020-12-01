@@ -112,7 +112,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
 
         final Map<String, Object> expectedStates = ImmutableMap.<String, Object>builder()
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
-                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.emptyMap())
+                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.singletonMap("new-document", "/unittestcontent/documents/unittestproject/experiences"))
                 .build();
         Assertions.assertThat(states)
                 .describedAs("A page component contains only channel states")
@@ -149,7 +149,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
 
         final Map<String, Object> expectedStates = ImmutableMap.<String, Object>builder()
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
-                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.emptyMap())
+                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.singletonMap("new-document", "/unittestcontent/documents/unittestproject/experiences"))
                 .build();
         Assertions.assertThat(states)
                 .describedAs("A page component contains only channel states")
@@ -205,7 +205,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(XPAGE, HstState.XPAGE_NAME), name)
                 .put(key(XPAGE, HstState.XPAGE_STATE), "live")
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
-                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.emptyMap())
+                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.singletonMap("new-document", "/unittestcontent/documents/unittestproject/experiences"))
                 .put(key(WORKFLOW, HstState.WORKFLOW_REQUESTS), Collections.emptyList())
                 .build();
         Assertions.assertThat(states)
