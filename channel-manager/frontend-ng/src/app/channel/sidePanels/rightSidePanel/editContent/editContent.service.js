@@ -25,6 +25,7 @@ class EditContentService {
     ConfigService,
     ContentEditor,
     ContentService,
+    HippoIframeService,
     ProjectService,
     RightSidePanelService,
   ) {
@@ -36,6 +37,7 @@ class EditContentService {
     this.ConfigService = ConfigService;
     this.ContentEditor = ContentEditor;
     this.ContentService = ContentService;
+    this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
 
@@ -115,8 +117,8 @@ class EditContentService {
   }
 
   startEditing(documentId, state) {
-    const newState = state || 'hippo-cm.channel.edit-content';
-    const transition = () => this.$state.go(newState, { documentId });
+    const editingState = state || 'hippo-cm.channel.edit-content';
+    const transition = () => this.$state.go(editingState, { documentId });
     if (!this.ConfigService.projectsEnabled) {
       transition.apply();
     } else {
@@ -126,7 +128,7 @@ class EditContentService {
           if (selectedProjectId && document.branchId !== selectedProjectId) {
             this._showDocumentTitle(document.displayName);
             this._setDocumentContext();
-            this.$state.go('hippo-cm.channel.add-to-project', { documentId });
+            this.$state.go('hippo-cm.channel.add-to-project', { documentId, nextState: editingState });
           } else {
             transition.apply();
           }
@@ -135,9 +137,10 @@ class EditContentService {
     }
   }
 
-  branchAndEditDocument(documentId) {
+  branchAndEditDocument(documentId, state = 'hippo-cm.channel.edit-content') {
     this.ContentService.branchDocument(documentId)
-      .then(() => this.$state.go('hippo-cm.channel.edit-content', { documentId }));
+      .then(() => this.$state.go(state, { documentId }))
+      .then(() => this.HippoIframeService.reload());
   }
 
   stopEditing() {
