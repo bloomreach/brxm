@@ -24,11 +24,11 @@ import java.util.Set;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
+import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 
 public interface ChannelService {
 
@@ -81,5 +81,5 @@ public interface ChannelService {
      */
     List<Mount> findMounts(final Channel channel);
 
-    Set<XPageLayout> getXPageLayouts(final String channelId);
+    Set<XPageLayout> getXPageLayouts(final Mount mount);
 }
