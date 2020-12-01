@@ -21,6 +21,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -37,6 +38,8 @@ import org.hippoecm.repository.util.DocumentUtils;
 import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.lang.Boolean.TRUE;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
@@ -44,6 +47,8 @@ import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 final class XPageContextFactory {
+
+    private final static Logger log = LoggerFactory.getLogger(XPageContextFactory.class);
 
     public static final String DOCUMENT_STATE_UNKNOWN = "unknown";
 
@@ -65,12 +70,23 @@ final class XPageContextFactory {
 
         final String selectedBranchId = contextService.getSelectedBranchId();
         final String useXPageDocBranch;
-        if (workflow.listBranches().contains(selectedBranchId)) {
+        final Set<String> branches = workflow.listBranches();
+        if (branches.isEmpty()) {
+            String msg = String.format("No branches and not master present for document '%s'", handle.getPath());
+            log.warn(msg);
+            throw new IllegalStateException(msg);
+        }
+
+        if (branches.contains(selectedBranchId)) {
             // xpage doc branch exists for currently selectedBranchId (in Channel mgr)
             useXPageDocBranch = selectedBranchId;
-        } else {
+        } else if (branches.contains(MASTER_BRANCH_ID)){
             // xpage doc branch does not exist for selectedBranchId, use master
             useXPageDocBranch = MASTER_BRANCH_ID;
+        } else {
+            // there is no branch for currently selected branch and there is no master branch, just pick an existing
+            // branch to deduct the document state from
+            useXPageDocBranch = branches.iterator().next();
         }
         final BranchHandleImpl branchHandle = new BranchHandleImpl(useXPageDocBranch, handle);
         final String documentState = getDocumentState(branchHandle);

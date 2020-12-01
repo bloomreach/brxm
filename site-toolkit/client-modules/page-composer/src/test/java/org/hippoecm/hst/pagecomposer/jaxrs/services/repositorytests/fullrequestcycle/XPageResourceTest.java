@@ -22,14 +22,19 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.Utilities;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +49,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static java.lang.Boolean.FALSE;
 import static javax.ws.rs.core.Response.Status.CREATED;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.hippoecm.repository.HippoStdNodeType.NT_CM_XPAGE_FOLDER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -310,6 +320,78 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         }
     }
 
+
+
+    @Test
+    public void action_and_state_for_channel_foo_and_xpage_for_branch_foo_and_NO_master() throws Exception {
+
+        // change the document to be only for 'foo' and not existing for master : for this to work, we first need
+        // to copy the handle to a fresh new document since this one already has a version for 'master'
+
+        Node xpageWithoutCoreHandle = null;
+
+        try {
+            xpageWithoutCoreHandle = JcrUtils.copy(handle, "xpageDocWithoutCore", handle.getParent());
+
+            final Session session = handle.getSession();
+            xpageWithoutCoreHandle.addMixin(NT_HIPPO_VERSION_INFO);
+            xpageWithoutCoreHandle.setProperty(HIPPO_BRANCHES_PROPERTY, new String[]{"foo"});
+            for (Node variant : new NodeIterable(xpageWithoutCoreHandle.getNodes())) {
+                variant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
+                variant.setProperty(HIPPO_PROPERTY_BRANCH_ID, "foo");
+                variant.setProperty(HIPPO_PROPERTY_BRANCH_NAME, "Foo");
+                session.move(variant.getPath(), xpageWithoutCoreHandle.getPath() + "/xpageDocWithoutCore");
+            }
+            session.save();
+
+            // change the hstXpageDocNode to point to the new node to test
+            hstXpageDocNode = getVariant(xpageWithoutCoreHandle, "unpublished").getNode("hst:xpage");
+
+            assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_xpage_for_branch_foo_and_NO_master.json", "foo");
+            assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_xpage_for_branch_foo_and_NO_master.json", "foo");
+        } finally {
+            if (xpageWithoutCoreHandle != null) {
+                xpageWithoutCoreHandle.remove();
+                handle.getSession().save();
+            }
+        }
+    }
+
+    @Test
+    public void action_and_state_for_channel_foo_and_NO_EXISTING_xpage_for_branch_foo_AND_NO_master() throws Exception {
+
+        // change the document to be only for 'bar' and not existing for master : for this to work, we first need
+        // to copy the handle to a fresh new document since this one already has a version for 'master'
+
+        Node xpageWithoutCoreHandle = null;
+        try {
+            xpageWithoutCoreHandle = JcrUtils.copy(handle, "xpageDocWithoutCore", handle.getParent());
+            final Session session = handle.getSession();
+            xpageWithoutCoreHandle.addMixin(NT_HIPPO_VERSION_INFO);
+            xpageWithoutCoreHandle.setProperty(HIPPO_BRANCHES_PROPERTY, new String[]{"bar"});
+            for (Node variant : new NodeIterable(xpageWithoutCoreHandle.getNodes())) {
+                variant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
+                variant.setProperty(HIPPO_PROPERTY_BRANCH_ID, "bar");
+                variant.setProperty(HIPPO_PROPERTY_BRANCH_NAME, "Bar");
+                session.move(variant.getPath(), xpageWithoutCoreHandle.getPath() + "/xpageDocWithoutCore");
+            }
+            session.save();
+
+            // change the hstXpageDocNode to point to the new node to test
+            hstXpageDocNode = getVariant(xpageWithoutCoreHandle, "unpublished").getNode("hst:xpage");
+
+
+            // now we have a use case where we 'ask' for branch  'foo' which does not exist. Normally you then get 'core',
+            // however, since core does not exist, 'just' any other branch which exists (bar in this case) should be returned
+            assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_NO_EXISTING_xpage_for_branch_foo_and_NO_master.json", "foo");
+            assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_NO_EXISTING_xpage_for_branch_foo_and_NO_master.json", "foo");
+        } finally {
+            if (xpageWithoutCoreHandle != null) {
+                xpageWithoutCoreHandle.remove();
+                handle.getSession().save();
+            }
+        }
+    }
 
     private void assertions(final SimpleCredentials creds, String fixtureFileName, final String branchId) throws Exception {
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(

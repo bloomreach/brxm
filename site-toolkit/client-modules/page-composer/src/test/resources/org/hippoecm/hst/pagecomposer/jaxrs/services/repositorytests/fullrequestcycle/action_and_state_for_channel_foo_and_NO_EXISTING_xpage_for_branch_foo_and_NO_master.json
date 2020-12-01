@@ -1,0 +1,65 @@
+{
+  "success":true,
+  "message":"",
+  "errorCode":null,
+  "data":{
+    "actions":{
+      "channel":{
+        "items":{
+          "settings":{
+            "enabled":true
+          },
+          "manage-changes":{
+            "enabled":false
+          },
+          "discard-changes":{
+            "enabled":false
+          },
+          "close":{
+            "enabled":true
+          },
+          "delete":{
+            "enabled":false
+          }
+        }
+      },
+      "xpage":{
+        "items":{
+          "move":{
+            "enabled":false
+          },
+          "rename":{
+            "enabled":false
+          },
+          "copy":{
+            "enabled":false
+          },
+          "delete":{
+            "enabled":false
+          }
+        }
+      }
+    },
+    "states":{
+      "workflow":{
+        "requests":[
+
+        ]
+      },
+      "channel":{
+        "xPageTemplateQueries":{
+
+        },
+        "xPageLayouts":{
+          "hst:pages/xpage1":"XPage 1"
+        }
+      },
+      "xpage":{
+        "branchId":"bar",
+        "name":"xpageDocWithoutCore",
+        "state":"live"
+      }
+    }
+  },
+  "reloadRequired":false
+}
