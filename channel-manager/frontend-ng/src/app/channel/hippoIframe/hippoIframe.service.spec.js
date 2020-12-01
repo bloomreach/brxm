@@ -186,11 +186,13 @@ describe('HippoIframeService', () => {
 
   it('should perform force iframe reload', () => {
     HippoIframeService.pageLoaded = true;
-    spyOn(HippoIframeService, 'getSrc').and.returnValue('something');
+    spyOn(HippoIframeService, 'getCurrentRenderPathInfo').and.returnValue('path');
+    ChannelService.makePath.and.returnValue('something');
 
     HippoIframeService.reload(true);
     $rootScope.$digest();
 
+    expect(ChannelService.makePath).toHaveBeenCalledWith('path');
     expect(CommunicationService.reload).not.toHaveBeenCalled();
     expect(HippoIframeService.iframeJQueryElement.attr('src')).toBe('something');
 
