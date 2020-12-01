@@ -46,8 +46,8 @@ import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivilege
 import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_CHANNEL_ID;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_FOLDERTYPE;
-import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
 import static org.hippoecm.repository.HippoStdNodeType.NT_CM_XPAGE_FOLDER;
+import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
 import static org.hippoecm.repository.HippoStdNodeType.NT_XPAGE_FOLDER;
 
 final class ChannelContextFactory implements ComponentManagerAware {
@@ -107,8 +107,9 @@ final class ChannelContextFactory implements ComponentManagerAware {
         // if -preview is not found, we already have the live channel id (substringBefore returns same string if -preview not found)
         final String masterLiveChannelId = substringBefore(masterChannelId, "-preview");
 
-        final NodeIterator cmXPageFolders = queryCmXPageFolders(channelId, contentRootPath, session);
+        final NodeIterator cmXPageFolders = queryCmXPageFolders(masterLiveChannelId, contentRootPath, session);
         if (cmXPageFolders.getSize() > 0) {
+            log.debug("Found {} CM XPage folders for channel {}", cmXPageFolders.getSize(), masterLiveChannelId);
             final Node cmXPageFolder = cmXPageFolders.nextNode();
             final List<String> additionalCmXPageFolderPaths = new ArrayList<>();
             while (cmXPageFolders.hasNext()) {
@@ -116,12 +117,13 @@ final class ChannelContextFactory implements ComponentManagerAware {
             }
             if (!additionalCmXPageFolderPaths.isEmpty()) {
                 // At the moment only one node per channel in the contentRoot may have this mixin.
-                // This requirement can be removed later if the UI supports multiple cm xpage folders.
-                log.warn("Root xpage folder for channel {} not unique, using '{}'. Additional root xpage folder paths: {}",
+                // This requirement can be removed later if the UI supports multiple CM XPage folders.
+                log.warn("CM XPage folder for channel {} not unique, using '{}'. Additional root XPage folder paths: {}",
                         masterLiveChannelId, cmXPageFolder.getPath(), additionalCmXPageFolderPaths);
             }
             return getTemplateQueryMap(cmXPageFolder);
         }
+        log.debug("No CM XPage folder found for channel {}, try find it as direct child of {}", masterLiveChannelId, contentRootPath);
         final Node contentRoot = session.getNode(contentRootPath);
         for (Node child : new NodeIterable(contentRoot.getNodes())) {
             if (child.isNodeType(NT_XPAGE_FOLDER)) {
@@ -131,6 +133,7 @@ final class ChannelContextFactory implements ComponentManagerAware {
                 }
             }
         }
+        log.debug("No XPage folders found for channel {}, returning empty template query map", masterLiveChannelId);
         return Collections.emptyMap();
     }
 
@@ -138,6 +141,7 @@ final class ChannelContextFactory implements ComponentManagerAware {
         final String statement = String.format(
                 "/%s//element(*, %s)[@jcr:mixinTypes='%s', @%s='%s', @%s]",
                 contentRootPath, NT_FOLDER, NT_CM_XPAGE_FOLDER, HIPPOSTD_CHANNEL_ID, channelId, HIPPOSTD_FOLDERTYPE);
+        log.debug("Query statement for CM XPage folder: {}", statement);
         return session.getWorkspace().getQueryManager()
                 .createQuery(statement, Query.XPATH)
                 .execute()
@@ -150,8 +154,11 @@ final class ChannelContextFactory implements ComponentManagerAware {
                 .filter(t -> StringUtils.endsWith(t, "-document"))
                 .findFirst();
         if (folderType.isPresent()) {
+            log.debug("Folder type {} found at XPage folder {}, returning singleton template query map",
+                    folderType.get(), xPageRootFolderNode.getPath());
             return Collections.singletonMap(folderType.get(), xPageRootFolderNode.getPath());
         } else {
+            log.debug("No '-document' folder types found at XPage folder {}, returning empty template query map", xPageRootFolderNode.getPath());
             return Collections.emptyMap();
         }
     }
