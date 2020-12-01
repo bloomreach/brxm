@@ -232,6 +232,101 @@ The component data in case of inline mapping can be accessed via the template co
 export class AppComponent {}
 ```
 
+### Buttons
+- Manage menu button can be placed inside a menu component using `brManageMenuButton` directive.
+  ```typescript
+  import { Component, Input } from '@angular/core';
+  import { Component as BrComponent, Menu, Page, Reference } from '@bloomreach/spa-sdk';
+
+  interface MenuModels {
+    menu: Reference;
+  }
+
+  @Component({
+    selector: 'app-menu',
+    template: `
+      <ul [ngClass]="{ 'has-edit-button': page.isPreview() }">
+        <!-- ... -->
+
+        <ng-container [brManageMenuButton]="menu"></ng-container>
+      </ul>
+    `,
+  })
+  export class MenuComponent {
+    @Input() component!: BrComponent;
+    @Input() page!: Page;
+
+    get menu() {
+      const { menu } = this.component.getModels<MenuModels>();
+
+      return menu && this.page.getContent<Menu>(menu);
+    }
+  }
+  ```
+- Manage content button can be placed inside a component using `brManageContentButton` directive with non-empty input.
+  ```typescript
+  import { Component, Input } from '@angular/core';
+  import { Component as BrComponent, Document, Page, Reference } from '@bloomreach/spa-sdk';
+
+  interface BannerModels {
+    document: Reference;
+  }
+
+  @Component({
+    selector: 'app-banner',
+    template: `
+      <div [ngClass]="{ 'has-edit-button': page.isPreview() }">
+        <!-- ... -->
+
+        <ng-container
+          [brManageContentButton]="document"
+          documentTemplateQuery="new-banner-document"
+          folderTemplateQuery="new-banner-folder"
+          parameter="document"
+          root="banners"
+          [relative]="true">
+        </ng-container>
+      </div>
+    `,
+  })
+  export class BannerComponent {
+    @Input() component!: BrComponent;
+    @Input() page!: Page;
+
+    get document() {
+      const { document } = this.component.getModels<BannerModels>();
+
+      return document && this.page.getContent<Document>(document);
+    }
+  }
+  ```
+- Add new content button can be placed inside a component using `brManageContentButton` directive but without passing a content entity.
+  ```typescript
+  import { Component } from '@angular/core';
+
+  @Component({
+    selector: 'app-news',
+    template: `
+      <div [ngClass]="{ 'has-edit-button': page.isPreview() }">
+        <!-- ... -->
+
+        <ng-container
+          [brManageContentButton]
+          documentTemplateQuery="new-news-document"
+          folderTemplateQuery="new-news-folder"
+          root="news">
+        </ng-container>
+      </div>
+    `,
+  })
+  export class NewsComponent {
+    @Input() component!: BrComponent;
+    @Input() page!: Page;
+
+    // ...
+  }
+  ```
+
 ### State Transfering
 The `br-page` component supports [TransferState](https://angular.io/api/platform-browser/TransferState) without any extra configuration.
 To use it in [Angular Universal](https://angular.io/guide/universal) applications, import [ServerTransferStateModule](https://angular.io/api/platform-server/ServerTransferStateModule) on the server and [BrowserTransferStateModule](BrowserTransferStateModule) on the client.
