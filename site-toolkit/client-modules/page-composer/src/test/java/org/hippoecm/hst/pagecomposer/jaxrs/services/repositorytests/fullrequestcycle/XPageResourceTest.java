@@ -44,6 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static java.lang.Boolean.FALSE;
 import static javax.ws.rs.core.Response.Status.CREATED;
+import static org.hippoecm.repository.HippoStdNodeType.NT_CM_XPAGE_FOLDER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -293,6 +294,22 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_unpublished_xpage_for_branch_foo.json", "foo");
         assertions(AUTHOR_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_unpublished_xpage_for_branch_foo.json", "foo");
     }
+
+    @Test
+    public void action_and_state_for_channel_master_cmxpagefolder() throws Exception {
+
+        admin.getNode("/unittestcontent/documents/unittestproject/experiences/experiences-subfolder").addMixin(NT_CM_XPAGE_FOLDER);
+        admin.save();
+
+        try {
+            assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin_cmxpagefolder.json", "master");
+            assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author_cmxpagefolder.json", "master");
+        } finally {
+            admin.getNode("/unittestcontent/documents/unittestproject/experiences/experiences-subfolder").removeMixin(NT_CM_XPAGE_FOLDER);
+            admin.save();
+        }
+    }
+
 
     private void assertions(final SimpleCredentials creds, String fixtureFileName, final String branchId) throws Exception {
         final RequestResponseMock createRequestResponse = mockGetRequestResponse(
