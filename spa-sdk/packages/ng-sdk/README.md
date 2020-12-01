@@ -191,7 +191,7 @@ In case you need to show a static component or a component from the abstract pag
   template: `
     <br-page>
       <ng-template>
-        <app-menu *brComponent="'menu'" let-component [component]="component">
+        <app-menu *brComponent="'menu'; let component" [component]="component">
         </app-menu>
       </ng-template>
     </br-page>
@@ -221,7 +221,7 @@ The component data in case of inline mapping can be accessed via the template co
   template: `
     <br-page>
       <ng-template>
-        <ul *brComponent="'menu'" let-component let-page="page">
+        <ul *brComponent="'menu'; let component; let page=page">
           <li><a [href]="page.getUrl('/')">Home</a></li>
           <li *ngFor="let item of component.getModels()">...</li>
         </ul>
