@@ -39,7 +39,6 @@ export default class CommunicationService {
       methods: {
         disableScroll: this._disableScroll.bind(this),
         enableScroll: this._enableScroll.bind(this),
-        getPath: this._getPath.bind(this),
         getScroll: this._getScroll.bind(this),
         parseElements: this._parseElements.bind(this),
         reload: this._reload.bind(this),
@@ -77,10 +76,6 @@ export default class CommunicationService {
 
   _enableScroll(...args) {
     return this.$injector.get('ScrollService').enable(...args);
-  }
-
-  _getPath() {
-    return this.$injector.get('$window').location.pathname;
   }
 
   _getScroll(...args) {
