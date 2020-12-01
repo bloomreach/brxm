@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ describe('addToProjectComponent', () => {
   let EditContentService;
 
   const testDocumentId = 'testDocument';
+  const testState = 'teststate';
 
   const testProject = {
     id: 'test',
@@ -46,7 +47,7 @@ describe('addToProjectComponent', () => {
 
     spyOn(ProjectService, 'beforeChange');
 
-    $uiRouterGlobals.params = { documentId: testDocumentId };
+    $uiRouterGlobals.params = { documentId: testDocumentId, nextState: testState };
 
     $ctrl = $componentController('addToProject');
     $ctrl.$onInit();
@@ -76,7 +77,7 @@ describe('addToProjectComponent', () => {
     it('adds the document to the selected project', () => {
       spyOn(EditContentService, 'branchAndEditDocument');
       $ctrl.addDocumentToProject();
-      expect(EditContentService.branchAndEditDocument).toHaveBeenCalledWith(testDocumentId);
+      expect(EditContentService.branchAndEditDocument).toHaveBeenCalledWith(testDocumentId, testState);
     });
 
     it('closes the content service', () => {

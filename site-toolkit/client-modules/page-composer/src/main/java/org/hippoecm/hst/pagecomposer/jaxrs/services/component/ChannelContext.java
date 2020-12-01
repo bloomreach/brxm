@@ -102,10 +102,8 @@ public class ChannelContext {
 
     ChannelContext setChannel(final Channel channel) {
         this.channel = channel;
+        // note channel id can be for -preview and for a branch
         this.channelId = channel.getId();
-        if (channelId.endsWith("-preview")) {
-            channelId = channelId.substring(0, channelId.lastIndexOf("-preview"));
-        }
         this.hasCustomProperties = channel.getHasCustomProperties();
         this.changeBySet = channel.getChangedBySet();
         this.workspaceExists = channel.isWorkspaceExists();
