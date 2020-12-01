@@ -143,7 +143,7 @@ class HippoIframeService {
 
     await this.ScrollService.savePosition();
     if (force) {
-      this.iframeJQueryElement.attr('src', this.getSrc());
+      this.iframeJQueryElement.attr('src', this.ChannelService.makePath(this.getCurrentRenderPathInfo()));
     } else {
       await this.CommunicationService.reload();
     }
