@@ -16,32 +16,43 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
+import javax.jcr.query.Query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.onehippo.cms7.services.hst.Channel;
 
 import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.util.JcrSessionUtils.isInRole;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_CHANNEL_ID;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_FOLDERTYPE;
+import static org.hippoecm.repository.HippoStdNodeType.NT_CM_XPAGE_FOLDER;
+import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
+import static org.hippoecm.repository.HippoStdNodeType.NT_XPAGE_FOLDER;
 
 final class ChannelContextFactory implements ComponentManagerAware {
+
+    private static final Logger log = LoggerFactory.getLogger(ChannelContextFactory.class);
 
     private final ChannelService channelService;
     private boolean crossChannelPageCopySupported;
@@ -65,7 +76,7 @@ final class ChannelContextFactory implements ComponentManagerAware {
                 .setHasPrototypes(!hasPrototypes(contextService));
 
         final Optional<Channel> channelOptional = channelService.getChannelByMountId(actionContext.getMountId(),
-                                                                                     actionContext.getHostGroup());
+                actionContext.getHostGroup());
         if (!channelOptional.isPresent()) {
             return channelContext;
         }
@@ -96,34 +107,60 @@ final class ChannelContextFactory implements ComponentManagerAware {
         // if -preview is not found, we already have the live channel id (substringBefore returns same string if -preview not found)
         final String masterLiveChannelId = substringBefore(masterChannelId, "-preview");
 
+        final NodeIterator cmXPageFolders = queryCmXPageFolders(masterLiveChannelId, contentRootPath, session);
+        if (cmXPageFolders.getSize() > 0) {
+            log.debug("Found {} CM XPage folders for channel {}", cmXPageFolders.getSize(), masterLiveChannelId);
+            final Node cmXPageFolder = cmXPageFolders.nextNode();
+            final List<String> additionalCmXPageFolderPaths = new ArrayList<>();
+            while (cmXPageFolders.hasNext()) {
+                additionalCmXPageFolderPaths.add(cmXPageFolders.nextNode().getPath());
+            }
+            if (!additionalCmXPageFolderPaths.isEmpty()) {
+                // At the moment only one node per channel in the contentRoot may have this mixin.
+                // This requirement can be removed later if the UI supports multiple CM XPage folders.
+                log.warn("CM XPage folder for channel {} not unique, using '{}'. Additional root XPage folder paths: {}",
+                        masterLiveChannelId, cmXPageFolder.getPath(), additionalCmXPageFolderPaths);
+            }
+            return getTemplateQueryMap(cmXPageFolder);
+        }
+        log.debug("No CM XPage folder found for channel {}, try find it as direct child of {}", masterLiveChannelId, contentRootPath);
         final Node contentRoot = session.getNode(contentRootPath);
-        final NodeIterator nodes = contentRoot.getNodes();
-        while (nodes.hasNext()) {
-            final Node child = nodes.nextNode();
-            if (!child.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER)) {
-                continue;
-            }
-
-            final Property channelIdProperty = JcrUtils.getPropertyIfExists(child,
-                    HippoStdNodeType.HIPPOSTD_CHANNEL_ID);
-            if (channelIdProperty == null || !masterLiveChannelId.equals(channelIdProperty.getString())) {
-                continue;
-            }
-
-            final Property folderType = JcrUtils.getPropertyIfExists(child, HippoStdNodeType.HIPPOSTD_FOLDERTYPE);
-            if (folderType == null) {
-                continue;
-            }
-
-            for (final Value folderTypeValue : folderType.getValues()) {
-                final String folderTypeString = folderTypeValue.getString();
-                if (StringUtils.endsWith(folderTypeString, "-document")) {
-                    return Collections.singletonMap(folderTypeString, child.getPath());
+        for (Node child : new NodeIterable(contentRoot.getNodes())) {
+            if (child.isNodeType(NT_XPAGE_FOLDER)) {
+                final String channelIdProperty = JcrUtils.getStringProperty(child, HIPPOSTD_CHANNEL_ID, null);
+                if (masterLiveChannelId.equals(channelIdProperty)) {
+                    return getTemplateQueryMap(child);
                 }
             }
         }
-
+        log.debug("No XPage folders found for channel {}, returning empty template query map", masterLiveChannelId);
         return Collections.emptyMap();
+    }
+
+    private NodeIterator queryCmXPageFolders(String channelId, String contentRootPath, Session session) throws RepositoryException {
+        final String statement = String.format(
+                "/%s//element(*, %s)[@jcr:mixinTypes='%s', @%s='%s', @%s]",
+                contentRootPath, NT_FOLDER, NT_CM_XPAGE_FOLDER, HIPPOSTD_CHANNEL_ID, channelId, HIPPOSTD_FOLDERTYPE);
+        log.debug("Query statement for CM XPage folder: {}", statement);
+        return session.getWorkspace().getQueryManager()
+                .createQuery(statement, Query.XPATH)
+                .execute()
+                .getNodes();
+    }
+
+    private Map<String, String> getTemplateQueryMap(final Node xPageRootFolderNode) throws RepositoryException {
+        final String[] folderTypes = JcrUtils.getMultipleStringProperty(xPageRootFolderNode, HIPPOSTD_FOLDERTYPE, new String[0]);
+        final Optional<String> folderType = Stream.of(folderTypes)
+                .filter(t -> StringUtils.endsWith(t, "-document"))
+                .findFirst();
+        if (folderType.isPresent()) {
+            log.debug("Folder type {} found at XPage folder {}, returning singleton template query map",
+                    folderType.get(), xPageRootFolderNode.getPath());
+            return Collections.singletonMap(folderType.get(), xPageRootFolderNode.getPath());
+        } else {
+            log.debug("No '-document' folder types found at XPage folder {}, returning empty template query map", xPageRootFolderNode.getPath());
+            return Collections.emptyMap();
+        }
     }
 
     private boolean hasPrototypes(final PageComposerContextService contextService) {

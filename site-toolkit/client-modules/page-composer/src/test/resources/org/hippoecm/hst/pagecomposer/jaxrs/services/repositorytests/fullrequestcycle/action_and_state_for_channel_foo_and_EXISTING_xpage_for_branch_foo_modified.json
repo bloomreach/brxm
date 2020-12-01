@@ -48,7 +48,7 @@
       },
       "channel":{
         "xPageTemplateQueries":{
-
+          "new-document":"/unittestcontent/documents/unittestproject/experiences"
         },
         "xPageLayouts":{
           "hst:xpages/xpage1":"XPage 1"
