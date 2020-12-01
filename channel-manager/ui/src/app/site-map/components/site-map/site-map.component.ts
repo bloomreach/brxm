@@ -91,8 +91,8 @@ export class SiteMapComponent implements OnChanges, OnDestroy, AfterViewChecked 
     this.search$.complete();
   }
 
-  isSelected({ pathInfo, renderPathInfo }: SiteMapItem): boolean {
-    return renderPathInfo === this.renderPathInfo || `${pathInfo === '/' ? '' : '/'}${pathInfo}` === this.renderPathInfo;
+  isSelected({ renderPathInfo }: SiteMapItem): boolean {
+    return renderPathInfo === this.renderPathInfo;
   }
 
   async selectNode(node: SiteMapItemNode): Promise<void> {
