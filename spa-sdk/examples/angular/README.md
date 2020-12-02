@@ -4,7 +4,7 @@ Example Angular SPA using the Bloomreach Experience [Angular SDK](https://www.np
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli).
 
 ## Install and run
-Run [Docker](https://hub.docker.com/repository/docker/bloomreach/xm-spa-example) container with the configured brXM instance:
+Run [Docker](https://hub.docker.com/r/bloomreach/xm-spa-example) container with the configured brXM instance:
 ```bash
 docker run --net=host bloomreach/xm-spa-example
 ```
