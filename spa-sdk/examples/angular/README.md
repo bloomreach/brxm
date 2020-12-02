@@ -9,6 +9,8 @@ Run [Docker](https://hub.docker.com/r/bloomreach/xm-spa-example) container with 
 docker run --net=host bloomreach/xm-spa-example
 ```
 
+First, change the application URL to `http://localhost:4200` in the [channel settings](http://localhost:8080/cms/console/?path=/hst:xmspaexample/hst:configurations/xmspaexample/hst:workspace/hst:channel/hst:channelinfo).
+
 Then, update `src/environments/environment.ts` and `src/environments/environment.prod.ts` files to specify the brXM instance to fetch the page model from:
 ```
 export const environment = {
