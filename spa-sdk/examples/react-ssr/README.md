@@ -6,7 +6,7 @@ The app uses unversal framework [Next.js](https://github.com/zeit/next.js) for c
 ## Install and run
 Run [Docker](https://hub.docker.com/r/bloomreach/xm-spa-example) container with the configured brXM instance:
 ```bash
-docker run --net=host bloomreach/xm-spa-example
+docker run -p 8080:8080 bloomreach/xm-spa-example
 ```
 
 Then, copy `.env.dist` file to `.env` and specify the brXM instance to fetch the page model from:
