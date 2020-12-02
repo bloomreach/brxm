@@ -264,6 +264,93 @@ export default {
 </script>
 ```
 
+### Buttons
+- Manage menu button can be placed inside a menu component using `br-manage-menu-button` component.
+  ```vue
+  <template>
+    <ul v-if="menu" :class="{ 'has-edit-button': page.isPreview() }">
+      <!-- ... -->
+
+      <br-manage-menu-button :menu="menu" />
+    </ul>
+  </template>
+
+  <script>
+  import { Menu, Reference } from '@bloomreach/spa-sdk';
+
+  interface MenuModels {
+    menu: Reference;
+  }
+
+  export default {
+    computed: {
+      menu() {
+        const { menu: menuRef } = this.component.getModels<MenuModels>();
+
+        return menuRef && this.page.getContent<Menu>(menuRef);
+      },
+    },
+    props: ['component', 'page'],
+  };
+  </script>
+  ```
+- Manage content button can be placed inside a component using `br-manage-content-button` component with non-empty `content` property.
+  ```vue
+  <template>
+    <div v-if="document" :class="{ 'has-edit-button': page.isPreview() }">
+      <!-- ... -->
+
+      <br-manage-content-button
+        :content="document"
+        document-template-query="new-banner-document"
+        folder-template-query="new-banner-folder"
+        parameter="document"
+        root="banners"
+        :relative="true"
+      />
+    </div>
+  </template>
+
+  <script>
+  import { Document, Reference } from '@bloomreach/spa-sdk';
+
+  interface BannerModels {
+    document: Reference;
+  }
+
+  export default {
+    computed: {
+      document() {
+        const { document: documentRef } = this.component.getModels<BannerModels>();
+
+        return documentRef && this.page.getContent<Document>(documentRef);
+      },
+    },
+    props: ['component', 'page'],
+  };
+  </script>
+  ```
+- Add new content button can be placed inside a component using `br-manage-content-button` directive but without passing a content entity.
+  ```vue
+  <template>
+    <div :class="{ 'has-edit-button': page.isPreview() }">
+      <!-- ... -->
+
+      <br-manage-content-button
+        document-template-query="new-news-document"
+        folder-template-query="new-news-folder"
+        root="news"
+      />
+    </div>
+  </template>
+
+  <script>
+  export default {
+    props: ['component', 'page'],
+  };
+  </script>
+  ```
+
 ### Reference
 The Vue.js SDK is using [Bloomreach SPA SDK](https://www.npmjs.com/package/@bloomreach/spa-sdk#reference) to interact with the brXM.
 The complete reference of the exposed JavaScript objects can be found [here](https://javadoc.onehippo.org/14.3/bloomreach-spa-sdk/).
