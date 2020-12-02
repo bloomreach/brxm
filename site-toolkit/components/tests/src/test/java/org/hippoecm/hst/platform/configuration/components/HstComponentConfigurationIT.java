@@ -336,10 +336,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         // non existing property place holder ${23} should result in 'null' replacement
         baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"${23}"});
 
-        for (Node o : new NodeIterable(((HippoSession)session).pendingChanges())) {
-            System.out.println(o.getPath());
-        }
-
         session.save();
 
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:xpages/basepage/header"});
