@@ -6,7 +6,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ## Install and run
 Run [Docker](https://hub.docker.com/r/bloomreach/xm-spa-example) container with the configured brXM instance:
 ```bash
-docker run --net=host bloomreach/xm-spa-example
+docker run -p 8080:8080 bloomreach/xm-spa-example
 ```
 
 First, change the application URL to `http://localhost:4200` in the [channel settings](http://localhost:8080/cms/console/?path=/hst:xmspaexample/hst:configurations/xmspaexample/hst:workspace/hst:channel/hst:channelinfo).
