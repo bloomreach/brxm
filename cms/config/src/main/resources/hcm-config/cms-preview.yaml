@@ -22,7 +22,7 @@ definitions:
         plugin.class: org.hippoecm.addon.workflow.DocumentWorkflowManagerPlugin
         wicket.id: ${cluster.id}.workflows
         wicket.model: ${model.compareTo}
-        workflow.categories: [default, translation, committype]
+        workflow.categories: [default, translation, committype, branchinfo]
         workflow.menuorder: [publication, request, document, miscellaneous]
-        workflow.xpage.categories: [default, committype]
+        workflow.xpage.categories: [default, committype, branchinfo]
         workflow.version.categories: versioning
