@@ -16,8 +16,10 @@
 package org.hippoecm.hst.pagemodelapi.v10;
 
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.core.LogEvent;
 import org.assertj.core.api.Assertions;
@@ -34,11 +37,14 @@ import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
 import org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider;
 import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.platform.configuration.hosting.MountService;
+import org.json.JSONException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -700,7 +706,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         }
 
     }
-
 
     private void assertions(final String actual, final InputStream expectedStream) throws IOException, JSONException {
         String expected = IOUtils.toString(expectedStream, StandardCharsets.UTF_8);
