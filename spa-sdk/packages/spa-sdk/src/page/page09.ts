@@ -15,6 +15,7 @@
  */
 
 import { inject, injectable, optional } from 'inversify';
+import { ButtonFactory } from './button-factory';
 import { ComponentFactory } from './component-factory09';
 import { ComponentMeta, Component } from './component';
 import { ComponentModel } from './component09';
@@ -53,6 +54,7 @@ interface PageRootModel {
 export interface PageModel {
   _links: PageModel10['links'];
   _meta: PageModel10['meta'];
+  channel?: PageModel10['channel'];
   content?: { [reference: string]: ContentModel };
   page: (ComponentModel | ContainerItemModel | ContainerModel) & PageRootModel;
 }
@@ -65,6 +67,7 @@ export class PageImpl implements Page {
 
   constructor(
     @inject(PageModelToken) protected model: PageModel,
+    @inject(ButtonFactory) private buttonFactory: ButtonFactory,
     @inject(ComponentFactory) componentFactory: ComponentFactory,
     @inject(ContentFactory) private contentFactory: ContentFactory,
     @inject(LinkFactory) private linkFactory: LinkFactory,
@@ -91,6 +94,14 @@ export class PageImpl implements Page {
 
   private static getContentReference(reference: Reference) {
     return  reference.$ref.split('/', 3)[2] || '';
+  }
+
+  getButton(type: string, ...params: unknown[]) {
+    return this.buttonFactory.create(type, ...params);
+  }
+
+  getChannelParameters<T>(): T {
+    return (this.model.channel?.info.props ?? {}) as T;
   }
 
   getComponent<T extends Component>(): T;
@@ -141,7 +152,7 @@ export class PageImpl implements Page {
     return !!this.model._meta.preview;
   }
 
-  rewriteLinks(content: string, type: SupportedType = 'text/html') {
+  rewriteLinks(content: string, type = 'text/html') {
     return this.linkRewriter.rewrite(content, type);
   }
 

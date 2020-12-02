@@ -21,12 +21,16 @@ class DocumentWorkflowService {
     this.$window = $window;
   }
 
-  _invoke(documentId, category, action) {
-    return this.$window.parent.Hippo.Workflow.invoke(documentId, category, action);
+  _invoke(documentId, category, action, branchId) {
+    return this.$window.parent.Hippo.Workflow.invoke(documentId, category, action, branchId);
   }
 
-  copy(documentId) {
-    return this._invoke(documentId, 'document', 'copy');
+  rename(documentId) {
+    return this._invoke(documentId, 'document', 'rename');
+  }
+
+  copy(documentId, branchId) {
+    return this._invoke(documentId, 'document', 'copy', branchId);
   }
 
   move(documentId) {
@@ -67,6 +71,30 @@ class DocumentWorkflowService {
 
   requestScheduleUnpublication(documentId) {
     return this._invoke(documentId, 'publication', 'REQ_SCHED_DEPUB');
+  }
+
+  cancelRequest(documentId) {
+    return this._invoke(documentId, 'request', 'cancel');
+  }
+
+  acceptRequest(documentId) {
+    return this._invoke(documentId, 'request', 'accept');
+  }
+
+  rejectRequest(documentId) {
+    return this._invoke(documentId, 'request', 'reject');
+  }
+
+  showRequestRejected(documentId) {
+    return this._invoke(documentId, 'request', 'rejected');
+  }
+
+  acceptBranch(documentId, branchId) {
+    return this._invoke(documentId, 'project', 'accept-branch', branchId);
+  }
+
+  rejectBranch(documentId, branchId) {
+    return this._invoke(documentId, 'project', 'reject-branch', branchId);
   }
 }
 

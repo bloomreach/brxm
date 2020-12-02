@@ -529,23 +529,6 @@ describe('ChannelService', () => {
     expect(CmsService.publish).toHaveBeenCalledWith('channel-changed-in-angular');
   });
 
-  it('should extract the renderPathInfo given a channel with non-empty preview prefix and mount path', () => {
-    channelMock.cmsPreviewPrefix = '_cmsinternal';
-    loadChannel();
-
-    expect(ChannelService.extractRenderPathInfo('/testContextPath/_cmsinternal/test/pa.th')).toBe('/test/pa.th');
-    expect(ChannelService.extractRenderPathInfo('/testContextPath/_cmsinternal/')).toBe('');
-    expect(ChannelService.extractRenderPathInfo('/testContextPath/_cmsinternal')).toBe('');
-  });
-
-  it('should extract the renderPathInfo given a channel with empty preview prefix and mount path', () => {
-    loadChannel();
-
-    expect(ChannelService.extractRenderPathInfo('/testContextPath/test/render.path'))
-      .toBe('/test/render.path');
-    expect(ChannelService.extractRenderPathInfo('/testContextPath/')).toBe('');
-  });
-
   it('uses the channel\'s mount path to generate the homepage renderPathInfo', () => {
     channelMock.mountPath = '/mou/nt';
     loadChannel();
@@ -554,14 +537,6 @@ describe('ChannelService', () => {
     delete channelMock.mountPath;
     loadChannel();
     expect(ChannelService.getHomePageRenderPathInfo()).toBe('');
-  });
-
-  it('should return source path if there is no matching channel prefix', () => {
-    loadChannel();
-    const nonMatchingPrefix = '/testContexxxtPath/test/render.path';
-
-    expect(ChannelService.extractRenderPathInfo(nonMatchingPrefix))
-      .toBe(nonMatchingPrefix);
   });
 
   it('should return the channel\'s siteMap ID', () => {

@@ -20,11 +20,13 @@ import java.util.Locale;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree;
@@ -81,17 +83,37 @@ public class TaxonomyTree extends ContextMenuTree {
 
     @Override
     protected MarkupContainer newLink(MarkupContainer parent, String id, final ILinkCallback callback) {
-        MarkupContainer result = super.newLink(parent, id, new ILinkCallback() {
+        MarkupContainer link = super.newLink(parent, id, (ILinkCallback) target -> {
+            if (TaxonomyTree.this.isEnabled()) {
+                callback.onClick(target);
+            }
+        });
 
-            public void onClick(AjaxRequestTarget target) {
-                if (TaxonomyTree.this.isEnabled()) {
-                    callback.onClick(target);
-                }
+        parent.add(ClassAttribute.append(() -> {
+            final Object object = parent.getDefaultModelObject();
+            if (!(object instanceof CategoryNode)) {
+                return StringUtils.EMPTY;
             }
 
-        });
-        result.setEnabled(isEnabled());
-        return result;
+            final CategoryNode categoryNode = (CategoryNode) object;
+            final CategoryState categoryState = getCategoryState(categoryNode.getCategory());
+            if (categoryState == CategoryState.DISABLED) {
+                return "taxonomy-item-disabled";
+            }
+
+            if (categoryState == CategoryState.HIDDEN) {
+                return "taxonomy-item-hidden";
+            }
+
+            return StringUtils.EMPTY;
+        }));
+
+        link.setEnabled(isEnabled());
+        return link;
+    }
+
+    protected CategoryState getCategoryState(final Category category) {
+        return CategoryState.VISIBLE;
     }
 
     @Override

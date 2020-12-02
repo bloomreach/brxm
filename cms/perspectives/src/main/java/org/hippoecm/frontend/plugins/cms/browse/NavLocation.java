@@ -43,7 +43,10 @@ public class NavLocation implements IClusterable {
     }
 
     public static NavLocation folder(final IModel<Node> model, final Mode mode) {
-        final String path = JcrUtils.getNodePathQuietly(model.getObject());
+        return folder(JcrUtils.getNodePathQuietly(model.getObject()), mode);
+    }
+
+    public static NavLocation folder(final String path, final Mode mode) {
         return new NavLocation(path, StringUtils.EMPTY, mode);
     }
 

@@ -80,7 +80,7 @@ public class TaxonomyPickerDialog extends Dialog<Classification> {
         setOkEnabled(false);
         setOutputMarkupId(true);
         setTitleKey("taxonomy-picker");
-        setSize(DialogConstants.LARGE_AUTO);
+        setSize(DialogConstants.SMALL_RELATIVE);
 
         viewType = config.getString(CONFIG_TYPE, TREE);
         if (PALETTE.equals(viewType)) {

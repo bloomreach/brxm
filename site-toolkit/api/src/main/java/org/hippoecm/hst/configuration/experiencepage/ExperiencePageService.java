@@ -22,7 +22,9 @@ import org.hippoecm.hst.configuration.site.HstSite;
 
 public interface ExperiencePageService {
 
-    HstComponentConfiguration loadExperiencePage(Node hstPage, HstSite hstSite, ClassLoader websiteClassLoader);
+    HstComponentConfiguration loadExperiencePage(Node hstPage, HstSite hstSite,
+                                                 ClassLoader websiteClassLoader) throws ExperiencePageLoadingException;
 
-    HstComponentConfiguration loadExperiencePageComponentItem(Node componentItem, HstSite hstSite, ClassLoader websiteClassLoader);
+    HstComponentConfiguration loadExperiencePageComponentItem(Node componentItem, HstSite hstSite,
+                                                              ClassLoader websiteClassLoader) throws ExperiencePageLoadingException;
 }

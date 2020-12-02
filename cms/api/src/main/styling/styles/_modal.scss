@@ -330,6 +330,21 @@
   margin-right: 8px;
 }
 
+// rejected request confirmation dialog
+.hippo-dialog-form.rejected-request-dialog {
+  .hippo-confirm-dialog {
+    background: $white;
+    padding: 8px;
+
+    .notification {
+      border: 1px solid $gray38;
+      border-radius: 4px;
+      display: block;
+      padding: 8px;
+    }
+  }
+}
+
 .hippo-workflow-dialog {
   .hippo-dialog-center {
     overflow: hidden;

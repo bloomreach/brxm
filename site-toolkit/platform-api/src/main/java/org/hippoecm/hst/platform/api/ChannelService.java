@@ -27,6 +27,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.onehippo.cms7.services.hst.Channel;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 
 public interface ChannelService {
@@ -118,11 +119,17 @@ public interface ChannelService {
 
 	/**
 	 *
-	 * @param channelId
+	 * @param channelId the *live* channelId is expected, not the preview (typically has -preview appended)
 	 * @return Map of the available {@link XPageLayout}s for {@code Channel} with id {@code channelId} where the keys are
 	 * the id of the XPageLayout (which is equal to the XPageLayout HstComponentConfiguration id).
 	 * If none found an empty collection is returned
 	 */
 	Map<String, XPageLayout> getXPageLayouts(String channelId);
+
+	/**
+	 * Same as {@link #getXPageLayouts(String) } only now for a Mount instance where the Mount can be a 'preview decorated mount'
+	 * @see #getXPageLayouts(String)
+	 */
+	Map<String, XPageLayout> getXPageLayouts(Mount mount);
 
 }

@@ -273,11 +273,11 @@ describe('ComponentEditorService', () => {
   describe('reopening the editor', () => {
     it('opens the editor for the component it was opened for originally', () => {
       openComponentEditor();
-      spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
+      spyOn(ComponentEditor, 'load').and.returnValue($q.resolve());
 
       ComponentEditor.reopen();
 
-      expect(ComponentEditor.open).toHaveBeenCalledWith('componentId');
+      expect(ComponentEditor.load).toHaveBeenCalledWith(mockChannel, mockPage, mockComponent);
     });
   });
 
@@ -714,12 +714,12 @@ describe('ComponentEditorService', () => {
     });
 
     it('should not render a component if it is not present on the page', () => {
-      mockPage.getComponentById.and.returnValue(null);
       const properties = [
         { name: 'a', value: '2017-09-21T00:00:00.000+02:00', type: 'datefield' },
       ];
       openComponentEditor(properties);
 
+      mockPage.getComponentById.and.returnValue(null);
       ComponentEditor.updatePreview();
       $rootScope.$digest();
 

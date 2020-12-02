@@ -17,6 +17,9 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.ItemNotFoundException;
@@ -46,9 +49,11 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.String.format;
 import static org.apache.jackrabbit.JcrConstants.JCR_FROZENUUID;
 import static org.apache.jackrabbit.JcrConstants.NT_FROZENNODE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED;
+import static org.hippoecm.hst.platform.utils.UUIDUtils.isValidUUID;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
@@ -248,31 +253,46 @@ public class XPageUtils {
 
 
     /**
-     * Returns the WORKSPACE container item for {@code identifier}
+     * Returns the WORKSPACE node for {@code identifier}
      *
      * Note that 'pageComposerContextService.getRequestConfigIdentifier()' can return a frozen node : this method returns
      * the 'workspace' version of that node, and if not found, a ItemNotFoundException will be thrown
      */
     static Node getWorkspaceNode(final Session session, final String identifier) throws RepositoryException {
         // note this can be a frozen node
-        final Node containerItem = session.getNodeByIdentifier(identifier);
+        final Node node = session.getNodeByIdentifier(identifier);
 
-        if (containerItem.isNodeType(JcrConstants.NT_FROZENNODE)) {
+        if (node.isNodeType(JcrConstants.NT_FROZENNODE)) {
             // get hold of the workspace container item! Since 'checkoutCorrectBranch' did already do the checkout,
             // and a restore from version history restores the frozen uuid, we can safely get hold of that one
-            final String workspaceUUID = containerItem.getProperty(JcrConstants.JCR_FROZENUUID).getString();
+            final String workspaceUUID = node.getProperty(JcrConstants.JCR_FROZENUUID).getString();
             return session.getNodeByIdentifier(workspaceUUID);
         } else {
-            return containerItem;
+            return node;
         }
     }
 
+    // returns the UUIDs of the workspace version for children in case children belong to versioned nodes
+    public static List<String> getWorkspaceChildrenIds(final Session session, final List<String> childIds) throws RepositoryException {
+        final List<String> workspaceChildren = new ArrayList<>(childIds.size());
+        for (String childId : childIds) {
+            if (!isValidUUID(childId)) {
+                throw new ClientException(format("Invalid child id '%s'", childId), ClientError.INVALID_UUID);
+            }
+            try {
+                workspaceChildren.add(getWorkspaceNode(session, childId).getIdentifier());
+            } catch (ItemNotFoundException e) {
+                throw new ClientException(format("Could not find workspace node for child id '%s'", childId), ClientError.INVALID_UUID);
+            }
+        }
+        return workspaceChildren;
+    }
 
     /**
      * if belongs to XPage, returns the unpublished variant. If it is an XPage but there is no unpublished variant,
      * we throw an ClientException for now, see CMS-13262.
      * Note that the {@code node} can also be a frozen XPage node: In that case we try to get hold of the
-     * unpubished variant from the frozen node.
+     * unpublished WORKSPACE variant from the frozen node.
      */
     public static Node getXPageUnpublishedVariant(Node node) throws RepositoryException {
         if (node.getSession().getRootNode().isSame(node)) {
@@ -315,5 +335,13 @@ public class XPageUtils {
         }
 
         return getXPageUnpublishedVariant(node.getParent());
+    }
+
+
+    public static Calendar updateTimestamp(final Node containerNode) throws RepositoryException {
+        // update last modified for optimistic locking
+        final Calendar updatedTimestamp = Calendar.getInstance();
+        containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, updatedTimestamp);
+        return updatedTimestamp;
     }
 }

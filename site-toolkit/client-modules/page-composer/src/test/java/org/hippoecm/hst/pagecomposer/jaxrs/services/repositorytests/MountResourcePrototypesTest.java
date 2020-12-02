@@ -61,6 +61,8 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         prototypeNode.getNode("main/container1").remove();
         prototypeNode.getNode("main/container2").remove();
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(200);
         mockNewRequest(session, "localhost", "");
         PrototypesRepresentation representation = (PrototypesRepresentation)((ResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
         assertEquals(1, representation.getPrototypes().size());

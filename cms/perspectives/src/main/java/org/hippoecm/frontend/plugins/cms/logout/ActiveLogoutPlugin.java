@@ -15,11 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.cms.logout;
 
-import javax.jcr.RepositoryException;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.NavAppBridgeHeaderItem;
@@ -32,13 +37,14 @@ import org.slf4j.LoggerFactory;
  * Logs the current user out of the CMS after a certain timespan of inactivity.
  */
 public class ActiveLogoutPlugin extends Component {
-
     private static final Logger log = LoggerFactory.getLogger(ActiveLogoutPlugin.class);
+
+    private static final String ACTIVE_LOGOUT_JS = "active-logout.js";
     private static final int CONNECTION_TIMEOUT_NOT_SET = -1;
 
+    private final int iframesConnectionTimeout;
     private final int maxInactiveIntervalMinutes;
     private final LogoutBehavior logoutBehavior;
-    private final int iframesConnectionTimeout;
 
     /**
      * @param id                         the Wicket ID of this component
@@ -77,7 +83,8 @@ public class ActiveLogoutPlugin extends Component {
         super.internalRenderHead(container);
 
         if (isActive()) {
-            log.info("Inactive user sessions will be logged out automatically after {}", Duration.minutes(maxInactiveIntervalMinutes));
+            log.info("Inactive user sessions will be logged out automatically after {} minutes",
+                    Duration.minutes(maxInactiveIntervalMinutes));
         } else {
             log.info("Inactive user sessions will not be logged out automatically");
         }
@@ -87,20 +94,31 @@ public class ActiveLogoutPlugin extends Component {
 
 
         if (Main.isCmsApplication()) {
-            if (iframesConnectionTimeout == CONNECTION_TIMEOUT_NOT_SET){
+            if (iframesConnectionTimeout == CONNECTION_TIMEOUT_NOT_SET) {
                 log.warn("iframesConnectionTimeout has not been set, please set it to a valid number by using" +
                         " the constructor parameter");
                 return;
             }
             header.render(new NavAppBridgeHeaderItem(getLogoutCallbackUrl(), iframesConnectionTimeout));
+        } else if (Main.isConsoleApplication()) {
+            header.render(OnLoadHeaderItem.forScript(createActiveLogoutScript()));
         }
-
-
     }
 
     @Override
     protected void onRender() {
         // nothing to render
+    }
+
+    private String createActiveLogoutScript() {
+        final Map<String, String> scriptParams = new TreeMap<>();
+        scriptParams.put("logoutCallbackUrl", getLogoutCallbackUrl());
+
+        try (final PackageTextTemplate activeLogoutJs = new PackageTextTemplate(ActiveLogoutPlugin.class, ACTIVE_LOGOUT_JS)) {
+            return activeLogoutJs.asString(scriptParams);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to load " + ACTIVE_LOGOUT_JS, e);
+        }
     }
 
     private String getLogoutCallbackUrl() {

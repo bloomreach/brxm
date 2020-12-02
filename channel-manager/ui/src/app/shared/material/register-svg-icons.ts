@@ -21,6 +21,7 @@ import alertOutline from '!!raw-loader!./icons/alert-outline.svg';
 import calendarClock from '!!raw-loader!./icons/calendar-clock.svg';
 import calendarToday from '!!raw-loader!./icons/calendar-today.svg';
 import chartPie from '!!raw-loader!./icons/chart-pie.svg';
+import chevronRight from '!!raw-loader!./icons/chevron-right.svg';
 import close from '!!raw-loader!./icons/close.svg';
 import commentCheckOutline from '!!raw-loader!./icons/comment-check-outline.svg';
 import commentProcessingOutline from '!!raw-loader!./icons/comment-processing-outline.svg';
@@ -65,4 +66,5 @@ export function registerSvgIcons(iconRegistry: MatIconRegistry, donSanitizer: Do
   registerIcon('trash', trash);
   registerIcon('web', web);
   registerIcon('xpage', xpage);
+  registerIcon('chevron-right', chevronRight);
 }

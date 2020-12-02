@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { mocked } from 'ts-jest/utils';
 import { shallowMount } from '@vue/test-utils';
 import { Component, Prop, Provide, Vue } from 'vue-property-decorator';
-import { MetaCollection, Menu, Page, isMenu } from '@bloomreach/spa-sdk';
+import { MetaCollection, Page } from '@bloomreach/spa-sdk';
 import BrManageMenuButton from '@/BrManageMenuButton.vue';
 import BrMeta from '@/BrMeta.vue';
 
@@ -35,42 +34,29 @@ class BrPage extends Vue {
 describe('BrManageMenuButton', () => {
   const meta = {} as MetaCollection;
   let page: jest.Mocked<Page>;
-  let provide: Function;
+  let provide: () => unknown;
 
   beforeAll(() => {
     page = ({
-      getMeta: jest.fn(() => meta),
+      getButton: jest.fn(() => meta),
       isPreview: jest.fn(),
     } as unknown) as typeof page;
 
     const wrapper = shallowMount(BrPage, { propsData: { page } });
-    provide = (wrapper.vm.$options.provide as Function).bind(wrapper.vm);
+    provide = (wrapper.vm.$options.provide as typeof provide).bind(wrapper.vm);
   });
 
   describe('render', () => {
     it('should render nothing when it is not a preview', () => {
-      const menu = { _meta: {} } as Menu;
+      const menu = {};
       const wrapper = shallowMount(BrManageMenuButton, { provide, propsData: { menu } });
 
       expect(wrapper.html()).toBe('');
     });
 
-    it('should render menu-button meta-data created with the page', () => {
-      page.isPreview.mockReturnValueOnce(true);
-      mocked(isMenu).mockReturnValue(false);
-      const menu = { _meta: {} } as Menu;
-      const wrapper = shallowMount(BrManageMenuButton, { provide, propsData: { menu } });
-      const props = wrapper.findComponent(BrMeta).props();
-
-      // eslint-disable-next-line no-underscore-dangle
-      expect(page.getMeta).toBeCalledWith(menu._meta);
-      expect(props.meta).toBe(meta);
-    });
-
     it('should render a menu button meta', () => {
       page.isPreview.mockReturnValueOnce(true);
-      mocked(isMenu).mockReturnValue(true);
-      const menu = { getMeta: jest.fn(() => meta) };
+      const menu = {};
       const wrapper = shallowMount(BrManageMenuButton, { provide, propsData: { menu } });
       const props = wrapper.findComponent(BrMeta).props();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
+import org.hippoecm.frontend.plugins.yui.upload.model.UploadedFile;
+import org.hippoecm.frontend.plugins.yui.upload.processor.DefaultFileUploadPreProcessorService;
+import org.hippoecm.frontend.plugins.yui.upload.processor.FileUploadPreProcessorService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
@@ -48,25 +51,36 @@ public abstract class AbstractFileUploadWidget extends Panel {
 
     private final FileUploadValidationService validator;
 
+    private final FileUploadPreProcessorService preProcessorService;
+
     protected final FileUploadWidgetSettings settings;
 
-    public AbstractFileUploadWidget(String id, final IPluginConfig pluginConfig, final FileUploadValidationService validator){
+    @Deprecated
+    public AbstractFileUploadWidget(String id, final IPluginConfig pluginConfig,
+                                    final FileUploadValidationService validator){
+        this(id, pluginConfig, validator, new DefaultFileUploadPreProcessorService());
+    }
+
+    public AbstractFileUploadWidget(String id, final IPluginConfig pluginConfig,
+                                    final FileUploadValidationService validator,
+                                    final FileUploadPreProcessorService preProcessorService){
         super(id);
         this.settings = new FileUploadWidgetSettings(pluginConfig, validator);
         this.validator = validator;
+        this.preProcessorService = preProcessorService;
     }
 
     public String getUploadScript(){
         return StringUtils.EMPTY;
     }
+
     /**
      * Validate file upload item against the file upload validation service defined in
-     * {@link #AbstractFileUploadWidget(String, IPluginConfig, FileUploadValidationService)} then call {@link #onFileUpload(FileUpload)}
-     *
+     * {@link #AbstractFileUploadWidget(String, IPluginConfig, FileUploadValidationService)}
      * @param fileUpload
      * @throws FileUploadViolationException
      */
-    protected void process(FileUpload fileUpload) throws FileUploadViolationException {
+    protected void validate(final FileUpload fileUpload) throws FileUploadViolationException {
         try {
             validator.validate(fileUpload);
         } catch (ValidationException e) {
@@ -75,13 +89,28 @@ public abstract class AbstractFileUploadWidget extends Panel {
         }
 
         IValidationResult result = validator.getValidationResult();
-        if (result.isValid()){
-            onFileUpload(fileUpload);
-        } else {
+        if (!result.isValid()){
             List<String> errors = new ArrayList<>();
             result.getViolations().forEach(violation -> errors.add(violation.getMessage().getObject()));
             throw new FileUploadViolationException(errors);
         }
+    }
+
+    /**
+     * Executes custom preProcessors
+     * @param uploadedFile
+     */
+    protected void preProcess(final UploadedFile uploadedFile) {
+        preProcessorService.process(uploadedFile);
+    }
+    /**
+     * It calls {@link #onFileUpload(FileUpload)}
+     *
+     * @param fileUpload
+     * @throws FileUploadViolationException
+     */
+    protected void process(FileUpload fileUpload) throws FileUploadViolationException {
+        onFileUpload(fileUpload);
     }
 
     public FileUploadWidgetSettings getSettings(){

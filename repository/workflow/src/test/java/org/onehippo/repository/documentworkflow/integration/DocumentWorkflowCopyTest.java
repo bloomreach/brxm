@@ -22,11 +22,13 @@ import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.documentworkflow.task.CopyDocumentTask;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,6 +40,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class DocumentWorkflowCopyTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -141,8 +144,12 @@ public class DocumentWorkflowCopyTest extends AbstractDocumentWorkflowIntegratio
         assertThat(version.getFrozenNode().getProperty("title").getString()).isEqualTo("foo title");
     }
 
+    /**
+     * TODO once CMS-14276 has been addressed, rename this test to
+     * copy_document_foo_when_other_branch_is_the_unpublished_copies_foo_from_history_and_sets_branch_info_on_target
+     */
     @Test
-    public void copy_document_foo_when_other_branch_is_the_unpublished_copies_foo_from_history_and_sets_branch_info_on_target()
+    public void copy_document_foo_when_other_branch_is_the_unpublished_copies_foo_from_history_and_sets_it_to_core()
             throws Exception {
 
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
@@ -166,17 +173,29 @@ public class DocumentWorkflowCopyTest extends AbstractDocumentWorkflowIntegratio
 
 
         // EXPECTATIONS FOR THE TARGET NODE
-        assertThat(newDocUnpublished.isNodeType(HIPPO_MIXIN_BRANCH_INFO))
-                .as("Expected 'foo' branch to have been copied")
-                .isTrue();
+        // TODO CMS-14276
+        if (CopyDocumentTask.COPY_BRANCH_TO_BRANCH_SUPPORTED) {
+            assertThat(newHandle.isNodeType(HippoNodeType.NT_HIPPO_VERSION_INFO))
+                    .isTrue();
+            assertThat(newDocUnpublished.isNodeType(HIPPO_MIXIN_BRANCH_INFO))
+                    .as("Expected 'foo' branch to have been copied")
+                    .isTrue();
+            assertThat(newDocUnpublished.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString()).isEqualTo("foo");
+            assertThat(newDocUnpublished.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString()).isEqualTo("Foo");
+            assertThat(JcrUtils.getMultipleStringProperty(newHandle, HIPPO_BRANCHES_PROPERTY, null))
+                    .containsExactly("foo");
+        } else {
+            assertThat(newDocUnpublished.isNodeType(HIPPO_MIXIN_BRANCH_INFO))
+                    .as("As long as CMS-14276 is not done, we copy always to a 'master' version")
+                    .isFalse();
+            assertThat(newHandle.isNodeType(HippoNodeType.NT_HIPPO_VERSION_INFO))
+                    .as("As long as CMS-14276 is not done, we copy always to a 'master' version")
+                    .isFalse();
+        }
 
         assertThat(newDocUnpublished.hasProperty("title")).isTrue();
         assertThat(newDocUnpublished.getProperty("title").getString()).isEqualTo("foo title");
 
-        assertThat(newDocUnpublished.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString()).isEqualTo("foo");
-        assertThat(newDocUnpublished.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString()).isEqualTo("Foo");
-        assertThat(JcrUtils.getMultipleStringProperty(newHandle, HIPPO_BRANCHES_PROPERTY, null))
-                .containsExactly("foo");
 
         final VersionHistory newDocVersionHistory = session.getWorkspace().getVersionManager().getVersionHistory(newDocUnpublished.getPath());
         assertThat(newDocVersionHistory.getVersionLabels())

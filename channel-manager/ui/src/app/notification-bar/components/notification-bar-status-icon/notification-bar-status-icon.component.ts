@@ -43,6 +43,7 @@ export class NotificationBarStatusIconComponent {
       [XPageStatus.ScheduledToTakeOffline]: 'calendar-clock',
       [XPageStatus.ScheduledPublicationRequest]: 'comment-processing-outline',
       [XPageStatus.ScheduledToTakeOfflineRequest]: 'comment-processing-outline',
+      [XPageStatus.NotPartOfProject]: 'xpage',
       [XPageStatus.ProjectInProgress]: 'minus-circle-outline',
       [XPageStatus.ProjectInReview]: 'comment-processing-outline',
       [XPageStatus.ProjectPageApproved]: 'comment-check-outline',

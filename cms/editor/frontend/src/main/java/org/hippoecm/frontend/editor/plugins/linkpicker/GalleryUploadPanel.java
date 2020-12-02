@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import java.util.Objects;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,8 +41,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.i18n.TranslatorUtils;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
@@ -56,6 +53,8 @@ import org.hippoecm.frontend.plugins.jquery.upload.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
 import org.hippoecm.frontend.plugins.jquery.upload.single.SingleFileUploadWidget;
+import org.hippoecm.frontend.plugins.yui.upload.processor.DefaultFileUploadPreProcessorService;
+import org.hippoecm.frontend.plugins.yui.upload.processor.FileUploadPreProcessorService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.hippoecm.frontend.session.UserSession;
@@ -87,6 +86,7 @@ public abstract class GalleryUploadPanel extends Panel {
     private AjaxButton uploadButton;
     private final LoadableDetachableModel<List<String>> galleryTypesModel;
     private final FileUploadValidationService validator;
+    private final FileUploadPreProcessorService fileUploadPreProcessorService;
     private AbstractFileUploadWidget fileUploadWidget;
 
     private boolean uploadSelected;
@@ -110,6 +110,7 @@ public abstract class GalleryUploadPanel extends Panel {
             }
         };
         validator = ImageUploadValidationService.getValidationService(context, config);
+        fileUploadPreProcessorService = DefaultFileUploadPreProcessorService.getPreProcessorService(context, config);
 
         add(createUploadForm(config));
         setOutputMarkupId(true);
@@ -145,7 +146,8 @@ public abstract class GalleryUploadPanel extends Panel {
         uploadButton.setOutputMarkupId(true);
         uploadForm.add(this.uploadButton);
 
-        fileUploadWidget = new SingleFileUploadWidget(FILEUPLOAD_WIDGET_ID, config, validator) {
+        fileUploadWidget = new SingleFileUploadWidget(FILEUPLOAD_WIDGET_ID, config, validator,
+                fileUploadPreProcessorService) {
             @Override
             protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {
                 // because it's an ajax event, feedbacks need to be removed manually

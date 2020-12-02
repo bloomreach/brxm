@@ -20,12 +20,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Optional;
 
+import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
-import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.util.PropertyParser;
@@ -58,18 +58,41 @@ public class ComponentConfigurationImpl implements ComponentConfiguration {
     }
     
     public Map<String,String> getParameters(ResolvedSiteMapItem hstResolvedSiteMapItem) {
-        Map<String,String> parameters = new HashMap<String, String>();
+        Map<String,String> parameters = new HashMap<>();
         PropertyParser pp = new PropertyParser(hstResolvedSiteMapItem.getParameters());
         for(Entry<String, String> entry: componentConfiguration.getParameters().entrySet()) {
             String parsedParamValue = (String)pp.resolveProperty(entry.getKey(), entry.getValue());
             parameters.put(entry.getKey(), parsedParamValue);
         }
+        componentConfiguration.getDynamicComponentParameters().forEach(param -> {
+            if (parameters.containsKey(param.getName())) {
+                // already from parameter names/values populated
+                return;
+            }
+            Object defaultValue = param.getDefaultValue();
+            if (defaultValue == null) {
+                return;
+            }
+            String parsedParamValue = (String)pp.resolveProperty(param.getName(), String.valueOf(defaultValue));
+            parameters.put(param.getName(), parsedParamValue);
+        });
         return parameters;
     }
     
    
     public String getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
         String paramValue = componentConfiguration.getParameter(name);
+        if (paramValue == null) {
+            Optional<DynamicParameter> dynamicComponentParameter = componentConfiguration.getDynamicComponentParameter(name);
+            if (!dynamicComponentParameter.isPresent()) {
+                return null;
+            }
+            Object defaultValue = dynamicComponentParameter.get().getDefaultValue();
+            if (defaultValue == null) {
+                return null;
+            }
+            paramValue = String.valueOf(defaultValue);
+        }
         PropertyParser pp = new PropertyParser(hstResolvedSiteMapItem.getParameters());
         String parsedParamValue = (String)pp.resolveProperty(name, paramValue);
         log.debug("Return value '{}' for property '{}'", parsedParamValue, name);

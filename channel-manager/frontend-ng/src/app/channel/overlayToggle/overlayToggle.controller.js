@@ -35,6 +35,10 @@ class OverlayToggleController {
     if (changes.channel) {
       this.initiateOverlay();
     }
+
+    if (changes.state && (changes.state.previousValue !== changes.state.currentValue)) {
+      this.setState(changes.state.currentValue);
+    }
   }
 
   initiateOverlay() {

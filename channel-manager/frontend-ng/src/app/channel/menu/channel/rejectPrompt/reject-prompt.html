@@ -33,9 +33,9 @@
     </form>
   </md-dialog-content>
   <md-dialog-actions>
-    <md-button ng-click="$ctrl.cancel()">{{ 'CANCEL' | translate }}</md-button>
+    <md-button class="qa-cancel" ng-click="$ctrl.cancel()">{{ 'CANCEL' | translate }}</md-button>
     <md-button ng-disabled="messageForm.$invalid"
-               ng-click="$ctrl.close(message)">
+               class="qa-ok" ng-click="$ctrl.close(message)">
       {{ 'OK' | translate }}
     </md-button>
   </md-dialog-actions>

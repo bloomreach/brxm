@@ -19,30 +19,10 @@ class SiteMapListingController {
     'ngInject';
 
     this.HippoIframeService = HippoIframeService;
-
-    const startWithSlashFilter = $filter('startWithSlash');
-    this.filteredFields = ['pageTitle', 'name', item => startWithSlashFilter(item.pathInfo)];
-    this.filteredItems = [];
   }
 
-  onFilter(filteredItems) {
-    this.filteredItems = filteredItems;
-  }
-
-  showPage(siteMapItem) {
-    this.HippoIframeService.load(siteMapItem.renderPathInfo);
-  }
-
-  isActiveSiteMapItem(siteMapItem) {
-    return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
-  }
-
-  get activeItemIndex() {
-    return this.filteredItems.findIndex(item => this.isActiveSiteMapItem(item));
-  }
-
-  set activeItemIndex(index) {
-    // ignore update by md-virtual-repeat-container on scroll
+  getCurrentRenderPathInfo() {
+    return this.HippoIframeService.getCurrentRenderPathInfo();
   }
 }
 

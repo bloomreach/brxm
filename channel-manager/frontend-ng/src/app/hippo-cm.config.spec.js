@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,11 +73,11 @@ describe('The hippo-cm module config', () => {
   });
 
   it('falls back to English translations for unknown locales', () => {
-    configService.locale = 'no-such-locale';
-    $httpBackend.whenGET('i18n/no-such-locale.json?antiCache=123').respond(404);
+    configService.locale = 'unknown';
+    $httpBackend.expectGET('i18n/unknown.json?antiCache=123').respond(404);
 
     $state.go('hippo-cm.dummy-child-state');
-    $rootScope.$apply();
+    $httpBackend.flush();
 
     expect($translate.instant('HIPPO')).toEqual('Hippo');
   });

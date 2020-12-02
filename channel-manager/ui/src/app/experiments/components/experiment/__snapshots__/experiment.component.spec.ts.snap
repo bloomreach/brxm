@@ -25,7 +25,7 @@ exports[`ExperimentComponent if experiment was not saved should show the experim
       class="actions"
     >
       <button
-        class="save-button"
+        class="save-button qa-save"
         color="primary"
         mat-stroked-button=""
       >
@@ -62,7 +62,7 @@ exports[`ExperimentComponent if experiment was saved should show the experiment 
       class="actions"
     >
       <button
-        class="save-button"
+        class="save-button qa-save"
         color="primary"
         mat-stroked-button=""
       >

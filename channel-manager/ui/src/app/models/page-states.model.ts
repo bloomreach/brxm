@@ -15,11 +15,11 @@
  */
 
 import { ScheduledRequest } from './scheduled-request.model';
-import { WorkflowRequest } from './workflow-request.model';
+import { Workflow } from './workflow.model';
 import { XPageState } from './xpage-state.model';
 
 export interface PageStates {
   xpage?: XPageState;
   scheduledRequest?: ScheduledRequest;
-  workflowRequest?: WorkflowRequest;
+  workflow?: Workflow;
 }

@@ -47,7 +47,7 @@ import static org.junit.Assert.assertEquals;
 import static org.easymock.EasyMock.expect;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*"})
 @PrepareForTest(ResourceBundleUtils.class)
 public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTestParametersInfoProcessor {
 

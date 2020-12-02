@@ -27,46 +27,10 @@ describe('siteMapListingController', () => {
     });
 
     spyOn(HippoIframeService, 'getCurrentRenderPathInfo');
-    spyOn(HippoIframeService, 'load');
   });
 
-  it('asks the HippoIframeService to load the requested siteMap item', () => {
-    const siteMapItem = {
-      renderPathInfo: 'dummy',
-    };
-    $ctrl.showPage(siteMapItem);
-
-    expect(HippoIframeService.load).toHaveBeenCalledWith('dummy');
-  });
-
-  it('compares the site map item\'s renderPathInfo to the current one', () => {
-    HippoIframeService.getCurrentRenderPathInfo.and.returnValue('/current/path');
-    const siteMapItem = {
-      renderPathInfo: '/current/path',
-    };
-    expect($ctrl.isActiveSiteMapItem(siteMapItem)).toBe(true);
-
-    siteMapItem.renderPathInfo = '/other/path';
-    expect($ctrl.isActiveSiteMapItem(siteMapItem)).toBe(false);
-  });
-
-  it('gets filtered sitemap-items via the onFilter callback', () => {
-    const items = ['one', 'two'];
-    $ctrl.onFilter(items);
-
-    expect($ctrl.filteredItems).toEqual(items);
-  });
-
-  it('returns the index of the active sitemap item in the filtered items', () => {
-    $ctrl.filteredItems = [{ renderPathInfo: 'one' }, { renderPathInfo: 'two' }];
-
-    HippoIframeService.getCurrentRenderPathInfo.and.returnValue('one');
-    expect($ctrl.activeItemIndex).toEqual(0);
-
-    HippoIframeService.getCurrentRenderPathInfo.and.returnValue('two');
-    expect($ctrl.activeItemIndex).toEqual(1);
-
-    HippoIframeService.getCurrentRenderPathInfo.and.returnValue('three');
-    expect($ctrl.activeItemIndex).toEqual(-1);
+  it('returns the currentRenderPathInfo from service', () => {
+    $ctrl.getCurrentRenderPathInfo();
+    expect(HippoIframeService.getCurrentRenderPathInfo).toHaveBeenCalled();
   });
 });

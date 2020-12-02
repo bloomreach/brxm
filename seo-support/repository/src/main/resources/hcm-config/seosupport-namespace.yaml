@@ -42,8 +42,8 @@ definitions:
           /_default_:
             jcr:primaryType: frontend:plugincluster
             frontend:properties: [mode]
-            frontend:references: [wicket.model, model.compareTo, engine]
-            frontend:services: [wicket.id]
+            frontend:references: [wicket.model, model.compareTo, engine, validator.id]
+            frontend:services: [wicket.id, validator.id]
             /root:
               jcr:primaryType: frontend:plugin
               item: ${cluster.id}.field

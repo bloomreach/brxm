@@ -36,56 +36,56 @@ describe('DocumentWorkflowService', () => {
 
   it('should invoke the "copy" workflow', () => {
     DocumentWorkflowService.copy('doc1');
-    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'document', 'copy');
+    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'document', 'copy', undefined);
   });
 
   it('should invoke the "move" workflow', () => {
     DocumentWorkflowService.move('doc1');
-    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'document', 'move');
+    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'document', 'move', undefined);
   });
 
   it('should invoke the "delete" workflow', () => {
     DocumentWorkflowService.delete('doc1');
-    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'document', 'delete');
+    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'document', 'delete', undefined);
   });
 
   it('should invoke the "publish" workflow', () => {
     DocumentWorkflowService.publish('doc1');
-    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'PUB');
+    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'PUB', undefined);
   });
 
   it('should invoke the "schedule publication" workflow', () => {
     DocumentWorkflowService.schedulePublication('doc1');
-    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'SCHED_PUB');
+    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'SCHED_PUB', undefined);
   });
 
   it('should invoke the "request publication" workflow', () => {
     DocumentWorkflowService.requestPublication('doc1');
-    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'REQ_PUB');
+    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'REQ_PUB', undefined);
   });
 
   it('should invoke the "request schedule publication" workflow', () => {
     DocumentWorkflowService.requestSchedulePublication('doc1');
-    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'REQ_SCHED_PUB');
+    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'REQ_SCHED_PUB', undefined);
   });
 
   it('should invoke the "unpublish" workflow', () => {
     DocumentWorkflowService.unpublish('doc1');
-    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'DEPUB');
+    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'DEPUB', undefined);
   });
 
   it('should invoke the "schedule unpublication" workflow', () => {
     DocumentWorkflowService.scheduleUnpublication('doc1');
-    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'SCHED_DEPUB');
+    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'SCHED_DEPUB', undefined);
   });
 
   it('should invoke the "request unpublication" workflow', () => {
     DocumentWorkflowService.requestUnpublication('doc1');
-    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'REQ_DEPUB');
+    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'REQ_DEPUB', undefined);
   });
 
   it('should invoke the "request schedule unpublication" workflow', () => {
     DocumentWorkflowService.requestScheduleUnpublication('doc1');
-    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'REQ_SCHED_DEPUB');
+    expect(workflow.invoke).toHaveBeenCalledWith('doc1', 'publication', 'REQ_SCHED_DEPUB', undefined);
   });
 });

@@ -463,6 +463,11 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             // channel mngr when we are dealing with an explicit configured Mount or not, hence we request the delegatee
             return delegatee.isExplicit();
         }
+
+        @Override
+        public String getPageModelApi() {
+            return delegatee.getPageModelApi();
+        }
     }
 
     static class PreviewDecoratedVirtualHost implements VirtualHost {
