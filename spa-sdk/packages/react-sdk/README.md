@@ -153,6 +153,88 @@ export default function Menu() {
 }
 ```
 
+### Buttons
+- Manage menu button can be placed inside a menu component using `BrManageMenuButton` component.
+  ```tsx
+  import React from 'react';
+  import { Menu, Reference } from '@bloomreach/spa-sdk';
+  import { BrComponentContext, BrManageMenuButton, BrPageContext } from '@bloomreach/react-sdk';
+
+  interface MenuModels {
+    menu: Reference;
+  }
+
+  export default function MenuComponent() {
+    const component = React.useContext(BrComponentContext);
+    const page = React.useContext(BrPageContext);
+    const menuRef = component?.getModels<MenuModels>().menu;
+    const menu = menuRef && page?.getContent<Menu>(menuRef);
+
+    if (!menu) {
+      return null;
+    }
+
+    return (
+      <ul className={page?.isPreview() ? 'has-edit-button' : ''}>
+        {/* ... */}
+
+        <BrManageMenuButton menu={menu} />
+      </ul>
+    );
+  }
+  ```
+- Manage content button can be placed inside a component using `BrManageContentButton` component with non-empty `content` property.
+  ```tsx
+  import React from 'react';
+  import { Document, Reference } from '@bloomreach/spa-sdk';
+  import { BrManageContentButton, BrProps } from '@bloomreach/react-sdk';
+
+  interface BannerModels {
+    document: Reference;
+  }
+
+  export default function Banner({ component, page }: BrProps) {
+    const { document: documentRef } = component.getModels<BannerModels>();
+    const document = documentRef && page.getContent<Document>(documentRef);
+
+    return (
+      <div className={page.isPreview() ? 'has-edit-button' : ''}>
+        {/* ... */}
+
+        <BrManageContentButton
+          content={document}
+          documentTemplateQuery="new-banner-document"
+          folderTemplateQuery="new-banner-folder"
+          parameter="document"
+          root="banners"
+          relative
+        />
+      </div>
+    );
+  }
+  ```
+- Add new content button can be placed inside a component using `BrManageContentButton` directive but without passing a content entity.
+  ```tsx
+  import React from 'react';
+  import { BrManageContentButton, BrProps } from '@bloomreach/react-sdk';
+
+  export default function News({ component, page }: BrProps) {
+    // ...
+
+    return (
+      <div className={page.isPreview() ? 'has-edit-button' : ''}>
+        {/* ... */}
+
+        <BrManageContentButton
+          documentTemplateQuery="new-news-document"
+          folderTemplateQuery="new-news-folder"
+          root="news"
+        />
+      </div>
+    );
+  }
+  ```
+
 ### Reference
 The React SDK is using [Bloomreach SPA SDK](https://www.npmjs.com/package/@bloomreach/spa-sdk#reference) to interact with the brXM.
 The complete reference of the exposed JavaScript objects can be found [here](https://javadoc.onehippo.org/14.3/bloomreach-spa-sdk/).
