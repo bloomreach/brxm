@@ -142,6 +142,15 @@ public class DocumentsServiceImpl implements DocumentsService {
                 return createDocument(uuid, handle, docType, draft);
             }
 
+            // there is no unpublished for branch 'branchId' and no published master, in case branchId is not for
+            // 'master', check whether there is an unpublished master.
+            if (!MASTER_BRANCH_ID.equals(branchId)) {
+                final Node unpublishedMaster = new BranchHandleImpl(MASTER_BRANCH_ID, handle).getUnpublished();
+                if (unpublishedMaster != null) {
+                    return createDocument(uuid, handle, docType, unpublishedMaster);
+                }
+            }
+
             throw new NotFoundException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST));
 
         } catch (WorkflowException e) {
