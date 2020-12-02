@@ -27,14 +27,12 @@ import javax.jcr.SimpleCredentials;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.Utilities;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
