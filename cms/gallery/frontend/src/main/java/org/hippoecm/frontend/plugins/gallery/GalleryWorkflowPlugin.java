@@ -54,6 +54,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.model.SvgOnLoadGalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.SvgScriptGalleryException;
 import org.hippoecm.frontend.plugins.jquery.upload.multiple.JQueryFileUploadDialog;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
@@ -85,7 +86,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
 
     private static final Logger log = LoggerFactory.getLogger(GalleryWorkflowPlugin.class);
 
-    public class UploadDialog extends JQueryFileUploadDialog{
+    public class UploadDialog extends JQueryFileUploadDialog {
         private static final long serialVersionUID = 1L;
 
         protected UploadDialog(final IPluginContext pluginContext, final IPluginConfig pluginConfig) {
@@ -148,6 +149,9 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                     if (StringUtils.containsIgnoreCase(svgContent, "<script")) {
                         throw new SvgScriptGalleryException("SVG images with embedded script are not supported.");
                     }
+                    if (StringUtils.containsIgnoreCase(svgContent, "onload=")) {
+                        throw new SvgOnLoadGalleryException("SVG images with onload attribute are not supported.");
+                    }
                 }
 
                 WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
@@ -191,7 +195,8 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
         }
     }
 
-    protected void onGalleryItemCreation(Node node) { }
+    protected void onGalleryItemCreation(Node node) {
+    }
 
     private void remove(final WorkflowManager manager, final HippoNode node) {
         try {
@@ -209,8 +214,8 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
 
     private void afterUploadItems() {
         int threshold = getPluginConfig().getAsInteger("select.after.create.threshold", 1);
-        if(newItems.size() <= threshold) {
-            for(String path : newItems){
+        if (newItems.size() <= threshold) {
+            for (String path : newItems) {
                 select(new JcrNodeModel(path));
             }
         }
@@ -309,7 +314,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             try {
                 if (nodeModel.getNode() != null
                         && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode()
-                                .isNodeType(HippoNodeType.NT_HANDLE))) {
+                        .isNodeType(HippoNodeType.NT_HANDLE))) {
                     browser.browse(nodeModel);
                 }
             } catch (RepositoryException ex) {
