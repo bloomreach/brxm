@@ -1,0 +1,14 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/branchinfo:
+      jcr:primaryType: hipposys:workflowcategory
+      /handle:
+        jcr:primaryType: frontend:workflow
+        hipposys:classname: org.onehippo.repository.documentworkflow.DocumentWorkflowImpl
+        hipposys:display: Branch info workflow
+        hipposys:nodetype: hippo:handle
+        hipposys:privileges: ['hippo:author']
+        hipposys:subtype: hippostdpubwf:document
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.reviewedactions.BranchInfoWorkflowPlugin
