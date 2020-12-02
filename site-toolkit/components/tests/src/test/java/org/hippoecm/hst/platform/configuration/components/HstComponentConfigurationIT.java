@@ -34,6 +34,8 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -312,6 +314,9 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         session.save();
 
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
+        // for some reason the invalidator does not always invalidate the header, resulting in flake test, for now,
+        // add thread sleep (which should not be needed)
+        Thread.sleep(50);
 
         assertPropertyPlaceHolderReplaced("prop");
 
@@ -321,14 +326,27 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
 
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
 
+        // for some reason the invalidator does not always invalidate the header, resulting in flake test, for now,
+        // add thread sleep (which should not be needed)
+        Thread.sleep(50);
+
         assertPropertyPlaceHolderReplaced("prop");
 
         baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[] {"prop"});
         // non existing property place holder ${23} should result in 'null' replacement
         baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"${23}"});
+
+        for (Node o : new NodeIterable(((HippoSession)session).pendingChanges())) {
+            System.out.println(o.getPath());
+        }
+
         session.save();
 
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:xpages/basepage/header"});
+
+        // for some reason the invalidator does not always invalidate the header, resulting in flake test, for now,
+        // add thread sleep (which should not be needed)
+        Thread.sleep(50);
 
         {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
@@ -352,6 +370,10 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
 
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
 
+        // for some reason the invalidator does not always invalidate the header, resulting in flake test, for now,
+        // add thread sleep (which should not be needed)
+        Thread.sleep(50);
+
         assertPropertyPlaceHolderReplaced("placeholderprop");
 
 
@@ -368,6 +390,10 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
 
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header/container/banner-new-style",
         "/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/testcatalogitem/paramWithDefaultValue"});
+
+        // for some reason the invalidator does not always invalidate the header, resulting in flake test, for now,
+        // add thread sleep (which should not be needed)
+        Thread.sleep(50);
 
         {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
