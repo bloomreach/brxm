@@ -27,7 +27,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Form;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-class MenuHierarchy implements Serializable {
+public class MenuHierarchy implements Serializable {
 
     private final List<String> categories;
     private final List<String> submenuOrder;
@@ -175,12 +175,7 @@ class MenuHierarchy implements Serializable {
         return submenus.get(category);
     }
 
-    public ActionDescription getAction(final String action) {
-        for (final ActionDescription actionDescription : items) {
-            if (actionDescription.getId().equals(action)) {
-                return actionDescription;
-            }
-        }
-        return null;
+    public List<ActionDescription> getItems() {
+        return items;
     }
 }

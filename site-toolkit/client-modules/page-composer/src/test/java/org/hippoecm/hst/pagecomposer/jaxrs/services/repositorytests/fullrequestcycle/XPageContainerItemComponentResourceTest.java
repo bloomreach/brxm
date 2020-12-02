@@ -37,6 +37,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContaine
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -51,7 +53,9 @@ import static java.lang.Boolean.TRUE;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -79,7 +83,6 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         getComponentItemAs(ADMIN_CREDENTIALS, mountId, componentItemIdNewStyle);
     }
-
 
     private void getComponentItemAs(final SimpleCredentials creds, final String mountId, final String componentItemId) throws IOException, ServletException {
         final RequestResponseMock requestResponse = mockGetRequestResponse(
@@ -114,7 +117,6 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         // author is also allowed to do a GET on XPageContainerItemComponentResource.getVariant()
         getComponentItemAs(AUTHOR_CREDENTIALS, mountId, frozenBannerComponent.getIdentifier());
     }
-
 
     @Test
     public void get_container_item_new_style_of_branched_xpage_for_VERSIONED_XPage() throws Exception {
@@ -199,7 +201,7 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner").getProperty(COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES);
 
-        final String[] variants = JcrUtils.getMultipleStringProperty(admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner"),
+        final String[] variants = getMultipleStringProperty(admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner"),
                 COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES, null);
 
         assertThat(variants)
@@ -836,4 +838,80 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
         assertNull(parameters.getValue("variant1", "newparam"));
     }
 
+
+    /**
+     * XPage docs can also have static components which can also have containers with container items which are not
+     * linked back to an XPage Layout container
+     * @throws Exception
+     */
+    @Test
+    public void get_and_modify_container_item_from_NON_XPAGE_LAYOUT_container() throws Exception {
+        try {
+            // ******* SETUP FIXTURE ************ //
+            JcrUtils.copy(admin, EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH, "/backupXPage");
+            admin.save();
+
+            // make sure the unpublished variant exists (just by depublishing for now....)
+            final WorkflowManager workflowManager = ((HippoSession) admin).getWorkspace().getWorkflowManager();
+
+            handle = admin.getNode(EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH);
+            final DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
+            documentWorkflow.depublish();
+            // and publish again such that there is a live variant
+            documentWorkflow.publish();
+
+            // ******* END SETUP FIXTURE ************ //
+            final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            String componentItemId = getVariant(handle, "unpublished").getNode("hst:xpage/header/header-container-xpage-doc-only/banner-new-style").getIdentifier();
+            {
+                // READ ITEM
+                final RequestResponseMock requestResponse = mockGetRequestResponse(
+                        "http", "localhost", "/_rp/" + componentItemId + "./hippo-default/en", null, "GET");
+
+                final MockHttpServletResponse response = render(mountId, requestResponse, ADMIN_CREDENTIALS);
+                final String restResponse = response.getContentAsString();
+
+                final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+
+                // see default BannerComponentInfo
+                List<Map<String, String>> properties = (List) responseMap.get("properties");
+                assertEquals(1, properties.size());
+
+                Map<String, String> propertyRepresentation = properties.get(0);
+
+                assertEquals("path", propertyRepresentation.get("name"));
+                assertEquals("/some/default", propertyRepresentation.get("defaultValue"));
+                assertEquals("", propertyRepresentation.get("value"));
+            }
+            {
+                // UPDATE ITEM
+                final RequestResponseMock requestResponse = mockGetRequestResponse(
+                        "http", "localhost", "/_rp/" + componentItemId + "./variant1",
+                        "path=/my/new/value&newparam=newvalue", "PUT");
+
+
+                final MultivaluedMap<String, String> updatedParams = new MultivaluedHashMap<>();
+                updatedParams.putSingle("path", "/my/new/value");
+
+                final MockHttpServletRequest request = requestResponse.getRequest();
+                request.setContent(objectMapper.writeValueAsBytes(updatedParams));
+                request.setContentType("application/json;charset=UTF-8");
+
+                // Do it as author which : author should be allowed
+                final MockHttpServletResponse response = render(mountId, requestResponse, AUTHOR_CREDENTIALS);
+
+                assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+                assertThat(getMultipleStringProperty(admin.getNodeByIdentifier(componentItemId), GENERAL_PROPERTY_PARAMETER_VALUES, null))
+                        .containsExactly("/my/new/value");
+            }
+        } finally {
+            if (admin.nodeExists("/backupXPage")) {
+                admin.getNode(EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH).remove();
+                admin.move("/backupXPage", EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH);
+                admin.save();
+            }
+        }
+    }
 }

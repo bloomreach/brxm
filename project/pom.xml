@@ -95,7 +95,7 @@
         Note that there is *no* dependency management for the version properties below.
     -->
     <google-api-services-analytics.version>v3-rev116-1.20.0</google-api-services-analytics.version>
-    <cxf.version>3.3.6</cxf.version>
+    <cxf.version>3.3.8</cxf.version>
     <jaxrs.version>2.1</jaxrs.version>
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
     <jackson2.version>2.10.5</jackson2.version>
@@ -112,6 +112,8 @@
     <freemarker.version>2.3.28</freemarker.version>
     <nodejs.version>v12.16.1</nodejs.version>
     <npm.version>6.13.4</npm.version>
+    <httpclient.version>4.5.6</httpclient.version>
+    <httpcore.version>4.4.10</httpcore.version>
 
     <!-- test dependencies -->
     <restassured.version>4.1.2</restassured.version>
@@ -182,7 +184,7 @@
     <!-- default empty javaagent, to be set for JRebel or HotSwapAgent -->
     <javaagent />
     <!-- the h2 driver version to use for development environments. The h2 driver is bundled with the repository and added to the Tomcat classpath-->
-    <h2.database.version>1.4.199</h2.database.version>
+    <h2.database.version>1.4.200</h2.database.version>
 
     <javadoc.base.version>14.3</javadoc.base.version>
   </properties>

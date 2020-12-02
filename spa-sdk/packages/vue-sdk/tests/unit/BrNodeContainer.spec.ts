@@ -59,7 +59,7 @@ describe('BrNodeContainer', () => {
   let component: jest.Mocked<Container>;
   let mapping: Record<string, Vue.Component>;
   let page: jest.Mocked<Page>;
-  let provide: Function;
+  let provide: () => unknown;
   let parent: Wrapper<Vue>;
 
   beforeEach(() => {
@@ -70,7 +70,7 @@ describe('BrNodeContainer', () => {
     page = ({} as unknown) as typeof page;
 
     parent = shallowMount(BrPage, { propsData: { component, mapping, page } });
-    provide = (parent.vm.$options.provide as Function).bind(parent.vm);
+    provide = (parent.vm.$options.provide as typeof provide).bind(parent.vm);
   });
 
   afterEach(() => {

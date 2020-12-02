@@ -370,7 +370,7 @@ describe('ContentEditorService', () => {
         expect(ContentEditor.getDocumentErrorMessages()).toEqual([]);
         expect(ContentEditor.getPublicationState()).toBe('new');
         expect(ContentEditor.getError()).toEqual({
-          titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+          titleKey: 'FEEDBACK_DOCUMENT_NOT_EDITABLE_TITLE',
           messageKey: 'FEEDBACK_DOCUMENT_REQUEST_PENDING_MESSAGE',
           messageParams: {
             displayName: 'Display Name',
@@ -1278,7 +1278,7 @@ describe('ContentEditorService', () => {
         expect(ContentEditor.document).toBeUndefined();
         expect(FeedbackService.showError).not.toHaveBeenCalled();
         expect(ContentEditor.getError()).toEqual({
-          titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+          titleKey: 'FEEDBACK_DOCUMENT_NOT_EDITABLE_TITLE',
           messageKey: 'FEEDBACK_DOCUMENT_REQUEST_PENDING_MESSAGE',
           messageParams: {
             displayName: 'Display Name',
@@ -1494,65 +1494,6 @@ describe('ContentEditorService', () => {
       expect(ContentEditor.getDocumentFieldValue('choice', 0)).toBe('value');
       expect(ContentEditor.getDocumentFieldValue('choice', 1)).toEqual({ string: 'value' });
       expect(ContentEditor.getDocumentFieldValue('choice', 1, 'string')).toBe('value');
-    });
-  });
-
-  describe('confirmPristine', () => {
-    beforeEach(() => {
-      testDocument.displayName = 'Test';
-      ContentEditor.document = testDocument;
-      spyOn($translate, 'instant');
-    });
-
-    it('should resolve if editor is pristine', (done) => {
-      ContentEditor.confirmPristine().then(done);
-      $rootScope.$digest();
-    });
-
-    it('should reject with "CANCELLED" if dialog is cancelled', (done) => {
-      ContentEditor.markDocumentDirty();
-      DialogService.show.and.returnValue($q.reject());
-
-      ContentEditor.confirmPristine()
-        .catch((e) => {
-          expect(e).toBe('CANCELLED');
-          done();
-        });
-      $rootScope.$digest();
-    });
-
-    it('should reject with "Unknown action <actionId>" if dialog returns unknown action', (done) => {
-      ContentEditor.markDocumentDirty();
-      DialogService.show.and.returnValue($q.resolve('UNKNOWN'));
-
-      ContentEditor.confirmPristine()
-        .catch((e) => {
-          expect(e).toBe('Unknown action \'UNKNOWN\'');
-          done();
-        });
-      $rootScope.$digest();
-    });
-
-    it('should saves changes', () => {
-      ContentEditor.markDocumentDirty();
-      DialogService.show.and.returnValue($q.resolve('SAVE'));
-      spyOn(ContentEditor, 'save').and.returnValue($q.resolve());
-
-      ContentEditor.confirmPristine();
-      $rootScope.$digest();
-
-      expect(ContentEditor.save).toHaveBeenCalled();
-    });
-
-    it('should discard changes', () => {
-      ContentEditor.markDocumentDirty();
-      DialogService.show.and.returnValue($q.resolve('DISCARD'));
-      spyOn(ContentEditor, 'discardChanges').and.returnValue($q.resolve());
-
-      ContentEditor.confirmPristine();
-      $rootScope.$digest();
-
-      expect(ContentEditor.discardChanges).toHaveBeenCalled();
     });
   });
 });

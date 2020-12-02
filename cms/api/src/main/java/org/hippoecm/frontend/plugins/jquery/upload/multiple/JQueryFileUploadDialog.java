@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,8 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
+import org.hippoecm.frontend.plugins.yui.upload.processor.DefaultFileUploadPreProcessorService;
+import org.hippoecm.frontend.plugins.yui.upload.processor.FileUploadPreProcessorService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.slf4j.Logger;
@@ -57,6 +59,7 @@ public abstract class JQueryFileUploadDialog extends Dialog {
     private FileUploadWidget fileUploadWidget;
 
     private final FileUploadValidationService validator;
+    private final FileUploadPreProcessorService fileUploadPreProcessorService;
     private final Button uploadButton;
     private boolean isUploadButtonEnabled;
 
@@ -94,12 +97,14 @@ public abstract class JQueryFileUploadDialog extends Dialog {
         this.pluginContext = pluginContext;
         this.pluginConfig = pluginConfig;
         this.validator = getValidator();
+        this.fileUploadPreProcessorService = getPreProcessor();
 
         createComponents();
     }
 
      private void createComponents() {
-        fileUploadWidget = new FileUploadWidget(FILEUPLOAD_WIDGET_ID, pluginConfig, validator){
+        fileUploadWidget = new FileUploadWidget(FILEUPLOAD_WIDGET_ID, pluginConfig, validator,
+                fileUploadPreProcessorService){
 
             @Override
             protected void onFileUpload(final FileUpload fileUpload) throws FileUploadViolationException {
@@ -169,6 +174,10 @@ public abstract class JQueryFileUploadDialog extends Dialog {
 
     protected FileUploadValidationService getValidator() {
         return ImageUploadValidationService.getValidationService(pluginContext, pluginConfig);
+    }
+
+    protected FileUploadPreProcessorService getPreProcessor() {
+        return DefaultFileUploadPreProcessorService.getPreProcessorService(pluginContext, pluginConfig);
     }
 
     @Override

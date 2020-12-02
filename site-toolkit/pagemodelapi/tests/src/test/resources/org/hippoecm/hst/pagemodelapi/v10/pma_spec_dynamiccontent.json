@@ -29,10 +29,10 @@
   },
   "page" : {
     "uid0" : {
-      "id" : "r25",
+      "id" : "h1",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25",
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=h1",
           "type" : "external"
         }
       },
@@ -163,10 +163,10 @@
       }
     },
     "uid1" : {
-      "id" : "r25_r1",
+      "id" : "h1_r1",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1",
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=h1_r1",
           "type" : "external"
         }
       },
@@ -186,10 +186,10 @@
       } ]
     },
     "uid2" : {
-      "id" : "r25_r2",
+      "id" : "h1_r2",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r2",
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=h1_r2",
           "type" : "external"
         }
       },
@@ -345,11 +345,11 @@
         "number" : 1,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=1&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=1&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=1&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=1&h1:limit=10",
             "type" : "external"
           }
         }
@@ -358,11 +358,11 @@
         "number" : 5,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=5&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=5&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=5&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=5&h1:limit=10",
             "type" : "external"
           }
         }
@@ -371,11 +371,11 @@
         "number" : 6,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=6&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=6&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=6&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=6&h1:limit=10",
             "type" : "external"
           }
         }
@@ -384,11 +384,11 @@
         "number" : 7,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=7&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=7&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=7&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=7&h1:limit=10",
             "type" : "external"
           }
         }
@@ -397,11 +397,11 @@
         "number" : 11,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=11&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=11&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=11&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=11&h1:limit=10",
             "type" : "external"
           }
         }
@@ -410,11 +410,11 @@
         "number" : 1,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=1&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=1&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=1&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=1&h1:limit=10",
             "type" : "external"
           }
         }
@@ -422,11 +422,11 @@
         "number" : 2,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=2&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=2&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=2&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=2&h1:limit=10",
             "type" : "external"
           }
         }
@@ -434,11 +434,11 @@
         "number" : 3,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=3&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=3&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=3&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=3&h1:limit=10",
             "type" : "external"
           }
         }
@@ -446,11 +446,11 @@
         "number" : 4,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=4&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=4&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=4&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=4&h1:limit=10",
             "type" : "external"
           }
         }
@@ -458,11 +458,11 @@
         "number" : 5,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=5&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=5&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=5&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=5&h1:limit=10",
             "type" : "external"
           }
         }
@@ -470,11 +470,11 @@
         "number" : 6,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=6&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=6&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=6&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=6&h1:limit=10",
             "type" : "external"
           }
         }
@@ -482,11 +482,11 @@
         "number" : 7,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=7&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=7&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=7&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=7&h1:limit=10",
             "type" : "external"
           }
         }
@@ -494,11 +494,11 @@
         "number" : 8,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=8&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=8&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=8&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=8&h1:limit=10",
             "type" : "external"
           }
         }
@@ -506,11 +506,11 @@
         "number" : 9,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=9&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=9&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=9&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=9&h1:limit=10",
             "type" : "external"
           }
         }
@@ -518,11 +518,11 @@
         "number" : 10,
         "links" : {
           "site" : {
-            "href" : "/genericdetail/dynamiccontent?r25:page=10&r25:limit=10",
+            "href" : "/genericdetail/dynamiccontent?h1:page=10&h1:limit=10",
             "type" : "internal"
           },
           "self" : {
-            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?r25:page=10&r25:limit=10",
+            "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?h1:page=10&h1:limit=10",
             "type" : "external"
           }
         }
@@ -531,10 +531,10 @@
       "enabled" : true
     },
     "uid5" : {
-      "id" : "r25_r1_r1",
+      "id" : "h1_r1_r1",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r1",
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=h1_r1_r1",
           "type" : "external"
         }
       },
@@ -546,10 +546,10 @@
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     },
     "uid6" : {
-      "id" : "r25_r1_r2",
+      "id" : "h1_r1_r2",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2",
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=h1_r1_r2",
           "type" : "external"
         }
       },
@@ -571,10 +571,10 @@
       } ]
     },
     "uid7" : {
-      "id" : "r25_r1_r2_r1",
+      "id" : "h1_r1_r2_r1",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r1",
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=h1_r1_r2_r1",
           "type" : "external"
         }
       },
@@ -590,10 +590,10 @@
       "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     },
     "uid8" : {
-      "id" : "r25_r1_r2_r2",
+      "id" : "h1_r1_r2_r2",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r2",
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=h1_r1_r2_r2",
           "type" : "external"
         }
       },
@@ -609,10 +609,10 @@
       "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     },
     "uid9" : {
-      "id" : "r25_r1_r2_r3",
+      "id" : "h1_r1_r2_r3",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r3",
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=h1_r1_r2_r3",
           "type" : "external"
         }
       },
@@ -628,10 +628,10 @@
       "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     },
     "uid10" : {
-      "id" : "r25_r1_r2_r4",
+      "id" : "h1_r1_r2_r4",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r25_r1_r2_r4",
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=h1_r1_r2_r4",
           "type" : "external"
         }
       },

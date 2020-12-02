@@ -31,6 +31,15 @@ export function NewsList(props: BrProps) {
   return (
     <div>
       { pageable.items.map((reference, key) => <NewsListItem key={key} item={props.page.getContent<Document>(reference)!} />) }
+      { props.page.isPreview() && (
+        <div className="has-edit-button float-right">
+          <BrManageContentButton
+            documentTemplateQuery="new-news-document"
+            folderTemplateQuery="new-news-folder"
+            root="news"
+          />
+        </div>
+      ) }
       <NewsListPagination {...pageable} />
     </div>
   );

@@ -15,6 +15,7 @@
  */
 
 import { Typed } from 'emittery';
+import { ButtonFactory } from './button-factory';
 import { Component } from './component';
 import { ComponentFactory } from './component-factory09';
 import { ContentFactory } from './content-factory09';
@@ -29,6 +30,7 @@ import { MetaCollectionFactory } from './meta-collection-factory';
 import { PageImpl, PageModel, isPage } from './page09';
 import { Page } from './page';
 
+let buttonFactory: jest.Mocked<ButtonFactory>;
 let componentFactory: jest.Mocked<ComponentFactory>;
 let content: Content;
 let contentFactory: jest.MockedFunction<ContentFactory>;
@@ -51,6 +53,7 @@ const model = {
 function createPage(pageModel = model) {
   return new PageImpl(
     pageModel,
+    buttonFactory,
     componentFactory,
     contentFactory,
     linkFactory,
@@ -62,6 +65,7 @@ function createPage(pageModel = model) {
 }
 
 beforeEach(() => {
+  buttonFactory = { create: jest.fn() } as unknown as typeof buttonFactory;
   componentFactory = { create: jest.fn(() => root) } as unknown as typeof componentFactory;
   content = {} as jest.Mocked<Content>;
   contentFactory = jest.fn(() => content) as unknown as typeof contentFactory;
@@ -74,6 +78,32 @@ beforeEach(() => {
 });
 
 describe('PageImpl', () => {
+  describe('getButton', () => {
+    it('should delegate to the ButtonFactory to create button', () => {
+      const page = createPage();
+      const model = {};
+
+      page.getButton('something', model);
+
+      expect(buttonFactory.create).toHaveBeenCalledWith('something', model);
+    });
+  });
+
+  describe('getChannelParameters', () => {
+    it('should return empty object if there is no channel', () => {
+      const page = createPage();
+
+      expect(page.getChannelParameters()).toStrictEqual({});
+    });
+
+    it('should return channel info parameters', () => {
+      const props = {};
+      const page = createPage({ ...model, channel: { info: { props } } });
+
+      expect(page.getChannelParameters()).toBe(props);
+    });
+  });
+
   describe('getComponent', () => {
     it('should forward a call to the root component', () => {
       const page = createPage();

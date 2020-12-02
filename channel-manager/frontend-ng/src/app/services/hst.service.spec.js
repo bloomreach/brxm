@@ -296,18 +296,38 @@ describe('HstService', () => {
 
     it('adds a new component from catalog toolkit', () => {
       spyOn(hstService, 'doPost').and.returnValue($q.when({ id: 'cafebabe' }));
+      const container = jasmine.createSpyObj('container', ['getId', 'isXPageLayoutComponent']);
+      container.getId.and.returnValue('container1');
+      container.isXPageLayoutComponent.and.returnValue(false);
 
-      hstService.addHstComponent({ id: '123456' }, 'container1').then((response) => {
+      hstService.addHstComponent({ id: '123456' }, container).then((response) => {
         expect(response).toEqual({ id: 'cafebabe' });
       });
 
       expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', '123456', undefined);
     });
 
+    it('adds a new layout component from catalog toolkit', () => {
+      spyOn(hstService, 'doPost').and.returnValue($q.when({ id: 'cafebabe' }));
+      const container = jasmine.createSpyObj('container', ['getId', 'isXPageLayoutComponent',
+        'getXPageLayoutHippoIdentifier']);
+      container.getId.and.returnValue('container1');
+      container.isXPageLayoutComponent.and.returnValue(true);
+      container.getXPageLayoutHippoIdentifier.and.returnValue('hippoId');
+
+      hstService.addHstComponent({ id: '123456' }, container).then((response) => {
+        expect(response).toEqual({ id: 'cafebabe' });
+      });
+
+      expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', 'hippoId', '123456', undefined);
+    });
+
     it('adds a new component from catalog toolkit before another component', () => {
       spyOn(hstService, 'doPost').and.returnValue($q.when({ id: 'cafebabe' }));
+      const container = jasmine.createSpyObj('container', ['getId', 'isXPageLayoutComponent']);
+      container.getId.and.returnValue('container1');
 
-      hstService.addHstComponent({ id: '123456' }, 'container1', '654321').then((response) => {
+      hstService.addHstComponent({ id: '123456' }, container, '654321').then((response) => {
         expect(response).toEqual({ id: 'cafebabe' });
       });
 
@@ -327,12 +347,12 @@ describe('HstService', () => {
 
     it('extracts the sitemap from the returned pages response', () => {
       const promiseSpy = jasmine.createSpy('promiseSpy');
-      const siteMap = ['dummy'];
+      const siteMap = { dummy: 'test' };
       const siteMapId = 'testSiteMapId';
-      const url = `${cmsContextPath}${apiUrlPrefix}/${siteMapId}./pages`;
-      $httpBackend.expectGET(url).respond(200, { data: { pages: siteMap } });
+      const url = `${cmsContextPath}${apiUrlPrefix}/${siteMapId}./pagetree`;
+      $httpBackend.expectGET(url).respond(200, { data: siteMap });
 
-      hstService.getSiteMap('testSiteMapId').then(promiseSpy);
+      hstService.getSiteMapTree('testSiteMapId').then(promiseSpy);
       $httpBackend.flush();
 
       expect(promiseSpy).toHaveBeenCalledWith(siteMap);
@@ -341,10 +361,10 @@ describe('HstService', () => {
     it('rejects the promise when retrieving the sitemap fails', () => {
       const catchSpy = jasmine.createSpy('catchSpy');
       const siteMapId = 'testSiteMapId';
-      const url = `${cmsContextPath}${apiUrlPrefix}/${siteMapId}./pages`;
+      const url = `${cmsContextPath}${apiUrlPrefix}/${siteMapId}./pagetree`;
       $httpBackend.expectGET(url).respond(500);
 
-      hstService.getSiteMap('testSiteMapId').catch(catchSpy);
+      hstService.getSiteMapTree('testSiteMapId').catch(catchSpy);
       $httpBackend.flush();
 
       expect(catchSpy).toHaveBeenCalled();

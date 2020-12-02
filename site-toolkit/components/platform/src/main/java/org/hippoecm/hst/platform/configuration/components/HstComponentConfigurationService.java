@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -74,6 +75,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINER
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_XPAGE;
 import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
+import static org.hippoecm.hst.platform.configuration.components.HstComponentsConfigurationService.setAutocreatedReference;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_IDENTIFIER;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
@@ -131,8 +133,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private String pageErrorHandlerClassName;
 
-    private List<String> usedChildReferenceNames = new ArrayList<String>();
-    private int autocreatedCounter = 0;
+    private Set<String> usedChildReferenceNames = new HashSet<>();
+    private AtomicInteger autocreatedCounter = new AtomicInteger(0);
 
     private Map<String, String> parameters = new LinkedHashMap<String, String>();
 
@@ -170,7 +172,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private boolean prototype;
 
     /**
-     * true if this hst component configuration is the root hst:xpage node below hst:xpages
+     * true if this hst component configuration root is an hst:xpage node
      */
     private boolean xpage;
 
@@ -182,6 +184,20 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     // true if this is an explicit xpage layout component (aka not inherited component but directly below the hst:xpage
     private boolean xpageLayoutComponent;
+
+    /**
+     * if true, this component is build from a jcr node of type 'hst:containercomponentreference'
+     */
+    private boolean containerComponentReference;
+
+    // in case the config is transformed to an XPage but the XPage document does not have a container for the
+    // container from the XPAge Layout
+    private boolean unresolvedXpageLayoutContainer;
+
+    /**
+     * See {@link #isExperiencePageComponent()}
+     */
+    private boolean experiencePageComponent;
 
     /**
      * hst:component of type 'xpage' or 'containercomponent' are expected to have a hippo:identifier
@@ -256,7 +272,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private Calendar lockedOn;
     private Calendar lastModified;
     private Boolean markedDeleted;
-    private boolean experiencePageComponent;
 
     /**
      * detached is true for components returned from {@link #copy(String, String, boolean)} implying that the
@@ -564,9 +579,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                         child.getNodeTypeName(), child.getValueProvider().getPath());
                 return null;
             }
-            if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
-                usedChildReferenceNames.add(StringPool.get(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
-            }
             try {
                 if (HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(child.getNodeTypeName())) {
                     HstNode referencedContainerNode = getReferencedContainer(child, referenceableContainers, rootConfigurationPathPrefix);
@@ -576,8 +588,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     // use the referencedContainerNode to build the hst component but use current child nodename as
                     // the name of the component node
                     String explicitName = child.getValueProvider().getName();
-                    return new HstComponentConfigurationService(referencedContainerNode,
+                    HstComponentConfigurationService childComponent = new HstComponentConfigurationService(referencedContainerNode,
                             this, rootNodeName, false, referenceableContainers, rootConfigurationPathPrefix, explicitName);
+                    // keep track of that the child component was loaded via a container component reference: these
+                    // need special handling in case of an XPage Layout since are not like XPage Layout container but
+                    // more like inherited components
+                    childComponent.containerComponentReference = true;
+                    return childComponent;
                 } else {
                     return new HstComponentConfigurationService(child, this, rootNodeName, false, referenceableContainers, rootConfigurationPathPrefix, null);
                 }
@@ -928,6 +945,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return xpageLayoutComponent;
     }
 
+    public boolean isContainerComponentReference() {
+        return containerComponentReference;
+    }
+
     @Override
     public String getHippoIdentifier() {
         return hippoIdentifier;
@@ -945,6 +966,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     @Override
     public boolean isHidden() {
         return hidden;
+    }
+
+    @Override
+    public boolean isUnresolvedXpageLayoutContainer() {
+        return unresolvedXpageLayoutContainer;
     }
 
     /**
@@ -1009,8 +1035,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.canonicalIdentifier = child.canonicalIdentifier;
         copy.componentFilterTag = child.componentFilterTag;
         copy.inherited = child.inherited;
-        // a copy is always shared
-        copy.shared = true;
+        // a copy is always shared unless the child IS an XPage Document Component: in that case it is never shared
+        if (child.isExperiencePageComponent()) {
+            copy.shared = false;
+        } else {
+            copy.shared = true;
+        }
         copy.standalone = child.standalone;
         copy.async = child.async;
         copy.asyncMode = child.asyncMode;
@@ -1020,7 +1050,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.parameterNamePrefixSet = new HashSet<String>(child.parameterNamePrefixSet);
         // localParameters have no merging, but for copy, the localParameters are copied
         copy.localParameters = new LinkedHashMap<String, String>(child.localParameters);
-        copy.usedChildReferenceNames = new ArrayList<String>(child.usedChildReferenceNames);
+        copy.usedChildReferenceNames = new HashSet<>(child.usedChildReferenceNames);
         copy.variants = new ArrayList<>(variants);
         copy.mountVariants = new ArrayList<>(mountVariants);
         copy.lockedBy = child.lockedBy;
@@ -1029,6 +1059,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.markedDeleted = child.markedDeleted;
         copy.fieldGroups = child.fieldGroups;
         copy.hstDynamicComponentParameters = child.hstDynamicComponentParameters;
+        copy.xpageLayoutComponent = child.xpageLayoutComponent;
+        copy.experiencePageComponent = child.experiencePageComponent;
+        copy.containerComponentReference = child.containerComponentReference;
 
         if (type != Type.CONTAINER_COMPONENT || includeContainerItems) {
             for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
@@ -1315,7 +1348,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private boolean referencesPopulated = false;
 
     protected void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations) {
-        if (referencesPopulated) {
+        if (referencesPopulated || rootComponentConfigurations == null) {
             return;
         }
         referencesPopulated = true;
@@ -1622,12 +1655,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             mergeResidualDynamicParameters(childToMerge.hstDynamicComponentParameters, this.hstDynamicComponentParameters);
         }
 
-        // debatable however not really relevant whether when fine grained merged the component is shared or not, since
-        // merging is not allowed for container and container items any way and for this the marker 'shared' is the most
-        // relevant
-        this.shared = childToMerge.shared;
+        if (!this.containerComponentReference) {
+            this.containerComponentReference = childToMerge.containerComponentReference;
+        }
 
-        // inherited flag not needed to merge
+        // Note we do NOT set this.shared = childToMerge.shared  : For XPages namely, an HstComponent can defined on the
+        // XPage doc as well as on, say, the inherited abstract page: in that case, the abstract inherited page has
+        // precedence
 
         if (!childToMerge.parameters.isEmpty()) {
             // as we already have parameters, add only the once we do not yet have
@@ -1850,7 +1884,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
 
         if (usedChildReferenceNames.isEmpty()) {
-            usedChildReferenceNames = Collections.emptyList();
+            usedChildReferenceNames = Collections.emptySet();
         }
     }
 
@@ -1858,12 +1892,15 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.autocreateReferenceNames();
-            if (child.getReferenceName() == null || "".equals(child.getReferenceName())) {
-                String autoRefName = "r" + (++autocreatedCounter);
-                while (usedChildReferenceNames.contains(autoRefName)) {
-                    autoRefName = "r" + (++autocreatedCounter);
-                }
-                child.setReferenceName(StringPool.get(autoRefName));
+            final String referenceName = child.getReferenceName();
+            if (StringUtils.isBlank(referenceName)) {
+                setAutocreatedReference(child, usedChildReferenceNames, autocreatedCounter);
+            } else if (usedChildReferenceNames.contains(referenceName)){
+                log.error("componentConfiguration '{}' contains invalid explicit reference '{}' since already in use. " +
+                        "Autocreating a new one now.", child.getCanonicalStoredLocation(), referenceName);
+                setAutocreatedReference(child, usedChildReferenceNames, autocreatedCounter);
+            } else {
+                usedChildReferenceNames.add(referenceName);
             }
         }
     }
@@ -1918,6 +1955,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         componentConfigurations = xPageDocumentContainer.componentConfigurations;
         childConfByName = xPageDocumentContainer.childConfByName;
 
+        // set the parent of the xPageDocumentContainer to the parent of the XPage Layout container such that
+        // if you request the getParent#getParent on a container item, you get the parent of the XPage Layout container
+        // since the parent of a container item will give the container of the XPage Document
+        xPageDocumentContainer.parent = parent;
     }
 
 
@@ -1928,9 +1969,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * XPage Layout : When in the CM someone adds a container item to it, we make sure the correct container gets added
      * to the Xpage in the Document!
      */
-    public void transformXpageLayoutContainer() {
+    public void transformUnresolvedXpageLayoutContainer() {
 
-        // mark the component to be an exp page container (even though this is a copy config from Xpage Config!
+        // mark the component to be an exp page container (even though this is a copy config from Xpage Config!)
+        // the reason: in the CM UI, an author should be able to add a container item to this container still!
         experiencePageComponent = true;
 
         // shared FALSE because the CM needs to be able to interact with the component as PART OF an Xpage Document!
@@ -1938,10 +1980,35 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         // even when the container comes from inherited common configuration, an XPage Document can hijack it via the
         // hippo:identifier making it effectively a non-inherited and non-shared container!
         inherited = false;
+
+        if (xpageLayoutComponent) {
+            unresolvedXpageLayoutContainer = true;
+        }
+
         // remove any child items present in Xpage Layout
         orderedListConfigs = Collections.emptyList();
         componentConfigurations = Collections.emptyMap();
         childConfByName = Collections.emptyMap();
+    }
+
+
+    public void addXPageDocChild(final HstComponentConfigurationService child) {
+        child.parent = this;
+        // xpage doc never contains 'xpageLayoutComponent' : to be sure, set it explicitly to false
+        child.xpageLayoutComponent = false;
+        componentConfigurations.put(child.getId(), child);
+        orderedListConfigs.add(child);
+        childConfByName.put(child.getName(), child);
+    }
+
+
+    public void merge(final HstComponentConfigurationService xpageDocComponent) {
+        HstComponentConfigurationService component = (HstComponentConfigurationService)getChildByName(xpageDocComponent.getName());
+        if (component ==null) {
+            throw new ExperiencePageLoadingException(String.format("Cannot merge XPage Doc component '%s' since does not exist for" +
+                    "'%s'", xpageDocComponent.getName(), this.getCanonicalStoredLocation()));
+        }
+        component.combine(xpageDocComponent, null);
     }
 
     @Override

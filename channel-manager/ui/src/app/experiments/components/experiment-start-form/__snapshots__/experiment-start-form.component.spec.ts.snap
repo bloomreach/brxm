@@ -265,7 +265,7 @@ exports[`ExperimentStartFormComponent if a goal is selected should be shown 1`] 
     class="actions"
   >
     <button
-      class="mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable"
+      class="qa-discard mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable"
       mat-stroked-button=""
     >
       <span
@@ -282,7 +282,7 @@ exports[`ExperimentStartFormComponent if a goal is selected should be shown 1`] 
       />
     </button>
     <button
-      class="save-button mat-focus-indicator mat-stroked-button mat-button-base mat-primary _mat-animation-noopable"
+      class="save-button qa-save mat-focus-indicator mat-stroked-button mat-button-base mat-primary _mat-animation-noopable"
       color="primary"
       mat-stroked-button=""
     >
@@ -560,7 +560,7 @@ exports[`ExperimentStartFormComponent should be shown 1`] = `
     class="actions"
   >
     <button
-      class="mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable mat-button-disabled"
+      class="qa-discard mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable mat-button-disabled"
       disabled="true"
       mat-stroked-button=""
     >
@@ -578,7 +578,7 @@ exports[`ExperimentStartFormComponent should be shown 1`] = `
       />
     </button>
     <button
-      class="save-button mat-focus-indicator mat-stroked-button mat-button-base mat-primary _mat-animation-noopable mat-button-disabled"
+      class="save-button qa-save mat-focus-indicator mat-stroked-button mat-button-base mat-primary _mat-animation-noopable mat-button-disabled"
       color="primary"
       disabled="true"
       mat-stroked-button=""
@@ -861,7 +861,7 @@ exports[`ExperimentStartFormComponent should be shown in the disabled mode 1`] =
     class="actions"
   >
     <button
-      class="mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable mat-button-disabled"
+      class="qa-discard mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable mat-button-disabled"
       disabled="true"
       mat-stroked-button=""
     >
@@ -879,7 +879,7 @@ exports[`ExperimentStartFormComponent should be shown in the disabled mode 1`] =
       />
     </button>
     <button
-      class="save-button mat-focus-indicator mat-stroked-button mat-button-base mat-primary _mat-animation-noopable mat-button-disabled"
+      class="save-button qa-save mat-focus-indicator mat-stroked-button mat-button-base mat-primary _mat-animation-noopable mat-button-disabled"
       color="primary"
       disabled="true"
       mat-stroked-button=""
@@ -1162,7 +1162,7 @@ exports[`ExperimentStartFormComponent should be shown in the enabled mode 1`] = 
     class="actions"
   >
     <button
-      class="mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable mat-button-disabled"
+      class="qa-discard mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable mat-button-disabled"
       disabled="true"
       mat-stroked-button=""
     >
@@ -1180,7 +1180,7 @@ exports[`ExperimentStartFormComponent should be shown in the enabled mode 1`] = 
       />
     </button>
     <button
-      class="save-button mat-focus-indicator mat-stroked-button mat-button-base mat-primary _mat-animation-noopable mat-button-disabled"
+      class="save-button qa-save mat-focus-indicator mat-stroked-button mat-button-base mat-primary _mat-animation-noopable mat-button-disabled"
       color="primary"
       disabled="true"
       mat-stroked-button=""

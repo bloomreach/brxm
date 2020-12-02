@@ -48,6 +48,7 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
 
     protected final static String EXPERIENCE_PAGE_HANDLE_PATH = "/unittestcontent/documents/unittestproject/experiences/expPage1";
     protected final static String EXPERIENCE_PAGE_2_HANDLE_PATH = "/unittestcontent/documents/unittestproject/experiences/expPage2";
+    protected final static String EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH = "/unittestcontent/documents/unittestproject/experiences/expPage-with-static-components";
 
     protected Node handle;
     protected HippoSession admin;
@@ -192,14 +193,5 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
         final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
 
         Assertions.assertThat(responseMap.get("reloadRequired")).isEqualTo(expected);
-    }
-
-    protected static class TestBranchSelectionService implements BranchSelectionService {
-
-        @Override
-        public String getSelectedBranchId(final Map<String, Serializable> contextPayload) {
-            return (String)contextPayload.get("testBranchId");
-        }
-
     }
 }

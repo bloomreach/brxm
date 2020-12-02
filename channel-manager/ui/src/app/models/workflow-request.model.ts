@@ -17,6 +17,7 @@
 import { WorkflowRequestType } from './workflow-request-type.enum';
 
 export interface WorkflowRequest {
+  id: string;
   reason: string;
   requestDate: number;
   creationDate: number;

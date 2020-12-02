@@ -18,12 +18,14 @@ package org.hippoecm.hst.pagemodelapi.v10;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -112,6 +114,43 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         assertions(actual, expected);
     }
 
+    @Test
+    public void homepage_api_URL_non_encoded_request_queryString_for_current_page() throws Exception {
+
+        String actual = getActualJson("/spa/resourceapi", "1.0", "c1:page=4&c2_c1:page=6");
+
+        InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_current_root_component_page_4.json");
+
+        assertions(actual, expected);
+    }
+
+    /**
+     * With encoded query params, the result should be the same as for not-encoded query params
+     */
+    @Test
+    public void homepage_api_URL_encoded_request_queryString_for_current_page() throws Exception {
+
+        // in the PMA output, the '%3A' should be replaced with ':'
+        final String encoded = URLEncoder.encode(":", "utf-8");
+
+        String actual = getActualJson("/spa/resourceapi", "1.0", "c1" + encoded + "page=4&c2_c1" +encoded + "page=6");
+
+        InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_current_root_component_page_4.json");
+
+        assertions(actual, expected);
+    }
+
+
+    @Test
+    public void homepage_api_URL_encoded_queryString_returns_in_same_order() throws Exception {
+        // if the querystring is something like ?b=c&a=d&e=f&i=j&g=h
+        // it should be returned in that order in the PMA
+        // this works since ServletRequest#getParameterMap returns an unmodifiable Map which wraps a LinkedHashMap
+        String actual = getActualJson("/spa/resourceapi", "1.0", "b=c&a=d&e=f&i=j&g=h");
+        InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_ordered_query_params.json");
+        System.out.println(actual);
+        assertions(actual, expected);
+    }
 
     @Test
     public void test_api_residual_parameters_v10_assertion() throws Exception {
@@ -162,23 +201,34 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
         Session session = createSession("admin", "admin");
         Node catalogItemNode = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pages/residualparamstestpage/container/testcatalogitemenucomponentinstance");
-        catalogItemNode.setProperty("hst:parameternames", new String[]{"menu"});
-        catalogItemNode.setProperty("hst:parametervalues", new String[]{"invalid ref"});
-        session.save();
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MenuDynamicComponent.class).build()) {
 
-            String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0", "_maxreflevel=0");
+        final Value[] valueBefore1 = catalogItemNode.getProperty("hst:parameternames").getValues();
+        final Value[] valueBefore2 = catalogItemNode.getProperty("hst:parametervalues").getValues();
 
-            final JsonNode root = mapper.readTree(actual);
-            final String dynamicParamOverriddenValue = root.path("page").path("uid3").path("meta").path("paramsInfo").path("menu").asText();
-            assertEquals("Field 'siteMenu' does not contain expected value", "invalid ref", dynamicParamOverriddenValue);
-
-            List<LogEvent> messages = interceptor.getEvents();
-            Assert.assertTrue(interceptor.messages().anyMatch(m -> m.equals("Invalid site menu is selected within MenuDynamicComponent: " + dynamicParamOverriddenValue)));
+        try {
             catalogItemNode.setProperty("hst:parameternames", new String[]{"menu"});
-            catalogItemNode.setProperty("hst:parametervalues", new String[]{"main"});
-            session.logout();
+            catalogItemNode.setProperty("hst:parametervalues", new String[]{"invalid ref"});
+            session.save();
 
+            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/hst:pages/residualparamstestpage/container/testcatalogitemenucomponentinstance");
+
+            try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MenuDynamicComponent.class).build()) {
+
+                String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0", "_maxreflevel=0");
+
+                final JsonNode root = mapper.readTree(actual);
+                final String dynamicParamOverriddenValue = root.path("page").path("uid3").path("meta").path("paramsInfo").path("menu").asText();
+                assertEquals("Field 'siteMenu' does not contain expected value", "invalid ref", dynamicParamOverriddenValue);
+
+                List<LogEvent> messages = interceptor.getEvents();
+                Assert.assertTrue(interceptor.messages().anyMatch(m -> m.equals("Invalid site menu is selected within MenuDynamicComponent: " + dynamicParamOverriddenValue)));
+
+
+            }
+        } finally {
+            catalogItemNode.setProperty("hst:parameternames", valueBefore1);
+            catalogItemNode.setProperty("hst:parametervalues", valueBefore2);
+            session.logout();
         }
     }
 
@@ -246,9 +296,9 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
         final JsonNode root = mapper.readTree(actual);
 
-        final int pageSize = root.path("page").path("uid7").path("size")
+        final int size = root.path("page").path("uid7").path("size")
                 .asInt();
-        assertEquals("Field 'size' does not contain expected value", 10, pageSize);
+        assertEquals("Field 'size' does not contain expected value", 6, size);
 
         final int currentPage = root.path("page").path("uid7").path("current").path("number")
                 .asInt();
@@ -283,7 +333,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         assertEquals("Field 'previous' does not contain expected value", 0, previousPage);
 
         final int pageCount = root.path("page").path("uid7").path("size").asInt();
-        assertEquals("Number of elements inside pages", 10, pageCount);
+        assertEquals("Number of elements inside pages", 6, pageCount);
 
         final int contentItemLength = root.path("page").path("uid7").path("items").size();
         assertEquals("Number of elements inside items", 6, contentItemLength);
@@ -657,7 +707,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
     }
 
-
     private void assertions(final String actual, final InputStream expectedStream) throws IOException, JSONException {
         String expected = IOUtils.toString(expectedStream, StandardCharsets.UTF_8);
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
@@ -669,31 +718,38 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
     public void test_api_residual_parameters_override_named_parameters_v10_assertion() throws Exception {
         final Session session = createSession("admin", "admin");
         final Node catalogItemNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/testcatalogitemparameteroverriding/hideFutureItems");
-        catalogItemNode.setProperty("hst:valuetype", "text");
-        session.save();
 
-        String actual;
-        try (final Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(HstComponentConfigurationService.class).build()) {
-            actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0");
-            assertTrue("Warning was not logged",
-                    interceptor.messages().anyMatch("Jcr and annotation based parameters are defined with the same name but with different type: hideFutureItems"::equals));
+        final Value valueBefore = catalogItemNode.getProperty("hst:valuetype").getValue();
+
+        try {
+            catalogItemNode.setProperty("hst:valuetype", "text");
+            session.save();
+
+            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/testcatalogitemparameteroverriding/hideFutureItems");
+
+            String actual;
+            try (final Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(HstComponentConfigurationService.class).build()) {
+                actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0");
+                assertTrue("Warning was not logged",
+                        interceptor.messages().anyMatch("Jcr and annotation based parameters are defined with the same name but with different type: hideFutureItems"::equals));
+            }
+
+            final JsonNode root = mapper.readTree(actual);
+            final JsonNode paramsInfo = root.path("page").path("uid5").path("meta").path("paramsInfo");
+
+            final int paramCount = paramsInfo.size();
+            assertEquals("Number of parameters inside paramsinfo", 9, paramCount);
+
+            final String sortOrder = paramsInfo.path("sortOrder").asText();
+            assertEquals("Field 'sortOrder' does not contain expected value", "asc", sortOrder);
+
+            final boolean futurePastItems = paramsInfo.path("futurePastItems").asBoolean();
+            assertFalse("Field 'futurePastItems' does not contain expected value", futurePastItems);
+        } finally {
+            catalogItemNode.setProperty("hst:valuetype", valueBefore);
+            session.save();
+            session.logout();
         }
-
-        final JsonNode root = mapper.readTree(actual);
-        final JsonNode paramsInfo = root.path("page").path("uid5").path("meta").path("paramsInfo");
-
-        final int paramCount = paramsInfo.size();
-        assertEquals("Number of parameters inside paramsinfo", 9, paramCount);
-
-        final String sortOrder = paramsInfo.path("sortOrder").asText();
-        assertEquals("Field 'sortOrder' does not contain expected value", "asc", sortOrder);
-
-        final boolean futurePastItems = paramsInfo.path("futurePastItems").asBoolean();
-        assertFalse("Field 'futurePastItems' does not contain expected value", futurePastItems);
-
-        catalogItemNode.setProperty("hst:valuetype", "boolean");
-        session.save();
-        session.logout();
     }
 
 }

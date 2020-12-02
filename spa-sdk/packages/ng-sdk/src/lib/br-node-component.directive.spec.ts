@@ -15,7 +15,7 @@
  */
 
 import { Component, ElementRef, Input, NgModule, TemplateRef, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Component as SpaComponent, MetaCollection, Page } from '@bloomreach/spa-sdk';
 import { BrComponentContext } from './br-component.directive';
 import { BrNodeComponentDirective } from './br-node-component.directive';
@@ -61,6 +61,7 @@ class TestComponent {
 }
 
 describe('BrNodeComponentDirective', () => {
+  let clear: jest.Mocked<ReturnType<MetaCollection['render']>>;
   let component: jest.Mocked<SpaComponent>;
   let meta: jest.Mocked<MetaCollection>;
   let node: BrNodeDirective;
@@ -69,10 +70,8 @@ describe('BrNodeComponentDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
 
   beforeEach(() => {
-    meta = {
-      render: jest.fn(),
-      clear: jest.fn(),
-    } as unknown as typeof meta;
+    clear = jest.fn();
+    meta = { render: jest.fn(() => clear) } as unknown as typeof meta;
     component = {
       getChildren: jest.fn(() => []),
       getMeta: jest.fn(() => meta),
@@ -85,7 +84,7 @@ describe('BrNodeComponentDirective', () => {
     } as unknown as typeof page;
   });
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BrNodeComponentDirective, TemplateComponent, TestComponent ],
       imports: [ TestModule ],
@@ -160,7 +159,7 @@ describe('BrNodeComponentDirective', () => {
       fixture.destroy();
 
       expect(fixture.nativeElement).toMatchSnapshot();
-      expect(meta.clear).toBeCalled();
+      expect(clear).toBeCalled();
     });
   });
 });

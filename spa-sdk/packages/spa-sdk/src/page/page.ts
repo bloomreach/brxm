@@ -15,6 +15,7 @@
  */
 
 import { inject, injectable, optional } from 'inversify';
+import { ButtonFactory } from './button-factory';
 import { ComponentFactory } from './component-factory';
 import { ComponentMeta, ComponentModel, Component } from './component';
 import { ContainerItemModel } from './container-item';
@@ -27,6 +28,8 @@ import { EventBusService, EventBus, PageUpdateEvent } from './events';
 import { LinkFactory } from './link-factory';
 import { LinkRewriter, LinkRewriterService } from './link-rewriter';
 import { Link, isLink } from './link';
+import { ManageContentButton, TYPE_MANAGE_CONTENT_BUTTON } from './button-manage-content';
+import { Menu, TYPE_MANAGE_MENU_BUTTON } from './menu';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionModel, MetaCollection } from './meta-collection';
 import { Reference, isReference, resolve } from './reference';
@@ -35,7 +38,22 @@ import { isAbsoluteUrl, resolveUrl } from '../url';
 
 export const PageModelToken = Symbol.for('PageModelToken');
 
+type ChannelParameters = Record<string, any>;
 type PageLinks = 'self' | 'site';
+
+/**
+ * Current channel info.
+ */
+interface ChannelInfoModel {
+  props: ChannelParameters;
+}
+
+/**
+ * Current channel of a page.
+ */
+interface ChannelModel {
+  info: ChannelInfoModel;
+}
 
 /**
  * Meta-data of a page root component.
@@ -82,6 +100,7 @@ interface PageMeta {
  * Model of a page.
  */
 export interface PageModel {
+  channel: ChannelModel;
   document?: Reference;
   links: Record<PageLinks, Link>;
   meta: PageMeta;
@@ -93,6 +112,30 @@ export interface PageModel {
  * The current page to render.
  */
 export interface Page {
+  /**
+   * Generates a manage content button.
+   * @return The manage content button meta-data.
+   */
+  getButton(type: typeof TYPE_MANAGE_CONTENT_BUTTON, button: ManageContentButton): MetaCollection;
+
+  /**
+   * Generates a manage menu button.
+   * @return The menu button meta-data.
+   */
+  getButton(type: typeof TYPE_MANAGE_MENU_BUTTON, menu: Menu): MetaCollection;
+
+  /**
+   * Generates a meta-data collection for the Experience Manager buttons.
+   * @return The button meta-data.
+   */
+  getButton(type: string, ...params: any[]): MetaCollection;
+
+  /**
+   * Gets current channel parameters.
+   * @returns The channel parameters.
+   */
+  getChannelParameters<T extends ChannelParameters = ChannelParameters>(): T;
+
   /**
    * Gets a root component in the page.
    * @return The root component.
@@ -129,6 +172,7 @@ export interface Page {
   /**
    * Generates a meta-data collection from the provided meta-data model.
    * @param meta The meta-data collection model as returned by the page-model-api.
+   * @deprecated Use `getButton` method to create buttons.
    */
   getMeta(meta: MetaCollectionModel): MetaCollection;
 
@@ -191,7 +235,7 @@ export interface Page {
    * @param content The HTML content to rewrite links.
    * @param type The content type.
    */
-  rewriteLinks(content: string, type?: SupportedType): string;
+  rewriteLinks(content: string, type?: string): string;
 
   /**
    * Synchronizes the CMS integration state.
@@ -212,6 +256,7 @@ export class PageImpl implements Page {
 
   constructor(
     @inject(PageModelToken) protected model: PageModel,
+    @inject(ButtonFactory) private buttonFactory: ButtonFactory,
     @inject(ComponentFactory) componentFactory: ComponentFactory,
     @inject(ContentFactory) private contentFactory: ContentFactory,
     @inject(LinkFactory) private linkFactory: LinkFactory,
@@ -227,6 +272,14 @@ export class PageImpl implements Page {
 
   protected onPageUpdate(event: PageUpdateEvent) {
     Object.assign(this.model.page, event.page.page);
+  }
+
+  getButton(type: string, ...params: unknown[]) {
+    return this.buttonFactory.create(type, ...params);
+  }
+
+  getChannelParameters<T>(): T {
+    return this.model.channel.info.props as T;
   }
 
   getComponent<T extends Component>(): T;
@@ -291,7 +344,7 @@ export class PageImpl implements Page {
     return !!this.model.meta.preview;
   }
 
-  rewriteLinks(content: string, type: SupportedType = 'text/html') {
+  rewriteLinks(content: string, type = 'text/html') {
     return this.linkRewriter.rewrite(content, type);
   }
 

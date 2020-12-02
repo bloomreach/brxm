@@ -18,6 +18,7 @@ import { ContainerModule } from 'inversify';
 import { DOMParser, XMLSerializer } from 'xmldom';
 import { Typed } from 'emittery';
 
+import { ButtonFactory } from './button-factory';
 import { ComponentFactory } from './component-factory09';
 import { ComponentImpl, TYPE_COMPONENT, TYPE_COMPONENT_CONTAINER, TYPE_COMPONENT_CONTAINER_ITEM } from './component09';
 import { ComponentChildrenToken, ComponentModelToken } from './component';
@@ -28,6 +29,7 @@ import { ContentImpl, ContentModelToken, ContentModel } from './content09';
 import { DomParserService, LinkRewriterImpl, LinkRewriterService, XmlSerializerService } from './link-rewriter';
 import { EventBusService } from './events';
 import { LinkFactory } from './link-factory';
+import { Menu } from './menu09';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { MetaCollectionImpl, MetaCollectionModelToken, MetaCollectionModel } from './meta-collection';
 import { MetaCommentImpl } from './meta-comment';
@@ -36,6 +38,8 @@ import { PageFactory } from './page-factory';
 import { PageImpl, PageModel } from './page09';
 import { PageModelToken } from './page';
 import { TYPE_LINK_INTERNAL } from './link';
+import { TYPE_MANAGE_CONTENT_BUTTON, createManageContentButton } from './button-manage-content';
+import { TYPE_MANAGE_MENU_BUTTON } from './menu';
 import { TYPE_META_COMMENT } from './meta';
 import { UrlBuilderService, UrlBuilder } from '../url';
 
@@ -48,6 +52,11 @@ export function PageModule() {
     bind(LinkRewriterService).to(LinkRewriterImpl).inSingletonScope();
     bind(DomParserService).toConstantValue(new DOMParser());
     bind(XmlSerializerService).toConstantValue(new XMLSerializer());
+
+    bind(ButtonFactory).toSelf().inSingletonScope().onActivation((context, factory) => factory
+      .register(TYPE_MANAGE_CONTENT_BUTTON, createManageContentButton)
+      .register(TYPE_MANAGE_MENU_BUTTON, ({ _meta }: Menu) => _meta ?? {}),
+    );
 
     bind(LinkFactory).toSelf().inSingletonScope().onActivation(({ container }, factory) => {
       const url = container.get<UrlBuilder>(UrlBuilderService);

@@ -46,7 +46,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.Boolean.FALSE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_XPAGE;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_EXPERIENCE_PAGE_COMPONENT;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_EXPERIENCE_PAGE_LAYOUT_COMPONENT;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_EXPERIENCE_PAGE_LAYOUT_HIPPO_IDENTIFIER;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.obtainEditableInstance;
 
 public class CmsComponentComponentWindowAttributeContributor implements ComponentWindowAttributeContributor {
@@ -69,7 +72,21 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
 
             final HippoSession cmsUser = JcrSessionUtils.getCmsUser(requestContext);
 
-            if (compConfig.isExperiencePageComponent()) {
+            if (compConfig.isExperiencePageComponent() || compConfig.isUnresolvedXpageLayoutContainer()) {
+
+                if (compConfig.isUnresolvedXpageLayoutContainer()) {
+                    // awkward situation: this happens when there was already an XPage document after which to the
+                    // XPage Layout a new container gets added: to this container it should be possible to add container
+                    // items in the Channel Mgr, however when adding, the 'container' with nodename equals to the
+                    // hst:qualifier most be added. Therefore, the 'uuid' has to operate on the hst:xpage node level
+                    // below the document variant since that is the only possible 'entry' point to know WHERE to
+                    // create the new container
+                    populatingAttributesMap.put("uuid", requestContext.getContentBean().getNode().getNode(NODENAME_HST_XPAGE).getIdentifier());
+                    populatingAttributesMap.put(HST_EXPERIENCE_PAGE_LAYOUT_COMPONENT, "true");
+                    populatingAttributesMap.put(HST_EXPERIENCE_PAGE_LAYOUT_HIPPO_IDENTIFIER, compConfig.getHippoIdentifier());
+                } else {
+                    populatingAttributesMap.put("uuid", compConfig.getCanonicalIdentifier());
+                }
                 if (requestContext.isRenderingHistory()) {
                     log.debug("Experience Page Component is not editable since a historic version is rendered");
                     return;
@@ -107,6 +124,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
                 }
 
             } else {
+                populatingAttributesMap.put("uuid", compConfig.getCanonicalIdentifier());
                 populatingAttributesMap.put(HST_EXPERIENCE_PAGE_COMPONENT, "false");
 
                 final Channel channel = requestContext.getResolvedMount().getMount().getChannel();
@@ -141,9 +159,6 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
         if (compConfig.getXType() != null) {
             populatingAttributesMap.put(ChannelManagerConstants.HST_XTYPE, compConfig.getXType());
         }
-
-
-        populatingAttributesMap.put("uuid", compConfig.getCanonicalIdentifier());
 
         final String componentType = compConfig.getComponentType().toString();
         populatingAttributesMap.put(ChannelManagerConstants.HST_TYPE, componentType);
@@ -191,7 +206,20 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
         HstComponentConfiguration config = ((HstComponentConfiguration) window.getComponentInfo());
 
         populatingAttributesMap.put(ChannelManagerConstants.HST_END_MARKER, "true");
-        populatingAttributesMap.put("uuid", config.getCanonicalIdentifier());
+
+        if (config.isUnresolvedXpageLayoutContainer()) {
+            try {
+                populatingAttributesMap.put("uuid", request.getRequestContext().getContentBean().getNode().getNode(NODENAME_HST_XPAGE).getIdentifier());
+            } catch (PathNotFoundException e) {
+                // cms user cannot read component thus certainly cannot modify it
+                log.debug("CMS user cannot read hst:xpage node");
+            } catch (RepositoryException e) {
+                log.error("Exception while trying to get hst:xpage node :", e);
+            }
+        } else {
+            populatingAttributesMap.put("uuid", config.getCanonicalIdentifier());
+        }
+
     }
 
     private String getLabel(HstComponentConfiguration config) {

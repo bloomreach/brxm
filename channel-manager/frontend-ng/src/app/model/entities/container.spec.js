@@ -302,6 +302,16 @@ describe('Container', () => {
     it('should contain components ids', () => {
       expect(container.getHstRepresentation()).toEqual(jasmine.objectContaining({ children: ['component-id'] }));
     });
+
+    it('should return hippo-id if container is a layout component', () => {
+      const layoutComponentContainer = new Container({
+        uuid: 'container-id',
+        'HST-Experience-Page-LayoutComponent': 'true',
+        'HST-Experience-Page-Layout-Hippo_Identifier': 'hippo-id',
+      });
+
+      expect(layoutComponentContainer.getHstRepresentation()).toEqual(jasmine.objectContaining({ id: 'hippo-id' }));
+    });
   });
 
   describe('getDropGroups', () => {
@@ -339,6 +349,20 @@ describe('Container', () => {
       const container = new Container({ 'HST-XPage-Editable': 'false' });
 
       expect(container.isXPageEditable()).toBe(false);
+    });
+  });
+
+  describe('isXPagelayoutComponent', () => {
+    it('should return true', () => {
+      const container = new Container({ 'HST-Experience-Page-LayoutComponent': 'true' });
+
+      expect(container.isXPageLayoutComponent()).toBe(true);
+    });
+
+    it('should return false', () => {
+      const container = new Container({ 'HST-Experience-Page-LayoutComponent': 'false' });
+
+      expect(container.isXPageLayoutComponent()).toBe(false);
     });
   });
 });

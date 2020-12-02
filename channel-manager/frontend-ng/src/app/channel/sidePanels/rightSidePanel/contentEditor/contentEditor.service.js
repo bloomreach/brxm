@@ -81,7 +81,7 @@ const ERROR_MAP = {
     messageKey: 'FEEDBACK_PROJECT_DOCUMENT_NOT_FOUND',
   },
   REQUEST_PENDING: {
-    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    titleKey: 'FEEDBACK_DOCUMENT_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_DOCUMENT_REQUEST_PENDING_MESSAGE',
   },
   UNAVAILABLE: {
@@ -501,27 +501,6 @@ class ContentEditorService {
         return this.$q.resolve(action); // let caller know that changes have not been saved
       });
   }
-
-  confirmPristine(messageKey, messageParams, titleKey) {
-    if (this.isPristine()) {
-      return this.$q.resolve();
-    }
-
-    return this._askSaveOrDiscardChanges(messageKey, messageParams, titleKey)
-      .catch(() => this.$q.reject('CANCELLED'))
-      .then((action) => {
-        if (action === 'SAVE') {
-          return this.save();
-        }
-
-        if (action === 'DISCARD') {
-          return this.discardChanges();
-        }
-
-        return this.$q.reject(`Unknown action '${action}'`);
-      });
-  }
-
 
   _askSaveOrDiscardChanges(messageKey, messageParams = {}, titleKey = 'SAVE_DOCUMENT_CHANGES_TITLE') {
     if (this.isPristine()) {

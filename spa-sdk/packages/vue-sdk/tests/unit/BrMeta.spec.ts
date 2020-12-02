@@ -23,7 +23,6 @@ describe('BrMeta', () => {
 
   beforeEach(() => {
     meta = ({
-      clear: jest.fn(),
       render: jest.fn(),
     } as unknown) as typeof meta;
   });
@@ -54,6 +53,9 @@ describe('BrMeta', () => {
 
   describe('beforeDestroy', () => {
     it('should clear previously rendered meta on destruction', async () => {
+      const clear = jest.fn();
+      meta.render.mockReturnValueOnce(clear);
+
       const wrapper = shallowMount(BrMeta, {
         propsData: { meta },
         slots: { default: '<div />' },
@@ -61,7 +63,7 @@ describe('BrMeta', () => {
       await wrapper.vm.$nextTick();
       wrapper.destroy();
 
-      expect(meta.clear).toBeCalled();
+      expect(clear).toBeCalled();
     });
   });
 
@@ -81,6 +83,9 @@ describe('BrMeta', () => {
 
   describe('updated', () => {
     it('should render a new meta', async () => {
+      const clear = jest.fn();
+      meta.render.mockReturnValueOnce(clear);
+
       const wrapper = shallowMount(BrMeta, {
         propsData: { meta },
         slots: { default: '<div />' },
@@ -88,13 +93,12 @@ describe('BrMeta', () => {
       await wrapper.vm.$nextTick();
 
       const updated = {
-        clear: jest.fn(),
         render: jest.fn(),
       };
       wrapper.setProps({ meta: updated });
       await wrapper.vm.$nextTick();
 
-      expect(meta.clear).toBeCalled();
+      expect(clear).toBeCalled();
       expect(updated.render).toBeCalled();
     });
   });

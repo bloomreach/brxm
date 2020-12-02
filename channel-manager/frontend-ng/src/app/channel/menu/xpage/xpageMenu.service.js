@@ -16,167 +16,333 @@
 
 import MenuService from '../menu.service';
 
-class XPageMenuService extends MenuService {
+export default class XPageMenuService extends MenuService {
   constructor(
     $log,
-    $q,
-    $state,
+    $translate,
+    ChannelService,
     DocumentWorkflowService,
+    EditComponentService,
     EditContentService,
     FeedbackService,
     HippoIframeService,
+    HstService,
     PageService,
+    PageStructureService,
     PageToolsService,
+    SiteMapService,
   ) {
     'ngInject';
 
     super();
 
-    function isEnabled(action) {
-      return PageService.isActionEnabled('xpage', action);
-    }
+    this.$log = $log;
+    this.$translate = $translate;
+    this.ChannelService = ChannelService;
+    this.DocumentWorkflowService = DocumentWorkflowService;
+    this.EditComponentService = EditComponentService;
+    this.EditContentService = EditContentService;
+    this.FeedbackService = FeedbackService;
+    this.HippoIframeService = HippoIframeService;
+    this.HstService = HstService;
+    this.PageService = PageService;
+    this.PageStructureService = PageStructureService;
+    this.PageToolsService = PageToolsService;
+    this.SiteMapService = SiteMapService;
 
-    function isVisible(action) {
-      return PageService.hasAction('xpage', action);
-    }
+    this._getRequestTranslationKey = this._getRequestTranslationKey.bind(this);
+    this._initialize();
+    this._addWorkflowActions();
+  }
 
-    function getDocumentId() {
-      return PageService.getState('xpage').id;
-    }
-
-    function getDocumentName() {
-      return PageService.getState('xpage').name;
-    }
-
-    function isEditingCurrentPage() {
-      return EditContentService.isEditing(getDocumentId());
-    }
-
-    function showVersions() {
-      EditContentService.startEditing(getDocumentId(), 'hippo-cm.channel.edit-page.versions');
-    }
-
-    function showContent() {
-      EditContentService.startEditing(getDocumentId(), 'hippo-cm.channel.edit-page.content');
-    }
-
-    const menu = this.defineMenu('xpage', {
-      isVisible: () => PageService.hasActions('xpage'),
-      translationKey: 'TOOLBAR_BUTTON_XPAGE',
-    });
-
-    function failure(key, msg) {
-      try {
-        msg = JSON.parse(msg);
-      // eslint-disable-next-line no-empty
-      } catch (error) {}
-
-      if (msg && msg.cancelled === true) {
-        return;
-      }
-
-      $log.error(`Failed to execute workflow "${key}" on document[${getDocumentId()}]: ${msg}`);
-      FeedbackService.showError(`${key}_ERROR`, {
-        msg,
-        documentName: getDocumentName(),
-      });
-
-      HippoIframeService.reload();
-    }
-
-    function invokeWorkflow(onClick, translationKey) {
-      return () => onClick(getDocumentId())
-        .then((result) => {
-          if (result !== 'NO-RELOAD') {
-            HippoIframeService.reload();
-          }
-        })
-        .catch(msg => failure(translationKey, msg));
-    }
-
-    function addWorkflowAction(id, onClick, config = {}) {
-      const translationKey = `TOOLBAR_MENU_XPAGE_${id.replace(/-/g, '_').toUpperCase()}`;
-      menu.addAction(id, {
-        isEnabled: () => isEnabled(id),
-        isVisible: () => isVisible(id),
-        onClick: invokeWorkflow(onClick, translationKey),
-        translationKey,
-        ...config,
-      });
-    }
-
-    function addEditorAwareWorkflowAction(id, onclick, config) {
-      addWorkflowAction(id, (documentId) => {
-        if (!EditContentService.isEditing(documentId)) {
-          return onclick(documentId);
-        }
-
-        return EditContentService.ensureEditorIsPristine()
-          .then(() => onclick(documentId))
-          .then(() => EditContentService.reloadEditor())
-          .catch(err => (err === 'CANCELLED' ? $q.resolve('NO-RELOAD') : $q.reject(err)));
-      }, config);
-    }
-
-    menu
+  _initialize() {
+    this._menu = this
+      .defineMenu('xpage', {
+        isVisible: () => this.PageService.hasActions('xpage'),
+        translationKey: 'TOOLBAR_BUTTON_XPAGE',
+      })
       .addAction('tools', {
-        isVisible: () => PageToolsService.hasExtensions(),
-        onClick: () => PageToolsService.showPageTools(),
+        isVisible: () => this.PageToolsService.hasExtensions(),
+        onClick: () => this.PageToolsService.showPageTools(),
         translationKey: 'TOOLBAR_MENU_XPAGE_TOOLS',
       })
       .addAction('content', {
-        onClick: () => showContent(),
+        onClick: () => this._showContent(),
         translationKey: 'TOOLBAR_MENU_XPAGE_CONTENT',
       })
       .addAction('versions', {
-        onClick: () => showVersions(),
+        onClick: () => this._showVersions(),
         translationKey: 'TOOLBAR_MENU_XPAGE_VERSIONS',
-      })
-      .addDivider({
-        isVisible: () => PageService.hasSomeAction('xpage',
-          'unpublish',
-          'schedule-unpublish',
-          'request-unpublish',
-          'publish',
-          'schedule-publish',
-          'request-publish',
-          'request-schedule-publish'),
       });
+  }
 
-    addEditorAwareWorkflowAction('unpublish', id => DocumentWorkflowService.unpublish(id), {
+  _addWorkflowActions() {
+    this._menu.addDivider({
+      isVisible: () => this.PageService.hasSomeAction('xpage',
+        'cancel',
+        'accept',
+        'reject',
+        'rejected',
+        'accept-branch',
+        'reject-branch'),
+    });
+
+    this._addWorkflowAction('rejected', id => this.DocumentWorkflowService.showRequestRejected(id), {
+      iconName: 'mdi-comment-remove-outline',
+    });
+
+    this._addWorkflowAction('cancel', id => this.DocumentWorkflowService.cancelRequest(id), {
+      iconName: 'mdi-comment-processing-outline',
+      translationKeyFunction: this._getRequestTranslationKey,
+    });
+
+    this._addWorkflowAction('accept', id => this.DocumentWorkflowService.acceptRequest(id), {
+      iconName: 'mdi-check',
+      translationKeyFunction: this._getRequestTranslationKey,
+    });
+
+    this._addWorkflowAction('reject', id => this.DocumentWorkflowService.rejectRequest(id), {
+      iconName: 'mdi-close',
+      translationKeyFunction: this._getRequestTranslationKey,
+    });
+
+    this._addWorkflowAction('accept-branch', id => this.DocumentWorkflowService.acceptBranch(id, this._getBranchId()), {
+      iconName: 'mdi-check',
+      translationKey: 'TOOLBAR_MENU_XPAGE_ACCEPT',
+      translationKeyFunction: this._getRequestTranslationKey,
+    });
+
+    this._addWorkflowAction('reject-branch', id => this.DocumentWorkflowService.rejectBranch(id, this._getBranchId()), {
+      iconName: 'mdi-close',
+      translationKey: 'TOOLBAR_MENU_XPAGE_REJECT',
+      translationKeyFunction: this._getRequestTranslationKey,
+    });
+
+    this._menu.addDivider({
+      isVisible: () => this.PageService.hasSomeAction('xpage',
+        'unpublish',
+        'schedule-unpublish',
+        'request-unpublish',
+        'publish',
+        'schedule-publish',
+        'request-publish',
+        'request-schedule-publish'),
+    });
+
+    this._addWorkflowAction('unpublish', id => this.DocumentWorkflowService.unpublish(id), {
       iconName: 'mdi-minus-circle',
     });
 
-    addWorkflowAction('schedule-unpublish', id => DocumentWorkflowService.scheduleUnpublication(id), {
-      isEnabled: () => isEnabled('schedule-unpublish') && !isEditingCurrentPage(),
+    this._addWorkflowAction('schedule-unpublish', id => this.DocumentWorkflowService.scheduleUnpublication(id), {
+      isEnabled: () => this._isEnabled('schedule-unpublish') && !this._isEditingCurrentPage(),
     });
 
-    addWorkflowAction('request-unpublish', id => DocumentWorkflowService.requestUnpublication(id), {
+    this._addWorkflowAction('request-unpublish', id => this.DocumentWorkflowService.requestUnpublication(id), {
       iconName: 'mdi-minus-circle',
-      isEnabled: () => isEnabled('request-unpublish') && !isEditingCurrentPage(),
+      isEnabled: () => this._isEnabled('request-unpublish') && !this._isEditingCurrentPage(),
     });
 
-    addWorkflowAction('request-schedule-unpublish', id => DocumentWorkflowService.requestScheduleUnpublication(id), {
-      isEnabled: () => isEnabled('request-schedule-unpublish') && !isEditingCurrentPage(),
-    });
+    this._addWorkflowAction(
+      'request-schedule-unpublish',
+      id => this.DocumentWorkflowService.requestScheduleUnpublication(id),
+      { isEnabled: () => this._isEnabled('request-schedule-unpublish') && !this._isEditingCurrentPage() },
+    );
 
-    addEditorAwareWorkflowAction('publish', id => DocumentWorkflowService.publish(id), {
+    this._addWorkflowAction('publish', id => this.DocumentWorkflowService.publish(id), {
       iconName: 'mdi-check-circle',
     });
 
-    addWorkflowAction('schedule-publish', id => DocumentWorkflowService.schedulePublication(id), {
-      isEnabled: () => isEnabled('schedule-publish') && !isEditingCurrentPage(),
+    this._addWorkflowAction('schedule-publish', id => this.DocumentWorkflowService.schedulePublication(id), {
+      isEnabled: () => this._isEnabled('schedule-publish') && !this._isEditingCurrentPage(),
     });
 
-    addWorkflowAction('request-publish', id => DocumentWorkflowService.requestPublication(id), {
-      iconName: 'mdi-check-circle',
-      isEnabled: () => isEnabled('request-publish') && !isEditingCurrentPage(),
+    this._addWorkflowAction(
+      'request-publish',
+      id => this.DocumentWorkflowService.requestPublication(id),
+      {
+        iconName: 'mdi-check-circle',
+        isEnabled: () => this._isEnabled('request-publish') && !this._isEditingCurrentPage(),
+      },
+    );
+
+    this._addWorkflowAction(
+      'request-schedule-publish',
+      id => this.DocumentWorkflowService.requestSchedulePublication(id),
+      { isEnabled: () => this._isEnabled('request-schedule-publish') && !this._isEditingCurrentPage() },
+    );
+
+    this._menu.addDivider({
+      isVisible: () => this.PageService.hasSomeAction('xpage',
+        'rename',
+        'move',
+        'copy',
+        'delete'),
     });
 
-    addWorkflowAction('request-schedule-publish', id => DocumentWorkflowService.requestSchedulePublication(id), {
-      isEnabled: () => isEnabled('request-schedule-publish') && !isEditingCurrentPage(),
+    this._addWorkflowAction(
+      'rename',
+      id => this.DocumentWorkflowService.rename(id).then(() => this._navigateToDocument(id)),
+      { iconName: 'mdi-form-textbox' },
+    );
+
+    this._addWorkflowAction(
+      'copy',
+      id => this.DocumentWorkflowService.copy(id, this._getBranchId())
+        .then(documentId => this._navigateToDocument(documentId)),
+      { iconName: 'mdi-content-copy' },
+    );
+
+    this._addWorkflowAction(
+      'move',
+      id => this.DocumentWorkflowService.move(id).then(documentId => this._navigateToDocument(documentId)),
+      { iconName: 'mdi-file-move-outline' },
+    );
+
+    this._addWorkflowAction(
+      'delete',
+      id => this.DocumentWorkflowService.delete(id)
+        .then(() => this.SiteMapService.load(this.ChannelService.getSiteMapId()))
+        .then(() => {
+          const siteMap = this.SiteMapService.get();
+          const firstPage = siteMap[0];
+          return this.HippoIframeService.load(firstPage.renderPathInfo);
+        }),
+      { iconName: 'mdi-delete' },
+    );
+  }
+
+  _addWorkflowAction(id, onClick, config = {}) {
+    const translationKey = `TOOLBAR_MENU_XPAGE_${id.replace(/-/g, '_').toUpperCase()}`;
+    const onFailure = (msg) => {
+      const menuItem = this._menu.findAction(id);
+      return this._failure((menuItem && menuItem.translationKey) || translationKey, msg);
+    };
+    this._menu.addAction(id, {
+      isEnabled: () => this._isEnabled(id),
+      isVisible: () => this._isVisible(id),
+      onClick: this._invokeWorkflow.bind(this, onClick, onFailure),
+      translationKey,
+      ...config,
     });
   }
-}
 
-export default XPageMenuService;
+  async _invokeWorkflow(onClick, onFailure) {
+    try {
+      await this.EditComponentService.stopEditing();
+    } catch (error) {
+      return;
+    }
+
+    const documentId = this._getDocumentId();
+    const isEditing = this.EditContentService.isEditing(documentId);
+
+    try {
+      if (isEditing && !this.EditContentService.isEditorPristine()) {
+        await this.EditContentService.reloadEditor();
+      }
+    } catch (error) {
+      // The save/discard dialog was cancelled
+      return;
+    }
+
+    try {
+      await onClick(documentId);
+
+      if (isEditing) {
+        await this.EditContentService.reloadEditor();
+      }
+
+      this.HippoIframeService.reload();
+    } catch (message) {
+      if (message !== 'CANCELLED') {
+        onFailure(message);
+      }
+    }
+  }
+
+  _getRequestTranslationKey(key) {
+    const workflow = this.PageService.getState('workflow') || {};
+    const { requests = [] } = workflow;
+    const request = requests.find(r => r.type !== 'rejected');
+    if (request) {
+      return `${key}_REQUEST_${request.type.toUpperCase()}`;
+    }
+
+    const scheduledRequest = this.PageService.getState('scheduledRequest');
+    if (scheduledRequest !== null) {
+      return `${key}_SCHEDULED_${scheduledRequest.type.toUpperCase()}`;
+    }
+
+    return key;
+  }
+
+  _failure(key, reason = 'ERROR_WORKFLOW_GENERIC_REASON') {
+    try {
+      if (JSON.parse(reason).cancelled === true) {
+        return;
+      }
+      // eslint-disable-next-line no-empty
+    } catch (error) {}
+
+    reason = reason.startsWith('ERROR_') ? this.$translate.instant(reason) : reason;
+    this.$log.error(`Failed to execute workflow "${key}" on document[${this._getDocumentId()}]: ${reason}`);
+    this.FeedbackService.showError(`${key}_ERROR`, {
+      reason,
+      documentName: this._getDocumentName(),
+    });
+
+    this.HippoIframeService.reload();
+  }
+
+  _isEnabled(action) {
+    return this.PageService.isActionEnabled('xpage', action);
+  }
+
+  _isVisible(action) {
+    return this.PageService.hasAction('xpage', action);
+  }
+
+  _getBranchId() {
+    const xpage = this.PageService.getState('xpage');
+    if (xpage === null) {
+      return null;
+    }
+
+    return xpage.branchId;
+  }
+
+  _getDocumentId() {
+    return this.PageService.getState('xpage').id;
+  }
+
+  _getDocumentName() {
+    return this.PageService.getState('xpage').name;
+  }
+
+  _isEditingCurrentPage() {
+    return this.EditContentService.isEditing(this._getDocumentId());
+  }
+
+  _showVersions() {
+    this.EditContentService.startEditing(this._getDocumentId(), 'hippo-cm.channel.edit-page.versions');
+  }
+
+  _showContent() {
+    this.EditContentService.startEditing(this._getDocumentId(), 'hippo-cm.channel.edit-page.content');
+  }
+
+  async _navigateToDocument(documentId) {
+    try {
+      const { data: { renderPathInfo } } = await this.HstService.doGet(documentId, 'representation');
+      const pageMeta = this.PageStructureService.getPage().getMeta();
+      if (pageMeta.getPathInfo() !== renderPathInfo) {
+        this.HippoIframeService.load(renderPathInfo);
+      }
+
+      const siteMapId = this.ChannelService.getSiteMapId();
+      this.SiteMapService.load(siteMapId); // reload sitemap (left side panel)
+    } catch (e) {
+      this.$log.error(`Failed to navigate to document '${documentId}'`, e);
+    }
+  }
+}

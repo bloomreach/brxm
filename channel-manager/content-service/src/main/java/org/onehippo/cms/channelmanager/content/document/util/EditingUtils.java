@@ -40,7 +40,7 @@ public class EditingUtils {
 
     private static final Logger log = LoggerFactory.getLogger(EditingUtils.class);
 
-    public static final String HINT_PUBLISH = "publish";
+    public static final String HINT_PUBLISH = "publishBranch";
     public static final String HINT_REQUEST_PUBLICATION = "requestPublication";
 
     static final String HINT_COMMIT_EDITABLE_INSTANCE = "commitEditableInstance";

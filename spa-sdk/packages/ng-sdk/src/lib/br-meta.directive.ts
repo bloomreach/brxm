@@ -14,42 +14,38 @@
  * limitations under the License.
  */
 
-import { DoCheck, OnDestroy, Optional, TemplateRef, ViewContainerRef } from '@angular/core';
+import {
+  Directive,
+  OnChanges,
+  OnDestroy,
+  Optional,
+  SimpleChanges,
+  TemplateRef,
+  ViewContainerRef,
+} from '@angular/core';
 import { MetaCollection } from '@bloomreach/spa-sdk';
 
-export abstract class BrMetaDirective implements DoCheck, OnDestroy {
+@Directive()
+export abstract class BrMetaDirective implements OnChanges, OnDestroy {
   protected meta?: MetaCollection | undefined;
-  private rendered?: MetaCollection;
+  private clear?: ReturnType<MetaCollection['render']>;
 
   constructor(
     private container: ViewContainerRef,
     @Optional() private template?: TemplateRef<never>,
   ) {}
 
-  ngDoCheck(): void {
-    if (this.rendered === this.meta) {
-      return;
-    }
-
-    this.rendered?.clear();
+  ngOnChanges(changes: SimpleChanges): void {
+    this.clear?.();
     this.container.clear();
 
-    this.rendered = this.meta;
-
     const { head, tail } = this.render();
-
-    if (!head || !tail) {
-      return;
-    }
-
-    this.rendered?.render(head, tail);
+    this.clear = head && tail && this.meta?.render(head, tail);
   }
 
   ngOnDestroy(): void {
-    this.rendered?.clear();
+    this.clear?.();
     this.container.clear();
-
-    delete this.rendered;
   }
 
   private render() {

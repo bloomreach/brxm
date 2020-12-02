@@ -55,9 +55,9 @@ export default class BrNodeContainerItem extends Vue {
 
   private page!: Page;
 
-  private unsubscribe?: Function;
+  private unsubscribe?: ReturnType<ContainerItem['on']>;
 
-  destroyed() {
+  destroyed(): void {
     this.unsubscribe?.();
   }
 

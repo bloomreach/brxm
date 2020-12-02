@@ -41,7 +41,7 @@ class BrPage extends Vue {
 describe('BrComponent', () => {
   let parent: jest.Mocked<SpaComponent>;
   let page: jest.Mocked<Page>;
-  let provide: Function;
+  let provide: () => unknown;
 
   beforeAll(() => {
     parent = ({
@@ -51,7 +51,7 @@ describe('BrComponent', () => {
     page = ({ sync: jest.fn() } as unknown) as typeof page;
 
     const wrapper = shallowMount(BrPage, { propsData: { parent, page } });
-    provide = (wrapper.vm.$options.provide as Function).bind(wrapper.vm);
+    provide = (wrapper.vm.$options.provide as typeof provide).bind(wrapper.vm);
   });
 
   describe('render', () => {
@@ -67,9 +67,8 @@ describe('BrComponent', () => {
 
     it('should render nothing outside the page context', () => {
       const parentWrapper = shallowMount(BrPage);
-      // eslint-disable-next-line no-shadow
-      const provide = (parentWrapper.vm.$options.provide as Function).bind(parentWrapper.vm);
-      const wrapper = shallowMount(BrComponent, { provide, propsData: { component: 'something' } });
+      const parentProvide = (parentWrapper.vm.$options.provide as typeof provide).bind(parentWrapper.vm);
+      const wrapper = shallowMount(BrComponent, { provide: parentProvide, propsData: { component: 'something' } });
 
       expect(wrapper.html()).toBe('');
     });

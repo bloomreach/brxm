@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,21 +58,21 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
-
-    private static final long serialVersionUID = 1L;
+public abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractWorkflowManagerPlugin.class);
 
     public static final String OBSERVATION_KEY = "workflow.observation";
     public static final String CATEGORIES_KEY = "workflow.categories";
     public static final String VERSION_CATEGORIES_KEY = "workflow.version.categories";
+    public static final String XPAGE_CATEGORIES_KEY = "workflow.xpage.categories";
     public static final String MENU_ORDER_KEY = "workflow.menuorder";
 
     private Set<NodeObserver> observers;
     private PluginController plugins;
     private String[] categories;
     private String[] versionCategories;
+    private String[] xpageCategories;
     private String[] menuOrder;
     protected AbstractView view;
 
@@ -104,6 +104,12 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
             versionCategories = config.getStringArray(VERSION_CATEGORIES_KEY);
         } else {
             versionCategories = categories;
+        }
+
+        if (config.get(XPAGE_CATEGORIES_KEY) != null) {
+            xpageCategories = config.getStringArray(XPAGE_CATEGORIES_KEY);
+        } else {
+            xpageCategories = categories;
         }
 
         IServiceReference serviceReference = context.getReference(this);
@@ -143,7 +149,7 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
         super.onDetach();
     }
 
-    MenuHierarchy buildMenu(Set<Node> nodeSet, IPluginConfig config) {
+    protected MenuHierarchy buildMenu(Set<Node> nodeSet, IPluginConfig config) {
         Form form = getForm();
 
         final MenuHierarchy menu = new MenuHierarchy(Arrays.asList(categories), Arrays.asList(menuOrder), form, config);
@@ -173,7 +179,7 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
         final CategoriesService service = Optional
                 .ofNullable(HippoServiceRegistry.getService(CategoriesService.class))
                 .orElse(new CategoriesServiceImpl());
-        return service.getCategories(node, getPluginContext(), this.categories, versionCategories);
+        return service.getCategories(node, getPluginContext(), categories, versionCategories, xpageCategories);
     }
 
     private void stopObservation() {

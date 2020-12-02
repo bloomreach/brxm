@@ -101,7 +101,7 @@ export interface Component {
   /**
    * @return The parameters of the component.
    */
-  getParameters(): ComponentParameters;
+  getParameters<T = ComponentParameters>(): T;
 
   /**
    * @return The direct children of the component.
@@ -156,8 +156,8 @@ export class ComponentImpl implements Component {
     return this.model.name || '';
   }
 
-  getParameters() {
-    return this.model.meta.params || {};
+  getParameters<T>(): T {
+    return (this.model.meta.params ?? {}) as T;
   }
 
   getChildren() {

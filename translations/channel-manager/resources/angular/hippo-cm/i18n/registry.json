@@ -1210,36 +1210,84 @@
       "locales" : null
     },
     "TOOLBAR_MENU_XPAGE_SCHEDULE_UNPUBLISH_ERROR" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "TOOLBAR_MENU_XPAGE_REQUEST_PUBLISH_ERROR" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "TOOLBAR_MENU_XPAGE_PUBLISH_ERROR" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "TOOLBAR_MENU_XPAGE_REQUEST_UNPUBLISH_ERROR" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "TOOLBAR_MENU_XPAGE_SCHEDULE_PUBLISH_ERROR" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "TOOLBAR_MENU_XPAGE_REQUEST_SCHEDULE_UNPUBLISH_ERROR" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "TOOLBAR_MENU_XPAGE_REQUEST_SCHEDULE_PUBLISH_ERROR" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "TOOLBAR_MENU_XPAGE_UNPUBLISH_ERROR" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "NOTIFICATION_BAR_XPAGE_LABEL_LIVE" : {
       "status" : "CLEAN",
@@ -1495,7 +1543,7 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "VARIANT" : {
+    "TOOLBAR_MENU_XPAGE_ACCEPT_REQUEST_SCHEDULEDDEPUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1505,7 +1553,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_PAGE" : {
+    "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDPUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1515,7 +1563,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_START_DATE" : {
+    "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_DEPUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1525,7 +1573,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_GOAL" : {
+    "TOOLBAR_MENU_XPAGE_CANCEL_SCHEDULED_DEPUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1535,7 +1583,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_STATE" : {
+    "TOOLBAR_MENU_XPAGE_REJECT_REQUEST_DEPUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1545,7 +1593,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT" : {
+    "TOOLBAR_MENU_XPAGE_REJECT_REQUEST_SCHEDULEDPUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1555,7 +1603,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_WINNER_ABSENT" : {
+    "TOOLBAR_MENU_XPAGE_REJECT_REQUEST_SCHEDULEDDEPUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1565,7 +1613,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_WINNER_PRESENT" : {
+    "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_PUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1575,7 +1623,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_AFTER_THIS_MANY_VISITS" : {
+    "TOOLBAR_MENU_XPAGE_REJECTED" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1585,7 +1633,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_SAVED" : {
+    "TOOLBAR_MENU_XPAGE_ACCEPT_REQUEST_PUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1595,7 +1643,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_INFO_PUBLISH_TO_START" : {
+    "TOOLBAR_MENU_XPAGE_CANCEL_SCHEDULED_PUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1605,7 +1653,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "VARIANTS" : {
+    "TOOLBAR_MENU_XPAGE_ACCEPT_REQUEST_SCHEDULEDPUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1615,7 +1663,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED" : {
+    "TOOLBAR_MENU_XPAGE_REJECT_REQUEST_PUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1625,7 +1673,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_SAVE_ERROR" : {
+    "TOOLBAR_MENU_XPAGE_ACCEPT_REQUEST_DEPUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1635,7 +1683,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_PUBLISH_TO_START" : {
+    "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDDEPUBLISH" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1645,7 +1693,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED" : {
+    "TOOLBAR_MENU_XPAGE_REJECT_REQUEST_DEPUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1655,7 +1703,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_COMPLETION_ERROR" : {
+    "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDDEPUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1665,7 +1713,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_COMPLETED" : {
+    "ERROR_WORKFLOW_GENERIC_REASON" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1675,7 +1723,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPERIMENT_PUBLISH_TO_FINISH" : {
+    "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDPUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1685,7 +1733,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "COMPLETE_EXPERIMENT" : {
+    "TOOLBAR_MENU_XPAGE_REJECT_REQUEST_PUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1695,7 +1743,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPRESSION_AND" : {
+    "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_PUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1705,7 +1753,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "DIALOG_CHARACTERISTICS_STEP1" : {
+    "TOOLBAR_MENU_XPAGE_CANCEL_SCHEDULED_PUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1715,7 +1763,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "DIALOG_CHARACTERISTICS_STEP2" : {
+    "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_DEPUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1725,7 +1773,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "DIALOG_SEGMENTS_TITLE" : {
+    "TOOLBAR_MENU_XPAGE_ACCEPT_REQUEST_PUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1735,7 +1783,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "VARIANT_DELETE" : {
+    "TOOLBAR_MENU_XPAGE_ACCEPT_REQUEST_SCHEDULEDPUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1745,7 +1793,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "ADD" : {
+    "TOOLBAR_MENU_XPAGE_REJECT_REQUEST_SCHEDULEDPUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1755,7 +1803,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPRESSION_TARGET_GROUP_CITY" : {
+    "TOOLBAR_MENU_XPAGE_REJECTED_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1765,7 +1813,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPRESSION_TARGET_GROUP_CONTINENT_SUBJECT" : {
+    "TOOLBAR_MENU_XPAGE_ACCEPT_REQUEST_SCHEDULEDDEPUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1775,7 +1823,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "CHARACTERISTIC_ADD" : {
+    "TOOLBAR_MENU_XPAGE_CANCEL_SCHEDULED_DEPUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1785,7 +1833,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPRESSION_TARGET_GROUP_RETURNINGVISITOR" : {
+    "TOOLBAR_MENU_XPAGE_REJECT_REQUEST_SCHEDULEDDEPUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1795,7 +1843,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPRESSION_SEGMENT" : {
+    "TOOLBAR_MENU_XPAGE_ACCEPT_REQUEST_DEPUBLISH_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1805,7 +1853,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "VARIANT_EXPRESSIONS_DEFAULT" : {
+    "TOOLBAR_MENU_XPAGE_DELETE_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1815,7 +1863,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "VARIANT_EXPRESSION_DELETE" : {
+    "TOOLBAR_MENU_XPAGE_COPY_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1825,7 +1873,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "DIALOG_CHARACTERISTICS_NO_CHARACTERISTICS" : {
+    "TOOLBAR_MENU_XPAGE_MOVE_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1835,7 +1883,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "SELECT" : {
+    "TOOLBAR_MENU_XPAGE_COPY" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1845,7 +1893,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "VARIANT_EXPRESSIONS_DEFAULT_ONLY" : {
+    "TOOLBAR_MENU_XPAGE_RENAME" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1855,7 +1903,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPRESSION_TARGET_GROUP_GROUPS" : {
+    "TOOLBAR_MENU_XPAGE_RENAME_ERROR" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1865,7 +1913,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPRESSION_TARGET_GROUP_DOCUMENTTYPES" : {
+    "TOOLBAR_MENU_XPAGE_REJECT" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1875,7 +1923,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPRESSION_TARGET_GROUP_REFERRER_SUBJECT" : {
+    "TOOLBAR_MENU_XPAGE_ACCEPT" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1885,237 +1933,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "EXPRESSION_TARGET_GROUP_CONTINENT" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "EXPRESSION_TARGET_GROUP_CITY_SUBJECT" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "EXPRESSION_TARGET_GROUP_REFERRER" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "CHARACTERISTIC" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "EXPRESSION_TARGET_GROUP_TRACKING" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "VARIANT_EXPRESSIONS_EMPTY" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "DIALOG_CHARACTERISTICS_EMPTY_TARGET_GROUPS" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "EXPRESSION_TARGET_GROUP_COUNTRY" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "EXPRESSION_TARGET_GROUP_COUNTRY_SUBJECT" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "VARIANT_COPY" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "SEGMENT_ADD" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "EXPRESSION_TARGET_GROUP_DOCUMENTTYPES_SUBJECT" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "EXPRESSION_TARGET_GROUP_PAGEVIEWS" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "EXPRESSION_TARGET_GROUP_DAYOFWEEK_SUBJECT" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "SEGMENT" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "EXPRESSION_TARGET_GROUP_RETURNINGVISITOR_SUBJECT" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "EXPRESSION_TARGET_GROUP_TRACKING_SUBJECT" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "DIALOG_CHARACTERISTICS_NO_TARGET_GROUPS" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "EXPRESSION_TARGET_GROUP_PAGEVIEWS_SUBJECT" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "EXPRESSION_TARGET_GROUP_GROUPS_SUBJECT" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "EXPRESSION_TARGET_GROUP_DAYOFWEEK" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "VARIANT_EXPRESSIONS" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "DIALOG_SEGMENTS_NO_SEGMENTS" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "DIALOG_CHARACTERISTICS_TITLE" : {
+    "NOTIFICATION_BAR_XPAGE_LABEL_NOT_PART_OF_PROJECT" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",

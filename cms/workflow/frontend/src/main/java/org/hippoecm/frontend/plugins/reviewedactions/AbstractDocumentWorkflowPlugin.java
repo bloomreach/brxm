@@ -84,7 +84,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         }
     }
 
-    protected BranchIdModel getBranchIdModel() {
+    public BranchIdModel getBranchIdModel() {
         return branchIdModel;
     }
 
@@ -187,8 +187,14 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         //refresh session before IBrowseService.browse is called
         UserSession.get().getJcrSession().refresh(false);
 
-        getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class)
-                .browse(nodeModel);
+        final String browseServiceId = getPluginConfig().getString(IBrowseService.BROWSER_ID, IBrowseService.class.getName());
+        final IBrowseService<IModel<Node>> browseService = getPluginContext().getService(browseServiceId, IBrowseService.class);
+        if (browseService != null) {
+            browseService.browse(nodeModel);
+        } else {
+            log.warn("Cannot browse to node '{}' because browse-service '{}' was not found, ", browseServiceId,
+                    nodeModel.getItemModel().getPath());
+        }
     }
 
     protected IModel<String> getDocumentName() {

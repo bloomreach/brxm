@@ -25,6 +25,7 @@ class EditContentService {
     ConfigService,
     ContentEditor,
     ContentService,
+    HippoIframeService,
     ProjectService,
     RightSidePanelService,
   ) {
@@ -36,6 +37,7 @@ class EditContentService {
     this.ConfigService = ConfigService;
     this.ContentEditor = ContentEditor;
     this.ContentService = ContentService;
+    this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
 
@@ -79,13 +81,12 @@ class EditContentService {
     return this.ContentEditor.getDocumentId() === documentId;
   }
 
-  ensureEditorIsPristine() {
-    const messageKey = this.ContentEditor.isDocumentXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
-    return this.ContentEditor.confirmPristine(messageKey);
+  isEditorPristine() {
+    return this.ContentEditor.isPristine();
   }
 
   reloadEditor() {
-    this.$state.go('hippo-cm.channel.edit-page.content', {
+    return this.$state.go('hippo-cm.channel.edit-page.content', {
       documentId: this.ContentEditor.getDocumentId(),
       lastModified: Date.now(),
     });
@@ -116,8 +117,8 @@ class EditContentService {
   }
 
   startEditing(documentId, state) {
-    const newState = state || 'hippo-cm.channel.edit-content';
-    const transition = () => this.$state.go(newState, { documentId });
+    const editingState = state || 'hippo-cm.channel.edit-content';
+    const transition = () => this.$state.go(editingState, { documentId });
     if (!this.ConfigService.projectsEnabled) {
       transition.apply();
     } else {
@@ -125,9 +126,9 @@ class EditContentService {
       this.ContentService.getDocument(documentId, selectedProjectId).then(
         (document) => {
           if (selectedProjectId && document.branchId !== selectedProjectId) {
-            this._showDocumentTitle(document);
+            this._showDocumentTitle(document.displayName);
             this._setDocumentContext();
-            this.$state.go('hippo-cm.channel.add-to-project', { documentId });
+            this.$state.go('hippo-cm.channel.add-to-project', { documentId, nextState: editingState });
           } else {
             transition.apply();
           }
@@ -136,9 +137,10 @@ class EditContentService {
     }
   }
 
-  branchAndEditDocument(documentId) {
+  branchAndEditDocument(documentId, state = 'hippo-cm.channel.edit-content') {
     this.ContentService.branchDocument(documentId)
-      .then(() => this.$state.go('hippo-cm.channel.edit-content', { documentId }));
+      .then(() => this.$state.go(state, { documentId }))
+      .then(() => this.HippoIframeService.reload());
   }
 
   stopEditing() {
@@ -152,12 +154,10 @@ class EditContentService {
     this.RightSidePanelService.startLoading();
 
     const document = await this.ContentEditor.open(documentId);
-
     if (document) {
       this.documentId = documentId;
-      this._showDocumentTitle(document);
     }
-
+    this._showDocumentTitle(this.ContentEditor.getDocumentDisplayName());
     this._setDocumentContext();
     this.RightSidePanelService.stopLoading();
   }
@@ -174,8 +174,8 @@ class EditContentService {
     this.RightSidePanelService.setContext(documentLabel);
   }
 
-  _showDocumentTitle(document) {
-    this.RightSidePanelService.setTitle(document.displayName);
+  _showDocumentTitle(documentTitle) {
+    this.RightSidePanelService.setTitle(documentTitle);
   }
 
   _onCloseChannel() {
