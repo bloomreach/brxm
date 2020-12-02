@@ -34,7 +34,6 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -48,6 +47,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.model.SvgOnLoadGalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.SvgScriptGalleryException;
 import org.hippoecm.frontend.plugins.jquery.upload.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
@@ -123,7 +123,7 @@ public abstract class GalleryUploadPanel extends Panel {
 
         uploadButton = new AjaxButton("uploadButton", new StringResourceModel("button-upload-label", this)) {
             @Override
-            protected String getOnClickScript(){
+            protected String getOnClickScript() {
                 return fileUploadWidget.getUploadScript();
             }
 
@@ -196,9 +196,13 @@ public abstract class GalleryUploadPanel extends Panel {
                 final boolean svgScriptsEnabled = pluginConfig.getAsBoolean(SVG_SCRIPTS_ENABLED, false);
                 if (!svgScriptsEnabled && Objects.equals(mimetype, SVG_MIME_TYPE)) {
                     final String svgContent = new String(upload.getBytes());
-                    if (StringUtils.containsIgnoreCase(svgContent,"<script")) {
+                    if (StringUtils.containsIgnoreCase(svgContent, "<script")) {
                         IOUtils.closeQuietly(istream);
                         throw new SvgScriptGalleryException("SVG images with embedded script are not supported.");
+                    }
+                    if (StringUtils.containsIgnoreCase(svgContent, "onload=")) {
+                        IOUtils.closeQuietly(istream);
+                        throw new SvgOnLoadGalleryException("SVG images with onload attribute are not supported.");
                     }
                 }
 
@@ -215,7 +219,7 @@ public abstract class GalleryUploadPanel extends Panel {
                 if (!node.getDisplayName().equals(localName)) {
                     defaultWorkflow.setDisplayName(localName);
                 }
-            } catch (WorkflowException | SvgScriptGalleryException | RepositoryException ex) {
+            } catch (WorkflowException | SvgScriptGalleryException | SvgOnLoadGalleryException | RepositoryException ex) {
                 log.error(ex.getMessage());
                 error(TranslatorUtils.getExceptionTranslation(GalleryUploadPanel.class, ex, localName).getObject());
             }
