@@ -63,20 +63,24 @@ class ComponentEditorService {
   }
 
   open(componentId, variantId) {
-    this.close();
-    this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
-
     const channel = this.ChannelService.getChannel();
     const page = this.PageStructureService.getPage();
     const component = page.getComponentById(componentId);
 
-    if (!variantId && component) {
-      variantId = component.getRenderVariant();
-    }
+    this.close();
+    this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
 
-    this.request = this.HstComponentService.getProperties(componentId, variantId);
-    this.request.then(response => this._onLoadSuccess(channel, component, page, response.properties))
-      .then(() => this.updatePreview())
+    return this.load(channel, page, component, variantId);
+  }
+
+  reopen() {
+    return this.load(this.channel, this.page, this.component);
+  }
+
+  load(channel, page, component, variantId) {
+    this.request = this.HstComponentService
+      .getProperties(component.getId(), variantId || component.getRenderVariant())
+      .then(response => this._onLoadSuccess(channel, component, page, response.properties))
       .catch(() => this._onLoadFailure())
       .finally(() => { delete this.request; });
 
@@ -381,16 +385,14 @@ class ComponentEditorService {
     return this.DialogService.show(confirm);
   }
 
-  discardChanges() {
-    return this.HippoIframeService.reload()
-      .then(() => {
-        this.$rootScope.$emit('component:reset-current-variant');
-        return this.reopen();
-      });
-  }
+  async discardChanges() {
+    await this.reopen();
 
-  reopen() {
-    return this.open(this.component.getId());
+    if (!this.isForeignPage()) {
+      await this.HippoIframeService.reload();
+    }
+
+    this.$rootScope.$emit('component:reset-current-variant');
   }
 
   close() {

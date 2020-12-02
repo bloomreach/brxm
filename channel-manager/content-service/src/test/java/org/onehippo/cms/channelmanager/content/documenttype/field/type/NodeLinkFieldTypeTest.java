@@ -54,7 +54,7 @@ import static org.powermock.api.support.membermodification.MemberMatcher.methods
 import static org.powermock.api.support.membermodification.MemberModifier.suppress;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
+@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 @PrepareForTest({AbstractFieldType.class})
 public class NodeLinkFieldTypeTest {
 
@@ -214,7 +214,7 @@ public class NodeLinkFieldTypeTest {
     public void writeMissingValues() throws Exception {
         linkFieldType.setId("my:documentlink");
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("1234"));
-        linkFieldType.validate(fieldValues, new CompoundContext(null, documentNode, null, null));
+        linkFieldType.validate(fieldValues, new CompoundContext(documentNode, documentNode, null, null));
         linkFieldType.writeValues(documentNode, Optional.of(fieldValues));
     }
 

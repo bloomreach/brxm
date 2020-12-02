@@ -14,7 +14,11 @@
     "ecmaVersion": 2020
   },
   "rules": {
-    "import/prefer-default-export": "off"
+    "@typescript-eslint/no-use-before-define": ["error"],
+    "import/prefer-default-export": "off",
+    "vue/no-v-html": "off",
+    "no-undef": "off",
+    "no-use-before-define": "off"
   },
   "overrides": [
     {

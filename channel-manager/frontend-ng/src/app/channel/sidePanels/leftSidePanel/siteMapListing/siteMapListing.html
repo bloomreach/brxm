@@ -13,27 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<search
-  filtered-fields="$ctrl.filteredFields"
-  items="$ctrl.items"
-  item-name="{{ ::'SEARCH_SITEMAP_ITEM_NAME' | translate }}"
-  items-name="{{ ::'SEARCH_SITEMAP_ITEMS_NAME' | translate }}"
-  on-filter="$ctrl.onFilter(filteredItems)">
-</search>
 
-<md-content>
-  <md-virtual-repeat-container md-top-index="$ctrl.activeItemIndex">
-    <md-list class="qa-sitemap">
-      <md-list-item class="md-2-line qa-sitemap-item"
-                    ng-class="{'list-item-active': $ctrl.isActiveSiteMapItem(item) }"
-                    md-virtual-repeat="item in $ctrl.filteredItems"
-                    ng-click="$ctrl.showPage(item)">
-        <div class="md-list-item-text">
-          <h4 class="qa-pathinfo">{{ item.pathInfo | startWithSlash }}</h4>
-          <p class="text-truncate qa-name">{{ item.pageTitle || item.name }}</p>
-        </div>
-        <md-divider></md-divider>
-      </md-list-item>
-    </md-list>
-  </md-virtual-repeat-container>
-</md-content>
+<em-site-map ng-prop-site_map="$ctrl.items"
+             ng-prop-render_path_info="$ctrl.getCurrentRenderPathInfo()">
+</em-site-map>

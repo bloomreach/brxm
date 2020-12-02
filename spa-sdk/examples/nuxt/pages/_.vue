@@ -17,7 +17,7 @@
 <template>
   <div class="d-flex flex-column vh-100">
     <br-page :configuration="configuration" :mapping="mapping" :page="page">
-      <template v-slot:default="props">
+      <template #default="props">
         <header>
           <nav class="navbar navbar-expand-sm navbar-dark sticky-top bg-dark" role="navigation">
             <div class="container">
@@ -63,7 +63,7 @@ const VISITOR_COOKIE_MAX_AGE_IN_SECONDS = 365 * 24 * 60 * 60;
     const configuration = {
       baseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
       endpoint: process.env.VUE_APP_BRXM_ENDPOINT,
-      endpointQueryParameter: 'brxm',
+      endpointQueryParameter: 'endpoint',
       request: {
         path: context.route.fullPath,
       },

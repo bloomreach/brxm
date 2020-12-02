@@ -48,11 +48,9 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator';
 @Component({
   computed: {
     nextUrl(this: BrNewsListPagination) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return this.pageable.next ? this.page.getUrl(`?page=${this.pageable.nextPage}`) : '#';
     },
     previousUrl(this: BrNewsListPagination) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return this.pageable.previous ? this.page.getUrl(`?page=${this.pageable.previousPage}`) : '#';
     },
   },

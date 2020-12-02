@@ -91,8 +91,8 @@ export class ComponentImpl implements Component {
     return this.model.name || '';
   }
 
-  getParameters() {
-    return this.model._meta.params || {};
+  getParameters<T>(): T {
+    return (this.model._meta.params ?? {}) as T;
   }
 
   getChildren() {

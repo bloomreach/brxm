@@ -2,6 +2,7 @@ definitions:
   config:
     /hippo:configuration/hippo:frontend/cms/hippo-channel-manager:
       jcr:primaryType: frontend:plugincluster
+      frontend:references: [browser.id]
       /channel-manager-perspective:
         jcr:primaryType: frontend:plugin
         jcr:mixinTypes: ['frontend:navigationitem']
@@ -41,6 +42,6 @@ definitions:
         plugin.class: org.onehippo.cms7.channelmanager.channeleditor.PlainComponentVariantAdder
       /document-workflow:
         jcr:primaryType: frontend:plugin
-        plugin.class: org.hippoecm.addon.workflow.DocumentWorkflowInvokerPlugin
+        plugin.class: org.hippoecm.frontend.plugins.documentworkflow.DocumentWorkflowInvokerPlugin
         wicket.id: ${cluster.id}.workflows
         workflow.categories: default

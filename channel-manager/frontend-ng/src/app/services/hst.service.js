@@ -68,9 +68,9 @@ class HstService {
     }
   }
 
-  getSiteMap(id) {
-    return this.doGet(id, 'pages')
-      .then(response => response.data.pages);
+  getSiteMapTree(id) {
+    return this.doGet(id, 'pagetree')
+      .then(response => response.data);
   }
 
   doGet(uuid, ...pathElements) {
@@ -175,8 +175,14 @@ class HstService {
     return str.join('&');
   }
 
-  addHstComponent(catalogComponent, containerId, nextComponentId) {
-    return this.doPost(null, containerId, catalogComponent.id, nextComponentId);
+  addHstComponent(catalogComponent, container, nextComponentId) {
+    const containerId = container.getId();
+    const pathElements = [catalogComponent.id];
+    if (container.isXPageLayoutComponent()) {
+      pathElements.unshift(container.getXPageLayoutHippoIdentifier());
+    }
+
+    return this.doPost(null, containerId, ...pathElements, nextComponentId);
   }
 
   updateHstContainer(containerId, containerRepresentation) {

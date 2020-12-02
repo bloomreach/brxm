@@ -8,6 +8,7 @@
     "forceConsistentCasingInFileNames": true,
     "lib": [
       "es6",
+      "es2019.object",
       "dom",
       "dom.iterable"
     ],

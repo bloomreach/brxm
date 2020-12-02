@@ -16,6 +16,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
@@ -27,16 +28,22 @@ public class XPageContext {
     private String xPageLockedBy;
     private String xPageName;
     private String xPageState;
-    private WorkflowRequest workflowRequest;
+    private List<WorkflowRequest> workflowRequests;
     private ScheduledRequest scheduledRequest;
     private String branchId;
     private Boolean publishable;
     private Boolean unpublishable;
     private Boolean requestPublication;
     private Boolean requestDepublication;
+    private Boolean renameAllowed;
     private Boolean copyAllowed;
     private Boolean moveAllowed;
     private Boolean deleteAllowed;
+    private Boolean acceptRequest;
+    private Boolean cancelRequest;
+    private Boolean rejectRequest;
+    private Boolean rejectedRequest;
+    private Boolean publishableBranch;
 
     public String getXPageId() {
         return xPageId;
@@ -65,12 +72,12 @@ public class XPageContext {
         return this;
     }
 
-    public WorkflowRequest getWorkflowRequest() {
-        return workflowRequest;
+    public List<WorkflowRequest> getWorkflowRequests() {
+        return workflowRequests;
     }
 
-    XPageContext setWorkflowRequest(final WorkflowRequest workflowRequest) {
-        this.workflowRequest = workflowRequest;
+    public XPageContext setWorkflowRequests(final List<WorkflowRequest> workflowRequests) {
+        this.workflowRequests = workflowRequests;
         return this;
     }
 
@@ -137,6 +144,15 @@ public class XPageContext {
         return this;
     }
 
+    public Boolean isRenameAllowed() {
+        return renameAllowed;
+    }
+
+    public XPageContext setRenameAllowed(final Boolean renameAllowed) {
+        this.renameAllowed = renameAllowed;
+        return this;
+    }
+
     public Boolean isCopyAllowed() {
         return copyAllowed;
     }
@@ -164,4 +180,51 @@ public class XPageContext {
         return this;
     }
 
+    public Optional<Boolean> isCancelRequest() {
+        return Optional.ofNullable(cancelRequest);
+    }
+
+    public void setCancelRequest(final Boolean cancelRequest) {
+        this.cancelRequest = cancelRequest;
+    }
+
+    public Optional<Boolean> isAcceptRequest() {
+        return Optional.ofNullable(acceptRequest);
+    }
+
+    public void setAcceptRequest(final Boolean acceptRequest) {
+        this.acceptRequest = acceptRequest;
+    }
+
+    public Optional<Boolean> isRejectRequest() {
+        return Optional.ofNullable(rejectRequest);
+    }
+
+    public void setRejectRequest(final Boolean rejectRequest) {
+        this.rejectRequest = rejectRequest;
+    }
+
+    public Optional<Boolean> isRejectedRequest() {
+        return Optional.ofNullable(rejectedRequest);
+    }
+
+    public void setRejectedRequest(final Boolean rejectedRequest) {
+        this.rejectedRequest = rejectedRequest;
+    }
+
+    public boolean hasBlockingRequest() {
+        if (isAcceptRequest().orElse(false)) {
+            return true;
+        }
+
+        if (isRejectRequest().orElse(false)) {
+            return true;
+        }
+
+        if (isCancelRequest().orElse(false)) {
+            return true;
+        }
+
+        return false;
+    }
 }

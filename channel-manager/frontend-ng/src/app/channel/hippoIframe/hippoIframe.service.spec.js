@@ -21,6 +21,7 @@ describe('HippoIframeService', () => {
   let $rootScope;
   let $window;
   let hippoIframe;
+  let pageMeta;
   let iframe;
   let ChannelService;
   let CommunicationService;
@@ -34,7 +35,7 @@ describe('HippoIframeService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    CommunicationService = jasmine.createSpyObj('CommunicationService', ['getPath', 'reload']);
+    CommunicationService = jasmine.createSpyObj('CommunicationService', ['reload']);
     DomService = jasmine.createSpyObj('DomService', ['getAssetUrl']);
 
     angular.mock.module(($provide) => {
@@ -69,7 +70,6 @@ describe('HippoIframeService', () => {
     });
 
     spyOn(ChannelService, 'makePath').and.returnValue('/test/url');
-    spyOn(ChannelService, 'extractRenderPathInfo');
     spyOn(PageToolsService, 'updatePageTools');
     spyOn(ScrollService, 'savePosition');
     spyOn(ScrollService, 'restorePosition');
@@ -79,22 +79,20 @@ describe('HippoIframeService', () => {
     hippoIframe = $j('hippo-iframe');
     iframe = $j('#testIframe');
     HippoIframeService.initialize(hippoIframe, iframe);
+
+    const page = jasmine.createSpyObj('page', ['getMeta']);
+    pageMeta = jasmine.createSpyObj('pageMeta', ['getContextPath', 'getPathInfo']);
+    page.getMeta.and.returnValue(pageMeta);
+    spyOn(PageStructureService, 'getPage').and.returnValue(page);
   });
 
   describe('initializePath', () => {
-    let pageMeta;
-
     beforeEach(() => {
       HippoIframeService.renderPathInfo = '/path';
       spyOn(ChannelService, 'getChannel');
       spyOn(ChannelService, 'makeRenderPath');
       spyOn(HippoIframeService, 'load');
       spyOn(HippoIframeService, 'reload');
-
-      const page = jasmine.createSpyObj('page', ['getMeta']);
-      pageMeta = jasmine.createSpyObj('pageMeta', ['getContextPath']);
-      page.getMeta.and.returnValue(pageMeta);
-      spyOn(PageStructureService, 'getPage').and.returnValue(page);
     });
 
     it('changes the page in the current channel', () => {
@@ -186,6 +184,21 @@ describe('HippoIframeService', () => {
     expect($log.warn).not.toHaveBeenCalled();
   });
 
+  it('should perform force iframe reload', () => {
+    HippoIframeService.pageLoaded = true;
+    spyOn(HippoIframeService, 'getCurrentRenderPathInfo').and.returnValue('path');
+    ChannelService.makePath.and.returnValue('something');
+
+    HippoIframeService.reload(true);
+    $rootScope.$digest();
+
+    expect(ChannelService.makePath).toHaveBeenCalledWith('path');
+    expect(CommunicationService.reload).not.toHaveBeenCalled();
+    expect(HippoIframeService.iframeJQueryElement.attr('src')).toBe('something');
+
+    $rootScope.$emit('page:change', { initial: true });
+  });
+
   it('logs a warning upon a reload request when a reload is already ongoing', () => {
     spyOn($log, 'warn');
 
@@ -221,23 +234,27 @@ describe('HippoIframeService', () => {
   });
 
   it('extracts the current renderPathInfo when the page has been loaded', () => {
-    ChannelService.extractRenderPathInfo.and.returnValue('dummy');
-    CommunicationService.getPath.and.returnValue('dummy');
+    spyOn(ChannelService, 'getHomePageRenderPathInfo').and.returnValue('/channel');
+    pageMeta.getPathInfo.and.returnValue('/dummy');
+
     $rootScope.$emit('page:change', { initial: true });
     $rootScope.$digest();
 
-    expect(HippoIframeService.getCurrentRenderPathInfo()).toBe('dummy');
+    expect(HippoIframeService.getCurrentRenderPathInfo()).toBe('/channel/dummy');
   });
 
-  it('resets the current renderPathInfo when the iframe path cannot be found', () => {
-    HippoIframeService.initialize(undefined); // undo initialization
-    $rootScope.$emit('page:change', { initial: true });
+  it('should trim the trailing slash from the current rendering path', () => {
+    spyOn(ChannelService, 'getHomePageRenderPathInfo').and.returnValue('/channel');
+    pageMeta.getPathInfo.and.returnValue('/');
 
-    expect(HippoIframeService.getCurrentRenderPathInfo()).not.toBeDefined();
+    $rootScope.$emit('page:change', { initial: true });
+    $rootScope.$digest();
+
+    expect(HippoIframeService.getCurrentRenderPathInfo()).toBe('/channel');
   });
 
   it('uses jQuery to trigger a reload if the src attribute matches the to-be-loaded path', () => {
-    ChannelService.extractRenderPathInfo.and.returnValue('/target');
+    pageMeta.getPathInfo.and.returnValue('/target');
     HippoIframeService.load('/target');
     $rootScope.$emit('page:change', { initial: true });
 
@@ -260,8 +277,7 @@ describe('HippoIframeService', () => {
     });
 
     it('stores the current renderPath in sessionStorage', () => {
-      ChannelService.extractRenderPathInfo.and.returnValue('dummy');
-      CommunicationService.getPath.and.returnValue('dummy');
+      pageMeta.getPathInfo.and.returnValue('dummy');
       $rootScope.$emit('page:change', { initial: true });
       $rootScope.$digest();
 
@@ -318,8 +334,7 @@ describe('HippoIframeService', () => {
       $rootScope.$emit('iframe:page:edit-shared-containers', true);
       expect(HippoIframeService.isEditSharedContainers()).toBe(true);
 
-      ChannelService.extractRenderPathInfo.and.returnValue('dummy');
-      CommunicationService.getPath.and.returnValue('dummy');
+      pageMeta.getPathInfo.and.returnValue('dummy');
       $rootScope.$emit('page:change', { initial: true });
       $rootScope.$digest();
 

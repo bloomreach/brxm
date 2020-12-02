@@ -16,7 +16,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
-public enum HstAction {
+public enum HstAction implements NamedCategory {
 
     CHANNEL_SETTINGS("settings", HstCategory.CHANNEL),
     CHANNEL_PUBLISH("publish", HstCategory.CHANNEL),
@@ -41,6 +41,12 @@ public enum HstAction {
     XPAGE_REQUEST_UNPUBLICATION("request-unpublish", HstCategory.XPAGE),
     XPAGE_REQUEST_SCHEDULE_UNPUBLICATION("request-schedule-unpublish", HstCategory.XPAGE),
 
+    XPAGE_REQUEST_ACCEPT("accept", HstCategory.XPAGE),
+    XPAGE_REQUEST_CANCEL("cancel", HstCategory.XPAGE),
+    XPAGE_REQUEST_REJECT("reject", HstCategory.XPAGE),
+    XPAGE_REQUEST_REJECTED("rejected", HstCategory.XPAGE),
+
+    XPAGE_RENAME("rename", HstCategory.XPAGE),
     XPAGE_COPY("copy", HstCategory.XPAGE),
     XPAGE_MOVE("move", HstCategory.XPAGE),
     XPAGE_DELETE("delete", HstCategory.XPAGE),
@@ -54,14 +60,12 @@ public enum HstAction {
         this.category = category;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
-    public Action toAction(boolean enabled) {
-        return new Action(name, category.getName(), enabled);
-    }
-
+    @Override
     public Category getCategory() {
         return category;
     }

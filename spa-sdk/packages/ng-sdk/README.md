@@ -191,7 +191,7 @@ In case you need to show a static component or a component from the abstract pag
   template: `
     <br-page>
       <ng-template>
-        <app-menu *brComponent="'menu'" let-component [component]="component">
+        <app-menu *brComponent="'menu'; let component" [component]="component">
         </app-menu>
       </ng-template>
     </br-page>
@@ -221,7 +221,7 @@ The component data in case of inline mapping can be accessed via the template co
   template: `
     <br-page>
       <ng-template>
-        <ul *brComponent="'menu'" let-component let-page="page">
+        <ul *brComponent="'menu'; let component; let page=page">
           <li><a [href]="page.getUrl('/')">Home</a></li>
           <li *ngFor="let item of component.getModels()">...</li>
         </ul>
@@ -231,6 +231,101 @@ The component data in case of inline mapping can be accessed via the template co
 })
 export class AppComponent {}
 ```
+
+### Buttons
+- Manage menu button can be placed inside a menu component using `brManageMenuButton` directive.
+  ```typescript
+  import { Component, Input } from '@angular/core';
+  import { Component as BrComponent, Menu, Page, Reference } from '@bloomreach/spa-sdk';
+
+  interface MenuModels {
+    menu: Reference;
+  }
+
+  @Component({
+    selector: 'app-menu',
+    template: `
+      <ul [ngClass]="{ 'has-edit-button': page.isPreview() }">
+        <!-- ... -->
+
+        <ng-container [brManageMenuButton]="menu"></ng-container>
+      </ul>
+    `,
+  })
+  export class MenuComponent {
+    @Input() component!: BrComponent;
+    @Input() page!: Page;
+
+    get menu() {
+      const { menu } = this.component.getModels<MenuModels>();
+
+      return menu && this.page.getContent<Menu>(menu);
+    }
+  }
+  ```
+- Manage content button can be placed inside a component using `brManageContentButton` directive with non-empty input.
+  ```typescript
+  import { Component, Input } from '@angular/core';
+  import { Component as BrComponent, Document, Page, Reference } from '@bloomreach/spa-sdk';
+
+  interface BannerModels {
+    document: Reference;
+  }
+
+  @Component({
+    selector: 'app-banner',
+    template: `
+      <div [ngClass]="{ 'has-edit-button': page.isPreview() }">
+        <!-- ... -->
+
+        <ng-container
+          [brManageContentButton]="document"
+          documentTemplateQuery="new-banner-document"
+          folderTemplateQuery="new-banner-folder"
+          parameter="document"
+          root="banners"
+          [relative]="true">
+        </ng-container>
+      </div>
+    `,
+  })
+  export class BannerComponent {
+    @Input() component!: BrComponent;
+    @Input() page!: Page;
+
+    get document() {
+      const { document } = this.component.getModels<BannerModels>();
+
+      return document && this.page.getContent<Document>(document);
+    }
+  }
+  ```
+- Add new content button can be placed inside a component using `brManageContentButton` directive but without passing a content entity.
+  ```typescript
+  import { Component } from '@angular/core';
+
+  @Component({
+    selector: 'app-news',
+    template: `
+      <div [ngClass]="{ 'has-edit-button': page.isPreview() }">
+        <!-- ... -->
+
+        <ng-container
+          [brManageContentButton]
+          documentTemplateQuery="new-news-document"
+          folderTemplateQuery="new-news-folder"
+          root="news">
+        </ng-container>
+      </div>
+    `,
+  })
+  export class NewsComponent {
+    @Input() component!: BrComponent;
+    @Input() page!: Page;
+
+    // ...
+  }
+  ```
 
 ### State Transfering
 The `br-page` component supports [TransferState](https://angular.io/api/platform-browser/TransferState) without any extra configuration.
@@ -281,12 +376,18 @@ _`$implicit`_ | The current component.
 `page` | The current page instance.
 
 #### brManageContentButton
-This directive places a button on the page that opens the linked content in the document editor.
+This directive places a button on the page that opens the linked content in the document editor or opens a document editor to create a new one.
 The button will only be shown in preview mode.
 
 Property | Required | Description
 --- | :---: | ---
-`brManageContentButton` | _yes_ | The content entity to open for editing.
+`brManageContentButton` | _no_ | The content entity to open for editing.
+`documentTemplateQuery` | _no_ | Template query to use for creating new documents.
+`folderTemplateQuery` | _no_ | Template query to use in case folders specified by `path` do not yet exist and must be created.
+`path` | _no_ | Initial location of a new document, relative to the `root`.
+`parameter` | _no_ | Name of the component parameter in which the document path is stored.
+`relative` | _no_ | Flag indicating that the picked value should be stored as a relative path.
+`root` | _no_ | Path to the root folder of selectable document locations.
 
 #### brManageMenuButton
 This directive places a button on the page that opens the linked menu in the menu editor.

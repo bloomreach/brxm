@@ -21,14 +21,15 @@
   },
   "homepage": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
   "scripts": {
-    "build": "SKIP_PREFLIGHT_CHECK=true yarn workspaces foreach --parallel --topological run build",
+    "build": "yarn workspaces foreach --parallel --topological run build",
     "bump": "yarn workspaces foreach version",
     "docs": "yarn workspaces foreach --parallel run docs",
+    "heroku-postbuild": "cd ${PROJECT_PATH:-.} && yarn workspaces foreach --parallel --recursive --topological run build",
     "lint": "yarn workspaces foreach --parallel run lint",
     "release": "YARN_NPM_AUTH_TOKEN=$NPM_AUTH_TOKEN yarn workspaces foreach --include '@bloomreach/*-sdk' npm publish --access public",
     "test": "yarn workspaces foreach --parallel run test"
   },
   "resolutions": {
-    "typescript": "~3.8"
+    "typescript": "~4.0"
   }
 }

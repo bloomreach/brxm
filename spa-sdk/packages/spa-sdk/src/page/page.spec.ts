@@ -15,6 +15,7 @@
  */
 
 import { Typed } from 'emittery';
+import { ButtonFactory } from './button-factory';
 import { Component, TYPE_COMPONENT } from './component';
 import { ComponentFactory } from './component-factory';
 import { ContentFactory } from './content-factory';
@@ -27,6 +28,7 @@ import { Link, TYPE_LINK_INTERNAL, TYPE_LINK_EXTERNAL, isLink } from './link';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { PageImpl, PageModel, Page, isPage } from './page';
 
+let buttonFactory: jest.Mocked<ButtonFactory>;
 let componentFactory: jest.Mocked<ComponentFactory>;
 let content: unknown;
 let contentFactory: jest.Mocked<ContentFactory>;
@@ -38,6 +40,11 @@ let metaFactory: jest.MockedFunction<MetaCollectionFactory>;
 let root: Component;
 
 const model = {
+  channel: {
+    info: {
+      props: {},
+    },
+  },
   links: {
     self: { href: 'self-url', type: TYPE_LINK_EXTERNAL },
     site: { href: 'site-url', type: TYPE_LINK_INTERNAL },
@@ -52,6 +59,7 @@ const model = {
 function createPage(pageModel = model) {
   return new PageImpl(
     pageModel,
+    buttonFactory,
     componentFactory,
     contentFactory,
     linkFactory,
@@ -63,6 +71,7 @@ function createPage(pageModel = model) {
 }
 
 beforeEach(() => {
+  buttonFactory = { create: jest.fn() } as unknown as typeof buttonFactory;
   componentFactory = { create: jest.fn(() => root) } as unknown as typeof componentFactory;
   content = {};
   contentFactory = { create: jest.fn(() => content) } as unknown as typeof contentFactory;
@@ -75,6 +84,25 @@ beforeEach(() => {
 });
 
 describe('PageImpl', () => {
+  describe('getButton', () => {
+    it('should delegate to the ButtonFactory to create button', () => {
+      const page = createPage();
+      const model = {};
+
+      page.getButton('something', model);
+
+      expect(buttonFactory.create).toHaveBeenCalledWith('something', model);
+    });
+  });
+
+  describe('getChannelParameters', () => {
+    it('should return channel info parameters', () => {
+      const page = createPage();
+
+      expect(page.getChannelParameters()).toBe(model.channel.info.props);
+    });
+  });
+
   describe('getComponent', () => {
     it('should forward a call to the root component', () => {
       const page = createPage();

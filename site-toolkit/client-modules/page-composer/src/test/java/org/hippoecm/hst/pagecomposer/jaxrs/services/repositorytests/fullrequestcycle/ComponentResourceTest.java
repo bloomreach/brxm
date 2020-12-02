@@ -67,11 +67,13 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.X
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_DELETE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_MOVE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_PUBLISH;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_RENAME;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_SCHEDULE_PUBLICATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_SCHEDULE_UNPUBLICATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_UNPUBLISH;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.CHANNEL;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.PAGE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.WORKFLOW;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstCategory.XPAGE;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
@@ -110,7 +112,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
 
         final Map<String, Object> expectedStates = ImmutableMap.<String, Object>builder()
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
-                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.emptyMap())
+                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.singletonMap("new-document", "/unittestcontent/documents/unittestproject/experiences"))
                 .build();
         Assertions.assertThat(states)
                 .describedAs("A page component contains only channel states")
@@ -147,7 +149,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
 
         final Map<String, Object> expectedStates = ImmutableMap.<String, Object>builder()
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
-                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.emptyMap())
+                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.singletonMap("new-document", "/unittestcontent/documents/unittestproject/experiences"))
                 .build();
         Assertions.assertThat(states)
                 .describedAs("A page component contains only channel states")
@@ -186,6 +188,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(XPAGE, XPAGE_DELETE), false)
                 .put(key(XPAGE, XPAGE_MOVE), false)
                 .put(key(XPAGE, XPAGE_PUBLISH), false)
+                .put(key(XPAGE, XPAGE_RENAME), false)
                 .put(key(XPAGE, XPAGE_SCHEDULE_PUBLICATION), false)
                 .put(key(XPAGE, XPAGE_SCHEDULE_UNPUBLICATION), true)
                 .put(key(XPAGE, XPAGE_UNPUBLISH), true)
@@ -202,7 +205,8 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(XPAGE, HstState.XPAGE_NAME), name)
                 .put(key(XPAGE, HstState.XPAGE_STATE), "live")
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
-                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.emptyMap())
+                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.singletonMap("new-document", "/unittestcontent/documents/unittestproject/experiences"))
+                .put(key(WORKFLOW, HstState.WORKFLOW_REQUESTS), Collections.emptyList())
                 .build();
         Assertions.assertThat(states)
                 .describedAs("A published xpage request contains xpage and channel states")

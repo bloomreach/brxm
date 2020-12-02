@@ -16,7 +16,7 @@
 
 import { shallowMount } from '@vue/test-utils';
 import { Component, Prop, Provide, Vue } from 'vue-property-decorator';
-import { Document, MetaCollection, Page } from '@bloomreach/spa-sdk';
+import { MetaCollection, Page } from '@bloomreach/spa-sdk';
 import BrManageContentButton from '@/BrManageContentButton.vue';
 import BrMeta from '@/BrMeta.vue';
 
@@ -31,30 +31,33 @@ class BrPage extends Vue {
 
 describe('BrManageContentButton', () => {
   const meta = {} as MetaCollection;
-  let content: jest.Mocked<Document>;
   let page: jest.Mocked<Page>;
-  let provide: Function;
+  let provide: () => unknown;
 
   beforeAll(() => {
-    content = ({ getMeta: jest.fn(() => meta) } as unknown) as typeof content;
-    page = ({ isPreview: jest.fn() } as unknown) as typeof page;
+    page = ({
+      getButton: jest.fn(() => meta),
+      isPreview: jest.fn(),
+    } as unknown) as typeof page;
 
     const wrapper = shallowMount(BrPage, { propsData: { page } });
-    provide = (wrapper.vm.$options.provide as Function).bind(wrapper.vm);
+    provide = (wrapper.vm.$options.provide as typeof provide).bind(wrapper.vm);
   });
 
   describe('render', () => {
     it('should render nothing when it is not a preview', () => {
-      const wrapper = shallowMount(BrManageContentButton, { provide, propsData: { content } });
+      const wrapper = shallowMount(BrManageContentButton, { provide, propsData: {} });
 
       expect(wrapper.html()).toBe('');
     });
 
     it('should render a content button meta', () => {
       page.isPreview.mockReturnValueOnce(true);
-      const wrapper = shallowMount(BrManageContentButton, { provide, propsData: { content } });
+      const content = {};
+      const wrapper = shallowMount(BrManageContentButton, { provide, propsData: { content, path: 'content' } });
       const props = wrapper.findComponent(BrMeta).props();
 
+      expect(page.getButton).toBeCalledWith(expect.any(String), { content, path: 'content' });
       expect(props.meta).toBe(meta);
     });
   });

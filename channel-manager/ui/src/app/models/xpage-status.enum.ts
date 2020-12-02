@@ -25,6 +25,7 @@ export enum XPageStatus {
   ScheduledToTakeOffline,
   ScheduledPublicationRequest,
   ScheduledToTakeOfflineRequest,
+  NotPartOfProject,
   ProjectRunning,
   ProjectInProgress,
   ProjectInReview,

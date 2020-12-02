@@ -465,8 +465,8 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Set<XPageLayout> getXPageLayouts(final String channelId) {
-        final Map<String, XPageLayout> xPageLayoutsMap = channelService.getXPageLayouts(channelId);
+    public Set<XPageLayout> getXPageLayouts(final Mount mount) {
+        final Map<String, XPageLayout> xPageLayoutsMap = channelService.getXPageLayouts(mount);
         return new HashSet<>(xPageLayoutsMap.values());
     }
 

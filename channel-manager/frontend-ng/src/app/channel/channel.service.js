@@ -201,21 +201,6 @@ class ChannelService {
     return path;
   }
 
-  extractRenderPathInfo(path) {
-    if (!path.startsWith(this.channelPrefix)) {
-      return path;
-    }
-
-    let renderPathInfo = path.slice(this.channelPrefix.length);
-
-    // remove trailing slash if any, HST's siteMapItem.renderPathInfo never has a trailing slash.
-    if (renderPathInfo.endsWith('/')) {
-      renderPathInfo = renderPathInfo.slice(0, renderPathInfo.length - 1);
-    }
-
-    return renderPathInfo;
-  }
-
   getId() {
     return this.channel.id;
   }

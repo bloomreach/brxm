@@ -31,6 +31,7 @@ import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNA
 
 public final class WorkflowRequest {
 
+    private final String id;
     private final Calendar creationDate;
     private final Calendar requestDate;
     private final String reason;
@@ -38,11 +39,16 @@ public final class WorkflowRequest {
     private final String username;
 
     public WorkflowRequest(final Node requestNode) throws RepositoryException {
+        id = requestNode.getIdentifier();
         creationDate = JcrUtils.getDateProperty(requestNode, HIPPOSTDPUBWF_CREATION_DATE, null);
         requestDate = JcrUtils.getDateProperty(requestNode, HIPPOSTDPUBWF_REQDATE, null);
         reason = JcrUtils.getStringProperty(requestNode, HIPPOSTDPUBWF_REASON, null);
         type = JcrUtils.getStringProperty(requestNode, HIPPOSTDPUBWF_TYPE, null);
         username = JcrUtils.getStringProperty(requestNode, HIPPOSTDPUBWF_USERNAME, null);
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getReason() {

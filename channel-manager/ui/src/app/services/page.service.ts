@@ -162,7 +162,8 @@ export class PageService implements OnDestroy {
 
   private matchWorkflowRequest(pageStates: PageStates): XPageStatusInfo | undefined {
     const xPageState = pageStates.xpage;
-    const xPageWorkflowRequest = pageStates.workflowRequest;
+    const xPageWorkflowRequests = pageStates.workflow && pageStates.workflow.requests;
+    const xPageWorkflowRequest = xPageWorkflowRequests && xPageWorkflowRequests.length && xPageWorkflowRequests[0];
 
     if (!xPageState || !xPageWorkflowRequest) {
       return;
@@ -200,12 +201,11 @@ export class PageService implements OnDestroy {
       return;
     }
 
-    // skip the matcher if user is observing a project but the XPage document isn't a part of the project
-    if (xPageState.branchId === this.projectService.coreBranchId) {
-      return;
-    }
-
     const getPageStatus = (projectState: ProjectState, pageAcceptanceState?: AcceptanceState) => {
+      if (xPageState.branchId === this.projectService.coreBranchId) {
+        return XPageStatus.NotPartOfProject;
+      }
+
       switch (project.state) {
         case ProjectState.InReview:
           switch (pageAcceptanceState) {

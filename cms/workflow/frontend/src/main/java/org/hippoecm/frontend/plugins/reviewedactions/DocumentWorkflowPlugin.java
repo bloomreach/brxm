@@ -80,7 +80,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     private StdWorkflow whereUsedAction;
     private StdWorkflow historyAction;
 
-
     public DocumentWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
@@ -200,7 +199,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
                     @Override
                     public void invokeWorkflow() throws Exception {
-                        copyAction.invokeWorkflow();
+                        copyAction.invokeWorkflowNoReject();
                     }
 
                     @Override
@@ -268,7 +267,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                         getPluginContext(), getPluginConfig()) {
                     @Override
                     public void invokeWorkflow() throws Exception {
-                        moveAction.invokeWorkflow();
+                        moveAction.invokeWorkflowNoReject();
                     }
 
                     @Override

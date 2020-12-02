@@ -15,29 +15,20 @@
  */
 
 import React from 'react';
-import { Content, Document } from '@bloomreach/spa-sdk';
+import { ManageContentButton, TYPE_MANAGE_CONTENT_BUTTON } from '@bloomreach/spa-sdk';
 import { BrMeta } from '../meta';
 import { BrPageContext } from '../page/BrPageContext';
-
-interface BrManageContentButtonProps {
-  /**
-   * The content entity to open for editing.
-   */
-  content: Content | Document;
-}
 
 /**
  * The button component that opens for editing a content.
  */
-export class BrManageContentButton extends React.Component<BrManageContentButtonProps> {
+export class BrManageContentButton extends React.Component<ManageContentButton> {
   static contextType = BrPageContext;
   context: React.ContextType<typeof BrPageContext>;
 
   render() {
-    if (!this.context?.isPreview()) {
-      return null;
-    }
-
-    return <BrMeta meta={this.props.content.getMeta()} />;
+    return this.context?.isPreview()
+      ? <BrMeta meta={this.context.getButton(TYPE_MANAGE_CONTENT_BUTTON, this.props)} />
+      : null;
   }
 }

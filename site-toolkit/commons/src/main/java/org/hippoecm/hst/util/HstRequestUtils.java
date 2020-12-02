@@ -581,6 +581,21 @@ public class HstRequestUtils {
     }
 
     /**
+     * Creates a fully qualified URL with the same scheme and host as the client used, and pathInfo equal to the
+     * matched mount : note that this pathInfo for the matched mount does not include the _cmsinternal for preview matched
+     * mounts
+     */
+    public static String createURLForMountPath(final String scheme, final Mount mount, final HttpServletRequest request) {
+        String contextPath = "";
+        if (mount.isContextPathInUrl()) {
+            contextPath = mount.getContextPath();
+        }
+        return new StringBuilder(scheme).append("://").append(HstRequestUtils.getFarthestRequestHost(request, false))
+                .append(contextPath).append(mount.getMountPath()).toString();
+
+    }
+
+    /**
      * Returns a fully qualified String url for the {@link HstURL} <code>hstUrl</code>. As scheme for the created url,
      * always the scheme of the current (farthest) request is taken, as a hstUrl can never have a different scheme than the
      * request that was used to create the hstUrl

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,14 @@ public class CategoriesBuilderImpl extends AbstractCategoriesBuilder {
 
     @Override
     public String[] build() {
-        assert node != null;
-        assert versionCategories != null;
-        assert workflowCategories != null;
-        return isFrozenNode(node) ? versionCategories : workflowCategories;
+        if (isFrozenNode(node)) {
+            return versionCategories;
+        }
+
+        if (isXpage(node)) {
+            return xpageCategories;
+        }
+
+        return workflowCategories;
     }
 }
