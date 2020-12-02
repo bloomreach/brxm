@@ -120,7 +120,6 @@
     <wicket.version>7.17.0</wicket.version>
     <wicket-extjs.version>0.26.0</wicket-extjs.version>
     <wicket15-tree.version>7.1.0</wicket15-tree.version>
-    <httpclient.version>4.5.6</httpclient.version>
 
     <joda-time.version>2.0</joda-time.version>
     <json-lib.version>2.4</json-lib.version>
