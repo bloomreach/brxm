@@ -71,6 +71,7 @@ export class NotificationBarStatusTextComponent {
       [XPageStatus.ScheduledToTakeOffline]: 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE',
       [XPageStatus.ScheduledPublicationRequest]: 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_PUBLICATION_REQUESTED',
       [XPageStatus.ScheduledToTakeOfflineRequest]: 'NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTED',
+      [XPageStatus.NotPartOfProject]: 'NOTIFICATION_BAR_XPAGE_LABEL_NOT_PART_OF_PROJECT',
       [XPageStatus.ProjectInProgress]: 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_PROGRESS',
       [XPageStatus.ProjectInReview]: 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_REVIEW',
       [XPageStatus.ProjectPageApproved]: 'NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_PAGE_APPROVED',

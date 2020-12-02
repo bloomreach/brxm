@@ -7,16 +7,16 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@bloomreach/react-sdk": "^14.4.0",
-    "axios": "^0.19",
+    "axios": "^0.21",
     "dotenv": "^8.2",
-    "next": "^9.4",
+    "next": "^10.0",
     "next-routes": "^1.4",
-    "nookies": "^2.3",
-    "react": "^16.13",
-    "react-dom": "^16.13"
+    "nookies": "^2.4",
+    "react": "^16.14",
+    "react-dom": "^16.14"
   },
   "devDependencies": {
-    "@types/node": "^14.0",
+    "@types/node": "^14.14",
     "@types/react": "^16.9",
     "@types/react-dom": "^16.9"
   },

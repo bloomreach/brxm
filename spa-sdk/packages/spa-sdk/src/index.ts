@@ -204,6 +204,7 @@ export {
   ImageSet,
   Image,
   Link,
+  ManageContentButton,
   MenuItem,
   Menu,
   MetaCollection,
@@ -237,4 +238,6 @@ export {
   TYPE_LINK_EXTERNAL,
   TYPE_LINK_INTERNAL,
   TYPE_LINK_RESOURCE,
+  TYPE_MANAGE_CONTENT_BUTTON,
+  TYPE_MANAGE_MENU_BUTTON,
 } from './page';

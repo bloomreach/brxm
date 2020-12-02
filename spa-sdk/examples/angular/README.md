@@ -4,10 +4,12 @@ Example Angular SPA using the Bloomreach Experience [Angular SDK](https://www.np
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli).
 
 ## Install and run
-Run [Docker](https://hub.docker.com/repository/docker/bloomreach/xm-spa-example) container with the configured brXM instance:
+Run [Docker](https://hub.docker.com/r/bloomreach/xm-spa-example) container with the configured brXM instance:
 ```bash
-docker run --net=host bloomreach/xm-spa-example
+docker run -p 8080:8080 bloomreach/xm-spa-example
 ```
+
+First, change the application URL to `http://localhost:4200` in the [channel settings](http://localhost:8080/cms/console/?path=/hst:xmspaexample/hst:configurations/xmspaexample/hst:workspace/hst:channel/hst:channelinfo).
 
 Then, update `src/environments/environment.ts` and `src/environments/environment.prod.ts` files to specify the brXM instance to fetch the page model from:
 ```

@@ -62,7 +62,7 @@ import static org.powermock.api.support.membermodification.MemberMatcher.methods
 import static org.powermock.api.support.membermodification.MemberModifier.suppress;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
+@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 @PrepareForTest({AbstractFieldType.class})
 public class ImageLinkFieldTypeTest {
 
@@ -239,7 +239,7 @@ public class ImageLinkFieldTypeTest {
         imageLink.setId("my:imagelink");
         final MockNode documentNode = MockNode.root();
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("1234"));
-        CompoundContext compoundContext = new CompoundContext(null, documentNode, null, null);
+        CompoundContext compoundContext = new CompoundContext(documentNode, documentNode, null, null);
         imageLink.validate(fieldValues, compoundContext);
         imageLink.writeValues(documentNode, Optional.of(fieldValues));
     }

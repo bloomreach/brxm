@@ -71,9 +71,14 @@ public class BrowseState implements IClusterable {
         if (navLocation != null && path.equals(navLocation.getPath())) {
             JcrNodeModel documentModel = new JcrNodeModel(path);
             final Node documentNode = documentModel.getNode();
+            if (documentNode == null) {
+                final String parentPath = StringUtils.substringBeforeLast(path, "/");
+                onNavLocationChanged(NavLocation.folder(parentPath, NavLocation.Mode.REPLACE));
+                return;
+            }
 
             try {
-                if (!documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                if (documentNode != null && !documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                     final HandleIdentifierStrategy identifierStrategy = new HandleIdentifierStrategy();
                     final String nodeId = identifierStrategy.getIdentifier(documentNode);
                     if (nodeId != null) {

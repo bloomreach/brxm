@@ -53,23 +53,4 @@ public final class State {
                 .add("value='" + value + "'")
                 .toString();
     }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final State state = (State) o;
-        return name.equals(state.name) &&
-                category.equals(state.category) &&
-                Objects.equals(value, state.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, category, value);
-    }
 }

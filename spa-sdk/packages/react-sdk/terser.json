@@ -5,6 +5,5 @@
   "output": {
     "beautify": true,
     "comments": "/^\\*/"
-  },
-  "sourcemap": true
+  }
 }

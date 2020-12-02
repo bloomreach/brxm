@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.jquery.upload;
 
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.upload.processor.FileUploadPreProcessorService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 
@@ -122,7 +123,7 @@ public class FileUploadWidgetSettings implements IClusterable {
      * automatically or wait until the upload script is called.
      *
      * @see AbstractFileUploadWidget#getUploadScript()
-     * @see org.hippoecm.frontend.plugins.jquery.upload.single.SingleFileUploadWidget#SingleFileUploadWidget(String, IPluginConfig, FileUploadValidationService, boolean)
+     * @see org.hippoecm.frontend.plugins.jquery.upload.single.SingleFileUploadWidget#SingleFileUploadWidget(String, IPluginConfig, FileUploadValidationService, FileUploadPreProcessorService, boolean)
      */
     public boolean isAutoUpload() {
         return autoUpload;

@@ -61,7 +61,7 @@ class HippoIframeService {
     // When another project became active the page reload will trigger a channel switch.
     this.ProjectService.afterChange('iframeReload', (projectIdIdentical) => {
       if (!projectIdIdentical) {
-        this.reload();
+        this.reload(true);
       }
     });
 
@@ -127,7 +127,7 @@ class HippoIframeService {
     return this.renderPathInfo;
   }
 
-  async reload() {
+  async reload(force = false) {
     if (!this.isPageLoaded()) {
       return;
     }
@@ -142,7 +142,11 @@ class HippoIframeService {
     this._deferredReload = this.$q.defer();
 
     await this.ScrollService.savePosition();
-    await this.CommunicationService.reload();
+    if (force) {
+      this.iframeJQueryElement.attr('src', this.ChannelService.makePath(this.getCurrentRenderPathInfo()));
+    } else {
+      await this.CommunicationService.reload();
+    }
 
     // eslint-disable-next-line consistent-return
     return this._deferredReload.promise;
@@ -169,14 +173,21 @@ class HippoIframeService {
 
     this.CmsService.publish('user-activity');
 
-    const renderPathInfo = await this._determineRenderPathInfo();
+    const mountPath = this.ChannelService.getHomePageRenderPathInfo();
+    const pathInfo = this.PageStructureService.getPage().getMeta().getPathInfo();
+
+    let renderPathInfo = `${mountPath}${pathInfo}`;
+    if (renderPathInfo !== '/' && renderPathInfo.endsWith('/')) {
+      renderPathInfo = renderPathInfo.slice(0, renderPathInfo.length - 1);
+    }
+
     if (renderPathInfo !== this.renderPathInfo) {
-      this.renderPathInfo = renderPathInfo;
+      this.$rootScope.$evalAsync(() => { this.renderPathInfo = renderPathInfo; });
       this._editSharedContainers = false;
     }
 
     if (this.ConfigService.isDevMode()) {
-      sessionStorage.channelPath = this.renderPathInfo;
+      sessionStorage.channelPath = pathInfo;
     }
   }
 
@@ -184,17 +195,6 @@ class HippoIframeService {
     this.$rootScope.$apply(() => {
       this._editSharedContainers = data;
     });
-  }
-
-  async _determineRenderPathInfo() {
-    try {
-      const loadedPath = await this.CommunicationService.getPath();
-
-      return this.ChannelService.extractRenderPathInfo(loadedPath);
-    } catch (ignoredError) {
-      // if pathname is not found, reset renderPathInfo
-      return undefined;
-    }
   }
 
   liftIframeAboveMask() {

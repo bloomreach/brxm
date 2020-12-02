@@ -15,7 +15,7 @@
  */
 
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Container, Page } from '@bloomreach/spa-sdk';
 import { BrContainerOrderedListComponent } from './br-container-ordered-list.component';
 
@@ -25,7 +25,7 @@ describe('BrContainerOrderedListComponent', () => {
   let container: Container;
   let page: jest.Mocked<Page>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BrContainerOrderedListComponent ],
       schemas: [ NO_ERRORS_SCHEMA ],

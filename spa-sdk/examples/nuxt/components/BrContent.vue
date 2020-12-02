@@ -21,7 +21,6 @@
     <h1 v-if="data.title">{{ data.title }}</h1>
     <p v-if="data.author" class="mb-3 text-muted">{{ data.author }}</p>
     <p v-if="date" class="mb-3 small text-muted">{{ formatDate(date) }}</p>
-    <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-if="data.content" v-html="page.rewriteLinks(data.content.value)" />
   </div>
 </template>

@@ -14,48 +14,46 @@
  * limitations under the License.
  */
 
-import { MetaCollectionImpl } from './meta-collection';
+import { isMetaCollection, MetaCollectionImpl, MetaCollectionModel } from './meta-collection';
 import { MetaFactory } from './meta-factory';
 import { MetaType, Meta, META_POSITION_BEGIN, META_POSITION_END, TYPE_META_COMMENT } from './meta';
 import { MetaCommentImpl } from './meta-comment';
 
+let factory: jest.Mocked<MetaFactory>;
+
+beforeEach(() => {
+  factory = { create: jest.fn() } as unknown as jest.Mocked<MetaFactory>;
+});
+
+function createMetaCollection(model = {} as MetaCollectionModel) {
+  return new MetaCollectionImpl(model, factory);
+}
+
 describe('MetaCollectionImpl', () => {
   describe('constructor', () => {
-    let factory: jest.Mocked<MetaFactory>;
-
-    beforeEach(() => {
-      factory = { create: jest.fn() } as unknown as jest.Mocked<MetaFactory>;
-    });
-
     it('should extend a built-in array class', () => {
-      const collection = new MetaCollectionImpl({}, factory);
+      const collection = createMetaCollection();
 
       expect(collection).toBeInstanceOf(Array);
     });
 
     it('should call a factory to build meta-data', () => {
-      new MetaCollectionImpl(
-        {
-          beginNodeSpan: [
-            { data: 'meta1', type: 'type1' as MetaType },
-            { data: 'meta2', type: 'type2' as MetaType },
-          ],
-        },
-        factory,
-      );
+      createMetaCollection({
+        beginNodeSpan: [
+          { data: 'meta1', type: 'type1' as MetaType },
+          { data: 'meta2', type: 'type2' as MetaType },
+        ],
+      });
 
       expect(factory.create).toBeCalledWith({ data: 'meta1', type: 'type1' }, expect.anything());
       expect(factory.create).toBeCalledWith({ data: 'meta2', type: 'type2' }, expect.anything());
     });
 
     it('should pass a position of the meta', () => {
-      new MetaCollectionImpl(
-        {
-          beginNodeSpan: [{ data: 'meta1', type: 'type1' as MetaType }],
-          endNodeSpan: [{ data: 'meta2', type: 'type2' as MetaType }],
-        },
-        factory,
-      );
+      createMetaCollection({
+        beginNodeSpan: [{ data: 'meta1', type: 'type1' as MetaType }],
+        endNodeSpan: [{ data: 'meta2', type: 'type2' as MetaType }],
+      });
 
       expect(factory.create).toBeCalledWith({ data: 'meta1', type: 'type1' }, META_POSITION_BEGIN);
       expect(factory.create).toBeCalledWith({ data: 'meta2', type: 'type2' }, META_POSITION_END);
@@ -68,13 +66,10 @@ describe('MetaCollectionImpl', () => {
       factory.create.mockReturnValueOnce(meta1);
       factory.create.mockReturnValueOnce(meta2);
 
-      const collection = new MetaCollectionImpl(
-        {
-          beginNodeSpan: [{ data: 'meta1', type: 'type1' as MetaType }],
-          endNodeSpan: [{ data: 'meta2', type: 'type2' as MetaType }],
-        },
-        factory,
-      );
+      const collection = createMetaCollection({
+        beginNodeSpan: [{ data: 'meta1', type: 'type1' as MetaType }],
+        endNodeSpan: [{ data: 'meta2', type: 'type2' as MetaType }],
+      });
 
       expect(collection).toMatchSnapshot();
     });
@@ -129,7 +124,7 @@ describe('MetaCollectionImpl', () => {
           ],
         },
         new MetaFactory()
-          .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position))
+          .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position)),
       );
 
       a = document.createElement('a');
@@ -169,5 +164,35 @@ describe('MetaCollectionImpl', () => {
 
       expect(document.body).toMatchSnapshot();
     });
+
+    it('should return a callback clearing rendered comments', () => {
+      const clear = collection.render(a, a);
+      clear();
+
+      expect(clear).toBeInstanceOf(Function);
+      expect(document.body).toMatchSnapshot();
+    });
+
+    it('should return a callback clearing only rendered comments during the call', () => {
+      const clear = collection.render(a, a);
+      collection.render(b, b);
+      clear();
+
+      expect(document.body).toMatchSnapshot();
+    });
+  });
+});
+
+describe('isMetaCollection', () => {
+  it('should return true', () => {
+    const meta = createMetaCollection();
+
+    expect(isMetaCollection(meta)).toBe(true);
+  });
+
+  it('should return false', () => {
+    expect(isMetaCollection(undefined)).toBe(false);
+    expect(isMetaCollection([])).toBe(false);
+    expect(isMetaCollection({})).toBe(false);
   });
 });

@@ -44,7 +44,7 @@ export default class Index extends React.Component<IndexProps> {
     const configuration = {
       baseUrl: publicRuntimeConfig.baseUrl,
       endpoint: publicRuntimeConfig.endpoint,
-      endpointQueryParameter: 'brxm',
+      endpointQueryParameter: 'endpoint',
       request: { path: context.asPath ?? '' },
       visitor:  cookies[VISITOR_COOKIE]
         ? JSON.parse(cookies[VISITOR_COOKIE])

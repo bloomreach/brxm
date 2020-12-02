@@ -24,6 +24,7 @@ describe('EditContentService', () => {
   let ContentEditor;
   let ContentService;
   let EditContentService;
+  let HippoIframeService;
   let ProjectService;
   let RightSidePanelService;
 
@@ -33,7 +34,6 @@ describe('EditContentService', () => {
     ContentEditor = jasmine.createSpyObj('ContentEditor', [
       'confirmClose',
       'close',
-      'confirmPristine',
       'confirmSaveOrDiscardChanges',
       'discardChanges',
       'getDocument',
@@ -45,7 +45,7 @@ describe('EditContentService', () => {
       'reload',
     ]);
     ContentEditor.isDocumentXPage = false;
-    ContentService = jasmine.createSpyObj('ContentService', ['getDocument']);
+    ContentService = jasmine.createSpyObj('ContentService', ['getDocument', 'branchDocument']);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', [
       'clearContext',
       'setContext',
@@ -53,10 +53,14 @@ describe('EditContentService', () => {
       'startLoading',
       'stopLoading',
     ]);
+    HippoIframeService = jasmine.createSpyObj('HippoIframeService', [
+      'reload',
+    ]);
 
     angular.mock.module(($provide) => {
       $provide.value('ContentEditor', ContentEditor);
       $provide.value('ContentService', ContentService);
+      $provide.value('HippoIframeService', HippoIframeService);
       $provide.value('RightSidePanelService', RightSidePanelService);
     });
 
@@ -186,7 +190,10 @@ describe('EditContentService', () => {
       expect($translate.instant).toHaveBeenCalledWith('DOCUMENT');
       expect(RightSidePanelService.setContext).toHaveBeenCalledWith('DOCUMENT');
       expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('Non Project Document');
-      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.add-to-project', { documentId: '42' });
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.add-to-project', {
+        documentId: '42',
+        nextState: 'hippo-cm.channel.edit-content',
+      });
     });
 
     it('does start editing a document that is part of the current project', () => {
@@ -328,18 +335,14 @@ describe('EditContentService', () => {
     });
   });
 
-  describe('ensureEditorIsPristine', () => {
-    it('should ensure document is pristine', () => {
-      EditContentService.ensureEditorIsPristine();
+  describe('branchAndEditDocument', () => {
+    it('should reload the iframe after a successful document branch and edit transition', () => {
+      ContentService.branchDocument.and.returnValue($q.resolve());
 
-      expect(ContentEditor.confirmPristine).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
-    });
+      EditContentService.branchAndEditDocument('documentId');
+      $rootScope.$digest();
 
-    it('should ensure xpage is pristine', () => {
-      ContentEditor.isDocumentXPage = true;
-      EditContentService.ensureEditorIsPristine();
-
-      expect(ContentEditor.confirmPristine).toHaveBeenCalledWith('SAVE_CHANGES_TO_XPAGE');
+      expect(HippoIframeService.reload).toHaveBeenCalled();
     });
   });
 });

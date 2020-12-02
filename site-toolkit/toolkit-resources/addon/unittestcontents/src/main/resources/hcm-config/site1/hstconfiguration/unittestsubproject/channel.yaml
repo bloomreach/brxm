@@ -3,5 +3,6 @@ definitions:
     /hst:hst/hst:configurations/unittestsubproject/hst:channel:
       jcr:primaryType: hst:channel
       hst:name: Test Sub Channel
+      hst:channelinfoclass: org.hippoecm.hst.test.channel.DefaultSiteChannelInfo
       /hst:channelinfo:
         jcr:primaryType: hst:channelinfo

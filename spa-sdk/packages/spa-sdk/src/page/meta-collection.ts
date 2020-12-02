@@ -32,7 +32,8 @@ export interface MetaCollectionModel {
  */
 export interface MetaCollection extends Array<Meta> {
   /**
-   * Clears previously rendered meta-data objects.
+   * Clears all previously rendered meta-data objects.
+   * @deprecated Use a callback returned by the `render` method.
    */
   clear(): void;
 
@@ -40,8 +41,9 @@ export interface MetaCollection extends Array<Meta> {
    * Renders meta-data objects on the page.
    * @param head The heading node of the page fragment.
    * @param tail The tailing node of the page fragment.
+   * @return The callback to clear rendered meta-data objects.
    */
-  render(head: Node, tail: Node): void;
+  render(head: Node, tail: Node): () => void;
 }
 
 @injectable()
@@ -64,39 +66,56 @@ export class MetaCollectionImpl extends Array<Meta> implements MetaCollection {
     Object.freeze(this);
   }
 
-  clear() {
-    this.comments.splice(0).forEach(comment => comment.remove());
+  clear(comments = [...this.comments]) {
+    comments.forEach((comment) => {
+      comment.remove();
+
+      const index = this.comments.indexOf(comment);
+      if (index > -1) {
+        this.comments.splice(index, 1);
+      }
+    });
   }
 
   render(head: Node, tail: Node) {
     const document = head.ownerDocument ?? tail.ownerDocument;
-    if (!document) {
-      return;
-    }
+    const comments = document
+      ? [
+        ...this.filter(isMetaComment)
+          .filter(meta => meta.getPosition() === META_POSITION_BEGIN)
+          .map(meta => document.createComment(meta.getData()))
+          .map((comment) => {
+            head.parentNode?.insertBefore(comment, head);
 
-    this.comments.push(
-      ...this.filter(isMetaComment)
-        .filter(meta => meta.getPosition() === META_POSITION_BEGIN)
-        .map(meta => document.createComment(meta.getData()))
-        .map((comment) => {
-          head.parentNode?.insertBefore(comment, head);
+            return comment;
+          }),
 
-          return comment;
-        }),
+        ...this.filter(isMetaComment)
+          .filter(meta => meta.getPosition() === META_POSITION_END)
+          .reverse()
+          .map(meta => document.createComment(meta.getData()))
+          .map((comment) => {
+            if (tail.nextSibling) {
+              tail.parentNode?.insertBefore(comment, tail.nextSibling);
+            } else {
+              tail.parentNode?.appendChild(comment);
+            }
 
-      ...this.filter(isMetaComment)
-        .filter(meta => meta.getPosition() === META_POSITION_END)
-        .reverse()
-        .map(meta => document.createComment(meta.getData()))
-        .map((comment) => {
-          if (tail.nextSibling) {
-            tail.parentNode?.insertBefore(comment, tail.nextSibling);
-          } else {
-            tail.parentNode?.appendChild(comment);
-          }
+            return comment;
+          }),
+      ]
+      : [];
 
-          return comment;
-        }),
-    );
+    this.comments.push(...comments);
+
+    return this.clear.bind(this, comments);
   }
+}
+
+/**
+ * Checks whether a value is a meta-data collection.
+ * @param value The value to check.
+ */
+export function isMetaCollection(value: any): value is MetaCollection {
+  return value instanceof MetaCollectionImpl;
 }

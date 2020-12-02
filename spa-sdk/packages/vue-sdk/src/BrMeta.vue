@@ -23,31 +23,26 @@ import { Fragment } from 'vue-fragment';
 export default class BrMeta extends Vue {
   @Prop() meta!: MetaCollection;
 
-  private clear?: Function;
+  private clear?: ReturnType<MetaCollection['render']>;
 
-  mounted() {
+  mounted(): void {
     this.inject();
   }
 
-  beforeUpdate() {
+  beforeUpdate(): void {
     this.clear?.();
   }
 
-  updated() {
+  updated(): void {
     this.inject();
   }
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     this.clear?.();
   }
 
   private inject() {
-    if (!this.$vnode.elm) {
-      return;
-    }
-
-    this.meta.render(this.$vnode.elm, this.$vnode.elm);
-    this.clear = this.meta.clear.bind(this.meta);
+    this.clear = this.$vnode.elm && this.meta.render(this.$vnode.elm, this.$vnode.elm);
   }
 
   @Watch('meta', { deep: false })
@@ -55,7 +50,7 @@ export default class BrMeta extends Vue {
     this.$forceUpdate();
   }
 
-  render(createElement: Vue.CreateElement) {
+  render(createElement: Vue.CreateElement): Vue.VNode {
     return this.$slots.default?.length === 1 ? this.$slots.default[0] : createElement(Fragment, this.$slots.default);
   }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
 import org.hippoecm.frontend.plugins.jquery.upload.single.FileUploadPanel;
+import org.hippoecm.frontend.plugins.yui.upload.processor.DefaultFileUploadPreProcessorService;
+import org.hippoecm.frontend.plugins.yui.upload.processor.FileUploadPreProcessorService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.hippoecm.frontend.service.IEditor;
@@ -61,8 +63,12 @@ public class ImageUploadPlugin extends RenderPlugin {
     }
 
     private FileUploadPanel createFileUploadPanel() {
-        final FileUploadValidationService validator = ImageUploadValidationService.getValidationService(getPluginContext(), getPluginConfig());
-        final FileUploadPanel panel = new FileUploadPanel("fileUpload", getPluginConfig(), validator) {
+        final FileUploadValidationService validator =
+                ImageUploadValidationService.getValidationService(getPluginContext(), getPluginConfig());
+        final FileUploadPreProcessorService preProcessorService =
+                DefaultFileUploadPreProcessorService.getPreProcessorService(getPluginContext(), getPluginConfig());
+        final FileUploadPanel panel = new FileUploadPanel("fileUpload", getPluginConfig(), validator,
+                preProcessorService) {
 
             @Override
             protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {

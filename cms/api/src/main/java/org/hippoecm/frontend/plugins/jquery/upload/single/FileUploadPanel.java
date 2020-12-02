@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
+import org.hippoecm.frontend.plugins.yui.upload.processor.FileUploadPreProcessorService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 
 /**
@@ -32,13 +33,15 @@ import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationS
  */
 public abstract class FileUploadPanel extends Panel {
 
-    public FileUploadPanel(String id, final IPluginConfig pluginConfig, final FileUploadValidationService validator) {
+    public FileUploadPanel(String id, final IPluginConfig pluginConfig, final FileUploadValidationService validator,
+                           final FileUploadPreProcessorService fileUploadPreProcessorService) {
         super(id);
 
         final HippoForm form = new HippoForm("form");
         form.setMultiPart(true);
 
-        form.add(new SingleFileUploadWidget("fileUpload", pluginConfig, validator, true) {
+        form.add(new SingleFileUploadWidget("fileUpload", pluginConfig, validator,
+                fileUploadPreProcessorService, true) {
             @Override
             protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {
                 form.clearFeedbackMessages();

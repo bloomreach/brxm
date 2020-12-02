@@ -31,6 +31,8 @@ public interface ChannelManagerConstants {
     String HST_BRANCH_ID = "HST-Branch-Id";
     String HST_EXPERIENCE_PAGE = "HST-Experience-Page";
     String HST_EXPERIENCE_PAGE_COMPONENT = "HST-Experience-Page-Component";
+    String HST_EXPERIENCE_PAGE_LAYOUT_COMPONENT = "HST-Experience-Page-LayoutComponent";
+    String HST_EXPERIENCE_PAGE_LAYOUT_HIPPO_IDENTIFIER = "HST-Experience-Page-Layout-Hippo_Identifier";
     String HST_SITEMAP_ID = "HST-Sitemap-Id";
     String HST_SITEMAPITEM_ID = "HST-SitemapItem-Id";
 

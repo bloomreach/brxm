@@ -17,11 +17,9 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Stream;
+import java.util.HashMap;
+import java.util.Map;
 
-import static java.util.stream.Collectors.toSet;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_CLOSE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_DELETE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_DISCARD_CHANGES;
@@ -31,123 +29,138 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.C
 
 public final class HstActionProvider {
 
-    public Set<Action> getActions(final ActionStateProviderContext context) {
-        return Stream.of(
-                channelActions(context),
-                pageActions(context),
-                xPageActions(context)
-        ).flatMap(Set::stream).collect(toSet());
+    public Map<NamedCategory, Boolean> getActions(final ActionStateProviderContext context) {
+        final Map<NamedCategory, Boolean> actions = new HashMap<>();
+        actions.putAll(channelActions(context));
+        actions.putAll(pageActions(context));
+        actions.putAll(xPageActions(context));
+        return actions;
     }
 
-    private Set<Action> channelActions(final ActionStateProviderContext actionProviderContext) {
+    private Map<NamedCategory, Boolean> channelActions(final ActionStateProviderContext actionProviderContext) {
 
         final ChannelContext context = actionProviderContext.getChannelContext();
-        final Set<Action> channelAction = new HashSet<>();
+        final Map<NamedCategory, Boolean> channelAction = new HashMap<>();
 
-        channelAction.add(CHANNEL_CLOSE.toAction(true));
+        channelAction.put(CHANNEL_CLOSE, true);
 
-        channelAction.add(CHANNEL_DELETE.toAction(
+        channelAction.put(CHANNEL_DELETE,
                 context.isChannelAdmin()
                         && context.isDeletable()
-                        && !context.isConfigurationLocked()));
+                        && !context.isConfigurationLocked());
 
-        channelAction.add(CHANNEL_DISCARD_CHANGES.toAction(
-                context.getChangedBySet().contains(actionProviderContext.getUserId())));
+        channelAction.put(CHANNEL_DISCARD_CHANGES,
+                context.getChangedBySet().contains(actionProviderContext.getUserId()));
 
-        channelAction.add(CHANNEL_MANAGE_CHANGES.toAction(
+        channelAction.put(CHANNEL_MANAGE_CHANGES,
                 context.isChannelAdmin()
                         && !context.getChangedBySet().isEmpty()
-                        && !context.isConfigurationLocked()));
+                        && !context.isConfigurationLocked());
 
         if (actionProviderContext.isMasterBranchSelected()) {
-            channelAction.add(CHANNEL_PUBLISH.toAction(
-                    context.getChangedBySet().contains(actionProviderContext.getUserId())));
+            channelAction.put(CHANNEL_PUBLISH,
+                    context.getChangedBySet().contains(actionProviderContext.getUserId()));
         }
 
-        channelAction.add(CHANNEL_SETTINGS.toAction(
-                context.hasCustomProperties()));
+        channelAction.put(CHANNEL_SETTINGS,
+                context.hasCustomProperties());
 
         return channelAction;
     }
 
-    private Set<Action> xPageActions(final ActionStateProviderContext context) {
+    private Map<NamedCategory, Boolean> xPageActions(final ActionStateProviderContext context) {
         return context.isExperiencePageRequest()
                 ? getXPageActions(context)
-                : Collections.emptySet();
+                : Collections.emptyMap();
     }
 
-    private Set<Action> getXPageActions(final ActionStateProviderContext context) {
-        final Set<Action> actions = new HashSet<>();
+    private Map<NamedCategory, Boolean> getXPageActions(final ActionStateProviderContext context) {
+        final Map<NamedCategory, Boolean> actions = new HashMap<>();
         final XPageContext xPageContext = context.getXPageContext();
 
         xPageContext.isPublishable().ifPresent(publishable -> {
-            actions.add(HstAction.XPAGE_PUBLISH.toAction(publishable));
-            actions.add(HstAction.XPAGE_SCHEDULE_PUBLICATION.toAction(publishable));
+            actions.put(HstAction.XPAGE_PUBLISH, publishable);
+            actions.put(HstAction.XPAGE_SCHEDULE_PUBLICATION, publishable);
         });
 
         xPageContext.isUnpublishable().ifPresent(unpublishable -> {
-            actions.add(HstAction.XPAGE_UNPUBLISH.toAction(unpublishable));
-            actions.add(HstAction.XPAGE_SCHEDULE_UNPUBLICATION.toAction(unpublishable));
+            actions.put(HstAction.XPAGE_UNPUBLISH, unpublishable);
+            actions.put(HstAction.XPAGE_SCHEDULE_UNPUBLICATION, unpublishable);
         });
 
         xPageContext.isRequestPublication().ifPresent(requestPublication -> {
-            actions.add(HstAction.XPAGE_REQUEST_PUBLICATION.toAction(requestPublication));
-            actions.add(HstAction.XPAGE_REQUEST_SCHEDULE_PUBLICATION.toAction(requestPublication));
+            actions.put(HstAction.XPAGE_REQUEST_PUBLICATION, requestPublication);
+            actions.put(HstAction.XPAGE_REQUEST_SCHEDULE_PUBLICATION, requestPublication);
         });
 
         xPageContext.isRequestDepublication().ifPresent(requestDepublication -> {
-            actions.add(HstAction.XPAGE_REQUEST_UNPUBLICATION.toAction(requestDepublication));
-            actions.add(HstAction.XPAGE_REQUEST_SCHEDULE_UNPUBLICATION.toAction(requestDepublication));
+            actions.put(HstAction.XPAGE_REQUEST_UNPUBLICATION, requestDepublication);
+            actions.put(HstAction.XPAGE_REQUEST_SCHEDULE_UNPUBLICATION, requestDepublication);
         });
 
-        actions.add(HstAction.XPAGE_COPY.toAction(xPageContext.isCopyAllowed()));
-        actions.add(HstAction.XPAGE_MOVE.toAction(xPageContext.isMoveAllowed()));
-        actions.add(HstAction.XPAGE_DELETE.toAction(xPageContext.isDeleteAllowed()));
+        xPageContext.isAcceptRequest().ifPresent(acceptRequest -> actions.put(HstAction.XPAGE_REQUEST_ACCEPT
+                , acceptRequest));
+
+        xPageContext.isCancelRequest().ifPresent(cancelRequest -> actions.put(HstAction.XPAGE_REQUEST_CANCEL
+                , cancelRequest));
+
+        xPageContext.isRejectRequest().ifPresent(rejectRequest -> actions.put(HstAction.XPAGE_REQUEST_REJECT
+                , rejectRequest));
+
+        xPageContext.isRejectedRequest().ifPresent(rejectedRequest -> actions.put(HstAction.XPAGE_REQUEST_REJECTED
+                , rejectedRequest));
+
+        actions.put(HstAction.XPAGE_RENAME, xPageContext.isRenameAllowed());
+        actions.put(HstAction.XPAGE_COPY, xPageContext.isCopyAllowed());
+        actions.put(HstAction.XPAGE_MOVE, xPageContext.isMoveAllowed());
+        actions.put(HstAction.XPAGE_DELETE, xPageContext.isDeleteAllowed());
 
         return actions;
     }
 
-    private Set<Action> pageActions(final ActionStateProviderContext context) {
-        return context.getChannelContext().isConfigurationLocked()
+    private Map<NamedCategory, Boolean> pageActions(final ActionStateProviderContext context) {
+        return   !context.getChannelContext().isChannelWebmaster()
+                || context.getChannelContext().isConfigurationLocked()
                 || context.isExperiencePageRequest()
-                ? Collections.emptySet()
+                ? Collections.emptyMap()
                 : getPageActions(context);
     }
 
-    private Set<Action> getPageActions(final ActionStateProviderContext context) {
+    private Map<NamedCategory, Boolean> getPageActions(final ActionStateProviderContext context) {
 
-        final Set<Action> actions = new HashSet<>();
+        final Map<NamedCategory, Boolean> actions = new HashMap<>();
         final PageContext pageContext = context.getPageContext();
         final ChannelContext channelContext = context.getChannelContext();
 
-        actions.add(HstAction.PAGE_COPY.toAction(
+        actions.put(HstAction.PAGE_COPY,
                 !pageContext.isLocked()
                         && (channelContext.hasWorkspace()
-                        || channelContext.isCrossChannelPageCopySupported())));
+                        || channelContext.isCrossChannelPageCopySupported())
+        );
 
-        actions.add(HstAction.PAGE_DELETE.toAction(
+        actions.put(HstAction.PAGE_DELETE,
                 !pageContext.isHomePage()
                         && !pageContext.isLocked()
                         && !pageContext.isInherited()
                         && pageContext.isWorkspaceConfigured()
-        ));
+        );
 
-        actions.add(HstAction.PAGE_MOVE.toAction(
+        actions.put(HstAction.PAGE_MOVE,
                 !pageContext.isHomePage()
                         && pageContext.isWorkspaceConfigured()
                         && !pageContext.isInherited()
                         && !pageContext.isLocked()
-        ));
+        );
 
-        actions.add(HstAction.PAGE_NEW.toAction(
-                channelContext.hasWorkspace()
-                        && !channelContext.hasPrototypes()));
+        actions.put(HstAction.PAGE_NEW,
+                channelContext.hasWorkspace() && !channelContext.hasPrototypes());
 
-        actions.add(HstAction.PAGE_PROPERTIES.toAction(
+        actions.put(HstAction.PAGE_PROPERTIES,
                 !pageContext.isHomePage()
                         && !pageContext.isLocked()
                         && !pageContext.isInherited()
-                        && pageContext.isWorkspaceConfigured()));
+                        && pageContext.isWorkspaceConfigured()
+        );
 
         return actions;
     }

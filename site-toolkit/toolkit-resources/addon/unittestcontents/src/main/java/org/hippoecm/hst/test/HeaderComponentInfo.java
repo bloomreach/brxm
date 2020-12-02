@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.test;
 
-import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 public interface HeaderComponentInfo {

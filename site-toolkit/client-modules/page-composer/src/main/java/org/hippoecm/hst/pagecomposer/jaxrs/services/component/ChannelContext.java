@@ -27,6 +27,7 @@ public class ChannelContext {
     private Channel channel;
     private String channelId;
     private boolean channelAdmin;
+    private boolean channelWebmaste;
     private boolean deletable;
     private boolean configurationLocked;
     private boolean hasCustomProperties;
@@ -43,6 +44,10 @@ public class ChannelContext {
 
     public boolean isChannelAdmin() {
         return channelAdmin;
+    }
+
+    public boolean isChannelWebmaster() {
+        return channelWebmaste;
     }
 
     public Channel getChannel() {
@@ -90,12 +95,15 @@ public class ChannelContext {
         return this;
     }
 
+    public ChannelContext setChannelWebmaster(final boolean channelWebmaster) {
+        this.channelWebmaste = channelWebmaster;
+        return this;
+    }
+
     ChannelContext setChannel(final Channel channel) {
         this.channel = channel;
+        // note channel id can be for -preview and for a branch
         this.channelId = channel.getId();
-        if (channelId.endsWith("-preview")) {
-            channelId = channelId.substring(0, channelId.lastIndexOf("-preview"));
-        }
         this.hasCustomProperties = channel.getHasCustomProperties();
         this.changeBySet = channel.getChangedBySet();
         this.workspaceExists = channel.isWorkspaceExists();
@@ -131,4 +139,6 @@ public class ChannelContext {
         this.xPageTemplateQueries = xPageTemplateQueries;
         return this;
     }
+
+
 }

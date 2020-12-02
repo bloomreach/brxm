@@ -15,18 +15,15 @@
  */
 
 import React from 'react';
-import { mocked } from 'ts-jest/utils';
 import { shallow } from 'enzyme';
-import { Menu, MetaCollection, Page, isMenu } from '@bloomreach/spa-sdk';
+import { Menu, MetaCollection, Page } from '@bloomreach/spa-sdk';
 import { BrManageMenuButton } from './BrManageMenuButton';
 import { BrMeta } from '../meta';
-
-jest.mock('@bloomreach/spa-sdk');
 
 describe('BrManageMenuButton', () => {
   const context = {
     isPreview: jest.fn(),
-    getMeta: jest.fn(),
+    getButton: jest.fn(),
   } as unknown as jest.Mocked<Page>;
   let props: React.ComponentProps<typeof BrManageMenuButton>;
 
@@ -39,9 +36,9 @@ describe('BrManageMenuButton', () => {
     /// @ts-ignore
     BrManageMenuButton.contextTypes = {
       isPreview: () => null,
-      getMeta: () => null,
+      getButton: () => null,
     };
-    delete BrManageMenuButton.contextType;
+    delete (BrManageMenuButton as Partial<typeof BrManageMenuButton>).contextType;
   });
 
   it('should only render in preview mode', () => {
@@ -51,34 +48,11 @@ describe('BrManageMenuButton', () => {
     expect(wrapper.html()).toBe(null);
   });
 
-  it('should only render if meta-data is available', () => {
-    context.isPreview.mockReturnValueOnce(true);
-    const wrapper = shallow(<BrManageMenuButton {...props} />, { context });
-
-    expect(wrapper.html()).toBe(null);
-  });
-
-  it('should render menu-button meta-data created with page context', () => {
-    const meta = {} as MetaCollection;
-    context.getMeta.mockReturnValueOnce(meta);
-    context.isPreview.mockReturnValueOnce(true);
-    props.menu._meta = {};
-    const wrapper = shallow(<BrManageMenuButton {...props} />, { context });
-
-    expect(context.getMeta).toHaveBeenCalledWith(props.menu._meta);
-    expect(
-      wrapper
-        .find(BrMeta)
-        .first()
-        .prop('meta'),
-    ).toBe(meta);
-  });
-
   it('should render a menu-button meta-data', () => {
     const meta = {} as MetaCollection;
-    props.menu = { getMeta: jest.fn(() => meta) } as unknown as Menu;
+    props.menu = {} as Menu;
     context.isPreview.mockReturnValueOnce(true);
-    mocked(isMenu).mockReturnValueOnce(true);
+    context.getButton.mockReturnValueOnce(meta);
     const wrapper = shallow(<BrManageMenuButton {...props} />, { context });
 
     expect(

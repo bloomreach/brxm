@@ -16,7 +16,7 @@
 
 import { mocked } from 'ts-jest/utils';
 import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
 import { Component as SpaComponent, Page, isComponent } from '@bloomreach/spa-sdk';
 import { BrComponentContext, BrComponentDirective } from './br-component.directive';
@@ -64,7 +64,7 @@ describe('BrComponentDirective', () => {
     } as unknown as typeof page;
   });
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BrComponentDirective, TemplateComponent, TestComponent ],
       providers: [

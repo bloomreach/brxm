@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import dts from 'rollup-plugin-dts';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
@@ -45,6 +45,7 @@ export default [
     plugins: [
       typescript({
         cacheRoot: './node_modules/.cache/rpt2',
+        clean: true,
         useTsconfigDeclarationDir: true,
       }),
       babel({ extensions: ['.ts'] }),
@@ -65,6 +66,7 @@ export default [
     plugins: [
       typescript({
         cacheRoot: './node_modules/.cache/rpt2',
+        clean: true,
         tsconfigOverride: {
           compilerOptions: {
             declaration: false,

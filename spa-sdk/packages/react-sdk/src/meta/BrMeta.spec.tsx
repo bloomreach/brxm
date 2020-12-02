@@ -25,67 +25,64 @@ describe('BrMeta', () => {
   beforeEach(() => {
     meta = {
       render: jest.fn(),
-      clear: jest.fn(),
       length: 1,
     } as unknown as jest.Mocked<MetaCollection>;
   });
 
-  describe('componentDidMount', () => {
-    it('should render meta-data surrounding children', () => {
-      mount((
-        <div>
-          <BrMeta meta={meta}>
-            <a/>
-            <b/>
-          </BrMeta>
-        </div>
-      ));
+  it('should render meta-data surrounding children', () => {
+    mount((
+      <div>
+        <BrMeta meta={meta}>
+          <a/>
+          <b/>
+        </BrMeta>
+      </div>
+    ));
 
-      expect(meta.render).toBeCalled();
+    expect(meta.render).toBeCalled();
 
-      const [head, tail] = meta.render.mock.calls[0];
+    const [head, tail] = meta.render.mock.calls[0];
 
-      expect(head).toMatchSnapshot();
-      expect(tail.previousSibling).toMatchSnapshot();
-    });
+    expect(head).toMatchSnapshot();
+    expect(tail.previousSibling).toMatchSnapshot();
   });
 
-  describe('componentDidUpdate', () => {
-    it('should rerender meta-data on update', () => {
-      const container = document.createElement('div');
-      const wrapper = mount(<BrMeta meta={meta}><a/></BrMeta>, { attachTo: container });
-      const newMeta = { length: 1,render: jest.fn() };
-      wrapper.setProps({ meta: newMeta });
+  it('should rerender meta-data on update', () => {
+    const clear = jest.fn();
+    meta.render.mockReturnValueOnce(clear);
 
-      expect(meta.clear).toBeCalled();
-      expect(newMeta.render).toBeCalled();
-    });
+    const container = document.createElement('div');
+    const wrapper = mount(<BrMeta meta={meta}><a/></BrMeta>, { attachTo: container });
+    const newMeta = { length: 1, render: jest.fn() };
+    wrapper.setProps({ meta: newMeta });
+
+    expect(clear).toBeCalled();
+    expect(newMeta.render).toBeCalled();
   });
 
-  describe('componentWillUnmount', () => {
-    it('should clear meta-data when the component unmounts', () => {
-      const container = document.createElement('div');
-      const wrapper = mount(<div><BrMeta meta={meta} /></div>, { attachTo: container });
-      wrapper.detach();
+  it('should clear meta-data when the component unmounts', () => {
+    const clear = jest.fn();
+    meta.render.mockReturnValueOnce(clear);
 
-      expect(meta.clear).toBeCalled();
-    });
+    const container = document.createElement('div');
+    const wrapper = mount(<div><BrMeta meta={meta} /></div>, { attachTo: container });
+    wrapper.detach();
+
+    expect(clear).toBeCalled();
   });
 
-  describe('render', () => {
-    it('should render only children if there is no meta', () => {
-      meta.length = 0;
+  it('should render only children if there is no meta', () => {
+    meta.length = 0;
 
-      const wrapper = mount((
-        <div>
-          <BrMeta meta={meta}>
-            <a/>
-            <b/>
-          </BrMeta>
-        </div>
-      ));
+    const wrapper = mount((
+      <div>
+        <BrMeta meta={meta}>
+          <a/>
+          <b/>
+        </BrMeta>
+      </div>
+    ));
 
-      expect(wrapper.html()).toMatchSnapshot();
-    });
+    expect(wrapper.html()).toMatchSnapshot();
   });
 });

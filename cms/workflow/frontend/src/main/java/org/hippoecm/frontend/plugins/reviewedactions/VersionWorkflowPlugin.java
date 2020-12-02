@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -131,19 +131,8 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 final Map<String, Serializable> hints = getModel().getHints(restoreToBranchId);
                 final Serializable canRestore = hints.get(restoreVersionToBranch().getAction());
                 if (Boolean.FALSE.equals(canRestore)) {
+                    log.debug("Cannot restore because {} workflow action is false", restoreVersionToBranch().getAction());
                     return false;
-                }
-
-                Node frozenNode;
-                try {
-                    frozenNode = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                    String primaryType = frozenNode.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString();
-                    String prefix = primaryType.substring(0, primaryType.indexOf(':'));
-                    if (prefix.contains("_")) {
-                        return false;
-                    }
-                } catch (RepositoryException e) {
-                    log.warn("Could not determine whether to enable restore button", e);
                 }
                 return true;
             }

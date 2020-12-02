@@ -279,13 +279,16 @@ describe('CreateContentService', () => {
       });
 
       it('should switch to state "edit-page"', () => {
-        spyOn($state, 'go');
+        spyOn(EditContentService, 'startEditing');
         representation.experiencePage = true;
 
         CreateContentService.finish('document-id');
         $rootScope.$digest();
 
-        expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page.content', { documentId: 'document-id' });
+        expect(EditContentService.startEditing).toHaveBeenCalledWith(
+          'document-id',
+          'hippo-cm.channel.edit-page.content',
+        );
       });
     });
   });

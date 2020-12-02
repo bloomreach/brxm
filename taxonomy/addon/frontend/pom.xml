@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  Copyright 2007-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -53,6 +53,11 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ahocorasick</groupId>
+      <artifactId>ahocorasick</artifactId>
     </dependency>
 
     <!-- test -->

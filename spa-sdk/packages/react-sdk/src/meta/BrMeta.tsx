@@ -14,50 +14,33 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { MetaCollection } from '@bloomreach/spa-sdk';
 
 interface BrMetaProps {
   meta: MetaCollection;
 }
 
-export class BrMeta extends React.Component<BrMetaProps> {
-  private headRef = React.createRef<HTMLElement>();
+export function BrMeta({ children, meta }: React.PropsWithChildren<BrMetaProps>) {
+  const head = useRef<HTMLSpanElement>(null);
+  const tail = useRef<HTMLSpanElement>(null);
 
-  private tailRef = React.createRef<HTMLElement>();
+  useEffect(
+    () => {
+      if (!head.current?.nextSibling || !tail.current) {
+        return;
+      }
 
-  componentDidMount() {
-    this.renderMeta();
-  }
+      return meta.render(head.current.nextSibling, tail.current);
+    },
+    [meta, head.current?.nextSibling, tail.current],
+  );
 
-  componentDidUpdate(prevProps: BrMetaProps) {
-    prevProps.meta.clear();
-
-    this.renderMeta();
-  }
-
-  componentWillUnmount() {
-    this.props.meta.clear();
-  }
-
-  private renderMeta() {
-    const head = this.headRef?.current?.nextSibling;
-    const tail = this.tailRef?.current;
-
-    if (!head || !tail) {
-      return;
-    }
-
-    this.props.meta.render(head, tail);
-  }
-
-  render() {
-    return (
-      <>
-        {this.props.meta.length > 0 && <span style={{ display: 'none' }} ref={this.headRef} />}
-        {this.props.children}
-        {this.props.meta.length > 0 && <span style={{ display: 'none' }} ref={this.tailRef} />}
-      </>
-    );
-  }
+  return (
+    <>
+      {meta.length > 0 && <span style={{ display: 'none' }} ref={head} />}
+      {children}
+      {meta.length > 0 && <span style={{ display: 'none' }} ref={tail} />}
+    </>
+  );
 }

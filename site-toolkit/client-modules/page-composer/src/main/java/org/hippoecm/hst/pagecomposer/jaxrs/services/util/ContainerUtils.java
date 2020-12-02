@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_COMPONENTDEFINITION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
-import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
+import static org.hippoecm.hst.platform.utils.UUIDUtils.isValidUUID;
 
 public class ContainerUtils {
 
