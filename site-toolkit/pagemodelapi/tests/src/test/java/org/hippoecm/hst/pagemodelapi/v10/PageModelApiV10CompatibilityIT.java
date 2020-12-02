@@ -16,17 +16,15 @@
 package org.hippoecm.hst.pagemodelapi.v10;
 
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.core.LogEvent;
 import org.assertj.core.api.Assertions;
@@ -36,14 +34,11 @@ import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
 import org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider;
 import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.platform.configuration.hosting.MountService;
-import org.json.JSONException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -200,23 +195,34 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
         Session session = createSession("admin", "admin");
         Node catalogItemNode = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pages/residualparamstestpage/container/testcatalogitemenucomponentinstance");
-        catalogItemNode.setProperty("hst:parameternames", new String[]{"menu"});
-        catalogItemNode.setProperty("hst:parametervalues", new String[]{"invalid ref"});
-        session.save();
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MenuDynamicComponent.class).build()) {
 
-            String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0", "_maxreflevel=0");
+        final Value[] valueBefore1 = catalogItemNode.getProperty("hst:parameternames").getValues();
+        final Value[] valueBefore2 = catalogItemNode.getProperty("hst:parametervalues").getValues();
 
-            final JsonNode root = mapper.readTree(actual);
-            final String dynamicParamOverriddenValue = root.path("page").path("uid3").path("meta").path("paramsInfo").path("menu").asText();
-            assertEquals("Field 'siteMenu' does not contain expected value", "invalid ref", dynamicParamOverriddenValue);
-
-            List<LogEvent> messages = interceptor.getEvents();
-            Assert.assertTrue(interceptor.messages().anyMatch(m -> m.equals("Invalid site menu is selected within MenuDynamicComponent: " + dynamicParamOverriddenValue)));
+        try {
             catalogItemNode.setProperty("hst:parameternames", new String[]{"menu"});
-            catalogItemNode.setProperty("hst:parametervalues", new String[]{"main"});
-            session.logout();
+            catalogItemNode.setProperty("hst:parametervalues", new String[]{"invalid ref"});
+            session.save();
 
+            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/hst:pages/residualparamstestpage/container/testcatalogitemenucomponentinstance");
+
+            try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MenuDynamicComponent.class).build()) {
+
+                String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0", "_maxreflevel=0");
+
+                final JsonNode root = mapper.readTree(actual);
+                final String dynamicParamOverriddenValue = root.path("page").path("uid3").path("meta").path("paramsInfo").path("menu").asText();
+                assertEquals("Field 'siteMenu' does not contain expected value", "invalid ref", dynamicParamOverriddenValue);
+
+                List<LogEvent> messages = interceptor.getEvents();
+                Assert.assertTrue(interceptor.messages().anyMatch(m -> m.equals("Invalid site menu is selected within MenuDynamicComponent: " + dynamicParamOverriddenValue)));
+
+
+            }
+        } finally {
+            catalogItemNode.setProperty("hst:parameternames", valueBefore1);
+            catalogItemNode.setProperty("hst:parametervalues", valueBefore2);
+            session.logout();
         }
     }
 
@@ -707,31 +713,38 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
     public void test_api_residual_parameters_override_named_parameters_v10_assertion() throws Exception {
         final Session session = createSession("admin", "admin");
         final Node catalogItemNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/testcatalogitemparameteroverriding/hideFutureItems");
-        catalogItemNode.setProperty("hst:valuetype", "text");
-        session.save();
 
-        String actual;
-        try (final Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(HstComponentConfigurationService.class).build()) {
-            actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0");
-            assertTrue("Warning was not logged",
-                    interceptor.messages().anyMatch("Jcr and annotation based parameters are defined with the same name but with different type: hideFutureItems"::equals));
+        final Value valueBefore = catalogItemNode.getProperty("hst:valuetype").getValue();
+
+        try {
+            catalogItemNode.setProperty("hst:valuetype", "text");
+            session.save();
+
+            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/testcatalogitemparameteroverriding/hideFutureItems");
+
+            String actual;
+            try (final Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(HstComponentConfigurationService.class).build()) {
+                actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0");
+                assertTrue("Warning was not logged",
+                        interceptor.messages().anyMatch("Jcr and annotation based parameters are defined with the same name but with different type: hideFutureItems"::equals));
+            }
+
+            final JsonNode root = mapper.readTree(actual);
+            final JsonNode paramsInfo = root.path("page").path("uid5").path("meta").path("paramsInfo");
+
+            final int paramCount = paramsInfo.size();
+            assertEquals("Number of parameters inside paramsinfo", 9, paramCount);
+
+            final String sortOrder = paramsInfo.path("sortOrder").asText();
+            assertEquals("Field 'sortOrder' does not contain expected value", "asc", sortOrder);
+
+            final boolean futurePastItems = paramsInfo.path("futurePastItems").asBoolean();
+            assertFalse("Field 'futurePastItems' does not contain expected value", futurePastItems);
+        } finally {
+            catalogItemNode.setProperty("hst:valuetype", valueBefore);
+            session.save();
+            session.logout();
         }
-
-        final JsonNode root = mapper.readTree(actual);
-        final JsonNode paramsInfo = root.path("page").path("uid5").path("meta").path("paramsInfo");
-
-        final int paramCount = paramsInfo.size();
-        assertEquals("Number of parameters inside paramsinfo", 9, paramCount);
-
-        final String sortOrder = paramsInfo.path("sortOrder").asText();
-        assertEquals("Field 'sortOrder' does not contain expected value", "asc", sortOrder);
-
-        final boolean futurePastItems = paramsInfo.path("futurePastItems").asBoolean();
-        assertFalse("Field 'futurePastItems' does not contain expected value", futurePastItems);
-
-        catalogItemNode.setProperty("hst:valuetype", "boolean");
-        session.save();
-        session.logout();
     }
 
 }
