@@ -56,7 +56,7 @@
 
         },
         "xPageLayouts":{
-          "hst:pages/xpage1":"XPage 1"
+          "hst:xpages/xpage1":"XPage 1"
         }
       }
     }
