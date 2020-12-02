@@ -19,7 +19,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 /**
- * @Depricated
+ * @deprecated
  *
  * The PreviewWorkPlugin does not add any functionality. However plugins might still extend it.
  */
