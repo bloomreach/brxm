@@ -20,7 +20,6 @@ import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.UnaryOperator;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -64,11 +63,6 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
     private static final String DEFAULT_FOLDERWORKFLOW_CATEGORY = "embedded";
-    /**
-     * Id and name of the document Info.
-     * The id should start with "info", see MenuHierarchy.
-     */
-    private static final String INFO_DOCUMENT_INFO = "infoDocumentInfo";
 
     private static final String COPY = "copy";
     private static final String DELETE = "delete";
@@ -379,46 +373,12 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(new StdWorkflow<DocumentWorkflow>(INFO_DOCUMENT_INFO, INFO_DOCUMENT_INFO) {
-
-            @Override
-            public String getSubMenu() {
-                return "info";
-            }
-
-            @Override
-            protected IModel<String> getTitle() {
-                final UnaryOperator<String> resolver = key ->
-                        new StringResourceModel(key, DocumentWorkflowPlugin.this).getString();
-                final Node node = getWorkflow().getNode();
-                RetainableStateSummary retainableStateSummary = new RetainableStateSummary(node, getBranchId());
-                final String info = new BranchInfoBuilder(resolver, getBranchInfo(resolver))
-                        .draftChanges(retainableStateSummary.hasDraftChanges())
-                        .unpublishedChanges(retainableStateSummary.hasUnpublishedChanges())
-                        .live(retainableStateSummary.isLive())
-                        .build();
-                return new Model<>(info);
-            }
-
-            @Override
-            protected void invoke() {
-                // do not invoke workflow
-            }
-        });
-
         Map<String, Serializable> info = getHints();
         hideOrDisable(info, COPY, copyAction);
         hideOrDisable(info, DELETE, deleteAction);
         hideOrDisable(info, LIST_VERSIONS, historyAction);
         hideOrDisable(info, MOVE, moveAction);
         hideOrDisable(info, RENAME, renameAction);
-    }
-
-    /**
-     * @return the branchInfo for the current branch.
-     */
-    protected String getBranchInfo(final UnaryOperator<String> resolver) {
-        return resolver.apply(BranchInfoBuilder.CORE_DOCUMENT_KEY);
     }
 
     private static boolean isDocumentAllowedInFolder(final WorkflowDescriptorModel documentModel, IModel<Node> destinationFolder) {

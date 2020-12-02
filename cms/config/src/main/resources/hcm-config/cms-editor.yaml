@@ -28,5 +28,5 @@ definitions:
         wicket.feedback: ${cluster.id}.feedback
         wicket.feedback.scope: document
         wicket.id: ${cluster.id}.workflows
-        workflow.categories: [editing]
+        workflow.categories: [editing, branchinfo]
         workflow.observation: false
