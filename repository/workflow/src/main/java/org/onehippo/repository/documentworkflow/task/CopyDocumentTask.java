@@ -56,6 +56,10 @@ public class CopyDocumentTask extends AbstractDocumentTask {
 
     private static final Logger log = LoggerFactory.getLogger(CopyDocumentTask.class);
 
+    // TODO for now, we only support copy branch to master, we need to support this later on but for now can't because
+    // results in other issues, see CMS-14276
+    public static final boolean COPY_BRANCH_TO_BRANCH_SUPPORTED = false;
+
     private Document destination;
     private String newName;
 
@@ -94,11 +98,10 @@ public class CopyDocumentTask extends AbstractDocumentTask {
             folderWorkflowCategory = (String) config.get("folder-workflow-category");
         }
 
-        final Optional<Pair<String, String>> branchIdNamePairSource;
         final Document copy;
         String sourceState = getSourceState(dm.getDocuments());
         DocumentVariant sourceVariant = dm.getDocuments().get(sourceState);
-        branchIdNamePairSource = getBranchIdNamePair(sourceVariant);
+        final Optional<Pair<String, String>> branchIdNamePairSource = getBranchIdNamePair(sourceVariant);
 
         Document folder = WorkflowUtils.getContainingFolder(sourceVariant, getWorkflowContext().getInternalWorkflowSession());
         Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
@@ -144,6 +147,11 @@ public class CopyDocumentTask extends AbstractDocumentTask {
     }
 
     private Optional<Pair<String, String>> getBranchIdNamePair(final DocumentVariant variant) throws RepositoryException {
+        // see CMS-14276
+        if (!COPY_BRANCH_TO_BRANCH_SUPPORTED) {
+            return Optional.empty();
+        }
+
         if (variant.getNode().isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
             final String branchIdSource = variant.getNode().getProperty(HIPPO_PROPERTY_BRANCH_ID).getString();
             final String branchNameSource = variant.getNode().getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString();
