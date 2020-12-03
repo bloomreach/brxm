@@ -79,17 +79,13 @@ import static org.junit.Assert.assertTrue;
 public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases {
 
     @Before
-    @Override
     public void setUp() throws Exception {
         ApiVersionProvider.set(V10);
-        super.setUp();
         DeterministicJsonPointerFactory.reset();
     }
 
     @After
-    @Override
     public void tearDown() throws Exception {
-        super.tearDown();
         ApiVersionProvider.clear();
     }
 
