@@ -18,6 +18,9 @@ package org.hippoecm.hst.pagecomposer.jaxrs;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
@@ -25,19 +28,24 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockServletContext;
 
 import static org.onehippo.cms7.services.context.HippoWebappContext.Type.CMS;
-import static org.onehippo.cms7.services.context.HippoWebappContext.Type.PLATFORM;
 import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 public abstract class AbstractComponentManagerTest {
+
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractComponentManagerTest.class);
 
     protected static final String CONTEXT_PATH = "/site";
     protected static final String PLATFORM_CONTEXT_PATH = "/cms";
@@ -125,4 +133,22 @@ public abstract class AbstractComponentManagerTest {
     }
 
     abstract protected String[] getConfigurations(boolean platform);
+
+    public void createHstConfigBackup(Session session) throws RepositoryException {
+        if (!session.nodeExists("/hst-backup")) {
+            JcrUtils.copy(session, "/hst:hst", "/hst-backup");
+            session.save();
+        }
+    }
+
+    public void restoreHstConfigBackup(Session session) throws RepositoryException {
+        if (session.nodeExists("/hst-backup")) {
+            if (session.nodeExists("/hst:hst")) {
+                session.removeItem("/hst:hst");
+            }
+            JcrUtils.copy(session, "/hst-backup", "/hst:hst");
+            session.save();
+        }
+    }
+
 }
