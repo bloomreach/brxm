@@ -29,11 +29,11 @@
       <excludes>
         <exclude>*/.env</exclude>
         <exclude>*/node_modules/**</exclude>
-        <exclude>*/README.md</exclude>
-        <exclude>*/dist/**</exclude>
-        <exclude>next/.next/**</exclude>
+        <exclude>angular/dist/**</exclude>
         <exclude>nuxt/.nuxt/**</exclude>
+        <exclude>next/.next/**</exclude>
         <exclude>react/build/**</exclude>
+        <exclude>vue/dist/**</exclude>
         <exclude>xm/**</exclude>
       </excludes>
     </fileSet>
@@ -45,7 +45,6 @@
         <exclude>*/dist/**</exclude>
         <exclude>*/docs/**</exclude>
         <exclude>*/node_modules/**</exclude>
-        <exclude>*/README.md</exclude>
       </excludes>
     </fileSet>
     <fileSet>
