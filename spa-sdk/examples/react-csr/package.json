@@ -8,15 +8,12 @@
     "axios": "^0.21",
     "react": "^16.14",
     "react-dom": "^16.14",
-    "react-router-dom": "^5.2",
-    "react-scripts": "4.0.0",
-    "typescript": "^4.0"
+    "react-router-dom": "^5.2"
   },
   "scripts": {
     "build": "SKIP_PREFLIGHT_CHECK=true react-scripts build",
-    "dev": "SKIP_PREFLIGHT_CHECK=true react-scripts start",
     "lint": "eslint --ext js,ts,tsx src",
-    "start": "node server.js"
+    "start": "SKIP_PREFLIGHT_CHECK=true react-scripts start"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -37,9 +34,9 @@
     "@types/react": "^16.9",
     "@types/react-dom": "^16.9",
     "@types/react-router-dom": "^5.1",
-    "dotenv": "^8.2",
     "eslint": "^7.12",
     "eslint-config-react-app": "^6.0",
-    "express": "^4.17"
+    "react-scripts": "4.0.0",
+    "typescript": "^4.0"
   }
 }
