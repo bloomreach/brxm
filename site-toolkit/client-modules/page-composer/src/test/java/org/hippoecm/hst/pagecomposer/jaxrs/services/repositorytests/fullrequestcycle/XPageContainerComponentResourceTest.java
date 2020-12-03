@@ -770,7 +770,6 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
 
 
             final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, AUTHOR_CREDENTIALS);
-            final ExtResponseRepresentation extResponseRepresentation = mapper.readerFor(ExtResponseRepresentation.class).readValue(createResponse.getContentAsString());
 
             assertEquals(CREATED.getStatusCode(), createResponse.getStatus());
             // assertion on newly created item
