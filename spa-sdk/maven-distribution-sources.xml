@@ -31,9 +31,9 @@
         <exclude>*/node_modules/**</exclude>
         <exclude>*/README.md</exclude>
         <exclude>*/dist/**</exclude>
+        <exclude>next/.next/**</exclude>
         <exclude>nuxt/.nuxt/**</exclude>
         <exclude>react/build/**</exclude>
-        <exclude>react-ssr/.next/**</exclude>
         <exclude>xm/**</exclude>
       </excludes>
     </fileSet>

@@ -1999,6 +1999,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bloomreach/example-next@workspace:examples/next":
+  version: 0.0.0-use.local
+  resolution: "@bloomreach/example-next@workspace:examples/next"
+  dependencies:
+    "@bloomreach/react-sdk": ^14.5.0
+    "@types/node": ^14.14
+    "@types/react": ^16.9
+    "@types/react-dom": ^16.9
+    axios: ^0.21
+    dotenv: ^8.2
+    next: ^10.0
+    next-routes: ^1.4
+    nookies: ^2.4
+    react: ^16.14
+    react-dom: ^16.14
+  languageName: unknown
+  linkType: soft
+
 "@bloomreach/example-nuxt@workspace:examples/nuxt":
   version: 0.0.0-use.local
   resolution: "@bloomreach/example-nuxt@workspace:examples/nuxt"
@@ -2025,24 +2043,6 @@ __metadata:
     nuxt: ^2.14
     nuxt-property-decorator: ^2.8
     prettier: ^2.1
-  languageName: unknown
-  linkType: soft
-
-"@bloomreach/example-react-ssr@workspace:examples/react-ssr":
-  version: 0.0.0-use.local
-  resolution: "@bloomreach/example-react-ssr@workspace:examples/react-ssr"
-  dependencies:
-    "@bloomreach/react-sdk": ^14.5.0
-    "@types/node": ^14.14
-    "@types/react": ^16.9
-    "@types/react-dom": ^16.9
-    axios: ^0.21
-    dotenv: ^8.2
-    next: ^10.0
-    next-routes: ^1.4
-    nookies: ^2.4
-    react: ^16.14
-    react-dom: ^16.14
   languageName: unknown
   linkType: soft
 
