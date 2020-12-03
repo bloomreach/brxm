@@ -82,16 +82,26 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
 
     protected MountResource mountResource;
 
-
+    /**
+     * addAnnotatedClassesConfigurationParam must be added before super setUpClass, hence redefine same setUpClass method
+     * to hide the super.setUpClass and invoke that explicitly
+     */
     @BeforeClass
     public static void setUpClass() throws Exception {
-        //Enable legacy project structure mode (without extensions)
-        System.setProperty("use.hcm.sites", "false");
+        String classXmlFileName = AbstractPageComposerTest.class.getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = AbstractPageComposerTest.class.getName().replace(".", "/") + "-*.xml";
+
+        AbstractComponentManagerTest.addAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractComponentManagerTest.addAnnotatedClassesConfigurationParam(classXmlFileName2);
+
+        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
+        AbstractComponentManagerTest.addPlatformAnnotatedClassesConfigurationParam(classXmlFileNamePlatform);
+        AbstractComponentManagerTest.setUpClass();
     }
+
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
 
         mountResource =  platformComponentManager.getComponent("org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource",
                 "org.hippoecm.hst.pagecomposer");
@@ -102,9 +112,7 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
 
         siteMapMatcher = platformModel.getHstSiteMapMatcher();
         hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
-
         session = (HippoSession)createSession();
-
         createHstConfigBackup(session);
 
 
@@ -113,28 +121,11 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
     @After
     public void tearDown() throws Exception {
 
-        try {
-            // to avoid jr problems with current session with shared depth kind of issues, use a refresh
-            session.refresh(false);
-            restoreHstConfigBackup(session);
+        // to avoid jr problems with current session with shared depth kind of issues, use a refresh
+        session.refresh(false);
+        restoreHstConfigBackup(session);
 
-            session.logout();
-        } finally {
-            super.tearDown();
-        }
-
-    }
-
-    protected String[] getConfigurations(final boolean platform) {
-        String classXmlFileName = AbstractPageComposerTest.class.getName().replace(".", "/") + ".xml";
-        String classXmlFileName2 = AbstractPageComposerTest.class.getName().replace(".", "/") + "-*.xml";
-
-        if (!platform) {
-            return new String[]{classXmlFileName, classXmlFileName2};
-        }
-
-        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
-        return new String[] { classXmlFileName, classXmlFileName2, classXmlFileNamePlatform };
+        session.logout();
     }
 
     protected Session createSession() throws RepositoryException {
