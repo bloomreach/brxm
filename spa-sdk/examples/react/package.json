@@ -1,5 +1,5 @@
 {
-  "name": "@bloomreach/example-react-csr",
+  "name": "@bloomreach/example-react",
   "description": "Example React SPA for Bloomreach Experience",
   "version": "14.5.0",
   "private": true,

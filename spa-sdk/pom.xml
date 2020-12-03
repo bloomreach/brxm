@@ -138,7 +138,7 @@
                 <include>*/node_modules/**</include>
                 <include>*/dist/**</include>
                 <include>nuxt/.nuxt/**</include>
-                <include>react-csr/build/**</include>
+                <include>react/build/**</include>
                 <include>react-ssr/.next/**</include>
               </includes>
             </fileset>
@@ -184,9 +184,9 @@
                 <exclude>examples/*/.*</exclude>
                 <exclude>examples/react-ssr/next-env.d.ts</exclude>
                 <exclude>examples/xm/**</exclude>
-                <exclude>examples/react-csr/build/**</exclude>
                 <exclude>examples/**/dist/**</exclude>
                 <exclude>examples/nuxt/.nuxt/**</exclude>
+                <exclude>examples/react/build/**</exclude>
                 <exclude>examples/react-ssr/.next/**</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
               </excludes>

@@ -2028,25 +2028,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bloomreach/example-react-csr@workspace:examples/react-csr":
-  version: 0.0.0-use.local
-  resolution: "@bloomreach/example-react-csr@workspace:examples/react-csr"
-  dependencies:
-    "@bloomreach/react-sdk": ^14.5.0
-    "@types/react": ^16.9
-    "@types/react-dom": ^16.9
-    "@types/react-router-dom": ^5.1
-    axios: ^0.21
-    eslint: ^7.12
-    eslint-config-react-app: ^6.0
-    react: ^16.14
-    react-dom: ^16.14
-    react-router-dom: ^5.2
-    react-scripts: 4.0.0
-    typescript: ^4.0
-  languageName: unknown
-  linkType: soft
-
 "@bloomreach/example-react-ssr@workspace:examples/react-ssr":
   version: 0.0.0-use.local
   resolution: "@bloomreach/example-react-ssr@workspace:examples/react-ssr"
@@ -2062,6 +2043,25 @@ __metadata:
     nookies: ^2.4
     react: ^16.14
     react-dom: ^16.14
+  languageName: unknown
+  linkType: soft
+
+"@bloomreach/example-react@workspace:examples/react":
+  version: 0.0.0-use.local
+  resolution: "@bloomreach/example-react@workspace:examples/react"
+  dependencies:
+    "@bloomreach/react-sdk": ^14.5.0
+    "@types/react": ^16.9
+    "@types/react-dom": ^16.9
+    "@types/react-router-dom": ^5.1
+    axios: ^0.21
+    eslint: ^7.12
+    eslint-config-react-app: ^6.0
+    react: ^16.14
+    react-dom: ^16.14
+    react-router-dom: ^5.2
+    react-scripts: 4.0.0
+    typescript: ^4.0
   languageName: unknown
   linkType: soft
 
