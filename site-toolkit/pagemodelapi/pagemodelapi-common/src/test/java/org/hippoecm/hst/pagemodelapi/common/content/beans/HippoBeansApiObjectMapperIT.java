@@ -44,7 +44,7 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class HippoBeansApiObjectMapperIT  extends RepositoryTestCase {
+public class HippoBeansApiObjectMapperIT extends RepositoryTestCase {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
