@@ -15,8 +15,11 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -29,14 +32,11 @@ import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.repository.util.JcrUtils;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockServletContext;
 
 import static org.onehippo.cms7.services.context.HippoWebappContext.Type.CMS;
@@ -45,34 +45,30 @@ import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 public abstract class AbstractComponentManagerTest {
 
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractComponentManagerTest.class);
-
     protected static final String CONTEXT_PATH = "/site";
     protected static final String PLATFORM_CONTEXT_PATH = "/cms";
 
-    protected SpringComponentManager siteComponentManager;
-    protected SpringComponentManager platformComponentManager;
-    protected final HippoWebappContext siteWebappContext = new HippoWebappContext(SITE, new MockServletContext() {
+    protected static SpringComponentManager siteComponentManager;
+    protected static SpringComponentManager platformComponentManager;
+    protected static final HippoWebappContext siteWebappContext = new HippoWebappContext(SITE, new MockServletContext() {
         public String getContextPath() {
             return CONTEXT_PATH;
         }
     });
 
-    protected final HippoWebappContext platformWebappContext = new HippoWebappContext(CMS, new MockServletContext() {
+    protected static final HippoWebappContext platformWebappContext = new HippoWebappContext(CMS, new MockServletContext() {
         public String getContextPath() {
             return PLATFORM_CONTEXT_PATH;
         }
     });
 
+    public static final Set<String> annotatedClasses = new HashSet<>();
+    public static final Set<String> extraPlatformAnnotatedClasses = new HashSet<>();
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         //Enable legacy project structure mode (without extensions)
         System.setProperty("use.hcm.sites", "false");
-    }
-
-
-    @Before
-    public void setUp() throws Exception {
 
         List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
 
@@ -120,8 +116,8 @@ public abstract class AbstractComponentManagerTest {
 
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterClass
+    public static void tearDownClass() {
         siteComponentManager.stop();
         siteComponentManager.close();
         platformComponentManager.stop();
@@ -132,7 +128,23 @@ public abstract class AbstractComponentManagerTest {
         ModifiableRequestContextProvider.clear();
     }
 
-    abstract protected String[] getConfigurations(boolean platform);
+    protected static String[] getConfigurations(boolean platform) {
+        if (platform) {
+           return Stream.of(annotatedClasses, extraPlatformAnnotatedClasses).flatMap(Set::stream).toArray(String[]::new);
+        } else {
+            return annotatedClasses.toArray(new String[0]);
+        }
+    }
+
+    public static void addAnnotatedClassesConfigurationParam(final String annotatedClassParam) {
+        annotatedClasses.add(annotatedClassParam);
+    }
+
+    public static void addPlatformAnnotatedClassesConfigurationParam(final String classXmlFileNamePlatform) {
+        extraPlatformAnnotatedClasses.add(classXmlFileNamePlatform);
+    }
+
+
 
     public void createHstConfigBackup(Session session) throws RepositoryException {
         if (!session.nodeExists("/hst-backup")) {
