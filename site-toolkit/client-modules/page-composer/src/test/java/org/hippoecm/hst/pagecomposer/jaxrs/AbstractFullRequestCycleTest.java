@@ -296,7 +296,7 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
     // returns the jcr session containing the changes, do more changes and save this session when needed (and logout)
     protected Session backupHstAndCreateWorkspace() throws RepositoryException {
         final Session session = createSession("admin", "admin");
-        AbstractPageComposerTest.createHstConfigBackup(session);
+        createHstConfigBackup(session);
         // move the hst:sitemap and hst:pages below the 'workspace' because since HSTTWO-3959 only the workspace
         // gets copied to preview configuration
         if (!session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace")) {
