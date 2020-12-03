@@ -56,6 +56,8 @@ import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -293,22 +295,6 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
         return resolvedMount.matchSiteMapItem(pathInfo);
     }
 
-    public static void createHstConfigBackup(Session session) throws RepositoryException {
-        if (!session.nodeExists("/hst-backup")) {
-            JcrUtils.copy(session, "/hst:hst", "/hst-backup");
-            session.save();
-        }
-    }
-
-    public static void restoreHstConfigBackup(Session session) throws RepositoryException {
-        if (session.nodeExists("/hst-backup")) {
-            if (session.nodeExists("/hst:hst")) {
-                session.removeItem("/hst:hst");
-            }
-            JcrUtils.copy(session, "/hst-backup", "/hst:hst");
-            session.save();
-        }
-    }
 
 
     protected void moveChannelToWorkspace() throws RepositoryException {
