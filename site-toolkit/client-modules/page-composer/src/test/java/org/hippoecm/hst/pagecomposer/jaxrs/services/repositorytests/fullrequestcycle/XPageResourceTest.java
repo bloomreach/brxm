@@ -28,7 +28,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -158,7 +158,7 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
 
         // use author credentials: if author succeeds, then surely for ADMIN it will also work
         final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, AUTHOR_CREDENTIALS);
-        final ExtResponseRepresentation extResponseRepresentation = mapper.readerFor(ExtResponseRepresentation.class).readValue(createResponse.getContentAsString());
+        final ResponseRepresentation<Map<String, ?>> responseRepresentation = mapper.readerFor(ResponseRepresentation.class).readValue(createResponse.getContentAsString());
 
         // for a newly added container, ALWAYS a page reload is needed
         assertRequiresReload(createResponse, true);
@@ -168,7 +168,7 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         // assert modifying the preview did not create a draft variant!!! changes are directly on unpublished
         assertNull(getVariant(handle, "draft"));
 
-        Map<String, ?> map = (Map) extResponseRepresentation.getData();
+        Map<String, ?> map = responseRepresentation.getData();
         final String createdUUID = map.get("id").toString();
 
 
