@@ -40,6 +40,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.cxf.PrivilegesAllowedInvokerPreproces
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.ConfigurationLockedTest;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
@@ -74,11 +75,26 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
     protected BranchSelectionService testBranchSelectionService = contextPayload -> (String)contextPayload.get(TEST_BRANCH_ID_PAYLOAD_NAME);
 
 
+    /**
+     * addAnnotatedClassesConfigurationParam must be added before super setUpClass, hence redefine same setUpClass method
+     * to hide the super.setUpClass and invoke that explicitly
+     */
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        String classXmlFileName = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + "-*.xml";
+
+        AbstractComponentManagerTest.addAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractComponentManagerTest.addAnnotatedClassesConfigurationParam(classXmlFileName2);
+
+        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
+        AbstractComponentManagerTest.addPlatformAnnotatedClassesConfigurationParam(classXmlFileNamePlatform);
+        AbstractComponentManagerTest.setUpClass();
+    }
+
+
     @Before
     public void setUp() throws Exception {
-
-        super.setUp();
-
         HippoServiceRegistry.register(testBranchSelectionService, BranchSelectionService.class);
 
         filter = platformComponentManager.getComponent(HstFilter.class.getName());
@@ -97,21 +113,8 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
 
 
     @After
-    @Override
     public void tearDown() throws Exception {
         HippoServiceRegistry.unregister(testBranchSelectionService, BranchSelectionService.class);
-        super.tearDown();
-    }
-
-    protected String[] getConfigurations(final boolean platform) {
-        String classXmlFileName = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + ".xml";
-        String classXmlFileName2 = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + "-*.xml";
-        if (!platform) {
-            return new String[]{classXmlFileName, classXmlFileName2};
-        }
-
-        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
-        return new String[] { classXmlFileName, classXmlFileName2, classXmlFileNamePlatform };
     }
 
     protected Session createSession(final String userName, final String password) throws RepositoryException {
