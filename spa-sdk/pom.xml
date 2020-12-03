@@ -128,8 +128,6 @@
                 <exclude>.gitignore</exclude>
                 <exclude>releases/**</exclude>
                 <exclude>plugins/**</exclude>
-                <exclude>sdks/**</exclude>
-                <exclude>versions/**</exclude>
               </excludes>
             </fileset>
             <fileset>
