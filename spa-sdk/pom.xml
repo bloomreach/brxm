@@ -134,10 +134,11 @@
               <directory>examples</directory>
               <includes>
                 <include>*/node_modules/**</include>
-                <include>*/dist/**</include>
-                <include>next/.next/**</include>
+                <include>angular/dist/**</include>
                 <include>nuxt/.nuxt/**</include>
+                <include>next/.next/**</include>
                 <include>react/build/**</include>
+                <include>vue/dist/**</include>
               </includes>
             </fileset>
             <fileset>
@@ -173,19 +174,13 @@
             <configuration>
               <excludes combine.children="append">
                 <exclude>.*/**</exclude>
-                <exclude>DEVELOPER.md</exclude>
-                <exclude>Procfile</exclude>
+                <exclude>**/.*</exclude>
+                <exclude>**/*.md</exclude>
+                <exclude>**/*.snap</exclude>
+                <exclude>**/robots.txt</exclude>
                 <exclude>yarn.lock</exclude>
-                <exclude>packages/**/__snapshots__/*.snap</exclude>
-                <exclude>packages/*/.*</exclude>
-                <exclude>packages/spa-sdk/src/docs/*.md</exclude>
-                <exclude>examples/*/.*</exclude>
-                <exclude>examples/**/dist/**</exclude>
-                <exclude>examples/next/.next/**</exclude>
-                <exclude>examples/nuxt/.nuxt/**</exclude>
-                <exclude>examples/react/build/**</exclude>
-                <exclude>examples/xm/**</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
+                <exclude>examples/xm/**</exclude>
               </excludes>
             </configuration>
           </plugin>
