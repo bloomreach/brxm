@@ -22,12 +22,12 @@ import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.PlatformServices;
 import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
@@ -45,7 +45,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_XPAGE_MI
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_XPAGE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_TEMPLATE;
 
-public class CreateExperiencePageWorkflowIT extends AbstractBeanTestCase {
+public class CreateExperiencePageWorkflowIT extends AbstractTestConfigurations {
 
 
     private Repository repository;
