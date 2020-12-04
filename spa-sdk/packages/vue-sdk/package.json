@@ -11,8 +11,8 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
-    "directory": "packages/vue-sdk"
+    "url": "https://github.com/bloomreach/brxm.git",
+    "directory": "spa-sdk/packages/vue-sdk"
   },
   "bugs": {
     "url": "https://issues.onehippo.com/projects/CMS/issues"
