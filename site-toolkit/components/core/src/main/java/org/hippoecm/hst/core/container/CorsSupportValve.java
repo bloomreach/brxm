@@ -188,8 +188,9 @@ public class CorsSupportValve implements Valve {
             // request (pipeline) handling completed here!
         } else {
 
-            if (replaceWildcardAllowOrigin && isAllowedOriginResponseHeaderWildcard(servletResponse)) {
-                setAccessControlAllowOrigin(servletResponse, HstRequestUtils.getOrigin(servletRequest));
+            final String requestOrigin = HstRequestUtils.getOrigin(servletRequest);
+            if (originAllowed(requestOrigin, servletResponse, context.getRequestContext().getResolvedMount().getMount())){
+                setAccessControlAllowOrigin(servletResponse, requestOrigin);
             }
 
             if (allowCredentials) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,10 +43,12 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.KeyValue;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -61,6 +63,17 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
     protected Session session;
     protected Boolean cacheableFlagAtSetup = null;
     protected String componentClassNameAtSetup = null;
+
+    /**
+     * addAnnotatedClassesConfigurationParam must be added before super setUpClass, hence redefine same setUpClass method
+     * to hide the super.setUpClass and invoke that explicitly
+     */
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        String classXmlFileName = PageCachingValveIT.class.getName().replace(".", "/") + ".xml";
+        AbstractSpringTestCase.addAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractSpringTestCase.setUpClass();
+    }
 
     @Before
     public void setUp() throws Exception {
