@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import javax.servlet.ServletConfig;
 import org.hippoecm.hst.container.HstContainerConfigImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 public class AbstractPipelineTestCase extends AbstractSpringTestCase {
 
@@ -29,6 +30,16 @@ public class AbstractPipelineTestCase extends AbstractSpringTestCase {
     protected ServletConfig servletConfig;
     protected HstContainerConfig requestContainerConfig;
 
+    /**
+     * addAnnotatedClassesConfigurationParam must be added before super setUpClass, hence redefine same setUpClass method
+     * to hide the super.setUpClass and invoke that explicitly
+     */
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        String classXmlFileName = AbstractPipelineTestCase.class.getName().replace(".", "/") + ".xml";
+        AbstractSpringTestCase.addAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractSpringTestCase.setUpClass();
+    }
 
     @Before
     public void setUp() throws Exception {

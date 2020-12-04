@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivilege
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_VALUE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PRIVILEGES;
 
-public class ChannelServiceTest extends AbstractBeanTestCase {
+public class ChannelServiceIT extends AbstractBeanTestCase {
 
     private PlatformServices platformServices;
     @Override

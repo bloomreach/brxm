@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,11 +23,9 @@ import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.core.jcr.AbstractRepositoryTestCase;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.platform.configuration.channel.BlueprintHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.hst.Channel;
-import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_BLUEPRINT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNEL;
@@ -45,7 +43,7 @@ public class BlueprintHandlerIT extends AbstractRepositoryTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        RepositoryTestCase.build(new String[]{
+        build(new String[]{
                 "/test", "nt:unstructured",
                 "/test/hst:blueprints", HstNodeTypes.NODENAME_HST_BLUEPRINTS
         }, session);
@@ -58,7 +56,7 @@ public class BlueprintHandlerIT extends AbstractRepositoryTestCase {
      */
     @Test
     public void getters() throws RepositoryException {
-        RepositoryTestCase.build(new String[]{
+        build(new String[]{
                 "/test/hst:blueprints/test", NODETYPE_HST_BLUEPRINT,
                 HstNodeTypes.BLUEPRINT_PROPERTY_NAME, "Test Blueprint",
                 HstNodeTypes.BLUEPRINT_PROPERTY_DESCRIPTION, "Description of Test Blueprint",
@@ -81,7 +79,7 @@ public class BlueprintHandlerIT extends AbstractRepositoryTestCase {
     @Test
     public void createChannelWithFixedMountPoint() throws RepositoryException {
 
-        RepositoryTestCase.build(new String[]{
+        build(new String[]{
                 "/test/hst:blueprints/test", NODETYPE_HST_BLUEPRINT,
                 "/test/hst:blueprints/test/hst:configuration", NODETYPE_HST_CONFIGURATION,
                 "/test/hst:blueprints/test/hst:configuration/hst:channel", NODETYPE_HST_CHANNEL,

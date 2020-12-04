@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.commons.configuration.Configuration;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -35,7 +37,6 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.platform.model.HstModel;
@@ -45,7 +46,9 @@ import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.context.HippoWebappContext;
@@ -62,62 +65,73 @@ import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
  * </p>
  */
 public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
+    protected static MockServletContext servletContext2;
+    protected static HippoWebappContext webappContext2;
+    protected static SpringComponentManager componentManager2;
+    protected static HstModel hstModelSite2;
 
     private HstManager hstManager;
     private HstURLFactory hstURLFactory;
-    private HstSiteMapMatcher siteMapMatcher;
-    protected MockServletContext servletContext2;
-    protected HippoWebappContext webappContext2;
-    protected SpringComponentManager componentManager2;
-
-    protected HstModel hstModelSite2;
 
     private final static String HTTP_SCHEME = "http";
     private final static String HTTPS_SCHEME = "https";
+
+    /**
+     * addAnnotatedClassesConfigurationParam must be added before super setUpClass, hence redefine same setUpClass method
+     * to hide the super.setUpClass and invoke that explicitly
+     */
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+
+        AbstractTestConfigurations.setUpClass();
+
+        servletContext2 = new MockServletContext() {
+            public String getContextPath() {
+                return "/site2";
+            }
+
+            public ClassLoader getClassLoader() {
+                return AbstractBeanTestCase.class.getClassLoader();
+            }
+        };
+        webappContext2 = new HippoWebappContext(SITE, servletContext2);
+        HippoWebappContextRegistry.get().register(webappContext2);
+        servletContext2.setContextPath("/site2");
+
+        final Configuration containerConfiguration = getContainerConfiguration();
+        containerConfiguration.addProperty("hst.configuration.rootPath", "/hst:site2");
+        componentManager2 = new SpringComponentManager(containerConfiguration);
+        componentManager2.setConfigurationResources(getConfigurations(false));
+        componentManager2.setServletContext(servletContext2);
+        componentManager2.initialize();
+        componentManager2.start();
+
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        hstModelSite2 = modelRegistry.registerHstModel(servletContext2, componentManager2, true);
+    }
+
+    @AfterClass
+    public static void afterClass() throws RepositoryException {
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        modelRegistry.unregisterHstModel(webappContext2.getServletContext().getContextPath());
+        if (componentManager2 != null) {
+            componentManager2.stop();
+            componentManager2.close();
+        }
+        HippoWebappContextRegistry.get().unregister(webappContext2);
+        AbstractTestConfigurations.afterClass();
+    }
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
         this.hstManager = getComponent(HstManager.class.getName());
-        this.siteMapMatcher = getComponent(HstSiteMapMatcher.class.getName());
         this.hstURLFactory = getComponent(HstURLFactory.class.getName());
 
-        if (HippoWebappContextRegistry.get().getContext("/site2") == null) {
-            servletContext2 = new MockServletContext() {
-                public String getContextPath() {
-                    return "/site2";
-                }
-
-                public ClassLoader getClassLoader() {
-                    return AbstractBeanTestCase.class.getClassLoader();
-                }
-            };
-            webappContext2 = new HippoWebappContext(SITE, servletContext2);
-            HippoWebappContextRegistry.get().register(webappContext2);
-            AbstractBeanTestCase.this.servletContext2.setContextPath("/site2");
-
-            final Configuration containerConfiguration = getContainerConfiguration();
-            containerConfiguration.addProperty("hst.configuration.rootPath", "/hst:site2");
-            componentManager2 = new SpringComponentManager(containerConfiguration);
-            componentManager2.setConfigurationResources(getConfigurations(false));
-            componentManager2.setServletContext(AbstractBeanTestCase.this.servletContext2);
-            componentManager2.initialize();
-            componentManager2.start();
-
-            final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-            hstModelSite2 = modelRegistry.registerHstModel(servletContext2, componentManager2, true);
-        }
     }
 
     @After
     public void tearDown() throws Exception {
-        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        modelRegistry.unregisterHstModel(webappContext2.getServletContext().getContextPath());
-        if (componentManager2 != null) {
-            this.componentManager2.stop();
-            this.componentManager2.close();
-        }
-        HippoWebappContextRegistry.get().unregister(webappContext2);
         super.tearDown();
     }
 
