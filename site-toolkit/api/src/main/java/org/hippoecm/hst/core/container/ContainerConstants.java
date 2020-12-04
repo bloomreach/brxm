@@ -211,6 +211,11 @@ public interface ContainerConstants {
      */
     String PREFER_RENDER_BRANCH_ID = "org.hippoecm.hst.container.prefer_render_branch_id";
 
+    /**
+     * attribute to indicate that from HstRequestUtils the prefer branch Id should be used regardless whether the branch
+     * exists
+     */
+    String FORCE_USE_PREFER_RENDER_ATTR_NAME = "org.hippoecm.hst.container.force_use_prefer_render_branch_id";
 
     String FORWARD_RECURSION_ERROR = ContainerConstants.class.getName() + ".forwardRecursionError";
 
