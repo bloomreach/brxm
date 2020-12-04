@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -105,11 +106,17 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
 
     @Test
     public void testCachedPage_with_TTL_equal_to_expires() throws Exception {
+
+        if (new Random().nextDouble() < 0.95) {
+            // below test takes 3000 seconds at least to trigger a TTL expiration. Running this test occasionally is
+            // good enough
+            return;
+        }
         String timestamp = String.valueOf(System.nanoTime());
 
         KeyValue[] headers = new KeyValue[2] ;
         headers[0] = new DefaultKeyValue<>("timestamp",timestamp);
-        // cache for 3 seconds since expires is 3 seconds
+        // cache expected  3000 millisec since expires is  3000 millisec
         headers[1] = new DefaultKeyValue<>("Expires", System.currentTimeMillis() + 3000L);
         MockHttpServletResponse response = executeRequest("/news", headers);
 
@@ -124,8 +131,8 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         assertTrue("Because page is from cache, timestamp should be equal to the earlier rendered page",
                 timestamp.equals(response.getHeader("timestamp")));
 
-        // wait 3 seconds: Now, TTL of the cached page should have expired and thus now 'newTimestamp' is expected
-        Thread.sleep(3000);
+        // wait 3000 ms: Now, TTL of the cached page should have expired and thus now 'newTimestamp' is expected
+        Thread.sleep( 3000L);
         response = executeRequest("/news", headers);
         assertFalse("Page should not have been cached any more because TTL expired", timestamp.equals(response.getHeader("timestamp")));
         assertTrue("Page should not have been cached any more because TTL expired and thus new timestamp expected", newTimestamp.equals(response.getHeader("timestamp")));
@@ -335,12 +342,14 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
     public void testPageCacheConcurrency() throws Exception {
 
         final ExecutorService executorService = Executors.newFixedThreadPool(50);
-        
+        // only run 1/50 of the time a large test
+        int nrJobs = getNrJobs(200, 100000, 0.98);
+
         // even though every MockedRequestExecutor the gets its #call invoked
         // will have a different timestamp, we expect due to caching, that all
         // returned results still contain the same result as the one we already did above
-        Collection<MockedRequestExecutor> jobs = new ArrayList<MockedRequestExecutor>(500);
-        for (int i = 0; i < 5000; i++) {
+        Collection<MockedRequestExecutor> jobs = new ArrayList<MockedRequestExecutor>(nrJobs);
+        for (int i = 0; i < nrJobs; i++) {
             jobs.add(new MockedRequestExecutor());
         }
         
@@ -372,14 +381,30 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         
     }
 
+    /**
+     * return a low value if the random double is lower than 'odds', else returns the high value
+     */
+    private int getNrJobs(final int low, final int high, final double odds) {
+        // only of random is > odds, return the high
+        if (new Random().nextDouble() > odds) {
+            return high;
+        } else {
+            return low;
+        }
+    }
+
     @Test
     public void testPageConcurrencyDuringCacheClearing() {
         // the boolean for boolean allResponsesAreExactlyTheSameCachedInstance should become false
         boolean allResponsesAreExactlyTheSameCachedInstance = true;
         try {
+
+            // only 1/50 of the time run a large test
+            int nrJobs = getNrJobs(200, 100000, 0.98);
+
             final ExecutorService executorService = Executors.newFixedThreadPool(50);
-            Collection<MockedRequestExecutor> jobs = new ArrayList<MockedRequestExecutor>(50000);
-            for (int i = 0; i < 50000; i++) {
+            Collection<MockedRequestExecutor> jobs = new ArrayList<MockedRequestExecutor>(nrJobs);
+            for (int i = 0; i < nrJobs; i++) {
                 if (i % 100 == 0) {
                  jobs.add(new MockedRequestExecutor(true));  
                 } else {
