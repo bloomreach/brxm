@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@
 
   <name>CMS Engine Test</name>
   <description>Hippo CMS Library with test base classes for frontend plugins</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms-test</artifactId>
   <packaging>jar</packaging>
 
@@ -94,18 +93,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-deprecated-facetsearch</artifactId>
       <version>${hippo.repository.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.htmlunit</groupId>
-      <artifactId>htmlunit</artifactId>
-      <version>${htmlunit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty</artifactId>
-      <version>${jetty.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
