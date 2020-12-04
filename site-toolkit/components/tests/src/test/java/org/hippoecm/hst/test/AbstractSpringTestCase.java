@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
  */
 package org.hippoecm.hst.test;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,8 +49,6 @@ import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -55,7 +56,6 @@ import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
-import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -80,40 +80,27 @@ public abstract class AbstractSpringTestCase
 {
 
     protected final static Logger log = LoggerFactory.getLogger(AbstractSpringTestCase.class);
-    protected SpringComponentManager componentManager;
 
-    protected HippoWebappContext webappContext = new HippoWebappContext(SITE, new MockServletContext() {
+    public static final Set<String> annotatedClasses = new HashSet<>();
+    public static final Set<String> extraPlatformAnnotatedClasses = new HashSet<>();
+    static {
+        extraPlatformAnnotatedClasses.add("org/hippoecm/hst/test/platform-context.xml");
+    }
+
+    protected static SpringComponentManager componentManager;
+
+    protected static HippoWebappContext webappContext = new HippoWebappContext(SITE, new MockServletContext() {
         public String getContextPath() {
             return "/site";
         }
     });
 
-    protected HstModel hstModelSite1;
+    protected static HstModel hstModelSite1;
 
     @BeforeClass
-    public static void clearRepository() {
+    public static void setUpClass() throws Exception {
         //Enable legacy project structure mode (without extensions)
         System.setProperty("use.hcm.sites", "false");
-
-        // when run together with other RepositoryTestCase based tests *and*
-        // -Dorg.onehippo.repository.test.keepserver=true
-        // then an existing RepositoryImpl may already be (kept) running, which can interfere with this test
-        RepositoryTestCase.clearRepository();
-    }
-
-    @AfterClass
-    public static void shutDownRepository() throws RepositoryException {
-        // after all methods of the class have finished we need to close the repository to unregister all services in the
-        // HippoServiceRegistry. Otherwise we get issues with IT tests that extend from RepositoryTestCase vs the IT tests
-        // that use spring wiring
-        HippoRepository hippoRepository = HippoRepositoryFactory.getHippoRepository();
-        if (hippoRepository != null) {
-            hippoRepository.close();
-        }
-    }
-
-    @Before
-    public void setUp() throws Exception {
 
         final Configuration containerConfiguration = getContainerConfiguration();
         containerConfiguration.addProperty("hst.configuration.rootPath", "/hst:hst");
@@ -130,51 +117,59 @@ public abstract class AbstractSpringTestCase
         componentManager.setServletContext(webappContext.getServletContext());
         componentManager.initialize();
         componentManager.start();
-        HstServices.setComponentManager(getComponentManager());
+        HstServices.setComponentManager(componentManager);
 
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
         hstModelSite1 = modelRegistry.registerHstModel(webappContext.getServletContext(), componentManager, true);
+
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterClass
+    public static void afterClass() throws RepositoryException {
         HippoWebappContextRegistry.get().unregister(webappContext);
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
         modelRegistry.unregisterHstModel(webappContext.getServletContext().getContextPath());
         if (componentManager != null) {
-            this.componentManager.stop();
-            this.componentManager.close();
+            componentManager.stop();
+            componentManager.close();
             HstServices.setComponentManager(null);
         }
+
+    }
+
+    @Before
+    public void setUp() throws Exception {
+
+    }
+
+    @After
+    public void tearDown() throws Exception {
         // always clear HstRequestContext in case it is set on a thread local
         ModifiableRequestContextProvider.clear();
     }
 
-    /**
-     * required specification of spring configurations
-     * the derived class can override this.
-     */
-    protected String[] getConfigurations(final boolean platform) {
-        String classXmlFileName = getClass().getName().replace(".", "/") + ".xml";
-        String classXmlFileName2 = getClass().getName().replace(".", "/") + "-*.xml";
 
-        if (!platform) {
-            return new String[]{classXmlFileName, classXmlFileName2};
+    protected static String[] getConfigurations(boolean platform) {
+        if (platform) {
+            return Stream.of(annotatedClasses, extraPlatformAnnotatedClasses).flatMap(Set::stream).toArray(String[]::new);
+        } else {
+            return annotatedClasses.toArray(new String[0]);
         }
-
-        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
-        return new String[] { classXmlFileName, classXmlFileName2, classXmlFileNamePlatform };
     }
-    
+
+    public static void addAnnotatedClassesConfigurationParam(final String annotatedClassParam) {
+        annotatedClasses.add(annotatedClassParam);
+    }
+
     protected ComponentManager getComponentManager() {
-        return this.componentManager;
+        return componentManager;
     }
 
     protected <T> T getComponent(String name) {
         return getComponentManager().getComponent(name);
     }
     
-    protected Configuration getContainerConfiguration() {
+    protected static Configuration getContainerConfiguration() {
         return new PropertiesConfiguration();
     }
 

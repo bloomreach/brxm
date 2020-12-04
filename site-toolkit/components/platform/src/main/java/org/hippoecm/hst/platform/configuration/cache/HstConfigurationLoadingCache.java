@@ -332,4 +332,11 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
                 NODETYPE_HST_COMPONENTDEFINITION.equals(containerItem.getNodeTypeName());
     }
 
+    public void clear() {
+        liveChannelsCache = new WeakTaggedCache<>();
+        previewChannelsCache = new WeakTaggedCache<>();
+        componentsConfigurationCache = new WeakTaggedCache<>();
+        siteMapItemHandlerConfigurationCache = new WeakTaggedCache<>();
+    }
+
 }
