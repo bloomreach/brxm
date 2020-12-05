@@ -116,7 +116,7 @@
     <httpcore.version>4.4.10</httpcore.version>
 
     <!-- test dependencies -->
-    <restassured.version>4.1.2</restassured.version>
+    <restassured.version>4.3.2</restassured.version>
     <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
     <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
 
