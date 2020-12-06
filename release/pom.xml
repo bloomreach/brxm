@@ -74,7 +74,7 @@
     <hippo.plugin.taxonomy.version>${hippo.release.version}</hippo.plugin.taxonomy.version>
     <hippo.addon-crisp.version>${hippo.release.version}</hippo.addon-crisp.version>
 
-    <hippo.maven.plugin.l10n>13.4.3-CMS-13468</hippo.maven.plugin.l10n>
+    <hippo.maven.plugin.l10n>13.4.6</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
     <hippo.cms.locales />
 
