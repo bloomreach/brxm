@@ -18,8 +18,6 @@ package org.hippoecm.hst.restapi;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
@@ -35,15 +33,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
-import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.context.HippoWebappContext;
@@ -95,7 +90,7 @@ public class AbstractRestApiIT {
     }
 
     @AfterClass
-    public static void tearDown() {
+    public static void afterClass() {
 
         ModifiableRequestContextProvider.clear();
         componentManager.stop();
