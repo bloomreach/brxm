@@ -33,3 +33,6 @@ definitions:
           /String:
             jcr:primaryType: hipposys:moduleconfig
             hipposys:className: org.onehippo.cms.services.validation.validator.RequiredStringValidator
+        /url:
+          jcr:primaryType: hipposys:moduleconfig
+          hipposys:className: org.onehippo.cms.services.validation.validator.UrlValidator
