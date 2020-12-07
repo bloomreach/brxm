@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-xdescribe('TargetingService', () => {
+describe('TargetingService', () => {
   let $httpBackend;
   let $rootScope;
   let $window;
@@ -49,7 +49,7 @@ xdescribe('TargetingService', () => {
 
     $window.parent.Hippo.Targeting.HttpProxy.REST_URL = 'targeting-rest-url';
 
-    ConfigService.locale = 'locale';
+    ConfigService.locale = 'en';
     ConfigService.variantsUuid = 'variantsUuid';
 
     spyOn(ChannelService, 'checkChanges');
@@ -150,7 +150,7 @@ xdescribe('TargetingService', () => {
         success: true,
       });
 
-      const url = '/test/variantsUuid./componentvariants?locale=locale';
+      const url = '/test/variantsUuid./componentvariants?locale=en';
       expectHttp(
         $httpBackend.expectPOST(url, ['variant-1', 'variant-2']),
         'Successfully loaded variants for container-item "container-item-id"',
