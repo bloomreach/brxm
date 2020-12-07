@@ -21,7 +21,7 @@
   <parent>
     <artifactId>hippo-essentials-plugin-sdk</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>12.6.14-SNAPSHOT</version>
+    <version>12.6.15-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   
