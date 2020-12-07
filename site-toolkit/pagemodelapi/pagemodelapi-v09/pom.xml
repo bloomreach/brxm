@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>pagemodelapi</artifactId>
-    <version>14.4.0-SNAPSHOT</version>
+    <version>14.4.0</version>
   </parent>
 
   <name>Hippo Site Toolkit Page Model API Version 0.9</name>

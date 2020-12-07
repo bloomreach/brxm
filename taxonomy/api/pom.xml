@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-plugin-taxonomy</artifactId>
-    <version>14.4.0-SNAPSHOT</version>
+    <version>14.4.0</version>
   </parent>
 
   <name>Hippo Plugin Taxonomy API</name>
