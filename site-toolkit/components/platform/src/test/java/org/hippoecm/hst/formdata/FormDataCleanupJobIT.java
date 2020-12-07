@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.hst.toolkit.addon.formdata;
+package org.hippoecm.hst.formdata;
 
 
 import java.util.Calendar;
@@ -26,21 +26,20 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
+import org.easymock.EasyMock;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.cms7.hst.toolkit.addon.formdata.FormDataCleanupJob;
 import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
-import static org.junit.Assert.assertEquals;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-
-public class FormDataCleanupJobTest extends RepositoryTestCase {
+public class FormDataCleanupJobIT extends RepositoryTestCase {
 
     // items that are 45 seconds old are still current, those 75 seconds old are outdated
     private static final long current = 45 * 1000;
@@ -48,6 +47,13 @@ public class FormDataCleanupJobTest extends RepositoryTestCase {
 
     // ensures unique formdata name to prevent name clashes
     private int counter = 0;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+        RepositoryTestCase.setUpClass();
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -96,23 +102,23 @@ public class FormDataCleanupJobTest extends RepositoryTestCase {
         long now = System.currentTimeMillis();
         createFormDataNode("/formdata", now - current);
         createFormDataNode("/formdata", now - outdated);
-        assertEquals(2l, getFormdataNodes().getTotalSize());
+        Assert.assertEquals(2l, getFormdataNodes().getTotalSize());
 
         final FormDataCleanupJob cleanupJob = new FormDataCleanupJob();
         final RepositoryJobExecutionContext executionContext = createExecutionContext("");
 
         cleanupJob.execute(executionContext);
 
-        assertEquals(1l, getFormdataNodes().getTotalSize());
+        Assert.assertEquals(1l, getFormdataNodes().getTotalSize());
     }
 
     private RepositoryJobExecutionContext createExecutionContext(final String excludePaths) throws RepositoryException {
-        final RepositoryJobExecutionContext executionContext = createMock(RepositoryJobExecutionContext.class);
-        expect(executionContext.createSystemSession()).andReturn(session.impersonate(new SimpleCredentials("admin", new char[]{})));
-        expect(executionContext.getAttribute("minutestolive")).andReturn("1");
-        expect(executionContext.getAttribute("batchsize")).andReturn("100");
-        expect(executionContext.getAttribute("excludepaths")).andReturn(excludePaths);
-        replay(executionContext);
+        final RepositoryJobExecutionContext executionContext = EasyMock.createMock(RepositoryJobExecutionContext.class);
+        EasyMock.expect(executionContext.createSystemSession()).andReturn(session.impersonate(new SimpleCredentials("admin", new char[]{})));
+        EasyMock.expect(executionContext.getAttribute("minutestolive")).andReturn("1");
+        EasyMock.expect(executionContext.getAttribute("batchsize")).andReturn("100");
+        EasyMock.expect(executionContext.getAttribute("excludepaths")).andReturn(excludePaths);
+        EasyMock.replay(executionContext);
         return executionContext;
     }
 
@@ -125,14 +131,14 @@ public class FormDataCleanupJobTest extends RepositoryTestCase {
         createFormDataNode("/formdata", now - outdated);
         createFormDataNode("/formdata/permanent", now - current);
         createFormDataNode("/formdata/abcd", now - outdated);
-        assertEquals(6l, getFormdataNodes().getTotalSize());
+        Assert.assertEquals(6l, getFormdataNodes().getTotalSize());
 
         final FormDataCleanupJob cleanupJob = new FormDataCleanupJob();
         final RepositoryJobExecutionContext executionContext = createExecutionContext("/formdata/permanent/|/formdata/abcd|");
 
         cleanupJob.execute(executionContext);
 
-        assertEquals(5l, getFormdataNodes().getTotalSize());
+        Assert.assertEquals(5l, getFormdataNodes().getTotalSize());
     }
 
     @Ignore
@@ -147,6 +153,6 @@ public class FormDataCleanupJobTest extends RepositoryTestCase {
         final FormDataCleanupJob cleanupJob = new FormDataCleanupJob();
         final RepositoryJobExecutionContext executionContext = createExecutionContext("");
         cleanupJob.execute(executionContext);
-        assertEquals(500, getFormdataNodes().getTotalSize());
+        Assert.assertEquals(500, getFormdataNodes().getTotalSize());
     }
 }
