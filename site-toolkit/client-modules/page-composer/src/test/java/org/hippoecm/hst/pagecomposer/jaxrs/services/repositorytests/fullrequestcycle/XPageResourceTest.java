@@ -18,7 +18,10 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequest
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -47,12 +50,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static java.lang.Boolean.FALSE;
 import static javax.ws.rs.core.Response.Status.CREATED;
+import static org.hippoecm.repository.HippoStdNodeType.NT_CM_XPAGE_FOLDER;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
-import static org.hippoecm.repository.HippoStdNodeType.NT_CM_XPAGE_FOLDER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -319,7 +322,6 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
     }
 
 
-
     @Test
     public void action_and_state_for_channel_foo_and_xpage_for_branch_foo_and_NO_master() throws Exception {
 
@@ -389,6 +391,31 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
                 handle.getSession().save();
             }
         }
+    }
+
+    @Test
+    public void action_and_state_for_master_channel_and_master_xpage_scheduled_depublication() throws Exception {
+
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
+        final Instant publicationDate = Instant.now().plus(2, ChronoUnit.DAYS);
+        documentWorkflow.depublish(Date.from(publicationDate));
+
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_scheduled_depublish_admin.json", "master");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_scheduled_depublish_author.json", "master");
+
+    }
+
+    @Test
+    public void action_and_state_for_master_channel_and_master_xpage_scheduled_publication() throws Exception {
+
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
+        final Instant publicationDate = Instant.now().plus(2, ChronoUnit.DAYS);
+        documentWorkflow.depublish();
+        documentWorkflow.publish(Date.from(publicationDate));
+
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_scheduled_publish_admin.json", "master");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_scheduled_publish_author.json", "master");
+
     }
 
     private void assertions(final SimpleCredentials creds, String fixtureFileName, final String branchId) throws Exception {
