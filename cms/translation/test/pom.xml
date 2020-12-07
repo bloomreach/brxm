@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms-translation</artifactId>
-    <version>12.6.14-SNAPSHOT</version>
+    <version>12.6.14</version>
   </parent>
 
   <name>CMS Translation Test</name>
