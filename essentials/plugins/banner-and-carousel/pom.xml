@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-essentials-plugins</artifactId>
-    <version>12.6.14-SNAPSHOT</version>
+    <version>12.6.15-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials Banner and Carousel Plugin</name>
