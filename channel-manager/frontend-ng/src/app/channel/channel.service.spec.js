@@ -723,10 +723,16 @@ describe('ChannelService', () => {
       expect(ChannelService.getOrigin()).toBeUndefined();
     });
 
-    it('returns an empty origin when the url is invalid', () => {
+    it('returns the CMS origin', () => {
       ChannelService.getChannel.and.returnValue({ url: '/_cmsinternal' });
 
-      expect(ChannelService.getOrigin()).toBeUndefined();
+      expect(ChannelService.getOrigin()).toBe('http://localhost:8080');
+    });
+
+    it('returns an origin relative to the CMS', () => {
+      ChannelService.getChannel.and.returnValue({ url: '//localhost:3000' });
+
+      expect(ChannelService.getOrigin()).toBe('http://localhost:3000');
     });
   });
 });
