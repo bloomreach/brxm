@@ -103,7 +103,7 @@
     <spring.version>4.3.29.RELEASE</spring.version>
     <spring-security.version>4.2.18.RELEASE</spring-security.version>
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
-    <groovy.version>2.4.15</groovy.version>
+    <groovy.version>2.4.21</groovy.version>
     <freemarker.version>2.3.24-incubating</freemarker.version>
     <nodejs.version>v8.13.0</nodejs.version>
     <npm.version>6.4.1</npm.version>
