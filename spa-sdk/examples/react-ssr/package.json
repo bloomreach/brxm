@@ -1,12 +1,12 @@
 {
   "name": "@bloomreach/example-react-ssr",
-  "version": "14.4.0",
+  "version": "14.4.1",
   "description": "Example Next.js SPA for Bloomreach Experience",
   "private": true,
   "author": "Bloomreach B.V.",
   "license": "Apache-2.0",
   "dependencies": {
-    "@bloomreach/react-sdk": "^14.4.0",
+    "@bloomreach/react-sdk": "^14.4.1",
     "axios": "^0.21",
     "dotenv": "^8.2",
     "next": "^10.0",
