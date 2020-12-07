@@ -122,9 +122,11 @@ export default class XPageMenuService extends MenuService {
       isVisible: () => this.PageService.hasSomeAction('xpage',
         'unpublish',
         'schedule-unpublish',
+        'cancel-scheduled-depublish',
         'request-unpublish',
         'publish',
         'schedule-publish',
+        'cancel-scheduled-publish',
         'request-publish',
         'request-schedule-publish'),
     });
@@ -136,6 +138,14 @@ export default class XPageMenuService extends MenuService {
     this._addWorkflowAction('schedule-unpublish', id => this.DocumentWorkflowService.scheduleUnpublication(id), {
       isEnabled: () => this._isEnabled('schedule-unpublish') && !this._isEditingCurrentPage(),
     });
+
+    this._addWorkflowAction(
+      'cancel-scheduled-depublish',
+      id => this.DocumentWorkflowService.cancelScheduleUnpublication(id),
+      {
+        iconName: 'mdi-calendar-clock',
+      },
+    );
 
     this._addWorkflowAction('request-unpublish', id => this.DocumentWorkflowService.requestUnpublication(id), {
       iconName: 'mdi-minus-circle',
@@ -155,6 +165,14 @@ export default class XPageMenuService extends MenuService {
     this._addWorkflowAction('schedule-publish', id => this.DocumentWorkflowService.schedulePublication(id), {
       isEnabled: () => this._isEnabled('schedule-publish') && !this._isEditingCurrentPage(),
     });
+
+    this._addWorkflowAction(
+      'cancel-scheduled-publish',
+      id => this.DocumentWorkflowService.cancelSchedulePublication(id),
+      {
+        iconName: 'mdi-calendar-clock',
+      },
+    );
 
     this._addWorkflowAction(
       'request-publish',
@@ -282,7 +300,7 @@ export default class XPageMenuService extends MenuService {
         return;
       }
       // eslint-disable-next-line no-empty
-    } catch (error) {}
+    } catch (error) { }
 
     reason = reason.startsWith('ERROR_') ? this.$translate.instant(reason) : reason;
     this.$log.error(`Failed to execute workflow "${key}" on document[${this._getDocumentId()}]: ${reason}`);
