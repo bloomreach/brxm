@@ -20,7 +20,7 @@
   <parent>
     <artifactId>hippo-essentials-plugins</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>13.4.7-SNAPSHOT</version>
+    <version>13.4.7</version>
   </parent>
 
   <artifactId>hippo-essentials-plugin-urlrewriter</artifactId>
