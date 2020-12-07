@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-plugin-selections</artifactId>
-    <version>13.4.7-SNAPSHOT</version>
+    <version>13.4.8-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-plugin-selections-hst-client</artifactId>
