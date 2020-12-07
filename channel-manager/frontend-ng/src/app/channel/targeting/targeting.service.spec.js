@@ -242,6 +242,21 @@ describe('TargetingService', () => {
         );
       });
 
+      it('should move to "hippo-default" variant if current variant is Default', () => {
+        TargetingService.updateVariant('component-id', data, 'hippo-default');
+        $rootScope.$digest();
+
+        expect(HstService.doPutFormWithHeaders).toHaveBeenCalledWith(
+          data,
+          'component-id',
+          jasmine.objectContaining({
+            lastModifiedTimestamp: 'last-modified',
+            'Move-To': 'hippo-default',
+          }),
+          'hippo-default',
+        );
+      });
+
       it('should return success response with the newVariantId', (done) => {
         TargetingService.updateVariant('component-id', data, 'variant-id').then((result) => {
           expect(result).toEqual({
