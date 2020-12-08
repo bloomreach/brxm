@@ -26,12 +26,15 @@ import javax.jcr.Session;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.repository.util.JcrUtils;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -125,8 +128,18 @@ public abstract class AbstractComponentManagerTest {
         HippoWebappContextRegistry.get().unregister(siteWebappContext);
         HippoWebappContextRegistry.get().unregister(platformWebappContext);
         HstServices.setComponentManager(null);
-        ModifiableRequestContextProvider.clear();
     }
+
+
+    @After
+    protected void tearDown() throws Exception {
+
+        ModifiableRequestContextProvider.clear();
+        // model is used in next test method again, invalidate to have a clean empty model again
+        ((HstModelImpl)platformComponentManager.getComponent(HstModelProvider.class).getHstModel()).invalidate();
+        ((HstModelImpl)siteComponentManager.getComponent(HstModelProvider.class).getHstModel()).invalidate();
+    }
+
 
     protected static String[] getConfigurations(boolean platform) {
         if (platform) {
