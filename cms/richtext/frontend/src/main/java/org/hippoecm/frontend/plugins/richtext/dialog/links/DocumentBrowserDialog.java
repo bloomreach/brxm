@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,6 +41,13 @@ public class DocumentBrowserDialog<T extends RichTextEditorDocumentLink> extends
         setResizable(true);
 
         add(new ThrottledTextFieldWidget("title", new StringPropertyModel(model, RichTextEditorDocumentLink.TITLE)) {
+            @Override
+            protected void onUpdate(final AjaxRequestTarget target) {
+                checkState();
+            }
+        });
+
+        add(new ThrottledTextFieldWidget("fragmentId", new StringPropertyModel(model, RichTextEditorDocumentLink.FRAGMENT_ID)) {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 checkState();
