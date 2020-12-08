@@ -132,7 +132,7 @@ public abstract class AbstractComponentManagerTest {
 
 
     @After
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
 
         ModifiableRequestContextProvider.clear();
         // model is used in next test method again, invalidate to have a clean empty model again
