@@ -155,7 +155,10 @@ class TargetingService {
     const component = page.getComponentById(componentId);
 
     const encodedVariantId = encodeURIComponent(variantId);
-    const newVariantId = this._createVariantId(personaId, characteristics);
+    const newVariantId = encodedVariantId === 'hippo-default'
+      ? encodedVariantId
+      : this._createVariantId(personaId, characteristics);
+
     const headers = {
       lastModifiedTimestamp: component.lastModified,
       'Move-To': newVariantId,
