@@ -33,11 +33,15 @@ import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.hst.mock.core.request.MockCmsSessionContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.PrivilegesAllowedInvokerPreprocessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.ConfigurationLockedTest;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -115,6 +119,7 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
     @After
     public void tearDown() throws Exception {
         HippoServiceRegistry.unregister(testBranchSelectionService, BranchSelectionService.class);
+        super.tearDown();
     }
 
     protected Session createSession(final String userName, final String password) throws RepositoryException {
