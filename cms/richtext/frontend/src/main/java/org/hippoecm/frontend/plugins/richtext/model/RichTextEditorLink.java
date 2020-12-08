@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public abstract class RichTextEditorLink extends AbstractPersistedMap {
 
-    private static final long serialVersionUID = 1L;
-
+    public static final String FRAGMENT_ID = "f_fragment_id";
     public static final String UUID = "f_uuid";
     public static final String TITLE = "f_title";
     public static final String TARGET = "f_target";
@@ -38,6 +37,10 @@ public abstract class RichTextEditorLink extends AbstractPersistedMap {
 
     public void setUuid(String uuid) {
         put(UUID, uuid);
+    }
+
+    public String getFragmentId() {
+        return get(FRAGMENT_ID);
     }
 
     public boolean getOpenInNewWindow() {

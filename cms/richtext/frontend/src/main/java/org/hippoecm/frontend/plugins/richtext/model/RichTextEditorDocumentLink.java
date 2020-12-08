@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.hippoecm.frontend.plugins.richtext.model;
 
 import java.util.Map;
@@ -26,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class RichTextEditorDocumentLink extends RichTextEditorLink {
-    private static final long serialVersionUID = 1L;
 
     protected static final Logger log = LoggerFactory.getLogger(RichTextEditorDocumentLink.class);
     

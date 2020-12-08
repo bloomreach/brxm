@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.onehippo.cms7.services.htmlprocessor.service.FacetService;
 
 public interface FacetTagProcessor extends Serializable {
 
+    String ATTRIBUTE_DATA_FRAGMENT_ID = "data-fragment-id";
     String ATTRIBUTE_DATA_UUID = "data-uuid";
 
     void onRead(Tag tag, final FacetService facetService);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,13 +54,16 @@ public class RichTextLinkTagProcessor implements FacetTagProcessor {
             return;
         }
 
-        final String name = NodeNameCodec.encode(href, true);
+        final String path = StringUtils.substringBefore(href, "#");
+        final String fragmentId = StringUtils.substringAfter(href, "#");
+        final String name = NodeNameCodec.encode(path, true);
         final String uuid = facetService.getFacetId(name);
 
         if (uuid != null) {
             // set href to 'http://' so CKEditor handles it as a link instead of an anchor
             tag.addAttribute(ATTRIBUTE_HREF, LinkUtil.INTERNAL_LINK_DEFAULT_HREF);
             tag.addAttribute(ATTRIBUTE_DATA_UUID, uuid);
+            tag.addAttribute(ATTRIBUTE_DATA_FRAGMENT_ID, fragmentId);
 
             facetService.markVisited(name);
         }
@@ -73,6 +76,9 @@ public class RichTextLinkTagProcessor implements FacetTagProcessor {
             return;
         }
 
+        final String fragmentId = tag.getAttribute(ATTRIBUTE_DATA_FRAGMENT_ID);
+        tag.removeAttribute(ATTRIBUTE_DATA_FRAGMENT_ID);
+
         final String uuid = tag.getAttribute(ATTRIBUTE_DATA_UUID);
         tag.removeAttribute(ATTRIBUTE_DATA_UUID);
 
@@ -84,10 +90,13 @@ public class RichTextLinkTagProcessor implements FacetTagProcessor {
             return;
         }
 
-        final String name = facetService.findOrCreateFacet(uuid);
-        if (name != null) {
-            tag.addAttribute(ATTRIBUTE_HREF, name);
-            facetService.markVisited(name);
+        String name = facetService.findOrCreateFacet(uuid);
+        if (name == null) {
+            return;
         }
+
+        final String newHref = StringUtils.isEmpty(fragmentId) ? name : name + "#" + fragmentId;
+        tag.addAttribute(ATTRIBUTE_HREF, newHref);
+        facetService.markVisited(name);
     }
 }
