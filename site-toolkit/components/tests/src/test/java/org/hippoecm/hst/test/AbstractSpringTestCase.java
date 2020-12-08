@@ -41,7 +41,9 @@ import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
@@ -146,6 +148,8 @@ public abstract class AbstractSpringTestCase
     public void tearDown() throws Exception {
         // always clear HstRequestContext in case it is set on a thread local
         ModifiableRequestContextProvider.clear();
+        // model is used in next test method again, invalidate to have a clean empty model again
+        ((HstModelImpl)componentManager.getComponent(HstModelProvider.class).getHstModel()).invalidate();
     }
 
 
