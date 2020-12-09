@@ -124,8 +124,8 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
         // to avoid jr problems with current session with shared depth kind of issues, use a refresh
         session.refresh(false);
         restoreHstConfigBackup(session);
-
         session.logout();
+        super.tearDown();
     }
 
     protected Session createSession() throws RepositoryException {
