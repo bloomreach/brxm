@@ -39,7 +39,7 @@ exports[`ExperimentComponent if experiment was not saved should show the experim
 
 exports[`ExperimentComponent if experiment was saved should show the experiment 1`] = `
 <div
-  id="root12"
+  id="root13"
 >
   
   <div
