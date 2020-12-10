@@ -208,7 +208,7 @@ describe('TargetingService', () => {
       it('should return success response', (done) => {
         TargetingService.addVariant('component-id', data).then((result) => {
           expect(result).toEqual({
-            message: 'Succesfully created a new variant for component "component-id"',
+            message: 'Successfully created a new variant for component "component-id"',
             reloadRequired: false,
             success: true,
             data,
@@ -229,7 +229,8 @@ describe('TargetingService', () => {
 
     describe('updateVariant', () => {
       it('should execute a PUT request on the HST with an URI-Encoded variant ID', () => {
-        TargetingService.updateVariant('component-id', data, 'variant&id');
+        const variant = { id: 'variant&id' };
+        TargetingService.updateVariant('component-id', data, variant);
         $rootScope.$digest();
 
         expect(HstService.doPutFormWithHeaders).toHaveBeenCalledWith(
@@ -243,7 +244,8 @@ describe('TargetingService', () => {
       });
 
       it('should move to "hippo-default" variant if current variant is Default', () => {
-        TargetingService.updateVariant('component-id', data, 'hippo-default');
+        const variant = { id: 'hippo-default' };
+        TargetingService.updateVariant('component-id', data, variant);
         $rootScope.$digest();
 
         expect(HstService.doPutFormWithHeaders).toHaveBeenCalledWith(
@@ -258,9 +260,10 @@ describe('TargetingService', () => {
       });
 
       it('should return success response with the newVariantId', (done) => {
-        TargetingService.updateVariant('component-id', data, 'variant-id').then((result) => {
+        const variant = { id: 'variant-id' };
+        TargetingService.updateVariant('component-id', data, variant).then((result) => {
           expect(result).toEqual({
-            message: 'Succesfully updated variant "variant-id" for component "component-id"',
+            message: 'Successfully updated variant "variant-id" for component "component-id"',
             reloadRequired: false,
             success: true,
             data,
@@ -457,7 +460,7 @@ describe('TargetingService', () => {
     it('should return the state of the specified experiment', () => {
       expectGet(
         urlRegex,
-        'Succesfully loaded state of experiment "experimentId"',
+        'Successfully loaded state of experiment "experimentId"',
         () => TargetingService.getExperimentStatus('experimentId'),
         [expectDefaultParams],
       );
@@ -478,7 +481,7 @@ describe('TargetingService', () => {
     it('should return an array of all available goals', () => {
       expectGet(
         urlRegex,
-        'Succesfully loaded goals',
+        'Successfully loaded goals',
         () => TargetingService.getGoals(),
         [expectDefaultParams],
       );
