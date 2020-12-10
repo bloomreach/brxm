@@ -15,5 +15,6 @@
  */
 
 export interface Channel {
+  mountId: string;
   contextPath: string;
 }
