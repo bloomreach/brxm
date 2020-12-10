@@ -126,9 +126,9 @@ describe('ComponentEditorService', () => {
     spyOn(ChannelService, 'getChannel').and.returnValue(mockChannel);
   });
 
-  function openComponentEditor(properties, componentId = 'componentId') {
+  function openComponentEditor(properties, componentId = 'componentId', variantId = 'hippo-default') {
     HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
-    ComponentEditor.open(componentId);
+    ComponentEditor.open(componentId, variantId);
     $rootScope.$digest();
 
     expect(PageStructureService.getPage).toHaveBeenCalled();
@@ -232,7 +232,7 @@ describe('ComponentEditorService', () => {
     });
 
     it('loads the component properties', () => {
-      ComponentEditor.open('componentId');
+      ComponentEditor.open('componentId', 'componentVariant');
       $rootScope.$digest();
 
       expect(HstComponentService.getProperties).toHaveBeenCalledWith('componentId', 'componentVariant');
@@ -714,12 +714,12 @@ describe('ComponentEditorService', () => {
     });
 
     it('should not render a component if it is not present on the page', () => {
+      mockPage.getComponentById.and.returnValue(null);
       const properties = [
         { name: 'a', value: '2017-09-21T00:00:00.000+02:00', type: 'datefield' },
       ];
       openComponentEditor(properties);
 
-      mockPage.getComponentById.and.returnValue(null);
       ComponentEditor.updatePreview();
       $rootScope.$digest();
 
