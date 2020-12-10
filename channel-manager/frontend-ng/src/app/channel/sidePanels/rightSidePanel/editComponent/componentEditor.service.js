@@ -62,29 +62,37 @@ class ComponentEditorService {
     this._onPageChange = this._onPageChange.bind(this);
   }
 
-  open(componentId, variantId) {
+  async open(componentId, variantId) {
     const channel = this.ChannelService.getChannel();
     const page = this.PageStructureService.getPage();
     const component = page.getComponentById(componentId);
 
+    if (!component) {
+      throw new Error(`Component ${componentId} not found`);
+    }
+
     this.close();
     this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
 
-    return this.load(channel, page, component, variantId);
+    await this.load(channel, page, component, variantId);
   }
 
   reopen() {
     return this.load(this.channel, this.page, this.component);
   }
 
-  load(channel, page, component, variantId) {
-    this.request = this.HstComponentService
-      .getProperties(component.getId(), variantId || component.getRenderVariant())
-      .then(response => this._onLoadSuccess(channel, component, page, response.properties))
-      .catch(() => this._onLoadFailure())
-      .finally(() => { delete this.request; });
+  async load(channel, page, component, variantId) {
+    this.request = this.HstComponentService.getProperties(component.getId(), variantId || component.getRenderVariant());
 
-    return this.request;
+    try {
+      const response = await this.request;
+      this._onLoadSuccess(channel, component, page, response.properties);
+      await this.updatePreview();
+    } catch (e) {
+      this._onLoadFailure();
+    } finally {
+      delete this.request;
+    }
   }
 
   getPropertyGroups() {
