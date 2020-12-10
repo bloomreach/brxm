@@ -19,6 +19,7 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { TranslateService } from '@ngx-translate/core';
 import { mocked } from 'ts-jest/utils';
 
+import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1service';
 import { NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { NotificationService } from '../../../services/notification.service';
 import { VariantsService } from '../../../variants/services/variants.service';
@@ -39,6 +40,7 @@ export class TranslateMockPipe implements PipeTransform {
 describe('ExperimentComponent', () => {
   let experimentsService: ExperimentsService;
   let notificationService: NotificationService;
+  let channelService: Ng1ChannelService;
 
   const mockExperiment: ExperimentWithStatusData = {
     id: 'experiment-1',
@@ -90,6 +92,8 @@ describe('ExperimentComponent', () => {
     ],
   };
 
+  const mockMountId = 'some-mount-id';
+
   const mockGoals = [
     {
       id: 'goal-1',
@@ -97,7 +101,7 @@ describe('ExperimentComponent', () => {
       type: 'PAGE',
       readOnly: false,
       targetPage: '/target-page',
-      mountId: 'some-mount-id',
+      mountId: mockMountId,
     },
     {
       id: 'goal-2',
@@ -105,7 +109,15 @@ describe('ExperimentComponent', () => {
       type: 'PAGE',
       readOnly: false,
       targetPage: '/target-page',
-      mountId: 'some-mount-id',
+      mountId: mockMountId,
+    },
+    {
+      id: 'goal-3',
+      name: 'Goal 3',
+      type: 'PAGE',
+      readOnly: false,
+      targetPage: '/some-target-page',
+      mountId: 'some-other-mount-id',
     },
   ];
 
@@ -150,12 +162,17 @@ describe('ExperimentComponent', () => {
       instant: jest.fn(x => x),
     };
 
+    const channelServiceMock = {
+      getChannel: jest.fn(() => ({ mountId: mockMountId })),
+    };
+
     TestBed.configureTestingModule({
       declarations: [
         ExperimentComponent,
         TranslateMockPipe,
       ],
       providers: [
+        { provide: NG1_CHANNEL_SERVICE, useValue: channelServiceMock },
         { provide: NG1_COMPONENT_EDITOR_SERVICE, useValue: componentEditorServiceMock },
         { provide: ExperimentsService, useValue: experimentsServiceMock },
         { provide: VariantsService, useValue: variantsServiceMock },
@@ -167,6 +184,7 @@ describe('ExperimentComponent', () => {
       ],
     });
 
+    channelService = TestBed.inject(NG1_CHANNEL_SERVICE);
     experimentsService = TestBed.inject(ExperimentsService);
     notificationService = TestBed.inject(NotificationService);
   });
@@ -188,6 +206,12 @@ describe('ExperimentComponent', () => {
     it('should show the experiment form', fakeAsync(() => {
       expect(fixture.nativeElement).toMatchSnapshot();
     }));
+
+    it('should only show goals from current channel', async () => {
+      const filteredGoals = mockGoals.filter(g => g.mountId === mockMountId);
+      const availableGoals = await component.availableGoals$;
+      expect(availableGoals).toEqual(filteredGoals);
+    });
 
     describe('onVariantAndGoalSelected', () => {
       const variantAndGoal = {
