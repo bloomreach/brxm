@@ -17,6 +17,7 @@
 import { Component, Inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
+import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1service';
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { NotificationService } from '../../../services/notification.service';
 import { VariantsService } from '../../../variants/services/variants.service';
@@ -33,7 +34,12 @@ export class ExperimentComponent {
   private readonly component = this.componentEditorService.getComponent();
   private readonly componentId = this.component.getId();
   readonly availableVariants$ = this.variantsService.getVariants(this.componentId);
-  readonly availableGoals$ = this.experimentsService.getGoals();
+  readonly availableGoals$ = this.experimentsService
+  .getGoals()
+  .then(goals => {
+    const channel = this.channelService.getChannel();
+    return goals.filter(goal => goal.mountId === channel.mountId);
+  });
 
   experiment$ = this.experimentsService.getExperiment(this.componentId);
 
@@ -41,11 +47,12 @@ export class ExperimentComponent {
 
   constructor(
     @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,
+    @Inject(NG1_CHANNEL_SERVICE) private readonly channelService: Ng1ChannelService,
     private readonly experimentsService: ExperimentsService,
     private readonly variantsService: VariantsService,
     private readonly notificationService: NotificationService,
     private readonly translateService: TranslateService,
-  ) {}
+  ) { }
 
   isExperimentRunning(experiment: Experiment): boolean {
     return experiment.state === ExperimentState.Running;
