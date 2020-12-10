@@ -142,7 +142,7 @@ class TargetingService {
 
     try {
       const result = await this.HstService.doPutFormWithHeaders(formData, componentId, headers, variantId);
-      return this._success(`Succesfully created a new variant for component "${componentId}"`, result);
+      return this._success(`Successfully created a new variant for component "${componentId}"`, result);
     } catch (e) {
       return this._failure(`Failed to create new variant for component "${componentId}"`, e);
     } finally {
@@ -150,14 +150,14 @@ class TargetingService {
     }
   }
 
-  async updateVariant(componentId, formData, variantId, personaId, characteristics) {
+  async updateVariant(componentId, formData, variant, personaId, characteristics) {
     const page = this.PageStructureService.getPage();
     const component = page.getComponentById(componentId);
 
-    const encodedVariantId = encodeURIComponent(variantId);
+    const encodedVariantId = encodeURIComponent(variant.id);
     const newVariantId = encodedVariantId === 'hippo-default'
       ? encodedVariantId
-      : this._createVariantId(personaId, characteristics);
+      : this._createVariantId(personaId, characteristics, variant.abvariantId);
 
     const headers = {
       lastModifiedTimestamp: component.lastModified,
@@ -167,7 +167,7 @@ class TargetingService {
     try {
       const result = await this.HstService.doPutFormWithHeaders(formData, componentId, headers, encodedVariantId);
       result.data.newVariantId = newVariantId;
-      return this._success(`Succesfully updated variant "${variantId}" for component "${componentId}"`, result);
+      return this._success(`Successfully updated variant "${variant.id}" for component "${componentId}"`, result);
     } catch (e) {
       return this._failure('Failed to update', e);
     } finally {
@@ -175,13 +175,13 @@ class TargetingService {
     }
   }
 
-  _createVariantId(personaId = '', characteristics = [], abvariantId) {
-    if (!abvariantId) {
-      abvariantId = Math.floor(new Date().getTime() / 1000);
+  _createVariantId(personaId = '', characteristics = [], ABVariantId) {
+    if (!ABVariantId) {
+      ABVariantId = Math.floor(new Date().getTime() / 1000);
     }
 
     const encodedCharacteristics = this._encodeCharacteristics(characteristics);
-    const personaVariant = `${personaId}@${abvariantId}`;
+    const personaVariant = `${personaId}@${ABVariantId}`;
     const personaRules = encodedCharacteristics ? `$${encodedCharacteristics}` : '';
     return personaVariant + personaRules;
   }
@@ -299,7 +299,7 @@ class TargetingService {
     try {
       const params = this._getDefaultParams();
       const result = await this._execute('GET', ['experiments', 'serving', experimentId], null, params);
-      return this._success(`Succesfully loaded state of experiment "${experimentId}"`, result);
+      return this._success(`Successfully loaded state of experiment "${experimentId}"`, result);
     } catch (e) {
       return this._failure(`Failed to load state of experiment "${experimentId}"`, e);
     }
@@ -308,7 +308,7 @@ class TargetingService {
   async getGoals() {
     try {
       const result = await this._execute('GET', ['goals'], null, this._getDefaultParams());
-      return this._success('Succesfully loaded goals', result);
+      return this._success('Successfully loaded goals', result);
     } catch (e) {
       return this._failure('Failed to load goals', e);
     }

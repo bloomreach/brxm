@@ -340,11 +340,10 @@ class ComponentEditorService {
     if (this.ConfigService.relevancePresent) {
       const variant = this.ComponentVariantsService.getCurrentVariant();
       const { persona, characteristics } = this.ComponentVariantsService.extractExpressions(variant);
-      const variantId = variant.id;
       response = await this.TargetingService.updateVariant(
         componentId,
         formData,
-        variantId,
+        variant,
         persona,
         characteristics,
       );
