@@ -286,6 +286,11 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         }
 
         @Override
+        public void invalidate() {
+            delegatee.invalidate();
+        }
+
+        @Override
         public boolean isHstConfigurationNodesLoaded() {
             return delegatee.isHstConfigurationNodesLoaded();
         }
