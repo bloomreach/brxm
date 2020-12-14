@@ -34,6 +34,7 @@
     <button mat-icon-button
             matTooltip="{{ 'VARIANT_COPY' | translate }}"
             [matTooltipShowDelay]="1000"
+            [disabled]="isReadOnly()"
             class="qa-variant-copy"
             (click)="addVariant()">
       <mat-icon svgIcon="copy"></mat-icon>
@@ -42,7 +43,7 @@
     <button mat-icon-button
             matTooltip="{{ 'VARIANT_DELETE' | translate }}"
             [matTooltipShowDelay]="1000"
-            [disabled]="isDefaultVariant()"
+            [disabled]="isDefaultVariant() || isReadOnly()"
             class="qa-variant-delete"
             (click)="deleteVariant()">
       <mat-icon svgIcon="trash"></mat-icon>
@@ -75,6 +76,7 @@
                 class="qa-variant-expressions-delete"
                 matTooltip="{{ 'VARIANT_EXPRESSION_DELETE' | translate }}"
                 [matTooltipShowDelay]="1000"
+                [disabled]="isReadOnly()"
                 (click)="removeExpression(expression)">
           <mat-icon svgIcon="close"></mat-icon>
         </button>
@@ -86,13 +88,14 @@
               class="qa-variant-expressions-add-segment"
               matTooltip="{{ 'SEGMENT_ADD' | translate }}"
               [matTooltipShowDelay]="1000"
-              [disabled]="hasSelectedSegment()"
+              [disabled]="hasSelectedSegment() || isReadOnly()"
               (click)="addSegment()">
         <mat-icon svgIcon="plus"></mat-icon>
         {{ 'SEGMENT' | translate }}
       </button>
       <button mat-stroked-button
               class="qa-variant-expressions-add-characteristic"
+              [disabled]="isReadOnly()"
               matTooltip="{{ 'CHARACTERISTIC_ADD' | translate }}"
               [matTooltipShowDelay]="1000"
               (click)="addCharacteristic()">
