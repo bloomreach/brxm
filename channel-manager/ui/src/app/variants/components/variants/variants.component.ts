@@ -112,7 +112,7 @@ export class VariantsComponent implements OnInit, OnDestroy {
   }
 
   isDefaultVariant(): boolean {
-    return this.currentVariant?.id === 'hippo-default';
+    return this.currentVariant?.id === this.variantsService.defaultVariantId;
   }
 
   removeExpression(expression: VariantExpression): void {
