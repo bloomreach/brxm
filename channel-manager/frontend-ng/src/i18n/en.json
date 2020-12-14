@@ -171,6 +171,8 @@
   "COMPLETE_EXPERIMENT": "Complete experiment",
   "EXPERIMENT_COMPLETED": "Experiment is completed",
   "EXPERIMENT_COMPLETION_ERROR": "An error happaned while attempting to complete the experiment",
+  "COMPLETE_EXPERIMENT_DELETE_VARIANTS": "Delete losing variants",
+  "COMPLETE_EXPERIMENT_KEEP_VARIANTS": "Keep all variants",
   "EXPERIMENT_PUBLISH_TO_FINISH": "Publish the channel to stop and delete the experiment",
   "EXPRESSION_AND": " and",
   "EXPRESSION_SEGMENT": "matches segment '{{name}}'",
