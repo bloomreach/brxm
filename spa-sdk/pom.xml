@@ -180,6 +180,13 @@
                 <exclude>**/robots.txt</exclude>
                 <exclude>yarn.lock</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
+                <exclude>packages/*/coverage/**</exclude>
+                <exclude>packages/*/dist/**</exclude>
+                <exclude>examples/angular/dist/**</exclude>
+                <exclude>examples/next/.next/**</exclude>
+                <exclude>examples/nuxt/.nuxt/**</exclude>
+                <exclude>examples/react/build/**</exclude>
+                <exclude>examples/vue/dist/**</exclude>
                 <exclude>examples/xm/**</exclude>
               </excludes>
             </configuration>
