@@ -25,7 +25,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { NG1_CMS_SERVICE } from '../../../services/ng1/cms.ng1.service';
-import { NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
+import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { NG1_ROOT_SCOPE } from '../../../services/ng1/root-scope.service';
 import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
 import { Variant, VariantCharacteristicData } from '../../models/variant.model';
@@ -39,6 +39,7 @@ describe('VariantsComponent', () => {
   let fixture: ComponentFixture<VariantsComponent>;
   let stateService: Ng1StateService;
   let variantsService: VariantsService;
+  let componentEditorService: Ng1ComponentEditorService;
 
   @Component({
     // tslint:disable-next-line:component-selector
@@ -102,6 +103,7 @@ describe('VariantsComponent', () => {
     const componentEditorServiceMock = {
       getComponent: () => mockComponent,
       propertiesAsFormData: () => mockFormData,
+      isReadOnly: () => false,
     };
     const variantsServiceMock = {
       extractExpressions: jest.fn(),
@@ -143,6 +145,7 @@ describe('VariantsComponent', () => {
 
     stateService = TestBed.inject(NG1_STATE_SERVICE);
     variantsService = TestBed.inject(VariantsService);
+    componentEditorService = TestBed.inject(NG1_COMPONENT_EDITOR_SERVICE);
   });
 
   beforeEach(() => {
@@ -205,6 +208,16 @@ describe('VariantsComponent', () => {
         componentId: mockComponent.getId(),
         variantId: newVariant.id,
       });
+    });
+  });
+
+  describe('when the component editor is readonly', () => {
+    it('should disable the action buttons', () => {
+      jest.spyOn(componentEditorService, 'isReadOnly').mockReturnValue(true);
+
+      fixture.detectChanges();
+
+      expect(componentEl).toMatchSnapshot();
     });
   });
 });
