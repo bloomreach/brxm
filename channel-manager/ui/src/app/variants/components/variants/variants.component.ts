@@ -186,6 +186,10 @@ export class VariantsComponent implements OnInit, OnDestroy {
     return this.dirty && this.currentVariant?.id === variant.id;
   }
 
+  isReadOnly(): boolean {
+    return this.componentEditorService.isReadOnly();
+  }
+
   private onChange(): void {
     this.dirty = true;
     this.variantUpdated.emit({ variant: this.currentVariant });
