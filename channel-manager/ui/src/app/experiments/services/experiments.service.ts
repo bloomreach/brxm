@@ -95,7 +95,7 @@ export class ExperimentsService {
     }
   }
 
-  async completeExperiment(componentId: string, keepOnlyVariantId: string): Promise<void> {
+  async completeExperiment(componentId: string, keepOnlyVariantId?: string): Promise<void> {
     const result = await this.ng1TargetingService.completeExperiment(componentId, keepOnlyVariantId);
 
     if (!result.success) {

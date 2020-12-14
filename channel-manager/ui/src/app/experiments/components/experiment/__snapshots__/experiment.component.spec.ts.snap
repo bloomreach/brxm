@@ -24,6 +24,7 @@ exports[`ExperimentComponent if experiment was not saved should show the experim
     <div
       class="actions"
     >
+      
       <button
         class="save-button qa-save"
         color="primary"
@@ -31,6 +32,21 @@ exports[`ExperimentComponent if experiment was not saved should show the experim
       >
          COMPLETE_EXPERIMENT 
       </button>
+      
+      <mat-menu>
+        <button
+          class="qa-experiment-complete-keepall"
+          mat-menu-item=""
+        >
+           COMPLETE_EXPERIMENT_KEEP_VARIANTS 
+        </button>
+        <button
+          class="qa-experiment-complete-delete"
+          mat-menu-item=""
+        >
+           COMPLETE_EXPERIMENT_DELETE_VARIANTS 
+        </button>
+      </mat-menu>
     </div>
   </div>
   
@@ -61,6 +77,7 @@ exports[`ExperimentComponent if experiment was saved should show the experiment 
     <div
       class="actions"
     >
+      
       <button
         class="save-button qa-save"
         color="primary"
@@ -68,6 +85,21 @@ exports[`ExperimentComponent if experiment was saved should show the experiment 
       >
          COMPLETE_EXPERIMENT 
       </button>
+      
+      <mat-menu>
+        <button
+          class="qa-experiment-complete-keepall"
+          mat-menu-item=""
+        >
+           COMPLETE_EXPERIMENT_KEEP_VARIANTS 
+        </button>
+        <button
+          class="qa-experiment-complete-delete"
+          mat-menu-item=""
+        >
+           COMPLETE_EXPERIMENT_DELETE_VARIANTS 
+        </button>
+      </mat-menu>
     </div>
   </div>
   
