@@ -21,6 +21,7 @@ import { ComponentProperties } from '../../models/component-properties.model';
 export interface Ng1ComponentEditorService {
   propertiesAsFormData(): ComponentProperties;
   getComponent(): any;
+  isReadOnly(): boolean;
 }
 
 export const NG1_COMPONENT_EDITOR_SERVICE = new InjectionToken<Ng1ComponentEditorService>('NG1_COMPONENT_EDITOR_SERVICE');
