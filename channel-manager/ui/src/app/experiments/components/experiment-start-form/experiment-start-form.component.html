@@ -16,10 +16,10 @@
 
 <ng-container *ngIf="selectedVariant">
   <em-experiment-info-bar *ngIf="againstDefault">
-    {{ 'EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED' | translate:{ variantName: selectedVariant.name } }}
+    {{ 'EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED' | translate:{ variantName: selectedVariant?.name } }}
   </em-experiment-info-bar>
   <em-experiment-info-bar *ngIf="!againstDefault">
-    {{ 'EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED' | translate:{ variantName: selectedVariant.name } }}
+    {{ 'EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED' | translate:{ variantName: selectedVariant?.name } }}
   </em-experiment-info-bar>
 </ng-container>
 
@@ -46,6 +46,7 @@
     <mat-select class="qa-goal-select"
                 [(value)]="selectedGoalId"
                 [disabled]="disabled">
+      <mat-option><i>{{ 'CLEAR_SELECTION' | translate }}</i></mat-option>
       <mat-option *ngFor="let goal of goals"
                   class="{{ 'qa-goal-select-option-' + goal.id }}"
                   [value]="goal.id">
