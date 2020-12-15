@@ -142,7 +142,6 @@ exports[`VariantsComponent should create 1`] = `
         aria-describedby="cdk-describedby-message-1"
         cdk-describedby-host=""
         class="qa-variant-delete mat-tooltip-trigger"
-        disabled=""
         mat-icon-button=""
       >
         <mat-icon
@@ -153,14 +152,52 @@ exports[`VariantsComponent should create 1`] = `
       </button>
     </div>
     
-    <div
-      class="qa-variant-default-message variant-default-message"
-    >
-      <span>
-        VARIANT_EXPRESSIONS_DEFAULT
-      </span>
-    </div>
     
+    <div
+      class="qa-variant-expressions variant-expressions"
+    >
+      <div
+        class="variant-expressions-list"
+      >
+        <div
+          class="variant-expressions-list-label"
+        >
+           VARIANT_EXPRESSIONS 
+        </div>
+        
+        
+      </div>
+      <div
+        class="variant-expressions-actions"
+      >
+        <button
+          aria-describedby="cdk-describedby-message-2"
+          cdk-describedby-host=""
+          class="qa-variant-expressions-add-segment mat-tooltip-trigger"
+          mat-stroked-button=""
+        >
+          <mat-icon
+            svgicon="plus"
+          >
+            plus
+          </mat-icon>
+           SEGMENT 
+        </button>
+        <button
+          aria-describedby="cdk-describedby-message-3"
+          cdk-describedby-host=""
+          class="qa-variant-expressions-add-characteristic mat-tooltip-trigger"
+          mat-stroked-button=""
+        >
+          <mat-icon
+            svgicon="plus"
+          >
+            plus
+          </mat-icon>
+           CHARACTERISTIC 
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -292,7 +329,7 @@ exports[`VariantsComponent when the component editor is readonly should disable 
         </div>
       </mat-form-field>
       <button
-        aria-describedby="cdk-describedby-message-10"
+        aria-describedby="cdk-describedby-message-20"
         cdk-describedby-host=""
         class="qa-variant-copy mat-tooltip-trigger"
         disabled=""
@@ -305,7 +342,7 @@ exports[`VariantsComponent when the component editor is readonly should disable 
         </mat-icon>
       </button>
       <button
-        aria-describedby="cdk-describedby-message-11"
+        aria-describedby="cdk-describedby-message-21"
         cdk-describedby-host=""
         class="qa-variant-delete mat-tooltip-trigger"
         disabled=""
@@ -319,55 +356,14 @@ exports[`VariantsComponent when the component editor is readonly should disable 
       </button>
     </div>
     
-    
     <div
-      class="qa-variant-expressions variant-expressions"
+      class="qa-variant-default-message variant-default-message"
     >
-      <div
-        class="variant-expressions-list"
-      >
-        <div
-          class="variant-expressions-list-label"
-        >
-           VARIANT_EXPRESSIONS 
-        </div>
-        
-        <div
-          class="qa-variant-expressions-list-empty variant-expressions-list-item variant-expressions-list-empty"
-        >
-           VARIANT_EXPRESSIONS_EMPTY 
-        </div>
-        
-      </div>
-      <div
-        class="variant-expressions-actions"
-      >
-        <button
-          class="qa-variant-expressions-add-segment mat-tooltip-trigger"
-          disabled=""
-          mat-stroked-button=""
-        >
-          <mat-icon
-            svgicon="plus"
-          >
-            plus
-          </mat-icon>
-           SEGMENT 
-        </button>
-        <button
-          class="qa-variant-expressions-add-characteristic mat-tooltip-trigger"
-          disabled=""
-          mat-stroked-button=""
-        >
-          <mat-icon
-            svgicon="plus"
-          >
-            plus
-          </mat-icon>
-           CHARACTERISTIC 
-        </button>
-      </div>
+      <span>
+        VARIANT_EXPRESSIONS_DEFAULT
+      </span>
     </div>
+    
   </div>
 </div>
 `;
