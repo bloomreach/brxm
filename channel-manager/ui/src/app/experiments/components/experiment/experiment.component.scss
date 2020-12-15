@@ -18,12 +18,20 @@
 
 .experiment {
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: 
+    "info"
+    "status"
+    "actions";
+}
+
+em-experiment-info {
+  grid-area: info;
 }
 
 .experiment-status-wrapper {
-  flex: 1 1 0;
+  grid-area: status;
   padding: $br-size;
 
   em-experiment-status-chart {
@@ -31,9 +39,8 @@
   }
 }
 
-em-experiment-start-form,
-.experiment {
-  flex: 1 1 0;
+.actions-wrapper {
+  grid-area: actions;
 }
 
 .actions {
