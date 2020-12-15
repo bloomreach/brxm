@@ -31,22 +31,22 @@ public class MenuHierarchy implements Serializable {
 
     private final List<String> categories;
     private final List<String> submenuOrder;
-    private Map<String, List<MenuDescription>> menus = new LinkedHashMap<>();
+    private final Map<String, List<MenuDescription>> menus = new LinkedHashMap<>();
+    private final Form<?> form;
+    private final IPluginConfig config;
+
     private Map<String, MenuHierarchy> submenus = new LinkedHashMap<>();
     private List<ActionDescription> items = new LinkedList<>();
-    private IPluginConfig config;
 
-    private final Form form;
-
-    MenuHierarchy(Form form, IPluginConfig config) {
-        this(Collections.<String>emptyList(), form, config);
+    MenuHierarchy(final Form<?> form, final IPluginConfig config) {
+        this(Collections.emptyList(), form, config);
     }
 
-    MenuHierarchy(final List<String> categories, Form form, IPluginConfig config) {
+    MenuHierarchy(final List<String> categories, final Form<?> form, final IPluginConfig config) {
         this(categories, categories, form, config);
     }
 
-    MenuHierarchy(final List<String> categories, final List<String> submenuOrder, Form form, IPluginConfig config) {
+    MenuHierarchy(final List<String> categories, final List<String> submenuOrder, final Form<?> form, final IPluginConfig config) {
         this.categories = categories;
         this.submenuOrder = submenuOrder;
         this.form = form;
@@ -62,7 +62,7 @@ public class MenuHierarchy implements Serializable {
 
     public void put(String category, MenuDescription menu) {
         if (!menus.containsKey(category)) {
-            menus.put(category, new ArrayList<MenuDescription>(1));
+            menus.put(category, new ArrayList<>(1));
         }
         menus.get(category).add(menu);
     }
@@ -121,10 +121,9 @@ public class MenuHierarchy implements Serializable {
                 }
             }
 
-            List<String> categories = new ArrayList<>(this.submenuOrder);
-            if (categories.contains("default")) {
-                categories.remove("default");
-            }
+            List<String> categories = new ArrayList<>(submenuOrder);
+            categories.remove("default");
+
             for (String subMenuKey : submenus.keySet()) {
                 if ("info".equals(subMenuKey)) {
                     continue;

@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst.toolkit-resources</groupId>
     <artifactId>addon</artifactId>
-    <version>14.4.0-cm-extjs-removal-SNAPSHOT</version>
+    <version>14.5.0-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit CND Addon Resources</name>

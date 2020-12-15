@@ -19,7 +19,7 @@
 
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms7-project</artifactId>
-  <version>14.4.0-cm-extjs-removal-SNAPSHOT</version>
+  <version>14.5.0-SNAPSHOT</version>
 
   <name>Hippo CMS Project POM</name>
   <description>Hippo CMS Project POM</description>
@@ -33,7 +33,7 @@
   </organization>
 
   <properties>
-    <hippo.release.version>14.4.0-cm-extjs-removal-SNAPSHOT</hippo.release.version>
+    <hippo.release.version>14.5.0-SNAPSHOT</hippo.release.version>
 
     <!-- use UTF-8 encoding for filtered file copy and test reports -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -108,7 +108,7 @@
     <spring-security.version>5.1.12.RELEASE</spring-security.version>
     <spring-security-oauth2.version>2.3.7.RELEASE</spring-security-oauth2.version>
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
-    <groovy.version>2.5.8</groovy.version>
+    <groovy.version>2.5.14</groovy.version>
     <freemarker.version>2.3.28</freemarker.version>
     <nodejs.version>v12.16.1</nodejs.version>
     <npm.version>6.13.4</npm.version>

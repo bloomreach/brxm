@@ -20,7 +20,6 @@ import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.UnaryOperator;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -64,26 +63,26 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
     private static final String DEFAULT_FOLDERWORKFLOW_CATEGORY = "embedded";
-    public static final String DOCUMENT = "document";
-    public static final String UNAVAILABLE_TIP = "unavailable-tip";
-    public static final String DELETE = "delete";
-    /**
-     * Id and name of the document Info.
-     * The id should start with "info", see MenuHierarchy.
-     */
-    private static final String INFO_DOCUMENT_INFO = "infoDocumentInfo";
 
-    private StdWorkflow deleteAction;
-    private StdWorkflow renameAction;
-    private StdWorkflow copyAction;
-    private StdWorkflow moveAction;
-    private StdWorkflow whereUsedAction;
-    private StdWorkflow historyAction;
+    private static final String COPY = "copy";
+    private static final String DELETE = "delete";
+    private static final String DOCUMENT = "document";
+    private static final String LIST_VERSIONS = "listVersions";
+    private static final String MOVE = "move";
+    private static final String RENAME = "rename";
+    private static final String UNAVAILABLE_TIP = "unavailable-tip";
+
+    private final StdWorkflow<DocumentWorkflow> deleteAction;
+    private final StdWorkflow<DocumentWorkflow> renameAction;
+    private final StdWorkflow<DocumentWorkflow> copyAction;
+    private final StdWorkflow<DocumentWorkflow> moveAction;
+    private final StdWorkflow<DocumentWorkflow> whereUsedAction;
+    private final StdWorkflow<DocumentWorkflow> historyAction;
 
     public DocumentWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(renameAction = new StdWorkflow("rename", new StringResourceModel("rename-label", this), context, getModel()) {
+        add(renameAction = new StdWorkflow<DocumentWorkflow>(RENAME, new StringResourceModel("rename-label", this), context, getModel()) {
             private RenameDocumentArguments renameDocumentArguments;
 
             @Override
@@ -97,7 +96,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected IModel getTooltip() {
+            protected IModel<String> getTooltip() {
                 if (isEnabled()) {
                     return super.getTooltip();
                 } else {
@@ -128,7 +127,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 final String targetName = renameDocumentArguments.getTargetName();
                 final String uriName = renameDocumentArguments.getUriName();
 
@@ -150,7 +149,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 WorkflowManager manager = UserSession.get().getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                 if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
-                    ((DocumentWorkflow) wf).rename(nodeName);
+                    workflow.rename(nodeName);
                 }
                 if (!node.getDisplayName().equals(localName)) {
                     defaultWorkflow.setDisplayName(localName);
@@ -159,7 +158,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(copyAction = new StdWorkflow("copy", new StringResourceModel("copy-label", this), context, getModel()) {
+        add(copyAction = new StdWorkflow<DocumentWorkflow>(COPY, new StringResourceModel("copy-label", this), context, getModel()) {
             NodeModelWrapper<Node> destination = null;
             String name = null;
 
@@ -210,14 +209,13 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 Node folder = destination != null ? destination.getChainedModel().getObject() :
                         new JcrNodeModel("/").getNode();
                 Node document = getModel().getNode();
 
                 String nodeName = getNodeNameCodec(document, folder).encode(name);
 
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.copy(new Document(folder), nodeName, getBranchIdModel().getBranchId());
 
                 JcrNodeModel resultModel = new JcrNodeModel(folder.getPath() + "/" + nodeName);
@@ -237,7 +235,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
         });
 
-        add(moveAction = new StdWorkflow("move", new StringResourceModel("move-label", this), context, getModel()) {
+        add(moveAction = new StdWorkflow<DocumentWorkflow>(MOVE, new StringResourceModel("move-label", this), context, getModel()) {
             NodeModelWrapper<Node> destination;
 
             @Override
@@ -251,7 +249,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected IModel getTooltip() {
+            protected IModel<String> getTooltip() {
                 if (isEnabled()) {
                     return super.getTooltip();
                 } else {
@@ -278,20 +276,19 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 Node document = getHandleOrUnpublishedVariant(getModel().getWorkflow());
                 Node folder = destination != null ? destination.getChainedModel().getObject()
                         : new JcrNodeModel("/").getNode();
 
                 String nodeName = document.getName();
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.move(new Document(folder), nodeName);
                 browseTo(new JcrNodeModel(folder.getPath() + "/" + nodeName));
                 return null;
             }
         });
 
-        add(deleteAction = new StdWorkflow(DELETE,
+        add(deleteAction = new StdWorkflow<DocumentWorkflow>(DELETE,
                 new StringResourceModel("delete-label", this), context, getModel()) {
 
             @Override
@@ -305,7 +302,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected IModel getTooltip() {
+            protected IModel<String> getTooltip() {
                 if (isEnabled()) {
                     return super.getTooltip();
                 } else {
@@ -322,14 +319,13 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 workflow.delete();
                 return null;
             }
         });
 
-        add(whereUsedAction = new StdWorkflow("where-used", new StringResourceModel("where-used-label", this), context, getModel()) {
+        add(whereUsedAction = new StdWorkflow<DocumentWorkflow>("where-used", new StringResourceModel("where-used-label", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -348,12 +344,12 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 return null;
             }
         });
 
-        add(historyAction = new StdWorkflow("history", new StringResourceModel("history-label", this), context, getModel()) {
+        add(historyAction = new StdWorkflow<DocumentWorkflow>("history", new StringResourceModel("history-label", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -372,57 +368,17 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 return null;
             }
         });
 
-        addBranchInfo();
-
         Map<String, Serializable> info = getHints();
+        hideOrDisable(info, COPY, copyAction);
         hideOrDisable(info, DELETE, deleteAction);
-        hideOrDisable(info, "rename", renameAction);
-        hideOrDisable(info, "move", moveAction);
-
-        hideOrDisable(info, "copy", copyAction);
-        hideOrDisable(info, "listVersions", historyAction);
-    }
-
-    private void addBranchInfo() {
-        addOrReplace(new StdWorkflow<DocumentWorkflow>(INFO_DOCUMENT_INFO
-                , INFO_DOCUMENT_INFO) {
-
-            @Override
-            public String getSubMenu() {
-                return "info";
-            }
-
-            @Override
-            protected IModel<String> getTitle() {
-                final UnaryOperator<String> resolver = key ->
-                        new StringResourceModel(key, DocumentWorkflowPlugin.this).getString();
-                final Node node = getWorkflow().getNode();
-                RetainableStateSummary retainableStateSummary = new RetainableStateSummary(node, getBranchId());
-                final String info = new BranchInfoBuilder(resolver, getBranchInfo(resolver))
-                        .draftChanges(retainableStateSummary.hasDraftChanges())
-                        .unpublishedChanges(retainableStateSummary.hasUnpublishedChanges())
-                        .live(retainableStateSummary.isLive())
-                        .build();
-                return new Model<>(info);
-            }
-
-            @Override
-            protected void invoke() {
-                // do not invoke workflow
-            }
-        });
-    }
-
-    /**
-     * @return the branchInfo for the current branch.
-     */
-    protected String getBranchInfo(final UnaryOperator<String> resolver) {
-        return resolver.apply(BranchInfoBuilder.CORE_DOCUMENT_KEY);
+        hideOrDisable(info, LIST_VERSIONS, historyAction);
+        hideOrDisable(info, MOVE, moveAction);
+        hideOrDisable(info, RENAME, renameAction);
     }
 
     private static boolean isDocumentAllowedInFolder(final WorkflowDescriptorModel documentModel, IModel<Node> destinationFolder) {
