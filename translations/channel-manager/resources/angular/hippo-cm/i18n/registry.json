@@ -2344,6 +2344,16 @@
         "zh" : "UNRESOLVED",
         "es" : "UNRESOLVED"
       }
+    },
+    "EXPERIMENT_VARIANT_STATUS_MESSAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
