@@ -37,7 +37,7 @@ export interface Ng1TargetingService {
   getGoals(): Promise<TargetingApiResponse<ExperimentGoal[]>>;
   getExperiment(componentId: string): Promise<TargetingApiResponse<Experiment>>;
   getExperimentStatus(experimentId: string): Promise<TargetingApiResponse<ExperimentStatus>>;
-  saveExperiment(componentId: string, goalId: string, variantId: string): Promise<TargetingApiResponse<string>>;
+  saveExperiment(componentId: string, goalId?: string, variantId?: string): Promise<TargetingApiResponse<string>>;
   completeExperiment(componentId: string, keepOnlyVariantId?: string): Promise<TargetingApiResponse<void>>;
   getCharacteristics(): Promise<TargetingApiResponse<Characteristic[]>>;
   getCharacteristicConfig(id: string): any | null;
