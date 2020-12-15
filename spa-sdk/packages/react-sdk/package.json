@@ -1,6 +1,6 @@
 {
   "name": "@bloomreach/react-sdk",
-  "version": "14.4.0",
+  "version": "14.5.0",
   "description": "Bloomreach SPA SDK for React",
   "keywords": [
     "bloomreach",
@@ -11,8 +11,8 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
-    "directory": "packages/react-sdk"
+    "url": "https://github.com/bloomreach/brxm.git",
+    "directory": "spa-sdk/packages/react-sdk"
   },
   "bugs": {
     "url": "https://issues.onehippo.com/projects/CMS/issues"
@@ -38,7 +38,7 @@
     "last 1 edge version"
   ],
   "dependencies": {
-    "@bloomreach/spa-sdk": "^14.4.0"
+    "@bloomreach/spa-sdk": "^14.5.0"
   },
   "peerDependencies": {
     "react": "^16.14"

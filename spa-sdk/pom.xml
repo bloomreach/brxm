@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.4.0-cm-extjs-removal-SNAPSHOT</version>
+    <version>14.5.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <groupId>org.onehippo</groupId>
   <artifactId>spa-sdk</artifactId>
   <name>Bloomreach SPA SDK</name>
-  <version>14.4.0-cm-extjs-removal-SNAPSHOT</version>
+  <version>14.5.0-SNAPSHOT</version>
 
   <inceptionYear>2019</inceptionYear>
 
@@ -128,18 +128,17 @@
                 <exclude>.gitignore</exclude>
                 <exclude>releases/**</exclude>
                 <exclude>plugins/**</exclude>
-                <exclude>sdks/**</exclude>
-                <exclude>versions/**</exclude>
               </excludes>
             </fileset>
             <fileset>
               <directory>examples</directory>
               <includes>
                 <include>*/node_modules/**</include>
-                <include>*/dist/**</include>
+                <include>angular/dist/**</include>
                 <include>nuxt/.nuxt/**</include>
-                <include>react-csr/build/**</include>
-                <include>react-ssr/.next/**</include>
+                <include>next/.next/**</include>
+                <include>react/build/**</include>
+                <include>vue/dist/**</include>
               </includes>
             </fileset>
             <fileset>
@@ -175,20 +174,20 @@
             <configuration>
               <excludes combine.children="append">
                 <exclude>.*/**</exclude>
-                <exclude>DEVELOPER.md</exclude>
-                <exclude>Procfile</exclude>
+                <exclude>**/.*</exclude>
+                <exclude>**/*.md</exclude>
+                <exclude>**/*.snap</exclude>
+                <exclude>**/robots.txt</exclude>
                 <exclude>yarn.lock</exclude>
-                <exclude>packages/**/__snapshots__/*.snap</exclude>
-                <exclude>packages/*/.*</exclude>
-                <exclude>packages/spa-sdk/src/docs/*.md</exclude>
-                <exclude>examples/*/.*</exclude>
-                <exclude>examples/react-ssr/next-env.d.ts</exclude>
-                <exclude>examples/xm/**</exclude>
-                <exclude>examples/react-csr/build/**</exclude>
-                <exclude>examples/**/dist/**</exclude>
-                <exclude>examples/nuxt/.nuxt/**</exclude>
-                <exclude>examples/react-ssr/.next/**</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
+                <exclude>packages/*/coverage/**</exclude>
+                <exclude>packages/*/dist/**</exclude>
+                <exclude>examples/angular/dist/**</exclude>
+                <exclude>examples/next/.next/**</exclude>
+                <exclude>examples/nuxt/.nuxt/**</exclude>
+                <exclude>examples/react/build/**</exclude>
+                <exclude>examples/vue/dist/**</exclude>
+                <exclude>examples/xm/**</exclude>
               </excludes>
             </configuration>
           </plugin>

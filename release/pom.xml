@@ -20,12 +20,12 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.4.0-cm-extjs-removal-SNAPSHOT</version>
+    <version>14.5.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>14.4.0-cm-extjs-removal-SNAPSHOT</version>
+  <version>14.5.0-SNAPSHOT</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
@@ -76,7 +76,7 @@
     <hippo.spa-sdk.version>${hippo.release.version}</hippo.spa-sdk.version>
     <hippo.ui-extension.version>${hippo.release.version}</hippo.ui-extension.version>
 
-    <hippo.maven.plugin.l10n>14.2.2-CMS-13468</hippo.maven.plugin.l10n>
+    <hippo.maven.plugin.l10n>14.3.3</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
     <hippo.cms.locales />
 

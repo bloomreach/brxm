@@ -64,6 +64,16 @@
     "hippo:cms.validators/path-is-used-multiple-times" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "hippo:cms.validators/url" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
