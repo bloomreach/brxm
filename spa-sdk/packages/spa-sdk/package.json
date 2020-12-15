@@ -1,6 +1,6 @@
 {
   "name": "@bloomreach/spa-sdk",
-  "version": "14.4.0",
+  "version": "14.5.0",
   "description": "Bloomreach SPA SDK",
   "keywords": [
     "bloomreach",
@@ -11,8 +11,8 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
-    "directory": "packages/spa-sdk"
+    "url": "https://github.com/bloomreach/brxm.git",
+    "directory": "spa-sdk/packages/spa-sdk"
   },
   "bugs": {
     "url": "https://issues.onehippo.com/projects/CMS/issues"
