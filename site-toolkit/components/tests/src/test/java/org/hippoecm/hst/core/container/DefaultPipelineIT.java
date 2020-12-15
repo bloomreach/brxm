@@ -21,9 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -35,23 +33,12 @@ public class DefaultPipelineIT extends AbstractPipelineTestCase {
     protected HttpServletRequest servletRequest;
     protected HttpServletResponse servletResponse;
 
-    /**
-     * addAnnotatedClassesConfigurationParam must be added before super setUpClass, hence redefine same setUpClass method
-     * to hide the super.setUpClass and invoke that explicitly
-     */
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        String classXmlFileName = DefaultPipelineIT.class.getName().replace(".", "/") + ".xml";
-        AbstractSpringTestCase.addAnnotatedClassesConfigurationParam(classXmlFileName);
-        AbstractPipelineTestCase.setUpClass();
-    }
-
     @Before
     @Override
     public void setUp() throws Exception{
         super.setUp();
-        this.servletRequest = getComponent(HttpServletRequest.class.getName());
-        this.servletResponse = getComponent(HttpServletResponse.class.getName());
+        this.servletRequest = mockRequest();
+        this.servletResponse = mockResponse();
     }
 
     @Test
