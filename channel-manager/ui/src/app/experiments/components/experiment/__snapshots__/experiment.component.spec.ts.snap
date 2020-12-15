@@ -17,6 +17,17 @@ exports[`ExperimentComponent if experiment was not saved should show the experim
         class="qa-experiment-status-message"
       />
       <em-experiment-status-chart />
+      <ul
+        class="variants-info"
+      >
+        
+        <li>
+           EXPERIMENT_VARIANT_STATUS_MESSAGE 
+        </li>
+        <li>
+           EXPERIMENT_VARIANT_STATUS_MESSAGE 
+        </li>
+      </ul>
     </div>
     
     <div
@@ -74,6 +85,17 @@ exports[`ExperimentComponent if experiment was saved should show the experiment 
         class="qa-experiment-status-message"
       />
       <em-experiment-status-chart />
+      <ul
+        class="variants-info"
+      >
+        
+        <li>
+           EXPERIMENT_VARIANT_STATUS_MESSAGE 
+        </li>
+        <li>
+           EXPERIMENT_VARIANT_STATUS_MESSAGE 
+        </li>
+      </ul>
     </div>
     
     <div
