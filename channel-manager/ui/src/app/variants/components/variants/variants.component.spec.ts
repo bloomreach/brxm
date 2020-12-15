@@ -41,6 +41,8 @@ describe('VariantsComponent', () => {
   let variantsService: VariantsService;
   let componentEditorService: Ng1ComponentEditorService;
 
+  const mockDefaultVariantId = 'test-default';
+
   @Component({
     // tslint:disable-next-line:component-selector
     selector: 'mat-icon',
@@ -62,7 +64,7 @@ describe('VariantsComponent', () => {
 
   const mockVariants = [
    {
-     id: 'hippo-default',
+     id: mockDefaultVariantId,
      name: 'Default',
      description: null,
      group: '',
@@ -91,7 +93,7 @@ describe('VariantsComponent', () => {
 
   const mockComponent = {
     getId: () => 'mockComponentId',
-    getRenderVariant: () => 'hippo-default',
+    getRenderVariant: () => mockDefaultVariantId,
   };
 
   const mockFormData = {
@@ -109,6 +111,7 @@ describe('VariantsComponent', () => {
       extractExpressions: jest.fn(),
       addVariant: () => Promise.resolve(),
       getVariants: () => Promise.resolve(mockVariants),
+      defaultVariantId: mockDefaultVariantId,
     };
     const stateServiceMock = {
       params: {
