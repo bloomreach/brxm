@@ -80,17 +80,11 @@ export class ExperimentComponent {
     }
   }
 
-  async onCompleteExperiment(experiment: Experiment): Promise<void> {
-    const firstNonDefaultVariant = experiment.variants.find(v => v.variantId !== this.variantsService.defaultVariantId);
-
-    if (!firstNonDefaultVariant) {
-      throw new Error('Unable to find a non default variant');
-    }
-
+  async onCompleteExperiment(keepOnlyVariantId?: string): Promise<void> {
     try {
       this.requestInProgress = true;
 
-      await this.experimentsService.completeExperiment(this.componentId, firstNonDefaultVariant.variantId);
+      await this.experimentsService.completeExperiment(this.componentId, keepOnlyVariantId);
 
       this.experiment$ = this.experimentsService.getExperiment(this.componentId);
 
