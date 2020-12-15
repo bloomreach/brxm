@@ -57,6 +57,18 @@ export class ExperimentComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.experiment = await this.experimentsService.getExperiment(this.componentId);
+    this.experiment?.variants.forEach(variant => {
+      const mean = 100 * variant.mean;
+      const sigma = 100 * Math.sqrt(variant.variance);
+
+      const conversion = {
+        mean : Math.max(mean, 0).toFixed(1),
+        low : Math.max(mean - sigma, 0).toFixed(1),
+        high : Math.max(mean + sigma, 0).toFixed(1),
+      };
+
+      variant.conversion = conversion;
+    });
   }
 
   isExperimentCreated(experiment: Experiment): boolean {
