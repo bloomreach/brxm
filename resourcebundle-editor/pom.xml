@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.5.0-SNAPSHOT</version>
+    <version>14.5-cm-extjs-removal-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -28,7 +28,7 @@
 
   <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
   <name>Hippo Plugin Resourcebundle Editor</name>
-  <version>14.5.0-SNAPSHOT</version>
+  <version>14.5-cm-extjs-removal-SNAPSHOT</version>
 
   <properties>
     <hippo.cms.version>${hippo.release.version}</hippo.cms.version>
