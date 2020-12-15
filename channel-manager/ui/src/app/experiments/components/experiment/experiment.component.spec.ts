@@ -213,6 +213,43 @@ describe('ExperimentComponent', () => {
       expect(availableGoals).toEqual(filteredGoals);
     });
 
+    describe('onCancelExperiment', () => {
+      it('should cancel the experiment', () => {
+        component.onCancelExperiment();
+
+        expect(experimentsService.saveExperiment).toHaveBeenCalledWith('mockComponentId');
+      });
+
+      it('should load the saved experiment', async () => {
+        const mockSavedExperiment = { ...mockExperiment , state: ExperimentState.Created };
+
+        mocked(experimentsService.saveExperiment).mockResolvedValue();
+        mocked(experimentsService.getExperiment).mockResolvedValue(mockSavedExperiment);
+
+        await component.onCancelExperiment();
+        const savedExperiment = await component.experiment$;
+
+        expect(experimentsService.getExperiment).toHaveBeenCalledWith('mockComponentId');
+        expect(savedExperiment).toBe(mockSavedExperiment);
+      });
+
+      it('should show a notification after successful saving', async () => {
+        mocked(experimentsService.saveExperiment).mockResolvedValue();
+
+        await component.onCancelExperiment();
+
+        expect(notificationService.showNotification).toHaveBeenCalledWith('EXPERIMENT_CANCELED');
+      });
+
+      it('should show an error notification after unsuccessful saving', async () => {
+        mocked(experimentsService.saveExperiment).mockRejectedValue(new Error());
+
+        await component.onCancelExperiment();
+
+        expect(notificationService.showErrorNotification).toHaveBeenCalledWith('EXPERIMENT_CANCEL_ERROR');
+      });
+    });
+
     describe('onVariantAndGoalSelected', () => {
       const variantAndGoal = {
         variantId: 'variant-1',
