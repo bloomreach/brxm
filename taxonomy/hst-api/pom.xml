@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-plugin-taxonomy</artifactId>
-    <version>14.5.0-SNAPSHOT</version>
+    <version>14.5-cm-extjs-removal-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Plugin Taxonomy HST API</name>
