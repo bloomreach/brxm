@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<div *ngIf="experiment$ | async as experiment; else startExperimentForm"
+<div *ngIf="experiment; else startExperimentForm"
      class="experiment">
   <em-experiment-info [experiment]="experiment"></em-experiment-info>
 

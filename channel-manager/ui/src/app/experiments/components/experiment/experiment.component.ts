@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1service';
@@ -22,6 +22,7 @@ import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../.
 import { NotificationService } from '../../../services/notification.service';
 import { VariantsService } from '../../../variants/services/variants.service';
 import { ExperimentState } from '../../models/experiment-state.enum';
+import { ExperimentWithStatusData } from '../../models/experiment-with-status-data.model';
 import { Experiment } from '../../models/experiment.model';
 import { ExperimentsService } from '../../services/experiments.service';
 import { SelectedVariantIdAndGoalId } from '../experiment-start-form/experiment-start-form.component';
@@ -30,7 +31,7 @@ import { SelectedVariantIdAndGoalId } from '../experiment-start-form/experiment-
   templateUrl: 'experiment.component.html',
   styleUrls: ['experiment.component.scss'],
 })
-export class ExperimentComponent {
+export class ExperimentComponent implements OnInit {
   private readonly component = this.componentEditorService.getComponent();
   private readonly componentId = this.component.getId();
   readonly availableVariants$ = this.variantsService.getVariants(this.componentId);
@@ -41,7 +42,7 @@ export class ExperimentComponent {
     return goals.filter(goal => goal.mountId === channel.mountId);
   });
 
-  experiment$ = this.experimentsService.getExperiment(this.componentId);
+  experiment?: ExperimentWithStatusData;
 
   requestInProgress = false;
 
@@ -53,6 +54,10 @@ export class ExperimentComponent {
     private readonly notificationService: NotificationService,
     private readonly translateService: TranslateService,
   ) { }
+
+  async ngOnInit(): Promise<void> {
+    this.experiment = await this.experimentsService.getExperiment(this.componentId);
+  }
 
   isExperimentCreated(experiment: Experiment): boolean {
     return experiment.state === ExperimentState.Created;
@@ -72,7 +77,7 @@ export class ExperimentComponent {
 
       await this.experimentsService.saveExperiment(this.componentId);
 
-      this.experiment$ = this.experimentsService.getExperiment(this.componentId);
+      this.experiment = await this.experimentsService.getExperiment(this.componentId);
 
       this.notificationService.showNotification(this.translateService.instant('EXPERIMENT_CANCELED'));
     } catch (e) {
@@ -90,7 +95,7 @@ export class ExperimentComponent {
 
       await this.experimentsService.saveExperiment(this.componentId, variantId, goalId);
 
-      this.experiment$ = this.experimentsService.getExperiment(this.componentId);
+      this.experiment = await this.experimentsService.getExperiment(this.componentId);
 
       this.notificationService.showNotification(this.translateService.instant('EXPERIMENT_SAVED'));
     } catch (e) {
@@ -106,7 +111,7 @@ export class ExperimentComponent {
 
       await this.experimentsService.completeExperiment(this.componentId, keepOnlyVariantId);
 
-      this.experiment$ = this.experimentsService.getExperiment(this.componentId);
+      this.experiment = await this.experimentsService.getExperiment(this.componentId);
 
       this.notificationService.showNotification(this.translateService.instant('EXPERIMENT_COMPLETED'));
     } catch {
