@@ -71,7 +71,7 @@
     <commons-dbcp2.version>2.7.0</commons-dbcp2.version>
     <commons-email.version>1.5</commons-email.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
-    <commons-imaging.version>1.0-alpha1</commons-imaging.version>
+    <commons-imaging.version>1.0-alpha2</commons-imaging.version>
     <commons-io.version>2.6</commons-io.version>
     <commons-lang3.version>3.9</commons-lang3.version>
     <!-- commons-logging-api and commons-logging are set to test level -->
