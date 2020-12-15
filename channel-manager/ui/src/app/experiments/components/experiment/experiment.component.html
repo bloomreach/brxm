@@ -14,12 +14,14 @@
   limitations under the License.
   -->
 
-<div *ngIf="experiment$ | async as experiment; else startExperimentForm" class="experiment">
+<div *ngIf="experiment$ | async as experiment; else startExperimentForm"
+     class="experiment">
   <em-experiment-info [experiment]="experiment"></em-experiment-info>
 
-  <div *ngIf="isExperimentRunningOrCompleted(experiment)" class="experiment-status-wrapper">
-    <em-experiment-status-message [winnerVariant]="experiment.winnerVariant"
-                                  [visits]="experiment.totalVisits"
+  <div *ngIf="isExperimentRunningOrCompleted(experiment)"
+       class="experiment-status-wrapper">
+    <em-experiment-status-message [winnerVariant]="experiment?.winnerVariant"
+                                  [visits]="experiment?.totalVisits"
                                   class="qa-experiment-status-message">
     </em-experiment-status-message>
     <em-experiment-status-chart [experiment]="experiment"></em-experiment-status-chart>
@@ -30,11 +32,33 @@
 
     <div class="actions">
       <button mat-stroked-button
+              *ngIf="!(experiment?.winnerVariant)"
               color="primary"
-              (click)="onCompleteExperiment(experiment)"
+              (click)="onCompleteExperiment()"
               class="save-button qa-save">
         {{ 'COMPLETE_EXPERIMENT' | translate }}
       </button>
+
+      <button mat-stroked-button
+              *ngIf="experiment?.winnerVariant"
+              color="primary"
+              [matMenuTriggerFor]="completeMenu"
+              class="save-button qa-save">
+        {{ 'COMPLETE_EXPERIMENT' | translate }}
+      </button>
+
+      <mat-menu #completeMenu>
+        <button mat-menu-item
+                class="qa-experiment-complete-keepall"
+                (click)="onCompleteExperiment()">
+          {{ 'COMPLETE_EXPERIMENT_KEEP_VARIANTS' | translate }}
+        </button>
+        <button mat-menu-item
+                class="qa-experiment-complete-delete"
+                (click)="onCompleteExperiment(experiment?.winnerVariant?.variantId)">
+          {{ 'COMPLETE_EXPERIMENT_DELETE_VARIANTS' | translate }}
+        </button>
+      </mat-menu>
     </div>
   </ng-container>
 </div>

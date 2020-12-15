@@ -264,7 +264,7 @@ describe('ExperimentComponent', () => {
       } as Experiment;
 
       it('should complete the experiment', () => {
-        component.onCompleteExperiment(experiment);
+        component.onCompleteExperiment('variant-1');
 
         expect(experimentsService.completeExperiment).toHaveBeenCalledWith('mockComponentId', 'variant-1');
       });
@@ -275,7 +275,7 @@ describe('ExperimentComponent', () => {
         mocked(experimentsService.completeExperiment).mockResolvedValue();
         mocked(experimentsService.getExperiment).mockResolvedValue(mockSavedExperiment);
 
-        await component.onCompleteExperiment(experiment);
+        await component.onCompleteExperiment();
         const savedExperiment = await component.experiment$;
 
         expect(experimentsService.getExperiment).toHaveBeenCalledWith('mockComponentId');
@@ -285,7 +285,7 @@ describe('ExperimentComponent', () => {
       it('should show a notification after successful completion', async () => {
         mocked(experimentsService.completeExperiment).mockResolvedValue();
 
-        await component.onCompleteExperiment(experiment);
+        await component.onCompleteExperiment();
 
         expect(notificationService.showNotification).toHaveBeenCalledWith('EXPERIMENT_COMPLETED');
       });
@@ -293,7 +293,7 @@ describe('ExperimentComponent', () => {
       it('should show an error notification after unsuccessful completion', async () => {
         mocked(experimentsService.completeExperiment).mockRejectedValue(new Error());
 
-        await component.onCompleteExperiment(experiment);
+        await component.onCompleteExperiment();
 
         expect(notificationService.showErrorNotification).toHaveBeenCalledWith('EXPERIMENT_COMPLETION_ERROR');
       });

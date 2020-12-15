@@ -286,7 +286,12 @@ class TargetingService {
 
   async completeExperiment(componentId, keepOnlyVariantId) {
     try {
-      const params = { ...this._getDefaultParams(), keepOnlyVariantId };
+      const params = this._getDefaultParams();
+
+      if (keepOnlyVariantId) {
+        params.keepOnlyVariantId = keepOnlyVariantId;
+      }
+
       const result = await this._execute('POST', ['experiments', 'complete'], componentId, params);
       await this.ChannelService.checkChanges();
       return this._success(`Experiment completed for component "${componentId}"`, result);
