@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-plugin-robotstxt</artifactId>
-    <version>14.4.0-cm-extjs-removal-SNAPSHOT</version>
+    <version>14.5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-plugin-robotstxt-addon-repository</artifactId>

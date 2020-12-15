@@ -23,6 +23,7 @@ class ChannelService {
     $q,
     $state,
     $rootScope,
+    $window,
     CatalogService,
     CmsService,
     ConfigService,
@@ -41,6 +42,7 @@ class ChannelService {
     this.$q = $q;
     this.$state = $state;
     this.$rootScope = $rootScope;
+    this.$window = $window;
     this.CatalogService = CatalogService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
@@ -373,7 +375,7 @@ class ChannelService {
     }
 
     try {
-      const { origin } = new URL(url);
+      const { origin } = new URL(url, this.$window.location.origin);
 
       // eslint-disable-next-line consistent-return
       return origin;

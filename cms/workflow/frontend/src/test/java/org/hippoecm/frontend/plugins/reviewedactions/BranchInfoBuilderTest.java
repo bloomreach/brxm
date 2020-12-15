@@ -35,7 +35,7 @@ public class BranchInfoBuilderTest {
     private final String expected;
 
     private static final UnaryOperator<String> propertyResolver = (key) -> {
-        try (InputStream input = ClassLoader.getSystemResourceAsStream("org/hippoecm/frontend/plugins/reviewedactions/DocumentWorkflowPlugin.properties")) {
+        try (InputStream input = ClassLoader.getSystemResourceAsStream("org/hippoecm/frontend/plugins/reviewedactions/BranchInfoWorkflowPlugin.properties")) {
             Properties prop = new Properties();
             prop.load(input);
             final String value = prop.getProperty(key);
