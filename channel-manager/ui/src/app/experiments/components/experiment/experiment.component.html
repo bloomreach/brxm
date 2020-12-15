@@ -27,12 +27,21 @@
     <em-experiment-status-chart [experiment]="experiment"></em-experiment-status-chart>
   </div>
 
-  <ng-container *ngIf="isExperimentRunning(experiment)">
+  <div *ngIf="isExperimentRunning(experiment) || isExperimentCreated(experiment)"
+       class="actions-wrapper">
     <mat-divider></mat-divider>
 
     <div class="actions">
       <button mat-stroked-button
-              *ngIf="!(experiment?.winnerVariant)"
+              *ngIf="isExperimentCreated(experiment)"
+              color="primary"
+              (click)="onCancelExperiment()"
+              class="save-button qa-cancel">
+        {{ 'CANCEL_EXPERIMENT' | translate }}
+      </button>
+
+      <button mat-stroked-button
+              *ngIf="isExperimentRunning(experiment) && !(experiment?.winnerVariant)"
               color="primary"
               (click)="onCompleteExperiment()"
               class="save-button qa-save">
@@ -40,7 +49,7 @@
       </button>
 
       <button mat-stroked-button
-              *ngIf="experiment?.winnerVariant"
+              *ngIf="isExperimentRunning(experiment) && experiment?.winnerVariant"
               color="primary"
               [matMenuTriggerFor]="completeMenu"
               class="save-button qa-save">
@@ -60,7 +69,7 @@
         </button>
       </mat-menu>
     </div>
-  </ng-container>
+  </div>
 </div>
 
 <ng-template #startExperimentForm>

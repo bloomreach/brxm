@@ -54,12 +54,32 @@ export class ExperimentComponent {
     private readonly translateService: TranslateService,
   ) { }
 
+  isExperimentCreated(experiment: Experiment): boolean {
+    return experiment.state === ExperimentState.Created;
+  }
+
   isExperimentRunning(experiment: Experiment): boolean {
     return experiment.state === ExperimentState.Running;
   }
 
   isExperimentRunningOrCompleted(experiment: Experiment): boolean {
     return this.isExperimentRunning(experiment) || experiment.state === ExperimentState.Completed;
+  }
+
+  async onCancelExperiment(): Promise<void> {
+    try {
+      this.requestInProgress = true;
+
+      await this.experimentsService.saveExperiment(this.componentId);
+
+      this.experiment$ = this.experimentsService.getExperiment(this.componentId);
+
+      this.notificationService.showNotification(this.translateService.instant('EXPERIMENT_CANCELED'));
+    } catch (e) {
+      this.notificationService.showErrorNotification(this.translateService.instant('EXPERIMENT_CANCEL_ERROR'));
+    } finally {
+      this.requestInProgress = false;
+    }
   }
 
   async onVariantAndGoalSelected(value: SelectedVariantIdAndGoalId): Promise<void> {
