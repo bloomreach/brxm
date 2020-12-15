@@ -19,34 +19,38 @@ exports[`ExperimentComponent if experiment was not saved should show the experim
       <em-experiment-status-chart />
     </div>
     
-    
-    <mat-divider />
     <div
-      class="actions"
+      class="actions-wrapper"
     >
-      
-      <button
-        class="save-button qa-save"
-        color="primary"
-        mat-stroked-button=""
+      <mat-divider />
+      <div
+        class="actions"
       >
-         COMPLETE_EXPERIMENT 
-      </button>
-      
-      <mat-menu>
+        
+        
         <button
-          class="qa-experiment-complete-keepall"
-          mat-menu-item=""
+          class="save-button qa-save"
+          color="primary"
+          mat-stroked-button=""
         >
-           COMPLETE_EXPERIMENT_KEEP_VARIANTS 
+           COMPLETE_EXPERIMENT 
         </button>
-        <button
-          class="qa-experiment-complete-delete"
-          mat-menu-item=""
-        >
-           COMPLETE_EXPERIMENT_DELETE_VARIANTS 
-        </button>
-      </mat-menu>
+        
+        <mat-menu>
+          <button
+            class="qa-experiment-complete-keepall"
+            mat-menu-item=""
+          >
+             COMPLETE_EXPERIMENT_KEEP_VARIANTS 
+          </button>
+          <button
+            class="qa-experiment-complete-delete"
+            mat-menu-item=""
+          >
+             COMPLETE_EXPERIMENT_DELETE_VARIANTS 
+          </button>
+        </mat-menu>
+      </div>
     </div>
   </div>
   
@@ -55,7 +59,7 @@ exports[`ExperimentComponent if experiment was not saved should show the experim
 
 exports[`ExperimentComponent if experiment was saved should show the experiment 1`] = `
 <div
-  id="root13"
+  id="root17"
 >
   
   <div
@@ -72,34 +76,38 @@ exports[`ExperimentComponent if experiment was saved should show the experiment 
       <em-experiment-status-chart />
     </div>
     
-    
-    <mat-divider />
     <div
-      class="actions"
+      class="actions-wrapper"
     >
-      
-      <button
-        class="save-button qa-save"
-        color="primary"
-        mat-stroked-button=""
+      <mat-divider />
+      <div
+        class="actions"
       >
-         COMPLETE_EXPERIMENT 
-      </button>
-      
-      <mat-menu>
+        
+        
         <button
-          class="qa-experiment-complete-keepall"
-          mat-menu-item=""
+          class="save-button qa-save"
+          color="primary"
+          mat-stroked-button=""
         >
-           COMPLETE_EXPERIMENT_KEEP_VARIANTS 
+           COMPLETE_EXPERIMENT 
         </button>
-        <button
-          class="qa-experiment-complete-delete"
-          mat-menu-item=""
-        >
-           COMPLETE_EXPERIMENT_DELETE_VARIANTS 
-        </button>
-      </mat-menu>
+        
+        <mat-menu>
+          <button
+            class="qa-experiment-complete-keepall"
+            mat-menu-item=""
+          >
+             COMPLETE_EXPERIMENT_KEEP_VARIANTS 
+          </button>
+          <button
+            class="qa-experiment-complete-delete"
+            mat-menu-item=""
+          >
+             COMPLETE_EXPERIMENT_DELETE_VARIANTS 
+          </button>
+        </mat-menu>
+      </div>
     </div>
   </div>
   

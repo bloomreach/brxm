@@ -87,7 +87,7 @@ export class ExperimentsService {
     return response.data;
   }
 
-  async saveExperiment(componentId: string, goalId: string, variantId: string): Promise<void> {
+  async saveExperiment(componentId: string, goalId?: string, variantId?: string): Promise<void> {
     const result = await this.ng1TargetingService.saveExperiment(componentId, variantId, goalId);
 
     if (!result.success) {
