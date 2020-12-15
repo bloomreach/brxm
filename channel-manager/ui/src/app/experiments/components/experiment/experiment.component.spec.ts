@@ -19,13 +19,12 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { TranslateService } from '@ngx-translate/core';
 import { mocked } from 'ts-jest/utils';
 
-import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1service';
+import { NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1service';
 import { NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { NotificationService } from '../../../services/notification.service';
 import { VariantsService } from '../../../variants/services/variants.service';
 import { ExperimentState } from '../../models/experiment-state.enum';
 import { ExperimentWithStatusData } from '../../models/experiment-with-status-data.model';
-import { Experiment } from '../../models/experiment.model';
 import { ExperimentsService } from '../../services/experiments.service';
 
 import { ExperimentComponent } from './experiment.component';
@@ -40,7 +39,6 @@ export class TranslateMockPipe implements PipeTransform {
 describe('ExperimentComponent', () => {
   let experimentsService: ExperimentsService;
   let notificationService: NotificationService;
-  let channelService: Ng1ChannelService;
 
   const mockExperiment: ExperimentWithStatusData = {
     id: 'experiment-1',
@@ -184,7 +182,6 @@ describe('ExperimentComponent', () => {
       ],
     });
 
-    channelService = TestBed.inject(NG1_CHANNEL_SERVICE);
     experimentsService = TestBed.inject(ExperimentsService);
     notificationService = TestBed.inject(NotificationService);
   });
@@ -227,7 +224,7 @@ describe('ExperimentComponent', () => {
         mocked(experimentsService.getExperiment).mockResolvedValue(mockSavedExperiment);
 
         await component.onCancelExperiment();
-        const savedExperiment = await component.experiment$;
+        const savedExperiment = component.experiment;
 
         expect(experimentsService.getExperiment).toHaveBeenCalledWith('mockComponentId');
         expect(savedExperiment).toBe(mockSavedExperiment);
@@ -269,7 +266,7 @@ describe('ExperimentComponent', () => {
         mocked(experimentsService.getExperiment).mockResolvedValue(mockSavedExperiment);
 
         await component.onVariantAndGoalSelected(variantAndGoal);
-        const savedExperiment = await component.experiment$;
+        const savedExperiment = component.experiment;
 
         expect(experimentsService.getExperiment).toHaveBeenCalledWith('mockComponentId');
         expect(savedExperiment).toBe(mockSavedExperiment);
@@ -293,13 +290,6 @@ describe('ExperimentComponent', () => {
     });
 
     describe('onCompleteExperiment', () => {
-      const experiment = {
-        variants: [
-          { variantId: 'variant-1' },
-          { variantId: 'hippo-default' },
-        ],
-      } as Experiment;
-
       it('should complete the experiment', () => {
         component.onCompleteExperiment('variant-1');
 
@@ -313,7 +303,7 @@ describe('ExperimentComponent', () => {
         mocked(experimentsService.getExperiment).mockResolvedValue(mockSavedExperiment);
 
         await component.onCompleteExperiment();
-        const savedExperiment = await component.experiment$;
+        const savedExperiment = component.experiment;
 
         expect(experimentsService.getExperiment).toHaveBeenCalledWith('mockComponentId');
         expect(savedExperiment).toBe(mockSavedExperiment);
@@ -366,7 +356,6 @@ describe('ExperimentComponent', () => {
 
   describe('if experiment was saved', () => {
     let fixture: ComponentFixture<ExperimentComponent>;
-    let component: ExperimentComponent;
 
     beforeEach(fakeAsync(() => {
       fixture = TestBed.createComponent(ExperimentComponent);
@@ -374,8 +363,6 @@ describe('ExperimentComponent', () => {
       fixture.detectChanges();
       tick();
       fixture.detectChanges();
-
-      component = fixture.componentInstance;
     }));
 
     it('should show the experiment', fakeAsync(() => {
