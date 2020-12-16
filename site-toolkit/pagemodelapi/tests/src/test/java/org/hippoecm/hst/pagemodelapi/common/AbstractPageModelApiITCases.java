@@ -146,6 +146,10 @@ public abstract class AbstractPageModelApiITCases {
         annotatedClasses.add(annotatedClassParam);
     }
 
+    public static void removeAnnotatedClassesConfigurationParam(final String annotatedClassParam) {
+        annotatedClasses.remove(annotatedClassParam);
+    }
+
     private static String getAnnotatedClassesConfigurationParam() {
         return annotatedClasses.stream().collect(Collectors.joining(","));
     }

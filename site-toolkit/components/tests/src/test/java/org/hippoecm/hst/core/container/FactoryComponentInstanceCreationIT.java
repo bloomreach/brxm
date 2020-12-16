@@ -17,6 +17,8 @@ package org.hippoecm.hst.core.container;
 
 import java.util.HashSet;
 
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -29,6 +31,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.platform.container.components.HstComponentRegistryImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -56,6 +59,13 @@ public class FactoryComponentInstanceCreationIT extends AbstractSpringTestCase {
         String classXmlFileName = FactoryComponentInstanceCreationIT.class.getName().replace(".", "/") + ".xml";
         AbstractSpringTestCase.addAnnotatedClassesConfigurationParam(classXmlFileName);
         AbstractSpringTestCase.setUpClass();
+    }
+
+    @AfterClass
+    public static void afterClass() throws RepositoryException {
+        String classXmlFileName = FactoryComponentInstanceCreationIT.class.getName().replace(".", "/") + ".xml";
+        AbstractSpringTestCase.removeAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractSpringTestCase.afterClass();
     }
 
     @Before
