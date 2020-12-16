@@ -25,7 +25,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ValueListProviderServiceImplTest extends AbstractTestConfigurations {
+public class ValueListProviderServiceImplIT extends AbstractTestConfigurations {
 
     @Before
     public void setUp() throws Exception {

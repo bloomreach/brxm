@@ -38,7 +38,9 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.proxy.ProxyFactory;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -51,10 +53,21 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 
-public class TestHstRequest extends AbstractSpringTestCase {
+public class HstRequestIT extends AbstractSpringTestCase {
     
     protected HttpServletRequest servletRequest;
     protected HstMutableRequestContext requestContext;
+
+    /**
+     * addAnnotatedClassesConfigurationParam must be added before super setUpClass, hence redefine same setUpClass method
+     * to hide the super.setUpClass and invoke that explicitly
+     */
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        String classXmlFileName = HstRequestIT.class.getName().replace(".", "/") + ".xml";
+        AbstractSpringTestCase.addAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractTestConfigurations.setUpClass();
+    }
 
     @Before
     public void setUp() throws Exception {

@@ -58,7 +58,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
     public void setUp() throws Exception {
         super.setUp();
         final Session session = createSession("admin", "admin");
-        AbstractPageComposerTest.createHstConfigBackup(session);
+        createHstConfigBackup(session);
         session.save();
         session.logout();
     }
@@ -67,7 +67,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
     public void tearDown() throws Exception {
         try {
             final Session session = createSession("admin", "admin");
-            AbstractPageComposerTest.restoreHstConfigBackup(session);
+            restoreHstConfigBackup(session);
             session.logout();
         } finally {
             super.tearDown();

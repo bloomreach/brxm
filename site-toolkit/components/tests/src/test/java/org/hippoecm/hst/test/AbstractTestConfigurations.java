@@ -27,11 +27,28 @@ import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 public class AbstractTestConfigurations extends AbstractSpringTestCase {
 
     protected HstModelProvider provider;
     protected EventPathsInvalidator invalidator;
+
+    /**
+     * addAnnotatedClassesConfigurationParam must be added before super setUpClass, hence redefine same setUpClass method
+     * to hide the super.setUpClass and invoke that explicitly
+     */
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        String classXmlFileName = AbstractTestConfigurations.class.getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = AbstractTestConfigurations.class.getName().replace(".", "/") + "-*.xml";
+
+        AbstractSpringTestCase.addAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractSpringTestCase.addAnnotatedClassesConfigurationParam(classXmlFileName2);
+
+        AbstractSpringTestCase.setUpClass();
+    }
+
 
     @Override
     @Before
@@ -40,20 +57,6 @@ public class AbstractTestConfigurations extends AbstractSpringTestCase {
         provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
         invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
     }
-
-    @Override
-    protected String[] getConfigurations(final boolean platform) {
-        String classXmlFileName = AbstractTestConfigurations.class.getName().replace(".", "/") + ".xml";
-        String classXmlFileName2 = AbstractTestConfigurations.class.getName().replace(".", "/") + "-*.xml";
-
-        if (!platform) {
-            return new String[]{classXmlFileName, classXmlFileName2};
-        }
-
-        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
-        return new String[] { classXmlFileName, classXmlFileName2, classXmlFileNamePlatform };
-    }
-
 
     protected void createHstConfigBackup(Session session) throws RepositoryException {
         if (!session.nodeExists("/hst-backup")) {
