@@ -47,6 +47,7 @@ import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.KeyValue;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -73,6 +74,13 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         String classXmlFileName = PageCachingValveIT.class.getName().replace(".", "/") + ".xml";
         AbstractSpringTestCase.addAnnotatedClassesConfigurationParam(classXmlFileName);
         AbstractSpringTestCase.setUpClass();
+    }
+
+    @AfterClass
+    public static void afterClass() throws RepositoryException {
+        String classXmlFileName = PageCachingValveIT.class.getName().replace(".", "/") + ".xml";
+        AbstractSpringTestCase.removeAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractSpringTestCase.afterClass();
     }
 
     @Before

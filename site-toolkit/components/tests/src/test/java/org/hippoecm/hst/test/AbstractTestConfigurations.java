@@ -26,6 +26,7 @@ import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
@@ -49,6 +50,16 @@ public class AbstractTestConfigurations extends AbstractSpringTestCase {
         AbstractSpringTestCase.setUpClass();
     }
 
+    @AfterClass
+    public static void afterClass() throws RepositoryException {
+        String classXmlFileName = AbstractTestConfigurations.class.getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = AbstractTestConfigurations.class.getName().replace(".", "/") + "-*.xml";
+
+        AbstractSpringTestCase.removeAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractSpringTestCase.removeAnnotatedClassesConfigurationParam(classXmlFileName2);
+
+        AbstractSpringTestCase.afterClass();
+    }
 
     @Override
     @Before

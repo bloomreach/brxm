@@ -59,6 +59,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -99,6 +100,18 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
         AbstractComponentManagerTest.setUpClass();
     }
 
+    @AfterClass
+    public static void tearDownClass() {
+        String classXmlFileName = AbstractPageComposerTest.class.getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = AbstractPageComposerTest.class.getName().replace(".", "/") + "-*.xml";
+
+        AbstractComponentManagerTest.removeAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractComponentManagerTest.removeAnnotatedClassesConfigurationParam(classXmlFileName2);
+
+        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
+        AbstractComponentManagerTest.removePlatformAnnotatedClassesConfigurationParam(classXmlFileNamePlatform);
+        AbstractComponentManagerTest.tearDownClass();
+    }
 
     @Before
     public void setUp() throws Exception {

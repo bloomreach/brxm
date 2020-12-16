@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -40,6 +41,11 @@ public class ResponseWithDynamicBeansIT extends AbstractPageModelApiITCases {
     public static void setUpClass() throws Exception {
         AbstractPageModelApiITCases.addAnnotatedClassesConfigurationParam(EXTRA_ANNOTATED_CLASSES_CONFIGURATION_PARAM);
         AbstractPageModelApiITCases.setUpClass();
+    }
+    @AfterClass
+    public static void tearDownClass() {
+        AbstractPageModelApiITCases.removeAnnotatedClassesConfigurationParam(EXTRA_ANNOTATED_CLASSES_CONFIGURATION_PARAM);
+        AbstractPageModelApiITCases.tearDownClass();
     }
 
     @Test
