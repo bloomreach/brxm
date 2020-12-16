@@ -31,18 +31,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.hst.mock.core.request.MockCmsSessionContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.PrivilegesAllowedInvokerPreprocessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.ConfigurationLockedTest;
-import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.model.HstModel;
-import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -53,6 +48,8 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
@@ -96,6 +93,18 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
         AbstractComponentManagerTest.setUpClass();
     }
 
+    @AfterClass
+    public static void tearDownClass() {
+        String classXmlFileName = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + "-*.xml";
+
+        AbstractComponentManagerTest.removeAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractComponentManagerTest.removeAnnotatedClassesConfigurationParam(classXmlFileName2);
+
+        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
+        AbstractComponentManagerTest.removeAnnotatedClassesConfigurationParam(classXmlFileNamePlatform);
+        AbstractComponentManagerTest.tearDownClass();
+    }
 
     @Before
     public void setUp() throws Exception {

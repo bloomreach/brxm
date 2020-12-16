@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections4.EnumerationUtils;
@@ -39,6 +40,7 @@ import org.hippoecm.hst.proxy.ProxyFactory;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -67,6 +69,13 @@ public class HstRequestIT extends AbstractSpringTestCase {
         String classXmlFileName = HstRequestIT.class.getName().replace(".", "/") + ".xml";
         AbstractSpringTestCase.addAnnotatedClassesConfigurationParam(classXmlFileName);
         AbstractTestConfigurations.setUpClass();
+    }
+
+    @AfterClass
+    public static void afterClass() throws RepositoryException {
+        String classXmlFileName = HstRequestIT.class.getName().replace(".", "/") + ".xml";
+        AbstractSpringTestCase.removeAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractSpringTestCase.afterClass();
     }
 
     @Before
