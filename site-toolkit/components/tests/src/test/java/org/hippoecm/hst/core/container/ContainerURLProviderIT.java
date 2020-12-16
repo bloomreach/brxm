@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -167,58 +167,62 @@ public class ContainerURLProviderIT extends AbstractContainerURLProviderIT {
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedMount());
         requestContext.setBaseURL(containerURL);
 
-        ((HstURLFactoryImpl) this.urlFactory).setReferenceNamespaceIgnored(true);
+        try {
+            ((HstURLFactoryImpl) this.urlFactory).setReferenceNamespaceIgnored(true);
 
-        HstURL url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "r1", containerURL, requestContext);
-        url.setParameter("param1", "value1");
-        url.setParameter("param2", "value2");
+            HstURL url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "r1", containerURL, requestContext);
+            url.setParameter("param1", "value1");
+            url.setParameter("param2", "value2");
 
-        assertFalse("The url is wrong.", url.toString().contains(":param1=value1"));
-        assertFalse("The url is wrong.", url.toString().contains(":param2=value2"));
-        assertTrue("The url is wrong.", url.toString().contains("param1=value1"));
-        assertTrue("The url is wrong.", url.toString().contains("param2=value2"));
+            assertFalse("The url is wrong.", url.toString().contains(":param1=value1"));
+            assertFalse("The url is wrong.", url.toString().contains(":param2=value2"));
+            assertTrue("The url is wrong.", url.toString().contains("param1=value1"));
+            assertTrue("The url is wrong.", url.toString().contains("param2=value2"));
 
-        request.setParameter("param1", "value1");
-        request.setParameter("param2", "value2");
+            request.setParameter("param1", "value1");
+            request.setParameter("param2", "value2");
 
-        HstRequest hstRequestRightChildWindow = new HstRequestImpl(request, requestContext, rightChildWindow, HstRequest.RENDER_PHASE);
-        assertEquals("The parameter value is wrong: param1", "value1", hstRequestRightChildWindow.getParameter("param1"));
-        assertEquals("The parameter value is wrong: param2", "value2", hstRequestRightChildWindow.getParameter("param2"));
+            HstRequest hstRequestRightChildWindow = new HstRequestImpl(request, requestContext, rightChildWindow, HstRequest.RENDER_PHASE);
+            assertEquals("The parameter value is wrong: param1", "value1", hstRequestRightChildWindow.getParameter("param1"));
+            assertEquals("The parameter value is wrong: param2", "value2", hstRequestRightChildWindow.getParameter("param2"));
 
-        // because namespaceless, every component should be able to read all request parameters 
-        HstRequest hstRequestLeftChildWindow = new HstRequestImpl(request, requestContext, leftChildWindow, HstRequest.RENDER_PHASE);
-        assertEquals("The parameter value is wrong: param1", "value1", hstRequestLeftChildWindow.getParameter("param1"));
-        assertEquals("The parameter value is wrong: param2", "value2", hstRequestLeftChildWindow.getParameter("param2"));
+            // because namespaceless, every component should be able to read all request parameters
+            HstRequest hstRequestLeftChildWindow = new HstRequestImpl(request, requestContext, leftChildWindow, HstRequest.RENDER_PHASE);
+            assertEquals("The parameter value is wrong: param1", "value1", hstRequestLeftChildWindow.getParameter("param1"));
+            assertEquals("The parameter value is wrong: param2", "value2", hstRequestLeftChildWindow.getParameter("param2"));
 
-        HstRequest hstRequestrootWindow = new HstRequestImpl(request, requestContext, rootWindow, HstRequest.RENDER_PHASE);
-        assertEquals("The parameter value is wrong: param1", "value1", hstRequestrootWindow.getParameter("param1"));
-        assertEquals("The parameter value is wrong: param2", "value2", hstRequestrootWindow.getParameter("param2"));
+            HstRequest hstRequestrootWindow = new HstRequestImpl(request, requestContext, rootWindow, HstRequest.RENDER_PHASE);
+            assertEquals("The parameter value is wrong: param1", "value1", hstRequestrootWindow.getParameter("param1"));
+            assertEquals("The parameter value is wrong: param2", "value2", hstRequestrootWindow.getParameter("param2"));
 
-        url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "", containerURL, requestContext);
-        url.setParameter("param1", "value1");
-        url.setParameter("param2", "value2");
+            url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "", containerURL, requestContext);
+            url.setParameter("param1", "value1");
+            url.setParameter("param2", "value2");
 
-        assertFalse("The url is wrong.", url.toString().contains(":param1=value1"));
-        assertFalse("The url is wrong.", url.toString().contains(":param2=value2"));
-        assertTrue("The url is wrong.", url.toString().contains("param1=value1"));
-        assertTrue("The url is wrong.", url.toString().contains("param2=value2"));
+            assertFalse("The url is wrong.", url.toString().contains(":param1=value1"));
+            assertFalse("The url is wrong.", url.toString().contains(":param2=value2"));
+            assertTrue("The url is wrong.", url.toString().contains("param1=value1"));
+            assertTrue("The url is wrong.", url.toString().contains("param2=value2"));
 
-        request.removeAllParameters();
-        request.setParameter("param1", "value1");
-        request.setParameter("param2", "value2");
+            request.removeAllParameters();
+            request.setParameter("param1", "value1");
+            request.setParameter("param2", "value2");
 
-        hstRequestRightChildWindow = new HstRequestImpl(request, requestContext, rootWindow, HstRequest.RENDER_PHASE);
-        assertEquals("The parameter value is wrong: param1", "value1", hstRequestRightChildWindow.getParameter("param1"));
-        assertEquals("The parameter value is wrong: param2", "value2", hstRequestRightChildWindow.getParameter("param2"));    
+            hstRequestRightChildWindow = new HstRequestImpl(request, requestContext, rootWindow, HstRequest.RENDER_PHASE);
+            assertEquals("The parameter value is wrong: param1", "value1", hstRequestRightChildWindow.getParameter("param1"));
+            assertEquals("The parameter value is wrong: param2", "value2", hstRequestRightChildWindow.getParameter("param2"));
 
-        // because namespaceless, every component should be able to read all request parameters 
-        hstRequestLeftChildWindow = new HstRequestImpl(request, requestContext, leftChildWindow, HstRequest.RENDER_PHASE);
-        assertEquals("The parameter value is wrong: param1", "value1", hstRequestLeftChildWindow.getParameter("param1"));
-        assertEquals("The parameter value is wrong: param2", "value2", hstRequestLeftChildWindow.getParameter("param2"));
+            // because namespaceless, every component should be able to read all request parameters
+            hstRequestLeftChildWindow = new HstRequestImpl(request, requestContext, leftChildWindow, HstRequest.RENDER_PHASE);
+            assertEquals("The parameter value is wrong: param1", "value1", hstRequestLeftChildWindow.getParameter("param1"));
+            assertEquals("The parameter value is wrong: param2", "value2", hstRequestLeftChildWindow.getParameter("param2"));
 
-        hstRequestrootWindow = new HstRequestImpl(request, requestContext, rootWindow, HstRequest.RENDER_PHASE);
-        assertEquals("The parameter value is wrong: param1", "value1", hstRequestrootWindow.getParameter("param1"));
-        assertEquals("The parameter value is wrong: param2", "value2", hstRequestrootWindow.getParameter("param2"));
+            hstRequestrootWindow = new HstRequestImpl(request, requestContext, rootWindow, HstRequest.RENDER_PHASE);
+            assertEquals("The parameter value is wrong: param1", "value1", hstRequestrootWindow.getParameter("param1"));
+            assertEquals("The parameter value is wrong: param2", "value2", hstRequestrootWindow.getParameter("param2"));
+        } finally {
+            ((HstURLFactoryImpl) this.urlFactory).setReferenceNamespaceIgnored(false);
+        }
     }
 
     @Test

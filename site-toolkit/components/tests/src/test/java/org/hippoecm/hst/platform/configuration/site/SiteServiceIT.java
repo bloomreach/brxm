@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.google.common.base.Optional;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -34,8 +32,10 @@ import org.hippoecm.hst.container.site.CompositeHstSite;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
+import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.hosting.MountService;
 import org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider;
+import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ResolvedMountImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
@@ -47,6 +47,8 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.google.common.base.Optional;
+
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
@@ -54,6 +56,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
+import static org.joor.Reflect.on;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -70,6 +73,14 @@ public class SiteServiceIT extends AbstractTestConfigurations {
     public void setUp() throws Exception {
         super.setUp();
         hstManager = getComponent(HstManager.class.getName());
+
+
+        // first trigger the virtual hosts to be invalidated otherwise the loaded model from a preview test method
+        // might be loaded already
+        ((HstModelImpl)hstModelSite1).invalidate();
+        HstConfigurationLoadingCache hstConfigurationLoadingCache = on(hstModelSite1).field("hstConfigurationLoadingCache").get();
+        hstConfigurationLoadingCache.clear();
+
     }
 
     @Test

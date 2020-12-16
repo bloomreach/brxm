@@ -58,35 +58,27 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
-import org.powermock.api.easymock.PowerMock;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.hippoecm.hst.core.container.ContainerConstants.FORCE_USE_PREFER_RENDER_ATTR_NAME;
+import static org.hippoecm.hst.core.container.ContainerConstants.PREFER_RENDER_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_IDENTIFIER;
 import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
-@PrepareForTest(HstRequestUtils.class)
 public class ExperiencePageIT extends AbstractBeanTestCase {
 
     private Repository repository;
@@ -401,10 +393,8 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
 
     private void initContext(final String pathToExperiencePage, final String branch) throws ObjectBeanManagerException {
         if (branch != null) {
-            // Mock that the right branch is loaded!
-            PowerMock.mockStaticPartial(HstRequestUtils.class, "getBranchIdFromContext");
-            expect(HstRequestUtils.getBranchIdFromContext(anyObject())).andStubReturn(branch);
-            PowerMock.replay(HstRequestUtils.class);
+            requestContext.setAttribute(FORCE_USE_PREFER_RENDER_ATTR_NAME, Boolean.TRUE);
+            requestContext.setAttribute(PREFER_RENDER_BRANCH_ID, branch);
         }
 
         HippoBean requestBean = (HippoBean)requestContext.getObjectBeanManager().getObject(pathToExperiencePage);
