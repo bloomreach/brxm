@@ -86,17 +86,21 @@ public class PageModelApiStatelessIT extends AbstractPageModelApiITCases {
     public void assertions_http_session_creation_allowed_for_page_model_api_request_if_configured_to_be_allowed() throws Exception {
         PageModelApiInitializationValve component = HstServices.getComponentManager().getComponent(PageModelApiInitializationValve.class.getName());
 
-        // don't report on http session creation
-        component.setStatelessRequestValidation(false);
+        try {
+            // don't report on http session creation
+            component.setStatelessRequestValidation(false);
 
-        final RequestResponseMock requestResponse = mockGetRequestResponse(
-                "http", "localhost", "/spa/resourceapi/httpsessionpage", null);
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/spa/resourceapi/httpsessionpage", null);
 
-        requestResponse.getRequest().addHeader(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION, "1.0");
-        render(requestResponse);
-        assertThat(requestResponse.getRequest().getSession(false))
-                .as("Expected that a http session was created")
-                .isNotNull();
+            requestResponse.getRequest().addHeader(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION, "1.0");
+            render(requestResponse);
+            assertThat(requestResponse.getRequest().getSession(false))
+                    .as("Expected that a http session was created")
+                    .isNotNull();
+        } finally {
+            component.setStatelessRequestValidation(true);
+        }
     }
 
     @Test

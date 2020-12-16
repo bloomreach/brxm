@@ -55,16 +55,12 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOCBASE;
 public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiITCases {
 
     @Before
-    @Override
-    public void setUp() throws Exception {
+    public void setUp() {
         ApiVersionProvider.set(V09);
-        super.setUp();
     }
 
     @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void tearDown() {
         ApiVersionProvider.clear();
     }
 

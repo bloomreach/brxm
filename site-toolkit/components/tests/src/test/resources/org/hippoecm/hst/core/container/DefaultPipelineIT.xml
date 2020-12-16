@@ -21,19 +21,4 @@
 
   <import resource="classpath:/org/hippoecm/hst/core/container/AbstractPipelineTestCase.xml" />
 
-  <bean id="javax.servlet.http.HttpServletRequest" scope="prototype"
-        class="org.springframework.mock.web.MockHttpServletRequest">
-    <constructor-arg ref="javax.servlet.ServletContext" />
-    <property name="scheme" value="http" />
-    <property name="serverName" value="localhost" />
-    <property name="serverPort" value="8085" />
-    <property name="method" value="GET" />
-    <property name="contextPath" value="/site" />
-  </bean>
-
-  <bean id="javax.servlet.http.HttpServletResponse" scope="prototype"
-        class="org.springframework.mock.web.MockHttpServletResponse">
-  </bean>
-
-
 </beans>

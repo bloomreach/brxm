@@ -64,6 +64,8 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.hippoecm.hst.core.container.ContainerConstants.BR_VERSION_UUID_REQUEST_PARAMETER;
+import static org.hippoecm.hst.core.container.ContainerConstants.FORCE_USE_PREFER_RENDER_ATTR_NAME;
+import static org.hippoecm.hst.core.container.ContainerConstants.PREFER_RENDER_BRANCH_ID;
 import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
 import static org.hippoecm.hst.site.HstServices.getComponentManager;
@@ -798,6 +800,11 @@ public class HstRequestUtils {
 
 
     public static String getBranchIdFromContext(final HstRequestContext requestContext) {
+
+        if (Boolean.TRUE.equals(requestContext.getAttribute(FORCE_USE_PREFER_RENDER_ATTR_NAME))
+                && requestContext.getAttribute(PREFER_RENDER_BRANCH_ID) != null) {
+            return (String) requestContext.getAttribute(PREFER_RENDER_BRANCH_ID);
+        }
 
         final Map<HstSite, HstSite> renderMap = (Map<HstSite, HstSite>)requestContext.getAttribute(RENDER_BRANCH_ID);
         if (renderMap == null) {

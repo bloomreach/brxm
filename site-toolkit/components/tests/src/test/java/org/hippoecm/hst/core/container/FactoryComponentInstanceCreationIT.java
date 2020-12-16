@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.platform.container.components.HstComponentRegistryImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.createNiceMock;
@@ -44,6 +45,18 @@ public class FactoryComponentInstanceCreationIT extends AbstractSpringTestCase {
 
     private VirtualHost virtualHost;
     private VirtualHosts virtualHosts;
+
+
+    /**
+     * addAnnotatedClassesConfigurationParam must be added before super setUpClass, hence redefine same setUpClass method
+     * to hide the super.setUpClass and invoke that explicitly
+     */
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        String classXmlFileName = FactoryComponentInstanceCreationIT.class.getName().replace(".", "/") + ".xml";
+        AbstractSpringTestCase.addAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractSpringTestCase.setUpClass();
+    }
 
     @Before
     public void setUp() throws Exception {
