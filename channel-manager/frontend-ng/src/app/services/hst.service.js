@@ -104,12 +104,21 @@ class HstService {
     return this._callHst('PUT', uuid, pathElements, data, null, FORM_HEADERS);
   }
 
+  doPutFormWithHeaders(data, uuid, headers, ...pathElements) {
+    data = this._serializeParams(data);
+    return this._callHst('PUT', uuid, pathElements, data, null, { ...FORM_HEADERS, ...headers });
+  }
+
   doPutWithHeaders(uuid, headers, ...pathElements) {
     return this._callHst('PUT', uuid, pathElements, undefined, undefined, headers);
   }
 
   doDelete(uuid, ...pathElements) {
     return this._callHst('DELETE', uuid, pathElements);
+  }
+
+  doDeleteWithHeaders(uuid, headers, ...pathElements) {
+    return this._callHst('DELETE', uuid, pathElements, undefined, undefined, headers);
   }
 
   _callHst(method, uuid, pathElements, data, params, headers) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapresource;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +27,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
@@ -274,9 +273,9 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         final Mount targetMount = getTargetMountByAlias("subsite");
         final Response copy = siteMapResource.copy(targetMount.getIdentifier(), home.getId(), null, "copy");
         assertEquals(OK.getStatusCode(), copy.getStatus());
-        ExtResponseRepresentation extResponseRepresentation = (ExtResponseRepresentation)copy.getEntity();
-        assertEquals(SiteMapPageRepresentation.class, extResponseRepresentation.getData().getClass());
-        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation)extResponseRepresentation.getData();
+        ResponseRepresentation responseRepresentation = (ResponseRepresentation)copy.getEntity();
+        assertEquals(SiteMapPageRepresentation.class, responseRepresentation.getData().getClass());
+        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) responseRepresentation.getData();
         assertEquals("copy", siteMapPageRepresentation.getPathInfo());
         assertEquals("/subsite/copy", siteMapPageRepresentation.getRenderPathInfo());
     }
@@ -632,7 +631,7 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
             final Mount targetMount = getTargetMountByAlias("subsite");
             final Response copy = siteMapResource.copy(targetMount.getIdentifier(), news.getId(), null, "copy-again");
             assertEquals(BAD_REQUEST.getStatusCode(), copy.getStatus());
-            final ExtResponseRepresentation entity = (ExtResponseRepresentation)copy.getEntity();
+            final ResponseRepresentation entity = (ResponseRepresentation)copy.getEntity();
             final String errorCode = entity.getErrorCode();
             assertEquals(String.valueOf(ClientError.ITEM_ALREADY_LOCKED), errorCode);
             // error message is about this node being locked
@@ -670,7 +669,7 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
             final Mount targetMount = getTargetMountByAlias("subsite");
             final Response copy = siteMapResource.copy(targetMount.getIdentifier(), news.getId(), null, "copy-again");
             assertEquals(BAD_REQUEST.getStatusCode(), copy.getStatus());
-            final ExtResponseRepresentation entity = (ExtResponseRepresentation)copy.getEntity();
+            final ResponseRepresentation entity = (ResponseRepresentation)copy.getEntity();
             final String errorCode = entity.getErrorCode();
             assertEquals(String.valueOf(ClientError.ITEM_ALREADY_LOCKED), errorCode);
             // error message is about this node being locked
@@ -709,7 +708,7 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         final Mount editingMount = mountResource.getPageComposerContextService().getEditingMount();
         final Response copy = siteMapResource.copy(editingMount.getIdentifier(), home.getId(), null, "ho" + invalidChar+"me");
         assertEquals(BAD_REQUEST.getStatusCode(), copy.getStatus());
-        assertTrue(((ExtResponseRepresentation) copy.getEntity()).getMessage().contains(messagePart));
+        assertTrue(((ResponseRepresentation) copy.getEntity()).getMessage().contains(messagePart));
     }
 
 }

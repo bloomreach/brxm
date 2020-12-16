@@ -14,8 +14,46 @@
  * limitations under the License.
  */
 
+@import '~@bloomreach/frontend-theme/angular-theme';
 @import 'mixins';
 @import 'material-theme';
+@import 'variables';
+
+.mat-line {
+  font-size: 14px !important;
+}
+
+.mat-line.version-actions {
+  display: none;
+}
+
+.mat-list-single-selected-option {
+  background-color: map-get($blue, 50);
+
+  .mat-line:first-child {
+    font-weight: bold !important;
+  }
+
+  .version-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    button:not(:first-child) {
+      margin-left: 8px;
+    }
+  }
+}
+
+.mat-subheader {
+  position: relative;
+}
+
+.mat-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
 
 .no-versions {
   height: 72px;

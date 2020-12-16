@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,13 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapresource;
 
-
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEventListenerRegistry;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCreateContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCreateEvent;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -113,7 +112,7 @@ public class PageCreateEventTest extends AbstractSiteMapResourceTest {
             newItem.setPageTitle(newPageTitle);
             final SiteMapResource siteMapResource = createResource();
             final Response response = siteMapResource.create(newItem);
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     OK.getStatusCode(), response.getStatus());
 
 
@@ -141,7 +140,7 @@ public class PageCreateEventTest extends AbstractSiteMapResourceTest {
             newItem.setPageTitle(newPageTitle);
             final SiteMapResource siteMapResource = createResource();
             final Response response = siteMapResource.create(newItem);
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 
             final String previewSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "/" + newPageName;
@@ -169,7 +168,7 @@ public class PageCreateEventTest extends AbstractSiteMapResourceTest {
             newItem.setPageTitle(newPageTitle);
             final SiteMapResource siteMapResource = createResource();
             final Response response = siteMapResource.create(newItem);
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     BAD_REQUEST.getStatusCode(), response.getStatus());
 
             final String previewSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "/" + newPageName;

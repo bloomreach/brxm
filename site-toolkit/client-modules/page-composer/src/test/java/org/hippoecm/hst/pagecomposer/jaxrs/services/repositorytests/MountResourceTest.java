@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests;
 
-import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
-import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
-import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.DISCARD;
-import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PREVIEW_CREATION;
-import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PUBLISH;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +27,7 @@ import javax.ws.rs.core.Response;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService;
@@ -54,6 +43,17 @@ import org.junit.Test;
 import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.DISCARD;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PREVIEW_CREATION;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PUBLISH;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class MountResourceTest extends AbstractMountResourceTest {
 
@@ -627,7 +627,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
             assertNotNull(listener.handledEvent.getException());
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-            assertEquals(listener.handledEvent.getException().toString(), ((ExtResponseRepresentation)response.getEntity()).getMessage());
+            assertEquals(listener.handledEvent.getException().toString(), ((ResponseRepresentation)response.getEntity()).getMessage());
 
             // session contains not more changes as should be reset
             assertFalse(session.hasPendingChanges());
@@ -654,7 +654,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
             assertNotNull(listener.handledEvent.getException());
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-            assertEquals(listener.handledEvent.getException().toString(), ((ExtResponseRepresentation)response.getEntity()).getMessage());
+            assertEquals(listener.handledEvent.getException().toString(), ((ResponseRepresentation)response.getEntity()).getMessage());
 
             // session contains not more changes as should be reset
             assertFalse(session.hasPendingChanges());
@@ -691,7 +691,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
                 assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 
-                assertEquals("IllegalStateException message", ((ExtResponseRepresentation) response.getEntity()).getMessage());
+                assertEquals("IllegalStateException message", ((ResponseRepresentation) response.getEntity()).getMessage());
                 // session contains not more changes as should be reset
                 assertFalse(session.hasPendingChanges());
 
@@ -716,7 +716,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
             try (Log4jInterceptor ignore = Log4jInterceptor.onWarn().trap(AbstractConfigResource.class).build()) {
                 Response response = mountResource.discardChanges();
                 assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-                assertEquals("IllegalStateException message", ((ExtResponseRepresentation)response.getEntity()).getMessage());
+                assertEquals("IllegalStateException message", ((ResponseRepresentation)response.getEntity()).getMessage());
 
                 // session contains not more changes as should be reset
                 assertFalse(session.hasPendingChanges());

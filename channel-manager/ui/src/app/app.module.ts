@@ -16,10 +16,12 @@
 
 import { NgModule } from '@angular/core';
 
+import { ExperimentsModule } from './experiments/experiments.module';
 import { NotificationBarModule } from './notification-bar/notification-bar.module';
 import { Ng1ServicesModule } from './services/ng1/ng1-services.module';
 import { SharedModule } from './shared/shared.module';
 import { SiteMapModule } from './site-map/site-map.module';
+import { VariantsModule } from './variants/variants.module';
 import { VersionsModule } from './versions/versions.module';
 
 @NgModule({
@@ -27,6 +29,8 @@ import { VersionsModule } from './versions/versions.module';
     SharedModule,
     NotificationBarModule,
     VersionsModule,
+    VariantsModule,
+    ExperimentsModule,
     Ng1ServicesModule,
     SiteMapModule,
   ],
