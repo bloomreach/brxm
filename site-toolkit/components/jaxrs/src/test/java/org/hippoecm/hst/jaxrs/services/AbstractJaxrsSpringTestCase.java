@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,8 +26,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.context.HippoWebappContext;
@@ -50,27 +49,23 @@ public abstract class AbstractJaxrsSpringTestCase
 
     protected final static Logger log = LoggerFactory.getLogger(AbstractJaxrsSpringTestCase.class);
     
-    protected SpringComponentManager componentManager;
+    protected static SpringComponentManager componentManager;
 
-    protected HippoWebappContext webappContext = new HippoWebappContext(SITE, new MockServletContext() {
+    protected static HippoWebappContext webappContext = new HippoWebappContext(SITE, new MockServletContext() {
         public String getContextPath() {
             return "/site";
         }
     });
 
-    protected MockServletContext servletContext;
+    protected static MockServletContext servletContext;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         //Enable legacy project structure mode (without extensions)
         System.setProperty("use.hcm.sites", "false");
-    }
-
-    @Before
-    public void setUp() throws Exception {
         HippoWebappContextRegistry.get().register(webappContext);
 
-        final Configuration containerConfiguration = getContainerConfiguration();
+        final Configuration containerConfiguration = new PropertiesConfiguration();
         containerConfiguration.addProperty("hst.configuration.rootPath", "/hst:hst");
         componentManager = new SpringComponentManager(containerConfiguration);
         componentManager.setConfigurationResources(getConfigurations());
@@ -89,17 +84,17 @@ public abstract class AbstractJaxrsSpringTestCase
         componentManager.setServletContext(servletContext);
         componentManager.initialize();
         componentManager.start();
-        HstServices.setComponentManager(getComponentManager());
+        HstServices.setComponentManager(componentManager);
 
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
         modelRegistry.registerHstModel(servletContext, componentManager, true);
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterClass
+    public static void afterClass() {
         HippoWebappContextRegistry.get().unregister(webappContext);
-        this.componentManager.stop();
-        this.componentManager.close();
+        componentManager.stop();
+        componentManager.close();
         ModifiableRequestContextProvider.clear();
         HstServices.setComponentManager(null);
     }
@@ -108,9 +103,9 @@ public abstract class AbstractJaxrsSpringTestCase
      * required specification of spring configurations
      * the derived class can override this.
      */
-    protected String[] getConfigurations() {
-        String classXmlFileName = getClass().getName().replace(".", "/") + ".xml";
-        String classXmlFileName2 = getClass().getName().replace(".", "/") + "-*.xml";
+    static String[] getConfigurations() {
+        String classXmlFileName = AbstractJaxrsSpringTestCase.class.getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = AbstractJaxrsSpringTestCase.class.getName().replace(".", "/") + "-*.xml";
 
         String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
         return new String[] { classXmlFileName, classXmlFileName2, classXmlFileNamePlatform };
@@ -123,8 +118,5 @@ public abstract class AbstractJaxrsSpringTestCase
     protected <T> T getComponent(String name) {
         return getComponentManager().getComponent(name);
     }
-    
-    protected Configuration getContainerConfiguration() {
-        return new PropertiesConfiguration();
-    }
+
 }

@@ -62,7 +62,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
     public void tearDown() throws Exception {
         try {
             final Session session = createSession("admin", "admin");
-            AbstractPageComposerTest.restoreHstConfigBackup(session);
+            restoreHstConfigBackup(session);
             session.logout();
         } finally {
             super.tearDown();

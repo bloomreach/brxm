@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,14 +33,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
-import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.context.HippoWebappContext;
@@ -56,19 +54,16 @@ import static org.apache.commons.lang3.StringUtils.substringBefore;
 
 public class AbstractRestApiIT {
 
-    protected SpringComponentManager componentManager;
-    protected final MockServletContext servletContext = new MockServletContext();
-    protected HippoWebappContext webappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, servletContext);
-    protected Filter filter;
+    protected static SpringComponentManager componentManager;
+    protected static final MockServletContext servletContext = new MockServletContext();
+    protected static HippoWebappContext webappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, servletContext);
+    protected static Filter filter;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         //Enable legacy project structure mode (without extensions)
         System.setProperty("use.hcm.sites", "false");
-    }
 
-    @Before
-    public void setUp() throws Exception {
         final PropertiesConfiguration configuration = new PropertiesConfiguration();
         configuration.addProperty("hst.configuration.rootPath", "/hst:hst");
         componentManager = new SpringComponentManager(configuration);
@@ -87,34 +82,29 @@ public class AbstractRestApiIT {
 
         componentManager.initialize();
         componentManager.start();
-        HstServices.setComponentManager(getComponentManager());
+        HstServices.setComponentManager(componentManager);
         filter = HstServices.getComponentManager().getComponent("org.hippoecm.hst.container.HstFilter");
 
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
         modelRegistry.registerHstModel(servletContext, componentManager, true);
-
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterClass
+    public static void afterClass() {
 
-        this.componentManager.stop();
-        this.componentManager.close();
+        ModifiableRequestContextProvider.clear();
+        componentManager.stop();
+        componentManager.close();
         HippoWebappContextRegistry.get().unregister(webappContext);
         HstServices.setComponentManager(null);
-        ModifiableRequestContextProvider.clear();
 
     }
 
-    protected String[] getConfigurations() {
+    protected static String[] getConfigurations() {
         String classXmlFileName = AbstractRestApiIT.class.getName().replace(".", "/") + ".xml";
         String classXmlFileName2 = AbstractRestApiIT.class.getName().replace(".", "/") + "-*.xml";
         String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
         return new String[] { classXmlFileName, classXmlFileName2, classXmlFileNamePlatform };
-    }
-
-    protected ComponentManager getComponentManager() {
-        return this.componentManager;
     }
 
     protected Session createLiveUserSession() throws RepositoryException {

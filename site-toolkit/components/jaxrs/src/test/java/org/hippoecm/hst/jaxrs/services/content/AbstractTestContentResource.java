@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ import org.hippoecm.hst.platform.container.components.HstComponentRegistryImpl;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Before;
 import org.springframework.mock.web.MockServletConfig;
-import org.springframework.mock.web.MockServletContext;
 
 import static org.junit.Assert.assertTrue;
 
@@ -85,17 +84,9 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
     protected HstURLFactory urlFactory;
     protected HstContainerURLProvider urlProvider;
     protected HstLinkCreator linkCreator;
-    
-    protected String[] getConfigurations() {
 
-        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
-        return new String[] { "org/hippoecm/hst/jaxrs/services/content/TestContentServices.xml", classXmlFileNamePlatform };
-
-    }
-    
     @Before
     public void setUp() throws Exception {
-        super.setUp();
         
         pipelines = getComponent(Pipelines.class.getName());
         jaxrsPipeline = this.pipelines.getPipeline("JaxrsRestContentPipeline");
