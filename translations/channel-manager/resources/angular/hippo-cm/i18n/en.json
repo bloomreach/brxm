@@ -87,6 +87,7 @@
   "CONFIRM_DISCARD_DOCUMENT_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE": "Discard unsaved changes to document '{{documentName}}'?<br/>This will delete the '{{documentName}}' document",
   "TOOLBAR_MENU_XPAGE_PUBLISH": "Publish",
   "SUBPAGE_PAGE_PROPERTIES_TITLE": "Properties of '{{pageName}}'",
+  "EXPERIMENT_VARIANT_STATUS_MESSAGE": "{{ variantName }} has an estimated conversion rate between {{ conversion.low }}% and {{ conversion.high }}%, with a best guess of {{ conversion.mean }}%.",
   "ERROR_MENU_LOCKED_BY": "Menu locked by '{{lockedBy}}'",
   "LIVE": "live",
   "ERROR_MOVE_COMPONENT_FAILED": "Failed to move component '{{component}}'",
