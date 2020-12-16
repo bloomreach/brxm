@@ -18,7 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequest
 import javax.jcr.Session;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
-import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.junit.After;
 import org.junit.Before;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -89,7 +88,7 @@ public abstract class AbstractComponentResourceTest extends AbstractFullRequestC
     public void tearDown() throws Exception {
         try {
             final Session session = createSession("admin", "admin");
-            AbstractPageComposerTest.restoreHstConfigBackup(session);
+            restoreHstConfigBackup(session);
             session.logout();
         } finally {
             super.tearDown();

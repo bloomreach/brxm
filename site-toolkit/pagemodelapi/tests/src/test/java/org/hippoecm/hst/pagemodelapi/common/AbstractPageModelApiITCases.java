@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
@@ -31,8 +34,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
@@ -48,8 +49,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
@@ -60,6 +60,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
@@ -77,22 +79,23 @@ public abstract class AbstractPageModelApiITCases {
     public static final String SPA_MOUNT_JCR_PATH = LOCALHOST_JCR_PATH + "/hst:root/spa";
     public static final String ANNOTATED_CLASSES_CONFIGURATION_PARAM = "classpath*:org/hippoecm/hst/pagemodelapi/common/**/*.class";
 
+    public static final Set<String> annotatedClasses = new HashSet<>();
+    static {
+        annotatedClasses.add(ANNOTATED_CLASSES_CONFIGURATION_PARAM);
+    }
+
     protected static final SimpleCredentials EDITOR_CREDS = new SimpleCredentials("editor", "editor".toCharArray());
-    protected SpringComponentManager componentManager;
-    protected final MockServletContext servletContext = new MockServletContext();
-    protected HippoWebappContext webappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, servletContext);
-    protected Filter filter;
+    protected static SpringComponentManager componentManager;
+    protected static final MockServletContext servletContext = new MockServletContext();
+    protected static HippoWebappContext webappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, servletContext);
+    protected static Filter filter;
     protected static ObjectMapper mapper = new ObjectMapper();
-    protected EventPathsInvalidator eventPathsInvalidator;
+    protected static EventPathsInvalidator eventPathsInvalidator;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         //Enable legacy project structure mode (without extensions)
         System.setProperty("use.hcm.sites", "false");
-    }
-
-    @Before
-    public void setUp() throws Exception {
         final PropertiesConfiguration configuration = new PropertiesConfiguration();
         configuration.addProperty("hst.configuration.rootPath", "/hst:hst");
         // below is handy such that during integration tests, the PMA response is nicely formatted (if you do a
@@ -128,30 +131,34 @@ public abstract class AbstractPageModelApiITCases {
         eventPathsInvalidator = hstModel.getEventPathsInvalidator();
     }
 
-    protected String getAnnotatedClassesConfigurationParam() {
-        return ANNOTATED_CLASSES_CONFIGURATION_PARAM;
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
-        this.componentManager.stop();
-        this.componentManager.close();
+    @AfterClass
+    public static void tearDownClass() {
+        componentManager.stop();
+        componentManager.close();
         HippoWebappContextRegistry.get().unregister(webappContext);
         HstServices.setComponentManager(null);
         ModifiableRequestContextProvider.clear();
-
+        System.clearProperty("use.hcm.sites");
     }
 
-    protected String[] getConfigurations() {
+
+    public static void addAnnotatedClassesConfigurationParam(final String annotatedClassParam) {
+        annotatedClasses.add(annotatedClassParam);
+    }
+
+    private static String getAnnotatedClassesConfigurationParam() {
+        return annotatedClasses.stream().collect(Collectors.joining(","));
+    }
+
+    protected static String[] getConfigurations() {
         String classXmlFileName = AbstractPageModelApiITCases.class.getName().replace(".", "/") + ".xml";
         String classXmlFileName2 = AbstractPageModelApiITCases.class.getName().replace(".", "/") + "-*.xml";
         String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
         return new String[]{classXmlFileName, classXmlFileName2, classXmlFileNamePlatform};
     }
 
-    protected ComponentManager getComponentManager() {
-        return this.componentManager;
+    protected static ComponentManager getComponentManager() {
+        return componentManager;
     }
 
     protected Session createLiveUserSession() throws RepositoryException {
