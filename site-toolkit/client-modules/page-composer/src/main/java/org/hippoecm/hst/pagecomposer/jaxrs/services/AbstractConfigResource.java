@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BaseChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 
 public class AbstractConfigResource {
 
-    private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
 
     private PageComposerContextService pageComposerContextService;
 
@@ -61,87 +61,98 @@ public class AbstractConfigResource {
         return HippoServiceRegistry.getService(PlatformServices.class);
     }
 
-    protected Response ok(String msg) {
+    protected Response ok(final String msg) {
         return ok(msg, ArrayUtils.EMPTY_STRING_ARRAY, false);
     }
 
-    protected Response ok(String msg, boolean reloadRequired) {
+    protected Response ok(final String msg, final boolean reloadRequired) {
         return ok(msg, ArrayUtils.EMPTY_STRING_ARRAY, reloadRequired);
     }
 
-    protected Response ok(String msg, Object data) {
+    protected <T> Response ok(final String msg, final T data) {
         return ok(msg, data, false);
     }
 
-    protected Response ok(String msg, Object data, boolean reloadRequired) {
-        ExtResponseRepresentation entity = new ExtResponseRepresentation(data);
-        entity.setMessage(msg);
-        entity.setSuccess(true);
-        entity.setReloadRequired(reloadRequired);
-        return Response.ok().entity(entity).build();
+    protected <T> Response ok(final String msg, final T data, final boolean reloadRequired) {
+        final ResponseRepresentation<T> responseRepresentation = ResponseRepresentation.<T>builder()
+                .setSuccess(true)
+                .setMessage(msg)
+                .setData(data)
+                .setReloadRequired(reloadRequired)
+                .build();
+
+        return Response.ok(responseRepresentation).build();
     }
 
-    protected Response error(String msg) {
-        return error(msg, ArrayUtils.EMPTY_STRING_ARRAY);
+    protected Response error(final String msg) {
+        return error(msg, ArrayUtils.EMPTY_STRING_ARRAY, false);
     }
 
-    protected Response error(String msg, boolean reloadRequired) {
+    protected Response error(final String msg, final boolean reloadRequired) {
         return error(msg, ArrayUtils.EMPTY_STRING_ARRAY, reloadRequired);
     }
 
-    protected Response error(String msg, Object data) {
+    protected <T> Response error(final String msg, final T data) {
         return error(msg, data, false);
     }
 
-    protected Response error(String msg, Object data, boolean reloadRequired) {
-        ExtResponseRepresentation entity = new ExtResponseRepresentation(data);
-        entity.setMessage(msg);
-        entity.setSuccess(false);
-        entity.setReloadRequired(reloadRequired);
+    protected <T> Response error(final String msg, final T data, final boolean reloadRequired) {
+        final ResponseRepresentation<T> entity = ResponseRepresentation.<T>builder()
+                .setSuccess(false)
+                .setMessage(msg)
+                .setData(data)
+                .setReloadRequired(reloadRequired)
+                .build();
+
         return Response.serverError().entity(entity).build();
     }
 
-    protected Response clientError(String msg, Object data) {
+    protected <T> Response clientError(final String msg, final T data) {
         return clientError(msg, data, false);
     }
 
+    protected <T> Response clientError(final String msg, final T data, final boolean reloadRequired) {
+        final ResponseRepresentation<T> entity = ResponseRepresentation.<T>builder()
+                .setSuccess(false)
+                .setMessage(msg)
+                .setData(data)
+                .setReloadRequired(reloadRequired)
+                .build();
 
-    protected Response clientError(String msg, Object data, boolean reloadRequired) {
-        ExtResponseRepresentation entity = new ExtResponseRepresentation(data);
-        entity.setMessage(msg);
-        entity.setSuccess(false);
-        entity.setReloadRequired(reloadRequired);
         return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
     }
 
-    protected Response created(String msg) {
+    protected Response created(final String msg) {
         return created(msg, false);
     }
 
-    protected Response created(String msg, boolean reloadRequired) {
-        ExtResponseRepresentation entity = new ExtResponseRepresentation();
-        entity.setMessage(msg);
-        entity.setSuccess(true);
-        entity.setReloadRequired(reloadRequired);
+    protected Response created(final String msg, final boolean reloadRequired) {
+        final ResponseRepresentation<Void> entity = ResponseRepresentation.<Void>builder()
+                .setSuccess(true)
+                .setMessage(msg)
+                .setReloadRequired(reloadRequired)
+                .build();
+
         return Response.status(Response.Status.CREATED).entity(entity).build();
     }
 
-    protected Response conflict(String msg) {
+    protected Response conflict(final String msg) {
         return conflict(msg, false);
     }
 
-    protected Response conflict(String msg, boolean reloadRequired) {
-        ExtResponseRepresentation entity = new ExtResponseRepresentation();
-        entity.setMessage(msg);
-        entity.setSuccess(false);
-        entity.setReloadRequired(reloadRequired);
+    protected Response conflict(final String msg, final boolean reloadRequired) {
+        final ResponseRepresentation<Void> entity = ResponseRepresentation.<Void>builder()
+                .setSuccess(false)
+                .setMessage(msg)
+                .setReloadRequired(reloadRequired)
+                .build();
+
         return Response.status(Response.Status.CONFLICT).entity(entity).build();
     }
 
     protected ObjectConverter getObjectConverter(HstRequestContext requestContext) {
         return requestContext.getContentBeansTool().getObjectConverter();
     }
-
 
     protected Response tryGet(final Callable<Response> callable) {
         try {
@@ -189,7 +200,6 @@ public class AbstractConfigResource {
         }
     }
 
-
     private void createMandatoryWorkspaceNodesIfMissing() throws RepositoryException {
         final String liveConfigPath = getPageComposerContextService().getEditingLiveConfigurationPath();
         final String previewConfigPath = getPageComposerContextService().getEditingPreviewConfigurationPath();
@@ -231,11 +241,14 @@ public class AbstractConfigResource {
         } else {
             log.info(formattedMessage);
         }
-        final ExtResponseRepresentation entity = new ExtResponseRepresentation();
-        entity.setSuccess(false);
-        entity.setMessage(e.toString());
-        entity.setErrorCode(e.getError().name());
-        entity.setData(e.getParameterMap());
+
+        final ResponseRepresentation<Map<?, ?>> entity = ResponseRepresentation.<Map<?, ?>>builder()
+                .setSuccess(false)
+                .setMessage(e.toString())
+                .setData(e.getParameterMap())
+                .setErrorCode(e.getError().name())
+                .build();
+
         return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
     }
 
@@ -288,10 +301,13 @@ public class AbstractConfigResource {
         final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation()
                 .represent(containerItemNode, containerItem.getComponentDefinition(), containerItem.getTimeStamp());
 
-        final ExtResponseRepresentation entity = new ExtResponseRepresentation(containerItemRepresentation);
-        entity.setReloadRequired(requiresReload);
-        entity.setSuccess(true);
-        entity.setMessage(msg);
+        final ResponseRepresentation<ContainerItemRepresentation> entity = ResponseRepresentation.<ContainerItemRepresentation>builder()
+                .setSuccess(true)
+                .setMessage(msg)
+                .setData(containerItemRepresentation)
+                .setReloadRequired(requiresReload)
+                .build();
+
         return Response.status(statusType)
                 .entity(entity)
                 .build();

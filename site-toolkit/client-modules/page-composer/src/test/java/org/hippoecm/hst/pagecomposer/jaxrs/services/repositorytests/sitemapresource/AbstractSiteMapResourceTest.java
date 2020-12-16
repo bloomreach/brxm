@@ -38,7 +38,7 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService;
@@ -179,7 +179,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
         SiteMapItemRepresentation siteMapItemRepresentation =
-                (SiteMapItemRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+                (SiteMapItemRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
         return siteMapItemRepresentation;
     }
 

@@ -23,7 +23,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
@@ -88,7 +88,7 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
                 versionStamp);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 
-        final Object data = ((ExtResponseRepresentation) response.getEntity()).getData();
+        final Object data = ((ResponseRepresentation) response.getEntity()).getData();
         ContainerItemRepresentation containerItemRepresentation = (ContainerItemRepresentation)data;
         assertEquals(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName + "/main/container1/catalog-item",
                 containerItemRepresentation.getPath());
@@ -175,8 +175,8 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
                 incorrectVersionStamp);
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        ExtResponseRepresentation extResponseRepresentation = (ExtResponseRepresentation)response.getEntity();
-        ErrorStatus errorStatus = (ErrorStatus)extResponseRepresentation.getData();
+        ResponseRepresentation responseRepresentation = (ResponseRepresentation)response.getEntity();
+        ErrorStatus errorStatus = (ErrorStatus) responseRepresentation.getData();
         assertEquals(ClientError.ITEM_CHANGED, errorStatus.getError());
     }
 
@@ -209,8 +209,8 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
         final Response response = containerResource.createContainerItem(catalogItem.getIdentifier(), 0);
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        ExtResponseRepresentation extResponseRepresentation = (ExtResponseRepresentation)response.getEntity();
-        ErrorStatus errorStatus = (ErrorStatus)extResponseRepresentation.getData();
+        ResponseRepresentation responseRepresentation = (ResponseRepresentation)response.getEntity();
+        ErrorStatus errorStatus = (ErrorStatus) responseRepresentation.getData();
         assertEquals(ClientError.ITEM_ALREADY_LOCKED, errorStatus.getError());
 
         bob.logout();

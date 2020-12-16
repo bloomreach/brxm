@@ -20,6 +20,7 @@ export interface Ng1ConfigService {
   locale: string;
   timeZone: string;
   rootUuid: string;
+  variantsUuid: string;
   getCmsContextPath(): string;
   getCmsOrigin(): string;
   isDevMode(): boolean;

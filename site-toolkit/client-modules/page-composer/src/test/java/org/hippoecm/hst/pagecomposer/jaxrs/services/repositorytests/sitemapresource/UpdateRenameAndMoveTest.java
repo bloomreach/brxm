@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -232,7 +232,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
             newsDefault.setParentId(news.getId());
 
             Response response = siteMapResource.update(newsDefault);
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     Response.Status.OK.getStatusCode(), response.getStatus());
             final Node newsDefaultNode = session.getNodeByIdentifier(newsDefault.getId());
             assertEquals("foobar", newsDefaultNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
@@ -247,7 +247,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
 
         {
             Response response = siteMapResource.update(news);
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     Response.Status.OK.getStatusCode(), response.getStatus());
             final Node newsNode = session.getNodeByIdentifier(news.getId());
             assertEquals("foo", newsNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
@@ -287,7 +287,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
 
         {
             Response response = siteMapResource.update(newsAny);
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     Response.Status.OK.getStatusCode(), response.getStatus());
             final Node newsAnyNode = session.getNodeByIdentifier(newsAny.getId());
             assertEquals("foo", newsAnyNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
@@ -310,7 +310,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
             String parentPath = homeNode.getParent().getPath();
             home.setName("renamedHome");
             Response response = siteMapResource.update(home);
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     Response.Status.OK.getStatusCode(), response.getStatus());
             assertEquals("renamedHome", homeNode.getName());
 
@@ -341,14 +341,14 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
             news.setName("home");
             Response bobResponse = siteMapResource.update(news);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponse.getStatus());
-            final ExtResponseRepresentation representation = (ExtResponseRepresentation) bobResponse.getEntity();
+            final ResponseRepresentation representation = (ResponseRepresentation) bobResponse.getEntity();
             assertThat(representation.getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
 
             // bob also sees the 'renamedHome' locked
             news.setName("renamedHome");
             Response bobResponse2 = siteMapResource.update(news);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponse2.getStatus());
-            final ExtResponseRepresentation entity = (ExtResponseRepresentation) bobResponse2.getEntity();
+            final ResponseRepresentation entity = (ResponseRepresentation) bobResponse2.getEntity();
             assertThat(entity.getErrorCode(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
         }
     }
@@ -360,7 +360,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
         home.setName("home");
         final SiteMapResource siteMapResource = createResource();
         Response response = siteMapResource.update(home);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.OK.getStatusCode(), response.getStatus());
         assertTrue(homeNode.hasProperty(GENERAL_PROPERTY_LOCKED_BY));
     }
@@ -385,7 +385,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
             renamedHome.setName("home");
             Response response = siteMapResource.update(renamedHome);
             Node homeNode = admin.getNodeByIdentifier(renamedHome.getId());
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     Response.Status.OK.getStatusCode(), response.getStatus());
             assertEquals("home", homeNode.getName());
             assertEquals("admin", homeNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
@@ -425,7 +425,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
             final SiteMapItemRepresentation home = getSiteMapItemRepresentation(admin, "rename2");
             home.setName("home");
             Response response = siteMapResource.update(home);
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     Response.Status.OK.getStatusCode(), response.getStatus());
             assertEquals("home", home.getName());
             Node homeNode = admin.getNodeByIdentifier(home.getId());
@@ -499,7 +499,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         Response response = siteMapResource.update(home);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        final ExtResponseRepresentation entity = (ExtResponseRepresentation) response.getEntity();
+        final ResponseRepresentation entity = (ResponseRepresentation) response.getEntity();
         assertThat(entity.getErrorCode(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
     }
 
@@ -517,13 +517,13 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
         home.setName("renamed");
         Response failResponse = siteMapResource.update(home);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), failResponse.getStatus());
-        final ExtResponseRepresentation entity = (ExtResponseRepresentation) failResponse.getEntity();
+        final ResponseRepresentation entity = (ResponseRepresentation) failResponse.getEntity();
         assertThat(entity.getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
 
         // news should still be possible to move
         final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
         Response response = siteMapResource.update(news);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.OK.getStatusCode(), response.getStatus());
 
         bob.logout();
@@ -542,7 +542,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
         home.setName("about-us");
         Response failResponse = siteMapResource.update(home);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), failResponse.getStatus());
-        final String errorCode = ((ExtResponseRepresentation) failResponse.getEntity()).getErrorCode();
+        final String errorCode = ((ResponseRepresentation) failResponse.getEntity()).getErrorCode();
         assertThat(errorCode, is(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE.name()));
     }
 
@@ -596,7 +596,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         Response response = siteMapResource.update(home);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertTrue(((ExtResponseRepresentation) response.getEntity()).getMessage().contains(messagePart));
+        assertTrue(((ResponseRepresentation) response.getEntity()).getMessage().contains(messagePart));
     }
 
     @Test
@@ -627,7 +627,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
         if (response.getStatus() != 200) {
             throw new ClientException("failed", UNKNOWN);
         }
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.OK.getStatusCode(), response.getStatus());
 
         assertTrue(session.nodeExists(newsNode.getPath() + "/" + finalName));
@@ -695,7 +695,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
         notFound.setParentId(home.getId());
         final Response update = siteMapResource.update(notFound);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), update.getStatus());
-        final String message = ((ExtResponseRepresentation)update.getEntity()).getMessage();
+        final String message = ((ResponseRepresentation)update.getEntity()).getMessage();
         assertTrue(message.contains("is not part of required node path"));
     }
 
@@ -741,7 +741,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
 
         final Response update = siteMapResource.update(newsDefault);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), update.getStatus());
-        assertThat(((ExtResponseRepresentation) update.getEntity()).getErrorCode(), is(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE.name()));
+        assertThat(((ResponseRepresentation) update.getEntity()).getErrorCode(), is(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE.name()));
     }
 
     @Test
@@ -767,7 +767,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
 
             final Response update = siteMapResource.update(newsDefaultByBob);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), update.getStatus());
-            final String message = ((ExtResponseRepresentation)update.getEntity()).getMessage();
+            final String message = ((ResponseRepresentation)update.getEntity()).getMessage();
             assertTrue(message.contains("cannot be locked due to someone else who has the lock"));
         } finally {
             if (bob != null) {

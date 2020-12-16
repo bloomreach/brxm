@@ -16,7 +16,10 @@
 
 import { InjectionToken } from '@angular/core';
 
+import { Channel } from '../../models/channel.model';
+
 export interface Ng1ChannelService {
+  getChannel(): Channel;
   makeRenderPath(path: string): string;
   getHomePageRenderPathInfo(): string;
 }
