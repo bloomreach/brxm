@@ -15,11 +15,13 @@
  */
 package org.hippoecm.hst.core.container;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.container.HstContainerConfigImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -43,6 +45,14 @@ public class AbstractPipelineTestCase extends AbstractSpringTestCase {
         AbstractSpringTestCase.addAnnotatedClassesConfigurationParam(classXmlFileName);
         AbstractSpringTestCase.setUpClass();
     }
+
+    @AfterClass
+    public static void afterClass() throws RepositoryException {
+        String classXmlFileName = AbstractPipelineTestCase.class.getName().replace(".", "/") + ".xml";
+        AbstractSpringTestCase.removeAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractSpringTestCase.afterClass();
+    }
+
 
     @Before
     public void setUp() throws Exception {

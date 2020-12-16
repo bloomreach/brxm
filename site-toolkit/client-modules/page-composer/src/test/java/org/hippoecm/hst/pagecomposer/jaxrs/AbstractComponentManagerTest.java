@@ -157,7 +157,13 @@ public abstract class AbstractComponentManagerTest {
         extraPlatformAnnotatedClasses.add(classXmlFileNamePlatform);
     }
 
+    public static void removeAnnotatedClassesConfigurationParam(final String annotatedClassParam) {
+        annotatedClasses.remove(annotatedClassParam);
+    }
 
+    public static void removePlatformAnnotatedClassesConfigurationParam(final String classXmlFileNamePlatform) {
+        extraPlatformAnnotatedClasses.remove(classXmlFileNamePlatform);
+    }
 
     public void createHstConfigBackup(Session session) throws RepositoryException {
         if (!session.nodeExists("/hst-backup")) {

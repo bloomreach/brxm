@@ -135,6 +135,8 @@ public abstract class AbstractSpringTestCase
             componentManager.stop();
             componentManager.close();
             HstServices.setComponentManager(null);
+            componentManager = null;
+            hstModelSite1 = null;
         }
 
     }
@@ -163,6 +165,10 @@ public abstract class AbstractSpringTestCase
 
     public static void addAnnotatedClassesConfigurationParam(final String annotatedClassParam) {
         annotatedClasses.add(annotatedClassParam);
+    }
+
+    public static void removeAnnotatedClassesConfigurationParam(final String annotatedClassParam) {
+        annotatedClasses.remove(annotatedClassParam);
     }
 
     protected ComponentManager getComponentManager() {
