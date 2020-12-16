@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
@@ -61,10 +61,10 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", prototypeUUID);
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.OK.getStatusCode(), response.getStatus());
 
-        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
 
         final Node newSitemapItemNode = session.getNodeByIdentifier(siteMapPageRepresentation.getId());
         assertEquals("foo", newSitemapItemNode.getName());
@@ -122,7 +122,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
         final Node newSitemapItemNode = session.getNodeByIdentifier(siteMapPageRepresentation.getId());
         assertEquals("foo", newSitemapItemNode.getName());
 
@@ -150,7 +150,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final Response response = siteMapResource.create(newFoo);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
 
         final Node newSitemapItemNode = session.getNodeByIdentifier(siteMapPageRepresentation.getId());
         assertEquals("foo", newSitemapItemNode.getName());
@@ -172,7 +172,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
@@ -186,7 +186,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
@@ -200,7 +200,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
@@ -210,7 +210,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
@@ -221,7 +221,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
 
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
@@ -234,7 +234,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         newFoo.setComponentConfigurationId("invalid-uuid");
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
@@ -245,7 +245,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getHomePageUUID());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
@@ -260,7 +260,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
                 session.getNode(commonConfigPrototypePath).getIdentifier());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
@@ -302,7 +302,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         String expectedPageName = "foo-"+prototypePageNodeName +"-1";
         assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + expectedPageName));
 
-        SiteMapPageRepresentation newSiteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+        SiteMapPageRepresentation newSiteMapPageRepresentation = (SiteMapPageRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
 
         final Node newSitemapItemNode = session.getNodeByIdentifier(newSiteMapPageRepresentation.getId());
         assertEquals("hst:pages/"+expectedPageName,
@@ -334,7 +334,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final Response response = siteMapResource.create(newFoo);
         String expectedPageName = "foo-"+prototypePageNodeName +"-2";
         assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + expectedPageName));
-        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
 
         final Node newSitemapItemNode = session.getNodeByIdentifier(siteMapPageRepresentation.getId());
         assertEquals("hst:pages/"+expectedPageName,
@@ -356,11 +356,11 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             fooByBob.setName("bar");
             final Response bobResponse = siteMapResource.update(fooByBob);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponse.getStatus());
-            assertThat(((ExtResponseRepresentation) bobResponse.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
+            assertThat(((ResponseRepresentation) bobResponse.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
 
             final Response bobResponseDelete = siteMapResource.delete(fooByBob.getId());
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponseDelete.getStatus());
-            assertThat(((ExtResponseRepresentation) bobResponseDelete.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
+            assertThat(((ResponseRepresentation) bobResponseDelete.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
 
             bob.logout();
         }
@@ -517,7 +517,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newItem);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertThat(((ExtResponseRepresentation) response.getEntity()).getErrorCode(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
+        assertThat(((ResponseRepresentation) response.getEntity()).getErrorCode(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
     }
 
     @Test
@@ -531,7 +531,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation next =  createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final Response fail = siteMapResource.create(next);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
+        assertThat(((ResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
     }
 
 
@@ -547,7 +547,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         String expectedNewPageNodeName = "home-homeChild-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
         {
             final Response response = siteMapResource.create(homeChild, home.getId());
-            SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+            SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
             assertEquals("home/homeChild", siteMapPageRepresentation.getPathInfo());
             assertEquals("/home/homeChild", siteMapPageRepresentation.getRenderPathInfo());
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -568,7 +568,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             homeByBob.setName("newName");
             final Response fail = siteMapResource.update(homeByBob);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-            assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
+            assertThat(((ResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
             bob.logout();
         }
 
@@ -578,7 +578,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             homeAgain.setName("newName");
             final Response fail = siteMapResource.update(homeAgain);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-            assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
+            assertThat(((ResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
         }
 
         // delete the childByBob : after that, admin should be able to rename home
@@ -699,7 +699,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newItem);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertThat(((ExtResponseRepresentation) response.getEntity()).getErrorCode(), is(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE.name()));
+        assertThat(((ResponseRepresentation) response.getEntity()).getErrorCode(), is(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE.name()));
     }
 
     @Test
@@ -755,14 +755,14 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation(urlEncodedName, prototypeUUID);
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage() + " for " + checkURLEncodedChar,
+        assertEquals(((ResponseRepresentation) response.getEntity()).getMessage() + " for " + checkURLEncodedChar,
                 expected.getStatusCode(), response.getStatus());
 
         if (expected != Response.Status.OK) {
             return;
         }
 
-        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ResponseRepresentation) response.getEntity()).getData();
 
         final Node newSitemapItemNode = session.getNodeByIdentifier(siteMapPageRepresentation.getId());
         assertEquals(decodedName, newSitemapItemNode.getName());

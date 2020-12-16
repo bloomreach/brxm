@@ -34,7 +34,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.NodeIterable;
 import org.jetbrains.annotations.NotNull;
@@ -139,7 +139,7 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
 
         final String restResponse = response.getContentAsString();
 
-        final ExtResponseRepresentation o = mapper.readerFor(ExtResponseRepresentation.class).readValue(restResponse);
+        final ResponseRepresentation o = mapper.readerFor(ResponseRepresentation.class).readValue(restResponse);
 
         final Map<String, Object> data = (Map<String, Object>) o.getData();
         final List<Map<String, Object>> pages = (List<Map<String, Object>>) data.get("pages");

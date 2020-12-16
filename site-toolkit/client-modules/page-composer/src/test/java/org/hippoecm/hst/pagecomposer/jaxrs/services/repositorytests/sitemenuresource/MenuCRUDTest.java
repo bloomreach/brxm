@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource;
@@ -124,7 +124,7 @@ public class MenuCRUDTest extends AbstractMenuResourceTest {
 
         final Response fail = resource.update(contactItem);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
+        assertThat(((ResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
         bob.logout();
     }
 }

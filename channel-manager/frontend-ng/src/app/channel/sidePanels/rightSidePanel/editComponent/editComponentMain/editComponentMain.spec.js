@@ -25,6 +25,7 @@ describe('EditComponentMainCtrl', () => {
   let EditComponentService;
   let FeedbackService;
   let HippoIframeService;
+  let ConfigService;
 
   let $ctrl;
   let form;
@@ -63,11 +64,13 @@ describe('EditComponentMainCtrl', () => {
         'isReadOnly',
         'reopen',
         'save',
+        'open',
         'updatePreview',
       ]);
       FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
       EditComponentService = jasmine.createSpyObj('EditComponentService', ['isReadyForUser', 'killEditor']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
+      ConfigService = { relevancePresent: false };
 
       $scope = $rootScope.$new();
       $ctrl = $componentController('editComponentMain', {
@@ -78,6 +81,7 @@ describe('EditComponentMainCtrl', () => {
         EditComponentService,
         FeedbackService,
         HippoIframeService,
+        ConfigService,
       });
 
       form = jasmine.createSpyObj('form', ['$setPristine']);
@@ -320,11 +324,21 @@ describe('EditComponentMainCtrl', () => {
     });
 
     it('makes the form pristine when saving changes succeeds', (done) => {
-      ComponentEditor.save.and.returnValue($q.resolve());
+      ComponentEditor.save.and.returnValue($q.resolve({
+        data: {
+          id: 'testId',
+        },
+        reloadRequired: false,
+      }));
+      HippoIframeService.reload.and.returnValue($q.resolve());
+      ComponentEditor.open.and.returnValue($q.resolve());
+      ConfigService.relevancePresent = false;
+
       $ctrl.save().then(() => {
         expect(form.$setPristine).toHaveBeenCalled();
         done();
       });
+
       $scope.$digest();
     });
 
@@ -339,7 +353,16 @@ describe('EditComponentMainCtrl', () => {
     });
 
     it('should report usage statistics when the save succeeds', (done) => {
-      ComponentEditor.save.and.returnValue($q.resolve(''));
+      ComponentEditor.save.and.returnValue($q.resolve({
+        data: {
+          id: 'testId',
+        },
+        reloadRequired: false,
+      }));
+      HippoIframeService.reload.and.returnValue($q.resolve());
+      ComponentEditor.open.and.returnValue($q.resolve());
+      ConfigService.relevancePresent = false;
+
       $ctrl.save()
         .then(() => {
           expect(ComponentEditor.save).toHaveBeenCalled();

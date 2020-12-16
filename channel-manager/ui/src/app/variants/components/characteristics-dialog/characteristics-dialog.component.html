@@ -1,0 +1,110 @@
+<!--
+  Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="qa-characteristics-dialog mat-typography">
+  <h3 mat-dialog-title>
+    {{ 'DIALOG_CHARACTERISTICS_TITLE' | translate }}
+  </h3>
+
+  <div mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-list *ngIf="!characteristics || characteristics?.length === 0">
+      <mat-list-item>
+        {{ 'DIALOG_CHARACTERISTICS_NO_CHARACTERISTICS' | translate }}
+      </mat-list-item>
+    </mat-list>
+
+    <div *ngIf="characteristics?.length > 0" class="qa-characteristics characteristics">
+      <div class="step qa-characteristics-step1">
+        <div class="step-label">
+          <span class="step-label-circle">1</span>
+          {{ 'DIALOG_CHARACTERISTICS_STEP1' | translate }}
+        </div>
+        <div class="step-content">
+          <mat-selection-list color="primary"
+                              class="mat-list-option-horizontal qa-characteristics-list"
+                              #characteristicsList
+                              [multiple]="false">
+            <mat-list-option *ngFor="let characteristic of characteristics"
+                             [value]="characteristic"
+                             class="icon-text">
+              <mat-icon svgIcon="{{ getCharacteristicIcon(characteristic) }}"></mat-icon>
+              {{ 'EXPRESSION_TARGET_GROUP_' + characteristic.id.toUpperCase() | translate: { name: 'EXPRESSION_TARGET_GROUP_' + characteristic.id.toUpperCase() + '_SUBJECT' | translate }  }}
+            </mat-list-option>
+          </mat-selection-list>
+        </div>
+      </div>
+      <div class="step qa-characteristics-step2">
+        <div class="step-label">
+          <span class="step-label-circle">2</span>
+          {{ 'DIALOG_CHARACTERISTICS_STEP2' | translate }}
+        </div>
+        <div class="step-content">
+          <div *ngIf="!hasSelectedCharacteristic()">
+            <mat-list>
+              <mat-list-item class="help-text">
+                {{ 'DIALOG_CHARACTERISTICS_NO_TARGET_GROUPS' | translate }}
+              </mat-list-item>
+            </mat-list>
+          </div>
+
+          <div *ngIf="hasSelectedCharacteristic() && getSelectedCharacteristic()?.targetGroups.length === 0">
+            <mat-list>
+              <mat-list-item class="help-text">
+                {{ 'DIALOG_CHARACTERISTICS_EMPTY_TARGET_GROUPS' | translate }}
+              </mat-list-item>
+            </mat-list>
+          </div>
+
+          <mat-selection-list color="primary"
+                              class="mat-list-option-horizontal qa-characteristics-options-list"
+                              #targetGroupsList
+                              *ngIf="hasSelectedCharacteristic()"
+                              [multiple]="false">
+            <mat-list-option *ngFor="let targetGroup of getSelectedCharacteristic()?.targetGroups"
+                             [value]="targetGroup"
+                             class="text-text">
+              <span>{{ targetGroup.name }}</span>
+              <span class="no-wrap-ellipsis"
+                    matTooltip="{{ getPropertiesAsString(targetGroup.properties) }}"
+                    [matTooltipShowDelay]="1000">
+                {{ getPropertiesAsString(targetGroup.properties) }}
+              </span>
+            </mat-list-option>
+          </mat-selection-list>
+        </div>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-stroked-button
+            class="qa-characteristics-close"
+            type="button"
+            [matDialogClose]>
+      {{ 'CANCEL' | translate }}
+    </button>
+    <button mat-flat-button
+            class="qa-characteristics-select-characteristic"
+            type="submit"
+            color="primary"
+            [disabled]="!hasSelectedCharacteristic() || !hasSelectedTargetGroup()"
+            (click)="addSelection()">
+      {{ 'ADD' | translate }}
+    </button>
+  </div>
+</div>

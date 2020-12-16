@@ -1,0 +1,312 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExperimentInfoComponent COMPLETED experiment should be shown 1`] = `
+<div
+  id="root2"
+>
+  
+  
+  <em-experiment-info-bar>
+     EXPERIMENT_LABEL_COMPLETED. EXPERIMENT_PUBLISH_TO_FINISH
+
+  </em-experiment-info-bar>
+  <mat-list
+    class="small-list"
+    role="list"
+  >
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="experiment-goal-header"
+      >
+        experiment-1
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_GOAL
+      </span>
+      <span>
+        Goal 1
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_PAGE
+      </span>
+      <span>
+        /target-page
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_STATE
+      </span>
+      <span
+        class="experiment-state"
+      >
+        completed
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_START_DATE
+      </span>
+      <span>
+        1600868196063
+      </span>
+      <mat-divider />
+    </mat-list-item>
+  </mat-list>
+</div>
+`;
+
+exports[`ExperimentInfoComponent CREATED experiment should be shown 1`] = `
+<div
+  id="root0"
+>
+  
+  <em-experiment-info-bar>
+     EXPERIMENT_INFO_PUBLISH_TO_START
+
+  </em-experiment-info-bar>
+  
+  <mat-list
+    class="small-list"
+    role="list"
+  >
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="experiment-goal-header"
+      >
+        experiment-1
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_GOAL
+      </span>
+      <span>
+        Goal 1
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_PAGE
+      </span>
+      <span>
+        /target-page
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_STATE
+      </span>
+      <span
+        class="experiment-state"
+      >
+        created
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    
+  </mat-list>
+</div>
+`;
+
+exports[`ExperimentInfoComponent RUNNING experiment should be shown 1`] = `
+<div
+  id="root1"
+>
+  
+  
+  <mat-list
+    class="small-list"
+    role="list"
+  >
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="experiment-goal-header"
+      >
+        experiment-1
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_GOAL
+      </span>
+      <span>
+        Goal 1
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_PAGE
+      </span>
+      <span>
+        /target-page
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_STATE
+      </span>
+      <span
+        class="experiment-state"
+      >
+        running
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_START_DATE
+      </span>
+      <span>
+        1600868196063
+      </span>
+      <mat-divider />
+    </mat-list-item>
+  </mat-list>
+</div>
+`;
+
+exports[`ExperimentInfoComponent UNKNOWN experiment should be shown 1`] = `
+<div
+  id="root3"
+>
+  
+  
+  <mat-list
+    class="small-list"
+    role="list"
+  >
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="experiment-goal-header"
+      >
+        experiment-1
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_GOAL
+      </span>
+      <span>
+        Goal 1
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_PAGE
+      </span>
+      <span>
+        /target-page
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_STATE
+      </span>
+      <span
+        class="experiment-state"
+      >
+        unknown
+      </span>
+      <mat-divider />
+    </mat-list-item>
+    
+    <mat-list-item
+      role="listitem"
+    >
+      <span
+        class="line-header"
+      >
+        EXPERIMENT_START_DATE
+      </span>
+      <span>
+        1600868196063
+      </span>
+      <mat-divider />
+    </mat-list-item>
+  </mat-list>
+</div>
+`;

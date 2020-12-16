@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,26 @@
 
 import componentEditorService from './componentEditor.service';
 import componentFieldsComponent from './componentFields/componentFields.component';
+import componentVariantsComponent from './componentVariants/componentVariants.component';
+import componentVariantsService from './componentVariants/componentVariants.service';
 import editComponentConfig from './editComponent.config';
-import editComponentMainComponent from './editComponentMain.component';
+import editComponentMainComponent from './editComponentMain/editComponentMain.component';
 import editComponentService from './editComponent.service';
 import propertyGroupComponent from './propertyGroup/propertyGroup.component';
+import editComponentTabsComponent from './editComponentTabs/editComponentTabs.component';
+import experimentsWrapperComponent from './experimentsWrapper/experimentsWrapper.component';
 
 const editComponentModule = angular
   .module('hippo-cm.channel.rightSidePanel.editComponent', [])
   .config(editComponentConfig)
   .service('ComponentEditor', componentEditorService)
+  .service('ComponentVariantsService', componentVariantsService)
   .service('EditComponentService', editComponentService)
-  .component('editComponentMain', editComponentMainComponent)
   .component('componentFields', componentFieldsComponent)
+  .component('componentVariants', componentVariantsComponent)
+  .component('editComponentTabs', editComponentTabsComponent)
+  .component('editComponentMain', editComponentMainComponent)
+  .component('experimentsWrapper', experimentsWrapperComponent)
   .component('propertyGroup', propertyGroupComponent);
 
 export default editComponentModule.name;

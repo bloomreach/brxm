@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.MessageContentsList;
 import org.hippoecm.hst.jaxrs.cxf.InvokerPreprocessor;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.slf4j.Logger;
@@ -47,10 +47,12 @@ public abstract class AbstractInvokerPreProcessor implements InvokerPreprocessor
         try {
             final Optional<String> forbiddenOperation = isForbiddenOperation(exchange);
             if (forbiddenOperation.isPresent()) {
-                ExtResponseRepresentation entity = new ExtResponseRepresentation();
-                entity.setMessage(forbiddenOperation.get());
-                entity.setSuccess(false);
-                entity.setErrorCode(ClientError.FORBIDDEN.name());
+                final ResponseRepresentation<Void> entity = ResponseRepresentation.<Void>builder()
+                        .setSuccess(false)
+                        .setMessage(forbiddenOperation.get())
+                        .setErrorCode(ClientError.FORBIDDEN.name())
+                        .build();
+
                 return new MessageContentsList(Response.status(Response.Status.FORBIDDEN).entity(entity).build());
             }
         } catch (Exception e) {
