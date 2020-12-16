@@ -148,6 +148,9 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
         File tempFile = null;
         OutputStream outputStream = null;
         try {
+            // See CMS-14330: invoking closeStreams is required, otherwise an error may happen in Windows
+            originalFileUpload.closeStreams();
+
             tempFile = originalFileUpload.writeToTempFile();
             UploadedFile uploadedFile = new UploadedFile(tempFile, fileItem);
             preProcess(uploadedFile);
