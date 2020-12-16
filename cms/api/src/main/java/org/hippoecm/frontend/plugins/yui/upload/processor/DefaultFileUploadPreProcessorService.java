@@ -50,7 +50,7 @@ public class DefaultFileUploadPreProcessorService implements FileUploadPreProces
 
         if (preProcessorService == null) {
             preProcessorService = new DefaultFileUploadPreProcessorService();
-            log.warn("Cannot load pre processor service with id '{}', using the default service '{}'",
+            log.info("Cannot load pre processor service with id '{}', using the default service '{}'",
                     serviceId, preProcessorService.getClass().getName());
         }
         return preProcessorService;
