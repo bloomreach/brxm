@@ -29,6 +29,7 @@ import projectToggleModule from './projectToggle/projectToggle.module';
 import sidePanelModule from './sidePanels/sidePanel';
 import siteMenuEditorModule from './siteMenuEditor/siteMenuEditor.module';
 import subpageModule from './subpage/subpage.module';
+import targetingModule from './targeting/targeting.module';
 import viewAsModule from './view-as/view-as.module';
 import viewportToggleModule from './viewportToggle/viewportToggle.module';
 
@@ -43,6 +44,7 @@ const channelModule = angular
     sidePanelModule.name,
     siteMenuEditorModule.name,
     subpageModule.name,
+    targetingModule.name,
     viewAsModule.name,
     viewportToggleModule.name,
   ])

@@ -24,6 +24,10 @@ $font-medium: 16px;
 $font-normal: 14px;
 $font-small: 12px;
 
+// Layout
+$spacing-full: 16px;
+$spacing-half: $spacing-full / 2;
+
 $transition-small-area-speed: 100ms;
 
 // Notification banner
@@ -33,3 +37,7 @@ $notification-banner-fontsize: $font-normal;
 $notification-banner-height: 48px;
 $notification-banner-shadow: 0 0 4px 2px rgba(0, 0, 0, .12);
 $notification-banner-icon-color: rgba(0, 0, 0, .6);
+
+// Bloomreach theme colors
+$bloomreach-blue-light: rgba(map-get($blue, 500), .1);
+$bloomreach-blue-darker: rgba(map-get($blue, 500), .38);

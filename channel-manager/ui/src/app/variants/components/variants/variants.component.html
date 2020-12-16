@@ -1,0 +1,107 @@
+<!--
+  Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="mat-typography">
+  <div class="variant-select">
+    <mat-form-field appearance="outline">
+      <mat-label class="qa-variant-select-label">
+        {{ 'VARIANT' | translate }}
+      </mat-label>
+      <mat-select [formControl]="variantSelect"
+                  class="qa-variant-select"
+                  (selectionChange)="selectVariant($event.value)">
+        <mat-option *ngFor="let variant of variants"
+                    class="{{ 'qa-variant-select-option-' + variant.id }}"
+                    [value]="variant">
+          {{ variant.variantName }}<span *ngIf="isVariantDirty(variant)">*</span>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-icon-button
+            matTooltip="{{ 'VARIANT_COPY' | translate }}"
+            [matTooltipShowDelay]="1000"
+            [disabled]="isReadOnly()"
+            class="qa-variant-copy"
+            (click)="addVariant()">
+      <mat-icon svgIcon="copy"></mat-icon>
+    </button>
+
+    <button mat-icon-button
+            matTooltip="{{ 'VARIANT_DELETE' | translate }}"
+            [matTooltipShowDelay]="1000"
+            [disabled]="isDefaultVariant() || isReadOnly()"
+            class="qa-variant-delete"
+            (click)="deleteVariant()">
+      <mat-icon svgIcon="trash"></mat-icon>
+    </button>
+  </div>
+
+  <div class="qa-variant-default-message variant-default-message" *ngIf="isDefaultVariant()">
+    <span>{{ (variants.length === 1 ? 'VARIANT_EXPRESSIONS_DEFAULT_ONLY' : 'VARIANT_EXPRESSIONS_DEFAULT') | translate }}</span>
+  </div>
+
+  <div class="qa-variant-expressions variant-expressions" *ngIf="!isDefaultVariant()">
+    <div class="variant-expressions-list">
+      <div class="variant-expressions-list-label">
+        {{ 'VARIANT_EXPRESSIONS' | translate }}
+      </div>
+
+      <div class="qa-variant-expressions-list-empty variant-expressions-list-item variant-expressions-list-empty"
+           *ngIf="currentVariant?.expressions.length === 0">
+        {{ 'VARIANT_EXPRESSIONS_EMPTY' | translate }}
+      </div>
+
+      <div class="variant-expressions-list-item"
+           *ngFor="let expression of currentVariant?.expressions; let last = last;">
+        <span>
+          {{ getExpressionTranslation(expression) | translate: { name: expression.name } }}
+          {{ last ? '' : ('EXPRESSION_AND' | translate) }}
+        </span>
+
+        <button mat-icon-button
+                class="qa-variant-expressions-delete"
+                matTooltip="{{ 'VARIANT_EXPRESSION_DELETE' | translate }}"
+                [matTooltipShowDelay]="1000"
+                [disabled]="isReadOnly()"
+                (click)="removeExpression(expression)">
+          <mat-icon svgIcon="close"></mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="variant-expressions-actions">
+      <button mat-stroked-button
+              class="qa-variant-expressions-add-segment"
+              matTooltip="{{ 'SEGMENT_ADD' | translate }}"
+              [matTooltipShowDelay]="1000"
+              [disabled]="hasSelectedSegment() || isReadOnly()"
+              (click)="addSegment()">
+        <mat-icon svgIcon="plus"></mat-icon>
+        {{ 'SEGMENT' | translate }}
+      </button>
+      <button mat-stroked-button
+              class="qa-variant-expressions-add-characteristic"
+              [disabled]="isReadOnly()"
+              matTooltip="{{ 'CHARACTERISTIC_ADD' | translate }}"
+              [matTooltipShowDelay]="1000"
+              (click)="addCharacteristic()">
+        <mat-icon svgIcon="plus"></mat-icon>
+        {{ 'CHARACTERISTIC' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

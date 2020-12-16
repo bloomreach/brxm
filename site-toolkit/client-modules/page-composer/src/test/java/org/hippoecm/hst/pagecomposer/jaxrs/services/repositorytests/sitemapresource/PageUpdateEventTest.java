@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapresource;
 
-
 import javax.jcr.Node;
 import javax.ws.rs.core.Response;
 
@@ -24,7 +23,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEventListenerRegistry;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageUpdateContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageUpdateEvent;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -133,7 +132,7 @@ public class PageUpdateEventTest extends AbstractSiteMapResourceTest {
             componentConfigurationIdChanged = false;
             final SiteMapResource siteMapResource = createResource();
             Response response = siteMapResource.update(home);
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     OK.getStatusCode(), response.getStatus());
 
             final PageEvent pce = pageUpdateEventListener.receivedEvent;
@@ -161,7 +160,7 @@ public class PageUpdateEventTest extends AbstractSiteMapResourceTest {
 
             final SiteMapResource siteMapResource = createResource();
             Response response = siteMapResource.update(home);
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     OK.getStatusCode(), response.getStatus());
 
             final PageEvent pce = pageUpdateEventListener.receivedEvent;
@@ -191,7 +190,7 @@ public class PageUpdateEventTest extends AbstractSiteMapResourceTest {
             home.setPageTitle(newPageTitle);
             final SiteMapResource siteMapResource = createResource();
             Response response = siteMapResource.update(home);
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 
             // FailingPageUpdateEventListener should have short circuited the entire update and also must have removed the session changes
@@ -223,7 +222,7 @@ public class PageUpdateEventTest extends AbstractSiteMapResourceTest {
             home.setPageTitle(newPageTitle);
             final SiteMapResource siteMapResource = createResource();
             Response response = siteMapResource.update(home);
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+            assertEquals(((ResponseRepresentation) response.getEntity()).getMessage(),
                     BAD_REQUEST.getStatusCode(), response.getStatus());
 
             // FailingPageUpdateEventListener should have short circuited the entire update and also must have removed the session changes

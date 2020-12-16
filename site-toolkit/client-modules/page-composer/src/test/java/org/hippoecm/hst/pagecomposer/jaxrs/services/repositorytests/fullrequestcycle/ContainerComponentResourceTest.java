@@ -31,7 +31,7 @@ import javax.servlet.ServletException;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -169,7 +169,7 @@ public class ContainerComponentResourceTest extends AbstractComponentResourceTes
 
 
         final MockHttpServletResponse createResponse = render(mountId, createRequestResponse, creds);
-        final ExtResponseRepresentation extResponse = mapper.readerFor(ExtResponseRepresentation.class).readValue(createResponse.getContentAsString());
+        final ResponseRepresentation extResponse = mapper.readerFor(ResponseRepresentation.class).readValue(createResponse.getContentAsString());
         if (allowed) {
             assertEquals(Response.Status.CREATED.getStatusCode(), createResponse.getStatus());
             final Map<String, ?> map = (Map) extResponse.getData();

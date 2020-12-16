@@ -29,12 +29,15 @@ class ComponentEditorService {
     ChannelService,
     CmsService,
     CommunicationService,
+    ComponentVariantsService,
+    ConfigService,
     ContainerService,
     DialogService,
     FeedbackService,
     HippoIframeService,
     HstComponentService,
     PageStructureService,
+    TargetingService,
   ) {
     'ngInject';
 
@@ -44,41 +47,52 @@ class ComponentEditorService {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.CommunicationService = CommunicationService;
+    this.ComponentVariantsService = ComponentVariantsService;
+    this.ConfigService = ConfigService;
     this.ContainerService = ContainerService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
     this.PageStructureService = PageStructureService;
+    this.TargetingService = TargetingService;
 
     this.killed = false;
 
     this._onPageChange = this._onPageChange.bind(this);
   }
 
-  open(componentId) {
+  async open(componentId, variantId) {
     const channel = this.ChannelService.getChannel();
     const page = this.PageStructureService.getPage();
     const component = page.getComponentById(componentId);
 
+    if (!component) {
+      throw new Error(`Component ${componentId} not found`);
+    }
+
     this.close();
     this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
 
-    return this.load(channel, page, component);
+    await this.load(channel, page, component, variantId);
   }
 
   reopen() {
     return this.load(this.channel, this.page, this.component);
   }
 
-  load(channel, page, component) {
-    this.request = this.HstComponentService
-      .getProperties(component.getId(), component.getRenderVariant())
-      .then(response => this._onLoadSuccess(channel, component, page, response.properties))
-      .catch(() => this._onLoadFailure())
-      .finally(() => { delete this.request; });
+  async load(channel, page, component, variantId) {
+    this.request = this.HstComponentService.getProperties(component.getId(), variantId || component.getRenderVariant());
 
-    return this.request;
+    try {
+      const response = await this.request;
+      this._onLoadSuccess(channel, component, page, response.properties);
+      await this.updatePreview();
+    } catch (e) {
+      this._onLoadFailure();
+    } finally {
+      delete this.request;
+    }
   }
 
   getPropertyGroups() {
@@ -102,6 +116,10 @@ class ComponentEditorService {
     } else {
       this.HippoIframeService.load(pagePath);
     }
+  }
+
+  getComponent() {
+    return this.component;
   }
 
   isForeignPage() {
@@ -318,25 +336,38 @@ class ComponentEditorService {
       return;
     }
 
-    await this.ContainerService.renderComponent(component, this._propertiesAsFormData());
+    await this.ContainerService.renderComponent(component, this.propertiesAsFormData());
   }
 
   async save() {
-    const { data: { id }, reloadRequired } = await this.HstComponentService.setParameters(
-      this.component.getId(),
-      this.component.getRenderVariant(),
-      this._propertiesAsFormData(),
-    );
+    let response;
+    const componentId = this.component.getId();
+    const formData = this.propertiesAsFormData();
 
-    if (reloadRequired) {
-      await this.HippoIframeService.reload();
-      await this.open(id);
+    if (this.ConfigService.relevancePresent) {
+      const variant = this.ComponentVariantsService.getCurrentVariant();
+      const { persona, characteristics } = this.ComponentVariantsService.extractExpressions(variant);
+      response = await this.TargetingService.updateVariant(
+        componentId,
+        formData,
+        variant,
+        persona,
+        characteristics,
+      );
+    } else {
+      const variantId = this.component.getRenderVariant();
+      response = await this.HstComponentService.setParameters(
+        componentId,
+        variantId,
+        formData,
+      );
     }
 
-    return this.CmsService.reportUsageStatistic('CompConfigSidePanelSave');
+    this.CmsService.reportUsageStatistic('CompConfigSidePanelSave');
+    return response;
   }
 
-  _propertiesAsFormData() {
+  propertiesAsFormData() {
     return this.properties.reduce((formData, { name, type, value }) => {
       if (type === 'datefield') {
         // cut off the time and time zone information from the value that the datefield returns
@@ -367,6 +398,8 @@ class ComponentEditorService {
     if (!this.isForeignPage()) {
       await this.HippoIframeService.reload();
     }
+
+    this.$rootScope.$emit('component:reset-current-variant');
   }
 
   close() {

@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExperimentComponent if experiment was not saved should show the experiment form 1`] = `
+<div
+  id="root0"
+>
+  
+  <div
+    class="experiment"
+  >
+    <em-experiment-info />
+    
+    <div
+      class="experiment-status-wrapper"
+    >
+      <em-experiment-status-message
+        class="qa-experiment-status-message"
+      />
+      <em-experiment-status-chart />
+    </div>
+    
+    <div
+      class="actions-wrapper"
+    >
+      <mat-divider />
+      <div
+        class="actions"
+      >
+        
+        
+        <button
+          class="save-button qa-save"
+          color="primary"
+          mat-stroked-button=""
+        >
+           COMPLETE_EXPERIMENT 
+        </button>
+        
+        <mat-menu>
+          <button
+            class="qa-experiment-complete-keepall"
+            mat-menu-item=""
+          >
+             COMPLETE_EXPERIMENT_KEEP_VARIANTS 
+          </button>
+          <button
+            class="qa-experiment-complete-delete"
+            mat-menu-item=""
+          >
+             COMPLETE_EXPERIMENT_DELETE_VARIANTS 
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+  
+</div>
+`;
+
+exports[`ExperimentComponent if experiment was saved should show the experiment 1`] = `
+<div
+  id="root17"
+>
+  
+  <div
+    class="experiment"
+  >
+    <em-experiment-info />
+    
+    <div
+      class="experiment-status-wrapper"
+    >
+      <em-experiment-status-message
+        class="qa-experiment-status-message"
+      />
+      <em-experiment-status-chart />
+    </div>
+    
+    <div
+      class="actions-wrapper"
+    >
+      <mat-divider />
+      <div
+        class="actions"
+      >
+        
+        
+        <button
+          class="save-button qa-save"
+          color="primary"
+          mat-stroked-button=""
+        >
+           COMPLETE_EXPERIMENT 
+        </button>
+        
+        <mat-menu>
+          <button
+            class="qa-experiment-complete-keepall"
+            mat-menu-item=""
+          >
+             COMPLETE_EXPERIMENT_KEEP_VARIANTS 
+          </button>
+          <button
+            class="qa-experiment-complete-delete"
+            mat-menu-item=""
+          >
+             COMPLETE_EXPERIMENT_DELETE_VARIANTS 
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+  
+</div>
+`;

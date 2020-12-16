@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -36,7 +36,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class MoveTest extends AbstractSiteMapResourceTest {
-
 
     @Test
     public void test_move() throws Exception {
@@ -68,7 +67,7 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         final Node markedDeletedHome = session.getNode(homePathBeforeMove);
         final Response moveDeletedFail = siteMapResource.move(markedDeletedHome.getIdentifier(), news.getId());
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), moveDeletedFail.getStatus());
-        assertThat(((ExtResponseRepresentation) moveDeletedFail.getEntity()).getErrorCode(), is(ClientError.ITEM_NOT_IN_PREVIEW.name()));
+        assertThat(((ResponseRepresentation) moveDeletedFail.getEntity()).getErrorCode(), is(ClientError.ITEM_NOT_IN_PREVIEW.name()));
     }
 
     @Test
@@ -106,7 +105,7 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response fail = siteMapResource.move(news.getId(), newsAny.getId());
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), fail.getStatus());
-        assertTrue(((ExtResponseRepresentation) fail.getEntity()).getMessage().contains("move operation"));
+        assertTrue(((ResponseRepresentation) fail.getEntity()).getMessage().contains("move operation"));
     }
 
     @Test
@@ -115,7 +114,7 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response fail = siteMapResource.move(news.getId(), news.getId());
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(INVALID_MOVE_TO_SELF_OR_DESCENDANT.name()));
+        assertThat(((ResponseRepresentation) fail.getEntity()).getErrorCode(), is(INVALID_MOVE_TO_SELF_OR_DESCENDANT.name()));
     }
 
 
@@ -140,7 +139,7 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response fail = siteMapResource.move(news.getId(), aboutUs.getId());
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_NOT_CORRECT_LOCATION.name()));
+        assertThat(((ResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_NOT_CORRECT_LOCATION.name()));
     }
 
     @Test
@@ -151,6 +150,6 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response fail = siteMapResource.move(aboutUs.getId(), news.getId());
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertThat(((ExtResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_NOT_CORRECT_LOCATION.name()));
+        assertThat(((ResponseRepresentation) fail.getEntity()).getErrorCode(), is(ClientError.ITEM_NOT_CORRECT_LOCATION.name()));
     }
 }

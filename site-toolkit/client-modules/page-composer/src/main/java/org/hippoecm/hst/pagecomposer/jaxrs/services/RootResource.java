@@ -365,7 +365,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     }
 
     /**
-     * Note: Override the AbstractConfigResource#logAndReturnClientError() to remove ExtResponseRepresentation wrapper
+     * Note: Override the AbstractConfigResource#logAndReturnClientError() to remove ResponseRepresentation wrapper
      * in the body response.
      */
     @Override
