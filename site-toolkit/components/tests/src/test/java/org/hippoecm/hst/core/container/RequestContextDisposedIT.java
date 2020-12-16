@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.container;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 
-import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,11 +28,11 @@ import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -47,8 +46,8 @@ public class RequestContextDisposedIT extends AbstractPipelineTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        this.servletRequest = getComponent(HttpServletRequest.class.getName());
-        this.servletResponse = getComponent(HttpServletResponse.class.getName());
+        this.servletRequest = mockRequest();
+        this.servletResponse = mockResponse();
 
     }
 

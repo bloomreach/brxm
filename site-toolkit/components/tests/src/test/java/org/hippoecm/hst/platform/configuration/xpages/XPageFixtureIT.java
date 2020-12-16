@@ -22,7 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
