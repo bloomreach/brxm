@@ -870,7 +870,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), updateResponse.getStatus());
 
         } finally {
-            AbstractPageComposerTest.restoreHstConfigBackup(session);
+            restoreHstConfigBackup(session);
             session.logout();
         }
     }

@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.configuration.model;
 
-import java.util.List;
-
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;

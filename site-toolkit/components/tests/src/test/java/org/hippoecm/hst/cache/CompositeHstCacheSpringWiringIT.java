@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.hst.cache;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -27,7 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class CompositeHstCacheSpringWiringIT extends AbstractTestConfigurations {
+public class CompositeHstCacheSpringWiringIT extends CompositeHstCacheIT {
 
     // the following spring bean ids *MUST* be wired and the names are not allowed to be changed
     public static final String NOOP_CACHE_SPRING_BEAN_ID = "noopCache";
@@ -37,7 +36,7 @@ public class CompositeHstCacheSpringWiringIT extends AbstractTestConfigurations 
 
     @Test
     public void assert_NoopCache_gets_wired() throws Exception {
-        HstCache noopCache = getComponent(NOOP_CACHE_SPRING_BEAN_ID);
+        HstCache noopCache = componentManager.getComponent(NOOP_CACHE_SPRING_BEAN_ID);
         assertNotNull(noopCache);
         CacheElement element = noopCache.createElement("key1", "content1");
         assertNotNull(element);
@@ -50,7 +49,7 @@ public class CompositeHstCacheSpringWiringIT extends AbstractTestConfigurations 
     public void assert_caches_get_wired() throws Exception {
         for (String cacheBeanId : new String[]{DEFAULT_BINARIES_CACHE_SPRING_BEAN_ID,
                 DEFAULT_PAGE_CACHE_SPRING_BEAN_ID, DEFAULT_WEBFILE_CACHE_SPRING_BEAN_ID}) {
-            HstCache cache = getComponent(cacheBeanId);
+            HstCache cache = componentManager.getComponent(cacheBeanId);
             assertNotNull(cache);
             CacheElement element = cache.createElement("key1", "content1");
             assertNotNull(element);
@@ -71,7 +70,7 @@ public class CompositeHstCacheSpringWiringIT extends AbstractTestConfigurations 
         for (String cacheBeanId : new String[]{DEFAULT_BINARIES_CACHE_SPRING_BEAN_ID,
                 DEFAULT_PAGE_CACHE_SPRING_BEAN_ID, DEFAULT_WEBFILE_CACHE_SPRING_BEAN_ID}) {
 
-            HstCache cache = getComponent(cacheBeanId);
+            HstCache cache = componentManager.getComponent(cacheBeanId);
 
             String key = "key";
             cache.get(key);
@@ -89,6 +88,7 @@ public class CompositeHstCacheSpringWiringIT extends AbstractTestConfigurations 
             assertFalse("Since a #get on blocking cache is blocking other threads when the key is not present, the" +
                     " count down latch should not be able to reach 0.", countReachedZero);
 
+
         }
     }
 
@@ -98,7 +98,7 @@ public class CompositeHstCacheSpringWiringIT extends AbstractTestConfigurations 
         for (String cacheBeanId : new String[]{DEFAULT_BINARIES_CACHE_SPRING_BEAN_ID,
                 DEFAULT_PAGE_CACHE_SPRING_BEAN_ID, DEFAULT_WEBFILE_CACHE_SPRING_BEAN_ID}) {
 
-            HstCache cache = getComponent(cacheBeanId);
+            HstCache cache = componentManager.getComponent(cacheBeanId);
 
             String key = "key";
             cache.put(cache.createElement(key, "value"));
@@ -124,7 +124,7 @@ public class CompositeHstCacheSpringWiringIT extends AbstractTestConfigurations 
 
     @Test
     public void assert_is_key_in_cache_on_cache_is_not_blocking() throws Exception {
-        HstCache cache = getComponent(DEFAULT_PAGE_CACHE_SPRING_BEAN_ID);
+        HstCache cache = componentManager.getComponent(DEFAULT_PAGE_CACHE_SPRING_BEAN_ID);
 
         String key = "key";
         cache.get(key);
