@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { ExperimentVariantConversion } from './experiment-variant-conversion.model';
+
 export interface ExperimentVariant {
   variantId: string;
   variantName: string;
@@ -21,4 +23,5 @@ export interface ExperimentVariant {
   mean: number;
   variance: number;
   visitorSegment: string;
+  conversion?: ExperimentVariantConversion;
 }

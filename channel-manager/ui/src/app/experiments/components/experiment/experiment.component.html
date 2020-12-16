@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<div *ngIf="experiment$ | async as experiment; else startExperimentForm"
+<div *ngIf="experiment; else startExperimentForm"
      class="experiment">
   <em-experiment-info [experiment]="experiment"></em-experiment-info>
 
@@ -25,6 +25,12 @@
                                   class="qa-experiment-status-message">
     </em-experiment-status-message>
     <em-experiment-status-chart [experiment]="experiment"></em-experiment-status-chart>
+
+    <ul class="variants-info">
+      <li *ngFor="let variant of experiment?.variants">
+        {{ 'EXPERIMENT_VARIANT_STATUS_MESSAGE' | translate:variant }}
+      </li>
+    </ul>
   </div>
 
   <div *ngIf="isExperimentRunning(experiment) || isExperimentCreated(experiment)"
