@@ -67,7 +67,7 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
     public void tearDown() throws Exception {
         try {
             final Session session = createSession(ADMIN_CREDENTIALS);
-            AbstractPageComposerTest.restoreHstConfigBackup(session);
+            restoreHstConfigBackup(session);
             session.logout();
         } finally {
             super.tearDown();

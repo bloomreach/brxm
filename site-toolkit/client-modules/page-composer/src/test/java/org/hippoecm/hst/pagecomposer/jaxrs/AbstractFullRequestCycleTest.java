@@ -33,13 +33,18 @@ import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.hst.mock.core.request.MockCmsSessionContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.PrivilegesAllowedInvokerPreprocessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.ConfigurationLockedTest;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
@@ -74,11 +79,26 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
     protected BranchSelectionService testBranchSelectionService = contextPayload -> (String)contextPayload.get(TEST_BRANCH_ID_PAYLOAD_NAME);
 
 
+    /**
+     * addAnnotatedClassesConfigurationParam must be added before super setUpClass, hence redefine same setUpClass method
+     * to hide the super.setUpClass and invoke that explicitly
+     */
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        String classXmlFileName = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + "-*.xml";
+
+        AbstractComponentManagerTest.addAnnotatedClassesConfigurationParam(classXmlFileName);
+        AbstractComponentManagerTest.addAnnotatedClassesConfigurationParam(classXmlFileName2);
+
+        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
+        AbstractComponentManagerTest.addPlatformAnnotatedClassesConfigurationParam(classXmlFileNamePlatform);
+        AbstractComponentManagerTest.setUpClass();
+    }
+
+
     @Before
     public void setUp() throws Exception {
-
-        super.setUp();
-
         HippoServiceRegistry.register(testBranchSelectionService, BranchSelectionService.class);
 
         filter = platformComponentManager.getComponent(HstFilter.class.getName());
@@ -97,21 +117,9 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
 
 
     @After
-    @Override
     public void tearDown() throws Exception {
         HippoServiceRegistry.unregister(testBranchSelectionService, BranchSelectionService.class);
         super.tearDown();
-    }
-
-    protected String[] getConfigurations(final boolean platform) {
-        String classXmlFileName = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + ".xml";
-        String classXmlFileName2 = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + "-*.xml";
-        if (!platform) {
-            return new String[]{classXmlFileName, classXmlFileName2};
-        }
-
-        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
-        return new String[] { classXmlFileName, classXmlFileName2, classXmlFileNamePlatform };
     }
 
     protected Session createSession(final String userName, final String password) throws RepositoryException {
@@ -296,7 +304,7 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
     // returns the jcr session containing the changes, do more changes and save this session when needed (and logout)
     protected Session backupHstAndCreateWorkspace() throws RepositoryException {
         final Session session = createSession("admin", "admin");
-        AbstractPageComposerTest.createHstConfigBackup(session);
+        createHstConfigBackup(session);
         // move the hst:sitemap and hst:pages below the 'workspace' because since HSTTWO-3959 only the workspace
         // gets copied to preview configuration
         if (!session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace")) {
