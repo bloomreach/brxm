@@ -169,6 +169,7 @@
   "EXPERIMENT_AFTER_THIS_MANY_VISITS": "{{count}} visits so far",
   "EXPERIMENT_SAVED": "The experiment has been saved sucessfully",
   "EXPERIMENT_SAVE_ERROR": "An error happened while attempting to save the experiment",
+  "EXPERIMENT_VARIANT_STATUS_MESSAGE": "{{ variantName }} has an estimated conversion rate between {{ conversion.low }}% and {{ conversion.high }}%, with a best guess of {{ conversion.mean }}%.",
   "COMPLETE_EXPERIMENT": "Complete experiment",
   "CANCEL_EXPERIMENT": "Cancel experiment",
   "EXPERIMENT_CANCELED": "Experiment is canceled",

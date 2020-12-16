@@ -98,7 +98,15 @@ export class ExperimentStatusChartComponent implements OnInit {
 
   get variantNames(): { [key: string]: string } {
     return this.experiment.variants.reduce((names: { [key: string]: string }, v) => {
-      names[v.variantId] = v.variantName;
+      let variantName = v.variantName;
+      const mean = 100 * v.mean;
+      const sigma = 100 * Math.sqrt(v.variance);
+
+      if (mean >= 0 && sigma < 2.5) {
+        variantName += ` (${mean.toFixed(1)}%)`;
+      }
+
+      names[v.variantId] = variantName;
 
       return names;
     }, {});
