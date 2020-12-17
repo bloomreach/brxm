@@ -7,6 +7,7 @@ definitions:
         required#hippo-resource: Upload a resource
         non-empty: Enter a value
         required: Enter a value
+        url: Enter a valid URL
         escaped: 'Do not use these characters: < > & '' "'
         required#String: Enter some text
         resource-required: Upload a file
