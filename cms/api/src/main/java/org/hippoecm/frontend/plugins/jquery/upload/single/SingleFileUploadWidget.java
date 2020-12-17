@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.jquery.upload.single;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,6 @@ import org.hippoecm.frontend.plugins.jquery.upload.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.AjaxFileUploadBehavior;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
-import org.hippoecm.frontend.plugins.yui.upload.model.UploadedFile;
 import org.hippoecm.frontend.plugins.yui.upload.processor.FileUploadPreProcessorService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.slf4j.Logger;
@@ -123,8 +121,8 @@ public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
             }
 
             @Override
-            protected void preProcess(final UploadedFile uploadedFile) {
-                SingleFileUploadWidget.this.preProcess(uploadedFile);
+            protected FileUpload preProcess(FileItem fileItem, final FileUpload originalFileUpload) throws Exception {
+                return SingleFileUploadWidget.this.preProcess(fileItem, originalFileUpload);
             }
         });
 

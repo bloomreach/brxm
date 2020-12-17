@@ -16,8 +16,9 @@
 
 package org.hippoecm.frontend.plugins.yui.upload.processor;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.frontend.plugins.yui.upload.model.UploadedFile;
 
 /**
  * This interface represents a service that will be processed when a file is being uploaded to the CMS.
@@ -27,5 +28,5 @@ public interface FileUploadPreProcessorService extends IClusterable {
     String PRE_PROCESSOR_ID = "pre.processor.id";
     String DEFAULT_ID = "service.upload.pre.processor";
 
-    void process(final UploadedFile uploadedFile);
+    FileUpload process(FileItem fileItem, final FileUpload originalFileUpload) throws Exception;
 }
