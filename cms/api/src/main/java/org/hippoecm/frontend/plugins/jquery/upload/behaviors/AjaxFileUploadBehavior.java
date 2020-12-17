@@ -16,10 +16,6 @@
 
 package org.hippoecm.frontend.plugins.jquery.upload.behaviors;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +44,6 @@ import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.TemporaryFileItem;
-import org.hippoecm.frontend.plugins.yui.upload.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,42 +130,6 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
     }
 
     /**
-     * Since the fileItem is not modifiable (its OutputStream is already closed), this internal method creates a
-     * temporary file where we will load the Byte[] from the fileItem. The different pre-processors will be able to
-     * update that file and in the end we will generate a new FileItem using the Byte[] from the temporary file.
-     *
-     * @param fileItem
-     * @param originalFileUpload
-     * @return
-     * @throws IOException
-     */
-    private FileUpload preProcess(FileItem fileItem, final FileUpload originalFileUpload) throws Exception {
-        File tempFile = null;
-        OutputStream outputStream = null;
-        try {
-            // See CMS-14330: invoking closeStreams is required, otherwise an error may happen in Windows
-            originalFileUpload.closeStreams();
-
-            tempFile = originalFileUpload.writeToTempFile();
-            UploadedFile uploadedFile = new UploadedFile(tempFile, fileItem);
-            preProcess(uploadedFile);
-
-            fileItem = diskFileItemFactory.createItem(uploadedFile.getFieldName(), uploadedFile.getContentType(),
-                    uploadedFile.isFormField(), uploadedFile.getFileName());
-            outputStream = fileItem.getOutputStream();
-            outputStream.write(Files.readAllBytes(tempFile.toPath()));
-            return new FileUpload(fileItem);
-        } finally {
-            if (tempFile != null) {
-                tempFile.delete();
-            }
-            if (outputStream != null) {
-                outputStream.close();
-            }
-        }
-    }
-
-    /**
      * Event is fired before processing the uploaded file.
      */
     protected void onBeforeUpload(final FileUploadInfo fileUploadInfo) {
@@ -182,7 +141,8 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
     protected void validate(final FileUpload fileUpload) throws FileUploadViolationException {
     }
 
-    protected void preProcess(final UploadedFile uploadedFile) {
+    protected FileUpload preProcess(FileItem fileItem, final FileUpload originalFileUpload) throws Exception {
+        return originalFileUpload;
     }
 
     protected abstract void process(final FileUpload fileUpload) throws FileUploadViolationException;

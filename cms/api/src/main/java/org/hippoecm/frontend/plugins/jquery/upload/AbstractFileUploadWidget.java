@@ -97,11 +97,12 @@ public abstract class AbstractFileUploadWidget extends Panel {
     }
 
     /**
-     * Executes custom preProcessors
-     * @param uploadedFile
+     * Executes custom preProcessors, a new FileUpload object will be returned
+     * @param fileItem
+     * @param originalFileUpload
      */
-    protected void preProcess(final UploadedFile uploadedFile) {
-        preProcessorService.process(uploadedFile);
+    protected FileUpload preProcess(FileItem fileItem, final FileUpload originalFileUpload) throws Exception {
+        return preProcessorService.process(fileItem, originalFileUpload);
     }
     /**
      * It calls {@link #onFileUpload(FileUpload)}
