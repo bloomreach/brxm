@@ -19,3 +19,4 @@ definitions:
         resource-required: Upload a file
         summarySingle: This document has 1 error
         summaryMultiple: This document has ${numberOfErrors} errors
+        url: Enter a valid URL
