@@ -38,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.channelmanager.ComponentWindowResponseAppender;
 import org.hippoecm.hst.core.component.HeadElement;
+import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -585,6 +586,15 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         if (window.getChildWindowMap() == null) {
             return;
         }
+
+        if (!log.isDebugEnabled()) {
+            // if log is debug enabled, we keep logging possible waste. If WARN enabled, we log the waste message only
+            // ONCE per unique HstComponentInfo instance!
+           if (window.getComponentInfo().getAndSetLogWasteMessageProcessed()) {
+               return;
+           }
+        }
+
         for (HstComponentWindow childWindow : window.getChildWindowMap().values()) {
             final HstResponse childResponse = responseMap.get(childWindow);
             if (!(childResponse instanceof HstResponseImpl)) {
