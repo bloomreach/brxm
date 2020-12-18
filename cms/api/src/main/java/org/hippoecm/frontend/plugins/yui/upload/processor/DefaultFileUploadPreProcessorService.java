@@ -99,7 +99,8 @@ public class DefaultFileUploadPreProcessorService implements FileUploadPreProces
      * @param originalFileUpload
      * @return
      */
-    private FileUpload getFileUpload(final FileItem fileItem, final FileUpload originalFileUpload, Consumer<UploadedFile> processor) throws Exception {
+    private FileUpload getFileUpload(final FileItem fileItem, final FileUpload originalFileUpload,
+                                     final Consumer<UploadedFile> processor) throws Exception {
         File tempFile = null;
         OutputStream outputStream = null;
         try {
@@ -107,12 +108,12 @@ public class DefaultFileUploadPreProcessorService implements FileUploadPreProces
             originalFileUpload.closeStreams();
 
             tempFile = originalFileUpload.writeToTempFile();
-            UploadedFile uploadedFile = new UploadedFile(tempFile, fileItem);
+            final UploadedFile uploadedFile = new UploadedFile(tempFile, fileItem);
 
 
             processor.accept(uploadedFile);
 
-            DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory() {
+            final DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory() {
                 @Override
                 public FileItem createItem(String fieldName, String contentType, boolean isFormField, String fileName) {
                     FileItem item = super.createItem(fieldName, contentType, isFormField, fileName);
@@ -120,7 +121,8 @@ public class DefaultFileUploadPreProcessorService implements FileUploadPreProces
                 }
             };
 
-            FileItem newFileItem = diskFileItemFactory.createItem(uploadedFile.getFieldName(), uploadedFile.getContentType(),
+            final FileItem newFileItem = diskFileItemFactory.createItem(uploadedFile.getFieldName(),
+                    uploadedFile.getContentType(),
                     uploadedFile.isFormField(), uploadedFile.getFileName());
             outputStream = newFileItem.getOutputStream();
             outputStream.write(Files.readAllBytes(tempFile.toPath()));
