@@ -24,7 +24,12 @@ type MenuItemLinks = 'site';
  */
 export interface Menu {
   _meta?: MetaCollectionModel;
-  selectSiteMenuItem: MenuItem | null;
+
+  /**
+   * @deprecated The parameter was removed in the Experience Manager 14.2.
+   */
+  selectSiteMenuItem?: MenuItem | null;
+
   siteMenuItems: MenuItem[];
 }
 

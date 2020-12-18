@@ -28,7 +28,6 @@ const metaModel = {};
 const model = {
   data: {
     name: 'something',
-    selectSiteMenuItem: null,
     siteMenuItems: [],
   },
   meta: metaModel,
