@@ -30,7 +30,12 @@ export const TYPE_MENU = 'menu';
 
 interface MenuDataModel {
   name: string;
-  selectSiteMenuItem: MenuItemModel | null;
+
+  /**
+   * @deprecated The parameter was removed in the Experience Manager 14.2.
+   */
+  selectSiteMenuItem?: MenuItemModel;
+
   siteMenuItems: MenuItemModel[];
 }
 
@@ -55,6 +60,7 @@ export interface Menu {
   getMeta(): MetaCollection;
 
   /**
+   * @deprecated
    * @return The current menu item.
    */
   getSelected(): MenuItem | undefined;
