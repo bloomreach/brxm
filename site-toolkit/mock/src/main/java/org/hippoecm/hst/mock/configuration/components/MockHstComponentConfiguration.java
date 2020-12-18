@@ -451,4 +451,9 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
         return false;
     }
 
+
+    @Override
+    public boolean getAndSetLogWasteMessageProcessed() {
+        return false;
+    }
 }
