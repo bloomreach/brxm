@@ -55,7 +55,6 @@ public interface CommonMenuItem {
      *
      * @return <code>true</code> if the SiteMenuItem is expanded
      */
-    @PageModelIgnore
     boolean isExpanded();
 
     /**
@@ -79,7 +78,6 @@ public interface CommonMenuItem {
     /**
      * @return <code>true</code> is the SiteMenuItem is selected
      */
-    @PageModelIgnore
     boolean isSelected();
 
 }
