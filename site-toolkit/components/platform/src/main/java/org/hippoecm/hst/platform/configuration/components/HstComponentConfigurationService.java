@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -280,6 +281,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private boolean detached;
 
     private boolean hidden;
+
+    private AtomicBoolean logWasteMessageProcessed = new AtomicBoolean(false);
 
     protected List<DynamicFieldGroup> fieldGroups = new ArrayList<>();
 
@@ -2021,4 +2024,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return builder.toString();
     }
 
+    @Override
+    public boolean getAndSetLogWasteMessageProcessed() {
+        return logWasteMessageProcessed.getAndSet(true);
+    }
 }

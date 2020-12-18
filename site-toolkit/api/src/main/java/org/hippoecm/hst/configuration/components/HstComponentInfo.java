@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -105,4 +105,13 @@ public interface HstComponentInfo {
      */
     HstComponentConfiguration.Type getComponentType();
 
+    /**
+     * when a component does have children which do not get flushed to the parent component, a waste message is logged
+     * by default on WARN level. However, this can be logged for every request flooding the logs. Instead, better to
+     * log it only once if the log level is WARN and only log it for every request if the log level is set to DEBUG
+     *
+     * Note that on the first get, the boolean is flipped to true : this method can be invoked concurrently and also
+     * modifies a boolean in the shared underlying Hst Model
+     */
+    boolean getAndSetLogWasteMessageProcessed();
 }
