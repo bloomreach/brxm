@@ -239,7 +239,7 @@ Method | Description
 --- | ---
 `getItems(): MenuItem[]` | Returns the menu items.
 `getMeta(): MetaCollection` | Returns the menu meta-data collection.
-<code>getSelected(): MenuItem &vert; undefined</code> | Returns the current menu item.
+<code>getSelected(): MenuItem &vert; undefined</code> | Returns the current menu item. The method is **deprecated** and will be removed in the next major release.
 
 ##### MenuItem
 The `MenuItem` object holds a menu item that is used by the `Menu` object.
