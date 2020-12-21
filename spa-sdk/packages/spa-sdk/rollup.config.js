@@ -26,15 +26,22 @@ export default [
     input: 'src/index.ts',
     output: [
       {
+        dir: 'dist',
+        entryFileNames: '[name].js',
         exports: 'named',
-        file: 'dist/index.js',
         format: 'umd',
         name: 'BloomreachSpaSdk',
         sourcemap: true,
         sourcemapExcludeSources: true,
+        globals: {
+          inversify: 'inversify',
+          emittery: 'emiterry',
+          xmldom: 'xmldom',
+        },
       },
       {
-        file: 'dist/index.mjs',
+        dir: 'dist',
+        entryFileNames: '[name].mjs',
         format: 'esm',
       },
     ],
@@ -43,20 +50,17 @@ export default [
       ...Object.keys(pkg.peerDependencies || {}),
     ],
     plugins: [
-      typescript({
-        cacheRoot: './node_modules/.cache/rpt2',
-        clean: true,
-        useTsconfigDeclarationDir: true,
-      }),
-      babel({ extensions: ['.ts'] }),
-      terser(terserOptions)
+      typescript({ clean: true }),
+      babel({ babelHelpers: 'bundled', extensions: ['.ts'] }),
+      terser(terserOptions),
     ],
   },
 
   {
     input: 'src/index.ts',
     output: [{
-      file: 'dist/index.es6.js',
+      dir: 'dist',
+      entryFileNames: '[name].es6.js',
       format: 'esm',
     }],
     external: [
@@ -64,23 +68,16 @@ export default [
       ...Object.keys(pkg.peerDependencies || {}),
     ],
     plugins: [
-      typescript({
-        cacheRoot: './node_modules/.cache/rpt2',
-        clean: true,
-        tsconfigOverride: {
-          compilerOptions: {
-            declaration: false,
-          }
-        },
-      }),
-      terser(terserOptions)
+      typescript({ clean: true }),
+      terser(terserOptions),
     ],
   },
 
   {
     input: 'src/index.ts',
     output: [{
-      file: 'dist/index.d.ts',
+      dir: 'dist',
+      entryFileNames: '[name].d.ts',
       format: 'es',
     }],
     external: [
