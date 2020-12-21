@@ -16,6 +16,7 @@
 
 /* eslint-disable import/no-extraneous-dependencies */
 import babel from '@rollup/plugin-babel';
+import dts from 'rollup-plugin-dts';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 import pkg from './package.json';
@@ -50,10 +51,7 @@ export default [
       ...Object.keys(pkg.peerDependencies || {}),
     ],
     plugins: [
-      typescript({
-        clean: true,
-        useTsconfigDeclarationDir: true,
-      }),
+      typescript({ clean: true }),
       babel({ babelHelpers: 'bundled', extensions: ['.ts'] }),
       terser(terserOptions),
     ],
@@ -71,15 +69,24 @@ export default [
       ...Object.keys(pkg.peerDependencies || {}),
     ],
     plugins: [
-      typescript({
-        clean: true,
-        tsconfigOverride: {
-          compilerOptions: {
-            declaration: false,
-          }
-        },
-      }),
+      typescript({ clean: true }),
       terser(terserOptions)
+    ],
+  },
+
+  {
+    input: 'src/index.ts',
+    output: [{
+      dir: 'dist',
+      entryFileNames: '[name].d.ts',
+      format: 'es',
+    }],
+    external: [
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {}),
+    ],
+    plugins: [
+      dts(),
     ],
   },
 ];
