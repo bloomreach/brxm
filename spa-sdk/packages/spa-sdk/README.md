@@ -239,6 +239,7 @@ Method | Description
 --- | ---
 `getItems(): MenuItem[]` | Returns the menu items.
 `getMeta(): MetaCollection` | Returns the menu meta-data collection.
+`getName(): string` | Returns the menu name.
 <code>getSelected(): MenuItem &vert; undefined</code> | Returns the current menu item. The method is **deprecated** and will be removed in the next major release.
 
 ##### MenuItem

@@ -60,6 +60,11 @@ export interface Menu {
   getMeta(): MetaCollection;
 
   /**
+   * @return The menu name.
+   */
+  getName(): string;
+
+  /**
    * @deprecated
    * @return The current menu item.
    */
