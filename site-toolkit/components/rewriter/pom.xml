@@ -73,12 +73,19 @@
     </dependency>
     
     <!-- Test dependencies -->
-    
-   <dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-test</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-mock</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 

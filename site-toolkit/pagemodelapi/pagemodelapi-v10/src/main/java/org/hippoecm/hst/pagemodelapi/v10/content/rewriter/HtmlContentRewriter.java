@@ -75,7 +75,7 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
                         documentPath = substringBefore(documentPath, "?");
                     }
 
-                    final HstLink hstLink = getDocumentLink(documentPath, node, requestContext, targetMount);
+                    final HstLink hstLink = getDocumentLink(StringUtils.substringBefore(documentPath, "#"), node, requestContext, targetMount);
                     if (hstLink == null || hstLink.isNotFound() || hstLink.getPath() == null) {
                         if (removeAnchorTagOfBrokenLink) {
                             log.info("Could not create a link for '{}'. Removing the anchor now maintaining the text.",
@@ -105,6 +105,12 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
                             rewrittenHref += "?" + documentPathQueryString;
                         }
                     }
+
+                    // append the anchor again
+                    if (documentPath.contains("#")) {
+                        rewrittenHref += "#" + StringUtils.substringAfter(documentPath, "#");
+                    }
+
                     // override the href attr
                     setAttribute(anchorTag, "href", rewrittenHref);
 
