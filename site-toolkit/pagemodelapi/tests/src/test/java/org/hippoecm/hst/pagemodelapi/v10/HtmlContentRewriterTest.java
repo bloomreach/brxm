@@ -210,7 +210,6 @@ public class HtmlContentRewriterTest {
         String html = rewriter.rewrite(CONTENT_WITH_ANCHOR_LINK, node, requestContext, mount);
         // The PMA won't use toUrlForm since we do not return 'mount path' or 'context path' in the URLs
         // but just the path
-        System.out.println(html);
         assertTrue(html.contains("<a href=\"/home#foo\" data-type=\"internal\">anchor</a>"));
     }
 
