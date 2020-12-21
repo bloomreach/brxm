@@ -133,6 +133,9 @@ public class HtmlContentRewriterTest {
                 return new MockHstLink() {
                     @Override
                     public String getPath() {
+                        if (path.contains("#")) {
+                            throw new IllegalArgumentException("Expected path to not have # in it for HstLink");
+                        }
                         return path;
                     }
 
