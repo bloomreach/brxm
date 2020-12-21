@@ -251,7 +251,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
 
         final String[] hrefParts = StringUtils.split(documentLinkReference, '?');
 
-        final HstLink documentLink = getDocumentLink(hrefParts[0], hippoHtmlNode, requestContext, targetMount);
+        final HstLink documentLink = getDocumentLink(StringUtils.substringBefore(hrefParts[0], "#"), hippoHtmlNode, requestContext, targetMount);
         String rewrittenLinkHref;
 
         if (documentLink != null && documentLink.getPath() != null) {
@@ -265,7 +265,11 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         if (hrefParts.length > 1) {
             return rewrittenLinkHref + '?' + hrefParts[1];
         } else {
-            return rewrittenLinkHref;
+            if (hrefParts[0].contains("#")) {
+                return rewrittenLinkHref + "#" + StringUtils.substringAfter(hrefParts[0], "#");
+            } else {
+                return rewrittenLinkHref;
+            }
         }
 
     }
