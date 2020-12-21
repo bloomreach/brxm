@@ -30,6 +30,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.rewriter.ContentRewriter;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.mock.core.linking.MockHstLink;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -91,6 +92,16 @@ public class TestSimpleContentRewriter {
             "<a href=\"sip:mail@provider.com\">sip-protocol</a>" +
             "</body>\n" +
             "</html>";
+
+    private static final String CONTENT_WITH_ANCHOR_LINK =
+            "<html>\n" +
+                    "<head>\n" +
+                    "<title>Hello</title>\n" +
+                    "</head>\n" +
+                    "<body>" +
+                    "<a href=\"home#foo\">anchor</a>" +
+                    "</body>\n" +
+                    "</html>";
 
     private Node node;
     private HstRequestContext requestContext;
@@ -171,6 +182,29 @@ public class TestSimpleContentRewriter {
         String html = rewriter.rewrite(CONTENT_WITH_EXTERNAL_PROTOCOLS, node, requestContext, mount);
         assertTrue(html.contains("href=\"sip:mail@provider.com\""));
     }
+
+    @Test
+    public void testContentWithAnchorLinks() {
+        ContentRewriter<String> rewriter = new SimpleContentRewriter() {
+            @Override
+            protected HstLink getDocumentLink(final String path, final Node hippoHtmlNode, final HstRequestContext requestContext, final Mount targetMount) {
+                return new MockHstLink() {
+                    @Override
+                    public String getPath() {
+                        return path;
+                    }
+
+                    @Override
+                    public String toUrlForm(final HstRequestContext requestContext, final boolean fullyQualified) {
+                        return "/site" + "/" + path;
+                    }
+                };
+            }
+        };
+        String html = rewriter.rewrite(CONTENT_WITH_ANCHOR_LINK, node, requestContext, mount);
+        assertTrue(html.contains("\"/site/home#foo\""));
+    }
+
 
     @Test
     public void testSimpleLinkRewriting() throws Exception {
