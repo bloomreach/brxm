@@ -26,8 +26,9 @@ export default [
     input: 'src/index.ts',
     output: [
       {
+        dir: 'dist',
+        entryFileNames: '[name].js',
         exports: 'named',
-        file: 'dist/index.js',
         format: 'umd',
         name: 'BloomreachReactSdk',
         sourcemap: true,
@@ -39,13 +40,9 @@ export default [
         },
       },
       {
-        file: 'dist/index.mjs',
+        dir: 'dist',
+        entryFileNames: '[name].mjs',
         format: 'esm',
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-          '@bloomreach/spa-sdk': 'BloomreachSpaSdk',
-        },
       },
     ],
     external: [
@@ -54,11 +51,10 @@ export default [
     ],
     plugins: [
       typescript({
-        cacheRoot: './node_modules/.cache/rpt2',
         clean: true,
         useTsconfigDeclarationDir: true,
       }),
-      babel({ extensions: ['.ts'] }),
+      babel({ babelHelpers: 'bundled', extensions: ['.ts'] }),
       terser(terserOptions),
     ],
   },
@@ -66,7 +62,8 @@ export default [
   {
     input: 'src/index.ts',
     output: [{
-      file: 'dist/index.es6.mjs',
+      dir: 'dist',
+      entryFileNames: '[name].es6.js',
       format: 'esm',
     }],
     external: [
@@ -75,7 +72,6 @@ export default [
     ],
     plugins: [
       typescript({
-        cacheRoot: './node_modules/.cache/rpt2',
         clean: true,
         tsconfigOverride: {
           compilerOptions: {
