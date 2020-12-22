@@ -26,7 +26,7 @@ export default [
     input: 'src/index.ts',
     output: [
       {
-        dir: 'dist',
+        dir: 'lib',
         entryFileNames: '[name].js',
         exports: 'named',
         format: 'umd',
@@ -40,7 +40,7 @@ export default [
         },
       },
       {
-        dir: 'dist',
+        dir: 'lib',
         entryFileNames: '[name].mjs',
         format: 'esm',
       },
@@ -59,7 +59,7 @@ export default [
   {
     input: 'src/index.ts',
     output: [{
-      dir: 'dist',
+      dir: 'lib',
       entryFileNames: '[name].es6.js',
       format: 'esm',
     }],
@@ -76,7 +76,7 @@ export default [
   {
     input: 'src/index.ts',
     output: [{
-      dir: 'dist',
+      dir: 'lib',
       entryFileNames: '[name].d.ts',
       format: 'es',
     }],

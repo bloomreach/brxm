@@ -148,6 +148,7 @@
                 <include>*/dist/**</include>
                 <include>*/docs/**</include>
                 <include>*/node_modules/**</include>
+                <include>spa-sdk/lib/**</include>
               </includes>
             </fileset>
             <fileset>
@@ -182,6 +183,7 @@
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
                 <exclude>packages/*/coverage/**</exclude>
                 <exclude>packages/*/dist/**</exclude>
+                <exclude>packages/spa-sdk/lib/**</exclude>
                 <exclude>examples/angular/dist/**</exclude>
                 <exclude>examples/next/.next/**</exclude>
                 <exclude>examples/nuxt/.nuxt/**</exclude>
