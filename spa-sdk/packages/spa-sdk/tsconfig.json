@@ -19,25 +19,17 @@
     "strict": true,
     "target": "es6"
   },
-  "exclude": [
-    "dist",
-    "node_modules",
-    "src/**/*.spec.ts"
-  ],
-  "include": [
-    "src"
-  ],
   "typedocOptions": {
     "disableSources": true,
     "excludeExternals": true,
     "excludeNotExported": true,
     "excludePrivate": true,
     "excludeProtected": true,
-    "external-modulemap": ".*\/dist\/([\\w\\-_]+)",
+    "external-modulemap": ".*\/lib\/([\\w\\-_]+)",
     "hideGenerator": true,
     "ignoreCompilerErrors": true,
     "includeDeclarations": true,
-    "inputFiles": ["dist/index.d.ts"],
+    "inputFiles": ["lib/index.d.ts"],
     "mode": "modules",
     "out": "docs"
   }

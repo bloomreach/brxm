@@ -4,7 +4,7 @@ Bloomreach SPA SDK includes and bundles the following sub-components which are a
 licensed under the Apache License, Version 2.0. Your use of the code for these sub-components is subject to the terms
 and conditions of the Apache License, Version 2.0, as specified in the license text above:
 
-../dist/spa-sdk.*
+../lib/*
 
 For bundled sub-components also additional or separate copyright notices
 and license terms may apply. Your use of the code for these sub-components is also subject to the terms and conditions
