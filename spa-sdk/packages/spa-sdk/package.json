@@ -17,13 +17,13 @@
   "bugs": {
     "url": "https://issues.onehippo.com/projects/CMS/issues"
   },
-  "main": "dist/index.js",
-  "browser": "dist/index.js",
-  "module": "dist/index.mjs",
-  "es2015": "dist/index.es6.js",
-  "types": "dist/index.d.ts",
+  "main": "lib/index.js",
+  "browser": "lib/index.js",
+  "module": "lib/index.mjs",
+  "es2015": "lib/index.es6.js",
+  "types": "lib/index.d.ts",
   "files": [
-    "dist/"
+    "lib/"
   ],
   "scripts": {
     "build": "rollup -c rollup.config.js",
