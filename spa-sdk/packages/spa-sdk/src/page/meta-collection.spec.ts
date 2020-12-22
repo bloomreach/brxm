@@ -86,7 +86,7 @@ describe('MetaCollectionImpl', () => {
           endNodeSpan: [{ data: 'meta2', type: TYPE_META_COMMENT }],
         },
         new MetaFactory()
-          .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position))
+          .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position)),
       );
 
       a = document.createElement('a');
