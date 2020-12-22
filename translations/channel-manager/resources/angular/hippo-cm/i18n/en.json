@@ -395,7 +395,7 @@
   "COLLAPSE": "Collapse",
   "FEEDBACK_NOT_A_DOCUMENT_MESSAGE": "Only documents can be edited here.",
   "REMOVE": "Remove",
-  "TOOLBAR_BUTTON_ADD": "Add",
+  "TOOLBAR_BUTTON_ADD": "Page",
   "EXPRESSION_TARGET_GROUP_DAYOFWEEK_SUBJECT": "(day of week)",
   "EXPERIMENT_CANCELED": "Experiment is canceled",
   "EXPERIMENT_WINNER_PRESENT": "Variant {{variantName}} is the winner of this experiment",
