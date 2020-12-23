@@ -44,7 +44,6 @@ describe('EditContentService', () => {
       'open',
       'reload',
     ]);
-    ContentEditor.isDocumentXPage = false;
     ContentService = jasmine.createSpyObj('ContentService', ['getDocument', 'branchDocument']);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', [
       'clearContext',
@@ -93,6 +92,15 @@ describe('EditContentService', () => {
     ContentEditor.getDocumentId.and.returnValue(document.id);
 
     EditContentService.startEditing(document.id);
+    $rootScope.$digest();
+  }
+
+  function editPage(document) {
+    ContentEditor.open.and.returnValue($q.resolve(document));
+    ContentEditor.getDocument.and.returnValue(document);
+    ContentEditor.getDocumentId.and.returnValue(document.id);
+
+    EditContentService.startEditing(document.id, 'hippo-cm.channel.edit-page.content');
     $rootScope.$digest();
   }
 
@@ -150,9 +158,7 @@ describe('EditContentService', () => {
     const document = {
       id: '42',
     };
-    ContentEditor.isDocumentXPage = true;
-
-    editDocument(document);
+    editPage(document);
 
     expect(RightSidePanelService.clearContext).toHaveBeenCalled();
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
@@ -270,9 +276,8 @@ describe('EditContentService', () => {
     const document = {
       id: '42',
     };
-    ContentEditor.isDocumentXPage = true;
 
-    editDocument(document);
+    editPage(document);
     $state.go('hippo-cm');
 
     expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_TO_XPAGE', {}, 'SAVE_XPAGE_CHANGES_TITLE');
