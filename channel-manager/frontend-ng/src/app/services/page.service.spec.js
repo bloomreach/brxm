@@ -18,6 +18,7 @@ describe('PageService', () => {
   let $q;
   let $rootScope;
   let $state;
+  let EditContentService;
   let HippoIframeService;
   let HstService;
   let PageService;
@@ -32,6 +33,7 @@ describe('PageService', () => {
       _$q_,
       _$rootScope_,
       _$state_,
+      _EditContentService_,
       _HippoIframeService_,
       _HstService_,
       _PageService_,
@@ -41,6 +43,7 @@ describe('PageService', () => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $state = _$state_;
+      EditContentService = _EditContentService_;
       HippoIframeService = _HippoIframeService_;
       HstService = _HstService_;
       PageService = _PageService_;
@@ -75,9 +78,7 @@ describe('PageService', () => {
     it('should sync the page editor if it is open', () => {
       spyOn(PageService, 'load');
       spyOn(PageService, 'syncPageEditor');
-
-      $state.go('hippo-cm.channel.edit-page.content');
-      $rootScope.$digest();
+      spyOn(EditContentService, 'isEditingXPage').and.returnValue(true);
 
       $rootScope.$emit('page:change');
       $rootScope.$digest();
@@ -290,6 +291,16 @@ describe('PageService', () => {
   });
 
   describe('syncPageEditor', () => {
+    it('should do nothing if we are already editing the current page', () => {
+      PageService.states = { xpage: { id: 123 } };
+      spyOn($state, 'go');
+      spyOn(EditContentService, 'isEditing').and.returnValue(true);
+
+      PageService.syncPageEditor();
+
+      expect($state.go).not.toHaveBeenCalled();
+    });
+
     it('should open the page editor if the current page is an experience page', () => {
       spyOn($state, 'go');
       PageService.states = { xpage: { id: 123 } };

@@ -56,9 +56,8 @@ describe('EditContentMainCtrl', () => {
         'publish',
         'save',
       ]);
-      ContentEditor.isDocumentXPage = false;
       DialogService = _DialogService_;
-      EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
+      EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing', 'isEditingXPage']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
       RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', [
         'setClosing',
@@ -196,7 +195,7 @@ describe('EditContentMainCtrl', () => {
     [true, false].forEach((isXPage) => {
       [true, false].forEach((editorAllowsPublish) => {
         [true, false].forEach((dirty) => {
-          ContentEditor.isDocumentXPage = isXPage;
+          EditContentService.isEditingXPage.and.returnValue(isXPage);
           ContentEditor.isPublishAllowed.and.returnValue(editorAllowsPublish);
           ContentEditor.isDocumentDirty.and.returnValue(dirty);
           expect($ctrl.isPublishAllowed()).toBe(!isXPage && editorAllowsPublish && !dirty);
@@ -444,7 +443,7 @@ describe('EditContentMainCtrl', () => {
 
     it('shows a dialog with a page related message', () => {
       ContentEditor.isPristine.and.returnValue(false);
-      ContentEditor.isDocumentXPage = true;
+      EditContentService.isEditingXPage.and.returnValue(true);
 
       $ctrl.discard();
 
