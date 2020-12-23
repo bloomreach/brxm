@@ -12,6 +12,16 @@
     "title-label" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "fragment-id-label" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
