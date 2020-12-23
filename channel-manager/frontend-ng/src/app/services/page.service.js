@@ -17,12 +17,22 @@
 import { Subject } from 'rxjs';
 
 class PageService {
-  constructor($q, $rootScope, $state, HippoIframeService, HstService, PageStructureService, SiteMapService) {
+  constructor(
+    $q,
+    $rootScope,
+    $state,
+    EditContentService,
+    HippoIframeService,
+    HstService,
+    PageStructureService,
+    SiteMapService,
+  ) {
     'ngInject';
 
     this.$q = $q;
     this.$rootScope = $rootScope;
     this.$state = $state;
+    this.EditContentService = EditContentService;
     this.HippoIframeService = HippoIframeService;
     this.HstService = HstService;
     this.PageStructureService = PageStructureService;
@@ -35,7 +45,7 @@ class PageService {
     this.$rootScope.$on('page:change', async () => {
       await this.load();
 
-      if (this.$state.$current.name.startsWith('hippo-cm.channel.edit-page')) {
+      if (this.EditContentService.isEditingXPage()) {
         this.syncPageEditor();
       }
     });
@@ -120,7 +130,9 @@ class PageService {
 
   syncPageEditor() {
     if (this.isXPage) {
-      this.$state.go('hippo-cm.channel.edit-page.content', { documentId: this.xPageId });
+      if (!this.EditContentService.isEditing(this.xPageId)) {
+        this.$state.go('hippo-cm.channel.edit-page.content', { documentId: this.xPageId });
+      }
       return;
     }
 

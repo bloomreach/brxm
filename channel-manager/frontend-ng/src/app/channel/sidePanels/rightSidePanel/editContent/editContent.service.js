@@ -52,7 +52,7 @@ class EditContentService {
 
     $transitions.onEnter(
       { entering: '**.edit-page.*' },
-      transition => this._loadDocument(transition.params().documentId),
+      transition => this._loadPage(transition.params().documentId),
     );
 
     $transitions.onBefore(
@@ -81,6 +81,10 @@ class EditContentService {
     return this.ContentEditor.getDocumentId() === documentId;
   }
 
+  isEditingXPage() {
+    return this.$state.$current.name.startsWith('hippo-cm.channel.edit-page');
+  }
+
   isEditorPristine() {
     return this.ContentEditor.isPristine();
   }
@@ -107,8 +111,8 @@ class EditContentService {
 
   _beforeSwitchProject() {
     if (this._isEditingDocument()) {
-      const titleKey = this.ContentEditor.isDocumentXPage ? 'SAVE_XPAGE_CHANGES_TITLE' : 'SAVE_DOCUMENT_CHANGES_TITLE';
-      const messageKey = this.ContentEditor.isDocumentXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
+      const titleKey = this.isEditingXPage() ? 'SAVE_XPAGE_CHANGES_TITLE' : 'SAVE_DOCUMENT_CHANGES_TITLE';
+      const messageKey = this.isEditingXPage() ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
 
       return this.ContentEditor.confirmClose(messageKey, {}, titleKey)
         .then(() => this.stopEditing());
@@ -162,15 +166,33 @@ class EditContentService {
     this.RightSidePanelService.stopLoading();
   }
 
+  async _loadPage(documentId) {
+    this.RightSidePanelService.clearContext();
+
+    this._showDefaultTitle();
+    this.RightSidePanelService.startLoading();
+
+    const document = await this.ContentEditor.open(documentId);
+    if (document) {
+      this.documentId = documentId;
+    }
+    this._showDocumentTitle(this.ContentEditor.getDocumentDisplayName());
+    this._setPageContext();
+    this.RightSidePanelService.stopLoading();
+  }
+
   _showDefaultTitle() {
     const documentLabel = this.$translate.instant('DOCUMENT');
     this.RightSidePanelService.setTitle(documentLabel);
   }
 
   _setDocumentContext() {
-    const messageKey = this.ContentEditor.isDocumentXPage ? 'PAGE' : 'DOCUMENT';
-    const documentLabel = this.$translate.instant(messageKey);
+    const documentLabel = this.$translate.instant('DOCUMENT');
+    this.RightSidePanelService.setContext(documentLabel);
+  }
 
+  _setPageContext() {
+    const documentLabel = this.$translate.instant('PAGE');
     this.RightSidePanelService.setContext(documentLabel);
   }
 
@@ -179,8 +201,8 @@ class EditContentService {
   }
 
   _onCloseChannel() {
-    const titleKey = this.ContentEditor.isDocumentXPage ? 'SAVE_XPAGE_CHANGES_TITLE' : 'SAVE_DOCUMENT_CHANGES_TITLE';
-    const messageKey = this.ContentEditor.isDocumentXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
+    const titleKey = this.isEditingXPage() ? 'SAVE_XPAGE_CHANGES_TITLE' : 'SAVE_DOCUMENT_CHANGES_TITLE';
+    const messageKey = this.isEditingXPage() ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
 
     return this.ContentEditor.confirmClose(messageKey, {}, titleKey);
   }

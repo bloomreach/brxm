@@ -158,32 +158,28 @@ class ErrorResponse {
 class ContentEditorService {
   constructor(
     $q,
+    $state,
     $translate,
+    ChannelService,
     CmsService,
     ContentService,
     DialogService,
     FeedbackService,
     FieldService,
     WorkflowService,
-    ChannelService,
-    PageService,
   ) {
     'ngInject';
 
     this.$q = $q;
+    this.$state = $state;
     this.$translate = $translate;
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.FieldService = FieldService;
     this.WorkflowService = WorkflowService;
-    this.PageService = PageService;
-    this.ChannelService = ChannelService;
-  }
-
-  get isDocumentXPage() {
-    return this.PageService.xPageId === this.getDocumentId();
   }
 
   _setDocumentId(id) {
