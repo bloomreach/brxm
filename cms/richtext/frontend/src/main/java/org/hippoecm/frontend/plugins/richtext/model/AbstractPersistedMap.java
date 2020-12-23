@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractPersistedMap extends HashMap<String, String> implements IPersisted {
-    private static final long serialVersionUID = 1L;
-
 
     private Map<String, String> initialValues;
 
