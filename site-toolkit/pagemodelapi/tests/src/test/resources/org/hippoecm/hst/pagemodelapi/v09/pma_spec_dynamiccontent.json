@@ -44,6 +44,8 @@
               "hst:repobased":true
             },
             "name":"News",
+            "expanded" : false,
+            "selected" : false,
             "childMenuItems":[
 
             ],
@@ -64,6 +66,8 @@
               "hst:referencesitemapitem":"contact"
             },
             "name":"Contact",
+            "expanded" : false,
+            "selected" : false,
             "childMenuItems":[
 
             ],
@@ -84,6 +88,8 @@
               "hst:referencesitemapitem":"contact-spring"
             },
             "name":"Contact-Spring",
+            "expanded" : false,
+            "selected" : false,
             "childMenuItems":[
 
             ],
@@ -104,6 +110,8 @@
               "hst:referencesitemapitem":"contact-dispatch"
             },
             "name":"Contact-Dispatch",
+            "expanded" : false,
+            "selected" : false,
             "childMenuItems":[
 
             ],
@@ -124,6 +132,8 @@
               "hst:referencesitemapitem":"contact-springmvc"
             },
             "name":"Contact-SpringMVC",
+            "expanded" : false,
+            "selected" : false,
             "childMenuItems":[
 
             ],
@@ -144,6 +154,8 @@
               "hst:referencesitemapitem":"search"
             },
             "name":"Search",
+            "expanded" : false,
+            "selected" : false,
             "childMenuItems":[
 
             ],
@@ -164,6 +176,8 @@
               "hst:referencesitemapitem":"uniquelinks"
             },
             "name":"UniqueLinks",
+            "expanded" : false,
+            "selected" : false,
             "childMenuItems":[
 
             ],
