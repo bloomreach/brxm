@@ -193,8 +193,10 @@
             "hst:repobased" : true
           },
           "name" : "News",
-          "childMenuItems" : [ ],
+          "expanded" : true,
+          "selected" : false,
           "parameters" : { },
+          "childMenuItems" : [ ],
           "links" : {
             "site" : {
               "href" : "/news",
@@ -208,8 +210,10 @@
             "hst:referencesitemapitem" : "contact"
           },
           "name" : "Contact",
-          "childMenuItems" : [ ],
+          "expanded" : false,
+          "selected" : false,
           "parameters" : { },
+          "childMenuItems" : [ ],
           "links" : {
             "site" : {
               "href" : "/contact",
@@ -223,8 +227,10 @@
             "hst:referencesitemapitem" : "contact-spring"
           },
           "name" : "Contact-Spring",
-          "childMenuItems" : [ ],
+          "expanded" : false,
+          "selected" : false,
           "parameters" : { },
+          "childMenuItems" : [ ],
           "links" : {
             "site" : {
               "href" : "/contact-spring",
@@ -238,8 +244,10 @@
             "hst:referencesitemapitem" : "contact-dispatch"
           },
           "name" : "Contact-Dispatch",
-          "childMenuItems" : [ ],
+          "expanded" : false,
+          "selected" : false,
           "parameters" : { },
+          "childMenuItems" : [ ],
           "links" : {
             "site" : {
               "href" : "/contact-dispatch",
@@ -253,8 +261,10 @@
             "hst:referencesitemapitem" : "contact-springmvc"
           },
           "name" : "Contact-SpringMVC",
-          "childMenuItems" : [ ],
+          "expanded" : false,
+          "selected" : false,
           "parameters" : { },
+          "childMenuItems" : [ ],
           "links" : {
             "site" : {
               "href" : "/contact-springmvc",
@@ -268,8 +278,10 @@
             "hst:referencesitemapitem" : "search"
           },
           "name" : "Search",
-          "childMenuItems" : [ ],
+          "expanded" : false,
+          "selected" : false,
           "parameters" : { },
+          "childMenuItems" : [ ],
           "links" : {
             "site" : {
               "href" : "/search",
@@ -283,8 +295,10 @@
             "hst:referencesitemapitem" : "uniquelinks"
           },
           "name" : "UniqueLinks",
-          "childMenuItems" : [ ],
+          "expanded" : false,
+          "selected" : false,
           "parameters" : { },
+          "childMenuItems" : [ ],
           "links" : {
             "site" : {
               "href" : "/uniquelinks",
