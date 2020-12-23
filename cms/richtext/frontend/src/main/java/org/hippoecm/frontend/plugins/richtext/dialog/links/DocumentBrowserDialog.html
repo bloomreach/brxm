@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -18,9 +18,13 @@
   <wicket:extend>
     <div wicket:id="content"></div>
     <div class="hippo-picker-properties">
-      <wicket:container wicket:id="extra"/>
+      <label><wicket:message key="fragment-id-label">Anchor:</wicket:message> </label>
+      <div wicket:id="fragmentId" class="text-input">[Fragment identifier text box]</div>
+
       <label><wicket:message key="title-label">Title:</wicket:message> </label>
       <div wicket:id="title" class="text-input">[Title text box]</div>
+
+      <wicket:container wicket:id="extra"/>
     </div>
     <wicket:fragment wicket:id="popup">
       <label><wicket:message key="new-widow-label">Open in new window:</wicket:message> </label>

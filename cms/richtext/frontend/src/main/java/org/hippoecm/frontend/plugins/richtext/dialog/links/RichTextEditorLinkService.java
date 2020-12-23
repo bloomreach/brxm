@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,9 +17,11 @@
 package org.hippoecm.frontend.plugins.richtext.dialog.links;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.jcr.Node;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -37,6 +39,16 @@ public class RichTextEditorLinkService implements IClusterable {
 
     private static final Logger log = LoggerFactory.getLogger(RichTextEditorLinkService.class);
 
+    /**
+     * The fragment ID can contain the following characters (from http://tools.ietf.org/html/rfc3986#section-3.5)
+     *   0 - 9
+     *   a - z
+     *   A - Z
+     *   ? / : @ - . _ ~ ! $ & ' ( ) * + , ; =
+     *   percent-encoded characters (a % followed by two hexadecimal digits)
+     */
+    private static final Pattern VALID_FRAGMENT_ID = Pattern.compile("^([-?/:@._~!$&'()*+,;=a-zA-Z0-9]|%[0-9a-fA-F]{2})*$");
+
     private final RichTextLinkFactory factory;
 
     public RichTextEditorLinkService(final RichTextLinkFactory factory) {
@@ -45,15 +57,13 @@ public class RichTextEditorLinkService implements IClusterable {
 
     public RichTextEditorInternalLink create(final Map<String, String> p) {
         final String uuid = p.get(RichTextEditorLink.UUID);
-        if (uuid != null) {
-            if (factory.hasLink(uuid)) {
-                try {
-                    final RichTextLink link = factory.loadLink(uuid);
-                    final IModel<Node> targetModel = new JcrNodeModel(link.getTargetModel().get());
-                    return new InternalLink(p, targetModel);
-                } catch (final RichTextException e) {
-                    log.error("Could not load link '" + uuid + "'", e);
-                }
+        if (uuid != null && factory.hasLink(uuid)) {
+            try {
+                final RichTextLink link = factory.loadLink(uuid);
+                final IModel<Node> targetModel = new JcrNodeModel(link.getTargetModel().get());
+                return new InternalLink(p, targetModel);
+            } catch (final RichTextException e) {
+                log.error("Could not load link '" + uuid + "'", e);
             }
         }
         return new InternalLink(p, null);
@@ -67,6 +77,11 @@ public class RichTextEditorLinkService implements IClusterable {
 
         @Override
         public boolean isValid() {
+            final String fragmentId = getFragmentId();
+            if (StringUtils.isNotEmpty(fragmentId) && !VALID_FRAGMENT_ID.matcher(fragmentId).matches()) {
+                return false;
+            }
+
             final Model<Node> linkTarget = WicketModel.of(getLinkTarget());
             return super.isValid() && factory.isValid(linkTarget);
         }

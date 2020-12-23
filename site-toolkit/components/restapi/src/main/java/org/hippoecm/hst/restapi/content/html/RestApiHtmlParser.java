@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang.StringUtils.substringBefore;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_CONTENT;
 import static org.hippoecm.repository.HippoStdNodeType.NT_HTML;
 
@@ -104,7 +105,8 @@ public class RestApiHtmlParser {
                         log.debug("Remove query string '{}' for '{}' for content node '{}'", queryString, documentPath, htmlNode.getPrimaryItem());
                         documentPath = StringUtils.substringBefore(documentPath, "?");
                     }
-                    final HstLink hstLink = getDocumentLink(documentPath, htmlNode, requestContext, null);
+                    // internal links with # are not support in REST api links, just skipped
+                    final HstLink hstLink = getDocumentLink(substringBefore(documentPath, "#"), htmlNode, requestContext, null);
                     final Link apiLink;
                     if (hstLink == null) {
                         apiLink = Link.invalid;
