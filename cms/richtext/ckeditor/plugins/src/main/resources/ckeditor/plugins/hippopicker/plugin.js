@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,12 +62,13 @@
   function initInternalLinkPicker(editor) {
 
     var LINK_ATTRIBUTES_PARAMETER_MAP = {
+        'data-fragment-id': 'f_fragment_id',
         'data-uuid': 'f_uuid',
         title: 'f_title',
         target: 'f_target'
       },
       LANG = editor.lang.hippopicker,
-      LINK_ALLOWED_CONTENT = 'a[!data-uuid,!href,title,target]',
+      LINK_ALLOWED_CONTENT = 'a[!data-uuid,!href,title,target,data-fragment-id]',
       LINK_REQUIRED_CONTENT = 'a[data-uuid,href]';
 
     function createLinkAttributePairs(parameters) {
