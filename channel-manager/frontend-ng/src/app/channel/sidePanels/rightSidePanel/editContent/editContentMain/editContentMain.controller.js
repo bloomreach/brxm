@@ -119,11 +119,11 @@ class EditContentMainCtrl {
     let messageKey;
 
     if (this.isRetainable()) {
-      messageKey = this.ContentEditor.isDocumentXPage
+      messageKey = this.EditContentService.isEditingXPage()
         ? 'CONFIRM_DISCARD_XPAGE_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE'
         : 'CONFIRM_DISCARD_DOCUMENT_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE';
     } else {
-      messageKey = this.ContentEditor.isDocumentXPage
+      messageKey = this.EditContentService.isEditingXPage()
         ? 'CONFIRM_DISCARD_XPAGE_UNSAVED_CHANGES_MESSAGE'
         : 'CONFIRM_DISCARD_DOCUMENT_UNSAVED_CHANGES_MESSAGE';
     }
@@ -161,7 +161,9 @@ class EditContentMainCtrl {
   }
 
   isPublishAllowed() {
-    return !this.ContentEditor.isDocumentXPage && this.ContentEditor.isPublishAllowed() && !this.isDocumentDirty();
+    return !this.EditContentService.isEditingXPage()
+      && this.ContentEditor.isPublishAllowed()
+      && !this.isDocumentDirty();
   }
 
   isRetainable() {
@@ -207,8 +209,9 @@ class EditContentMainCtrl {
   }
 
   _confirmExit() {
-    const titleKey = this.ContentEditor.isDocumentXPage ? 'SAVE_XPAGE_CHANGES_TITLE' : 'SAVE_DOCUMENT_CHANGES_TITLE';
-    const messageKey = this.ContentEditor.isDocumentXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
+    const isEditingXPage = this.EditContentService.isEditingXPage();
+    const titleKey = isEditingXPage ? 'SAVE_XPAGE_CHANGES_TITLE' : 'SAVE_DOCUMENT_CHANGES_TITLE';
+    const messageKey = isEditingXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
 
     return this.ContentEditor.confirmSaveOrDiscardChanges(messageKey, {}, titleKey)
       .then((action) => {
