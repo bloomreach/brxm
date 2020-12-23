@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import static org.hippoecm.repository.HippoStdPubWfNodeType.DEPUBLISH;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.PUBLISH;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.PUBLISH_BRANCH;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.SCHEDDEPUBLISH;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.SCHEDPUBLISH;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ATTRIBUTE_NAMES;
@@ -132,7 +133,11 @@ public class HintsInspectorImpl implements HintsInspector {
                     final Node requestNode = session.getNodeByIdentifier(requestNodeId);
                     if (requestNode.isNodeType(NT_HIPPOSTDPUBWF_REQUEST)) {
                         final String type = getStringProperty(requestNode, HIPPOSTDPUBWF_TYPE, null);
-                        return PUBLISH.equals(type) || SCHEDPUBLISH.equals(type) || DEPUBLISH.equals(type) || SCHEDDEPUBLISH.equals(type);
+                        return PUBLISH.equals(type)
+                                || PUBLISH_BRANCH.equals(type)
+                                || SCHEDPUBLISH.equals(type)
+                                || DEPUBLISH.equals(type)
+                                || SCHEDDEPUBLISH.equals(type);
                     } else if (requestNode.isNodeType(HIPPOSCHED_WORKFLOW_JOB)) {
                         final String methodName = getHippoSchedMethodName(requestNode);
                         return PUBLISH.equals(methodName) || DEPUBLISH.equals(methodName);
