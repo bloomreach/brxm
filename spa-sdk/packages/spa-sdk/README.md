@@ -76,11 +76,12 @@ Option | Required | Default | Description
 `request.connection` | no | _none_ | Current request remote connection containing the remote address. This option is used in [the Relevance Module](https://documentation.bloomreach.com/14/library/enterprise/enterprise-features/targeting/targeting.html).
 `request.headers` | no | `{}` | An object holding request headers. It should contain a `Cookie` header if rendering is happening on the server-side in the UrlRewriter-based setup.
 `request.path` | yes | _none_ | The path part of the URL, including a query string if present (e.g. `/path/to/page?foo=1`).
+`request.visitor` | no | _none_ | An object holding information about the current visitor.
 `serverId` | no | _none_ | Cluster node identifier. By default, the SDK will try to extract the value from the request query string using `serverIdQueryParameter` option.
 `serverIdHeader` | no | `"Server-Id"` | Header identifying the current cluster node.
 `serverIdQueryParameter` | no | `"server-id"` | The query string parameter used to pass a cluster node identifier.
 `spaBaseUrl` | no | `""` | Base URL of the SPA (e.g. `/account` or `//www.example.com`). This option will be ignored if `options` is present.
-`visitor` | no | _none_ | An object holding information about the current visitor.
+`visitor` | no | _none_ | An object holding information about the current visitor. The option takes precedence over `request.visitor`.
 `visitor.id` | yes | _none_ | The current visitor identifier.
 `visitor.header` | yes | _none_ | An HTTP-header using to pass the visitor identifier to the Page Model API.
 `window` | no | `window` | A window object reference will be used to interact with brXM. It needs to be set when initialize is being called within an iframe or worker process.
