@@ -60,7 +60,7 @@ export interface ApiOptions {
   /**
    * Current user's request.
    */
-  request: HttpRequest;
+  request?: HttpRequest;
 
   /**
    * Header identifying the current cluster node.
@@ -100,8 +100,8 @@ export interface Api {
 @injectable()
 export class ApiImpl implements Api {
   private static getHeaders(options: ApiOptions) {
-    const { remoteAddress: ip } = options.request.connection || {};
-    const { host, ...headers } = options.request.headers || {};
+    const { remoteAddress: ip } = options.request?.connection || {};
+    const { host, ...headers } = options.request?.headers || {};
     const {
       apiVersionHeader = DEFAULT_API_VERSION_HEADER,
       apiVersion,
@@ -109,7 +109,7 @@ export class ApiImpl implements Api {
       authorizationToken,
       serverIdHeader = DEFAULT_SERVER_ID_HEADER,
       serverId,
-      visitor = options.request.visitor,
+      visitor = options.request?.visitor,
     } = options;
 
     return {
