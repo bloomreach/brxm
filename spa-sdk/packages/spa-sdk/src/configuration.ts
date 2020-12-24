@@ -41,6 +41,12 @@ export interface ConfigurationWithProxy extends ApiOptions, CmsOptions {
    * Options for generating the page model API URL.
    */
   options: UrlOptions;
+
+  /**
+   * The path part of the URL, including a query string if present.
+   * For example: '/path/to/page?foo=1'. The path always starts with '/'.
+   */
+  path?: string;
 }
 
 /**
@@ -58,6 +64,12 @@ export interface ConfigurationWithJwt extends ApiOptions, CmsOptions, PostMessag
    * By default, `server-id` parameter is used.
    */
   serverIdQueryParameter?: string;
+
+  /**
+   * The path part of the URL, including a query string if present.
+   * For example: '/path/to/page?foo=1'. The path always starts with '/'.
+   */
+  path?: string;
 }
 
 /**
