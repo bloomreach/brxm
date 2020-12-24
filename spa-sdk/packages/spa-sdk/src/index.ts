@@ -65,7 +65,10 @@ function onReady<T>(value: T | Promise<T>, callback: (value: T) => unknown): T |
 }
 
 function initializeWithProxy(scope: Container, configuration: ConfigurationWithProxy, model?: PageModel) {
-  const options = isMatched(configuration.request.path, configuration.options.preview.spaBaseUrl)
+  const options = isMatched(
+      configuration.path ?? configuration.request?.path ?? '/',
+      configuration.options.preview.spaBaseUrl,
+    )
     ? configuration.options.preview
     : configuration.options.live;
 
@@ -75,7 +78,7 @@ function initializeWithProxy(scope: Container, configuration: ConfigurationWithP
   scope.getNamed<Cms>(CmsService, 'cms14').initialize(configuration);
 
   return onReady(
-    scope.get<Spa>(SpaService).initialize(model ?? configuration.request.path),
+    scope.get<Spa>(SpaService).initialize(model ?? configuration.path ?? configuration.request?.path ?? '/'),
     () => {
       scope.unbind(ApiOptionsToken);
       scope.unbind(UrlBuilderOptionsToken);
@@ -87,7 +90,7 @@ function initializeWithJwt09(scope: Container, configuration: ConfigurationWithJ
   const authorizationParameter = configuration.authorizationQueryParameter ?? DEFAULT_AUTHORIZATION_PARAMETER;
   const serverIdParameter = configuration.serverIdQueryParameter ?? DEFAULT_SERVER_ID_PARAMETER;
   const { url: path, searchParams } = extractSearchParams(
-    configuration.request.path,
+    configuration.path ?? configuration.request?.path ?? '/',
     [authorizationParameter, serverIdParameter].filter(Boolean),
   );
   const authorizationToken = searchParams.get(authorizationParameter) ?? undefined;
@@ -121,7 +124,7 @@ function initializeWithJwt10(scope: Container, configuration: ConfigurationWithJ
   const endpointParameter = configuration.endpointQueryParameter ?? '';
   const serverIdParameter = configuration.serverIdQueryParameter ?? DEFAULT_SERVER_ID_PARAMETER;
   const { url: path, searchParams } = extractSearchParams(
-    configuration.request.path,
+    configuration.path ?? configuration.request?.path ?? '/',
     [authorizationParameter, serverIdParameter, endpointParameter].filter(Boolean),
   );
   const authorizationToken = searchParams.get(authorizationParameter) ?? undefined;
