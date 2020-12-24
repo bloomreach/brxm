@@ -38,7 +38,7 @@ describe('initialize', () => {
       window,
       baseUrl: '//example.com',
       endpoint: 'http://localhost:8080/site/my-spa/resourceapi',
-      request: { path: '/?token=something' },
+      path: '/?token=something',
     });
   });
 

@@ -79,8 +79,9 @@ export interface HttpRequest {
   /**
    * The path part of the URL, including a query string if present.
    * For example: '/path/to/page?foo=1'. The path always starts with '/'.
+   * @deprecated The parameter is deprecated in favor of `path` in the configuration object.
    */
-  path: string;
+  path?: string;
 
   /**
    * Current request visitor.
