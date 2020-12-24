@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import { Visitor } from '../page';
 
 /**
  * Fetches the page model data.
@@ -79,6 +81,11 @@ export interface HttpRequest {
    * For example: '/path/to/page?foo=1'. The path always starts with '/'.
    */
   path: string;
+
+  /**
+   * Current request visitor.
+   */
+  visitor?: Omit<Visitor, 'new'>;
 }
 
 /**

@@ -32,10 +32,10 @@ const config = {
       host: 'example.com',
     },
     path: '/',
-  },
-  visitor: {
-    id: 'visitor-id',
-    header: 'visitor-header',
+    visitor: {
+      id: 'visitor-id',
+      header: 'visitor-header',
+    },
   },
 };
 
@@ -93,6 +93,20 @@ describe('ApiImpl', () => {
       expect(config.httpClient).toBeCalledWith(expect.not.objectContaining({
         headers: {
           'visitor-header': expect.anything(),
+        },
+      }));
+    });
+
+    it('should prefer visitor from the common config', async () => {
+      const api = new ApiImpl(
+        urlBuilder,
+        { ...config, visitor: { header: 'custom-visitor-header', id: 'custom-visitor' } },
+      );
+      await api.getPage(config.request.path);
+
+      expect(config.httpClient).toBeCalledWith(expect.not.objectContaining({
+        headers: {
+          'custom-visitor-header': 'custom-visitor',
         },
       }));
     });

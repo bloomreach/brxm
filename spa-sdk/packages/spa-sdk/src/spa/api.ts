@@ -15,7 +15,7 @@
  */
 
 import { inject, injectable } from 'inversify';
-import { PageModel, Visitor } from '../page';
+import { PageModel } from '../page';
 import { UrlBuilderService, UrlBuilder } from '../url';
 import { HttpClientConfig, HttpClient, HttpHeaders, HttpRequest } from './http';
 
@@ -77,8 +77,9 @@ export interface ApiOptions {
 
   /**
    * Current visitor.
+   * This parameter takes precedence over `request.visitor`.
    */
-  visitor?: Omit<Visitor, 'new'>;
+  visitor?: HttpRequest['visitor'];
 }
 
 export interface Api {
@@ -108,7 +109,7 @@ export class ApiImpl implements Api {
       authorizationToken,
       serverIdHeader = DEFAULT_SERVER_ID_HEADER,
       serverId,
-      visitor,
+      visitor = options.request.visitor,
     } = options;
 
     return {
