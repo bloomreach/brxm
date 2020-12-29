@@ -64,6 +64,7 @@ import org.hippoecm.hst.pagemodelapi.v10.core.model.ChannelModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel;
 import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ParametersInfoUtils;
 import org.hippoecm.hst.util.QueryStringBuilder;
 import org.onehippo.cms7.services.hst.Channel;
@@ -473,7 +474,7 @@ public class PageModelAggregationValve extends AggregationValve {
 
         // servletRequest.getQueryString() can have encoded parts like '%3A' instead of ':' so cannot be used
         // therefore use QueryStringBuilder which is encoding aware
-        final QueryStringBuilder queryStringBuilder = new QueryStringBuilder(servletRequest.getCharacterEncoding());
+        final QueryStringBuilder queryStringBuilder = new QueryStringBuilder(HstRequestUtils.getURIEncoding(servletRequest));
 
         servletRequest.getParameterMap().entrySet().forEach(entry -> {
             final String[] values = entry.getValue();
