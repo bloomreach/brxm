@@ -75,6 +75,7 @@ Option | Required | Default | Description
 `path` | no | `/` | The path part of the URL, including a query string if present (e.g. `/path/to/page?foo=1`).
 `request` | yes | _none_ | Current user's request.
 `request.connection` | no | _none_ | Current request remote connection containing the remote address. This option is used in [the Relevance Module](https://documentation.bloomreach.com/14/library/enterprise/enterprise-features/targeting/targeting.html).
+`request.emit` | no | _none_ | Emits an event in the request scope. This option can be used in [Node.js integration](https://nodejs.org/api/stream.html#stream_readable_streams).
 `request.headers` | no | `{}` | An object holding request headers. It should contain a `Cookie` header if rendering is happening on the server-side in the UrlRewriter-based setup.
 `request.path` | no | `/` | The path part of the URL, including a query string if present (e.g. `/path/to/page?foo=1`). The option is **deprecated** in favor of `path`.
 `request.visitor` | no | _none_ | An object holding information about the current visitor.
