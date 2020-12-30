@@ -16,9 +16,9 @@
 
 import 'zone.js/dist/zone-node';
 
+import { relevance } from '@bloomreach/spa-sdk/lib/express';
 import { ngExpressEngine } from '@nguniversal/express-engine';
 import express from 'express';
-import cookieParser from 'cookie-parser';
 import { join } from 'path';
 
 import { AppServerModule } from './src/main.server';
@@ -33,7 +33,7 @@ export function app() {
   const distFolder = join(process.cwd(), 'dist/browser');
   const indexHtml = existsSync(join(distFolder, 'index.original.html')) ? 'index.original.html' : 'index';
 
-  server.use(cookieParser());
+  server.use(relevance);
 
   // Our Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
   server.engine('html', ngExpressEngine({
