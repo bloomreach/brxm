@@ -2006,10 +2006,8 @@ __metadata:
     "@types/react": ^16.9
     "@types/react-dom": ^16.9
     axios: ^0.21
-    dotenv: ^8.2
     next: ^10.0
     next-routes: ^1.4
-    nookies: ^2.4
     react: ^16.14
     react-dom: ^16.14
   languageName: unknown
@@ -8391,7 +8389,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:^0.4, cookie@npm:^0.4.0, cookie@npm:^0.4.1":
+"cookie@npm:^0.4, cookie@npm:^0.4.0":
   version: 0.4.1
   resolution: "cookie@npm:0.4.1"
   checksum: b8e0928e3e7aba013087974b33a6eec730b0a68b7ec00fc3c089a56ba2883bcf671252fc2ed64775aa1ca64796b6e1f6fdddba25a66808aef77614d235fd3e06
@@ -9928,7 +9926,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:8.2.0, dotenv@npm:^8.1.0, dotenv@npm:^8.2, dotenv@npm:^8.2.0":
+"dotenv@npm:8.2.0, dotenv@npm:^8.1.0, dotenv@npm:^8.2.0":
   version: 8.2.0
   resolution: "dotenv@npm:8.2.0"
   checksum: 16cb89cbd7b98b053899b8aba8c5044c8fb61a2db8a81fe70360b75035fce5fed53bd7a34d772be717d0880c0321122a4c09423f518025e1b52d96791521b1a7
@@ -17546,16 +17544,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"nookies@npm:^2.4":
-  version: 2.5.0
-  resolution: "nookies@npm:2.5.0"
-  dependencies:
-    cookie: ^0.4.1
-    set-cookie-parser: ^2.4.6
-  checksum: 367d6d320d2d7164c0e708cd0d7360fbc62242bfa0cb3eae0927819d51cde1d8587ea9b718a8e0395361f0af0120325dc396e7140d12c7060701d350d4542b7f
-  languageName: node
-  linkType: hard
-
 "noop-logger@npm:^0.1.1":
   version: 0.1.1
   resolution: "noop-logger@npm:0.1.1"
@@ -22015,13 +22003,6 @@ resolve@1.18.1:
   version: 2.0.0
   resolution: "set-blocking@npm:2.0.0"
   checksum: 0ac2403b0c2d39bf452f6d5d17dfd3cb952b9113098e1231cc0614c436e2f465637e39d27cf3b93556f5c59795e9790fd7e98da784c5f9919edeba4295ffeb29
-  languageName: node
-  linkType: hard
-
-"set-cookie-parser@npm:^2.4.6":
-  version: 2.4.6
-  resolution: "set-cookie-parser@npm:2.4.6"
-  checksum: 6eff809c7139583bb361a659b7916a44f713b3503acc13c5c35fb5a9384a355a12758db1604d642292550f3c1cdccd718ae46d1e960f20a1074d9b12567cfc79
   languageName: node
   linkType: hard
 

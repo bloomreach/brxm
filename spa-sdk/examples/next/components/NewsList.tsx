@@ -15,11 +15,9 @@
  */
 
 import React from 'react';
+import Link from 'next/link';
 import { Document } from '@bloomreach/spa-sdk';
 import { BrManageContentButton, BrPageContext, BrProps } from '@bloomreach/react-sdk';
-import routes from '../routes';
-
-const { Link } = routes;
 
 export function NewsList(props: BrProps) {
   const { pageable } = props.component.getModels<PageableModels>();
@@ -58,7 +56,7 @@ export function NewsListItem({ item }: NewsListItemProps) {
       <div className="card-body">
         { title && (
           <h2 className="card-title">
-            <Link route={item.getUrl()}>
+            <Link href={item.getUrl() ?? '/'}>
               <a>{title}</a>
             </Link>
           </h2>
@@ -82,7 +80,7 @@ export function NewsListPagination(props: Pageable) {
     <nav aria-label="News List Pagination">
       <ul className="pagination">
         <li className={`page-item ${props.previous ? '' : 'disabled'}`}>
-          <Link route={props.previous ? page.getUrl(`?page=${props.previousPage}`) : '#'}>
+          <Link href={props.previous ? page.getUrl(`?page=${props.previousPage}`) : '/'}>
             <a className="page-link" aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
               <span className="sr-only">Previous</span>
@@ -91,13 +89,13 @@ export function NewsListPagination(props: Pageable) {
         </li>
         { props.pageNumbersArray.map((pageNumber, key) => (
           <li key={key} className={`page-item ${pageNumber === props.currentPage ? 'active' : ''}`}>
-            <Link route={page.getUrl(`?page=${pageNumber}`)}>
+            <Link href={page.getUrl(`?page=${pageNumber}`)}>
               <a className="page-link">{pageNumber}</a>
             </Link>
           </li>
         )) }
         <li className={`page-item ${props.next ? '' : 'disabled'}`}>
-          <Link route={props.next ? page.getUrl(`?page=${props.nextPage}`) : '#'}>
+          <Link href={props.next ? page.getUrl(`?page=${props.nextPage}`) : '/'}>
             <a className="page-link" aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
               <span className="sr-only">Next</span>
