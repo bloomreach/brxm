@@ -88,4 +88,41 @@ export default [
       dts(),
     ],
   },
+
+  {
+    input: 'src/express/index.ts',
+    output: [
+      {
+        dir: 'lib/express',
+        entryFileNames: '[name].js',
+        exports: 'auto',
+        format: 'cjs',
+        preserveModules: true,
+      },
+      {
+        dir: 'lib/express',
+        entryFileNames: '[name].mjs',
+        format: 'esm',
+        preserveModules: true,
+      },
+    ],
+    external: [
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {}),
+    ],
+    plugins: [
+      typescript({
+        clean: true,
+        tsconfigOverride: {
+          include: ['src/express/**/*'],
+          compilerOptions: {
+            declaration: true,
+            declarationDir: 'lib',
+            target: 'es2018',
+          },
+        },
+        useTsconfigDeclarationDir: true,
+      }),
+    ],
+  },
 ];
