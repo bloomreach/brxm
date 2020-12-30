@@ -2027,7 +2027,6 @@ __metadata:
     "@nuxtjs/eslint-config-typescript": ^4.0
     "@nuxtjs/eslint-module": ^3.0
     babel-eslint: ^10.1
-    cookie-universal-nuxt: ^2.1
     core-js: ^3.6
     cross-env: ^7.0
     eslint: ^7.12
@@ -3917,13 +3916,6 @@ __metadata:
   dependencies:
     "@types/express": "*"
   checksum: a27ce8cddf829def0afd59f8da71bf4d8ed8a91ae312bbd75464d6abd8aca8dff7a558ba20aee89a528619fb1758815f57f80f945a640825487778765cda81d5
-  languageName: node
-  linkType: hard
-
-"@types/cookie@npm:^0.3.3":
-  version: 0.3.3
-  resolution: "@types/cookie@npm:0.3.3"
-  checksum: 35d603d5e620ed8a0c4dedcf6b6e19e4981a4c44d40402de39e53f041ce74bf66b40272a355db37271b9557709fd3e6dfc8fe6ea4031f59b8b16cf0606ea3797
   languageName: node
   linkType: hard
 
@@ -8355,26 +8347,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie-universal-nuxt@npm:^2.1":
-  version: 2.1.4
-  resolution: "cookie-universal-nuxt@npm:2.1.4"
-  dependencies:
-    "@types/cookie": ^0.3.3
-    cookie-universal: ^2.1.4
-  checksum: 5c2952672356c46a228d2742533050fbaa972b91088eb5788d36d750d3c4186deddce272cc4b877933768ddaefd644408ead034a2ce6e15ae5f7a6702a1fd2f7
-  languageName: node
-  linkType: hard
-
-"cookie-universal@npm:^2.1.4":
-  version: 2.1.4
-  resolution: "cookie-universal@npm:2.1.4"
-  dependencies:
-    "@types/cookie": ^0.3.3
-    cookie: ^0.4.0
-  checksum: 8333b3dcffee1daf5b19fff617863486ce873a713ed4e7edb05aab1ec468c52179e0ab92fca16240104852f8832b244590996c07e6d9354a6cf54a3a4001063c
-  languageName: node
-  linkType: hard
-
 "cookie@npm:0.3.1, cookie@npm:^0.3.1":
   version: 0.3.1
   resolution: "cookie@npm:0.3.1"
@@ -8389,7 +8361,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:^0.4, cookie@npm:^0.4.0":
+"cookie@npm:^0.4":
   version: 0.4.1
   resolution: "cookie@npm:0.4.1"
   checksum: b8e0928e3e7aba013087974b33a6eec730b0a68b7ec00fc3c089a56ba2883bcf671252fc2ed64775aa1ca64796b6e1f6fdddba25a66808aef77614d235fd3e06
