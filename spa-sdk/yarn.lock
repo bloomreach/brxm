@@ -1986,8 +1986,6 @@ __metadata:
     "@types/express": ^4.17
     "@types/jest": ^26.0
     codelyzer: ^6.0
-    cookie: ^0.4
-    cookie-parser: ^1.4
     express: ^4.17
     jest: ^26.6
     rxjs: ^6.6
@@ -8349,16 +8347,6 @@ __metadata:
   version: 0.3.5
   resolution: "convert-source-map@npm:0.3.5"
   checksum: d31937554444da25c0a23f75158cc420f13d9b6ae54fd1217522184670c9bcac6e458e53c03fe3fd191b7f1b13c6d135f9771916fcd1d5667d65ce5e4f00ab6d
-  languageName: node
-  linkType: hard
-
-"cookie-parser@npm:^1.4":
-  version: 1.4.5
-  resolution: "cookie-parser@npm:1.4.5"
-  dependencies:
-    cookie: 0.4.0
-    cookie-signature: 1.0.6
-  checksum: a3eeda832d81862477e40444a8d411595b91e15f9b1d2b397a173e9efa744a29129de9aaa99342cf9468641d854a464c4e215cd60d1df49374c9ccffa1af52bf
   languageName: node
   linkType: hard
 
