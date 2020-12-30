@@ -15,7 +15,7 @@
   -->
 
 <template>
-  <div id="app" class="d-flex flex-column">
+  <div id="app" class="d-flex flex-column vh-100">
     <br-page :configuration="configuration" :mapping="mapping">
       <template v-slot:default="props">
         <header>
@@ -91,13 +91,8 @@ export default class App extends Vue {
 
 <style>
 #app {
-  padding-bottom: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
-    'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  height: 100vh;
 }
 
 #app .has-edit-button {
