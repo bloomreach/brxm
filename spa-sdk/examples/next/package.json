@@ -8,10 +8,8 @@
   "dependencies": {
     "@bloomreach/react-sdk": "^14.5.0",
     "axios": "^0.21",
-    "dotenv": "^8.2",
     "next": "^10.0",
     "next-routes": "^1.4",
-    "nookies": "^2.4",
     "react": "^16.14",
     "react-dom": "^16.14"
   },
@@ -21,8 +19,8 @@
     "@types/react-dom": "^16.9"
   },
   "scripts": {
-    "dev": "node server.js",
+    "dev": "next",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js"
+    "start": "next start -p ${PORT:-3000}"
   }
 }
