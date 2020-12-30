@@ -55,43 +55,25 @@ import Content from '~/components/BrContent.vue';
 import Menu from '~/components/BrMenu.vue';
 import NewsList from '~/components/BrNewsList.vue';
 
-const VISITOR_COOKIE = '_v';
-const VISITOR_COOKIE_MAX_AGE_IN_SECONDS = 365 * 24 * 60 * 60;
-
 @Component({
   async asyncData(context) {
     const configuration = {
       baseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
       endpoint: process.env.VUE_APP_BRXM_ENDPOINT,
       endpointQueryParameter: 'endpoint',
-      request: {
-        path: context.route.fullPath,
-      },
-      visitor: process.server
-        ? context.app.$cookies.get(VISITOR_COOKIE, { parseJSON: true })
-        : context.nuxtState.visitor,
+      path: context.route.fullPath,
+      visitor: context.nuxtState?.visitor,
     };
 
     const page = await initialize({
       ...configuration,
       httpClient: context.$axios,
-      request: {
-        ...configuration.request,
-        connection: context.req?.connection,
-        headers: context.req?.headers['x-forwarded-for']
-          ? { 'x-forwarded-for': context.req?.headers['x-forwarded-for'] }
-          : undefined,
-      },
+      request: context.req,
     });
-    configuration.visitor = page.getVisitor();
 
-    if (process.server && configuration.visitor) {
-      context.app.$cookies.set(VISITOR_COOKIE, configuration.visitor, {
-        httpOnly: true,
-        maxAge: VISITOR_COOKIE_MAX_AGE_IN_SECONDS,
-      });
+    if (process.server) {
       context.beforeNuxtRender(({ nuxtState }) => {
-        nuxtState.visitor = configuration.visitor;
+        nuxtState.visitor = page.getVisitor();
       });
     }
 
@@ -121,7 +103,7 @@ export default class App extends Vue {
 
   @Watch('$route', { deep: true })
   navigate() {
-    this.$set(this.configuration, 'request', { path: this.$route.fullPath });
+    this.$set(this.configuration, 'path', this.$route.fullPath);
   }
 }
 </script>
