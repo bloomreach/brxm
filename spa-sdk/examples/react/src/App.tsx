@@ -22,13 +22,10 @@ import { Banner, Content, Menu, NewsList } from './components';
 
 export default function App(props: RouteComponentProps) {
   const configuration = {
-    baseUrl: process.env.REACT_APP_BASE_URL,
     endpoint: process.env.REACT_APP_BRXM_ENDPOINT,
     endpointQueryParameter: 'endpoint',
     httpClient: axios,
-    request: {
-      path: `${props.location.pathname}${props.location.search}`,
-    },
+    path: `${props.location.pathname}${props.location.search}`,
   };
   const mapping = { Banner, Content, 'News List': NewsList, 'Simple Content': Content };
 
