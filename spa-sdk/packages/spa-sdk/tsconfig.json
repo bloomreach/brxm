@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "./src",
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
@@ -21,15 +20,15 @@
   },
   "typedocOptions": {
     "disableSources": true,
-    "excludeExternals": true,
     "excludeNotExported": true,
     "excludePrivate": true,
     "excludeProtected": true,
+    "exclude": "!lib/**/*",
     "external-modulemap": ".*\/lib\/([\\w\\-_]+)",
     "hideGenerator": true,
     "ignoreCompilerErrors": true,
     "includeDeclarations": true,
-    "inputFiles": ["lib/index.d.ts"],
+    "inputFiles": ["lib/index.d.ts", "lib/express/index.d.ts"],
     "mode": "modules",
     "out": "docs"
   }
