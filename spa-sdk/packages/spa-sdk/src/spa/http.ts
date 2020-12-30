@@ -72,6 +72,12 @@ export interface HttpRequest {
   connection?: HttpConnection;
 
   /**
+   * Emits an event in the request scope.
+   * @see https://nodejs.org/api/stream.html#stream_readable_streams
+   */
+  emit?(event: string | symbol, ...args: any[]): boolean;
+
+  /**
    * All request headers (including cookies).
    */
   headers?: HttpHeaders;
