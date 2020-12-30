@@ -15,7 +15,6 @@
  */
 
 export const environment = {
-  baseUrl: undefined,
   endpoint: undefined,
   production: false,
 };
