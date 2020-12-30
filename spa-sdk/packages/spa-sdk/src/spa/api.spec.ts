@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+import { mocked } from 'ts-jest/utils';
+import { isConfigurationWithProxy } from '../configuration';
 import { PageModel } from '../page';
 import { UrlBuilder } from '../url';
 import { ApiImpl } from './api';
 
+jest.mock('../configuration');
 jest.mock('../url');
 
 const model = {} as PageModel;
@@ -30,6 +33,8 @@ const config = {
     headers: {
       cookie: 'JSESSIONID=1234',
       host: 'example.com',
+      referer: 'http://example.com',
+      'user-agent': 'Google Bot',
     },
     path: '/',
     visitor: {
@@ -64,15 +69,29 @@ describe('ApiImpl', () => {
         url: 'http://example.com/',
         method: 'GET',
         headers: {
-          cookie: 'JSESSIONID=1234',
-          'x-forwarded-for': '127.0.0.1',
+          referer: 'http://example.com',
+          'user-agent': 'Google Bot',
           'visitor-header': 'visitor-id',
+          'x-forwarded-for': '127.0.0.1',
         },
       });
     });
 
     it('should return a page model', async () => {
       expect(await api.getPage(config.request.path)).toBe(model);
+    });
+
+    it('should forward cookie header if the setup is using a reverse proxy', async () => {
+      mocked(isConfigurationWithProxy).mockReturnValueOnce(true);
+
+      const api = new ApiImpl(urlBuilder, config);
+      await api.getPage(config.request.path);
+
+      expect(config.httpClient).toBeCalledWith(expect.objectContaining({
+        headers: expect.objectContaining({
+          cookie: 'JSESSIONID=1234',
+        }),
+      }));
     });
 
     it('should not include x-forwarded-for header when the remote address could not be determined', async () => {
