@@ -15,14 +15,13 @@
   -->
 
 <template>
-  <nuxt />
+  <div class="d-flex flex-column vh-100">
+    <nuxt />
+  </div>
 </template>
 
 <style>
 body {
-  padding-bottom: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
-    'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
