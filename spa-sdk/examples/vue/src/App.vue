@@ -61,11 +61,11 @@ import NewsList from './components/BrNewsList.vue';
   data(this: App) {
     return {
       configuration: {
-        httpClient: axios,
         baseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
         endpoint: process.env.VUE_APP_BRXM_ENDPOINT,
         endpointQueryParameter: 'endpoint',
-        request: { path: this.$route.fullPath },
+        httpClient: axios,
+        path: this.$route.fullPath,
       },
       mapping: {
         Banner,
@@ -84,7 +84,7 @@ export default class App extends Vue {
 
   @Watch('$route', { immediate: true, deep: true })
   navigate(): void {
-    this.$set(this.configuration, 'request', { path: this.$route.fullPath });
+    this.$set(this.configuration, 'path', this.$route.fullPath);
   }
 }
 </script>
