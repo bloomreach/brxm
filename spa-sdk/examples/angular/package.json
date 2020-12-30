@@ -25,8 +25,6 @@
     "@angular/router": "^11.0",
     "@bloomreach/ng-sdk": "^14.5.0",
     "@nguniversal/express-engine": "^11.0",
-    "cookie": "^0.4",
-    "cookie-parser": "^1.4",
     "express": "^4.17",
     "rxjs": "^6.6",
     "tslib": "^2.0",
