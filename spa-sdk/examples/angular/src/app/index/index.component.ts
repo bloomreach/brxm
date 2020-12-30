@@ -16,11 +16,10 @@
 
 import { Component, InjectionToken, Inject, OnInit, Optional } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { RESPONSE, REQUEST } from '@nguniversal/express-engine/tokens';
+import { REQUEST } from '@nguniversal/express-engine/tokens';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { Response, Request } from 'express';
-import { serialize } from 'cookie';
+import { Request } from 'express';
 import { BrPageComponent } from '@bloomreach/ng-sdk';
 import { Page } from '@bloomreach/spa-sdk';
 
@@ -31,9 +30,6 @@ import { NewsListComponent } from '../news-list/news-list.component';
 
 export const BASE_URL = new InjectionToken<string>('SPA Base URL');
 export const ENDPOINT = new InjectionToken<string>('brXM API endpoint');
-
-const VISITOR_COOKIE = '_v';
-const VISITOR_COOKIE_MAX_AGE_IN_SECONDS = 365 * 24 * 60 * 60;
 
 @Component({
   selector: 'br-index',
@@ -56,22 +52,15 @@ export class IndexComponent implements OnInit {
     router: Router,
     @Inject(BASE_URL) baseUrl?: string,
     @Inject(ENDPOINT) endpoint?: string,
-    @Inject(REQUEST) @Optional() private request?: Request,
-    @Inject(RESPONSE) @Optional() private response?: Response,
+    @Inject(REQUEST) @Optional() request?: Request,
   ) {
     this.configuration = {
       baseUrl,
       endpoint,
+      request,
       endpointQueryParameter: 'endpoint',
-      request: {
-        connection: request?.connection,
-        headers: request?.headers['x-forwarded-for']
-          ? { 'x-forwarded-for': request?.headers['x-forwarded-for'] }
-          : undefined,
-        path: router.url,
-      },
-      visitor: this.request?.cookies[VISITOR_COOKIE] && JSON.parse(this.request.cookies[VISITOR_COOKIE]),
-    } as BrPageComponent['configuration'];
+      path: router.url,
+    } as IndexComponent['configuration'];
 
     this.navigationEnd = router.events.pipe(
       filter(event => event instanceof NavigationEnd),
@@ -80,28 +69,11 @@ export class IndexComponent implements OnInit {
 
   ngOnInit() {
     this.navigationEnd.subscribe((event) => {
-      this.configuration = {
-        ...this.configuration,
-        request: { path: event.url },
-      };
+      this.configuration = { ...this.configuration, path: event.url };
     });
   }
 
   setVisitor(page?: Page) {
-    const visitor = page?.getVisitor();
-
-    if (!visitor) {
-      return;
-    }
-
-    this.configuration.visitor = visitor;
-    this.response?.setHeader(
-      'Set-Cookie',
-      serialize(
-        VISITOR_COOKIE,
-        JSON.stringify(visitor),
-        { httpOnly: true, maxAge: VISITOR_COOKIE_MAX_AGE_IN_SECONDS },
-      ),
-    );
+    this.configuration.visitor = page?.getVisitor();
   }
 }
