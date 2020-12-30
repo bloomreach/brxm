@@ -29,9 +29,11 @@ import { PageModel, TYPE_LINK_RESOURCE, TYPE_LINK_EXTERNAL, TYPE_LINK_INTERNAL }
 
 describe('initialize', () => {
   let page: Page;
+  const emit = jest.fn();
   const httpClient = jest.fn(async () => ({ data: model as unknown as PageModel }));
 
   beforeEach(async () => {
+    emit.mockClear();
     httpClient.mockClear();
     page = await initialize({
       httpClient,
@@ -39,6 +41,7 @@ describe('initialize', () => {
       baseUrl: '//example.com',
       endpoint: 'http://localhost:8080/site/my-spa/resourceapi',
       path: '/?token=something',
+      request: { emit },
     });
   });
 
@@ -249,5 +252,9 @@ describe('initialize', () => {
     destroy(page);
 
     expect(postMessageSpy).toBeCalledWith(expect.anything(), 'http://localhost:12345');
+  });
+
+  it('should emit a request event', async () => {
+    expect(emit).toBeCalledWith('br:spa:initialized', page);
   });
 });
