@@ -15,6 +15,11 @@
     "appPath": "projects"
   },
   {
+    "id": "xm-api-token-management",
+    "appIframeUrl": "http://localhost:4201",
+    "appPath": "api-token-management"
+  },
+  {
     "id": "xm-content",
     "appIframeUrl": "http://localhost:4201",
     "appPath": "content"
