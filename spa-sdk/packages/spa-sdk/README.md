@@ -88,6 +88,24 @@ Option | Required | Default | Description
 `visitor.header` | yes | _none_ | An HTTP-header using to pass the visitor identifier to the Page Model API.
 `window` | no | `window` | A window object reference will be used to interact with brXM. It needs to be set when initialize is being called within an iframe or worker process.
 
+### Relevance Integration
+The SDK provides basic [Express middleware](https://expressjs.com/en/guide/using-middleware.html) for seamless integration with [the Relevance Module](https://documentation.bloomreach.com/14/library/enterprise/enterprise-features/targeting/targeting.html).
+
+```javascript
+import express from 'express';
+import { relevance } from '@bloomreach/spa-sdk/lib/express';
+
+const app = express();
+
+app.use(relevance);
+```
+
+The middleware can be customized using the `withOptions` method.
+
+```javascript
+app.use(relevance.withOptions({ name: '_visitor', maxAge: 24 * 60 * 60 }));
+```
+
 ### Reference
 The complete API reference can be found [here](https://javadoc.onehippo.org/14.0/bloomreach-spa-sdk/).
 
@@ -109,6 +127,8 @@ Function | Description
 `isPagination(value): boolean` | Checks whether a value is a pagination.
 `isLink(value): boolean` | Checks whether a value is a link.
 `isReference(value): boolean` | Checks whether a value is a content reference.
+`relevance(request: IncomingMessage, response: OutgoingMessage, next?: () => void): void` | Express middleware for seamless integration with [the Relevance Module](https://documentation.bloomreach.com/14/library/enterprise/enterprise-features/targeting/targeting.html).
+`relevance.withOptions(options?: Options): Handler` | Customizes Express middleware for [the Relevance Module](https://documentation.bloomreach.com/14/library/enterprise/enterprise-features/targeting/targeting.html) integration.
 
 #### Constants
 Constant | Description
