@@ -15,11 +15,9 @@
  */
 
 import React from 'react';
+import Link from 'next/link';
 import { MenuItem, Menu as BrMenu, TYPE_LINK_EXTERNAL, isMenu } from '@bloomreach/spa-sdk';
 import { BrComponentContext, BrManageMenuButton, BrPageContext } from '@bloomreach/react-sdk';
-import routes from '../routes';
-
-const { Link } = routes;
 
 interface MenuLinkProps {
   item: MenuItem;
@@ -37,7 +35,7 @@ function MenuLink({ item }: MenuLinkProps) {
   }
 
   return (
-    <Link route={url}>
+    <Link href={url}>
       <a className="nav-link text-capitalize">{item.getName()}</a>
     </Link>
   );
