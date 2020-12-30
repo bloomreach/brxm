@@ -28,7 +28,6 @@ import { ContentComponent } from '../content/content.component';
 import { MenuComponent } from '../menu/menu.component';
 import { NewsListComponent } from '../news-list/news-list.component';
 
-export const BASE_URL = new InjectionToken<string>('SPA Base URL');
 export const ENDPOINT = new InjectionToken<string>('brXM API endpoint');
 
 @Component({
@@ -50,12 +49,10 @@ export class IndexComponent implements OnInit {
 
   constructor(
     router: Router,
-    @Inject(BASE_URL) baseUrl?: string,
     @Inject(ENDPOINT) endpoint?: string,
     @Inject(REQUEST) @Optional() request?: Request,
   ) {
     this.configuration = {
-      baseUrl,
       endpoint,
       request,
       endpointQueryParameter: 'endpoint',
