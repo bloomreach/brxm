@@ -97,6 +97,9 @@ export const registerIcons = (iconRegistry: MatIconRegistry, donSanitizer: DomSa
   registerIcon('projects', projects);
   registerIcon('projects.highlighted', projectsActive);
 
+  registerIcon('api-token-management', projects);
+  registerIcon('api-token-management.highlighted', projectsActive);
+
   registerIcon('search-and-merchandising', searchAndMerchandising);
   registerIcon('search-and-merchandising.highlighted', searchAndMerchandisingActive);
 
