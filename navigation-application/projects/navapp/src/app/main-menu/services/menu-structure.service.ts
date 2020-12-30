@@ -62,6 +62,12 @@ export class MenuStructureService {
       'projects',
     );
 
+    const apiTokenManagement = new MenuItemLink(
+      'xm-api-token-management',
+      this.translate('MENU_ITEM_XM_API_TOKEN_MANAGEMENT'),
+      'api-token-management',
+    );
+
     const content = new MenuItemLink(
       'xm-content',
        this.translate('MENU_ITEM_XM_CONTENT'),
@@ -362,6 +368,7 @@ export class MenuStructureService {
       dashboard,
       experienceManager,
       projects,
+      apiTokenManagement,
       content,
       documentSearch,
       searchAndMerchandising,
