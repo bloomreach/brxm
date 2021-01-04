@@ -38,6 +38,7 @@ import {
   isConfigurationWithJwt09,
   isConfigurationWithProxy,
 } from './configuration';
+import { LoggerModule, Logger, Level } from './logger';
 import {
   UrlModule09,
   UrlModule,
@@ -54,7 +55,7 @@ const DEFAULT_SERVER_ID_PARAMETER = 'server-id';
 const container = new Container({ skipBaseClassChecks: true });
 const pages = new WeakMap<Page, Container>();
 
-container.load(CmsModule(), UrlModule());
+container.load(CmsModule(), LoggerModule(), UrlModule());
 
 function onReady<T>(value: T | Promise<T>, callback: (value: T) => unknown): T | Promise<T> {
   const wrapper = (result: T) => (callback(result), result);
@@ -177,6 +178,9 @@ export function initialize(configuration: Configuration, model?: Page | PageMode
   }
 
   const scope = container.createChild();
+  const logger = scope.get(Logger);
+
+  logger.level = configuration.debug ? Level.Debug : Level.Error;
 
   return onReady(
     isConfigurationWithProxy(configuration) ? initializeWithProxy(scope, configuration, model) :
