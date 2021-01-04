@@ -183,6 +183,7 @@
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
                 <exclude>packages/*/coverage/**</exclude>
                 <exclude>packages/*/dist/**</exclude>
+                <exclude>packages/spa-sdk/docs/**</exclude>
                 <exclude>packages/spa-sdk/lib/**</exclude>
                 <exclude>examples/angular/dist/**</exclude>
                 <exclude>examples/next/.next/**</exclude>
