@@ -94,6 +94,7 @@ public class DocumentQueryDynamicComponent extends BaseHstDynamicComponent {
     private static Logger log = LoggerFactory.getLogger(DocumentQueryDynamicComponent.class);
 
     protected static final String REQUEST_PARAM_PAGE = "page";
+    protected static final String REQUEST_PARAM_LIMIT = "limit";
     protected static final String REQUEST_ATTR_PAGINATION = "pagination";
 
 
