@@ -66,12 +66,21 @@ function onReady<T>(value: T | Promise<T>, callback: (value: T) => unknown): T |
 }
 
 function initializeWithProxy(scope: Container, configuration: ConfigurationWithProxy, model?: PageModel) {
+  const logger = scope.get(Logger);
+
+  logger.info('Enabled reverse-proxy based setup.');
+  logger.warn('This setup is deprecated and will not work in the next major release.');
+  logger.debug('Path:', configuration.path ?? configuration.request?.path ?? '/');
+  logger.debug('Base URL:', configuration.options.preview.spaBaseUrl);
+
   const options = isMatched(
       configuration.path ?? configuration.request?.path ?? '/',
       configuration.options.preview.spaBaseUrl,
     )
     ? configuration.options.preview
     : configuration.options.live;
+
+  logger.info(`Using ${options === configuration.options.preview ? 'preview' : 'live'} configuration.`);
 
   scope.load(PageModule09(), SpaModule(), UrlModule09());
   scope.bind(ApiOptionsToken).toConstantValue(configuration);
@@ -88,6 +97,12 @@ function initializeWithProxy(scope: Container, configuration: ConfigurationWithP
 }
 
 function initializeWithJwt09(scope: Container, configuration: ConfigurationWithJwt09, model?: PageModel) {
+  const logger = scope.get(Logger);
+
+  logger.info('Enabled token-based setup.');
+  logger.info('Using Page Model API 0.9.');
+  logger.warn('This version of the Page Model API is deprecated and will be removed in the next major release.');
+
   const authorizationParameter = configuration.authorizationQueryParameter ?? DEFAULT_AUTHORIZATION_PARAMETER;
   const serverIdParameter = configuration.serverIdQueryParameter ?? DEFAULT_SERVER_ID_PARAMETER;
   const { url: path, searchParams } = extractSearchParams(
@@ -102,6 +117,18 @@ function initializeWithJwt09(scope: Container, configuration: ConfigurationWithJ
     spaBaseUrl: appendSearchParams(configuration.spaBaseUrl ?? '', searchParams),
   };
 
+  if (authorizationToken) {
+    logger.debug('Token:', authorizationToken);
+  }
+
+  if (serverId) {
+    logger.debug('Server Id:', serverId);
+  }
+
+  logger.debug('Origin:', config.origin);
+  logger.debug('Path:', path);
+  logger.debug('Base URL:', config.spaBaseUrl);
+
   scope.load(PageModule09(), SpaModule(), UrlModule09());
   scope.bind(ApiOptionsToken).toConstantValue({ authorizationToken, serverId, ...config });
   scope.bind(UrlBuilderOptionsToken).toConstantValue(config);
@@ -110,8 +137,11 @@ function initializeWithJwt09(scope: Container, configuration: ConfigurationWithJ
     scope.get<Spa>(SpaService).initialize(model ?? path),
     (page) => {
       if (page.isPreview() && config.cmsBaseUrl) {
+        logger.info('Running in preview mode.');
         scope.get<PostMessage>(PostMessageService).initialize(config);
         scope.get<Cms>(CmsService).initialize(config);
+      } else {
+        logger.info('Running in live mode.');
       }
 
       scope.unbind(ApiOptionsToken);
@@ -121,6 +151,11 @@ function initializeWithJwt09(scope: Container, configuration: ConfigurationWithJ
 }
 
 function initializeWithJwt10(scope: Container, configuration: ConfigurationWithJwt10, model?: PageModel) {
+  const logger = scope.get(Logger);
+
+  logger.info('Enabled token-based setup.');
+  logger.info('Using Page Model API 1.0.');
+
   const authorizationParameter = configuration.authorizationQueryParameter ?? DEFAULT_AUTHORIZATION_PARAMETER;
   const endpointParameter = configuration.endpointQueryParameter ?? '';
   const serverIdParameter = configuration.serverIdQueryParameter ?? DEFAULT_SERVER_ID_PARAMETER;
@@ -139,6 +174,19 @@ function initializeWithJwt10(scope: Container, configuration: ConfigurationWithJ
     origin: configuration.origin ?? parseUrl(configuration.endpoint ?? endpoint ?? '').origin,
   };
 
+  if (authorizationToken) {
+    logger.debug('Token:', authorizationToken);
+  }
+
+  if (serverId) {
+    logger.debug('Server Id:', serverId);
+  }
+
+  logger.debug('Endpoint:', config.endpoint);
+  logger.debug('Origin:', config.origin);
+  logger.debug('Path:', path);
+  logger.debug('Base URL:', config.baseUrl);
+
   scope.load(PageModule(), SpaModule(), UrlModule());
   scope.bind(ApiOptionsToken).toConstantValue({ authorizationToken, serverId, ...config });
   scope.bind(UrlBuilderOptionsToken).toConstantValue(config);
@@ -147,8 +195,11 @@ function initializeWithJwt10(scope: Container, configuration: ConfigurationWithJ
     scope.get<Spa>(SpaService).initialize(model ?? path),
     (page) => {
       if (page.isPreview() && config.endpoint) {
+        logger.info('Running in preview mode.');
         scope.get<PostMessage>(PostMessageService).initialize(config);
         scope.get<Cms>(CmsService).initialize(config);
+      } else {
+        logger.info('Running in live mode.');
       }
 
       scope.unbind(ApiOptionsToken);
@@ -181,6 +232,7 @@ export function initialize(configuration: Configuration, model?: Page | PageMode
   const logger = scope.get(Logger);
 
   logger.level = configuration.debug ? Level.Debug : Level.Error;
+  logger.debug('Configuration:', configuration);
 
   return onReady(
     isConfigurationWithProxy(configuration) ? initializeWithProxy(scope, configuration, model) :
