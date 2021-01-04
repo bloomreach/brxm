@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { injectable } from 'inversify';
+import { injectable, inject, optional } from 'inversify';
 import { isMatched } from '../url';
 import { Events, Message, Procedures, Rpc } from './rpc';
+import { Logger } from '../logger';
 
 export const PostMessageService = Symbol.for('PostMessageService');
 
@@ -48,7 +49,7 @@ export class PostMessage<
 
   private window?: Window;
 
-  constructor() {
+  constructor(@inject(Logger) @optional() private logger?: Logger) {
     super();
     this.onMessage = this.onMessage.bind(this);
   }
@@ -61,14 +62,21 @@ export class PostMessage<
   }
 
   protected send(message: Message) {
-    if (this.origin) {
-      this.window?.parent?.postMessage(message, this.origin);
+    if (!this.origin) {
+      return;
     }
+
+    this.logger?.debug('[OUTGOING]', `[${this.origin}]`, message);
+    this.window?.parent?.postMessage(message, this.origin);
   }
 
   private onMessage(event: MessageEvent) {
     if (!event.data || !isMatched(event.origin, this.origin === '*' ? '' : this.origin)) {
       return;
+    }
+
+    if (event.data?.type) {
+      this.logger?.debug('[INCOMING]', `[${event.origin}]`, event.data);
     }
 
     this.process(event.data);
