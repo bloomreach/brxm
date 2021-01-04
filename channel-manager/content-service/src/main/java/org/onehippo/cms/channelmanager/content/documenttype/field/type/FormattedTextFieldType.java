@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.io.IOException;
@@ -58,7 +57,7 @@ public class FormattedTextFieldType extends StringFieldType implements HtmlField
         final FieldsInformation fieldsInfo = super.init(fieldContext);
 
         initConfig(fieldContext);
-        initProcessorfactory(fieldContext);
+        initProcessorFactory(fieldContext);
 
         return fieldsInfo;
     }
@@ -71,7 +70,7 @@ public class FormattedTextFieldType extends StringFieldType implements HtmlField
         }
     }
 
-    private void initProcessorfactory(final FieldTypeContext fieldContext) {
+    private void initProcessorFactory(final FieldTypeContext fieldContext) {
         final String processorId = fieldContext.getStringConfig(HTMLPROCESSOR_ID).orElse(defaultHtmlProcessorId);
         processorFactory = HtmlProcessorFactory.of(processorId);
     }
