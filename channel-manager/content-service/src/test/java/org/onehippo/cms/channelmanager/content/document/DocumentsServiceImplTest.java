@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.ws.rs.core.Response.Status;
 
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.PlatformServices;
@@ -103,19 +104,29 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
+@PowerMockIgnore({
+        "com.sun.org.apache.xalan.*",
+        "com.sun.org.apache.xerces.*",
+        "javax.activation.*",
+        "javax.management.*",
+        "javax.net.ssl.*",
+        "javax.xml.*",
+        "org.apache.logging.log4j.*",
+        "org.w3c.dom.*",
+        "org.xml.*",
+})
 @PrepareForTest({
-        DocumentNameUtils.class,
         DocumentLocaleUtils.class,
-        PublicationStateUtils.class,
+        DocumentNameUtils.class,
         DocumentTypesService.class,
         DocumentUtils.class,
         EditingUtils.class,
         FieldTypeUtils.class,
         FolderUtils.class,
         JcrUtils.class,
+        PublicationStateUtils.class,
         ValidationUtils.class,
-        WorkflowUtils.class
+        WorkflowUtils.class,
 })
 public class DocumentsServiceImplTest {
 
@@ -208,7 +219,7 @@ public class DocumentsServiceImplTest {
             documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST);
         }
 
         verifyAll();
@@ -228,7 +239,7 @@ public class DocumentsServiceImplTest {
             documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST);
         }
 
         verifyAll();
@@ -248,7 +259,7 @@ public class DocumentsServiceImplTest {
             documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST);
         }
 
         verifyAll();
@@ -270,10 +281,8 @@ public class DocumentsServiceImplTest {
             documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
-            assertTrue(e.getPayload() instanceof ErrorInfo);
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NOT_A_DOCUMENT));
-            assertThat(errorInfo.getParams().get("displayName"), equalTo("Display Name"));
+            assertErrorStatusAndReason(e, Status.METHOD_NOT_ALLOWED, Reason.NOT_A_DOCUMENT,
+                    Collections.singletonMap("displayName", "Display Name"));
         }
 
         verifyAll();
@@ -298,7 +307,7 @@ public class DocumentsServiceImplTest {
             documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
+            assertErrorStatusAndReason(e, Status.FORBIDDEN, Reason.SERVER_ERROR);
         }
 
         verifyAll();
@@ -309,7 +318,6 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
-        final ErrorInfo errorInfo = new ErrorInfo(Reason.OTHER_HOLDER);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
@@ -318,7 +326,8 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andStubReturn(emptyMap());
         expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(false);
-        expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session)).andReturn(Optional.of(errorInfo));
+        expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session))
+                .andReturn(Optional.of(new ErrorInfo(Reason.OTHER_HOLDER)));
 
         replayAll();
 
@@ -326,8 +335,8 @@ public class DocumentsServiceImplTest {
             documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(e.getPayload(), is(errorInfo));
-            assertThat(errorInfo.getParams().get("publicationState"), equalTo(PublicationState.CHANGED));
+            assertErrorStatusAndReason(e, Status.FORBIDDEN, Reason.OTHER_HOLDER,
+                    Collections.singletonMap("publicationState", PublicationState.CHANGED));
         }
 
         verifyAll();
@@ -352,7 +361,7 @@ public class DocumentsServiceImplTest {
             documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.DOES_NOT_EXIST);
         }
 
         verifyAll();
@@ -382,7 +391,7 @@ public class DocumentsServiceImplTest {
             documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
+            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR);
         }
 
         verifyAll();
@@ -409,10 +418,8 @@ public class DocumentsServiceImplTest {
             documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertTrue(e.getPayload() instanceof ErrorInfo);
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR));
-            assertThat(errorInfo.getParams().get("displayName"), equalTo("Display Name"));
+            assertErrorStatusAndReason(e, Status.FORBIDDEN, Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR,
+                    Collections.singletonMap("displayName", "Display Name"));
         }
 
         verifyAll();
@@ -439,7 +446,7 @@ public class DocumentsServiceImplTest {
             documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
+            assertErrorStatusAndReason(e, Status.FORBIDDEN, Reason.SERVER_ERROR);
         }
 
         verifyAll();
@@ -626,7 +633,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST);
         }
 
         verifyAll();
@@ -649,9 +656,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
-            assertTrue(e.getPayload() instanceof ErrorInfo);
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NOT_A_DOCUMENT));
+            assertErrorStatusAndReason(e, Status.METHOD_NOT_ALLOWED, Reason.NOT_A_DOCUMENT);
         }
 
         verifyAll();
@@ -675,7 +680,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST);
         }
 
         verifyAll();
@@ -704,10 +709,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertTrue(e.getPayload() instanceof ErrorInfo);
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NO_HOLDER));
-            assertNull(errorInfo.getParams());
+            assertErrorStatusAndReason(e, Status.FORBIDDEN, Reason.NO_HOLDER);
         }
 
         verifyAll();
@@ -721,7 +723,6 @@ public class DocumentsServiceImplTest {
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-        final ErrorInfo errorInfo = new ErrorInfo(Reason.OTHER_HOLDER);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
@@ -729,7 +730,8 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(false);
-        expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session)).andReturn(Optional.of(errorInfo));
+        expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session))
+                .andReturn(Optional.of(new ErrorInfo(Reason.OTHER_HOLDER)));
 
         replayAll();
 
@@ -737,7 +739,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(e.getPayload(), equalTo(errorInfo));
+            assertErrorStatusAndReason(e, Status.FORBIDDEN, Reason.OTHER_HOLDER);
         }
 
         verifyAll();
@@ -766,7 +768,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.DOES_NOT_EXIST);
         }
 
         verifyAll();
@@ -796,7 +798,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNSUPPORTED_VALIDATOR));
+            assertErrorStatusAndReason(e, Status.FORBIDDEN, Reason.SAVE_WITH_UNSUPPORTED_VALIDATOR);
         }
 
         verifyAll();
@@ -866,7 +868,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
+            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR);
         }
 
         verifyAll();
@@ -903,7 +905,8 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final BadRequestException e) {
-            assertThat(e.getPayload(), equalTo(document));
+            assertThat(e.getStatus(), is(Status.BAD_REQUEST));
+            assertThat(e.getPayload(), is(document));
         }
 
         verifyAll();
@@ -943,10 +946,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertTrue(e.getPayload() instanceof ErrorInfo);
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NO_HOLDER));
-            assertNull(errorInfo.getParams());
+            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.NO_HOLDER);
         }
 
         verifyAll();
@@ -1066,7 +1066,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST);
         }
 
         verifyAll();
@@ -1090,9 +1090,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
-            assertTrue(e.getPayload() instanceof ErrorInfo);
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NOT_A_DOCUMENT));
+            assertErrorStatusAndReason(e, Status.METHOD_NOT_ALLOWED, Reason.NOT_A_DOCUMENT);
         }
 
         verifyAll();
@@ -1117,7 +1115,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST);
         }
 
         verifyAll();
@@ -1146,10 +1144,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertTrue(e.getPayload() instanceof ErrorInfo);
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NO_HOLDER));
-            assertNull(errorInfo.getParams());
+            assertErrorStatusAndReason(e, Status.FORBIDDEN, Reason.NO_HOLDER);
         }
 
         verifyAll();
@@ -1161,7 +1156,6 @@ public class DocumentsServiceImplTest {
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-        final ErrorInfo errorInfo = new ErrorInfo(Reason.OTHER_HOLDER);
         final FieldPath fieldPath = new FieldPath("ns:field");
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("drafted value"));
 
@@ -1171,7 +1165,8 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(false);
-        expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session)).andReturn(Optional.of(errorInfo));
+        expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session))
+                .andReturn(Optional.of(new ErrorInfo(Reason.OTHER_HOLDER)));
 
         replayAll();
 
@@ -1179,7 +1174,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(e.getPayload(), equalTo(errorInfo));
+            assertErrorStatusAndReason(e, Status.FORBIDDEN, Reason.OTHER_HOLDER);
         }
 
         verifyAll();
@@ -1208,7 +1203,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.DOES_NOT_EXIST);
         }
 
         verifyAll();
@@ -1238,7 +1233,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNSUPPORTED_VALIDATOR));
+            assertErrorStatusAndReason(e, Status.FORBIDDEN, Reason.SAVE_WITH_UNSUPPORTED_VALIDATOR);
         }
 
         verifyAll();
@@ -1304,8 +1299,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("Expected a BadRequestException");
         } catch (BadRequestException expected) {
-            ErrorInfo errorInfo = (ErrorInfo) expected.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.INVALID_DATA));
+            assertErrorStatusAndReason(expected, Status.BAD_REQUEST, Reason.INVALID_DATA);
             verifyAll();
         }
     }
@@ -1369,7 +1363,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
+            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR);
         }
 
         verifyAll();
@@ -1387,7 +1381,7 @@ public class DocumentsServiceImplTest {
             documentsService.discardEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST);
         }
 
         verifyAll();
@@ -1409,9 +1403,7 @@ public class DocumentsServiceImplTest {
             documentsService.discardEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
-            assertTrue(e.getPayload() instanceof ErrorInfo);
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NOT_A_DOCUMENT));
+            assertErrorStatusAndReason(e, Status.METHOD_NOT_ALLOWED, Reason.NOT_A_DOCUMENT);
         }
 
         verifyAll();
@@ -1435,9 +1427,7 @@ public class DocumentsServiceImplTest {
             documentsService.discardEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertTrue(e.getPayload() instanceof ErrorInfo);
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.ALREADY_DELETED));
+            assertErrorStatusAndReason(e, Status.FORBIDDEN, Reason.ALREADY_DELETED);
         }
 
         verifyAll();
@@ -1463,7 +1453,7 @@ public class DocumentsServiceImplTest {
             documentsService.discardEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
+            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR);
         }
 
         verifyAll();
@@ -1539,8 +1529,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDocument(info, userContext);
             fail("No Exception");
         } catch (final ConflictException e) {
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NAME_ALREADY_EXISTS));
+            assertErrorStatusAndReason(e, Status.CONFLICT, Reason.NAME_ALREADY_EXISTS);
         }
 
         verifyAll();
@@ -1568,8 +1557,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDocument(info, userContext);
             fail("No Exception");
         } catch (final ConflictException e) {
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.SLUG_ALREADY_EXISTS));
+            assertErrorStatusAndReason(e, Status.CONFLICT, Reason.SLUG_ALREADY_EXISTS);
         }
 
         verifyAll();
@@ -1606,9 +1594,8 @@ public class DocumentsServiceImplTest {
             documentsService.createDocument(info, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NOT_A_FOLDER));
-            assertThat(errorInfo.getParams().get("displayName"), equalTo("News"));
+            assertErrorStatusAndReason(e, Status.METHOD_NOT_ALLOWED, Reason.NOT_A_FOLDER,
+                    Collections.singletonMap("displayName", "News"));
         }
 
         verifyAll();
@@ -2242,8 +2229,7 @@ public class DocumentsServiceImplTest {
             documentsService.deleteDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NOT_A_DOCUMENT));
+            assertErrorStatusAndReason(e, Status.METHOD_NOT_ALLOWED, Reason.NOT_A_DOCUMENT);
         }
 
         verifyAll();
@@ -2345,8 +2331,7 @@ public class DocumentsServiceImplTest {
             documentsService.deleteDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.NOT_A_FOLDER));
+            assertErrorStatusAndReason(e, Status.METHOD_NOT_ALLOWED, Reason.NOT_A_FOLDER);
         }
 
         verifyAll();
@@ -2504,8 +2489,30 @@ public class DocumentsServiceImplTest {
             documentsService.updateDocumentNames(uuid, null, document, userContext);
             fail("No Exception");
         } catch (final ConflictException e) {
-            final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(reason));
+            assertErrorStatusAndReason(e, Status.CONFLICT, reason);
         }
     }
+
+    private static void assertErrorStatusAndReason(final ErrorWithPayloadException e, final Status status, final Reason reason) {
+        assertErrorStatusAndReason(e, status, reason, null);
+    }
+
+    private static void assertErrorStatusAndReason(final ErrorWithPayloadException e, final Status status, final Reason reason,
+                                            final Map<String, Serializable> params) {
+        assertTrue(e.getPayload() instanceof ErrorInfo);
+
+        final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+        assertThat(e.getStatus(), is(status));
+        assertThat(errorInfo.getReason(), is(reason));
+
+        final Map<String, Serializable> exceptionParams = errorInfo.getParams();
+        if (params == null) {
+            assertNull(exceptionParams);
+        } else {
+            params.forEach((name, value) -> {
+                assertThat(exceptionParams.get(name), is(value));
+            });
+        }
+    }
+
 }
