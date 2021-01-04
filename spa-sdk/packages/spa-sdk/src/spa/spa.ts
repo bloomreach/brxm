@@ -18,6 +18,7 @@ import { inject, injectable, optional } from 'inversify';
 import { ApiService, Api } from './api';
 import { CmsUpdateEvent, EventBusService as CmsEventBusService, EventBus as CmsEventBus } from '../cms';
 import { EventBusService, EventBus, PageFactory, PageModel, Page } from '../page';
+import { Logger } from '../logger';
 
 export const SpaService = Symbol.for('SpaService');
 
@@ -38,19 +39,27 @@ export class Spa {
     @inject(PageFactory) private pageFactory: PageFactory,
     @inject(CmsEventBusService) @optional() private cmsEventBus?: CmsEventBus,
     @inject(EventBusService) @optional() private eventBus?: EventBus,
+    @inject(Logger) @optional() private logger?: Logger,
   ) {
     this.onCmsUpdate = this.onCmsUpdate.bind(this);
   }
 
   protected async onCmsUpdate(event: CmsUpdateEvent) {
+    this.logger?.debug('Recieved CMS update event.');
+    this.logger?.debug('Event:', event);
+
     const root = this.page!.getComponent();
     const component = root.getComponentById(event.id);
     const url = component?.getUrl();
     if (!url) {
+      this.logger?.debug('Skipping the update event.');
+
       return;
     }
 
+    this.logger?.debug('Trying to request the component model.');
     const model = await this.api.getComponent(url, event.properties);
+    this.logger?.debug('Model:', model);
 
     this.eventBus?.emit('page.update', { page: model });
   }
@@ -61,14 +70,21 @@ export class Spa {
    */
   initialize(model: PageModel | string): Page | Promise<Page> {
     if (typeof model === 'string') {
+      this.logger?.debug('Trying to request the page model.');
+
       return this.api.getPage(model)
         .then(this.hydrate.bind(this));
     }
+
+    this.logger?.debug('Received dehydrated model.');
 
     return this.hydrate(model);
   }
 
   private hydrate(model: PageModel) {
+    this.logger?.debug('Model:', model);
+    this.logger?.debug('Hydrating.');
+
     this.page = this.pageFactory(model);
 
     if (this.page.isPreview()) {
@@ -85,5 +101,7 @@ export class Spa {
     this.cmsEventBus?.off('cms.update', this.onCmsUpdate);
     this.eventBus?.clearListeners();
     delete this.page;
+
+    this.logger?.debug('Destroyed page.');
   }
 }
