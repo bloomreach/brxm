@@ -26,6 +26,7 @@ import {
 import { EmitterMixin, Emitter } from '../emitter';
 import { EventBusService, EventBus, PageUpdateEvent } from './events';
 import { LinkFactory } from './link-factory';
+import { Logger } from '../logger';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { PageModel } from './page';
 import { resolve } from './reference';
@@ -102,6 +103,7 @@ export class ContainerItemImpl
     @inject(LinkFactory) linkFactory: LinkFactory,
     @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
     @inject(EventBusService) @optional() eventBus?: EventBus,
+    @inject(Logger) @optional() private logger?: Logger,
   ) {
     super(model, [], linkFactory, metaFactory);
 
@@ -114,6 +116,9 @@ export class ContainerItemImpl
     if (model?.id !== this.getId()) {
       return;
     }
+
+    this.logger?.debug('Received container item update event.');
+    this.logger?.debug('Event:', event);
 
     this.model = model;
     this.meta = this.metaFactory(model.meta);
