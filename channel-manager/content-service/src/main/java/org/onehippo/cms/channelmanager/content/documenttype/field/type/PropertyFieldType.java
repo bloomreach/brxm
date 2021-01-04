@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -99,31 +97,26 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
         beforeWriteValues(values);
 
         try {
-            if (values.isEmpty()) {
-                removeProperty(node);
-                return;
-            }
-
             if (isMultiplicityOutOfSync(node)) {
                 removeProperty(node);
             }
 
-            final Stream<String> stringStream = getStrings(values);
-            if (stringStream.allMatch(Objects::isNull)) {
+            final String[] valuesAsStrings = values.stream()
+                    .filter(Objects::nonNull)
+                    .map(value -> value.findValue().orElse(null))
+                    .filter(Objects::nonNull)
+                    .toArray(String[]::new);
+
+            if (valuesAsStrings.length == 0) {
                 removeProperty(node);
                 return;
             }
-            final String[] strings = getStrings(values).toArray(String[]::new);
-            writeProperty(node, strings);
+
+            writeProperty(node, valuesAsStrings);
         } catch (final RepositoryException e) {
             log.warn("Failed to write value(s) to property {}", getId(), e);
             throw new InternalServerErrorException();
         }
-    }
-
-    private Stream<String> getStrings(final List<FieldValue> values) {
-        return values.stream()
-                .map(value -> value == null ? null : value.findValue().orElse(null));
     }
 
     private void removeProperty(final Node node) throws RepositoryException {
