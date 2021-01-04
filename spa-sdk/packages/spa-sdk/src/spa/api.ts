@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { inject, injectable } from 'inversify';
+import { inject, injectable, optional } from 'inversify';
 import { isConfigurationWithProxy } from '../configuration';
+import { Logger } from '../logger';
 import { PageModel } from '../page';
 import { UrlBuilderService, UrlBuilder } from '../url';
 import { HttpClientConfig, HttpClient, HttpHeaders, HttpRequest } from './http';
@@ -137,6 +138,7 @@ export class ApiImpl implements Api {
   constructor(
     @inject(UrlBuilderService) private urlBuilder: UrlBuilder,
     @inject(ApiOptionsToken) options: ApiOptions,
+    @inject(Logger) @optional() private logger?: Logger,
   ) {
     this.headers = ApiImpl.getHeaders(options);
     this.httpClient = options.httpClient;
@@ -162,6 +164,12 @@ export class ApiImpl implements Api {
   }
 
   private async send(config: HttpClientConfig) {
+    this.logger?.debug('Request:', config.method, config.url);
+    this.logger?.debug('Headers:', { ...this.headers, ...config.headers });
+    if (config.data) {
+      this.logger?.debug('Body:', config.data);
+    }
+
     const response = await this.httpClient({
       ...config,
       headers: { ...this.headers, ...config.headers },
