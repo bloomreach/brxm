@@ -25,6 +25,7 @@ import { ContainerItemEvents, ContainerItemMeta, ContainerItem } from './contain
 import { EmitterMixin } from '../emitter';
 import { EventBusService } from './events';
 import { EventBus, PageUpdateEvent } from './events09';
+import { Logger } from '../logger';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { PageModel } from './page09';
 import { UrlBuilderService, UrlBuilder } from '../url';
@@ -51,6 +52,7 @@ export class ContainerItemImpl
     @inject(MetaCollectionFactory) private metaFactory: MetaCollectionFactory,
     @inject(UrlBuilderService) urlBuilder: UrlBuilder,
     @inject(EventBusService) @optional() eventBus?: EventBus,
+    @inject(Logger) @optional() private logger?: Logger,
   ) {
     super(model, [], metaFactory, urlBuilder);
 
@@ -62,6 +64,9 @@ export class ContainerItemImpl
     if (model.id !== this.getId()) {
       return;
     }
+
+    this.logger?.debug('Received container item update event.');
+    this.logger?.debug('Event:', event);
 
     this.model = model as ContainerItemModel;
     this.meta = this.metaFactory(model._meta);
