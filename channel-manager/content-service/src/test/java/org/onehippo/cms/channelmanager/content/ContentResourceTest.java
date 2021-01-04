@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content;
 
 import java.io.BufferedReader;
@@ -74,7 +73,17 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
+@PowerMockIgnore({
+        "com.sun.org.apache.xalan.*",
+        "com.sun.org.apache.xerces.*",
+        "javax.activation.*",
+        "javax.management.*",
+        "javax.net.ssl.*",
+        "javax.xml.*",
+        "org.apache.logging.log4j.*",
+        "org.w3c.dom.*",
+        "org.xml.*",
+})
 @PrepareForTest({DocumentsService.class, DocumentTypesService.class, SlugFactory.class, ContentResource.class})
 public class ContentResourceTest extends CXFTest {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
 import java.util.ArrayList;
@@ -76,9 +75,26 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
-@PrepareForTest({AbstractFieldType.class, NamespaceUtils.class, FieldTypeFactory.class, ChoiceFieldUtils.class,
-        ContentTypeContext.class, HippoServiceRegistry.class, StringFieldType.class})
+@PowerMockIgnore({
+        "com.sun.org.apache.xalan.*",
+        "com.sun.org.apache.xerces.*",
+        "javax.activation.*",
+        "javax.management.*",
+        "javax.net.ssl.*",
+        "javax.xml.*",
+        "org.apache.logging.log4j.*",
+        "org.w3c.dom.*",
+        "org.xml.*",
+})
+@PrepareForTest({
+        AbstractFieldType.class,
+        ChoiceFieldUtils.class,
+        ContentTypeContext.class,
+        FieldTypeFactory.class,
+        HippoServiceRegistry.class,
+        NamespaceUtils.class,
+        StringFieldType.class,
+})
 public class FieldTypeUtilsTest {
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
     private static final String NODE_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
@@ -815,7 +831,7 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void writeFieldValues() throws Exception {
+    public void writeFieldValues() throws ErrorWithPayloadException {
         final StringFieldType field1 = createMock(StringFieldType.class);
         final StringFieldType field2 = createMock(StringFieldType.class);
         final Node node = createMock(Node.class);
@@ -840,7 +856,7 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void writeFieldValuesWithUnknownValidator() throws Exception {
+    public void writeFieldValuesWithUnknownValidator() throws ErrorWithPayloadException {
         final StringFieldType field1 = createMock(StringFieldType.class);
         final StringFieldType field2 = createMock(StringFieldType.class);
         final Node node = createMock(Node.class);
@@ -904,7 +920,6 @@ public class FieldTypeUtilsTest {
         final List<FieldType> fields = Arrays.asList(field1, field2);
         final Node node = createMock(Node.class);
         final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
-        final CompoundContext validationContext = createMock(CompoundContext.class);
 
         expect(field1.writeField(fieldPath, fieldValues, nodeContext)).andReturn(false);
         expect(field2.writeField(fieldPath, fieldValues, nodeContext)).andReturn(false);
