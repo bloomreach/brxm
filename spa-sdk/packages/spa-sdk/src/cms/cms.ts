@@ -15,6 +15,7 @@
  */
 
 import { inject, injectable, optional } from 'inversify';
+import { Logger } from '../logger';
 import { EventBus, EventBusService, CmsUpdateEvent } from './events';
 import { RpcClient, RpcClientService, RpcServer, RpcServerService, Procedures } from './rpc';
 
@@ -64,6 +65,7 @@ export class CmsImpl implements Cms {
     @inject(RpcClientService) protected rpcClient: RpcClient<CmsProcedures, CmsEvents>,
     @inject(RpcServerService) protected rpcServer: RpcServer<SpaProcedures, SpaEvents>,
     @inject(EventBusService) @optional() protected eventBus?: EventBus,
+    @inject(Logger) @optional() private logger?: Logger,
   ) {
     this.onStateChange = this.onStateChange.bind(this);
     this.eventBus?.on('page.ready', this.onPageReady.bind(this));
@@ -86,6 +88,8 @@ export class CmsImpl implements Cms {
   }
 
   private onInitialize() {
+    this.logger?.debug('The page is ready to accept incoming messages.');
+
     this.rpcServer.trigger('ready', undefined as never);
   }
 
@@ -99,10 +103,15 @@ export class CmsImpl implements Cms {
   }
 
   protected onPageReady() {
+    this.logger?.debug('Synchronizing the page.');
+
     this.rpcClient.call('sync');
   }
 
   protected onUpdate(event: CmsUpdateEvent) {
+    this.logger?.debug('Received update event.');
+    this.logger?.debug('Event:', event);
+
     this.eventBus?.emit('cms.update', event);
   }
 
@@ -110,6 +119,9 @@ export class CmsImpl implements Cms {
     if (!this.window?.document) {
       return Promise.reject(new Error('SPA document is not ready.'));
     }
+
+    this.logger?.debug('Received request to inject a resource.');
+    this.logger?.debug('Resource:', resource);
 
     return new Promise((resolve, reject) => {
       const script = this.window!.document.createElement('script');

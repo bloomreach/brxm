@@ -17,6 +17,7 @@
 import { injectable, inject, optional } from 'inversify';
 import { EventBusService, EventBus } from './events';
 import { CmsOptions, Cms } from './cms';
+import { Logger } from '../logger';
 
 const GLOBAL_WINDOW = typeof window === 'undefined' ? undefined : window;
 
@@ -40,7 +41,10 @@ export class Cms14Impl implements Cms {
   private api?: CmsApi;
   private postponed: Function[] = [];
 
-  constructor(@inject(EventBusService) @optional() protected eventBus?: EventBus) {}
+  constructor(
+    @inject(EventBusService) @optional() protected eventBus?: EventBus,
+    @inject(Logger) @optional() private logger?: Logger,
+  ) {}
 
   private async flush() {
     this.postponed
@@ -63,6 +67,7 @@ export class Cms14Impl implements Cms {
       return;
     }
 
+    this.logger?.debug('Initiating a handshake with the Experience Manager.');
     this.eventBus?.on('page.ready', this.postpone(this.sync));
 
     window.SPA = {
@@ -72,15 +77,23 @@ export class Cms14Impl implements Cms {
   }
 
   protected onInit(api: CmsApi) {
+    this.logger?.debug('Completed the handshake with the Experience Manager.');
+
     this.api = api;
     this.flush();
   }
 
   protected onRenderComponent(id: string, properties: object) {
+    this.logger?.debug('Received component rendering request.');
+    this.logger?.debug('Component:', id);
+    this.logger?.debug('Properties', properties);
+
     this.eventBus?.emit('cms.update', { id, properties });
   }
 
   protected sync() {
+    this.logger?.debug('Synchronizing the page.');
+
     this.api!.sync();
   }
 }
