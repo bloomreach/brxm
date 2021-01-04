@@ -58,6 +58,7 @@ Option | Required | Default | Description
 `authorizationQueryParameter` | no | `"token"` | The query string parameter used to pass authorization header value.
 `authorizationToken` | no | _none_ | Authorization token for the Page Model API. By default, the SDK will try to extract the token from the request query string using `authorizationQueryParameter` option.
 `baseUrl` | no | `""` | Base URL of the SPA (e.g. `/account` or `//www.example.com`). This option can only be used if `endpoint` is present.
+`debug` | no | `false` | The option enabling debug mode.
 `endpoint` | _exclusive_ | _none_ | Base URL of the Page Model API (e.g. `http://localhost:8080/site/resourceapi` or `http://localhost:8080/site/channel/resourceapi`). This option is exclusive and should not be used together with `options` or `cmsBaseUrl`.
 `endpointQueryParameter` | no | _none_ | The query string parameter used as the brXM endpoint (`cmsBaseUrl`). The option will be ignored if the `cmsBaseUrl` option is not empty. In case when this option is used, the `apiBaseUrl` will be prepended with the value from the query parameter. This option should be used only for testing or debugging. By default, the option is disabled.
 `cmsBaseUrl` | _exclusive_ | _none_ | Base URL of the site (e.g. `http://localhost:8080/site` or `http://localhost:8080/site/channel`). This option is exclusive and should not be used together with `options` or `endpoint`.

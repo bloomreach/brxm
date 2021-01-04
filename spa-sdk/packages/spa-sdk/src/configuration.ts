@@ -47,6 +47,11 @@ export interface ConfigurationWithProxy extends ApiOptions, CmsOptions {
    * For example: '/path/to/page?foo=1'. The path always starts with '/'.
    */
   path?: string;
+
+  /**
+   * The option enabling debug mode.
+   */
+  debug?: boolean;
 }
 
 /**
@@ -70,6 +75,11 @@ export interface ConfigurationWithJwt extends ApiOptions, CmsOptions, PostMessag
    * For example: '/path/to/page?foo=1'. The path always starts with '/'.
    */
   path?: string;
+
+  /**
+   * The option enabling debug mode.
+   */
+  debug?: boolean;
 }
 
 /**
