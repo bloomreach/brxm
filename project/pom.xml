@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -95,11 +95,11 @@
         Note that there is *no* dependency management for the version properties below.
     -->
     <google-api-services-analytics.version>v3-rev116-1.20.0</google-api-services-analytics.version>
-    <cxf.version>3.3.8</cxf.version>
-    <jaxrs.version>2.1</jaxrs.version>
+    <cxf.version>3.3.9</cxf.version>
+    <jaxrs.version>2.1.1</jaxrs.version>
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
     <jackson2.version>2.10.5</jackson2.version>
-    <jackson2-databind.version>2.10.5</jackson2-databind.version>
+    <jackson2-databind.version>2.10.5.1</jackson2-databind.version>
     <spring.version>5.1.18.RELEASE</spring.version>
     <!-- spring-data-redis version is not in sync with spring, caching module needs to be updated. See ENT-2061 -->
     <spring-data-redis.version>1.8.23.RELEASE</spring-data-redis.version>
