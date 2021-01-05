@@ -541,49 +541,7 @@ class ContentEditorService {
       });
   }
 
-  confirmPublication() {
-    const params = { documentName: this.document.displayName };
-    const textContent = this.$translate.instant(this._confirmPublicationTextKey(), params);
-    const ok = this.$translate.instant(this._confirmPublicationOkKey());
-    const cancel = this.$translate.instant('CANCEL');
-
-    const confirm = this.DialogService.confirm()
-      .textContent(textContent)
-      .ok(ok)
-      .cancel(cancel);
-
-    return this.DialogService.show(confirm)
-      .catch(() => {
-        this._reportPublishCancelAction();
-
-        return this.$q.reject();
-      });
-  }
-
-  _reportPublishCancelAction() {
-    const eventName = this.canPublish ? 'VisualEditingLightboxCancel' : 'VisualEditingLightboxRequestPubCancel';
-    this.CmsService.reportUsageStatistic(eventName);
-  }
-
-  _confirmPublicationTextKey() {
-    if (this.canPublish) {
-      return this.documentDirty
-        ? 'CONFIRM_PUBLISH_DIRTY_DOCUMENT' : 'CONFIRM_PUBLISH_DOCUMENT';
-    }
-
-    return this.documentDirty
-      ? 'CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT' : 'CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT';
-  }
-
-  _confirmPublicationOkKey() {
-    if (this.canPublish) {
-      return this.isDocumentDirty() ? 'SAVE_AND_PUBLISH' : 'PUBLISH';
-    }
-
-    return this.isDocumentDirty() ? 'SAVE_AND_REQUEST_PUBLICATION' : 'REQUEST_PUBLICATION';
-  }
-
-  async publish() {
+  publish() {
     const notificationKey = this.canPublish ? 'NOTIFICATION_DOCUMENT_PUBLISHED' : 'NOTIFICATION_PUBLICATION_REQUESTED';
     const errorKey = this.canPublish ? 'ERROR_PUBLISH_DOCUMENT_FAILED' : 'ERROR_REQUEST_PUBLICATION_FAILED';
     const messageParams = { documentName: this.document.displayName };

@@ -38,7 +38,6 @@ describe('EditContentMainCtrl', () => {
       CmsService = jasmine.createSpyObj('CmsService', ['publish', 'reportUsageStatistic']);
       ContentEditor = jasmine.createSpyObj('ContentEditor', [
         'close',
-        'confirmPublication',
         'confirmSaveOrDiscardChanges',
         'discardChanges',
         'getDocument',
@@ -242,42 +241,8 @@ describe('EditContentMainCtrl', () => {
   });
 
   describe('publish', () => {
-    it('shows a confirmation dialog', () => {
-      ContentEditor.confirmPublication.and.returnValue($q.resolve());
-
-      $ctrl.publish();
-      $scope.$digest();
-
-      expect(ContentEditor.confirmPublication).toHaveBeenCalled();
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingPublishButton');
-    });
-
-    it('does not publish nor save if the confirmation dialog is cancelled for a publication', () => {
-      ContentEditor.isDocumentDirty.and.returnValue(true);
-      ContentEditor.confirmPublication.and.returnValue($q.reject());
-
-      $ctrl.publish();
-      $scope.$digest();
-
-      expect(ContentEditor.save).not.toHaveBeenCalled();
-      expect(ContentEditor.publish).not.toHaveBeenCalled();
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingPublishButton');
-    });
-
-    it('does not publish nor save if the confirmation dialog is cancelled for a request publication', () => {
-      ContentEditor.isDocumentDirty.and.returnValue(true);
-      ContentEditor.confirmPublication.and.returnValue($q.reject());
-
-      $ctrl.publish();
-      $scope.$digest();
-
-      expect(ContentEditor.save).not.toHaveBeenCalled();
-      expect(ContentEditor.publish).not.toHaveBeenCalled();
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingPublishButton');
-    });
-
-    it('publishes if the confirmation dialog is confirmed', () => {
-      ContentEditor.confirmPublication.and.returnValue($q.resolve());
+    it('publishes the document', () => {
+      ContentEditor.publish.and.returnValue($q.resolve());
 
       $ctrl.publish();
       $scope.$digest();
@@ -289,7 +254,6 @@ describe('EditContentMainCtrl', () => {
     it('saves the form of a dirty document, prior to publishing', () => {
       ContentEditor.isDocumentDirty.and.returnValue(true);
       ContentEditor.save.and.returnValue($q.resolve());
-      ContentEditor.confirmPublication.and.returnValue($q.resolve());
 
       $ctrl.publish();
       $scope.$digest();
@@ -300,7 +264,6 @@ describe('EditContentMainCtrl', () => {
     });
 
     it('does not publish if saving fails', () => {
-      ContentEditor.confirmPublication.and.returnValue($q.resolve());
       ContentEditor.isDocumentDirty.and.returnValue(true);
       ContentEditor.save.and.returnValue($q.reject());
 
@@ -311,7 +274,6 @@ describe('EditContentMainCtrl', () => {
     });
 
     it('shows the loading indicator while publishing and resets it once done', (done) => {
-      ContentEditor.confirmPublication.and.returnValue($q.resolve());
       ContentEditor.publish.and.returnValue($q.resolve());
       spyOn($ctrl, 'startLoading').and.callThrough();
 
