@@ -37,6 +37,24 @@ function config($stateProvider) {
   });
 
   $stateProvider.state({
+    name: 'hippo-cm.channel.edit-page-unavailable',
+    params: {
+      title: '',
+    },
+    views: {
+      main: {
+        component: 'editPageUnavailable',
+      },
+      tools: {
+        template: '',
+      },
+      icon: {
+        template: '', // no icon
+      },
+    },
+  });
+
+  $stateProvider.state({
     name: 'hippo-cm.channel.edit-content',
     params: {
       documentId: '',

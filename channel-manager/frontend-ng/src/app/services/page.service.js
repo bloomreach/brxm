@@ -17,18 +17,28 @@
 import { Subject } from 'rxjs';
 
 class PageService {
-  constructor($q, $rootScope, HstService, PageStructureService) {
+  constructor($q, $rootScope, $state, HippoIframeService, HstService, PageStructureService, SiteMapService) {
     'ngInject';
 
     this.$q = $q;
     this.$rootScope = $rootScope;
+    this.$state = $state;
+    this.HippoIframeService = HippoIframeService;
     this.HstService = HstService;
     this.PageStructureService = PageStructureService;
+    this.SiteMapService = SiteMapService;
+
     this.actions = null;
     this.states = null;
     this.states$ = new Subject();
 
-    this.$rootScope.$on('page:change', () => this.load());
+    this.$rootScope.$on('page:change', async () => {
+      await this.load();
+
+      if (this.$state.$current.name.startsWith('hippo-cm.channel.edit-page')) {
+        this.syncPageEditor();
+      }
+    });
     this.$rootScope.$on('page:check-changes', () => this.load());
   }
 
@@ -106,6 +116,33 @@ class PageService {
     return this.hasState(category)
       ? this.states[category]
       : null;
+  }
+
+  syncPageEditor() {
+    if (this.isXPage) {
+      this.$state.go('hippo-cm.channel.edit-page.content', { documentId: this.xPageId });
+      return;
+    }
+
+    function findSiteMapItem(queue, val) {
+      while (queue.length > 0) {
+        const currentObj = queue.shift();
+        if (currentObj.renderPathInfo === val) {
+          return currentObj;
+        }
+
+        queue.push(...currentObj.children);
+      }
+
+      return false;
+    }
+
+    const sitemap = this.SiteMapService.get();
+    const currentSitemapItem = findSiteMapItem([...sitemap], this.HippoIframeService.getCurrentRenderPathInfo());
+    if (currentSitemapItem) {
+      const title = currentSitemapItem.pageTitle || currentSitemapItem.name;
+      this.$state.go('hippo-cm.channel.edit-page-unavailable', { title });
+    }
   }
 }
 
