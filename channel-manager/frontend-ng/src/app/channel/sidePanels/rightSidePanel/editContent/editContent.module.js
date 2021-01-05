@@ -16,11 +16,12 @@
 
 import config from './editContent.config';
 import addToProjectComponent from './addToProject/addToProject.component';
-import editContentService from './editContent.service';
-import editContentMainComponent from './editContentMain/editContentMain.component';
-import editContentIconComponent from './editContentIcon/editContentIcon.component';
-import editContentToolsComponent from './editContentTools/editContentTools.component';
 import contentTabsComponent from './contentTabs/contentTabs.component';
+import editContentIconComponent from './editContentIcon/editContentIcon.component';
+import editContentMainComponent from './editContentMain/editContentMain.component';
+import editContentService from './editContent.service';
+import editContentToolsComponent from './editContentTools/editContentTools.component';
+import editPageUnavailableComponent from './editPageUnavailable/editPageUnavailable.component';
 import versionsInfoWrapperComponent from './versionsInfoWrapper/versionsInfoWrapper.component';
 
 const editContentModule = angular
@@ -28,10 +29,11 @@ const editContentModule = angular
   .config(config)
   .service('EditContentService', editContentService)
   .component('addToProject', addToProjectComponent)
-  .component('editContentMain', editContentMainComponent)
-  .component('editContentIcon', editContentIconComponent)
-  .component('editContentTools', editContentToolsComponent)
   .component('contentTabs', contentTabsComponent)
+  .component('editContentIcon', editContentIconComponent)
+  .component('editContentMain', editContentMainComponent)
+  .component('editContentTools', editContentToolsComponent)
+  .component('editPageUnavailable', editPageUnavailableComponent)
   .component('versionsInfoWrapper', versionsInfoWrapperComponent);
 
 export default editContentModule.name;
