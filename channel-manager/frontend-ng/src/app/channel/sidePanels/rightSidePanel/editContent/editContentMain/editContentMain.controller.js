@@ -138,12 +138,9 @@ class EditContentMainCtrl {
 
   publish() {
     this.CmsService.reportUsageStatistic('VisualEditingPublishButton');
-    return this.ContentEditor.confirmPublication()
-      .then(() => {
-        const stopLoading = this.startLoading();
 
-        return this._doPublish().finally(stopLoading);
-      });
+    const stopLoading = this.startLoading();
+    return this._doPublish().finally(stopLoading);
   }
 
   _doPublish() {
