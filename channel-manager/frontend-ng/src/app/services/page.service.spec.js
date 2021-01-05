@@ -17,20 +17,35 @@
 describe('PageService', () => {
   let $q;
   let $rootScope;
+  let $state;
+  let HippoIframeService;
   let HstService;
   let PageService;
   let PageStructureService;
+  let SiteMapService;
 
   let mockPage;
   let mockPageMeta;
 
   beforeEach(() => {
-    inject((_$q_, _$rootScope_, _HstService_, _PageService_, _PageStructureService_) => {
+    inject((
+      _$q_,
+      _$rootScope_,
+      _$state_,
+      _HippoIframeService_,
+      _HstService_,
+      _PageService_,
+      _PageStructureService_,
+      _SiteMapService_,
+    ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $state = _$state_;
+      HippoIframeService = _HippoIframeService_;
       HstService = _HstService_;
       PageService = _PageService_;
       PageStructureService = _PageStructureService_;
+      SiteMapService = _SiteMapService_;
     });
 
     mockPageMeta = jasmine.createSpyObj('PageMeta', {
@@ -48,11 +63,26 @@ describe('PageService', () => {
   describe('on page:change', () => {
     it('should load', () => {
       spyOn(PageService, 'load');
+      spyOn(PageService, 'syncPageEditor');
 
       $rootScope.$emit('page:change');
       $rootScope.$digest();
 
       expect(PageService.load).toHaveBeenCalled();
+      expect(PageService.syncPageEditor).not.toHaveBeenCalled();
+    });
+
+    it('should sync the page editor if it is open', () => {
+      spyOn(PageService, 'load');
+      spyOn(PageService, 'syncPageEditor');
+
+      $state.go('hippo-cm.channel.edit-page.content');
+      $rootScope.$digest();
+
+      $rootScope.$emit('page:change');
+      $rootScope.$digest();
+
+      expect(PageService.syncPageEditor).toHaveBeenCalled();
     });
   });
 
@@ -256,6 +286,39 @@ describe('PageService', () => {
 
         expect(actual).toBe(123);
       });
+    });
+  });
+
+  describe('syncPageEditor', () => {
+    it('should open the page editor if the current page is an experience page', () => {
+      spyOn($state, 'go');
+      PageService.states = { xpage: { id: 123 } };
+
+      PageService.syncPageEditor();
+
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page.content', { documentId: 123 });
+    });
+
+    it('should open edit-page-unavailable state if current page is not an experience page', () => {
+      PageService.states = {};
+      const sitemap = [
+        {
+          renderPathInfo: '/',
+          children: [
+            {
+              pageTitle: 'My XPage',
+              renderPathInfo: '/xpages/my-xpage',
+            },
+          ],
+        },
+      ];
+      spyOn($state, 'go');
+      spyOn(SiteMapService, 'get').and.returnValue(sitemap);
+      spyOn(HippoIframeService, 'getCurrentRenderPathInfo').and.returnValue('/xpages/my-xpage');
+
+      PageService.syncPageEditor();
+
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page-unavailable', { title: 'My XPage' });
     });
   });
 });
