@@ -481,5 +481,6 @@
   "MOVE": "Move",
   "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDDEPUBLISH": "Cancel scheduled take offline request",
   "CREATE_DOCUMENT_LOCKED": "Cannot create document (component is locked)",
-  "NOTIFICATION_PUBLICATION_REQUESTED": "Publication requested for '{{documentName}}'"
+  "NOTIFICATION_PUBLICATION_REQUESTED": "Publication requested for '{{documentName}}'",
+  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "No page content or version history available for this page."
 }
