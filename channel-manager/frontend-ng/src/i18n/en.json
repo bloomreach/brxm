@@ -229,6 +229,7 @@
   "FEEDBACK_SWITCH_TO_CONTENT_EDITOR": "Switch to content editor",
   "FEEDBACK_UNKNOWN_ERROR": "The server responded with an unknown error: '{{errorKey}}'.",
   "FEEDBACK_XPAGE_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "The page is waiting to be published or unpublished.",
+  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "No page content or version history available for this page.",
   "FEEDBACK_XPAGE_HELD_BY_CORE_PROJECT_MESSAGE": "Page has been edited on core",
   "FEEDBACK_XPAGE_HELD_BY_OTHER_USER_MESSAGE": "The page is locked by {{user}}.",
   "FEEDBACK_XPAGE_NOT_EDITABLE_HERE_TITLE": "Page not editable here",
