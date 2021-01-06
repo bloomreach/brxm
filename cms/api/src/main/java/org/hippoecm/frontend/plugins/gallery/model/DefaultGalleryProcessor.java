@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,11 +106,9 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
 
         ImageReader reader = null;
         ImageWriter writer = null;
-        try {
+        try (MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(imageData)){
             reader = getImageReader(mimeType);
             writer = getImageWriter(mimeType);
-
-            MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(imageData);
             reader.setInput(mciis);
 
             double originalWidth = reader.getWidth(FIRST_IMAGE_IN_FILE);
@@ -135,7 +134,6 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
             writer.write(scaledImage);
             ios.flush();
             ios.close();
-            mciis.close();
 
             return new ByteArrayInputStream(out.toByteArray());
         } catch (IOException | UnsupportedMimeTypeException e) {
@@ -255,7 +253,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
 
     @Override
     public Dimension getDesiredResourceDimension(Node node) throws RepositoryException {
-        if(node.isNodeType("hippo:resource")) {
+        if(node.isNodeType(HippoNodeType.NT_RESOURCE)) {
             try {
                 InputStream imageData = node.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
                 ImageReader reader = getImageReader(node.getProperty(JcrConstants.JCR_MIMETYPE).getString());
@@ -267,9 +265,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
                 int resizeWidth = (int)(originalWidth * resizeRatio);
                 int resizeHeight = (int)(originalHeight * resizeRatio);
                 return new Dimension(resizeWidth, resizeHeight);
-            } catch (IOException ex) {
-                return null;
-            } catch (UnsupportedMimeTypeException ex) {
+            } catch (IOException | UnsupportedMimeTypeException ex) {
                 return null;
             }
         } else {
@@ -306,12 +302,12 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
             for (NodeDefinition childDef : node.getPrimaryNodeType().getChildNodeDefinitions()) {
                 if (childDef.getDefaultPrimaryType() != null
                         && childDef.getDefaultPrimaryType().isNodeType("hippo:resource")) {
-                    makeRegularImage(node, childDef.getName(), primaryChild.getProperty(JcrConstants.JCR_DATA).getStream(),
+                    makeRegularImage(node, childDef.getName(), primaryChild.getProperty(JcrConstants.JCR_DATA).getBinary().getStream(),
                             primaryChild.getProperty(JcrConstants.JCR_MIMETYPE).getString(), primaryChild.getProperty(
                                     JcrConstants.JCR_LASTMODIFIED).getDate());
                 }
             }
-            makeThumbnailImage(primaryChild, primaryChild.getProperty(JcrConstants.JCR_DATA).getStream(), primaryChild
+            makeThumbnailImage(primaryChild, primaryChild.getProperty(JcrConstants.JCR_DATA).getBinary().getStream(), primaryChild
                     .getProperty(JcrConstants.JCR_MIMETYPE).getString());
         } catch (ItemNotFoundException ex) {
             // deliberate ignore
@@ -358,7 +354,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
 
     @Override
     public Map<String, ScalingParameters> getScalingParametersMap() {
-        return new HashMap<String, ScalingParameters>();
+        return new HashMap<>();
     }
 
 
