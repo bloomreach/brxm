@@ -46,6 +46,7 @@
 
   <!-- ESI based asynchronous component window renderer -->
   <bean id="esiAsynchronousComponentWindowRenderer" class="org.hippoecm.hst.core.container.ESIAsynchronousComponentWindowRenderer">
+    <property name="skipEscapingSrcAttr" value="${esi.skip.escaping.src.attr}"/>
   </bean>
 
   <!-- SSI based asynchronous component window renderer -->
