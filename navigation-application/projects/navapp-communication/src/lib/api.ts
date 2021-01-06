@@ -22,7 +22,6 @@
 export interface ChildConnectConfig {
   /**
    * The html iframe element that penpal will use to see if that iframe’s window has a penpal instance to connect to.
-   * TODO: Add description
    */
   iframe: HTMLIFrameElement;
   /**
@@ -45,7 +44,6 @@ export interface ChildConnectConfig {
 export interface ParentConnectConfig {
   /**
    * A required string to whitelist the parent origin to form a connection with.
-   * This origin is assumed to be provided to an app via the SSO solution **TODO (specifics are still unclear)**.
    */
   parentOrigin: string;
   /**
@@ -91,7 +89,7 @@ export interface ChildConfig {
 
 export interface ParentApi {
   /** Get the current parent config. */
-  getConfig?: () => Promise<ParentConfig>;
+  getConfig: () => Promise<ParentConfig>;
   /**
    * Is called by an application when the application performs internal navigation. updateNavLocation **does not**
    * trigger a subsequent navigate callback. Also, upon navigating to a new state (see navigate callback above), an
@@ -100,48 +98,48 @@ export interface ParentApi {
    *
    * @param location the NavLocation navigated to
    */
-  updateNavLocation?: (location: NavLocation) => Promise<void>;
+  updateNavLocation: (location: NavLocation) => Promise<void>;
   /**
    * Is called by an application to perform internal or cross-app navigation. It **does** trigger the nav-app to perform a
    * ‘beforeNavigation’ and ‘navigate’ to route to the provided location.
    * **Do not set locations to other applications for navigation **
    * @param location The NavLocation navigated to
    */
-  navigate?: (location: NavLocation) => Promise<void>;
+  navigate: (location: NavLocation) => Promise<void>;
   /**
    * Is called by an application when it needs to cover the nav-app’s UI surface with a mask to prevent user
    * interactions for example because the user input is needed for a dialog.
    */
-  showMask?: () => Promise<void>;
+  showMask: () => Promise<void>;
   /**
    * Is called by an application when it needs to hide said mask again.
    */
-  hideMask?: () => Promise<void>;
+  hideMask: () => Promise<void>;
   /**
    * Is called by an application when it needs to show the busy indicator to indicate the user has to wait until the application has
    * changed its ui state.
    * For each call to the application should make a @{link {ParentApi.hideBusyIndicator}} call.
    */
-  showBusyIndicator?: () => Promise<void>;
+  showBusyIndicator: () => Promise<void>;
   /**
    * Is called by an application when it needs to hide the busy indicator to indicate the user can interact with the application again
    * For each call to the application should make a @{link {ParentApi.showBusyIndicator}} call.
    */
-  hideBusyIndicator?: () => Promise<void>;
+  hideBusyIndicator: () => Promise<void>;
   /**
    * Is called by an active application when a user makes some actions. Nav-app can propagate this calls to other
    * applications to prevent session expiration.
    */
-  onUserActivity?: () => Promise<void>;
+  onUserActivity: () => Promise<void>;
   /**
    * Is called by an application when it detects that it's internal session has expired.
    */
-  onSessionExpired?: () => Promise<void>;
+  onSessionExpired: () => Promise<void>;
   /**
    * Pass on an error that occurred on the client side.
    * @param clientError object containing info about the error
    */
-  onError?: (clientError: ClientError) => Promise<void>;
+  onError: (clientError: ClientError) => Promise<void>;
 }
 
 export interface ChildApi {

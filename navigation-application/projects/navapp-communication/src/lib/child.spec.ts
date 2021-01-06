@@ -24,9 +24,9 @@ describe('connectToChild', () => {
   let childMethods: ChildApi;
 
   beforeEach(() => {
-    const parentMethods: ParentApi = {
+    const parentMethods = {
       navigate: async () => {},
-    };
+    } as unknown as ParentApi;
 
     const iframe: HTMLIFrameElement = document.createElement('iframe');
     iframe.src = 'about:blank';
