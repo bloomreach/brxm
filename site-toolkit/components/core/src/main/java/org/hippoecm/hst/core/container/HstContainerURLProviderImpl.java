@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.component.HstURL;
@@ -378,10 +379,19 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
             } else if (HstURL.COMPONENT_RENDERING_TYPE.equals(requestType)) {
                 String componentRenderingReferenceNamespace = url.getParameter(urlNamespacedReferenceParamName);
+                if (componentRenderingReferenceNamespace == null) {
+                    // typically this situation easily leads to recursion if we do not throw an exception resulting in 404:
+                    // if we continue, the normal page would be rendered, typically including again the wrong
+                    // component-rendering url again. Therefore we short-circuit and return a 404
+                    throw new MatchException("Component rendering namespace now allowed to be missing " +
+                            "for component-rendering URLs");
+                }
                 url.setComponentRenderingWindowReferenceNamespace(componentRenderingReferenceNamespace);
 
                 log.debug("partial render window chosen for {}: {}", url.getPathInfo(), componentRenderingReferenceNamespace);
             }
+        } catch (MatchException e) {
+            throw e;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Invalid container URL path: {}", url.getRequestPath(), e);
