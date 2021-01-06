@@ -26,7 +26,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -86,25 +85,6 @@ public class ResourceHelper {
         } catch (IOException e) {
             throw new RepositoryException(e);
         }
-
-    }
-
-    /**
-     * Set the default 'hippo:resource' properties:
-     * <ul>
-     *   <li>jcr:mimeType</li>
-     *   <li>jcr:data</li>
-     *   <li>jcr:lastModified</li>
-     * </ul>
-     *
-     * @param node the {@link Node} on which to set the properties
-     * @param mimeType the mime-type of the binary data (e.g. <i>application/pdf</i>, <i>image/jpeg</i>)
-     * @param binary the binary data.
-     *
-     * @throws RepositoryException exception thrown when one of the properties or values could not be set
-     */
-    public static void setDefaultResourceProperties(final Node node, final String mimeType, final Binary binary) throws RepositoryException {
-        setDefaultResourceProperties(node, mimeType, binary, null);
     }
 
     /**
@@ -119,6 +99,7 @@ public class ResourceHelper {
      * @param node the {@link Node} on which to set the properties
      * @param mimeType the mime-type of the binary data (e.g. <i>application/pdf</i>, <i>image/jpeg</i>)
      * @param binary the binary data.
+     * @param filename the name of the resource file, should not be <code>null</code> or "".
      *
      * @throws RepositoryException exception thrown when one of the properties or values could not be set
      */
@@ -126,9 +107,7 @@ public class ResourceHelper {
         node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
         node.setProperty(JcrConstants.JCR_DATA, binary);
         node.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
-        if(StringUtils.isNotEmpty(filename)) {
-            node.setProperty(HippoNodeType.HIPPO_FILENAME, filename);
-        }
+        node.setProperty(HippoNodeType.HIPPO_FILENAME, filename);
     }
 
     /**
