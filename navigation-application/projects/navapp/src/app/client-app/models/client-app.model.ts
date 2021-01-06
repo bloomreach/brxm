@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { ChildPromisedApi } from '@bloomreach/navapp-communication';
+import { ChildApi } from '@bloomreach/navapp-communication';
 
 export class ClientApp {
   constructor(
     public url: string,
-    public api: ChildPromisedApi,
+    public api: ChildApi,
   ) {}
 }

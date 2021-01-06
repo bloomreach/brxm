@@ -17,7 +17,7 @@
 import { DebugElement, SecurityContext } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { By, DomSanitizer } from '@angular/platform-browser';
-import { ChildPromisedApi } from '@bloomreach/navapp-communication';
+import { ChildApi } from '@bloomreach/navapp-communication';
 
 import { Connection } from '../../../models/connection.model';
 import { FailedConnection } from '../../../models/failed-connection.model';
@@ -35,7 +35,7 @@ describe('ClientAppComponent', () => {
   let connectionServiceMock: jasmine.SpyObj<ConnectionService>;
   let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
 
-  let resolveIframeConnection: (value: ChildPromisedApi) => any;
+  let resolveIframeConnection: (value: ChildApi) => any;
   let rejectIframeConnection: (reason?: string) => any;
 
   beforeEach(async(() => {
