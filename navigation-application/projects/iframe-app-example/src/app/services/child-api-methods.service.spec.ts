@@ -61,14 +61,14 @@ describe('ChildApiMethodsService', () => {
   });
 
   describe('getConfig()', () => {
-    it('should return child config', () => {
+    it('should return child config', async () => {
       const expected = {
         apiVersion: '1.2.0',
         showSiteDropdown: false,
         communicationTimeout: 500,
       };
 
-      const actual = childApiMethods.getConfig();
+      const actual = await childApiMethods.getConfig();
 
       expect(actual).toEqual(expected);
     });
@@ -101,8 +101,8 @@ describe('ChildApiMethodsService', () => {
         stateMock.selectedSiteId = undefined;
       });
 
-      it('should return default nav items', () => {
-        const navItems = childApiMethods.getNavItems() as NavItem[];
+      it('should return default nav items', async () => {
+        const navItems = await childApiMethods.getNavItems() as NavItem[];
 
         expect(navItems.length).toBe(105);
       });
@@ -116,8 +116,8 @@ describe('ChildApiMethodsService', () => {
         };
       });
 
-      it('should return default nav items', () => {
-        const navItems = childApiMethods.getNavItems() as NavItem[];
+      it('should return default nav items', async () => {
+        const navItems = await childApiMethods.getNavItems() as NavItem[];
 
         expect(navItems.length).toBe(10);
       });
@@ -211,28 +211,28 @@ describe('ChildApiMethodsService', () => {
     });
 
     describe('getConfig()', () => {
-      it('should return child config', () => {
+      it('should return child config', async () => {
         const expected = {
           apiVersion: '1.2.0',
           showSiteDropdown: true,
         };
 
-        const actual = childApiMethods.getConfig();
+        const actual = await childApiMethods.getConfig();
 
         expect(actual).toEqual(expected);
       });
     });
 
     describe('getSites()', () => {
-      it('should return sites', () => {
-        const sites = childApiMethods.getSites() as Site[];
+      it('should return sites', async () => {
+        const sites = await childApiMethods.getSites() as Site[];
 
         expect(sites.length).toBe(8);
       });
     });
 
     describe('getSelectedSite()', () => {
-      it('should return sites', () => {
+      it('should return sites', async () => {
         const expected = {
           siteId: 10,
           accountId: 20,
@@ -240,7 +240,7 @@ describe('ChildApiMethodsService', () => {
 
         stateMock.selectedSiteId = expected;
 
-        const actual = childApiMethods.getSelectedSite();
+        const actual = await childApiMethods.getSelectedSite();
 
         expect(actual).toBe(expected);
       });
