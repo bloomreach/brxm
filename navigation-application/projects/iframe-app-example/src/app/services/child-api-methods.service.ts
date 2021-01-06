@@ -45,12 +45,12 @@ export class ChildApiMethodsService {
 
   private getBasicMethods(): ChildApi {
     return {
-      getConfig: () => ({
+      getConfig: async () => ({
         apiVersion: this.state.navappCommunicationImplementationApiVersion,
         showSiteDropdown: false,
         communicationTimeout: 500,
       }),
-      getNavItems: () => {
+      getNavItems: async () => {
         if (environment.generateErrorOnNavItemsLoading) {
           return Promise.reject(new Error('Unable to send nav items from an iframe app because it is disabled by the configuration'));
         }
@@ -64,29 +64,29 @@ export class ChildApiMethodsService {
 
         return mockNavItemsPerSite || defaultNavItems;
       },
-      navigate: (location: NavLocation, triggeredBy: NavigationTrigger) => {
+      navigate: async (location: NavLocation, triggeredBy: NavigationTrigger) => {
         this.state.navigateCount += 1;
         this.state.navigatedTo = location;
         this.state.lastNavigationTriggeredBy = triggeredBy;
 
         return new Promise(r => setTimeout(r, this.state.navigationDelay));
       },
-      logout: () => this.state.generateAnErrorUponLogout ?
+      logout: async () => this.state.generateAnErrorUponLogout ?
         Promise.reject(new Error('Custom logout error')) :
         Promise.resolve(),
-      onUserActivity: () => { this.state.userActivityReported++; },
+      onUserActivity: async () => { this.state.userActivityReported++; },
     };
   }
 
   private getBrSmMockMethods(): ChildApi {
     return {
-      getConfig: () => ({
+      getConfig: async () => ({
         apiVersion: this.state.navappCommunicationImplementationApiVersion,
         showSiteDropdown: true,
       }),
-      getSites: () => sites,
-      getSelectedSite: () => this.state.selectedSiteId,
-      updateSelectedSite: (siteId?: SiteId) => { this.state.selectedSiteId = siteId; },
+      getSites: async () => sites,
+      getSelectedSite: async () => this.state.selectedSiteId,
+      updateSelectedSite: async (siteId?: SiteId) => { this.state.selectedSiteId = siteId; },
     };
   }
 }

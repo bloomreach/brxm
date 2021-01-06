@@ -17,8 +17,8 @@
 import Penpal from 'penpal';
 
 import {
+  ParentApi,
   ParentConnectConfig,
-  ParentPromisedApi,
 } from './api';
 
 /**
@@ -30,6 +30,6 @@ import {
 export async function connectToParent({
   parentOrigin,
   methods,
-}: ParentConnectConfig): Promise<ParentPromisedApi> {
+}: ParentConnectConfig): Promise<ParentApi> {
   return Penpal.connectToParent({ parentOrigin, methods }).promise;
 }
