@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
+import java.util.Set;
 
 import org.hippoecm.hst.core.component.WrapperElement;
 
@@ -73,13 +74,14 @@ public class WrapperElementUtils
     private static void writeWrapperElementStart(final Writer writer, WrapperElement wrapperElement) throws IOException {
         writer.write('<');
         writer.write(wrapperElement.getTagName());
-        
+
+        Set<String> skipEscapingAttrs = wrapperElement.getSkipEscapingAttrs();
         for (Map.Entry<String, String> entry : wrapperElement.getAttributeMap().entrySet())
         {
             writer.write(' ');
             writer.write(entry.getKey());
             writer.write("=\"");
-            writer.write(XmlUtils.encode(entry.getValue()));
+            writer.write(skipEscapingAttrs.contains(entry.getKey()) ? entry.getValue() : XmlUtils.encode(entry.getValue()));
             writer.write("\"");
         }
         
