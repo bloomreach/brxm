@@ -291,7 +291,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
             }
             Node primaryChild = (Node) item;
             if (primaryChild.isNodeType("hippo:resource")) {
-                ResourceHelper.setDefaultResourceProperties(primaryChild, mimeType, istream);
+                ResourceHelper.setDefaultResourceProperties(primaryChild, mimeType, istream, fileName);
                 if (MimeTypeHelper.isPdfMimeType(mimeType)) {
                     InputStream dataInputStream = primaryChild.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
                     ResourceHelper.handlePdfAndSetHippoTextProperty(primaryChild,dataInputStream);
