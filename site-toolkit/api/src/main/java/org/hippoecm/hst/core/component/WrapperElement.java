@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.component;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * WrapperElement interface to wrap markup contents
@@ -25,7 +26,7 @@ import java.util.Map;
  */
 public interface WrapperElement extends Serializable, Cloneable
 {
-    
+
     /**
      * Return the tag name of the head contribution element
      */
@@ -75,6 +76,12 @@ public interface WrapperElement extends Serializable, Cloneable
      * @param textContent
      */
     void setTextContent(String textContent);
+
+    /**
+     * @return the set of attributes for which the values should not be encoded. If no specific attributes should be
+     * skipped an empty {@link Set} is returned
+     */
+    Set<String> getSkipEscapingAttrs();
     
     /**
      * @see Object#clone()
