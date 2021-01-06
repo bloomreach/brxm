@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.component;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -30,11 +31,12 @@ import org.w3c.dom.NamedNodeMap;
  */
 public class WrapperElementImpl implements WrapperElement
 {
-    
-    private static final long serialVersionUID = 1L;
-    
+
+    public static final String SKIP_ESCAPING_PREAMBLE_ELEMENT_ATTRIBUTES_KEY = WrapperElement.class.getName() + "skipEncodingPreamble";
+
     private String tagName;
     private Map<String, String> attributes;
+    private Set<String> skipEscapingAttrs;
     private String textContent;
 
     public WrapperElementImpl()
@@ -69,6 +71,8 @@ public class WrapperElementImpl implements WrapperElement
         }
         
         textContent = element.getTextContent();
+
+        skipEscapingAttrs = (Set<String>) element.getUserData(SKIP_ESCAPING_PREAMBLE_ELEMENT_ATTRIBUTES_KEY);
     }
     
     public String getTagName()
@@ -142,5 +146,9 @@ public class WrapperElementImpl implements WrapperElement
         cloned.textContent = textContent;
         
         return cloned;
+    }
+
+    public Set<String> getSkipEscapingAttrs() {
+        return skipEscapingAttrs == null ? Collections.emptySet() : skipEscapingAttrs;
     }
 }
