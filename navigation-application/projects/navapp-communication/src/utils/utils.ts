@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-import {
-  ChildApi,
-  ChildPromisedApi,
-  ParentApi,
-  ParentPromisedApi,
-} from '../lib/api';
-
 export const DEFAULT_COMMUNICATION_TIMEOUT = 300000; // 5 minutes
 
 export function mergeIntersecting(obj1: object, obj2: object): object {

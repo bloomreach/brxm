@@ -15,7 +15,7 @@
  */
 
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { ChildPromisedApi } from '@bloomreach/navapp-communication';
+import { ChildApi } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { Subject } from 'rxjs';
@@ -211,8 +211,8 @@ xdescribe('ClientAppService', () => {
     });
 
     describe('when getConfig() is defined in ChildApi', () => {
-      let childApi1: jasmine.SpyObj<ChildPromisedApi>;
-      let childApi2: jasmine.SpyObj<ChildPromisedApi>;
+      let childApi1: jasmine.SpyObj<ChildApi>;
+      let childApi2: jasmine.SpyObj<ChildApi>;
 
       beforeEach(() => {
         childApi1 = jasmine.createSpyObj('ChildApi1', [
@@ -310,8 +310,8 @@ xdescribe('ClientAppService', () => {
   });
 
   describe('when initialized', () => {
-    let clientApiWithoutSitesSupport: ChildPromisedApi;
-    let clientApiWithSitesSupport: ChildPromisedApi;
+    let clientApiWithoutSitesSupport: ChildApi;
+    let clientApiWithSitesSupport: ChildApi;
 
     beforeEach(async(() => {
       clientApiWithoutSitesSupport = {
@@ -449,8 +449,8 @@ xdescribe('ClientAppService', () => {
       });
 
       describe('when getConfig() is defined in ChildApi', () => {
-        let childApi1: jasmine.SpyObj<ChildPromisedApi>;
-        let childApi2: jasmine.SpyObj<ChildPromisedApi>;
+        let childApi1: jasmine.SpyObj<ChildApi>;
+        let childApi2: jasmine.SpyObj<ChildApi>;
 
         beforeEach(() => {
           spyOn(logger, 'warn');
