@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.editor.plugins.resource;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 
@@ -25,10 +26,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,10 +58,10 @@ public class ResourceHelper {
      * @throws RepositoryException exception thrown when one of the properties or values could not be set
      */
     public static void setDefaultResourceProperties(Node node, String mimeType, InputStream inputStream) throws RepositoryException {
-        try{
-            setDefaultResourceProperties(node, mimeType, getValueFactory(node).createBinary(inputStream), null);
-        } finally {
-            IOUtils.closeQuietly(inputStream);
+        try (InputStream is = inputStream) {
+            setDefaultResourceProperties(node, mimeType, getValueFactory(node).createBinary(is), null);
+        } catch (IOException e) {
+            log.warn("Something went wrong while reading the inputstream when setting properties of node: {}", JcrUtils.getNodePathQuietly(node) ,e);
         }
     }
 
@@ -80,11 +81,12 @@ public class ResourceHelper {
      * @throws RepositoryException exception thrown when one of the properties or values could not be set
      */
     public static void setDefaultResourceProperties(Node node, String mimeType, InputStream inputStream, String filename) throws RepositoryException {
-        try{
-            setDefaultResourceProperties(node, mimeType, getValueFactory(node).createBinary(inputStream), filename);
-        } finally {
-            IOUtils.closeQuietly(inputStream);
+        try (InputStream is = inputStream){
+            setDefaultResourceProperties(node, mimeType, getValueFactory(node).createBinary(is), filename);
+        } catch (IOException e) {
+            throw new RepositoryException(e);
         }
+
     }
 
     /**
@@ -137,33 +139,35 @@ public class ResourceHelper {
      * @param inputStream data stream
      */
     public static void handlePdfAndSetHippoTextProperty(Node node, InputStream inputStream) {
-        ByteArrayInputStream byteInputStream = null;
-        String nodePath = null;
+        String content = StringUtils.EMPTY;
         try {
-            nodePath = node.getPath();
-            String content = PdfParser.parse(inputStream);
-            byteInputStream = new ByteArrayInputStream(content.getBytes());
-            node.setProperty(HippoNodeType.HIPPO_TEXT, getValueFactory(node).createBinary(byteInputStream));
-        } catch (RepositoryException e) {
-            setEmptyHippoTextBinary(node);
-            log.warn("An exception occurred while trying to set property with extracted text for node '" + nodePath + "' ", e);
+            content = PdfParser.parse(inputStream);
         } catch (Throwable e) {
+            log.warn("An exception or error occurred while trying to parse the pdf", e);
+        }
+        try (ByteArrayInputStream byteInputStream = new ByteArrayInputStream(content.getBytes())) {
+            node.setProperty(HippoNodeType.HIPPO_TEXT, getValueFactory(node).createBinary(byteInputStream));
+        } catch (RepositoryException | IOException e) {
             setEmptyHippoTextBinary(node);
-            log.warn("An exception occurred while trying to set property with extracted text for node '"+nodePath+"' ",e);
-        } finally {
-            IOUtils.closeQuietly(byteInputStream);
-            IOUtils.closeQuietly(inputStream);
+            log.warn("An exception occurred while trying to set property with extracted text for node {}", JcrUtils.getNodePathQuietly(node), e);
+        }
+        finally{
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    log.warn("An exception occurred while trying to close stream associated with node {}", JcrUtils.getNodePathQuietly(node), e);
+                }
+            }
         }
     }
 
     private static void setEmptyHippoTextBinary(final Node node) {
-        String nodePath = null;
         try {
-            nodePath = node.getPath();
             final ByteArrayInputStream emptyByteArrayInputStream = new ByteArrayInputStream(new byte[0]);
             node.setProperty(HippoNodeType.HIPPO_TEXT, getValueFactory(node).createBinary(emptyByteArrayInputStream));
         } catch (RepositoryException e) {
-            log.error("Unable to store empty hippo:text binary for node '"+nodePath+"'", e);
+            log.error("Unable to store empty hippo:text binary for node {}", JcrUtils.getNodePathQuietly(node), e);
         }
     }
 
