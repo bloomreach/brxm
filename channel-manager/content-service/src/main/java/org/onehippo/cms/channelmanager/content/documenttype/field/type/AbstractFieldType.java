@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.LinkedHashSet;
@@ -47,6 +46,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  */
 @JsonInclude(Include.NON_EMPTY)
 public abstract class AbstractFieldType implements BaseFieldType {
+
+    private static final String PROPERTY_MAX_ITEMS = "maxitems";
 
     private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
@@ -207,7 +208,7 @@ public abstract class AbstractFieldType implements BaseFieldType {
 
         if (fieldContext.isMultiple()) {
             setMinValues(0);
-            setMaxValues(Integer.MAX_VALUE);
+            setMaxValues(loadMaxValues(fieldContext));
         }
 
         setMultiple(fieldContext.isMultiple());
@@ -216,6 +217,13 @@ public abstract class AbstractFieldType implements BaseFieldType {
         effectiveType = fieldContext.getType();
 
         return FieldsInformation.allSupported();
+    }
+
+
+    private int loadMaxValues(final FieldTypeContext fieldContext) {
+        return fieldContext.getStringConfig(PROPERTY_MAX_ITEMS)
+                .map(Integer::parseInt)
+                .orElse(Integer.MAX_VALUE);
     }
 
     @Override

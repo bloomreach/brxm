@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.documenttype.util;
 
 import java.util.Collections;
@@ -253,7 +252,16 @@ public class NamespaceUtilsTest {
     }
 
     @Test
-    public void getConfigPropertyNotInClusterOptionsFromType() throws Exception {
+    public void getConfigPropertyFromEditorConfig() throws Exception {
+        final Node editorFieldConfigNode = MockNode.root();
+        editorFieldConfigNode.setProperty("maxlength", "256");
+        final FieldTypeContext fieldContext = new FieldTypeContext(null, null, null, false, false, null, null, editorFieldConfigNode);
+
+        assertThat(NamespaceUtils.getConfigProperty(fieldContext, "maxlength", JcrStringReader.get()).get(), equalTo("256"));
+    }
+
+    @Test
+    public void getConfigPropertyNotInClusterOptionsOrEditorConfigFromType() throws Exception {
         final String propertyName = "maxlength";
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         final Node editorFieldConfigNode = createMock(Node.class);
@@ -267,6 +275,7 @@ public class NamespaceUtilsTest {
 
         expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(true);
         expect(editorFieldConfigNode.getNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(clusterOptionsNode);
+        expect(editorFieldConfigNode.hasProperty(propertyName)).andReturn(false);
         expect(clusterOptionsNode.hasProperty(propertyName)).andReturn(false);
 
         expect(parentContext.getSession()).andReturn(session);
@@ -286,7 +295,7 @@ public class NamespaceUtilsTest {
     }
 
     @Test
-    public void getConfigPropertyNoClusterOptionsFromType() throws Exception {
+    public void getConfigPropertyNoClusterOptionsAndNotInEditorConfigFromType() throws Exception {
         final String propertyName = "maxlength";
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         final Node editorFieldConfigNode = createMock(Node.class);
@@ -298,6 +307,7 @@ public class NamespaceUtilsTest {
                 true, false, Collections.emptyList(), parentContext, editorFieldConfigNode);
 
         expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(false);
+        expect(editorFieldConfigNode.hasProperty(propertyName)).andReturn(false);
 
         expect(parentContext.getSession()).andReturn(session);
         expect(session.getNode("/hippo:namespaces/hippo/fieldtype")).andReturn(contentTypeRootNode);
@@ -327,6 +337,7 @@ public class NamespaceUtilsTest {
                 true, false, Collections.emptyList(), parentContext, editorFieldConfigNode);
 
         expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(false);
+        expect(editorFieldConfigNode.hasProperty(propertyName)).andReturn(false);
 
         expect(parentContext.getSession()).andReturn(session);
         expect(session.getNode("/hippo:namespaces/hippo/fieldtype")).andReturn(contentTypeRootNode);
