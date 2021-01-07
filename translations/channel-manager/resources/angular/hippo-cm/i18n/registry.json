@@ -945,14 +945,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "REQUEST_PUBLICATION" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "CONFIRM_PUBLISH_DOCUMENT" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "DOCUMENT_CHANGED_TOOLTIP" : {
       "status" : "CLEAN",
       "locales" : null
@@ -971,23 +963,7 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "CONFIRM_PUBLISH_DIRTY_DOCUMENT" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "SAVE_AND_PUBLISH" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "ERROR_CANCEL_REQUEST_PUBLICATION_FAILED" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -1004,10 +980,6 @@
       "locales" : null
     },
     "FEEDBACK_CANCEL_REQUEST" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "SAVE_AND_REQUEST_PUBLICATION" : {
       "status" : "CLEAN",
       "locales" : null
     },

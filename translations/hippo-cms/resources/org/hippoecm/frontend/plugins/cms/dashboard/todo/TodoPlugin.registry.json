@@ -32,6 +32,16 @@
     "scheduledpublishdepublish" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "publishBranch" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
