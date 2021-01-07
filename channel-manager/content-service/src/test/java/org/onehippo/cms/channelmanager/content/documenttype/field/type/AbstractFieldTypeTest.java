@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.Arrays;
@@ -254,6 +253,31 @@ public class AbstractFieldTypeTest {
                 "Hint",
                 0,
                 Integer.MAX_VALUE);
+
+        verifyAll();
+    }
+
+    @Test
+    public void initMultipleWithMaxValues() {
+        final FieldTypeContext fieldContext = new MockFieldTypeContext.Builder(fieldType)
+                .displayName("Field Display Name")
+                .hint("Hint")
+                .multiple(true)
+                .maxValues(3)
+                .build();
+
+        replayAll();
+
+        final FieldsInformation fieldsInfo = fieldType.init(fieldContext);
+
+        assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
+        assertFieldType(fieldType,
+                MockFieldTypeContext.DEFAULT_JCR_NAME,
+                MockFieldTypeContext.DEFAULT_JCR_TYPE,
+                "Field Display Name",
+                "Hint",
+                0,
+                3);
 
         verifyAll();
     }
