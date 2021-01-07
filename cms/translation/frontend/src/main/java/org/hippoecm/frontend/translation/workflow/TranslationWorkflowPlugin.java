@@ -669,9 +669,9 @@ public final class TranslationWorkflowPlugin extends RenderPlugin<WorkflowDescri
             Collections.reverse(folders);
         }
 
-        private void findSourceTranslatedFolder(TranslatedFolder sourceTranslatedFolder
+        private void findSourceTranslatedFolder(final TranslatedFolder sourceTranslatedFolder
                 , final TranslatedFolder targetTranslatedFolder) throws RepositoryException {
-            while (sourceTranslatedFolder != null) {
+            if (sourceTranslatedFolder != null) {
                 FolderTranslation ft = JcrFolderTranslationFactory.createFolderTranslation(
                         sourceTranslatedFolder.node, targetTranslatedFolder.node);
                 ft.setEditable(false);
@@ -680,20 +680,18 @@ public final class TranslationWorkflowPlugin extends RenderPlugin<WorkflowDescri
                 // walk up the source tree until a translated ancestor is found
                 TranslatedSourceAncestorFinder translatedSourceAncestorFinder = new TranslatedSourceAncestorFinder(sourceTranslatedFolder).invoke();
                 if (translatedSourceAncestorFinder.isFound()) {
-                    break;
+                    return;
                 }
-                sourceTranslatedFolder = translatedSourceAncestorFinder.getSourceTranslatedFolder();
                 TranslatedFolder sourceSibling = translatedSourceAncestorFinder.getSourceSibling();
-
-                // walk up the target tree until a translated ancestor is found
-                findTranslatedTargetAncestor(targetTranslatedFolder, sourceSibling);
+                findSourceTranslatedFolder(translatedSourceAncestorFinder.getSourceTranslatedFolder(),
+                        findTranslatedTargetAncestor(targetTranslatedFolder, sourceSibling));
             }
         }
 
-        private void findTranslatedTargetAncestor(TranslatedFolder targetTranslatedFolder, final TranslatedFolder sourceSibling) throws RepositoryException {
+        private TranslatedFolder findTranslatedTargetAncestor(TranslatedFolder targetTranslatedFolder, final TranslatedFolder sourceSibling) throws RepositoryException {
             targetTranslatedFolder = targetTranslatedFolder.getParent();
             if (targetTranslatedFolder != null && targetTranslatedFolder.equals(sourceSibling)) {
-                return;
+                return targetTranslatedFolder;
             }
             while (targetTranslatedFolder != null) {
                 TranslatedFolder backLink = targetTranslatedFolder.getSibling(languageModel.getObject());
@@ -708,6 +706,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin<WorkflowDescri
 
                 targetTranslatedFolder = targetTranslatedFolder.getParent();
             }
+            return targetTranslatedFolder;
         }
 
         private boolean saveFolder(FolderTranslation ft, javax.jcr.Session session) {
