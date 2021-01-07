@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.documenttype.util;
 
 import java.util.ArrayList;
@@ -157,6 +156,9 @@ public class NamespaceUtils {
                                                     final JcrPropertyReader<T> propertyReader) {
         Optional<T> result = getConfigPropertyFromClusterOptions(fieldContext, propertyName, propertyReader);
         if (!result.isPresent()) {
+            result = getConfigPropertyFromEditorConfigNode(fieldContext, propertyName, propertyReader);
+        }
+        if (!result.isPresent()) {
             result = getConfigPropertyFromType(fieldContext, propertyName, propertyReader);
         }
         return result;
@@ -168,6 +170,13 @@ public class NamespaceUtils {
         return fieldContext.getEditorConfigNode().flatMap(editorFieldConfigNode ->
                 getPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName, propertyReader)
         );
+    }
+
+    private static <T> Optional<T> getConfigPropertyFromEditorConfigNode(final FieldTypeContext fieldContext,
+                                                                        final String propertyName,
+                                                                        final JcrPropertyReader<T> propertyReader) {
+        return fieldContext.getEditorConfigNode()
+                .flatMap(editorConfigNode -> propertyReader.read(editorConfigNode, propertyName));
     }
 
     private static <T> Optional<T> getConfigPropertyFromType(final FieldTypeContext fieldContext,

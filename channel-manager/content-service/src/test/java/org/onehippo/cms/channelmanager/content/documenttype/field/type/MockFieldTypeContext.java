@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public class MockFieldTypeContext {
         private List<String> validators = Collections.emptyList();
         private ResourceBundle resourceBundle;
         private Node editorFieldNode;
-
+        private Integer maxValues;
         private Locale parentContextLocale;
 
         public Builder(final AbstractFieldType fieldType) {
@@ -109,6 +109,11 @@ public class MockFieldTypeContext {
             return this;
         }
 
+        public Builder maxValues(final Integer maxValues) {
+            this.maxValues = maxValues;
+            return this;
+        }
+
         public FieldTypeContext build() {
             final FieldTypeContext fieldContext = PowerMock.createMock(FieldTypeContext.class);
 
@@ -138,6 +143,13 @@ public class MockFieldTypeContext {
             expect(fieldContext.getJcrType()).andReturn(jcrType);
             expect(fieldContext.getType()).andReturn(type);
             expect(fieldContext.isMultiple()).andReturn(isMultiple).anyTimes();
+
+            if (isMultiple) {
+                final Optional<String> maxItemsOptional = maxValues != null
+                        ? Optional.of(String.valueOf(maxValues))
+                        : Optional.empty();
+                expect(fieldContext.getStringConfig("maxitems")).andReturn(maxItemsOptional);
+            }
 
             return fieldContext;
         }
