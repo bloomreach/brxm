@@ -17,20 +17,20 @@
 import { fakeAsync, tick } from '@angular/core/testing';
 import { NavItemDtoMock } from 'projects/navapp/src/app/models/dto/nav-item-dto.mock';
 
-import { ChildApi, ChildPromisedApi, NavigationTrigger, NavItem } from '../lib/api';
+import { ChildApi, NavigationTrigger, NavItem } from '../lib/api';
 
 import { DEFAULT_COMMUNICATION_TIMEOUT } from './utils';
 import { wrapWithTimeout } from './wrap-with-timeout';
 
 describe('wrapWithTimeout', () => {
-  const navItemsMock = [
+  const navItemsMock: NavItem[] = [
     new NavItemDtoMock(),
     new NavItemDtoMock(),
   ];
 
   it('should wrap provided api', async () => {
     const api: ChildApi = {
-      getNavItems: (): NavItem[] => navItemsMock,
+      getNavItems: async () => navItemsMock,
     };
 
     const promisedApi = wrapWithTimeout(api, 1);
@@ -39,7 +39,7 @@ describe('wrapWithTimeout', () => {
   });
 
   it('should wrap provided api in promises with default timeout', fakeAsync(() => {
-    const api: ChildPromisedApi = {
+    const api: ChildApi = {
       getNavItems: () => new Promise(() => {}),
     };
 
@@ -54,7 +54,7 @@ describe('wrapWithTimeout', () => {
 
   it('should not wrap the provided api if the timeout is not set', () => {
     const api: ChildApi = {
-      getNavItems: (): NavItem[] => navItemsMock,
+      getNavItems: async () => navItemsMock,
     };
 
     const promisedApi = wrapWithTimeout(api, null);
@@ -64,7 +64,7 @@ describe('wrapWithTimeout', () => {
 
   it('should not wrap the provided api if the timeout is negative', () => {
     const api: ChildApi = {
-      getNavItems: (): NavItem[] => navItemsMock,
+      getNavItems: async () => navItemsMock,
     };
 
     const promisedApi = wrapWithTimeout(api, -1);
@@ -79,7 +79,7 @@ describe('wrapWithTimeout', () => {
       }),
     };
 
-    const promisedApi = wrapWithTimeout(api, 100) as ChildPromisedApi;
+    const promisedApi = wrapWithTimeout(api, 100) as ChildApi;
 
     promisedApi.navigate({ path: 'test' }, NavigationTrigger.NotDefined).catch(e => {
       expect(e).toBe('navigate call timed out');

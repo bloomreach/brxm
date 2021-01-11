@@ -23,7 +23,7 @@ import { CommunicationService } from './communication.service';
 describe('CommunicationService', () => {
   let service: CommunicationService;
   let stateMock: AppState;
-  let parentApiMock: jasmine.SpyObj<navCommLib.ParentPromisedApi>;
+  let parentApiMock: jasmine.SpyObj<navCommLib.ParentApi>;
 
   beforeEach(async () => {
     stateMock = {
