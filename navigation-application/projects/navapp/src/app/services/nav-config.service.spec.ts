@@ -21,7 +21,7 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { async, TestBed } from '@angular/core/testing';
-import { ChildPromisedApi, NavItem, Site } from '@bloomreach/navapp-communication';
+import { ChildApi, NavItem, Site } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 
 import { AppSettings } from '../models/dto/app-settings.dto';
@@ -68,7 +68,7 @@ describe('NavConfigService', () => {
 
   let locationMock: jasmine.SpyObj<Location>;
   let connectionServiceMock: jasmine.SpyObj<ConnectionService>;
-  let childApiMock: jasmine.SpyObj<ChildPromisedApi>;
+  let childApiMock: jasmine.SpyObj<ChildApi>;
   let loggerMock: jasmine.SpyObj<NGXLogger>;
 
   let rootUrl: string;
@@ -79,10 +79,10 @@ describe('NavConfigService', () => {
     ]);
     locationMock.prepareExternalUrl.and.callFake((path: string) => Location.joinWithSlash('https://example.com', path));
 
-    childApiMock = jasmine.createSpyObj('ChildPromisedApi', {
-      getNavItems: [navItemsMock[0]],
-      getSites: sitesMock,
-      getSelectedSite: selectedSiteMock,
+    childApiMock = jasmine.createSpyObj('ChildApi', {
+      getNavItems: Promise.resolve([navItemsMock[0]]),
+      getSites: Promise.resolve(sitesMock),
+      getSelectedSite: Promise.resolve(selectedSiteMock),
     });
     connectionServiceMock = jasmine.createSpyObj('ConnectionService', {
       connect: Promise.resolve(childApiMock),

@@ -19,11 +19,11 @@ import Penpal from 'penpal';
 import { wrapWithTimeout } from '../utils/wrap-with-timeout';
 
 import {
+  ChildApi,
   ChildConnectConfig,
-  ChildPromisedApi,
 } from './api';
 
-const wrapChildMethodsWithTimeout = (methods: ChildPromisedApi, timeout: number) => {
+const wrapChildMethodsWithTimeout = (methods: ChildApi, timeout: number) => {
   const beforeNavigation = methods.beforeNavigation;
   delete methods.beforeNavigation;
 
@@ -48,7 +48,7 @@ export async function connectToChild({
   methods,
   connectionTimeout,
   methodInvocationTimeout,
-}: ChildConnectConfig): Promise<ChildPromisedApi> {
+}: ChildConnectConfig): Promise<ChildApi> {
   const childMethods = await Penpal.connectToChild({ iframe, methods, timeout: connectionTimeout }).promise;
 
   return wrapChildMethodsWithTimeout(childMethods, methodInvocationTimeout);

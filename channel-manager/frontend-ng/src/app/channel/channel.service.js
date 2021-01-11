@@ -60,8 +60,8 @@ class ChannelService {
 
     const parentOrigin = window.location.origin;
     const methods = {
-      navigate: (location, triggeredBy) => this.navigate(location, triggeredBy),
-      beforeNavigation: () => this._beforeNavigation(),
+      navigate: async (location, triggeredBy) => this.navigate(location, triggeredBy),
+      beforeNavigation: async () => this._beforeNavigation(),
     };
     this.parentApiPromise = this.NavappCommunication.connectToParent({ parentOrigin, methods });
   }
@@ -337,14 +337,14 @@ class ChannelService {
 
   navigate(location) {
     if (location.path === '') {
-      this.$state.go('hippo-cm')
+      return this.$state.go('hippo-cm')
         .then(() => {
           this.clearChannel();
           this.CmsService.publish('close-channel');
         });
-    } else {
-      this.updateNavLocation();
     }
+
+    return this.updateNavLocation();
   }
 
   updateNavLocation() {
