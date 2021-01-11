@@ -24,9 +24,9 @@ describe('connectToChild', () => {
   let childMethods: ChildApi;
 
   beforeEach(() => {
-    const parentMethods: ParentApi = {
-      navigate: () => {},
-    };
+    const parentMethods = {
+      navigate: async () => {},
+    } as unknown as ParentApi;
 
     const iframe: HTMLIFrameElement = document.createElement('iframe');
     iframe.src = 'about:blank';
@@ -39,15 +39,15 @@ describe('connectToChild', () => {
     };
 
     childMethods = {
-      getConfig: () => ({} as any),
-      getNavItems: () => [],
-      getSites: () => [],
-      getSelectedSite: () => ({} as any),
-      beforeNavigation: () => true,
-      onUserActivity: () => {},
-      logout: () => {},
-      navigate: () => {},
-      updateSelectedSite: () => {},
+      getConfig: async () => ({} as any),
+      getNavItems: async () => [],
+      getSites: async () => [],
+      getSelectedSite: async () => ({} as any),
+      beforeNavigation: async () => true,
+      onUserActivity: async () => {},
+      logout: async () => {},
+      navigate: async () => {},
+      updateSelectedSite: async () => {},
     };
 
     spyOn(Penpal, 'connectToChild').and.returnValue({

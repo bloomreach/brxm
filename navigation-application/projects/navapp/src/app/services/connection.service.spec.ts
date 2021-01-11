@@ -43,7 +43,7 @@ describe('ConnectionService', () => {
   let connectToChildSpy: jasmine.Spy;
   let parentMethods: commLib.ParentApi;
 
-  const childApiMock: commLib.ChildPromisedApi = {};
+  const childApiMock: commLib.ChildApi = {};
 
   beforeEach(() => {
     const appSettingsMock = new AppSettingsMock();
@@ -93,8 +93,8 @@ describe('ConnectionService', () => {
 
   describe('createConnection', () => {
     const url = 'http://localhost/testUrl';
-    let connectionPromise: Promise<commLib.ChildPromisedApi>;
-    let connectToChildResolve: (value: commLib.ChildPromisedApi) => any;
+    let connectionPromise: Promise<commLib.ChildApi>;
+    let connectToChildResolve: (value: commLib.ChildApi) => any;
     let connectToChildReject: (reason?: any) => any;
 
     beforeEach(() => {
@@ -137,7 +137,7 @@ describe('ConnectionService', () => {
     });
 
     describe('if the same connection is required', () => {
-      let newConnectionPromise: Promise<commLib.ChildPromisedApi>;
+      let newConnectionPromise: Promise<commLib.ChildApi>;
 
       beforeEach(() => {
         connectToChildSpy.calls.reset();
@@ -159,7 +159,7 @@ describe('ConnectionService', () => {
       });
 
       it('should not create an additional iframe', async () => {
-        connectToChildResolve({} as commLib.ChildPromisedApi);
+        connectToChildResolve({} as commLib.ChildApi);
 
         await newConnectionPromise;
 

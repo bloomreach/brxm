@@ -16,7 +16,7 @@
 
 import { DOCUMENT, Location } from '@angular/common';
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { ChildPromisedApi, ClientError } from '@bloomreach/navapp-communication';
+import { ChildApi, ClientError } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 
@@ -39,8 +39,8 @@ describe('AuthService', () => {
   const sessionExpiredMock$ = new Subject<void>();
 
   let connectionServiceMock: jasmine.SpyObj<ConnectionService>;
-  let child1ApiMock: jasmine.SpyObj<ChildPromisedApi>;
-  let child2ApiMock: jasmine.SpyObj<ChildPromisedApi>;
+  let child1ApiMock: jasmine.SpyObj<ChildApi>;
+  let child2ApiMock: jasmine.SpyObj<ChildApi>;
   let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
   let mainLoaderServiceMock: jasmine.SpyObj<MainLoaderService>;
   let busyIndicatorServiceMock: jasmine.SpyObj<BusyIndicatorService>;

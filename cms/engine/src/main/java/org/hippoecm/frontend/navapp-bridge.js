@@ -67,7 +67,7 @@
       connectionTimeout: '${iframesConnectionTimeout}',
       methods: {
         ...navappAPI,
-        updateNavLocation: (location) => {
+        updateNavLocation: async (location) => {
           locationsMap.set(iframeElement, location);
 
           return Hippo.navapp.updateNavLocation(location);
@@ -165,7 +165,7 @@
   }
 
   const xmAPI = {
-    getConfig() {
+    getConfig: async () => {
       const apiVersion = navCom.getVersion();
       return { apiVersion };
     },
@@ -216,7 +216,24 @@
     },
   };
 
+  // Proxy the navapp api for access through window global scope
+  // Used by Wicket and ExtJS
   const navapp = {
+    getConfig: async () => {
+      const navappAPI = await navappConnection;
+      return navappAPI.getConfig();
+    },
+
+    updateNavLocation: async (location) => {
+      const navappAPI = await navappConnection;
+      return navappAPI.updateNavLocation(location);
+    },
+
+    navigate: async (location) => {
+      const navappAPI = await navappConnection;
+      return navappAPI.navigate(location);
+    },
+
     showMask: async () => {
       const navappAPI = await navappConnection;
       return navappAPI.showMask();
@@ -237,9 +254,14 @@
       return navappAPI.hideBusyIndicator();
     },
 
-    updateNavLocation: async (location) => {
+    onUserActivity: async () => {
       const navappAPI = await navappConnection;
-      return navappAPI.updateNavLocation(location);
+      return navappAPI.onUserActivity();
+    },
+
+    onSessionExpired: async () => {
+      const navappAPI = await navappConnection;
+      return navappAPI.onSessionExpired();
     },
 
     onError: async (clientError) => {
