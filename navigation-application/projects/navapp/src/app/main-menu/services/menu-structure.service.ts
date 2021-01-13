@@ -262,8 +262,10 @@ export class MenuStructureService {
           new MenuItemLink('setup/devstudio/attribute-configuration', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_ATTRIBUTE_CONFIGURATION')),
           new MenuItemLink('setup/devstudio/api-explorer', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_API_EXPLORER')),
           new MenuItemContainer(this.translate('MENU_CONTAINER_DATA_CONNECT'), [
-            new MenuItemLink('setup/devstudio/data-connect/catalog-management',
-              this.translate('MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_CATALOG_MANAGEMENT')),
+            new MenuItemLink('setup/devstudio/data-connect/content-catalogs',
+              this.translate('MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_CONTENT_CATALOGS')),
+            new MenuItemLink('setup/devstudio/data-connect/product-catalogs',
+              this.translate('MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_PRODUCT_CATALOGS')),
             new MenuItemLink('setup/devstudio/data-connect/key-management',
               this.translate('MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_KEY_MANAGEMENT')),
           ]),
