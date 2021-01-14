@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,16 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.util.Collections;
+
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+
+import static org.hippoecm.hst.core.component.WrapperElementImpl.SKIP_ESCAPING_PREAMBLE_ELEMENT_ATTRIBUTES_KEY;
 
 /**
  * ESIAsynchronousComponentWindowRenderer
@@ -32,6 +34,12 @@ import org.w3c.dom.Element;
  */
 public class ESIAsynchronousComponentWindowRenderer extends AbstractAsynchronousComponentWindowRenderer {
 
+    private boolean skipEscapingSrcAttr;
+
+    public void setSkipEscapingSrcAttr(final boolean skipEscapingSrcAttr) {
+        this.skipEscapingSrcAttr = skipEscapingSrcAttr;
+    }
+
     @Override
     public void processWindowBeforeRender(HstComponentWindow window, HstRequest request, HstResponse response) {
         HstRequestContext requestContext = request.getRequestContext();
@@ -40,6 +48,11 @@ public class ESIAsynchronousComponentWindowRenderer extends AbstractAsynchronous
         Element esiElem = response.createElement("esi:include");
         esiElem.setAttribute("src", url);
         esiElem.setAttribute("onerror", "continue");
+        if (skipEscapingSrcAttr) {
+            esiElem.setUserData(SKIP_ESCAPING_PREAMBLE_ELEMENT_ATTRIBUTES_KEY, Collections.singleton("src"), (operation, key, data, src, dst) -> {
+                // NOOP, we don't care about copying or whatever
+            });
+        }
         response.addPreamble(esiElem);
     }
 

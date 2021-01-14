@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,10 +69,10 @@ describe('ApiImpl', () => {
         url: 'http://example.com/',
         method: 'GET',
         headers: {
-          referer: 'http://example.com',
-          'user-agent': 'Google Bot',
+          Referer: 'http://example.com',
+          'User-Agent': 'Google Bot',
           'visitor-header': 'visitor-id',
-          'x-forwarded-for': '127.0.0.1',
+          'X-Forwarded-For': '127.0.0.1',
         },
       });
     });
@@ -89,7 +89,7 @@ describe('ApiImpl', () => {
 
       expect(config.httpClient).toBeCalledWith(expect.objectContaining({
         headers: expect.objectContaining({
-          cookie: 'JSESSIONID=1234',
+          Cookie: 'JSESSIONID=1234',
         }),
       }));
     });

@@ -20,9 +20,9 @@ import {
   ChildApi,
   ClientErrorCodes,
   connectToParent,
+  ParentApi,
   ParentConfig,
   ParentConnectConfig,
-  ParentPromisedApi,
 } from '@bloomreach/navapp-communication';
 
 import { AppState } from './app-state';
@@ -31,7 +31,7 @@ import { AppState } from './app-state';
   providedIn: 'root',
 })
 export class CommunicationService {
-  private parentApi: ParentPromisedApi;
+  private parentApi: ParentApi;
   private config: ParentConfig;
 
   constructor(private readonly state: AppState) { }

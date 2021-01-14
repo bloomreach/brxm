@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ const QUERY_PARAM_NAME = 'antiCache';
 export function getAntiCacheQueryParam(locationPath): string {
   const results = new RegExp(`[?&]${QUERY_PARAM_NAME}=([^&#]*)`).exec(locationPath);
 
-  const antiCacheValue = results ? results[1] : new Date().toLocaleString();
+  const antiCacheValue = results ? results[1] : Date.now();
 
   return `${QUERY_PARAM_NAME}=${antiCacheValue}`;
 }
