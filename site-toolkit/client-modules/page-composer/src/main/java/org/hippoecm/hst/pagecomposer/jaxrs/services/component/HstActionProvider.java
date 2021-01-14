@@ -121,10 +121,10 @@ public final class HstActionProvider {
         if (scheduledRequest != null) {
             switch (scheduledRequest.getType()) {
                 case "publish":
-                    actions.put(HstAction.XPAGE_CANCEL_SCHEDULED_PUBLICATION, true);
+                    actions.put(HstAction.XPAGE_CANCEL_SCHEDULED_PUBLICATION, xPageContext.isCancelAllowed());
                     break;
                 case "depublish":
-                    actions.put(HstAction.XPAGE_CANCEL_SCHEDULED_DEPUBLICATION, true);
+                    actions.put(HstAction.XPAGE_CANCEL_SCHEDULED_DEPUBLICATION, xPageContext.isCancelAllowed());
                     break;
                 default:
                     throw new IllegalArgumentException(scheduledRequest.getType());

@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -145,6 +146,12 @@ final class XPageContextFactory {
             } else if (hints.containsKey("requestDepublication")) {
                 xPageContext.setRequestDepublication(TRUE.equals(hints.get("requestDepublication")));
             }
+        } else {
+            final Boolean cancelRequest = (Boolean) requestsHints
+                    .getOrDefault(scheduledRequest.getIdentifier(), Collections.emptyMap())
+                    .get("cancelRequest");
+                xPageContext.setCancelAllowed(cancelRequest);
+
         }
         return xPageContext;
     }
