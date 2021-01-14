@@ -17,7 +17,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import {
-  ChildPromisedApi,
+  ChildApi,
   ClientError,
   connectToChild,
   getVersion as getCommunicationLibraryVersion,
@@ -36,7 +36,7 @@ import { USER_SETTINGS } from './user-settings';
 
 interface ChildConnection {
   iframe: HTMLIFrameElement;
-  apiPromise: Promise<ChildPromisedApi>;
+  apiPromise: Promise<ChildApi>;
 }
 
 @Injectable({
@@ -63,7 +63,7 @@ export class ConnectionService {
     private readonly logger: NGXLogger,
   ) { }
 
-  connect(url: string): Promise<ChildPromisedApi> {
+  connect(url: string): Promise<ChildApi> {
     if (this.connections.has(url)) {
       return this.connections.get(url).apiPromise;
     }
@@ -91,7 +91,7 @@ export class ConnectionService {
     }
   }
 
-  async connectToIframe(iframe: HTMLIFrameElement): Promise<ChildPromisedApi> {
+  async connectToIframe(iframe: HTMLIFrameElement): Promise<ChildApi> {
     const url = iframe.src;
     const config = {
       iframe,
@@ -111,43 +111,43 @@ export class ConnectionService {
 
   private getParentApiMethods(appUrl: string): ParentApi {
     return {
-      getConfig: () => ({
+      getConfig: async () => ({
         apiVersion: getCommunicationLibraryVersion(),
         userSettings: this.userSettings,
       }),
-      showMask: () => {
+      showMask: async () => {
         this.logger.debug(`app '${appUrl}' called showMask()`);
         this.showMask$.next();
       },
-      hideMask: () => {
+      hideMask: async () => {
         this.logger.debug(`app '${appUrl}' called hideMask()`);
         this.hideMask$.next();
       },
-      showBusyIndicator: () => {
+      showBusyIndicator: async () => {
         this.logger.debug(`app '${appUrl}' called showBusyIndicator()`);
         this.busyIndicatorService.show();
       },
-      hideBusyIndicator: () => {
+      hideBusyIndicator: async () => {
         this.logger.debug(`app '${appUrl}' called hideBusyIndicator()`);
         this.busyIndicatorService.hide();
       },
-      navigate: (location: NavLocation) => {
+      navigate: async (location: NavLocation) => {
         this.logger.debug(`app '${appUrl}' called navigate()`, location);
         this.navigate$.next(location);
       },
-      updateNavLocation: (location: NavLocation) => {
+      updateNavLocation: async (location: NavLocation) => {
         this.logger.debug(`app '${appUrl}' called updateNavLocation()`, location);
         this.updateNavLocation$.next(location);
       },
-      onError: (clientError: ClientError) => {
+      onError: async (clientError: ClientError) => {
         this.logger.debug(`app '${appUrl}' called onError()`, clientError);
         this.onError$.next(clientError);
       },
-      onSessionExpired: () => {
+      onSessionExpired: async () => {
         this.logger.debug(`app '${appUrl}' called onSessionExpired()`);
         this.onSessionExpired$.next();
       },
-      onUserActivity: () => this.onUserActivity$.next(),
+      onUserActivity: async () => this.onUserActivity$.next(),
     };
   }
 

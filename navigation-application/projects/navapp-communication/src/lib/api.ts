@@ -22,7 +22,6 @@
 export interface ChildConnectConfig {
   /**
    * The html iframe element that penpal will use to see if that iframe’s window has a penpal instance to connect to.
-   * TODO: Add description
    */
   iframe: HTMLIFrameElement;
   /**
@@ -45,7 +44,6 @@ export interface ChildConnectConfig {
 export interface ParentConnectConfig {
   /**
    * A required string to whitelist the parent origin to form a connection with.
-   * This origin is assumed to be provided to an app via the SSO solution **TODO (specifics are still unclear)**.
    */
   parentOrigin: string;
   /**
@@ -91,7 +89,7 @@ export interface ChildConfig {
 
 export interface ParentApi {
   /** Get the current parent config. */
-  getConfig?: () => (ParentConfig | Promise<ParentConfig>);
+  getConfig: () => Promise<ParentConfig>;
   /**
    * Is called by an application when the application performs internal navigation. updateNavLocation **does not**
    * trigger a subsequent navigate callback. Also, upon navigating to a new state (see navigate callback above), an
@@ -100,81 +98,70 @@ export interface ParentApi {
    *
    * @param location the NavLocation navigated to
    */
-  updateNavLocation?: (location: NavLocation) => (void | Promise<void>);
+  updateNavLocation: (location: NavLocation) => Promise<void>;
   /**
    * Is called by an application to perform internal or cross-app navigation. It **does** trigger the nav-app to perform a
    * ‘beforeNavigation’ and ‘navigate’ to route to the provided location.
    * **Do not set locations to other applications for navigation **
    * @param location The NavLocation navigated to
    */
-  navigate?: (location: NavLocation) => (void | Promise<void>);
+  navigate: (location: NavLocation) => Promise<void>;
   /**
    * Is called by an application when it needs to cover the nav-app’s UI surface with a mask to prevent user
    * interactions for example because the user input is needed for a dialog.
    */
-  showMask?: () => (void | Promise<void>);
+  showMask: () => Promise<void>;
   /**
    * Is called by an application when it needs to hide said mask again.
    */
-  hideMask?: () => (void | Promise<void>);
+  hideMask: () => Promise<void>;
   /**
    * Is called by an application when it needs to show the busy indicator to indicate the user has to wait until the application has
    * changed its ui state.
    * For each call to the application should make a @{link {ParentApi.hideBusyIndicator}} call.
    */
-  showBusyIndicator?: () => (void | Promise<void>);
+  showBusyIndicator: () => Promise<void>;
   /**
    * Is called by an application when it needs to hide the busy indicator to indicate the user can interact with the application again
    * For each call to the application should make a @{link {ParentApi.showBusyIndicator}} call.
    */
-  hideBusyIndicator?: () => (void | Promise<void>);
+  hideBusyIndicator: () => Promise<void>;
   /**
    * Is called by an active application when a user makes some actions. Nav-app can propagate this calls to other
    * applications to prevent session expiration.
    */
-  onUserActivity?: () => (void | Promise<void>);
+  onUserActivity: () => Promise<void>;
   /**
    * Is called by an application when it detects that it's internal session has expired.
    */
-  onSessionExpired?: () => (void | Promise<void>);
+  onSessionExpired: () => Promise<void>;
   /**
    * Pass on an error that occurred on the client side.
    * @param clientError object containing info about the error
    */
-  onError?: (clientError: ClientError) => (void | Promise<void>);
-}
-
-export interface ParentPromisedApi {
-  getConfig?: () => Promise<ParentConfig>;
-  updateNavLocation?: (location: NavLocation) => Promise<void>;
-  navigate?: (location: NavLocation) => Promise<void>;
-  showMask?: () => Promise<void>;
-  hideMask?: () => Promise<void>;
-  onUserActivity?: () => Promise<void>;
-  onSessionExpired?: () => Promise<void>;
-  onError?: (clientError: ClientError) => Promise<void>;
+  onError: (clientError: ClientError) => Promise<void>;
 }
 
 export interface ChildApi {
   /**
    * Get the current [[ChildConfig]].
    */
-  getConfig?: () => (ChildConfig | Promise<ChildConfig>);
+  getConfig?: () => Promise<ChildConfig>;
   /**
    * Requests navigation items from the iframe application. Applications which register. If an application doesn’t have
    * navigation items to register, it returns an empty array.
    */
-  getNavItems?: () => (NavItem[] | Promise<NavItem[]>);
+  getNavItems?: () => Promise<NavItem[]>;
   /**
    * Requests an array of sites to be used in the nested site selection drop-down of the nav-app’s toolbar.
    * The sites are expected to be provided (only) by the SM Navigation Provider app. Other apps that do not have sites
    * to provide should return an empty array.
    */
-  getSites?: () => (Site[] | Promise<Site[]>);
+  getSites?: () => Promise<Site[]>;
   /**
    * Requests the currently selected site saved on the brSM side (as a cookie value).
    */
-  getSelectedSite?: () => (SiteId | Promise<SiteId>);
+  getSelectedSite?: () => Promise<SiteId>;
   /**
    * Fired before nav-app initiates a navigation action which will leave the current location,
    * this event allows applications to clean up location-specific state (such as dirty forms)
@@ -183,7 +170,7 @@ export interface ChildApi {
    * When the application is good to “leave”, it resolves the Promise with "true".
    * In order to prevent leaving the current location, the application should resolve the Promise with "false".
    */
-  beforeNavigation?: () => (boolean | Promise<boolean>);
+  beforeNavigation?: () => Promise<boolean>;
 
   /**
    * Fired before nav-app initiates a logout broadcast, this event allows applications to clean up
@@ -192,17 +179,17 @@ export interface ChildApi {
    * When the application is good to “logout”, it resolves the Promise.
    * In order to prevent the logout process, the application should reject the Promise.
    */
-  beforeLogout?: () => (void | Promise<void>);
+  beforeLogout?: () => Promise<void>;
 
   /**
    * Called to notify the child app that the user is still active to prevent logging out the user in one app while the
    * user is active in another app.
    */
-  onUserActivity?: () => (void | Promise<void>);
+  onUserActivity?: () => Promise<void>;
   /**
    * Called to let the child app initiate their logout process.
    */
-  logout?: () => (void | Promise<void>);
+  logout?: () => Promise<void>;
   /**
    * Is a command which tells the application to navigate to the specified location. If a user triggers a navigation
    * (for example by clicking a button) but the url is absolutely the same it doesn’t lead to any transitions.
@@ -211,7 +198,7 @@ export interface ChildApi {
    * @param location the NavLocation to navigate to
    * @param triggeredBy The source of the navigate call so the client app is able to react appropriately on a specific source
    */
-  navigate?: (location: NavLocation, triggeredBy: NavigationTrigger) => (void | Promise<void>);
+  navigate?: (location: NavLocation, triggeredBy: NavigationTrigger) => Promise<void>;
   /**
    * Sets the accountId (merchantId) and siteId (siteGroupId) to work with. Site selection is intentionally separated
    * from navigation since it represents an additional dimension in the navigation process to cover brSM needs.
@@ -226,18 +213,6 @@ export interface ChildApi {
    *
    * @param siteId the selected SiteId
    */
-  updateSelectedSite?: (siteId?: SiteId) => (void | Promise<void>);
-}
-
-export interface ChildPromisedApi {
-  getConfig?: () => Promise<ChildConfig>;
-  getNavItems?: () => Promise<NavItem[]>;
-  getSites?: () => Promise<Site[]>;
-  getSelectedSite?: () => Promise<SiteId>;
-  beforeNavigation?: () => Promise<boolean>;
-  onUserActivity?: () => Promise<void>;
-  logout?: () => Promise<void>;
-  navigate?: (location: NavLocation, triggeredBy: NavigationTrigger) => Promise<void>;
   updateSelectedSite?: (siteId?: SiteId) => Promise<void>;
 }
 
