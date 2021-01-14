@@ -29,10 +29,12 @@ public final class ScheduledRequest {
 
     private final Calendar scheduledDate;
     private final String type;
+    private final String identifier;
 
     public ScheduledRequest(final Node requestNode) throws RepositoryException {
         scheduledDate = JcrUtils.getDateProperty(requestNode, "hipposched:triggers/default/hipposched:nextFireTime", null);
         type = getAttributeValue(requestNode, "hipposched:methodName", "unknown");
+        identifier = requestNode.getIdentifier();
     }
 
     public String getType() {
@@ -41,6 +43,10 @@ public final class ScheduledRequest {
 
     public Calendar getScheduledDate() {
         return scheduledDate;
+    }
+
+    public String getIdentifier() {
+        return identifier;
     }
 
     private static String getAttributeValue(final Node node, final String attributeName, final String defaultValue) throws RepositoryException {
