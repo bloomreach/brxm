@@ -258,7 +258,7 @@
       </div>
     </md-input-container>
 
-    <div ng-if="$ctrl.isDraggable()" class="field__buttons" layout flex="none">
+    <div ng-if="$ctrl.isDraggable() || $ctrl.isRemovable()" class="field__buttons" layout flex="none">
       <md-menu ng-if="$ctrl.isDraggable()">
         <md-button class="md-icon-button qa-button-reorder" ng-sortable-handle ng-click="$mdMenu.open($event)">
           <md-tooltip ng-if="$ctrl.dragging !== $index">Click or drag to change order</md-tooltip>
@@ -292,6 +292,11 @@
           </md-menu-item>
         </md-menu-content>
       </md-menu>
+
+      <md-button ng-if="$ctrl.isRemovable()" class="md-icon-button qa-button-remove" ng-click="$ctrl.onRemove($index)">
+        <md-tooltip ng-if="$ctrl.dragging !== $index">Remove value</md-tooltip>
+        <md-icon md-font-icon="mdi-close-circle-outline"></md-icon>
+      </md-button>
     </div>
   </div>
 </div>

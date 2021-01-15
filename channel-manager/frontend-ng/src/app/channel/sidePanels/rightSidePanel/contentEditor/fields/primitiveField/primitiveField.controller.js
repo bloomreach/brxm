@@ -164,6 +164,10 @@ class PrimitiveFieldCtrl {
     return this.fieldType.multiple && this.fieldType.orderable && this.fieldValues.length > 1;
   }
 
+  isRemovable() {
+    return this.fieldType.multiple && (!this.fieldType.required || this.fieldValues.length > 1);
+  }
+
   // eslint-disable-next-line consistent-return
   async onMove(oldIndex, newIndex) {
     const [value] = this.fieldValues.splice(oldIndex, 1);
@@ -182,6 +186,16 @@ class PrimitiveFieldCtrl {
     await this._saveField();
     this.form.$setDirty();
     this.form[this.getFieldName(newIndex)].$$element[0].focus();
+  }
+
+  async onRemove(index) {
+    this.fieldValues.splice(index, 1);
+    await this._saveField();
+    this.form.$setDirty();
+
+    if (this.fieldValues.length) {
+      this.form[this.getFieldName(Math.max(index - 1, 0))].$$element[0].focus();
+    }
   }
 }
 
