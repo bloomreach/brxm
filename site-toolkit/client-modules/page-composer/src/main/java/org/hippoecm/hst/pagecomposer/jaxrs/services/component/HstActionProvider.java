@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
+
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_CLOSE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_DELETE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.CHANNEL_DISCARD_CHANGES;
@@ -114,6 +116,20 @@ public final class HstActionProvider {
         actions.put(HstAction.XPAGE_COPY, xPageContext.isCopyAllowed());
         actions.put(HstAction.XPAGE_MOVE, xPageContext.isMoveAllowed());
         actions.put(HstAction.XPAGE_DELETE, xPageContext.isDeleteAllowed());
+
+        final ScheduledRequest scheduledRequest = xPageContext.getScheduledRequest();
+        if (scheduledRequest != null) {
+            switch (scheduledRequest.getType()) {
+                case "publish":
+                    actions.put(HstAction.XPAGE_CANCEL_SCHEDULED_PUBLICATION, xPageContext.isCancelAllowed());
+                    break;
+                case "depublish":
+                    actions.put(HstAction.XPAGE_CANCEL_SCHEDULED_DEPUBLICATION, xPageContext.isCancelAllowed());
+                    break;
+                default:
+                    throw new IllegalArgumentException(scheduledRequest.getType());
+            }
+        }
 
         return actions;
     }
