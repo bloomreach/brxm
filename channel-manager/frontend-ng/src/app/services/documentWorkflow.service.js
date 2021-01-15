@@ -49,6 +49,10 @@ class DocumentWorkflowService {
     return this._invoke(documentId, 'publication', 'SCHED_PUB');
   }
 
+  cancelSchedulePublication(documentId) {
+    return this._invoke(documentId, 'request', 'cancel');
+  }
+
   requestPublication(documentId) {
     return this._invoke(documentId, 'publication', 'REQ_PUB');
   }
@@ -63,6 +67,10 @@ class DocumentWorkflowService {
 
   scheduleUnpublication(documentId) {
     return this._invoke(documentId, 'publication', 'SCHED_DEPUB');
+  }
+
+  cancelScheduleUnpublication(documentId) {
+    return this._invoke(documentId, 'request', 'cancel');
   }
 
   requestUnpublication(documentId) {
