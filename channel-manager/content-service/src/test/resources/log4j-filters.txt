@@ -1,5 +1,5 @@
 #
-#  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+#  Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
 #
 #  Licensed under the Apache License, Version 2.0 (the  "License");
 #  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 #
 
 ^Value of hint action \'.+\' is expected to be boolean but it was \'.+\'
+An error occurred while looking up the prototype node for type 'test:string'
 Cancel request received but no pending request found for 'uuid'.
 Cannot change the URL name of document
 Cannot create validation context
@@ -47,6 +48,11 @@ Failed to dispose of editable instance
 Failed to erase document 'uuid'
 Failed to execute 'add' with category 'new-folder', type 'hippostd:folder' and relPath 'test'
 Failed to execute template query 'new-document'
+Failed to find field with path 'field-a'
+Failed to find field with path 'field-b'
+Failed to find field with path 'parent/child'
+Failed to find field with path 'parent/child-b'
+Failed to find prototype node for field of type 'test:string'
 Failed to find nodeType node for content type '/bla'
 Failed to find validator 'unknown', ignoring it
 Failed to get folder '/test'

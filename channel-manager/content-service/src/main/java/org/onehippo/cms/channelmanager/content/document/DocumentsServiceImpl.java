@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.document;
 
 import java.io.Serializable;
@@ -104,7 +103,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     private HintsInspector hintsInspector;
     private BranchingService branchingService;
-
+    private CompoundService compoundService;
 
     public void setHintsInspector(final HintsInspector hintsInspector) {
         this.hintsInspector = hintsInspector;
@@ -112,6 +111,10 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     public void setBranchingService(final BranchingService branchingService) {
         this.branchingService = branchingService;
+    }
+
+    public void setCompoundService(final CompoundService compoundService) {
+        this.compoundService = compoundService;
     }
 
     @Override
@@ -151,7 +154,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                 }
             }
 
-            throw new NotFoundException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST));
+            throw new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST));
 
         } catch (WorkflowException e) {
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
@@ -369,7 +372,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final Map<String, Serializable> hints = HintsUtils.getHints(workflow, branchId);
         if (!hintsInspector.canDisposeEditableDocument(branchId, hints)) {
-            throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED));
+            throw new ForbiddenException(new ErrorInfo(Reason.ALREADY_DELETED));
         }
 
         try {
@@ -559,6 +562,45 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
+    @Override
+    public Document addCompoundField(final String uuid,
+                                     final String branchId,
+                                     final FieldPath fieldPath,
+                                     final UserContext userContext) {
+
+        if (fieldPath.isEmpty()) {
+            log.warn("Can not add compound field if fieldPath is empty");
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+        }
+
+        final Node handle = getHandle(uuid, userContext.getSession());
+        final BranchHandle branchHandle;
+        try {
+            branchHandle = new BranchHandleImpl(branchId, handle);
+        } catch (WorkflowException e) {
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
+        }
+
+        final Node draft = branchHandle.getDraft();
+        if (draft == null) {
+            throw new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST));
+        }
+
+        final String documentPath;
+        try {
+            documentPath = draft.getPath();
+        } catch (RepositoryException e) {
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
+        }
+
+        final DocumentType documentType = getDocumentType(handle, userContext);
+        compoundService.addCompoundField(documentPath, fieldPath, documentType.getFields());
+
+        final Document document = assembleDocument(uuid, handle, draft, documentType);
+        FieldTypeUtils.readFieldValues(draft, documentType.getFields(), document.getFields());
+        return document;
+    }
+
     private static void archiveDocument(final String uuid, final DocumentWorkflow documentWorkflow) {
         try {
             log.info("Archiving document '{}'", uuid);
@@ -654,7 +696,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     private ErrorInfo errorInfoFromHintsOrNoHolder(String branchId, Map<String, Serializable> hints, Session session) {
         return hintsInspector.determineEditingFailure(branchId, hints, session)
-                .orElseGet(() -> new ErrorInfo(ErrorInfo.Reason.NO_HOLDER));
+                .orElseGet(() -> new ErrorInfo(Reason.NO_HOLDER));
     }
 
 }
