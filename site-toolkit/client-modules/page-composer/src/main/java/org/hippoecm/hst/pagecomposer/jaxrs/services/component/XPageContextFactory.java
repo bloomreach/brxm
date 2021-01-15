@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -80,7 +81,7 @@ final class XPageContextFactory {
         if (branches.contains(selectedBranchId)) {
             // xpage doc branch exists for currently selectedBranchId (in Channel mgr)
             useXPageDocBranch = selectedBranchId;
-        } else if (branches.contains(MASTER_BRANCH_ID)){
+        } else if (branches.contains(MASTER_BRANCH_ID)) {
             // xpage doc branch does not exist for selectedBranchId, use master
             useXPageDocBranch = MASTER_BRANCH_ID;
         } else {
@@ -132,19 +133,26 @@ final class XPageContextFactory {
             return xPageContext;
         }
 
-        final boolean pageIsUnlocked = StringUtils.isBlank(xPageContext.getLockedBy());
-        if (hints.containsKey("publishBranch")) {
-            xPageContext.setPublishable(TRUE.equals(hints.get("publishBranch")) && pageIsUnlocked);
-        } else if (hints.containsKey("requestPublication")) {
-            xPageContext.setRequestPublication(TRUE.equals(hints.get("requestPublication")));
-        }
+        if (scheduledRequest == null) {
+            final boolean pageIsUnlocked = StringUtils.isBlank(xPageContext.getLockedBy());
+            if (hints.containsKey("publishBranch")) {
+                xPageContext.setPublishable(TRUE.equals(hints.get("publishBranch")) && pageIsUnlocked);
+            } else if (hints.containsKey("requestPublication")) {
+                xPageContext.setRequestPublication(TRUE.equals(hints.get("requestPublication")));
+            }
 
-        if (hints.containsKey("depublishBranch")) {
-            xPageContext.setUnpublishable(TRUE.equals(hints.get("depublishBranch")) && pageIsUnlocked);
-        } else if (hints.containsKey("requestDepublication")) {
-            xPageContext.setRequestDepublication(TRUE.equals(hints.get("requestDepublication")));
-        }
+            if (hints.containsKey("depublishBranch")) {
+                xPageContext.setUnpublishable(TRUE.equals(hints.get("depublishBranch")) && pageIsUnlocked);
+            } else if (hints.containsKey("requestDepublication")) {
+                xPageContext.setRequestDepublication(TRUE.equals(hints.get("requestDepublication")));
+            }
+        } else {
+            final Boolean cancelRequest = (Boolean) requestsHints
+                    .getOrDefault(scheduledRequest.getIdentifier(), Collections.emptyMap())
+                    .get("cancelRequest");
+                xPageContext.setCancelAllowed(cancelRequest);
 
+        }
         return xPageContext;
     }
 

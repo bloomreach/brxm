@@ -33,11 +33,13 @@ public enum HstAction implements NamedCategory {
 
     XPAGE_PUBLISH("publish", HstCategory.XPAGE),
     XPAGE_SCHEDULE_PUBLICATION("schedule-publish", HstCategory.XPAGE),
+    XPAGE_CANCEL_SCHEDULED_PUBLICATION("cancel-scheduled-publish", HstCategory.XPAGE),
     XPAGE_REQUEST_PUBLICATION("request-publish", HstCategory.XPAGE),
     XPAGE_REQUEST_SCHEDULE_PUBLICATION("request-schedule-publish", HstCategory.XPAGE),
 
     XPAGE_UNPUBLISH("unpublish", HstCategory.XPAGE),
     XPAGE_SCHEDULE_UNPUBLICATION("schedule-unpublish", HstCategory.XPAGE),
+    XPAGE_CANCEL_SCHEDULED_DEPUBLICATION("cancel-scheduled-depublish", HstCategory.XPAGE),
     XPAGE_REQUEST_UNPUBLICATION("request-unpublish", HstCategory.XPAGE),
     XPAGE_REQUEST_SCHEDULE_UNPUBLICATION("request-schedule-unpublish", HstCategory.XPAGE),
 

@@ -39,6 +39,7 @@ public class XPageContext {
     private Boolean copyAllowed;
     private Boolean moveAllowed;
     private Boolean deleteAllowed;
+    private Boolean cancelAllowed;
     private Boolean acceptRequest;
     private Boolean cancelRequest;
     private Boolean rejectRequest;
@@ -178,6 +179,14 @@ public class XPageContext {
     public XPageContext setDeleteAllowed(final Boolean deleteAllowed) {
         this.deleteAllowed = deleteAllowed;
         return this;
+    }
+
+    public Boolean isCancelAllowed() {
+        return cancelAllowed;
+    }
+
+    public void setCancelAllowed(final Boolean cancelAllowed) {
+        this.cancelAllowed = cancelAllowed;
     }
 
     public Optional<Boolean> isCancelRequest() {
