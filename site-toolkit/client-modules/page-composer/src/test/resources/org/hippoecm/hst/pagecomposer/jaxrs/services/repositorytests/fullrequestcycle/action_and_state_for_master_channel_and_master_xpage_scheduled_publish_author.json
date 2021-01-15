@@ -12,9 +12,6 @@
           "rename":{
             "enabled":false
           },
-          "cancel-scheduled-publish":{
-            "enabled":true
-          },
           "copy":{
             "enabled":true
           },
