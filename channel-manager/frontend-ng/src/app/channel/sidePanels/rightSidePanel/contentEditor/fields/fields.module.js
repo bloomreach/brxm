@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'angular-legacy-sortablejs-maintained';
 import choiceFieldComponent from './choiceField/choiceField.component';
 import ckeditorModule from './ckeditor/ckeditor.module';
 import compoundFieldComponent from './compoundField/compoundField.component';
@@ -30,6 +31,7 @@ import './fields.scss';
 const fieldsModule = angular
   .module('hippo-cm.channel.rightSidePanel.contentEditor.fields', [
     ckeditorModule,
+    'ng-sortable',
   ])
   .component('choiceField', choiceFieldComponent)
   .component('compoundField', compoundFieldComponent)
