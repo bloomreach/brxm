@@ -15,12 +15,22 @@
  */
 
 class PrimitiveFieldCtrl {
-  constructor($scope, FieldService, SharedSpaceToolbarService) {
+  constructor($rootScope, $scope, FieldService, SharedSpaceToolbarService) {
     'ngInject';
 
+    this.$rootScope = $rootScope;
     this.$scope = $scope;
     this.FieldService = FieldService;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
+
+    this.ngSortable = {
+      chosenClass: 'field--dragged',
+      forceFallback: true,
+      fallbackClass: 'field--ghost',
+      handle: '[ng-sortable-handle]',
+      onStart: this.onDrag.bind(this),
+      onEnd: this.onDrop.bind(this),
+    };
   }
 
   $onChanges(changes) {
@@ -148,6 +158,30 @@ class PrimitiveFieldCtrl {
     if (errorsChanged) {
       this._onFieldValuesChanged(this.fieldValues);
     }
+  }
+
+  isDraggable() {
+    return this.fieldType.multiple && this.fieldType.orderable && this.fieldValues.length > 1;
+  }
+
+  // eslint-disable-next-line consistent-return
+  async onMove(oldIndex, newIndex) {
+    const [value] = this.fieldValues.splice(oldIndex, 1);
+    this.fieldValues.splice(newIndex, 0, value);
+    await this._saveField();
+    this.form.$setDirty();
+    this.form[this.getFieldName(newIndex)].$$element[0].focus();
+  }
+
+  onDrag({ oldIndex }) {
+    this.dragging = oldIndex;
+  }
+
+  async onDrop({ newIndex }) {
+    delete this.dragging;
+    await this._saveField();
+    this.form.$setDirty();
+    this.form[this.getFieldName(newIndex)].$$element[0].focus();
   }
 }
 
