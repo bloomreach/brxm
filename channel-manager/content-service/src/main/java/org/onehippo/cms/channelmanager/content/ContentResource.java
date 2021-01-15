@@ -99,6 +99,16 @@ public class ContentResource {
                 userContext -> documentService.obtainEditableDocument(id, getBranchId(servletRequest), userContext));
     }
 
+    @POST
+    @Path("documents/{documentId}/editable/{fieldPath:.*}")
+    public Response addCompoundField(@PathParam("documentId") final String documentId,
+                                     @PathParam("fieldPath") final String fieldPath,
+                                     @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK,
+                userContext -> documentService.addCompoundField(documentId, getBranchId(servletRequest),
+                                                                new FieldPath(fieldPath), userContext));
+    }
+
     @PUT
     @Path("documents/{documentId}/editable")
     public Response updateEditableDocument(@PathParam("documentId") final String id,
