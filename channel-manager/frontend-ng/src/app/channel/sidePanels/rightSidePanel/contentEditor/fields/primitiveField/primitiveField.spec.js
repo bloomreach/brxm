@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -224,6 +224,23 @@ describe('PrimitiveField', () => {
     expect($ctrl.hasFocus).toBeFalsy();
     expect(onFieldFocus).not.toHaveBeenCalled();
     expect(onFieldBlur).toHaveBeenCalled();
+  });
+
+  it('should move value', () => {
+    const validatedValues = angular.copy(fieldValues);
+    FieldService.save.and.returnValue($q.resolve(validatedValues));
+
+    $ctrl.onMove(0, 2);
+    $rootScope.$digest();
+
+    expect(FieldService.save).toHaveBeenCalledWith({
+      name: 'test-name/field:type',
+      values: [
+        { value: 'Value 2' },
+        { value: 'Value 3' },
+        { value: 'Value 1' },
+      ],
+    });
   });
 
   describe('valueChanged', () => {

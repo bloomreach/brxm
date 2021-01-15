@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,236 +15,283 @@
   -->
 <div class="field"
      layout="column"
-     ng-class="{'has-invalid-field': !$ctrl.isValid()}">
-  <md-input-container class="qa-field field-type-{{:: $ctrl.fieldType.type | lowercase }}"
-                      md-no-float
-                      ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
-                      ng-switch="::$ctrl.fieldType.type"
-                      ng-class="{
-                      'has-focused-field': $ctrl.hasFocus,
-                      'has-hint': $ctrl.fieldType.hint,
-                      'md-input-has-value': $ctrl.fieldType.type === 'RADIO_GROUP' || $ctrl.fieldType.type === 'BOOLEAN_RADIO_GROUP'
-                      }">
+     ng-class="{
+       'has-invalid-field': !$ctrl.isValid(),
+       'field--multiple': $ctrl.fieldType.multiple,
+     }"
+     ng-sortable="$ctrl.ngSortable">
+  <div ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
+       layout
+       layout-align="space-between top"
+       md-whiteframe="{{ $ctrl.dragging === $index ? 1 : -1 }}"
+       md-colors="$ctrl.dragging === $index ? { 'background-color': 'hippo-grey-100' } : {}">
+    <md-input-container class="qa-field field-type-{{:: $ctrl.fieldType.type | lowercase }}"
+                        flex="grow"
+                        md-no-float
+                        ng-switch="::$ctrl.fieldType.type"
+                        ng-class="{
+                          'has-focused-field': $ctrl.hasFocus,
+                          'has-hint': $ctrl.fieldType.hint,
+                          'md-input-has-value': $ctrl.fieldType.type === 'RADIO_GROUP' || $ctrl.fieldType.type === 'BOOLEAN_RADIO_GROUP'
+                        }"
+                        >
 
-    <label ng-if="::$first && $ctrl.fieldType.type !== 'BOOLEAN'"
-           layout
-           layout-align="start center"
-           class="field-title"
-           ng-click="$ctrl.onLabelClick($event)"
-           tabindex="-1"
-           >
-      <span>
-        {{ ::$ctrl.fieldType.displayName }}
+      <label ng-if="::$first && $ctrl.fieldType.type !== 'BOOLEAN'"
+            layout
+            layout-align="start center"
+            class="field-title"
+            ng-click="$ctrl.onLabelClick($event)"
+            tabindex="-1"
+            >
+        <span>
+          {{ ::$ctrl.fieldType.displayName }}
 
-        <span ng-if="::$ctrl.fieldType.required">*</span>
-      </span>
+          <span ng-if="::$ctrl.fieldType.required">*</span>
+        </span>
 
-      <md-icon ng-if="::$ctrl.fieldType.hint"
-               class="hippo-hint-icon"
-               md-font-icon="mdi-information-outline">
-        <md-tooltip>
-          {{ ::$ctrl.fieldType.hint }}
-        </md-tooltip>
-      </md-icon>
-    </label>
-
-    <!-- editors per field type -->
-    <input ng-switch-when="STRING"
-           ng-model="fieldValue.value"
-           ng-change="$ctrl.valueChanged()"
-           name="{{::$ctrl.getFieldName($index)}}"
-           ng-attr-maxlength="{{::$ctrl.fieldType.maxLength}}"
-           aria-label="{{::$ctrl.fieldType.displayName}}"
-           ng-required="::$ctrl.fieldType.required"
-           ng-focus="$ctrl.focusPrimitive($event)"
-           ng-blur="$ctrl.blurPrimitive($event)">
-
-    <input ng-switch-when="LONG"
-           ng-model="fieldValue.value"
-           ng-change="$ctrl.valueChanged()"
-           name="{{::$ctrl.getFieldName($index)}}"
-           aria-label="{{::$ctrl.fieldType.displayName}}"
-           ng-focus="$ctrl.focusPrimitive($event)"
-           ng-blur="$ctrl.blurPrimitive($event)"
-           ng-required="::$ctrl.fieldType.required"
-           ng-pattern="/^-?[0-9]\d*(\.\d+)?$/">
-
-    <input ng-switch-when="DOUBLE"
-           ng-model="fieldValue.value"
-           ng-change="$ctrl.valueChanged()"
-           name="{{::$ctrl.getFieldName($index)}}"
-           aria-label="{{::$ctrl.fieldType.displayName}}"
-           ng-focus="$ctrl.focusPrimitive($event)"
-           ng-blur="$ctrl.blurPrimitive($event)"
-           ng-required="::$ctrl.fieldType.required"
-           ng-pattern="/^[+-]?((\d+((\.)\d*)?)|((\.)\d+))$/">
-
-    <div ng-switch-when="BOOLEAN">
-      <md-checkbox ng-model="fieldValue.value"
-                   ng-true-value="'true'"
-                   ng-false-value="'false'"
-                   ng-change="$ctrl.valueChanged()"
-                   class="md-primary"
-                   name="{{::$ctrl.getFieldName($index)}}"
-                   ng-focus="$ctrl.focusPrimitive($event)"
-                   ng-blur="$ctrl.blurPrimitive($event)">
-        {{::$ctrl.fieldType.displayName}}
         <md-icon ng-if="::$ctrl.fieldType.hint"
-                 class="checkbox-hint hippo-hint-icon"
-                 md-font-icon="mdi-information-outline">
+                class="hippo-hint-icon"
+                md-font-icon="mdi-information-outline">
           <md-tooltip>
             {{ ::$ctrl.fieldType.hint }}
           </md-tooltip>
         </md-icon>
-      </md-checkbox>
-    </div>
+      </label>
 
-    <date-field ng-switch-when="DATE_AND_TIME|DATE_ONLY"
-                ng-switch-when-separator="|"
-                name="::$ctrl.getFieldName($index)"
-                field-type="::$ctrl.fieldType"
-                ng-model="fieldValue.value"
-                ng-change="$ctrl.valueChanged()"
-                on-field-focus="$ctrl.focusPrimitive($event)"
-                on-field-blur="$ctrl.blurPrimitive($event)">
-    </date-field>
+      <!-- editors per field type -->
+      <input ng-switch-when="STRING"
+            ng-model="fieldValue.value"
+            ng-change="$ctrl.valueChanged()"
+            name="{{::$ctrl.getFieldName($index)}}"
+            ng-attr-maxlength="{{::$ctrl.fieldType.maxLength}}"
+            aria-label="{{::$ctrl.fieldType.displayName}}"
+            ng-required="::$ctrl.fieldType.required"
+            ng-focus="$ctrl.focusPrimitive($event)"
+            ng-blur="$ctrl.blurPrimitive($event)">
 
-    <md-select
-      ng-switch-when="STATIC_DROPDOWN"
-      aria-label="::$ctrl.fieldType.displayName"
-      name="::$ctrl.getFieldName($index)"
-      ng-change="$ctrl.valueChanged()"
-      ng-model="fieldValue.value"
-      ng-required="::$ctrl.fieldType.required"
-      md-no-asterisk
-    >
-      <md-option
-        ng-repeat="optionValue in $ctrl.fieldType.optionValues"
-        value="{{ optionValue }}"
+      <input ng-switch-when="LONG"
+            ng-model="fieldValue.value"
+            ng-change="$ctrl.valueChanged()"
+            name="{{::$ctrl.getFieldName($index)}}"
+            aria-label="{{::$ctrl.fieldType.displayName}}"
+            ng-focus="$ctrl.focusPrimitive($event)"
+            ng-blur="$ctrl.blurPrimitive($event)"
+            ng-required="::$ctrl.fieldType.required"
+            ng-pattern="/^-?[0-9]\d*(\.\d+)?$/">
+
+      <input ng-switch-when="DOUBLE"
+            ng-model="fieldValue.value"
+            ng-change="$ctrl.valueChanged()"
+            name="{{::$ctrl.getFieldName($index)}}"
+            aria-label="{{::$ctrl.fieldType.displayName}}"
+            ng-focus="$ctrl.focusPrimitive($event)"
+            ng-blur="$ctrl.blurPrimitive($event)"
+            ng-required="::$ctrl.fieldType.required"
+            ng-pattern="/^[+-]?((\d+((\.)\d*)?)|((\.)\d+))$/">
+
+      <div ng-switch-when="BOOLEAN">
+        <md-checkbox ng-model="fieldValue.value"
+                    ng-true-value="'true'"
+                    ng-false-value="'false'"
+                    ng-change="$ctrl.valueChanged()"
+                    class="md-primary"
+                    name="{{::$ctrl.getFieldName($index)}}"
+                    ng-focus="$ctrl.focusPrimitive($event)"
+                    ng-blur="$ctrl.blurPrimitive($event)">
+          {{::$ctrl.fieldType.displayName}}
+          <md-icon ng-if="::$ctrl.fieldType.hint"
+                  class="checkbox-hint hippo-hint-icon"
+                  md-font-icon="mdi-information-outline">
+            <md-tooltip>
+              {{ ::$ctrl.fieldType.hint }}
+            </md-tooltip>
+          </md-icon>
+        </md-checkbox>
+      </div>
+
+      <date-field ng-switch-when="DATE_AND_TIME|DATE_ONLY"
+                  ng-switch-when-separator="|"
+                  name="::$ctrl.getFieldName($index)"
+                  field-type="::$ctrl.fieldType"
+                  ng-model="fieldValue.value"
+                  ng-change="$ctrl.valueChanged()"
+                  on-field-focus="$ctrl.focusPrimitive($event)"
+                  on-field-blur="$ctrl.blurPrimitive($event)">
+      </date-field>
+
+      <md-select
+        ng-switch-when="STATIC_DROPDOWN"
+        aria-label="::$ctrl.fieldType.displayName"
+        name="::$ctrl.getFieldName($index)"
+        ng-change="$ctrl.valueChanged()"
+        ng-model="fieldValue.value"
+        ng-required="::$ctrl.fieldType.required"
+        md-no-asterisk
       >
-        {{ $ctrl.fieldType.optionDisplayValues[$index] }}
-      </md-option>
-    </md-select>
+        <md-option
+          ng-repeat="optionValue in $ctrl.fieldType.optionValues"
+          value="{{ optionValue }}"
+        >
+          {{ $ctrl.fieldType.optionDisplayValues[$index] }}
+        </md-option>
+      </md-select>
 
-    <dynamic-dropdown ng-switch-when="DYNAMIC_DROPDOWN"
-                 field-type="::$ctrl.fieldType.type"
-                 locale="::$ctrl.locale"
-                 name="::$ctrl.getFieldName($index)"
-                 ng-change="$ctrl.valueChanged()"
-                 on-field-blur="$ctrl.blurPrimitive($event)"
-                 on-field-focus="$ctrl.focusPrimitive($event)"
-                 ng-model="fieldValue.value"
-                 options-source="::$ctrl.fieldType.source"
-                 show-default="::$ctrl.fieldType.showDefault"
-                 sort-comparator="::$ctrl.fieldType.sortComparator"
-                 sort-by="::$ctrl.fieldType.sortBy"
-                 sort-order="::$ctrl.fieldType.sortOrder"
-                 is-required="::$ctrl.fieldType.required">
-    </dynamic-dropdown>
+      <dynamic-dropdown ng-switch-when="DYNAMIC_DROPDOWN"
+                  field-type="::$ctrl.fieldType.type"
+                  locale="::$ctrl.locale"
+                  name="::$ctrl.getFieldName($index)"
+                  ng-change="$ctrl.valueChanged()"
+                  on-field-blur="$ctrl.blurPrimitive($event)"
+                  on-field-focus="$ctrl.focusPrimitive($event)"
+                  ng-model="fieldValue.value"
+                  options-source="::$ctrl.fieldType.source"
+                  show-default="::$ctrl.fieldType.showDefault"
+                  sort-comparator="::$ctrl.fieldType.sortComparator"
+                  sort-by="::$ctrl.fieldType.sortBy"
+                  sort-order="::$ctrl.fieldType.sortOrder"
+                  is-required="::$ctrl.fieldType.required">
+      </dynamic-dropdown>
 
-    <radio-group ng-switch-when="RADIO_GROUP"
-                 field-type="::$ctrl.fieldType.type"
-                 locale="::$ctrl.locale"
-                 name="::$ctrl.getFieldName($index)"
-                 ng-change="$ctrl.valueChanged()"
-                 on-field-blur="$ctrl.blurPrimitive($event)"
-                 on-field-focus="$ctrl.focusPrimitive($event)"
-                 ng-model="fieldValue.value"
-                 options-source="::$ctrl.fieldType.source"
-                 sort-comparator="::$ctrl.fieldType.sortComparator"
-                 sort-by="::$ctrl.fieldType.sortBy"
-                 sort-order="::$ctrl.fieldType.sortOrder"
-                 orientation="::$ctrl.fieldType.orientation"
-                 is-required="::$ctrl.fieldType.required">
-    </radio-group>
+      <radio-group ng-switch-when="RADIO_GROUP"
+                  field-type="::$ctrl.fieldType.type"
+                  locale="::$ctrl.locale"
+                  name="::$ctrl.getFieldName($index)"
+                  ng-change="$ctrl.valueChanged()"
+                  on-field-blur="$ctrl.blurPrimitive($event)"
+                  on-field-focus="$ctrl.focusPrimitive($event)"
+                  ng-model="fieldValue.value"
+                  options-source="::$ctrl.fieldType.source"
+                  sort-comparator="::$ctrl.fieldType.sortComparator"
+                  sort-by="::$ctrl.fieldType.sortBy"
+                  sort-order="::$ctrl.fieldType.sortOrder"
+                  orientation="::$ctrl.fieldType.orientation"
+                  is-required="::$ctrl.fieldType.required">
+      </radio-group>
 
-    <radio-group ng-switch-when="BOOLEAN_RADIO_GROUP"
-                 field-type="::$ctrl.fieldType.type"
-                 locale="::$ctrl.locale"
-                 name="::$ctrl.getFieldName($index)"
-                 ng-change="$ctrl.valueChanged()"
-                 on-field-blur="$ctrl.blurPrimitive($event)"
-                 on-field-focus="$ctrl.focusPrimitive($event)"
-                 options-source="::$ctrl.fieldType.source"
-                 ng-model="fieldValue.value"
-                 orientation="::$ctrl.fieldType.orientation"
-                 false-label="::$ctrl.fieldType.falseLabel"
-                 true-label="::$ctrl.fieldType.trueLabel"
-                 is-required="::$ctrl.fieldType.required">
-    </radio-group>
+      <radio-group ng-switch-when="BOOLEAN_RADIO_GROUP"
+                  field-type="::$ctrl.fieldType.type"
+                  locale="::$ctrl.locale"
+                  name="::$ctrl.getFieldName($index)"
+                  ng-change="$ctrl.valueChanged()"
+                  on-field-blur="$ctrl.blurPrimitive($event)"
+                  on-field-focus="$ctrl.focusPrimitive($event)"
+                  options-source="::$ctrl.fieldType.source"
+                  ng-model="fieldValue.value"
+                  orientation="::$ctrl.fieldType.orientation"
+                  false-label="::$ctrl.fieldType.falseLabel"
+                  true-label="::$ctrl.fieldType.trueLabel"
+                  is-required="::$ctrl.fieldType.required">
+      </radio-group>
 
-    <textarea ng-switch-when="MULTILINE_STRING"
-              ng-model="fieldValue.value"
-              ng-change="$ctrl.valueChanged()"
-              ng-attr-maxlength="{{::$ctrl.fieldType.maxLength}}"
-              name="{{::$ctrl.getFieldName($index)}}"
-              aria-label="::$ctrl.fieldType.displayName"
-              ng-required="::$ctrl.fieldType.required"
-              md-no-resize
-              ng-focus="$ctrl.focusPrimitive($event)"
-              ng-blur="$ctrl.blurPrimitive($event)">
-    </textarea>
-
-    <ckeditor ng-switch-when="HTML"
-              ng-model="fieldValue.value"
-              ng-change="$ctrl.valueChanged()"
-              id="fieldValue.id"
-              name="::$ctrl.getFieldName($index)"
-              aria-label="::$ctrl.fieldType.displayName"
-              config="::$ctrl.fieldType.config"
-              on-focus="$ctrl.focusPrimitive($event)"
-              on-blur="$ctrl.blurPrimitive($event)"
-              field-object="$ctrl.form[$ctrl.getFieldName($index)]"
-              ng-class="{ 'is-invalid': !$ctrl.isValid() }">
-    </ckeditor>
-
-    <image-link ng-switch-when="IMAGE_LINK"
+      <textarea ng-switch-when="MULTILINE_STRING"
                 ng-model="fieldValue.value"
                 ng-change="$ctrl.valueChanged()"
-                ng-required="::$ctrl.fieldType.required"
-                ng-focus="$ctrl.focusPrimitive($event)"
-                ng-blur="$ctrl.blurPrimitive($event)"
+                ng-attr-maxlength="{{::$ctrl.fieldType.maxLength}}"
                 name="{{::$ctrl.getFieldName($index)}}"
+                aria-label="::$ctrl.fieldType.displayName"
+                ng-required="::$ctrl.fieldType.required"
+                md-no-resize
+                ng-focus="$ctrl.focusPrimitive($event)"
+                ng-blur="$ctrl.blurPrimitive($event)">
+      </textarea>
+
+      <ckeditor ng-switch-when="HTML"
+                ng-model="fieldValue.value"
+                ng-change="$ctrl.valueChanged()"
+                id="fieldValue.id"
+                name="::$ctrl.getFieldName($index)"
+                aria-label="::$ctrl.fieldType.displayName"
+                config="::$ctrl.fieldType.config"
+                on-focus="$ctrl.focusPrimitive($event)"
+                on-blur="$ctrl.blurPrimitive($event)"
+                field-object="$ctrl.form[$ctrl.getFieldName($index)]"
+                ng-class="{ 'is-invalid': !$ctrl.isValid() }">
+      </ckeditor>
+
+      <image-link ng-switch-when="IMAGE_LINK"
+                  ng-model="fieldValue.value"
+                  ng-change="$ctrl.valueChanged()"
+                  ng-required="::$ctrl.fieldType.required"
+                  ng-focus="$ctrl.focusPrimitive($event)"
+                  ng-blur="$ctrl.blurPrimitive($event)"
+                  name="{{::$ctrl.getFieldName($index)}}"
+                  aria-label="{{::$ctrl.fieldType.displayName}}"
+                  config="::$ctrl.fieldType.config"
+                  hint="::$ctrl.fieldType.hint"
+                  index="::$index"
+                  display-name="::fieldValue.metadata.url">
+      </image-link>
+
+      <node-link ng-switch-when="NODE_LINK"
                 aria-label="{{::$ctrl.fieldType.displayName}}"
                 config="::$ctrl.fieldType.config"
+                display-name="::fieldValue.metadata.displayName"
                 hint="::$ctrl.fieldType.hint"
                 index="::$index"
-                display-name="::fieldValue.metadata.url">
-    </image-link>
+                ng-required="::$ctrl.fieldType.required"
+                name="{{::$ctrl.getFieldName($index)}}"
+                ng-model="fieldValue.value"
+                ng-change="$ctrl.valueChanged()"
+                ng-focus="$ctrl.focusPrimitive($event)"
+                ng-blur="$ctrl.blurPrimitive($event)">
+      </node-link>
 
-    <node-link ng-switch-when="NODE_LINK"
-               aria-label="{{::$ctrl.fieldType.displayName}}"
-               config="::$ctrl.fieldType.config"
-               display-name="::fieldValue.metadata.displayName"
-               hint="::$ctrl.fieldType.hint"
-               index="::$index"
-               ng-required="::$ctrl.fieldType.required"
-               name="{{::$ctrl.getFieldName($index)}}"
-               ng-model="fieldValue.value"
-               ng-change="$ctrl.valueChanged()"
-               ng-focus="$ctrl.focusPrimitive($event)"
-               ng-blur="$ctrl.blurPrimitive($event)">
-    </node-link>
+      <openui-string-field ng-switch-when="OPEN_UI"
+                          layout="row"
+                          extension-id="{{:: $ctrl.fieldType.uiExtension }}"
+                          name="{{::$ctrl.getFieldName($index)}}"
+                          ng-change="$ctrl.valueChanged()"
+                          ng-model="fieldValue.value"
+                          ng-focus="$ctrl.focusPrimitive($event)"
+                          ng-blur="$ctrl.blurPrimitive($event)"
+                          ng-required="::$ctrl.fieldType.required">
+      </openui-string-field>
 
-    <openui-string-field ng-switch-when="OPEN_UI"
-                         layout="row"
-                         extension-id="{{:: $ctrl.fieldType.uiExtension }}"
-                         name="{{::$ctrl.getFieldName($index)}}"
-                         ng-change="$ctrl.valueChanged()"
-                         ng-model="fieldValue.value"
-                         ng-focus="$ctrl.focusPrimitive($event)"
-                         ng-blur="$ctrl.blurPrimitive($event)"
-                         ng-required="::$ctrl.fieldType.required">
-    </openui-string-field>
+      <div ng-if="$last && !$ctrl.isValid()"
+          ng-messages="$ctrl.getFieldError()">
+        <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
+        <div ng-message="server">{{ ::$ctrl.firstServerError }}</div>
+        <div ng-if="::$ctrl.fieldType.type === 'LONG'" ng-message="pattern">{{ ::'ERROR_FIELD_LONG_PATTERN' | translate }}</div>
+        <div ng-if="::$ctrl.fieldType.type === 'DOUBLE'" ng-message="pattern">{{ ::'ERROR_FIELD_DOUBLE_PATTERN' | translate }}</div>
+        <div ng-if="::$ctrl.fieldType.type === 'DATE_AND_TIME'" ng-message="valid">{{ ::'ERROR_INVALID_DATE' | translate }}</div>
+        <div ng-if="::$ctrl.fieldType.type === 'DATE_ONLY'" ng-message="valid">{{ ::'ERROR_INVALID_DATE' | translate }}</div>
+      </div>
+    </md-input-container>
 
-    <div ng-if="$last && !$ctrl.isValid()"
-         ng-messages="$ctrl.getFieldError()">
-      <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
-      <div ng-message="server">{{ ::$ctrl.firstServerError }}</div>
-      <div ng-if="::$ctrl.fieldType.type === 'LONG'" ng-message="pattern">{{ ::'ERROR_FIELD_LONG_PATTERN' | translate }}</div>
-      <div ng-if="::$ctrl.fieldType.type === 'DOUBLE'" ng-message="pattern">{{ ::'ERROR_FIELD_DOUBLE_PATTERN' | translate }}</div>
-      <div ng-if="::$ctrl.fieldType.type === 'DATE_AND_TIME'" ng-message="valid">{{ ::'ERROR_INVALID_DATE' | translate }}</div>
-      <div ng-if="::$ctrl.fieldType.type === 'DATE_ONLY'" ng-message="valid">{{ ::'ERROR_INVALID_DATE' | translate }}</div>
+    <div ng-if="$ctrl.isDraggable()" class="field__buttons" layout flex="none">
+      <md-menu ng-if="$ctrl.isDraggable()">
+        <md-button class="md-icon-button qa-button-reorder" ng-sortable-handle ng-click="$mdMenu.open($event)">
+          <md-tooltip ng-if="$ctrl.dragging !== $index">Click or drag to change order</md-tooltip>
+          <md-icon md-font-icon="mdi-reorder-horizontal"></md-icon>
+        </md-button>
+        <md-menu-content>
+          <md-menu-item>
+            <md-button ng-click="$ctrl.onMove($index, 0)" ng-disabled="$first" class="qa-menu-move-top">
+              <md-icon md-font-icon="mdi-arrow-collapse-up" md-menu-align-target></md-icon>
+              Move to top
+            </md-button>
+          </md-menu-item>
+          <md-menu-item>
+            <md-button ng-click="$ctrl.onMove($index, $index - 1)" ng-disabled="$first" class="qa-menu-move-up">
+              <md-icon md-font-icon="mdi-arrow-up" md-menu-align-target></md-icon>
+              Move up
+            </md-button>
+          </md-menu-item>
+          <md-menu-divider></md-menu-divider>
+          <md-menu-item>
+            <md-button ng-click="$ctrl.onMove($index, $index + 1)" ng-disabled="$last" class="qa-menu-move-down">
+              <md-icon md-font-icon="mdi-arrow-down"></md-icon>
+              Move down
+            </md-button>
+          </md-menu-item>
+          <md-menu-item>
+            <md-button ng-click="$ctrl.onMove($index, $ctrl.fieldValues.length - 1)" ng-disabled="$last" class="qa-menu-move-bottom">
+              <md-icon md-font-icon="mdi-arrow-collapse-down"></md-icon>
+              Move to bottom
+            </md-button>
+          </md-menu-item>
+        </md-menu-content>
+      </md-menu>
     </div>
-  </md-input-container>
+  </div>
 </div>
