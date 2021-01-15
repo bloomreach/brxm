@@ -81,6 +81,12 @@ const webpackConfig = merge.strategy({ plugins: 'replace' })(config, {
     },
   },
 
+  resolve: {
+    alias: {
+      'sortablejs': 'sortablejs/Sortable.js',
+    },
+  },
+
   module: {
     rules: [
       {

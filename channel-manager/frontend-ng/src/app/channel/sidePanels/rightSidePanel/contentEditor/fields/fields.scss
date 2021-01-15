@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,6 +82,31 @@ compound-field {
     border-color: map-get($red, 500);
   }
 
+  &--multiple {
+    .md-errors-spacer {
+      min-height: 0;
+    }
+  }
+
+  &--ghost {
+    display: none !important;
+  }
+
+  &--dragged,
+  &--dragged * {
+    cursor: grabbing !important;
+  }
+
+  &--dragged {
+    .md-input-focused,
+    .md-input-has-placeholder,
+    .md-input-has-value {
+      label:not(.md-no-float) {
+        display: none;
+      }
+    }
+  }
+
   &__title {
     margin-bottom: $form-dense-distance;
     margin-left: -6px;
@@ -98,6 +123,26 @@ compound-field {
     &--invalid,
     &--invalid &-icon {
       color: map-get($red, 500);
+    }
+  }
+
+  &__buttons {
+    margin-right: -8px;
+    margin-top: 12px;
+    max-width: 8px;
+    overflow: hidden;
+    transition: max-width 1s;
+
+    md-input-container:hover + &,
+    .field--dragged &,
+    .md-input-focused + &,
+    &:focus-within,
+    &:hover {
+      max-width: 100%;
+    }
+
+    .md-button.md-icon-button {
+      margin: 0;
     }
   }
 
