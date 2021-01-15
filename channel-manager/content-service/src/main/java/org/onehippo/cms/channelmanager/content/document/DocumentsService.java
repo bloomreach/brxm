@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.document;
 
 import java.util.List;
@@ -159,4 +158,20 @@ public interface DocumentsService {
      * @throws ErrorWithPayloadException If deleting the document failed
      */
     void deleteDocument(final String uuid, final String branchId, final UserContext userContext);
+
+    /**
+     * Add a new compound field. The position of the new field can be managed by passing an index (1-based) in the
+     * {@code fieldPath} argument using the square-bracket notation, e.g. field[2]. By default, the new field is
+     * inserted at the first position.
+     *
+     * @param uuid          UUID of the document (handle)
+     * @param branchId      Id of the requested document branch
+     * @param fieldPath     Path to the new compound field in the document
+     * @param userContext   Properties of the user that executes the request
+     *
+     * @return JSON-serializable representation of the persisted document.
+     *
+     * @throws ErrorWithPayloadException If adding a compound field to the document failed
+     */
+    Document addCompoundField(String uuid, String branchId, FieldPath fieldPath, UserContext userContext);
 }
