@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content;
 
 import java.io.Serializable;
@@ -26,9 +25,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms.channelmanager.content.document.CompoundService;
+import org.onehippo.cms.channelmanager.content.document.CompoundServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.DocumentVersionServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.BranchSelectionServiceImpl;
@@ -82,11 +84,16 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
     private DocumentVersionServiceImpl documentVersionService;
 
     public ChannelContentServiceModule() {
-        this.documentsService = new DocumentsServiceImpl();
-        this.workflowsService = new WorkflowServiceImpl();
-        this.contextPayloadService = request -> Optional.ofNullable(CmsSessionContext.getContext(request.getSession()).getContextPayload()).orElse(Collections.emptyMap());
+        documentsService = new DocumentsServiceImpl();
+        workflowsService = new WorkflowServiceImpl();
 
-        this.documentVersionService = new DocumentVersionServiceImpl(HintsUtils::getDocumentWorkflowHints);
+        contextPayloadService = request -> {
+            final HttpSession session = request.getSession();
+            return Optional.ofNullable(CmsSessionContext.getContext(session).getContextPayload())
+                    .orElse(Collections.emptyMap());
+        };
+
+        documentVersionService = new DocumentVersionServiceImpl(HintsUtils::getDocumentWorkflowHints);
         addEventListener(new HippoNamespacesEventListener() {
             @Override
             public void onEvent(final EventIterator events) {
@@ -97,7 +104,7 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
-        this.branchSelectionService = createBranchSelectionService(session);
+        branchSelectionService = createBranchSelectionService(session);
 
         final BranchSelectionService prev = HippoServiceRegistry.getService(BranchSelectionService.class);
         if (prev != null) {
@@ -109,8 +116,13 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
         // First create the branchSelectionService because doInitialize needs it to be non-null
         super.doInitialize(session);
-        this.documentsService.setHintsInspector(createHintsInspector(session));
-        this.documentsService.setBranchingService(createBranchingService(session));
+        documentsService.setHintsInspector(createHintsInspector(session));
+        documentsService.setBranchingService(createBranchingService(session));
+        documentsService.setCompoundService(createCompoundService(session));
+    }
+
+    private CompoundService createCompoundService(final Session session) {
+        return new CompoundServiceImpl(session);
     }
 
     private HintsInspector createHintsInspector(final Session session) throws RepositoryException {
@@ -133,7 +145,6 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RepositoryException(e);
         }
-
     }
 
     private BranchSelectionService createBranchSelectionService(final Session session) throws RepositoryException {
@@ -146,7 +157,6 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RepositoryException(e);
         }
-
     }
 
     @Override

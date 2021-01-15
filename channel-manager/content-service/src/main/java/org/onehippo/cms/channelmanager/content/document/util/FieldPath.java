@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.document.util;
 
 import java.util.regex.Pattern;
@@ -26,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class FieldPath {
 
-    private static final String SEPARATOR = "/";
+    public static final String SEPARATOR = "/";
     private static final Pattern NUMBERED_SUFFIX = Pattern.compile("^\\[\\d\\]$");
 
     private final String firstSegment;

@@ -29,10 +29,10 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
-import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
-import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtils;
 import org.onehippo.cms.services.validation.api.ValueContext;
 import org.onehippo.repository.l10n.ResourceBundle;
 
@@ -163,7 +163,8 @@ public abstract class AbstractFieldType implements BaseFieldType {
         this.hasUnsupportedValidator = hasUnsupportedValidator;
     }
 
-    final String getJcrType() {
+    @Override
+    public final String getJcrType() {
         return jcrType;
     }
 
@@ -229,7 +230,6 @@ public abstract class AbstractFieldType implements BaseFieldType {
 
         return FieldsInformation.allSupported();
     }
-
 
     private int loadMaxValues(final FieldTypeContext fieldContext) {
         return fieldContext.getStringConfig(PROPERTY_MAX_ITEMS)
