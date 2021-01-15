@@ -243,6 +243,22 @@ describe('PrimitiveField', () => {
     });
   });
 
+  it('should remove value', () => {
+    const validatedValues = angular.copy(fieldValues);
+    FieldService.save.and.returnValue($q.resolve(validatedValues));
+
+    $ctrl.onRemove(1);
+    $rootScope.$digest();
+
+    expect(FieldService.save).toHaveBeenCalledWith({
+      name: 'test-name/field:type',
+      values: [
+        { value: 'Value 1' },
+        { value: 'Value 3' },
+      ],
+    });
+  });
+
   describe('valueChanged', () => {
     let field;
 
