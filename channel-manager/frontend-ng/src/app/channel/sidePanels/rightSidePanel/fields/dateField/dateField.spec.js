@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import DateValue from './dateValue.model';
 describe('DateField', () => {
   let $componentController;
   let $ctrl;
+  let $element;
   let ngModel;
 
   const fieldType = { id: 'field:type' };
@@ -39,7 +40,8 @@ describe('DateField', () => {
       ngModel.$viewValue = value;
     });
 
-    $ctrl = $componentController('dateField', {}, {
+    $element = angular.element('<div/>');
+    $ctrl = $componentController('dateField', { $element }, {
       fieldType,
       fieldValue,
       name: 'test-name',
