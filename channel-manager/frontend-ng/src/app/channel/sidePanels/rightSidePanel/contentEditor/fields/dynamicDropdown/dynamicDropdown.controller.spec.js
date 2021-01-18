@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 describe('dynamicDropdown', () => {
   let ContentService;
   let $ctrl;
+  let $element;
   let $q;
   let $scope;
 
@@ -27,8 +28,10 @@ describe('dynamicDropdown', () => {
       $q = _$q_;
       ContentService = jasmine.createSpyObj('ContentService', ['getValueList']);
 
+      $element = angular.element('<div/>');
       $scope = $rootScope.$new();
       $ctrl = $componentController('dynamicDropdown', {
+        $element,
         $scope,
         ContentService,
       });
