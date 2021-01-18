@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.repository.monkey;
+package org.onehippo.repository.clustering;
 
 
 import javax.jcr.Node;
@@ -41,6 +41,8 @@ public class ClusteredIndexingDocumentsTest extends ClusterTest {
         try {
             final Node testFolder = sessionNode1.getRootNode().addNode("testfolder", "hippostd:folder");
 
+            // although the issue from CMS-14290 already occured for total = 1, test 500 created handles just to make
+            // sure no other indexing issues happen when indexing many jcr nodes
             int total = 500;
             for (int i = 1; i <= total; i++) {
                 Node handle = testFolder.addNode("doc" + i, "hippo:handle");
@@ -77,14 +79,14 @@ public class ClusteredIndexingDocumentsTest extends ClusterTest {
                 sessionNode1.save();
 
                 // commit mimic
-                NodeIterator unpublishedVariantChilren = unpblishedDocVariant.getNodes();
-                while (unpublishedVariantChilren.hasNext()) {
-                    unpublishedVariantChilren.nextNode().remove();
+                NodeIterator unpublishedVariantChildren = unpblishedDocVariant.getNodes();
+                while (unpublishedVariantChildren.hasNext()) {
+                    unpublishedVariantChildren.nextNode().remove();
                 }
 
-                NodeIterator draftVariantChilren = draft.getNodes();
-                while (draftVariantChilren.hasNext()) {
-                    Node next = draftVariantChilren.nextNode();
+                NodeIterator draftVariantChildren = draft.getNodes();
+                while (draftVariantChildren.hasNext()) {
+                    Node next = draftVariantChildren.nextNode();
                     JcrUtils.copy(next, next.getName(), unpblishedDocVariant);
                 }
                 // mimic publish
