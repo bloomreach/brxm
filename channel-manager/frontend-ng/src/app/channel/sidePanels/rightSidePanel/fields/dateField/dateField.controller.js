@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,10 @@
 import DateValue from './dateValue.model';
 
 class DateFieldController {
-  constructor(ConfigService) {
+  constructor($element, ConfigService) {
     'ngInject';
 
+    this.$element = $element;
     this.ConfigService = ConfigService;
   }
 
@@ -38,6 +39,22 @@ class DateFieldController {
   setToNow() {
     this.dateValue.setToNow();
     this.valueChanged();
+  }
+
+  onBlur($event) {
+    if (this.mdInputContainer) {
+      this.mdInputContainer.setFocused(false);
+    }
+
+    this.$element.triggerHandler($event || 'blur');
+  }
+
+  onFocus($event) {
+    if (this.mdInputContainer) {
+      this.mdInputContainer.setFocused(true);
+    }
+
+    this.$element.triggerHandler($event || 'focus');
   }
 }
 

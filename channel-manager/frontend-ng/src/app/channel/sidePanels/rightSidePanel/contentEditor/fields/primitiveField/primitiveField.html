@@ -115,8 +115,8 @@
                   field-type="::$ctrl.fieldType"
                   ng-model="fieldValue.value"
                   ng-change="$ctrl.valueChanged()"
-                  on-field-focus="$ctrl.focusPrimitive($event)"
-                  on-field-blur="$ctrl.blurPrimitive($event)">
+                  ng-focus="$ctrl.focusPrimitive($event)"
+                  ng-blur="$ctrl.blurPrimitive($event)">
       </date-field>
 
       <md-select
