@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -467,7 +467,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
     private void appendDocumentsThatHaveChangedChildNodesOrChangedHandles(final Set<NodeId> augmentedRemove,
                                                                           final Map<NodeId, NodeState> augmentedAdd) throws RepositoryException, IOException {
         final Set<NodeId> checkedIds = new HashSet<>();
-        List<NodeState> nodeStatesToAdd = new ArrayList<>();
+        List<NodeState> reindexNodeStates = new ArrayList<>();
         final ItemStateManager itemStateManager = getItemStateManager();
         for (Map.Entry<NodeId, NodeState> addEntry : augmentedAdd.entrySet()) {
             try {
@@ -483,7 +483,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                         final NodeState childState = (NodeState)itemStateManager.getItemState(childNodeEntry.getId());
                         if (isHippoDocument(childState)) {
                             // found document below changed handle. Add document to be reindexed
-                            addStateIfNeeded(augmentedRemove, augmentedAdd, nodeStatesToAdd, childState);
+                            addStateIfNeeded(augmentedRemove, augmentedAdd, reindexNodeStates, childState);
                         }
                     }
                     continue;
@@ -491,13 +491,13 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
                 NodeState document = getContainingDocument(state, checkedIds, itemStateManager);
                 if (document != null) {
-                    addStateIfNeeded(augmentedRemove, augmentedAdd, nodeStatesToAdd, document);
+                    addStateIfNeeded(augmentedRemove, augmentedAdd, reindexNodeStates, document);
                 }
             } catch (ItemStateException e) {
                 log.debug("Unable to retrieve state: {}", e.getMessage());
             }
         }
-        for (NodeState nodeState : nodeStatesToAdd) {
+        for (NodeState nodeState : reindexNodeStates) {
             augmentedAdd.put(nodeState.getNodeId(), nodeState);
             augmentedRemove.add(nodeState.getNodeId());
         }
@@ -505,17 +505,17 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
     private void addStateIfNeeded(final Set<NodeId> augmentedRemove,
                                   final Map<NodeId, NodeState> augmentedAdd,
-                                  final List<NodeState> nodeStates, final NodeState state) {
+                                  final List<NodeState> reindexNodeStates, final NodeState state) {
         final NodeId nodeId = state.getNodeId();
         if (nodeId instanceof HippoNodeId) {
             // do not index virtual child nodes, ever
             return;
         }
-        if (augmentedAdd.containsKey(nodeId) ||
+        if (augmentedAdd.containsKey(nodeId) &&
                 augmentedRemove.contains(nodeId)) {
             return;
         }
-        nodeStates.add(state);
+        reindexNodeStates.add(state);
     }
 
     @Override
