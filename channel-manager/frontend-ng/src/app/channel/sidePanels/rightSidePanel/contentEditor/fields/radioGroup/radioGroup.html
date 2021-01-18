@@ -1,5 +1,5 @@
 <!--
-  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 <md-radio-group class="md-primary"
                 ng-class="{'horizontal': $ctrl.isOrientationHorizontal()}"
                 name="{{::$ctrl.name}}"
-                ng-blur="$ctrl.onFieldBlur()"
+                ng-blur="$ctrl.onBlur($event)"
                 ng-change="$ctrl.ngModelCtrl.$setViewValue($ctrl.ngModel)"
-                ng-focus="$ctrl.onFieldFocus()"
+                ng-focus="$ctrl.onFocus($event)"
                 ng-model="$ctrl.ngModel"
                 ng-required="$ctrl.isRequired">
   <md-radio-button ng-repeat="buttonValue in $ctrl.buttonValues()" ng-value="buttonValue">
