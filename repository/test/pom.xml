@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
- 
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
- 
+
        http://www.apache.org/licenses/LICENSE-2.0
- 
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -165,6 +165,8 @@
             <exclude>**/UpdaterExecutorTest.java</exclude>
             <exclude>**/SchedulerTest.java</exclude>
             <exclude>**/MonkeyTest.java</exclude>
+            <exclude>**/ClusterStartupTest.java</exclude>
+            <exclude>**/ClusteredIndexingDocumentsTest.java</exclude>
             <exclude>**/LockTest.java</exclude>
             <exclude>**/LockManagerAbortTest.java</exclude>
             <exclude>**/LockManagerBasicTest.java</exclude>
@@ -211,6 +213,8 @@
                     <include>**/UpdaterExecutorTest.java</include>
                     <include>**/SchedulerTest.java</include>
                     <include>**/MonkeyTest.java</include>
+                    <include>**/ClusterStartupTest.java</include>
+                    <include>**/ClusteredIndexingDocumentsTest.java</include>
                     <include>**/LockTest.java</include>
                     <include>**/LockManagerAbortTest.java</include>
                     <include>**/LockManagerBasicTest.java</include>
