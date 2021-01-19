@@ -261,40 +261,40 @@
       <div ng-if="$ctrl.isDraggable() || $ctrl.isRemovable()" class="field__buttons" layout flex="none">
         <md-menu ng-if="$ctrl.isDraggable()">
           <md-button class="md-icon-button qa-button-reorder" ng-sortable-handle ng-click="$mdMenu.open($event)">
-            <md-tooltip ng-if="$ctrl.dragging !== $index">Click or drag to change order</md-tooltip>
+            <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'DRAG_VALUE' | translate }}</md-tooltip>
             <md-icon md-font-icon="mdi-reorder-horizontal"></md-icon>
           </md-button>
           <md-menu-content>
             <md-menu-item>
               <md-button ng-click="$ctrl.onMove($index, 0)" ng-disabled="$first" class="qa-menu-move-top">
                 <md-icon md-font-icon="mdi-arrow-collapse-up" md-menu-align-target></md-icon>
-                Move to top
+                {{ ::'MOVE_TO_TOP' | translate }}
               </md-button>
             </md-menu-item>
             <md-menu-item>
               <md-button ng-click="$ctrl.onMove($index, $index - 1)" ng-disabled="$first" class="qa-menu-move-up">
                 <md-icon md-font-icon="mdi-arrow-up" md-menu-align-target></md-icon>
-                Move up
+                {{ ::'MOVE_UP' | translate }}
               </md-button>
             </md-menu-item>
             <md-menu-divider></md-menu-divider>
             <md-menu-item>
               <md-button ng-click="$ctrl.onMove($index, $index + 1)" ng-disabled="$last" class="qa-menu-move-down">
                 <md-icon md-font-icon="mdi-arrow-down"></md-icon>
-                Move down
+                {{ ::'MOVE_DOWN' | translate }}
               </md-button>
             </md-menu-item>
             <md-menu-item>
               <md-button ng-click="$ctrl.onMove($index, $ctrl.fieldValues.length - 1)" ng-disabled="$last" class="qa-menu-move-bottom">
                 <md-icon md-font-icon="mdi-arrow-collapse-down"></md-icon>
-                Move to bottom
+                {{ ::'MOVE_TO_BOTTOM' | translate }}
               </md-button>
             </md-menu-item>
           </md-menu-content>
         </md-menu>
   
         <md-button ng-if="$ctrl.isRemovable()" class="md-icon-button qa-button-remove" ng-click="$ctrl.onRemove($index)">
-          <md-tooltip ng-if="$ctrl.dragging !== $index">Remove value</md-tooltip>
+          <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'REMOVE_VALUE' | translate }}</md-tooltip>
           <md-icon md-font-icon="mdi-close-circle-outline"></md-icon>
         </md-button>
       </div>
@@ -306,7 +306,7 @@
 
     <div class="field__button-add" flex="auto">
       <md-button class="md-icon-button qa-button-add" ng-click="$ctrl.onAdd()">
-        <md-tooltip>Add value</md-tooltip>
+        <md-tooltip>{{ ::'ADD_VALUE' | translate }}</md-tooltip>
         <md-icon md-font-icon="mdi-plus-circle-outline"></md-icon>
       </md-button>
     </div>
