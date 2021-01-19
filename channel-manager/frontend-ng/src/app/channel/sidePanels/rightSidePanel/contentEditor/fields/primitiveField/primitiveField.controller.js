@@ -205,6 +205,15 @@ class PrimitiveFieldCtrl {
       this.form[this.getFieldName(Math.max(index - 1, 0))].$$element[0].focus();
     }
   }
+
+  onAdd() {
+    this.fieldValues.push({ value: '' });
+    this.form.$setDirty();
+
+    setTimeout(() => {
+      this.form[this.getFieldName(this.fieldValues.length - 1)].$$element[0].focus();
+    });
+  }
 }
 
 export default PrimitiveFieldCtrl;
