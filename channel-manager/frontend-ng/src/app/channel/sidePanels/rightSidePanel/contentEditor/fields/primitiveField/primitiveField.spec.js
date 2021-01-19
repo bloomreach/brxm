@@ -357,7 +357,7 @@ describe('PrimitiveField', () => {
     expect($ctrl.$scope.$broadcast).toHaveBeenCalledWith('primitive-field:focus', $event);
   });
 
-  describe('$onChanges', () => {
+  describe('$onInit', () => {
     beforeEach(() => {
       $ctrl.form = {
         field1: {
@@ -380,13 +380,11 @@ describe('PrimitiveField', () => {
     it('makes form field invalid', () => {
       spyOn($ctrl, 'getFieldName').and.returnValue('field1');
 
-      $ctrl.$onChanges({
-        fieldValues: {
-          currentValue: [{
-            errorInfo: { message: 'error message' },
-          }],
-        },
-      });
+      $ctrl.$onInit();
+      $ctrl.fieldValues = [{
+        errorInfo: { message: 'error message' },
+      }];
+      $rootScope.$digest();
 
       expect($ctrl.getFieldName).toHaveBeenCalled();
       expect($ctrl.form.field1.$setTouched).toHaveBeenCalled();
@@ -397,11 +395,9 @@ describe('PrimitiveField', () => {
     it('makes form field valid', () => {
       spyOn($ctrl, 'getFieldName').and.returnValue('field2');
 
-      $ctrl.$onChanges({
-        fieldValues: {
-          currentValue: [{}],
-        },
-      });
+      $ctrl.$onInit();
+      $ctrl.fieldValues = [{}];
+      $rootScope.$digest();
 
       expect($ctrl.getFieldName).toHaveBeenCalled();
       expect($ctrl.form.field1.$setTouched).not.toHaveBeenCalled();
