@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,10 +33,18 @@ class PrimitiveFieldCtrl {
     };
   }
 
-  $onChanges(changes) {
-    if (changes.fieldValues) {
-      this._onFieldValuesChanged(changes.fieldValues.currentValue);
+  $onInit() {
+    if (!this.fieldValues) {
+      this.fieldValues = [];
     }
+
+    this.$scope.$watch(() => this.fieldValues, () => {
+      if (!this.fieldValues) {
+        this.fieldValues = [];
+      } else {
+        this._onFieldValuesChanged(this.fieldValues);
+      }
+    });
   }
 
   _onFieldValuesChanged(fieldValues) {
