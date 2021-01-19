@@ -259,6 +259,20 @@ describe('PrimitiveField', () => {
     });
   });
 
+  it('should add value', () => {
+    $ctrl.form = { $setDirty: jasmine.createSpy('$setDirty') };
+    $ctrl.onAdd();
+    $rootScope.$digest();
+
+    expect($ctrl.fieldValues).toEqual([
+      { value: 'Value 1' },
+      { value: 'Value 2' },
+      { value: 'Value 3' },
+      { value: '' },
+    ]);
+    expect($ctrl.form.$setDirty).toHaveBeenCalled();
+  });
+
   describe('valueChanged', () => {
     let field;
 

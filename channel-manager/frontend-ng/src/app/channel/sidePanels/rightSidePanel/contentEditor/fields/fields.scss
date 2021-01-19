@@ -146,6 +146,22 @@ compound-field {
     }
   }
 
+  &__tools {
+    margin-bottom: 16px;
+  }
+
+  &__button-add {
+    text-align: right;
+
+    .md-button.md-icon-button {
+      margin: 0;
+    }
+
+    & > .md-button:last-child {
+      margin-right: -8px;
+    }
+  }
+
   &__error {
     margin-left: $icon-size + 4px;
   }
