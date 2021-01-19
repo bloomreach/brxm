@@ -167,8 +167,9 @@
             <exclude>**/integration/*.java</exclude>
             <exclude>**/UpdaterExecutorTest.java</exclude>
             <exclude>**/SchedulerTest.java</exclude>
-            <exclude>**/ClusterStartupTest.java</exclude>
             <exclude>**/MonkeyTest.java</exclude>
+            <exclude>**/ClusterStartupTest.java</exclude>
+            <exclude>**/ClusteredIndexingDocumentsTest.java</exclude>
             <exclude>**/LockTest.java</exclude>
             <exclude>**/LockManagerAbortTest.java</exclude>
             <exclude>**/LockManagerBasicTest.java</exclude>
@@ -215,6 +216,7 @@
                     <include>**/SchedulerTest.java</include>
                     <include>**/MonkeyTest.java</include>
                     <include>**/ClusterStartupTest.java</include>
+                    <include>**/ClusteredIndexingDocumentsTest.java</include>
                     <include>**/LockTest.java</include>
                     <include>**/LockManagerAbortTest.java</include>
                     <include>**/LockManagerBasicTest.java</include>
