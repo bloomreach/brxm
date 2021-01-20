@@ -62,7 +62,7 @@ export interface ParentConfig {
   userSettings: UserSettings;
 }
 
-interface UserSettings {
+export interface UserSettings {
   /** The human-readable name of the user currently logged in. */
   userName: string;
   /** email of user account if available */
