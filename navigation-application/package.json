@@ -33,7 +33,7 @@
     "@angular/platform-browser-dynamic": "8.2.14",
     "@angular/router": "8.2.14",
     "@bloomreach/frontend-theme": "1.0.0-6",
-    "@bloomreach/navapp-communication": "2.0.0-1",
+    "@bloomreach/navapp-communication": "2.0.0-2",
     "@ngx-translate/core": "11.0.1",
     "@ngx-translate/http-loader": "4.0.0",
     "core-js": "3.4.5",
