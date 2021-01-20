@@ -48,22 +48,12 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
     private static final Logger log = LoggerFactory.getLogger(ChannelLazyLoadingChangedBySet.class);
 
     private Set<String> delegatee;
-    private transient Set<String> usersWithMainConfigNodeChanges;
     private transient final HstSite previewHstSite;
     private transient final Channel channel;
     private transient final HstNodeLoadingCache hstNodeLoadingCache;
 
-    public ChannelLazyLoadingChangedBySet(final HstNode channelRootConfigNode, final HstSite previewHstSite, final Channel channel,
+    public ChannelLazyLoadingChangedBySet(final HstSite previewHstSite, final Channel channel,
                                           final HstNodeLoadingCache hstNodeLoadingCache) {
-        for (HstNode mainConfigNode : channelRootConfigNode.getNodes()) {
-            if (usersWithMainConfigNodeChanges == null) {
-                usersWithMainConfigNodeChanges = new HashSet<>();
-            }
-            final String lockedBy = mainConfigNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
-            if (lockedBy != null) {
-                usersWithMainConfigNodeChanges.add(lockedBy);
-            }
-        }
         this.previewHstSite = previewHstSite;
         this.channel = channel;
         this.hstNodeLoadingCache = hstNodeLoadingCache;
@@ -74,9 +64,6 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
             return;
         }
         delegatee = new HashSet<>();
-        if (usersWithMainConfigNodeChanges != null) {
-            delegatee.addAll(usersWithMainConfigNodeChanges);
-        }
         delegatee.addAll(getAllUsersWithComponentLock(previewHstSite));
         delegatee.addAll(getAllUsersWithSiteMapItemLock(previewHstSite));
         delegatee.addAll(getAllUsersWithSiteMenuLock(previewHstSite));
