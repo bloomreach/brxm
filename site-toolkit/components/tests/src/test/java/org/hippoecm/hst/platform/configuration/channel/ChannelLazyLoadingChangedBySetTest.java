@@ -103,7 +103,7 @@ public class ChannelLazyLoadingChangedBySetTest {
         expect(channel.getChannelNodeLockedBy()).andReturn(null);
         replay(mocks);
 
-        set = new ChannelLazyLoadingChangedBySet(rootConfigNode, previewSite, channel, null);
+        set = new ChannelLazyLoadingChangedBySet(previewSite, channel, null);
         assertThat(set.isEmpty(), is(true));
     }
 
@@ -133,7 +133,7 @@ public class ChannelLazyLoadingChangedBySetTest {
 
         expect(channel.getChannelNodeLockedBy()).andReturn(null);
         replay(mocks);
-        set = new ChannelLazyLoadingChangedBySet(rootConfigNode, previewSite, channel, null);
+        set = new ChannelLazyLoadingChangedBySet(previewSite, channel, null);
         assertThat(set.contains("joe"), is(true));
 
     }
@@ -165,7 +165,7 @@ public class ChannelLazyLoadingChangedBySetTest {
         expect(channel.getChannelNodeLockedBy()).andReturn(null);
         replay(mocks);
 
-        set = new ChannelLazyLoadingChangedBySet(rootConfigNode, previewSite, channel, null);
+        set = new ChannelLazyLoadingChangedBySet(previewSite, channel, null);
         assertThat(set.contains("john"), is(true));
 
     }
@@ -190,7 +190,7 @@ public class ChannelLazyLoadingChangedBySetTest {
         expect(channel.getChannelNodeLockedBy()).andReturn("john").atLeastOnce();
         replay(mocks);
 
-        set = new ChannelLazyLoadingChangedBySet(rootConfigNode, previewSite, channel, null);
+        set = new ChannelLazyLoadingChangedBySet(previewSite, channel, null);
         assertThat(set.contains("john"), is(true));
 
     }
@@ -226,7 +226,7 @@ public class ChannelLazyLoadingChangedBySetTest {
 
         replay(mocks);
 
-        set = new ChannelLazyLoadingChangedBySet(rootConfigNode, previewSite, channel, null);
+        set = new ChannelLazyLoadingChangedBySet(previewSite, channel, null);
         assertThat(set.contains("john"), is(true));
     }
 
