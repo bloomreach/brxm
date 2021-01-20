@@ -257,7 +257,7 @@ public class HstSiteService implements HstSite {
 
             if (isPreviewSite) {
                 ch.setPreview(true);
-                ch.setChangedBySet(new ChannelLazyLoadingChangedBySet(site, this, ch, hstNodeLoadingCache));
+                ch.setChangedBySet(new ChannelLazyLoadingChangedBySet(this, ch, hstNodeLoadingCache));
             }
         }
 
