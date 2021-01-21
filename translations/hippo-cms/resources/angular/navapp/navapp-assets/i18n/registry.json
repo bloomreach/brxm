@@ -661,16 +661,6 @@
         "es" : "UNRESOLVED"
       }
     },
-    "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_CATALOG_MANAGEMENT" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
     "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_KEY_MANAGEMENT" : {
       "status" : "UPDATED",
       "locales" : {
@@ -730,6 +720,26 @@
     "MENU_ITEM_TESTING" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_CONTENT_CATALOGS" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_PRODUCT_CATALOGS" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
