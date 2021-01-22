@@ -85,22 +85,17 @@
   "MENU_ITEM_INSIGHTS_REPORTING_SITE_SEARCH_DIAGNOSTICS": "Diagnóstico de búsqueda del sitio",
   "MENU_CONTAINER_ORGANIC": "Orgánico",
   "HELP_LINK_SM_HELP": "Ayuda de brSM",
-  "MENU_ITEM_SETUP_ALGORITHM_SETTINGS_API_MODIFIER":   [
-    "Modificador de API",
-    "API modifier"
-  ],
+  "MENU_ITEM_SETUP_ALGORITHM_SETTINGS_API_MODIFIER": "Modificador de API",
   "MENU_ITEM_SITE_SEARCH_SEARCH_RANKING_DIAGNOSTICS": "Diagnóstico de clasificación",
   "MENU_ITEM_PATHWAYS": "Pathways",
-  "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_KEY_MANAGEMENT":   [
-    "Administración de claves",
-    "Key management"
-  ],
+  "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_KEY_MANAGEMENT": "Administración de claves",
   "ERROR_UNABLE_TO_CONNECT_TO_CLIENT_APP": "No es posible conectar con las aplicaciones del cliente",
   "MENU_ITEM_SETUP_USER_MANAGEMENT_MERCHANDISING_USER_INTERNAL_USER_MANAGEMENT": "Administración de usuarios internos",
   "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_TRENDS_PRODUCT_PAGE_TRAFFIC": "Tráfico de página de producto",
   "MENU_ITEM_XM_CONTENT_FEED": "Fuente de contenido",
   "MENU_CONTAINER_PATHWAY_ANALYTICS": "Análisis de Pathways",
   "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_PAGE_PERFORMANCE": "Rendimiento de la página",
+  "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_CATALOG_MANAGEMENT": "Administración de catálogos",
   "MENU_ITEM_TESTING": "Comprobación",
   "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_LEGACY_DEBUG": "Depuración heredada",
   "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_SITE_OPTIMIZATION_METRICS": "Parámetros de optimización del sitio",
@@ -133,10 +128,7 @@
   "MENU_ITEM_XM_SYSTEM_UPDATER": "Editor actualizador",
   "MENU_ITEM_SITE_SEARCH_SYNONYMS": "Sinónimos",
   "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_SESSION_DETAILS": "Detalles de la sesión",
-  "MENU_CONTAINER_DATA_CONNECT":   [
-    "Catálogos",
-    "Data connect"
-  ],
+  "MENU_CONTAINER_DATA_CONNECT": "Conexión de datos",
   "MENU_ITEM_SETUP_DEVSTUDIO_API_EXPLORER": "Explorador de API",
   "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_SUGGEST_OVERVIEW": "Sugerir información general",
   "MENU_ITEM_INSIGHTS_SEO_ANALYTICS_DEVICE_TRAFFIC_MOBILE": "Móvil",
@@ -178,10 +170,7 @@
   "MENU_ITEM_INSIGHTS_OVERVIEW_SITE_SEARCH_OVERVIEW": "Información general de búsqueda del sitio",
   "MENU_ITEM_SETUP_INTERNAL_ADMIN_TRAFFIC_ANALYSIS_LAST_CLICK_OVERVIEW": "Información general del último clic",
   "ERROR_UNKNOWN_URL": "Url desconocida: {{url}}",
-  "MENU_ITEM_SETUP_INTERNAL_ADMIN_BRX_INTEGRATION_CONFIGS":   [
-    "Configuraciones de integración de brX",
-    "brX integration configs"
-  ],
+  "MENU_ITEM_SETUP_INTERNAL_ADMIN_BRX_INTEGRATION_CONFIGS": "Configuraciones de integración de brX",
   "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_TOP_CATEGORIES_W_EXPERIMENT": "Categorías principales con experimento",
   "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_ASSISTED_CONVERSIONS": "Conversiones asistidas",
   "MENU_CONTAINER_LIBRARY": "Biblioteca"

@@ -641,46 +641,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "MENU_ITEM_SETUP_INTERNAL_ADMIN_BRX_INTEGRATION_CONFIGS" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "MENU_CONTAINER_DATA_CONNECT" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_KEY_MANAGEMENT" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "MENU_ITEM_SETUP_ALGORITHM_SETTINGS_API_MODIFIER" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
     "ERROR_UNABLE_TO_LOG_OUT" : {
       "status" : "CLEAN",
       "locales" : null
@@ -717,29 +677,29 @@
       "status" : "CLEAN",
       "locales" : null
     },
+    "MENU_ITEM_SETUP_ALGORITHM_SETTINGS_API_MODIFIER" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_KEY_MANAGEMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_CATALOG_MANAGEMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
     "MENU_ITEM_TESTING" : {
       "status" : "CLEAN",
       "locales" : null
     },
-    "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_CONTENT_CATALOGS" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+    "MENU_CONTAINER_DATA_CONNECT" : {
+      "status" : "CLEAN",
+      "locales" : null
     },
-    "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_PRODUCT_CATALOGS" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+    "MENU_ITEM_SETUP_INTERNAL_ADMIN_BRX_INTEGRATION_CONFIGS" : {
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }
