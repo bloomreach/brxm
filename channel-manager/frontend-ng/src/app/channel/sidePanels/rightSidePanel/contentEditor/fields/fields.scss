@@ -45,6 +45,11 @@ document-fields {
     vertical-align: baseline;
     width: 18px;
   }
+
+  &.collapsed {
+    padding-right: 0;
+    padding-top: 0;
+  }
 }
 
 primitive-field,
@@ -52,7 +57,7 @@ compound-field,
 choice-field {
   display: block;
 
-  > .field {
+  .field {
     padding-left: $form-dense-distance;
   }
 }
@@ -105,14 +110,19 @@ compound-field {
         display: none;
       }
     }
+
+    compound-field > & {
+      margin-right: -$form-dense-distance;
+      padding-right: $form-dense-distance;
+    }
   }
 
   &__title {
-    margin-bottom: $form-dense-distance;
     margin-left: -6px;
 
     h5 {
       margin-bottom: 0;
+      position: relative;
     }
 
     &--focused,
@@ -123,6 +133,34 @@ compound-field {
     &--invalid,
     &--invalid &-icon {
       color: map-get($red, 500);
+    }
+
+    & ~ document-fields {
+      margin-top: $form-dense-distance;
+
+      &.collapsed {
+        margin-top: 0;
+      }
+    }
+  }
+
+  &__title-buttons {
+    margin-right: -8px;
+
+    .md-button.md-icon-button {
+      margin: 0;
+    }
+  }
+
+  &__secondary-buttons {
+    opacity: 0;
+    transition: opacity 1s;
+
+    .field:hover > .field__title &,
+    .field:focus-within > .field__title &,
+    .field--dragged > .field__title &,
+    .field--focused > .field__title & {
+      opacity: 1;
     }
   }
 

@@ -50,7 +50,7 @@
             <compound-field ng-switch-when="COMPOUND"
               name="::$ctrl.getFieldName($index)"
               field-type="::$ctrl.fieldType.choices[fieldValue.chosenId]"
-              field-value="fieldValue.chosenValue"
+              field-values="[fieldValue.chosenValue]"
               ng-focus="$ctrl.focusChoice()"
               ng-blur="$ctrl.blurChoice()">
             </compound-field>
