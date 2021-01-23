@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,115 +18,166 @@ describe('CompoundField', () => {
   let $componentController;
   let $ctrl;
   let $element;
+  let $q;
+  let $rootScope;
   let $scope;
-  let parent;
+  let FeedbackService;
+  let FieldService;
 
-  const fieldType = {};
-  const fieldValue = [];
+  const fieldType = { id: 'something' };
+  const fieldValues = [];
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.contentEditor.fields');
 
-    inject((_$componentController_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _FieldService_) => {
       $componentController = _$componentController_;
+      $q = _$q_;
+      $rootScope = _$rootScope_;
+      FieldService = _FieldService_;
     });
 
-    parent = {
-      children: new Set(),
-      setError: jasmine.createSpy('setError'),
-    };
-    $scope = { collapse: jasmine.createSpyObj('CollapseCtrl', ['open']) };
+    FeedbackService = { showError: jasmine.createSpy('showError') };
+    $scope = $rootScope.$new();
     $element = angular.element('<div>');
-    $ctrl = $componentController('compoundField', { $element, $scope }, {
+    $ctrl = $componentController('compoundField', { $element, $scope, FeedbackService }, {
       fieldType,
-      fieldValue,
-      parent,
+      fieldValues,
       name: 'test-name',
     });
+    $ctrl.form = { $setDirty: jasmine.createSpy('$setDirty') };
   });
 
-  it('initializes the component', () => {
-    spyOn(parent.children, 'add');
-    $ctrl.$onInit();
+  describe('onFocus', () => {
+    it('focuses the component', () => {
+      const focusHandler = jasmine.createSpy('onFocus');
+      $element.on('focus', focusHandler);
 
-    expect($ctrl.fieldType).toBe(fieldType);
-    expect($ctrl.fieldValue).toBe(fieldValue);
-    expect($ctrl.name).toBe('test-name');
-    expect(parent.children.add).toHaveBeenCalledWith($ctrl);
+      $ctrl.onFocus();
+
+      expect(focusHandler).toHaveBeenCalled();
+    });
   });
 
-  it('destroys the component', () => {
-    spyOn(parent.children, 'delete');
-    $ctrl.$onDestroy();
+  describe('onBlur', () => {
+    it('blurs the component', () => {
+      const blurHandler = jasmine.createSpy('onBlur');
+      $element.on('blur', blurHandler);
 
-    expect(parent.children.delete).toHaveBeenCalledWith($ctrl);
+      $ctrl.onBlur();
+
+      expect(blurHandler).toHaveBeenCalled();
+    });
   });
 
-  it('focuses the component', () => {
-    const focusHandler = jasmine.createSpy('onFocus');
-    $element.on('focus', focusHandler);
+  describe('getFieldName', () => {
+    it('should compose a name for the nested field', () => {
+      expect($ctrl.getFieldName(0)).toBe('test-name/something');
+      expect($ctrl.getFieldName(1)).toBe('test-name/something[2]');
+      expect($ctrl.getFieldName(2)).toBe('test-name/something[3]');
+    });
 
-    $ctrl.onFocus();
+    it('should compose a name for the top level compound', () => {
+      $ctrl.name = undefined;
 
-    expect($ctrl.hasFocus).toBeTruthy();
-    expect(focusHandler).toHaveBeenCalled();
+      expect($ctrl.getFieldName(0)).toBe('something');
+      expect($ctrl.getFieldName(1)).toBe('something[2]');
+      expect($ctrl.getFieldName(2)).toBe('something[3]');
+    });
   });
 
-  it('blurs the component', () => {
-    const blurHandler = jasmine.createSpy('onBlur');
-    $element.on('blur', blurHandler);
+  describe('isDraggable', () => {
+    it('should be draggable', () => {
+      $ctrl.fieldType.multiple = true;
+      $ctrl.fieldType.orderable = true;
+      $ctrl.fieldValues = ['a', 'b'];
 
-    $ctrl.onBlur();
+      expect($ctrl.isDraggable()).toBe(true);
+    });
 
-    expect($ctrl.hasFocus).toBeFalsy();
-    expect(blurHandler).toHaveBeenCalled();
+    it('should not be draggable for a non-orderable field', () => {
+      $ctrl.fieldType.multiple = true;
+      $ctrl.fieldType.orderable = false;
+      $ctrl.fieldValues = ['a', 'b'];
+
+      expect($ctrl.isDraggable()).toBe(false);
+    });
+
+    it('should not be draggable for a non-multiple field type', () => {
+      $ctrl.fieldType.multiple = false;
+      $ctrl.fieldValues = ['a', 'b'];
+
+      expect($ctrl.isDraggable()).toBe(false);
+    });
+
+    it('should not be draggable when there are less than 2 values', () => {
+      $ctrl.fieldType.multiple = true;
+      $ctrl.fieldValues = ['a'];
+
+      expect($ctrl.isDraggable()).toBe(false);
+    });
   });
 
-  describe('$onChanges', () => {
+  describe('onDrop', () => {
+    let onDrop;
+
     beforeEach(() => {
-      spyOn($ctrl, 'setError');
+      onDrop = jasmine.createSpy('onDrop');
+
+      $scope.$on('field:drop', onDrop);
+      $ctrl.fieldValues = ['a', 'b', 'c', 'd'];
     });
 
-    it('sets the error state', () => {
-      $ctrl.$onChanges({ fieldValue: { currentValue: { errorInfo: {} } } });
+    it('should move a value', () => {
+      spyOn(FieldService, 'reorder');
 
-      expect($ctrl.setError).toHaveBeenCalledWith(true);
+      $ctrl.onDrop({ oldIndex: 1, newIndex: 2 });
+      $scope.$digest();
+
+      expect(FieldService.reorder).toHaveBeenCalledWith({ name: 'test-name/something[2]', order: 3 });
+      expect($ctrl.fieldValues).toEqual(['a', 'c', 'b', 'd']);
+      expect($ctrl.form.$setDirty).toHaveBeenCalled();
+      expect(onDrop).toHaveBeenCalled();
     });
 
-    it('unsets the error state', () => {
-      $ctrl.$onChanges({ fieldValue: { currentValue: { } } });
+    it('should handle an error', () => {
+      spyOn(FieldService, 'reorder').and.returnValue($q.reject());
 
-      expect($ctrl.setError).toHaveBeenCalledWith(false);
+      $ctrl.onDrop({ oldIndex: 1, newIndex: 2 });
+      $scope.$digest();
+
+      expect($ctrl.fieldValues).toEqual(['a', 'b', 'c', 'd']);
+      expect($ctrl.form.$setDirty).not.toHaveBeenCalled();
+      expect(FeedbackService.showError).toHaveBeenCalled();
+      expect(onDrop).toHaveBeenCalled();
     });
   });
 
-  describe('setError', () => {
-    it('sets the error flag', () => {
-      $ctrl.setError(true);
-      expect($ctrl.hasError).toBe(true);
-
-      $ctrl.setError(false);
-      expect($ctrl.hasError).toBe(false);
+  describe('onMove', () => {
+    beforeEach(() => {
+      $ctrl.fieldValues = ['a', 'b', 'c', 'd'];
     });
 
-    it('opens the collapsible block', () => {
-      $ctrl.setError(true);
+    it('should move a value', () => {
+      spyOn(FieldService, 'reorder');
 
-      expect($scope.collapse.open).toHaveBeenCalled();
+      $ctrl.onMove(1, 3);
+      $scope.$digest();
+
+      expect(FieldService.reorder).toHaveBeenCalledWith({ name: 'test-name/something[2]', order: 4 });
+      expect($ctrl.fieldValues).toEqual(['a', 'c', 'd', 'b']);
+      expect($ctrl.form.$setDirty).toHaveBeenCalled();
     });
 
-    it('keeps parent error state', () => {
-      parent.children.add({ hasError: true }, $ctrl);
-      $ctrl.setError(false);
+    it('should handle an error', () => {
+      spyOn(FieldService, 'reorder').and.returnValue($q.reject());
 
-      expect(parent.setError).toHaveBeenCalledWith(true);
-    });
+      $ctrl.onMove(1, 3);
+      $scope.$digest();
 
-    it('updates parent error state', () => {
-      parent.children.add({ hasError: false }, $ctrl);
-      $ctrl.setError(false);
-
-      expect(parent.setError).toHaveBeenCalledWith(false);
+      expect($ctrl.fieldValues).toEqual(['a', 'b', 'c', 'd']);
+      expect($ctrl.form.$setDirty).not.toHaveBeenCalled();
+      expect(FeedbackService.showError).toHaveBeenCalled();
     });
   });
 });

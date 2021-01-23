@@ -25,6 +25,7 @@ import imageLinkComponent from './imageLink/imageLink.component';
 import openuiStringFieldComponent from './openuiStringField/openuiStringField.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import radioGroupFieldComponent from './radioGroup/radioGroup.component';
+import CompoundFieldValueDirective from './compoundField/compoundFieldValue.directive';
 
 import './fields.scss';
 
@@ -41,6 +42,7 @@ const fieldsModule = angular
   .component('openuiStringField', openuiStringFieldComponent)
   .component('primitiveField', primitiveFieldComponent)
   .component('radioGroup', radioGroupFieldComponent)
+  .directive('compoundFieldValue', CompoundFieldValueDirective)
   .service('FieldService', fieldService);
 
 export default fieldsModule.name;
