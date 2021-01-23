@@ -112,6 +112,7 @@
   "ERROR_FIELD_DOUBLE_PATTERN": "Use decimal numbers only",
   "ERROR_FIELD_LONG_PATTERN": "Use numbers only",
   "ERROR_FIELD_REQUIRED": "{{displayName}} is a required field",
+  "ERROR_FIELD_REORDER": "Failed to move a field value",
   "ERROR_INVALID_DATA": "Unable to save. The document contains invalid content",
   "ERROR_INVALID_DATE": "Enter a valid date",
   "ERROR_INVALID_TEMPLATE_QUERY": "The template query '{{templateQuery}}' failed to execute",
