@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,54 +14,124 @@
  * limitations under the License.
  */
 
+import Sortable from 'sortablejs';
+
 export default class CompoundFieldCtrl {
-  constructor($element, $scope) {
+  constructor($element, $scope, $timeout, FeedbackService, FieldService) {
     'ngInject';
 
-    this.children = new Set();
+    this.expanded = new WeakSet();
     this.$element = $element;
     this.$scope = $scope;
+    this.$timeout = $timeout;
+    this.FeedbackService = FeedbackService;
+    this.FieldService = FieldService;
   }
 
   $onInit() {
-    if (this.parent) {
-      this.parent.children.add(this);
-    }
+    // @see https://github.com/SortableJS/angular-legacy-sortablejs/issues/44
+    this.sortable = new Sortable(this.$element[0], {
+      animation: 300,
+      chosenClass: 'field--dragged',
+      disabled: true,
+      forceFallback: true,
+      fallbackClass: 'field--ghost',
+      handle: '[ng-sortable-handle]',
+      onStart: this.onDrag.bind(this),
+      onUpdate: this.onDragging.bind(this),
+      onEnd: this.onDrop.bind(this),
+    });
+
+    this.$scope.$watch(() => !this.isDraggable(), (disabled) => {
+      this.sortable.option('disabled', disabled);
+    });
   }
 
-  $onDestroy() {
-    if (this.parent) {
-      this.parent.children.delete(this);
-    }
-  }
-
-  $onChanges(changes) {
-    if (changes.fieldValue) {
-      this.setError(!!changes.fieldValue.currentValue.errorInfo);
-    }
-  }
-
-  setError(value) {
-    this.hasError = value;
-
-    if (this.hasError) {
-      this.$scope.collapse.open();
-      this.$element.triggerHandler('focus');
-    }
-
-    if (this.parent) {
-      this.parent.setError([...this.parent.children]
-        .reduce((result, child) => result || child.hasError, false));
-    }
+  getFieldName(index) {
+    const fieldName = this.name ? `${this.name}/${this.fieldType.id}` : this.fieldType.id;
+    return index > 0 ? `${fieldName}[${index + 1}]` : fieldName;
   }
 
   onFocus() {
-    this.hasFocus = true;
     this.$element.triggerHandler('focus');
   }
 
   onBlur() {
-    delete this.hasFocus;
     this.$element.triggerHandler('blur');
+  }
+
+  isDraggable() {
+    return this.fieldType.multiple && this.fieldType.orderable && this.fieldValues.length > 1;
+  }
+
+  onDrag({
+    clone,
+    from,
+    item,
+    oldIndex,
+  }) {
+    this._nextNode = from === item.parentNode ? item.nextSibling : clone.nextSibling;
+    this.$scope.$apply(() => {
+      this.dragging = oldIndex;
+      this.$scope.$broadcast('field:drag');
+    });
+  }
+
+  onDragging({ from, item }) {
+    // Move ng-repeat comment node to the right position
+    // @see https://github.com/SortableJS/angular-legacy-sortablejs/blob/master/angular-legacy-sortable.js#L136
+    if (this._nextNode.nodeType === Node.COMMENT_NODE) {
+      from.insertBefore(this._nextNode, item.nextSibling);
+    }
+  }
+
+  async onDrop({ newIndex, oldIndex }) {
+    this.$scope.$apply(() => {
+      delete this.dragging;
+      this._move(oldIndex, newIndex);
+    });
+
+    try {
+      await this.FieldService.reorder({ name: this.getFieldName(oldIndex), order: newIndex + 1 });
+      this.form.$setDirty();
+      this._focus(newIndex);
+    } catch (error) {
+      this.FeedbackService.showError('ERROR_FIELD_REORDER');
+      this._move(newIndex, oldIndex);
+      this._focus(oldIndex);
+    } finally {
+      this.$scope.$broadcast('field:drop');
+    }
+  }
+
+  async onMove(oldIndex, newIndex) {
+    try {
+      await this.FieldService.reorder({ name: this.getFieldName(oldIndex), order: newIndex + 1 });
+      this._move(oldIndex, newIndex);
+      this._focus(newIndex);
+      this.form.$setDirty();
+    } catch (error) {
+      this.FeedbackService.showError('ERROR_FIELD_REORDER');
+    }
+  }
+
+  _move(oldIndex, newIndex) {
+    this.fieldValues.splice(newIndex, 0, this.fieldValues.splice(oldIndex, 1)[0]);
+  }
+
+  _focus(index) {
+    this.$timeout(() => {
+      const name = this.getFieldName(index);
+      const field = Object.keys(this.form).find(key => key.startsWith(name));
+
+      if (!field) {
+        return;
+      }
+
+      const element = this.form[field].$$element;
+
+      element[0].focus();
+      element[0].scrollIntoView();
+    });
   }
 }
