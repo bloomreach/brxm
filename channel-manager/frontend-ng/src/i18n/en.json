@@ -109,6 +109,7 @@
   "ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED": "Couldn't select document for '{{componentName}}': the container is locked by '{{lockedBy}}'",
   "ERROR_DOES_NOT_EXIST": "Failed to retrieve document",
   "ERROR_ENTER_EDIT": "Failed to enter Edit mode",
+  "ERROR_FIELD_ADD": "Failed to add a field value",
   "ERROR_FIELD_DOUBLE_PATTERN": "Use decimal numbers only",
   "ERROR_FIELD_LONG_PATTERN": "Use numbers only",
   "ERROR_FIELD_REQUIRED": "{{displayName}} is a required field",

@@ -180,4 +180,32 @@ describe('CompoundField', () => {
       expect(FeedbackService.showError).toHaveBeenCalled();
     });
   });
+
+  describe('onAdd', () => {
+    beforeEach(() => {
+      $ctrl.fieldValues = ['a', 'b', 'c'];
+    });
+
+    it('should add a value', () => {
+      spyOn(FieldService, 'add').and.returnValue('d');
+
+      $ctrl.onAdd(1);
+      $scope.$digest();
+
+      expect(FieldService.add).toHaveBeenCalledWith({ name: 'test-name/something[2]' });
+      expect($ctrl.fieldValues).toEqual(['a', { fields: 'd' }, 'b', 'c']);
+      expect($ctrl.form.$setDirty).toHaveBeenCalled();
+    });
+
+    it('should handle an error', () => {
+      spyOn(FieldService, 'add').and.returnValue($q.reject());
+
+      $ctrl.onAdd(1);
+      $scope.$digest();
+
+      expect($ctrl.fieldValues).toEqual(['a', 'b', 'c']);
+      expect($ctrl.form.$setDirty).not.toHaveBeenCalled();
+      expect(FeedbackService.showError).toHaveBeenCalled();
+    });
+  });
 });
