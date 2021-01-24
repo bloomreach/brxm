@@ -78,6 +78,10 @@ class ContentService {
     return this._send(REST_API_CONTENT_PATH, 'PATCH', ['documents', documentId, 'editable', fieldName], { order });
   }
 
+  addField(documentId, fieldName) {
+    return this._send(REST_API_CONTENT_PATH, 'POST', ['documents', documentId, 'editable', fieldName]);
+  }
+
   deleteDocument(id) {
     return this._send(REST_API_CONTENT_PATH, 'DELETE', ['documents', id]);
   }
