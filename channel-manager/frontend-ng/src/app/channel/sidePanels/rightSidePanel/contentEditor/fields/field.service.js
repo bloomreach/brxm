@@ -154,6 +154,10 @@ class FieldService {
   }) {
     return this.ContentService.reorderField(documentId, name, order);
   }
+
+  add({ documentId = this.getDocumentId(), name }) {
+    return this.ContentService.addField(documentId, name);
+  }
 }
 
 export default FieldService;

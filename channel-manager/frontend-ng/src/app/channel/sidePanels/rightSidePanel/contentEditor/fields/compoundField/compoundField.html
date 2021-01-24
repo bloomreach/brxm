@@ -15,6 +15,7 @@
   -->
 
 <div
+  ng-if="$ctrl.fieldValues"
   ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
   compound-field-value="fieldValue"
   collapse
@@ -58,7 +59,7 @@
           </md-icon>
         </h5>
 
-        <div ng-if="$ctrl.isDraggable()" class="field__title-buttons" layout layout-nowrap>
+        <div ng-if="$ctrl.fieldType.multiple" class="field__title-buttons" layout layout-nowrap>
           <div class="field__secondary-buttons" layout layout-nowrap>
             <md-menu ng-if="$ctrl.isDraggable()">
               <md-button class="md-icon-button field__title-button--secondary qa-button-reorder" ng-sortable-handle ng-click="$mdMenu.open($event)">
@@ -94,6 +95,10 @@
               </md-menu-content>
             </md-menu>
           </div>
+          <md-button class="md-icon-button qa-button-add" ng-click="$ctrl.onAdd($index + 1)">
+            <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'ADD_VALUE' | translate }}</md-tooltip>
+            <md-icon md-font-icon="mdi-plus-circle-outline"></md-icon>
+          </md-button>
         </div>
       </div>
 
@@ -109,4 +114,36 @@
       on-field-focus="$ctrl.onFocus(); $value.hasFocus = true"
       on-field-blur="$ctrl.onBlur(); $value.hasFocus = false">
     </document-fields>
+</div>
+
+<div ng-if="$ctrl.fieldType.multiple && (!$ctrl.fieldValues || !$ctrl.fieldValues.length)" class="field field--bordered qa-compound">
+  <div class="field__title" layout layout-align="space-between">
+    <h5 layout layout-align="start center" flex="grow">
+      <md-icon class="field__title-icon collapse-icon collapsed"
+               md-font-icon="mdi-chevron-down"
+               md-colors="{ color: 'grey' }">
+      </md-icon>
+
+      <span md-colors="{ color: 'grey' }">
+        {{ ::$ctrl.fieldType.displayName }}
+        <span ng-if="::$ctrl.fieldType.required">*</span>
+      </span>
+
+      <md-icon ng-if="::$ctrl.fieldType.hint"
+        class="field__title-icon hippo-hint-icon"
+        md-font-icon="mdi-information-outline"
+        md-colors="{ color: 'grey' }">
+          <md-tooltip>
+            {{ ::$ctrl.fieldType.hint }}
+          </md-tooltip>
+      </md-icon>
+    </h5>
+
+    <div class="field__button-add" flex="auto">
+      <md-button class="md-icon-button qa-button-add" ng-click="$ctrl.onAdd()">
+        <md-tooltip>{{ ::'ADD_VALUE' | translate }}</md-tooltip>
+        <md-icon md-font-icon="mdi-plus-circle-outline"></md-icon>
+      </md-button>
+    </div>
+  </div>
 </div>
