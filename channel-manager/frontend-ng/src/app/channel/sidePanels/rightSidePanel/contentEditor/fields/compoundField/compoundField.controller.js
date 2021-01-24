@@ -61,7 +61,7 @@ export default class CompoundFieldCtrl {
   }
 
   isDraggable() {
-    return this.fieldType.multiple && this.fieldType.orderable && this.fieldValues.length > 1;
+    return this.fieldType.multiple && this.fieldType.orderable && this.fieldValues && this.fieldValues.length > 1;
   }
 
   onDrag({
@@ -119,7 +119,7 @@ export default class CompoundFieldCtrl {
     this.fieldValues.splice(newIndex, 0, this.fieldValues.splice(oldIndex, 1)[0]);
   }
 
-  _focus(index) {
+  _focus(index, reset = false) {
     this.$timeout(() => {
       const name = this.getFieldName(index);
       const field = Object.keys(this.form).find(key => key.startsWith(name));
@@ -128,10 +128,30 @@ export default class CompoundFieldCtrl {
         return;
       }
 
+      if (reset) {
+        this.form[field].$setUntouched();
+      }
+
       const element = this.form[field].$$element;
 
       element[0].focus();
       element[0].scrollIntoView();
     });
+  }
+
+  async onAdd(index = 0) {
+    try {
+      const fields = await this.FieldService.add({ name: this.getFieldName(index) });
+
+      if (!this.fieldValues) {
+        this.fieldValues = [];
+      }
+
+      this.fieldValues.splice(index, 0, { fields });
+      this.form.$setDirty();
+      this._focus(index, true);
+    } catch (error) {
+      this.FeedbackService.showError('ERROR_FIELD_ADD');
+    }
   }
 }
