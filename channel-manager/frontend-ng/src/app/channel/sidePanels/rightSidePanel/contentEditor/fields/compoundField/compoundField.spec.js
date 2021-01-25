@@ -118,6 +118,39 @@ describe('CompoundField', () => {
     });
   });
 
+  describe('isRemovable', () => {
+    it('should be removable when there is more than one value', () => {
+      $ctrl.fieldType.multiple = true;
+      $ctrl.fieldType.required = true;
+      $ctrl.fieldValues = ['a', 'b'];
+
+      expect($ctrl.isRemovable()).toBe(true);
+    });
+
+    it('should be removable when the field type is not required', () => {
+      $ctrl.fieldType.multiple = true;
+      $ctrl.fieldType.required = false;
+      $ctrl.fieldValues = ['a'];
+
+      expect($ctrl.isRemovable()).toBe(true);
+    });
+
+    it('should not be removable when the field type is not multiple', () => {
+      $ctrl.fieldType.multiple = false;
+      $ctrl.fieldValues = ['a', 'b'];
+
+      expect($ctrl.isRemovable()).toBe(false);
+    });
+
+    it('should not be removable when there are less than 2 values', () => {
+      $ctrl.fieldType.multiple = true;
+      $ctrl.fieldType.required = true;
+      $ctrl.fieldValues = ['a'];
+
+      expect($ctrl.isRemovable()).toBe(false);
+    });
+  });
+
   describe('onDrop', () => {
     let onDrop;
 
@@ -201,6 +234,34 @@ describe('CompoundField', () => {
       spyOn(FieldService, 'add').and.returnValue($q.reject());
 
       $ctrl.onAdd(1);
+      $scope.$digest();
+
+      expect($ctrl.fieldValues).toEqual(['a', 'b', 'c']);
+      expect($ctrl.form.$setDirty).not.toHaveBeenCalled();
+      expect(FeedbackService.showError).toHaveBeenCalled();
+    });
+  });
+
+  describe('onRemove', () => {
+    beforeEach(() => {
+      $ctrl.fieldValues = ['a', 'b', 'c'];
+    });
+
+    it('should remove a value', () => {
+      spyOn(FieldService, 'remove');
+
+      $ctrl.onRemove(1);
+      $scope.$digest();
+
+      expect(FieldService.remove).toHaveBeenCalledWith({ name: 'test-name/something[2]' });
+      expect($ctrl.fieldValues).toEqual(['a', 'c']);
+      expect($ctrl.form.$setDirty).toHaveBeenCalled();
+    });
+
+    it('should handle an error', () => {
+      spyOn(FieldService, 'remove').and.returnValue($q.reject());
+
+      $ctrl.onRemove(1);
       $scope.$digest();
 
       expect($ctrl.fieldValues).toEqual(['a', 'b', 'c']);
