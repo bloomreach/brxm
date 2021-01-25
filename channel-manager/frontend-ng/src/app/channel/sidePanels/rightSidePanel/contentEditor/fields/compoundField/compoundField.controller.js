@@ -64,6 +64,10 @@ export default class CompoundFieldCtrl {
     return this.fieldType.multiple && this.fieldType.orderable && this.fieldValues && this.fieldValues.length > 1;
   }
 
+  isRemovable() {
+    return this.fieldType.multiple && (!this.fieldType.required || this.fieldValues.length > 1);
+  }
+
   onDrag({
     clone,
     from,
@@ -139,6 +143,10 @@ export default class CompoundFieldCtrl {
     });
   }
 
+  _focusAddButton() {
+    this.$timeout(() => this.$element.find('.field__button-add button').focus());
+  }
+
   async onAdd(index = 0) {
     try {
       const fields = await this.FieldService.add({ name: this.getFieldName(index) });
@@ -152,6 +160,22 @@ export default class CompoundFieldCtrl {
       this._focus(index, true);
     } catch (error) {
       this.FeedbackService.showError('ERROR_FIELD_ADD');
+    }
+  }
+
+  async onRemove(index) {
+    try {
+      await this.FieldService.remove({ name: this.getFieldName(index) });
+      this.fieldValues.splice(index, 1);
+      this.form.$setDirty();
+
+      if (this.fieldValues.length) {
+        this._focus(Math.max(index - 1, 0));
+      } else {
+        this._focusAddButton();
+      }
+    } catch (error) {
+      this.FeedbackService.showError('ERROR_FIELD_REMOVE');
     }
   }
 }
