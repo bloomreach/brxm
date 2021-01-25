@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -563,11 +563,10 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document addCompoundField(final String uuid,
+    public Map<String, List<FieldValue>> addCompoundField(final String uuid,
                                      final String branchId,
                                      final FieldPath fieldPath,
                                      final UserContext userContext) {
-
         if (fieldPath.isEmpty()) {
             log.warn("Can not add compound field if fieldPath is empty");
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
@@ -598,7 +597,25 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final Document document = assembleDocument(uuid, handle, draft, documentType);
         FieldTypeUtils.readFieldValues(draft, documentType.getFields(), document.getFields());
-        return document;
+
+        return findFieldValues(fieldPath, document.getFields());
+    }
+
+    private static Map<String, List<FieldValue>> findFieldValues(final FieldPath path,
+                                                                 final Map<String, List<FieldValue>> fields) {
+        final String fieldName = path.getFirstSegmentName();
+        final List<FieldValue> fieldValues = fields.get(fieldName);
+
+        if (fieldValues == null) {
+            throw new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST, "field", fieldName));
+        }
+
+        final int fieldIndex = path.getFirstSegmentIndex();
+        final Map<String, List<FieldValue>> firstSegmentFields = fieldValues.get(fieldIndex - 1).getFields();
+        final FieldPath remaining = path.getRemainingSegments();
+        return remaining.isEmpty()
+                ? firstSegmentFields
+                : findFieldValues(remaining, firstSegmentFields);
     }
 
     private static void archiveDocument(final String uuid, final DocumentWorkflow documentWorkflow) {

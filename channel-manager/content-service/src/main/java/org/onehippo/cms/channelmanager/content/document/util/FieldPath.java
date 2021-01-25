@@ -19,6 +19,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
+import static org.apache.commons.lang.StringUtils.substringAfterLast;
+import static org.apache.commons.lang.StringUtils.substringBeforeLast;
+
 /**
  * Represents the path to field value in a document. It consists of a hierarchy of segments that are unique per level.
  * Segments can (optionally) have a numbered suffix in square brackets to distinguish 'same name siblings'.
@@ -97,6 +100,29 @@ public class FieldPath {
      */
     public FieldPath getRemainingSegments() {
         return new FieldPath(remainingSegments);
+    }
+
+    /**
+     * @return the first segment of this field path without a numbered suffix.
+     */
+    public String getFirstSegmentName() {
+        if (!firstSegment.endsWith("]")) {
+            return firstSegment;
+        }
+
+        return StringUtils.substringBeforeLast(firstSegment, "[");
+    }
+
+    /**
+     * @return the JCR index of the first segment of this field path, defaults to 1.
+     */
+    public int getFirstSegmentIndex() {
+        if (!firstSegment.endsWith("]")) {
+            return 1;
+        }
+
+        final String indexAsString = substringBeforeLast(substringAfterLast(firstSegment, "["), "]");
+        return Integer.parseInt(indexAsString);
     }
 
     @Override
