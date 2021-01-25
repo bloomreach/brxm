@@ -16,6 +16,7 @@
 package org.onehippo.cms.channelmanager.content.document;
 
 import java.util.List;
+import java.util.Map;
 
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
@@ -169,9 +170,9 @@ public interface DocumentsService {
      * @param fieldPath     Path to the new compound field in the document
      * @param userContext   Properties of the user that executes the request
      *
-     * @return JSON-serializable representation of the persisted document.
+     * @return JSON-serializable representation of the new compound field.
      *
      * @throws ErrorWithPayloadException If adding a compound field to the document failed
      */
-    Document addCompoundField(String uuid, String branchId, FieldPath fieldPath, UserContext userContext);
+    Map<String, List<FieldValue>> addCompoundField(String uuid, String branchId, FieldPath fieldPath, UserContext userContext);
 }
