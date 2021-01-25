@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.document.util;
 
 import org.junit.Before;
@@ -22,8 +21,8 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
 
 public class FieldPathTest {
 
@@ -108,6 +107,26 @@ public class FieldPathTest {
         assertThat(nul.getFirstSegment(), is(nullValue()));
         assertThat(one2.getFirstSegment(), is("one[2]"));
         assertThat(one2Two.getFirstSegment(), is("one[2]"));
+    }
+
+    @Test
+    public void getFirstSegmentName() {
+        assertThat(one.getFirstSegmentName(), is("one"));
+        assertThat(oneTwo.getFirstSegmentName(), is("one"));
+        assertThat(oneTwoThree.getFirstSegmentName(), is("one"));
+        assertThat(blank.getFirstSegmentName(), is(" "));
+        assertThat(one2.getFirstSegmentName(), is("one"));
+        assertThat(one2Two.getFirstSegmentName(), is("one"));
+    }
+
+    @Test
+    public void getFirstSegmentIndex() {
+        assertThat(one.getFirstSegmentIndex(), is(1));
+        assertThat(oneTwo.getFirstSegmentIndex(), is(1));
+        assertThat(oneTwoThree.getFirstSegmentIndex(), is(1));
+        assertThat(blank.getFirstSegmentIndex(), is(1));
+        assertThat(one2.getFirstSegmentIndex(), is(2));
+        assertThat(one2Two.getFirstSegmentIndex(), is(2));
     }
 
     @Test
