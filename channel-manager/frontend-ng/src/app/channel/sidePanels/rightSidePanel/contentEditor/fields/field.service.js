@@ -158,6 +158,10 @@ class FieldService {
   add({ documentId = this.getDocumentId(), name }) {
     return this.ContentService.addField(documentId, name);
   }
+
+  remove({ documentId = this.getDocumentId(), name }) {
+    return this.ContentService.removeField(documentId, name);
+  }
 }
 
 export default FieldService;
