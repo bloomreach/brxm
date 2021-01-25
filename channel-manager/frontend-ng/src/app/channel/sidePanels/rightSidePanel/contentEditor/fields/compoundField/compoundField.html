@@ -94,6 +94,10 @@
                 </md-menu-item>
               </md-menu-content>
             </md-menu>
+            <md-button ng-if="$ctrl.isRemovable()" class="md-icon-button qa-button-remove" ng-click="$ctrl.onRemove($index)">
+              <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'REMOVE_VALUE' | translate }}</md-tooltip>
+              <md-icon md-font-icon="mdi-close-circle-outline"></md-icon>
+            </md-button>
           </div>
           <md-button class="md-icon-button qa-button-add" ng-click="$ctrl.onAdd($index + 1)">
             <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'ADD_VALUE' | translate }}</md-tooltip>
