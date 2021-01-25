@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,16 +48,18 @@ public class ArchiveDocumentTask extends AbstractDocumentTask {
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
         DocumentHandle dh = getDocumentHandle();
-        DocumentVariant variant;
+        DocumentVariant draft;
+        DocumentVariant unpublished;
         try {
-            variant = dh.getDocuments().get(HippoStdNodeType.DRAFT);
-            if (variant != null) {
-                deleteDocument(variant);
+            draft = dh.getDocuments().get(HippoStdNodeType.DRAFT);
+            unpublished = dh.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
+            if (draft != null && unpublished !=null) {
+                deleteDocument(draft);
             }
 
-            variant = dh.getDocuments().get(HippoStdNodeType.PUBLISHED);
-            if (variant != null) {
-                deleteDocument(variant);
+            DocumentVariant published = dh.getDocuments().get(HippoStdNodeType.PUBLISHED);
+            if (published != null) {
+                deleteDocument(published);
             }
         } catch (RepositoryException e) {
             throw new WorkflowException(e.getMessage(), e);
@@ -77,11 +79,9 @@ public class ArchiveDocumentTask extends AbstractDocumentTask {
 
 
         try {
-            variant = dh.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
-            if (variant != null) {
-                DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", variant);
-                defaultWorkflow.archive();
-            }
+           DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core"
+                   , unpublished != null ? unpublished: draft);
+           defaultWorkflow.archive();
         } catch (MappingException e) {
             log.warn("Cannot archive document: no default workflow", e);
         }
