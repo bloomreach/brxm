@@ -82,6 +82,10 @@ class ContentService {
     return this._send(REST_API_CONTENT_PATH, 'POST', ['documents', documentId, 'editable', fieldName]);
   }
 
+  removeField(documentId, fieldName) {
+    return this._send(REST_API_CONTENT_PATH, 'DELETE', ['documents', documentId, 'editable', fieldName]);
+  }
+
   deleteDocument(id) {
     return this._send(REST_API_CONTENT_PATH, 'DELETE', ['documents', id]);
   }
