@@ -125,6 +125,17 @@ compound-field {
       position: relative;
     }
 
+    .collapse-toggle {
+      & > * {
+        padding: 8px 8px 8px 0;
+      }
+
+      &:focus > * {
+        background: map-get($grey, 100);
+        border-radius: 4px;
+      }
+    }
+
     &--focused,
     &--focused &-icon {
       color: $blue-500;
