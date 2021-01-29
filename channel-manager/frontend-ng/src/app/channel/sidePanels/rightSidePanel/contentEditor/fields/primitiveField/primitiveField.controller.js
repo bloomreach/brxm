@@ -28,6 +28,7 @@ class PrimitiveFieldCtrl {
     this.ngSortable = {
       animation: 300,
       chosenClass: 'field--dragged',
+      disabled: true,
       forceFallback: true,
       fallbackClass: 'field--ghost',
       handle: '[ng-sortable-handle]',
@@ -47,6 +48,10 @@ class PrimitiveFieldCtrl {
       } else {
         this._onFieldValuesChanged(this.fieldValues);
       }
+    });
+
+    this.$scope.$watch(() => !this.isDraggable(), (disabled) => {
+      this.ngSortable.disabled = disabled;
     });
   }
 

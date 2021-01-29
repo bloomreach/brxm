@@ -48,21 +48,21 @@
               </md-icon>
 
               <span>
-                {{ ::$ctrl.fieldType.displayName }}
-                <span ng-if="::$ctrl.fieldType.required">*</span>
+                {{ $ctrl.fieldType.displayName }}
+                <span ng-if="$ctrl.fieldType.required">*</span>
               </span>
 
-              <md-icon ng-if="::$ctrl.fieldType.hint"
+              <md-icon ng-if="$ctrl.fieldType.hint"
                 class="field__title-icon hippo-hint-icon"
                 md-font-icon="mdi-information-outline">
                   <md-tooltip>
-                    {{ ::$ctrl.fieldType.hint }}
+                    {{ $ctrl.fieldType.hint }}
                   </md-tooltip>
               </md-icon>
             </div>
           </h5>
 
-          <div ng-if="$ctrl.fieldType.multiple" class="field__title-buttons" layout layout-nowrap>
+          <div ng-transclude="buttons" class="field__title-buttons" layout layout-nowrap>
             <div class="field__secondary-buttons" layout layout-nowrap>
               <md-menu ng-if="$ctrl.isDraggable()">
                 <md-button class="md-icon-button field__title-button--secondary qa-button-reorder" ng-sortable-handle ng-click="$mdMenu.open($event)">
@@ -102,7 +102,7 @@
                 <md-icon md-font-icon="mdi-close-circle-outline"></md-icon>
               </md-button>
             </div>
-            <md-button class="md-icon-button qa-button-add" ng-click="$ctrl.onAdd($index + 1)">
+            <md-button ng-if="$ctrl.fieldType.multiple" class="md-icon-button qa-button-add" ng-click="$ctrl.onAdd($index + 1)">
               <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'ADD_VALUE' | translate }}</md-tooltip>
               <md-icon md-font-icon="mdi-plus-circle-outline"></md-icon>
             </md-button>
@@ -116,7 +116,7 @@
 
       <document-fields class="collapse-element"
         name="$ctrl.getFieldName($index)"
-        field-types="::$ctrl.fieldType.fields"
+        field-types="$ctrl.fieldType.fields"
         field-values="fieldValue.fields"
         on-field-focus="$ctrl.onFocus(); $value.hasFocus = true"
         on-field-blur="$ctrl.onBlur(); $value.hasFocus = false">
@@ -133,16 +133,16 @@
       </md-icon>
 
       <span md-colors="{ color: 'grey' }">
-        {{ ::$ctrl.fieldType.displayName }}
-        <span ng-if="::$ctrl.fieldType.required">*</span>
+        {{ $ctrl.fieldType.displayName }}
+        <span ng-if="$ctrl.fieldType.required">*</span>
       </span>
 
-      <md-icon ng-if="::$ctrl.fieldType.hint"
+      <md-icon ng-if="$ctrl.fieldType.hint"
         class="field__title-icon hippo-hint-icon"
         md-font-icon="mdi-information-outline"
         md-colors="{ color: 'grey' }">
           <md-tooltip>
-            {{ ::$ctrl.fieldType.hint }}
+            {{ $ctrl.fieldType.hint }}
           </md-tooltip>
       </md-icon>
     </h5>

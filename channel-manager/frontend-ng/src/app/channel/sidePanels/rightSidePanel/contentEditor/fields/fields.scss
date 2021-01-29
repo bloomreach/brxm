@@ -169,7 +169,7 @@ compound-field {
 
     .field:hover > .field__title &,
     .field:focus-within > .field__title &,
-    .field--dragged > .field__title &,
+    .field--dragged .field__title &,
     .field--focused > .field__title & {
       opacity: 1;
     }
@@ -179,6 +179,7 @@ compound-field {
     margin-right: -8px;
     margin-top: 12px;
     max-width: 8px;
+    min-width: 8px;
     overflow: hidden;
     transition: max-width 1s;
 
