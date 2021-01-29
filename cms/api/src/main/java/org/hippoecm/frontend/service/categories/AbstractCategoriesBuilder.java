@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -10,7 +10,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
+
 package org.hippoecm.frontend.service.categories;
 
 import java.util.Objects;
@@ -29,11 +31,11 @@ public abstract class AbstractCategoriesBuilder implements CategoriesBuilder {
     protected Node node;
     protected String[] versionCategories;
     protected String[] workflowCategories;
-    protected String[] xpageCategories;
     protected IPluginContext context;
 
     @Override
     public CategoriesBuilder node(final Node node) {
+        Objects.requireNonNull(node);
         Objects.requireNonNull(node);
         this.node = node;
         return this;
@@ -54,13 +56,6 @@ public abstract class AbstractCategoriesBuilder implements CategoriesBuilder {
     }
 
     @Override
-    public CategoriesBuilder xpageCategories(final String[] xpageCategories) {
-        Objects.requireNonNull(xpageCategories);
-        this.xpageCategories = xpageCategories;
-        return this;
-    }
-
-    @Override
     public CategoriesBuilder context(final IPluginContext context) {
         Objects.requireNonNull(context);
         this.context = context;
@@ -68,35 +63,22 @@ public abstract class AbstractCategoriesBuilder implements CategoriesBuilder {
     }
 
     protected boolean isFrozenNode(final Node node) {
+        assert node != null;
         return isType(node, NT_FROZEN_NODE);
     }
 
-    protected boolean isXpage(final Node node) {
-        if (!isHandle(node)) {
-            return false;
-        }
-
-        try {
-            final Node variant = node.getNode(node.getName());
-            return isType(variant, "hst:xpagemixin");
-        } catch (RepositoryException e) {
-            final String errorMessage = String.format("Could not determine if node:{path:{%s}} is type xpage",
-                    JcrUtils.getNodePathQuietly(node));
-            throw new RepositoryRuntimeException(errorMessage, e);
-        }
-    }
-
-
     protected boolean isHandle(final Node node) {
+        assert node != null;
         return isType(node, NT_HANDLE);
     }
 
     private boolean isType(final Node node, final String type) {
+        assert node != null;
+        assert type != null;
         try {
             return node.isNodeType(type);
         } catch (RepositoryException e) {
-            throw new RepositoryRuntimeException(String.format("Could not determine nodetype of node:{path:{%s}}",
-                    JcrUtils.getNodePathQuietly(node)), e);
+            throw new RepositoryRuntimeException(String.format("Could not determine nodetype of node:{path:{%s}}", JcrUtils.getNodePathQuietly(node)), e);
         }
     }
 }
