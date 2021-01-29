@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,7 +14,9 @@
   limitations under the License.
   -->
 
-<div collapse
+<div
+  ng-if="$ctrl.fieldValues"
+  collapse
   class="field field--bordered qa-choice"
   ng-class="{
     'field--focused': $ctrl.hasFocus,
@@ -31,37 +33,112 @@
         </md-icon>
 
         <span>
-          {{ ::$ctrl.fieldType.displayName }}
-          <span ng-if="::$ctrl.fieldType.required">*</span>
+          {{ $ctrl.fieldType.displayName }}
+          <span ng-if="$ctrl.fieldType.required">*</span>
         </span>
 
-        <md-icon ng-if="::$ctrl.fieldType.hint"
+        <md-icon ng-if="$ctrl.fieldType.hint"
           class="field__title-icon hippo-hint-icon"
           md-font-icon="mdi-information-outline">
             <md-tooltip>
-              {{ ::$ctrl.fieldType.hint }}
+              {{ $ctrl.fieldType.hint }}
             </md-tooltip>
         </md-icon>
     </h5>
 
-    <div class="collapse-element">
-      <div ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
-          ng-switch="::$ctrl.fieldType.choices[fieldValue.chosenId].type">
-            <compound-field ng-switch-when="COMPOUND"
-              name="::$ctrl.getFieldName($index)"
-              field-type="::$ctrl.fieldType.choices[fieldValue.chosenId]"
-              field-values="[fieldValue.chosenValue]"
-              ng-focus="$ctrl.focusChoice()"
-              ng-blur="$ctrl.blurChoice()">
-            </compound-field>
+    <div class="collapse-element" ng-sortable-area>
+      <div ng-repeat="fieldValue in $ctrl.fieldValues track by $index">
+        <compound-field
+          ng-if="$ctrl.fieldType.choices[fieldValue.chosenId].type === 'COMPOUND'"
+          name="$ctrl.getFieldName($index)"
+          field-type="$ctrl.fieldType.choices[fieldValue.chosenId]"
+          field-values="[fieldValue.chosenValue]"
+          dragging="$ctrl.dragging === $index ? 0 : false"
+          ng-focus="$ctrl.onFocus()"
+          ng-blur="$ctrl.onBlur()">
+          <compound-field-buttons>
+            <div class="field__secondary-buttons" layout layout-nowrap>
+              <md-menu ng-if="$ctrl.isDraggable()">
+                <md-button class="md-icon-button qa-button-reorder" ng-sortable-handle ng-click="$mdMenu.open($event)">
+                  <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'DRAG_VALUE' | translate }}</md-tooltip>
+                  <md-icon md-font-icon="mdi-reorder-horizontal"></md-icon>
+                </md-button>
+                <md-menu-content>
+                  <md-menu-item>
+                    <md-button ng-click="$ctrl.onMove($index, 0)" ng-disabled="$first" class="qa-menu-move-top">
+                      <md-icon md-font-icon="mdi-arrow-collapse-up" md-menu-align-target></md-icon>
+                      {{ ::'MOVE_TO_TOP' | translate }}
+                    </md-button>
+                  </md-menu-item>
+                  <md-menu-item>
+                    <md-button ng-click="$ctrl.onMove($index, $index - 1)" ng-disabled="$first" class="qa-menu-move-up">
+                      <md-icon md-font-icon="mdi-arrow-up" md-menu-align-target></md-icon>
+                      {{ ::'MOVE_UP' | translate }}
+                    </md-button>
+                  </md-menu-item>
+                  <md-menu-divider></md-menu-divider>
+                  <md-menu-item>
+                    <md-button ng-click="$ctrl.onMove($index, $index + 1)" ng-disabled="$last" class="qa-menu-move-down">
+                      <md-icon md-font-icon="mdi-arrow-down"></md-icon>
+                      {{ ::'MOVE_DOWN' | translate }}
+                    </md-button>
+                  </md-menu-item>
+                  <md-menu-item>
+                    <md-button ng-click="$ctrl.onMove($index, $ctrl.fieldValues.length - 1)" ng-disabled="$last" class="qa-menu-move-bottom">
+                      <md-icon md-font-icon="mdi-arrow-collapse-down"></md-icon>
+                      {{ ::'MOVE_TO_BOTTOM' | translate }}
+                    </md-button>
+                  </md-menu-item>
+                </md-menu-content>
+              </md-menu>
+            </div>
+          </compound-field-buttons>
+        </compound-field>
 
-            <primitive-field ng-switch-default
-              name="::$ctrl.getFieldName($index)"
-              field-type="::$ctrl.fieldType.choices[fieldValue.chosenId]"
-              field-values="[fieldValue.chosenValue]"
-              on-field-focus="$ctrl.focusChoice()"
-              on-field-blur="$ctrl.blurChoice()">
-            </primitive-field>
+        <primitive-field
+          ng-if="$ctrl.fieldType.choices[fieldValue.chosenId].type !== 'COMPOUND'"
+          name="$ctrl.getFieldName($index)"
+          field-type="$ctrl.fieldType.choices[fieldValue.chosenId]"
+          field-values="[fieldValue.chosenValue]"
+          dragging="$ctrl.dragging === $index ? 0 : false"
+          on-field-focus="$ctrl.onFocus()"
+          on-field-blur="$ctrl.onBlur()">
+          <primitive-field-buttons>
+            <md-menu ng-if="$ctrl.isDraggable()">
+              <md-button class="md-icon-button qa-button-reorder" ng-sortable-handle ng-click="$mdMenu.open($event)">
+                <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'DRAG_VALUE' | translate }}</md-tooltip>
+                <md-icon md-font-icon="mdi-reorder-horizontal"></md-icon>
+              </md-button>
+              <md-menu-content>
+                <md-menu-item>
+                  <md-button ng-click="$ctrl.onMove($index, 0)" ng-disabled="$first" class="qa-menu-move-top">
+                    <md-icon md-font-icon="mdi-arrow-collapse-up" md-menu-align-target></md-icon>
+                    {{ ::'MOVE_TO_TOP' | translate }}
+                  </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                  <md-button ng-click="$ctrl.onMove($index, $index - 1)" ng-disabled="$first" class="qa-menu-move-up">
+                    <md-icon md-font-icon="mdi-arrow-up" md-menu-align-target></md-icon>
+                    {{ ::'MOVE_UP' | translate }}
+                  </md-button>
+                </md-menu-item>
+                <md-menu-divider></md-menu-divider>
+                <md-menu-item>
+                  <md-button ng-click="$ctrl.onMove($index, $index + 1)" ng-disabled="$last" class="qa-menu-move-down">
+                    <md-icon md-font-icon="mdi-arrow-down"></md-icon>
+                    {{ ::'MOVE_DOWN' | translate }}
+                  </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                  <md-button ng-click="$ctrl.onMove($index, $ctrl.fieldValues.length - 1)" ng-disabled="$last" class="qa-menu-move-bottom">
+                    <md-icon md-font-icon="mdi-arrow-collapse-down"></md-icon>
+                    {{ ::'MOVE_TO_BOTTOM' | translate }}
+                  </md-button>
+                </md-menu-item>
+              </md-menu-content>
+            </md-menu>
+          </compound-field-buttons>
+        </primitive-field>
       </div>
     </div>
 </div>

@@ -125,20 +125,20 @@ describe('CompoundFieldValue', () => {
 
   describe('onDrag', () => {
     it('should collapse a field', () => {
-      $scope.$broadcast('field:drag');
+      $scope.$broadcast('field:drag', context);
 
       expect(collapse.collapse).toHaveBeenCalled();
     });
 
     it('should store the expanded state', () => {
-      $scope.$broadcast('field:drag');
+      $scope.$broadcast('field:drag', context);
 
       expect(context.expanded.add).toHaveBeenCalledWith(fieldValue);
     });
 
     it('should not store the expanded state if a field is already collapsed', () => {
       collapse.isCollapsed = true;
-      $scope.$broadcast('field:drag');
+      $scope.$broadcast('field:drag', context);
 
       expect(context.expanded.add).not.toHaveBeenCalledWith(fieldValue);
     });
@@ -147,15 +147,15 @@ describe('CompoundFieldValue', () => {
   describe('onDrop', () => {
     it('should not expand a field', () => {
       collapse.isCollapsed = true;
-      $scope.$broadcast('field:drag');
-      $scope.$broadcast('field:drop');
+      $scope.$broadcast('field:drag', context);
+      $scope.$broadcast('field:drop', context);
 
       expect(collapse.open).not.toHaveBeenCalled();
     });
 
     it('should expand a field', () => {
-      $scope.$broadcast('field:drag');
-      $scope.$broadcast('field:drop');
+      $scope.$broadcast('field:drag', context);
+      $scope.$broadcast('field:drop', context);
 
       expect(collapse.open).toHaveBeenCalled();
     });

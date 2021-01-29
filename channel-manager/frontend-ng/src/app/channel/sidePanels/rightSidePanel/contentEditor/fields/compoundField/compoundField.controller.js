@@ -88,7 +88,7 @@ export default class CompoundFieldCtrl {
     this._nextNode = from === item.parentNode ? item.nextSibling : clone.nextSibling;
     this.$scope.$apply(() => {
       this.dragging = oldIndex;
-      this.$scope.$broadcast('field:drag');
+      this.$scope.$broadcast('field:drag', this);
     });
   }
 
@@ -115,7 +115,7 @@ export default class CompoundFieldCtrl {
       this._move(newIndex, oldIndex);
       this._focus(oldIndex);
     } finally {
-      this.$scope.$broadcast('field:drop');
+      this.$scope.$broadcast('field:drop', this);
     }
   }
 
