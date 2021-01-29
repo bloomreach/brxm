@@ -22,9 +22,13 @@ const compoundFieldComponent = {
     name: '<',
     fieldType: '<',
     fieldValues: '=',
+    dragging: '<?',
   },
   controller: CompoundFieldCtrl,
   template,
+  transclude: {
+    buttons: '?compoundFieldButtons',
+  },
   require: {
     form: '^^form',
   },
