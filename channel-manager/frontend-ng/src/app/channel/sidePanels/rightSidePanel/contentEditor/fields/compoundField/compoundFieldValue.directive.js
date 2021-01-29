@@ -22,7 +22,6 @@ export default function compoundFieldValueDirective() {
     restrict: 'A',
     require: {
       parent: '?^^compoundFieldValue',
-      context: '^^compoundField',
       collapse: 'collapse',
     },
     bindToController: {
