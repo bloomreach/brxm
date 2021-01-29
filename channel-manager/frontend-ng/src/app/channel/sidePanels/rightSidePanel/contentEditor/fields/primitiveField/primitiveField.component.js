@@ -25,9 +25,13 @@ const primitiveFieldComponent = {
     locale: '<',
     onFieldFocus: '&',
     onFieldBlur: '&',
+    dragging: '<?',
   },
   controller: PrimitiveFieldCtrl,
   template,
+  transclude: {
+    buttons: '?primitiveFieldButtons',
+  },
   require: {
     form: '^^form',
   },

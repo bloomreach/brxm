@@ -62,18 +62,20 @@ export default class CompoundFieldValueCtrl {
     }
   }
 
-  onDrag() {
+  onDrag(event, context) {
     if (!this.collapse.isCollapsed) {
-      this.context.expanded.add(this.fieldValue);
+      context.expanded.add(this.fieldValue);
     }
 
     this.collapse.collapse();
   }
 
-  onDrop() {
-    if (this.context.expanded.has(this.fieldValue)) {
+  onDrop(event, context) {
+    if (context.expanded.has(this.fieldValue)) {
       this.collapse.open();
-      this.context.expanded.delete(this.fieldValue);
+      context.expanded.delete(this.fieldValue);
+    } else if (!this.collapse.isCollapsed) {
+      this.collapse.collapse();
     }
   }
 }
