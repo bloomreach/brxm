@@ -25,4 +25,7 @@ public interface CompoundService {
     void addCompoundField(final String documentPath, final FieldPath fieldPath, final List<FieldType> fields);
 
     void reorderCompoundField(String documentPath, FieldPath fieldPath, int order);
+
+    void removeCompoundField(final String documentPath, final FieldPath fieldPath, final List<FieldType> fields);
+
 }

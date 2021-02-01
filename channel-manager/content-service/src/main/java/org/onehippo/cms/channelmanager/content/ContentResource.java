@@ -153,6 +153,17 @@ public class ContentResource {
         });
     }
 
+    @DELETE
+    @Path("documents/{documentId}/editable/{fieldPath:.*}")
+    public Response removeCompoundField(@PathParam("documentId") final String id,
+                                        @PathParam("fieldPath") final String fieldPath,
+                                        @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.NO_CONTENT, userContext -> {
+            documentService.removeCompoundField(id, getBranchId(servletRequest), new FieldPath(fieldPath), userContext);
+            return null;
+        });
+    }
+
     @GET
     @Path("documents/{documentId}/{branchId}")
     public Response getDocument(
