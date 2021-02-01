@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
 import java.util.List;
@@ -43,6 +42,7 @@ public class FieldTypeContext {
     private final String type;    // e.g. "CalendarDate"
     private final boolean isProperty;
     private final boolean isMultiple;
+    private final boolean isOrderable;
     private final List<String> validators;
     private final Node editorConfigNode;
     private final ContentTypeContext parentContext;
@@ -81,21 +81,12 @@ public class FieldTypeContext {
                 .orElse(null);
     }
 
-
     private static FieldTypeContext createForItem(final String itemName,
                                                   final ContentType parentType,
                                                   final ContentTypeContext context,
                                                   final Node editorFieldConfigNode) {
         final ContentTypeItem item = parentType.getItem(itemName);
         return item != null ? new FieldTypeContext(item, context, editorFieldConfigNode) : null;
-    }
-
-    private FieldTypeContext(final ContentTypeItem contentTypeItem,
-                             final ContentTypeContext parentContext,
-                             final Node editorConfigNode) {
-        this(contentTypeItem.getName(), contentTypeItem.getEffectiveType(), contentTypeItem.getItemType(),
-                contentTypeItem.isProperty(), contentTypeItem.isMultiple(),
-                getValidators(contentTypeItem), parentContext, editorConfigNode);
     }
 
     private static List<String> getValidators(final ContentTypeItem contentTypeItem) {
@@ -114,6 +105,14 @@ public class FieldTypeContext {
                         : Optional.empty());
     }
 
+    private FieldTypeContext(final ContentTypeItem contentTypeItem,
+                             final ContentTypeContext parentContext,
+                             final Node editorConfigNode) {
+        this(contentTypeItem.getName(), contentTypeItem.getEffectiveType(), contentTypeItem.getItemType(),
+                contentTypeItem.isProperty(), contentTypeItem.isMultiple(), contentTypeItem.isOrdered(),
+                getValidators(contentTypeItem), parentContext, editorConfigNode);
+    }
+
     public FieldTypeContext(final ContentTypeItem contentTypeItem, final ContentTypeContext parentContext) {
         this(contentTypeItem, parentContext, null);
     }
@@ -123,6 +122,7 @@ public class FieldTypeContext {
                             final String type,
                             final boolean isProperty,
                             final boolean isMultiple,
+                            final boolean isOrderable,
                             final List<String> validators,
                             final ContentTypeContext parentContext,
                             final Node editorConfigNode) {
@@ -131,6 +131,7 @@ public class FieldTypeContext {
         this.type = type;
         this.isProperty = isProperty;
         this.isMultiple = isMultiple;
+        this.isOrderable = isOrderable;
         this.validators = LegacyValidatorMapper.legacyMapper(validators, type);
         this.parentContext = parentContext;
         this.editorConfigNode = editorConfigNode;
@@ -154,6 +155,10 @@ public class FieldTypeContext {
 
     public boolean isMultiple() {
         return isMultiple;
+    }
+
+    public boolean isOrderable() {
+        return isOrderable;
     }
 
     public List<String> getValidators() {
