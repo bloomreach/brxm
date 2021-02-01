@@ -142,6 +142,39 @@ describe('ChoiceField', () => {
     });
   });
 
+  describe('isRemovable', () => {
+    it('should be removable when there is more than one value', () => {
+      $ctrl.fieldType.multiple = true;
+      $ctrl.fieldType.required = true;
+      $ctrl.fieldValues = ['a', 'b'];
+
+      expect($ctrl.isRemovable()).toBe(true);
+    });
+
+    it('should be removable when the field type is not required', () => {
+      $ctrl.fieldType.multiple = true;
+      $ctrl.fieldType.required = false;
+      $ctrl.fieldValues = ['a'];
+
+      expect($ctrl.isRemovable()).toBe(true);
+    });
+
+    it('should not be removable when the field type is not multiple', () => {
+      $ctrl.fieldType.multiple = false;
+      $ctrl.fieldValues = ['a', 'b'];
+
+      expect($ctrl.isRemovable()).toBe(false);
+    });
+
+    it('should not be removable when there are less than 2 values', () => {
+      $ctrl.fieldType.multiple = true;
+      $ctrl.fieldType.required = true;
+      $ctrl.fieldValues = ['a'];
+
+      expect($ctrl.isRemovable()).toBe(false);
+    });
+  });
+
   describe('onDrop', () => {
     let onDrop;
 
@@ -237,6 +270,37 @@ describe('ChoiceField', () => {
       spyOn(FieldService, 'add').and.returnValue($q.reject());
 
       $ctrl.onAdd('choice1', 1);
+      $scope.$digest();
+
+      expect($ctrl.fieldValues).toEqual([
+        jasmine.objectContaining({ chosenId: 'choice2' }),
+        jasmine.objectContaining({ chosenId: 'choice1' }),
+        jasmine.objectContaining({ chosenId: 'choice2' }),
+      ]);
+      expect($ctrl.form.$setDirty).not.toHaveBeenCalled();
+      expect(FeedbackService.showError).toHaveBeenCalled();
+    });
+  });
+
+  describe('onRemove', () => {
+    it('should remove a value', () => {
+      spyOn(FieldService, 'remove');
+
+      $ctrl.onRemove(1);
+      $scope.$digest();
+
+      expect(FieldService.remove).toHaveBeenCalledWith({ name: 'test-name[2]' });
+      expect($ctrl.fieldValues).toEqual([
+        jasmine.objectContaining({ chosenId: 'choice2' }),
+        jasmine.objectContaining({ chosenId: 'choice2' }),
+      ]);
+      expect($ctrl.form.$setDirty).toHaveBeenCalled();
+    });
+
+    it('should handle an error', () => {
+      spyOn(FieldService, 'remove').and.returnValue($q.reject());
+
+      $ctrl.onRemove(1);
       $scope.$digest();
 
       expect($ctrl.fieldValues).toEqual([
