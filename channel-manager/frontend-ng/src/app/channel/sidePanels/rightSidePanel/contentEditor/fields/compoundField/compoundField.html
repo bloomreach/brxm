@@ -14,113 +14,114 @@
   limitations under the License.
   -->
 
-<div
-  ng-if="$ctrl.fieldValues"
-  ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
-  compound-field-value="fieldValue"
-  collapse
-  class="field field--bordered qa-compound"
-  ng-class="{
-  'field--focused': $value.hasFocus,
-  'field--invalid': $value.hasError
-  }"
-  md-whiteframe="{{ $ctrl.dragging === $index ? 1 : -1 }}"
-  md-colors="$ctrl.dragging === $index ? { 'background-color': 'hippo-grey-100' } : {}"
-  ng-focus="$ctrl.onFocus()">
-    <div class="field__title"
-      ng-class="{
-        'field__title--focused': $value.hasFocus,
-        'field__title--invalid': fieldValue.errorInfo
-      }"
-      ng-sortable-handle>
-      <div layout layout-align="space-between">
-        <h5
-          layout
-          layout-align="start center"
-          tabindex="0"
-          flex="grow"
-          class="collapse-toggle"
-          ng-click="collapse.toggle()">
-          <div layout layout-align="start center">
-            <md-icon class="field__title-icon collapse-icon"
-              ng-class="{'collapsed': collapse.isCollapsed}"
-              md-font-icon="mdi-chevron-down">
-            </md-icon>
+<div ng-if="$ctrl.fieldValues" ng-sortable-area>
+  <div
+    ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
+    compound-field-value="fieldValue"
+    collapse
+    class="field field--bordered qa-compound"
+    ng-class="{
+    'field--focused': $value.hasFocus,
+    'field--invalid': $value.hasError
+    }"
+    md-whiteframe="{{ $ctrl.dragging === $index ? 1 : -1 }}"
+    md-colors="$ctrl.dragging === $index ? { 'background-color': 'hippo-grey-100' } : {}"
+    ng-focus="$ctrl.onFocus()">
+      <div class="field__title"
+        ng-class="{
+          'field__title--focused': $value.hasFocus,
+          'field__title--invalid': fieldValue.errorInfo
+        }"
+        ng-sortable-handle>
+        <div layout layout-align="space-between">
+          <h5
+            layout
+            layout-align="start center"
+            tabindex="0"
+            flex="grow"
+            class="collapse-toggle"
+            ng-click="collapse.toggle()">
+            <div layout layout-align="start center">
+              <md-icon class="field__title-icon collapse-icon"
+                ng-class="{'collapsed': collapse.isCollapsed}"
+                md-font-icon="mdi-chevron-down">
+              </md-icon>
 
-            <span>
-              {{ ::$ctrl.fieldType.displayName }}
-              <span ng-if="::$ctrl.fieldType.required">*</span>
-            </span>
+              <span>
+                {{ ::$ctrl.fieldType.displayName }}
+                <span ng-if="::$ctrl.fieldType.required">*</span>
+              </span>
 
-            <md-icon ng-if="::$ctrl.fieldType.hint"
-              class="field__title-icon hippo-hint-icon"
-              md-font-icon="mdi-information-outline">
-                <md-tooltip>
-                  {{ ::$ctrl.fieldType.hint }}
-                </md-tooltip>
-            </md-icon>
-          </div>
-        </h5>
+              <md-icon ng-if="::$ctrl.fieldType.hint"
+                class="field__title-icon hippo-hint-icon"
+                md-font-icon="mdi-information-outline">
+                  <md-tooltip>
+                    {{ ::$ctrl.fieldType.hint }}
+                  </md-tooltip>
+              </md-icon>
+            </div>
+          </h5>
 
-        <div ng-if="$ctrl.fieldType.multiple" class="field__title-buttons" layout layout-nowrap>
-          <div class="field__secondary-buttons" layout layout-nowrap>
-            <md-menu ng-if="$ctrl.isDraggable()">
-              <md-button class="md-icon-button field__title-button--secondary qa-button-reorder" ng-sortable-handle ng-click="$mdMenu.open($event)">
-                <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'DRAG_VALUE' | translate }}</md-tooltip>
-                <md-icon md-font-icon="mdi-reorder-horizontal"></md-icon>
+          <div ng-if="$ctrl.fieldType.multiple" class="field__title-buttons" layout layout-nowrap>
+            <div class="field__secondary-buttons" layout layout-nowrap>
+              <md-menu ng-if="$ctrl.isDraggable()">
+                <md-button class="md-icon-button field__title-button--secondary qa-button-reorder" ng-sortable-handle ng-click="$mdMenu.open($event)">
+                  <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'DRAG_VALUE' | translate }}</md-tooltip>
+                  <md-icon md-font-icon="mdi-reorder-horizontal"></md-icon>
+                </md-button>
+                <md-menu-content>
+                  <md-menu-item>
+                    <md-button ng-click="$ctrl.onMove($index, 0)" ng-disabled="$first" class="qa-menu-move-top">
+                      <md-icon md-font-icon="mdi-arrow-collapse-up" md-menu-align-target></md-icon>
+                      {{ ::'MOVE_TO_TOP' | translate }}
+                    </md-button>
+                  </md-menu-item>
+                  <md-menu-item>
+                    <md-button ng-click="$ctrl.onMove($index, $index - 1)" ng-disabled="$first" class="qa-menu-move-up">
+                      <md-icon md-font-icon="mdi-arrow-up" md-menu-align-target></md-icon>
+                      {{ ::'MOVE_UP' | translate }}
+                    </md-button>
+                  </md-menu-item>
+                  <md-menu-divider></md-menu-divider>
+                  <md-menu-item>
+                    <md-button ng-click="$ctrl.onMove($index, $index + 1)" ng-disabled="$last" class="qa-menu-move-down">
+                      <md-icon md-font-icon="mdi-arrow-down"></md-icon>
+                      {{ ::'MOVE_DOWN' | translate }}
+                    </md-button>
+                  </md-menu-item>
+                  <md-menu-item>
+                    <md-button ng-click="$ctrl.onMove($index, $ctrl.fieldValues.length - 1)" ng-disabled="$last" class="qa-menu-move-bottom">
+                      <md-icon md-font-icon="mdi-arrow-collapse-down"></md-icon>
+                      {{ ::'MOVE_TO_BOTTOM' | translate }}
+                    </md-button>
+                  </md-menu-item>
+                </md-menu-content>
+              </md-menu>
+              <md-button ng-if="$ctrl.isRemovable()" class="md-icon-button qa-button-remove" ng-click="$ctrl.onRemove($index)">
+                <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'REMOVE_VALUE' | translate }}</md-tooltip>
+                <md-icon md-font-icon="mdi-close-circle-outline"></md-icon>
               </md-button>
-              <md-menu-content>
-                <md-menu-item>
-                  <md-button ng-click="$ctrl.onMove($index, 0)" ng-disabled="$first" class="qa-menu-move-top">
-                    <md-icon md-font-icon="mdi-arrow-collapse-up" md-menu-align-target></md-icon>
-                    {{ ::'MOVE_TO_TOP' | translate }}
-                  </md-button>
-                </md-menu-item>
-                <md-menu-item>
-                  <md-button ng-click="$ctrl.onMove($index, $index - 1)" ng-disabled="$first" class="qa-menu-move-up">
-                    <md-icon md-font-icon="mdi-arrow-up" md-menu-align-target></md-icon>
-                    {{ ::'MOVE_UP' | translate }}
-                  </md-button>
-                </md-menu-item>
-                <md-menu-divider></md-menu-divider>
-                <md-menu-item>
-                  <md-button ng-click="$ctrl.onMove($index, $index + 1)" ng-disabled="$last" class="qa-menu-move-down">
-                    <md-icon md-font-icon="mdi-arrow-down"></md-icon>
-                    {{ ::'MOVE_DOWN' | translate }}
-                  </md-button>
-                </md-menu-item>
-                <md-menu-item>
-                  <md-button ng-click="$ctrl.onMove($index, $ctrl.fieldValues.length - 1)" ng-disabled="$last" class="qa-menu-move-bottom">
-                    <md-icon md-font-icon="mdi-arrow-collapse-down"></md-icon>
-                    {{ ::'MOVE_TO_BOTTOM' | translate }}
-                  </md-button>
-                </md-menu-item>
-              </md-menu-content>
-            </md-menu>
-            <md-button ng-if="$ctrl.isRemovable()" class="md-icon-button qa-button-remove" ng-click="$ctrl.onRemove($index)">
-              <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'REMOVE_VALUE' | translate }}</md-tooltip>
-              <md-icon md-font-icon="mdi-close-circle-outline"></md-icon>
+            </div>
+            <md-button class="md-icon-button qa-button-add" ng-click="$ctrl.onAdd($index + 1)">
+              <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'ADD_VALUE' | translate }}</md-tooltip>
+              <md-icon md-font-icon="mdi-plus-circle-outline"></md-icon>
             </md-button>
           </div>
-          <md-button class="md-icon-button qa-button-add" ng-click="$ctrl.onAdd($index + 1)">
-            <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'ADD_VALUE' | translate }}</md-tooltip>
-            <md-icon md-font-icon="mdi-plus-circle-outline"></md-icon>
-          </md-button>
+        </div>
+
+        <div class="field__error md-body-1" ng-if="fieldValue.errorInfo">
+          {{ fieldValue.errorInfo.message }}
         </div>
       </div>
 
-      <div class="field__error md-body-1" ng-if="fieldValue.errorInfo">
-        {{ fieldValue.errorInfo.message }}
-      </div>
-    </div>
-
-    <document-fields class="collapse-element"
-      name="$ctrl.getFieldName($index)"
-      field-types="::$ctrl.fieldType.fields"
-      field-values="fieldValue.fields"
-      on-field-focus="$ctrl.onFocus(); $value.hasFocus = true"
-      on-field-blur="$ctrl.onBlur(); $value.hasFocus = false">
-    </document-fields>
+      <document-fields class="collapse-element"
+        name="$ctrl.getFieldName($index)"
+        field-types="::$ctrl.fieldType.fields"
+        field-values="fieldValue.fields"
+        on-field-focus="$ctrl.onFocus(); $value.hasFocus = true"
+        on-field-blur="$ctrl.onBlur(); $value.hasFocus = false">
+      </document-fields>
+  </div>
 </div>
 
 <div ng-if="$ctrl.fieldType.multiple && (!$ctrl.fieldValues || !$ctrl.fieldValues.length)" class="field field--bordered qa-compound">
