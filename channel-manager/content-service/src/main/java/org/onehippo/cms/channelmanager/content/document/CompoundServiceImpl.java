@@ -65,6 +65,40 @@ public class CompoundServiceImpl implements CompoundService {
         }
     }
 
+    @Override
+    public void reorderCompoundField(final String documentPath, final FieldPath fieldPath, final int index) {
+        final String absCompoundPath = documentPath + SEPARATOR + fieldPath;
+        try {
+            final Node compoundNode = session.getNode(absCompoundPath);
+            final Node parent = compoundNode.getParent();
+
+            final String compoundPath = fieldPath.getLastSegment();
+            final String compoundName = fieldPath.getLastSegmentName();
+            final long numberOfCompounds = parent.getNodes(compoundName).getSize();
+
+            if (index > numberOfCompounds) {
+                log.warn("Failed to re-order compound '{}', new position '{}' is out of bounds", fieldPath, index);
+                throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "order", "out-of-bounds"));
+            }
+
+            if (numberOfCompounds == index) {
+                // move to last position
+                parent.orderBefore(compoundPath, null);
+            } else if (compoundNode.getIndex() > index) {
+                // move field up
+                parent.orderBefore(compoundPath, compoundName + "[" + index + "]");
+            } else {
+                // move field down
+                parent.orderBefore(compoundPath, compoundName + "[" + (index + 1) + "]");
+            }
+
+            session.save();
+        } catch (RepositoryException e) {
+            log.error("Failed to re-order compound field '{}' to position '{}'", absCompoundPath, index, e);
+            throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
+        }
+    }
+
     private String getPrototypePath(final FieldPath fieldPath, final List<FieldType> fields) {
         final FieldType fieldType = findFieldType(fieldPath, fields);
         if (fieldType == null) {

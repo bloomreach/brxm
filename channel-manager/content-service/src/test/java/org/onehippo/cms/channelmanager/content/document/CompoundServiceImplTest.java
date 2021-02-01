@@ -35,7 +35,9 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundF
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
+import org.onehippo.repository.mock.MockNode;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -258,6 +260,103 @@ public class CompoundServiceImplTest {
         replayAll();
 
         compoundService.addCompoundField("/document", new FieldPath("field-a[2]"), singletonList(fieldType));
+        verifyAll();
+    }
+
+    @Test
+    public void expectToThrowIfReorderIsOutOfBounds() throws Exception {
+        final MockNode root = MockNode.root();
+        final MockNode documents = root.addNode("documents", "nt:unstructured");
+        final MockNode document = documents.addNode("document", "nt:unstructured");
+        final MockNode field = document.addNode("field", "nt:unstructured");
+        expect(session.getNode("/documents/document/field")).andReturn(field);
+
+        replayAll();
+
+        try {
+            compoundService.reorderCompoundField("/documents", new FieldPath("document/field"), 2);
+            fail();
+        } catch (final InternalServerErrorException e) {
+            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR, "order", "out-of-bounds");
+        }
+
+        verifyAll();
+    }
+
+    @Test
+    public void expectToReorderUp() throws Exception {
+        final Node document = createMock(Node.class);
+        final Node field = createMock(Node.class);
+
+        expect(session.getNode("/documents/document/field[2]")).andReturn(field);
+        expect(field.getParent()).andReturn(document);
+        expect(field.getIndex()).andReturn(2);
+
+        final NodeIterator it = createMock(NodeIterator.class);
+        expect(document.getNodes("field")).andReturn(it);
+        expect(it.getSize()).andReturn(2L);
+
+        document.orderBefore(eq("field[2]"), eq("field[1]"));
+        expectLastCall();
+
+        session.save();
+        expectLastCall();
+
+        replayAll();
+
+        compoundService.reorderCompoundField("/documents", new FieldPath("document/field[2]"), 1);
+
+        verifyAll();
+    }
+
+    @Test
+    public void expectToReorderDown() throws Exception {
+        final Node document = createMock(Node.class);
+        final Node field = createMock(Node.class);
+
+        expect(session.getNode("/documents/document/field[1]")).andReturn(field);
+        expect(field.getParent()).andReturn(document);
+        expect(field.getIndex()).andReturn(1);
+
+        final NodeIterator it = createMock(NodeIterator.class);
+        expect(document.getNodes("field")).andReturn(it);
+        expect(it.getSize()).andReturn(3L);
+
+        document.orderBefore(eq("field[1]"), eq("field[3]"));
+        expectLastCall();
+
+        session.save();
+        expectLastCall();
+
+        replayAll();
+
+        compoundService.reorderCompoundField("/documents", new FieldPath("document/field[1]"), 2);
+
+        verifyAll();
+    }
+
+    @Test
+    public void expectToReorderToLast() throws Exception {
+        final Node document = createMock(Node.class);
+        final Node field = createMock(Node.class);
+
+        expect(session.getNode("/documents/document/field[1]")).andReturn(field);
+        expect(field.getParent()).andReturn(document);
+
+        final NodeIterator it = createMock(NodeIterator.class);
+        expect(document.getNodes("field")).andReturn(it);
+        expect(it.getSize()).andReturn(2L);
+
+        document.orderBefore(eq("field[1]"), eq(null));
+        expectLastCall();
+
+        session.save();
+        expectLastCall();
+
+        replayAll();
+
+        compoundService.reorderCompoundField("/documents", new FieldPath("document/field[1]"), 2);
+
         verifyAll();
     }
 }

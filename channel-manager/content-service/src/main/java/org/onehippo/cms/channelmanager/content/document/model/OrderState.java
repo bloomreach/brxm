@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cms.channelmanager.content.document;
+package org.onehippo.cms.channelmanager.content.document.model;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
+public class OrderState {
 
-public interface CompoundService {
+    private final int order;
 
-    void addCompoundField(final String documentPath, final FieldPath fieldPath, final List<FieldType> fields);
+    @JsonCreator
+    public OrderState(@JsonProperty("order") final int order) {
+        this.order = order;
+    }
 
-    void reorderCompoundField(String documentPath, FieldPath fieldPath, int order);
+    public int getOrder() {
+        return order;
+    }
 }

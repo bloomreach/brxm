@@ -175,4 +175,18 @@ public interface DocumentsService {
      * @throws ErrorWithPayloadException If adding a compound field to the document failed
      */
     Map<String, List<FieldValue>> addCompoundField(String uuid, String branchId, FieldPath fieldPath, UserContext userContext);
+
+    /**
+     * Reorder the specified compound field.
+     *
+     * @param uuid          UUID of the document (handle)
+     * @param branchId      Id of the requested document branch
+     * @param fieldPath     Path to the compound field in the document that should be removed
+     * @param userContext   Properties of the user that executes the request
+     * @param order         The position to move the field to
+     *
+     * @throws ErrorWithPayloadException If re-order of the compound field failed
+     */
+    void reorderCompoundField(final String uuid, final String branchId, final FieldPath fieldPath, final int order,
+                              final UserContext userContext);
 }

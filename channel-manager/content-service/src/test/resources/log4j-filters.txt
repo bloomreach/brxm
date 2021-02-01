@@ -61,6 +61,7 @@ Failed to get validator names for content type '/'
 Failed to load validator
 Failed to obtain draft for user 'bla'.
 Failed to persist changes
+Failed to re-order compound 'document/field', new position '2' is out of bounds
 Failed to read field 'test:id' from 'bla'
 Failed to read IMAGE_LINK 'my:imagelink' from node '/my:imagelink'
 Failed to read name of node 'null'
