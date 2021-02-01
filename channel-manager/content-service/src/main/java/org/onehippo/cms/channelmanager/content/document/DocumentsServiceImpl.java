@@ -574,14 +574,9 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final Node handle = getHandle(uuid, userContext.getSession());
         final Node draft = getDraft(handle, branchId);
-        final String documentPath;
-        try {
-            documentPath = draft.getPath();
-        } catch (RepositoryException e) {
-            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
-        }
-
+        final String documentPath = getDocumentPath(draft);
         final DocumentType documentType = getDocumentType(handle, userContext);
+
         compoundService.addCompoundField(documentPath, fieldPath, documentType.getFields());
 
         final Document document = assembleDocument(uuid, handle, draft, documentType);
@@ -601,18 +596,29 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
-        final String documentPath = getDocumentPath(uuid, branchId, userContext.getSession());
+        final Node handle = getHandle(uuid, userContext.getSession());
+        final Node draft = getDraft(handle, branchId);
+        final String documentPath = getDocumentPath(draft);
+
         compoundService.reorderCompoundField(documentPath, fieldPath, order);
     }
 
-    private static String getDocumentPath(final String uuid, final String branchId, final Session session) {
-        final Node handle = getHandle(uuid, session);
-        final Node draft = getDraft(handle, branchId);
-        try {
-            return draft.getPath();
-        } catch (final RepositoryException e) {
-            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
+    @Override
+    public void removeCompoundField(final String uuid,
+                               final String branchId,
+                               final FieldPath fieldPath,
+                               final UserContext userContext) {
+        if (fieldPath.isEmpty()) {
+            log.warn("Can not remove compound field if fieldPath is empty");
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
+
+        final Node handle = getHandle(uuid, userContext.getSession());
+        final Node draft = getDraft(handle, branchId);
+        final String documentPath = getDocumentPath(draft);
+        final DocumentType documentType = getDocumentType(handle, userContext);
+
+        compoundService.removeCompoundField(documentPath, fieldPath, documentType.getFields());
     }
 
     private static Map<String, List<FieldValue>> findFieldValues(final FieldPath path,
@@ -630,6 +636,14 @@ public class DocumentsServiceImpl implements DocumentsService {
         return remaining.isEmpty()
                 ? firstSegmentFields
                 : findFieldValues(remaining, firstSegmentFields);
+    }
+
+    private static String getDocumentPath(final Node draft) {
+        try {
+            return draft.getPath();
+        } catch (RepositoryException e) {
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
+        }
     }
 
     private static Node getDraft(final Node handle, final String branchId) {

@@ -20,6 +20,7 @@ import java.util.List;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -95,6 +96,37 @@ public class CompoundServiceImpl implements CompoundService {
             session.save();
         } catch (RepositoryException e) {
             log.error("Failed to re-order compound field '{}' to position '{}'", absCompoundPath, index, e);
+            throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
+        }
+    }
+
+    @Override
+    public void removeCompoundField(final String documentPath, final FieldPath fieldPath, final List<FieldType> fields) {
+        final FieldType fieldType = findFieldType(fieldPath, fields);
+        if (fieldType == null) {
+            log.warn("Failed to find field with path '{}'", fieldPath);
+            throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "fieldType", fieldPath.toString()));
+        }
+
+        final String compoundPath = documentPath + SEPARATOR + fieldPath;
+        try {
+            final String compoundName = fieldPath.getLastSegmentName();
+            final Node compoundNode = session.getNode(compoundPath);
+            final Node parent = compoundNode.getParent();
+            final long numberOfCompounds = parent.getNodes(compoundName).getSize();
+
+            if (numberOfCompounds <= fieldType.getMinValues()) {
+                log.warn("Cannot delete compound field '{}', the minimum amount of required fields is {}", fieldPath,
+                        fieldType.getMinValues());
+                throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "cardinality", "min-values"));
+            }
+
+            session.removeItem(compoundPath);
+            session.save();
+        } catch (final PathNotFoundException e) {
+            throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "compound", fieldPath.toString()));
+        } catch (final RepositoryException e) {
+            log.warn("Failed to remove compound '{}' from document '{}'", fieldPath, compoundPath, e);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
         }
     }

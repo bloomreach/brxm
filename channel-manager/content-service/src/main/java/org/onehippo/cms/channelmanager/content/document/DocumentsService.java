@@ -174,7 +174,8 @@ public interface DocumentsService {
      *
      * @throws ErrorWithPayloadException If adding a compound field to the document failed
      */
-    Map<String, List<FieldValue>> addCompoundField(String uuid, String branchId, FieldPath fieldPath, UserContext userContext);
+    Map<String, List<FieldValue>> addCompoundField(final String uuid, final String branchId, final FieldPath fieldPath,
+                                                   final UserContext userContext);
 
     /**
      * Reorder the specified compound field.
@@ -189,4 +190,17 @@ public interface DocumentsService {
      */
     void reorderCompoundField(final String uuid, final String branchId, final FieldPath fieldPath, final int order,
                               final UserContext userContext);
+
+    /**
+     * Remove specified compound field from the document.
+     *
+     * @param uuid          UUID of the document (handle)
+     * @param branchId      Id of the requested document branch
+     * @param fieldPath     Path to the compound field in the document that should be removed
+     * @param userContext   Properties of the user that executes the request
+     *
+     * @throws ErrorWithPayloadException If removal of the compound field failed
+     */
+    void removeCompoundField(final String uuid, final String branchId, final FieldPath fieldPath,
+                             final UserContext userContext);
 }
