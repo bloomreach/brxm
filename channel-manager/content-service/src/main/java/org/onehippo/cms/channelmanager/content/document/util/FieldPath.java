@@ -96,33 +96,57 @@ public class FieldPath {
     }
 
     /**
-     * @return the field path consisting of all segments except the first one.
-     */
-    public FieldPath getRemainingSegments() {
-        return new FieldPath(remainingSegments);
-    }
-
-    /**
      * @return the first segment of this field path without a numbered suffix.
      */
     public String getFirstSegmentName() {
-        if (!firstSegment.endsWith("]")) {
-            return firstSegment;
-        }
-
-        return StringUtils.substringBeforeLast(firstSegment, "[");
+        return hasSuffix(firstSegment) ? stripSuffix(firstSegment) : firstSegment;
     }
 
     /**
      * @return the JCR index of the first segment of this field path, defaults to 1.
      */
     public int getFirstSegmentIndex() {
-        if (!firstSegment.endsWith("]")) {
+        if (!hasSuffix(firstSegment)) {
             return 1;
         }
 
         final String indexAsString = substringBeforeLast(substringAfterLast(firstSegment, "["), "]");
         return Integer.parseInt(indexAsString);
+    }
+
+    /**
+     * @return the field path consisting of all segments except the first one.
+     */
+    public FieldPath getRemainingSegments() {
+        return new FieldPath(remainingSegments);
+    }
+
+    public String getLastSegment() {
+        if (remainingSegments == null) {
+            return firstSegment;
+        }
+
+        if (!StringUtils.contains(remainingSegments, SEPARATOR)) {
+            return remainingSegments;
+        }
+
+        return StringUtils.substringAfterLast(remainingSegments, SEPARATOR);
+    }
+
+    /**
+     * @return the last segment of this field path without a numbered suffix.
+     */
+    public String getLastSegmentName() {
+        final String lastSegment = getLastSegment();
+        return hasSuffix(lastSegment) ? stripSuffix(lastSegment) : lastSegment;
+    }
+
+    private static String stripSuffix(final String path) {
+        return StringUtils.substringBeforeLast(path, "[");
+    }
+
+    private static boolean hasSuffix(final String path) {
+        return path.endsWith("]");
     }
 
     @Override
