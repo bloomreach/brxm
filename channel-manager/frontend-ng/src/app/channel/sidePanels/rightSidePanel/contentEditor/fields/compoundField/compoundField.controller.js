@@ -29,21 +29,32 @@ export default class CompoundFieldCtrl {
   }
 
   $onInit() {
-    // @see https://github.com/SortableJS/angular-legacy-sortablejs/issues/44
-    this.sortable = new Sortable(this.$element[0], {
-      animation: 300,
-      chosenClass: 'field--dragged',
-      disabled: true,
-      forceFallback: true,
-      fallbackClass: 'field--ghost',
-      handle: '[ng-sortable-handle]',
-      onStart: this.onDrag.bind(this),
-      onUpdate: this.onDragging.bind(this),
-      onEnd: this.onDrop.bind(this),
-    });
+    this.$scope.$watch(() => !!this.fieldValues, () => this.$timeout(() => {
+      if (this.sortable) {
+        this.sortable.destroy();
+        delete this.sortable;
+      }
+
+      if (this.fieldValues) {
+        // @see https://github.com/SortableJS/angular-legacy-sortablejs/issues/44
+        this.sortable = new Sortable(this.$element.find('[ng-sortable-area]')[0], {
+          animation: 300,
+          chosenClass: 'field--dragged',
+          disabled: !this.isDraggable(),
+          forceFallback: true,
+          fallbackClass: 'field--ghost',
+          handle: '[ng-sortable-handle]',
+          onStart: this.onDrag.bind(this),
+          onUpdate: this.onDragging.bind(this),
+          onEnd: this.onDrop.bind(this),
+        });
+      }
+    }));
 
     this.$scope.$watch(() => !this.isDraggable(), (disabled) => {
-      this.sortable.option('disabled', disabled);
+      if (this.sortable) {
+        this.sortable.option('disabled', disabled);
+      }
     });
   }
 
@@ -139,7 +150,7 @@ export default class CompoundFieldCtrl {
       const element = this.form[field].$$element;
 
       element[0].focus();
-      element[0].scrollIntoView();
+      this.$timeout(() => element[0].scrollIntoView(), 500);
     });
   }
 
