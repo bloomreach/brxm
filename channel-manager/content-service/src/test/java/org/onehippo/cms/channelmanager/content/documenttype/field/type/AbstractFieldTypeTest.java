@@ -283,6 +283,23 @@ public class AbstractFieldTypeTest {
     }
 
     @Test
+    public void initOrderable() {
+        final FieldTypeContext fieldContext = new MockFieldTypeContext.Builder(fieldType)
+                .displayName("Field Display Name")
+                .hint("Hint")
+                .multiple(true)
+                .orderable(true)
+                .build();
+
+        replayAll();
+
+        fieldType.init(fieldContext);
+        assertTrue(fieldType.isOrderable());
+
+        verifyAll();
+    }
+
+    @Test
     public void initSingularNoLocalization() {
         final FieldTypeContext fieldContext = new MockFieldTypeContext.Builder(fieldType).build();
 

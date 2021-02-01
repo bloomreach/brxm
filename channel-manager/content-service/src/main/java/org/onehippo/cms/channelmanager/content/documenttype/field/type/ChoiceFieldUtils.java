@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.Map;
@@ -85,8 +84,8 @@ public class ChoiceFieldUtils {
                                                     final Map<String, NodeFieldType> choices,
                                                     final FieldsInformation fieldsInfo) {
         getProviderId(editorFieldNode)
-                .ifPresent(providerId -> ContentTypeContext.getContentType(providerId)
-                        .ifPresent(provider -> populateChoicesForProvider(provider, parentContext, choices, fieldsInfo)));
+                .flatMap(ContentTypeContext::getContentType)
+                .ifPresent(provider -> populateChoicesForProvider(provider, parentContext, choices, fieldsInfo));
     }
 
     private static Optional<String> getProviderId(final Node editorFieldNode) {
@@ -221,6 +220,7 @@ public class ChoiceFieldUtils {
             choiceId,                   // and the type
             false,                      // a choice is always stored in a node
             false,                      // a choice itself is never multiple
+            false,                      // a choice itself is never orderable
             contentType.getValidators(),// a choice executes the validators of its type
             choiceContext,              // the parent is the choice field
             null                        // a choice does not have its own editor config node but uses the one from the type
