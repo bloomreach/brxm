@@ -36,7 +36,13 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PR
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 
 /**
- * Custom workflow task for archiving document.
+ * <p>Custom workflow task for archiving or deleting a document</p>
+ *
+ * <p>Archives a document (moves document to the attic) if
+ * an unpublished variant is present. </p>
+ * <p>Deletes a document (completely delete the handle) if
+ * only a draft variant is present. That can happen is a document
+ * has been saved as draft and subsequently is deleted.</p>
  */
 public class ArchiveDocumentTask extends AbstractDocumentTask {
 
@@ -81,7 +87,11 @@ public class ArchiveDocumentTask extends AbstractDocumentTask {
         try {
            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core"
                    , unpublished != null ? unpublished: draft);
-           defaultWorkflow.archive();
+            if (draft != null && unpublished == null) {
+                defaultWorkflow.delete();
+            } else {
+                defaultWorkflow.archive();
+            }
         } catch (MappingException e) {
             log.warn("Cannot archive document: no default workflow", e);
         }
