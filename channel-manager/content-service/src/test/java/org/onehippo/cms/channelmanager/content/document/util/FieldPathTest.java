@@ -31,6 +31,7 @@ public class FieldPathTest {
     private FieldPath one2;
     private FieldPath oneTwo;
     private FieldPath one2Two;
+    private FieldPath one2Two2;
     private FieldPath oneTwoThree;
     private FieldPath two;
     private FieldPath nul;
@@ -46,6 +47,7 @@ public class FieldPathTest {
         one2 = new FieldPath("one[2]");
         oneTwo = new FieldPath("one/two");
         one2Two = new FieldPath("one[2]/two");
+        one2Two2 = new FieldPath("one[2]/two[2]");
         oneTwoThree = new FieldPath("one/two/three");
         two = new FieldPath("two");
         twoThree = new FieldPath("two/three");
@@ -139,6 +141,30 @@ public class FieldPathTest {
         assertThat(empty.getRemainingSegments(), equalTo(empty));
         assertThat(blank.getRemainingSegments(), equalTo(empty));
         assertThat(nul.getRemainingSegments(), equalTo(empty));
+    }
+
+    @Test
+    public void getLastSegment() {
+        assertThat(one.getLastSegment(), is("one"));
+        assertThat(oneTwo.getLastSegment(), is("two"));
+        assertThat(oneTwoThree.getLastSegment(), is("three"));
+        assertThat(empty.getLastSegment(), is(nullValue()));
+        assertThat(blank.getLastSegment(), is(" "));
+        assertThat(nul.getLastSegment(), is(nullValue()));
+        assertThat(one2.getLastSegment(), is("one[2]"));
+        assertThat(one2Two.getLastSegment(), is("two"));
+        assertThat(one2Two2.getLastSegment(), is("two[2]"));
+    }
+
+    @Test
+    public void getLastSegmentName() {
+        assertThat(one.getLastSegmentName(), is("one"));
+        assertThat(oneTwo.getLastSegmentName(), is("two"));
+        assertThat(oneTwoThree.getLastSegmentName(), is("three"));
+        assertThat(blank.getLastSegmentName(), is(" "));
+        assertThat(one2.getLastSegmentName(), is("one"));
+        assertThat(one2Two.getLastSegmentName(), is("two"));
+        assertThat(one2Two2.getLastSegmentName(), is("two"));
     }
 
     @Test

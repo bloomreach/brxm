@@ -573,18 +573,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         final Node handle = getHandle(uuid, userContext.getSession());
-        final BranchHandle branchHandle;
-        try {
-            branchHandle = new BranchHandleImpl(branchId, handle);
-        } catch (WorkflowException e) {
-            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
-        }
-
-        final Node draft = branchHandle.getDraft();
-        if (draft == null) {
-            throw new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST));
-        }
-
+        final Node draft = getDraft(handle, branchId);
         final String documentPath;
         try {
             documentPath = draft.getPath();
@@ -599,6 +588,31 @@ public class DocumentsServiceImpl implements DocumentsService {
         FieldTypeUtils.readFieldValues(draft, documentType.getFields(), document.getFields());
 
         return findFieldValues(fieldPath, document.getFields());
+    }
+
+    @Override
+    public void reorderCompoundField(final String uuid,
+                                     final String branchId,
+                                     final FieldPath fieldPath,
+                                     final int order,
+                                     final UserContext userContext) {
+        if (fieldPath.isEmpty()) {
+            log.warn("Can not reorder compound field if fieldPath is empty");
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+        }
+
+        final String documentPath = getDocumentPath(uuid, branchId, userContext.getSession());
+        compoundService.reorderCompoundField(documentPath, fieldPath, order);
+    }
+
+    private static String getDocumentPath(final String uuid, final String branchId, final Session session) {
+        final Node handle = getHandle(uuid, session);
+        final Node draft = getDraft(handle, branchId);
+        try {
+            return draft.getPath();
+        } catch (final RepositoryException e) {
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
+        }
     }
 
     private static Map<String, List<FieldValue>> findFieldValues(final FieldPath path,
@@ -616,6 +630,22 @@ public class DocumentsServiceImpl implements DocumentsService {
         return remaining.isEmpty()
                 ? firstSegmentFields
                 : findFieldValues(remaining, firstSegmentFields);
+    }
+
+    private static Node getDraft(final Node handle, final String branchId) {
+        final BranchHandle branchHandle;
+        try {
+            branchHandle = new BranchHandleImpl(branchId, handle);
+        } catch (WorkflowException e) {
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
+        }
+
+        final Node draft = branchHandle.getDraft();
+        if (draft == null) {
+            throw new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST));
+        }
+
+        return draft;
     }
 
     private static void archiveDocument(final String uuid, final DocumentWorkflow documentWorkflow) {
