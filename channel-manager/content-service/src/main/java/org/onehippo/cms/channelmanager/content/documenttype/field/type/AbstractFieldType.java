@@ -56,6 +56,7 @@ public abstract class AbstractFieldType implements BaseFieldType {
     private boolean hasUnsupportedValidator;
     private String jcrType;
     private String effectiveType;
+    private boolean orderable;
 
     @JsonIgnore
     private int minValues = 1;
@@ -64,7 +65,6 @@ public abstract class AbstractFieldType implements BaseFieldType {
     @JsonIgnore
     private boolean isMultiple;
 
-    // private boolean orderable; // future improvement
     // private boolean readOnly;  // future improvement
 
     private final Set<String> validatorNames = new LinkedHashSet<>();
@@ -167,6 +167,16 @@ public abstract class AbstractFieldType implements BaseFieldType {
         return jcrType;
     }
 
+    @Override
+    public boolean isOrderable() {
+        return orderable;
+    }
+
+    @Override
+    public void setOrderable(final boolean orderable) {
+        this.orderable = orderable;
+    }
+
     final void setJcrType(final String jcrType) {
         this.jcrType = jcrType;
     }
@@ -212,6 +222,7 @@ public abstract class AbstractFieldType implements BaseFieldType {
         }
 
         setMultiple(fieldContext.isMultiple());
+        setOrderable(fieldContext.isOrderable());
 
         jcrType = fieldContext.getJcrType();
         effectiveType = fieldContext.getType();

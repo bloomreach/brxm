@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -48,9 +47,9 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOCBASE;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.onehippo.repository.util.JcrConstants.GALLERY_PATH;
 import static org.onehippo.repository.util.JcrConstants.NT_UNSTRUCTURED;
@@ -108,7 +107,7 @@ public class ImageLinkFieldTypeTest {
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
         replayAll();
-        final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, null, parentContext, editorConfigNode);
+        final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, false, null, parentContext, editorConfigNode);
         imageLink.init(context);
 
         final JsonNode imagePickerConfig = imageLink.getConfig().get("imagepicker");
