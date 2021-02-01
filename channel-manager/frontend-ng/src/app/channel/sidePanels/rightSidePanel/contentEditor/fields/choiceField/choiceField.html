@@ -15,49 +15,135 @@
   -->
 
 <div
-  ng-if="$ctrl.fieldValues"
   collapse
   class="field field--bordered qa-choice"
   ng-class="{
     'field--focused': $ctrl.hasFocus,
     'field--invalid': $ctrl.hasError
   }">
-    <h5 layout
-      layout-align="start center"
-      class="field__title collapse-toggle"
-      ng-class="{ 'field__title--focused': $ctrl.hasFocus }"
-      ng-click="collapse.toggle()">
-        <md-icon class="field__title-icon collapse-icon"
-          ng-class="{'collapsed': collapse.isCollapsed}"
-          md-font-icon="mdi-chevron-down">
-        </md-icon>
+    <div
+      class="field__title"
+      ng-class="{ 'field__title--focused': $ctrl.hasFocus }">
+      <div layout layout-align="space-between">
+        <h5
+          layout
+          layout-align="start center"
+          ng-attr-tabindex="{{ !$ctrl.isEmpty() ? 0 : false }}"
+          flex="grow"
+          class="collapse-toggle"
+          ng-click="$ctrl.isEmpty() || collapse.toggle()">
+          <div layout layout-align="start center">
+            <md-icon class="field__title-icon collapse-icon"
+              ng-class="{'collapsed': $ctrl.isEmpty() || collapse.isCollapsed}"
+              md-font-icon="mdi-chevron-down"
+              md-colors="$ctrl.isEmpty() ? { color: 'grey' } : {}">
+            </md-icon>
 
-        <span>
-          {{ $ctrl.fieldType.displayName }}
-          <span ng-if="$ctrl.fieldType.required">*</span>
-        </span>
+            <span md-colors="$ctrl.isEmpty() ? { color: 'grey' } : {}">
+              {{ $ctrl.fieldType.displayName }}
+              <span ng-if="$ctrl.fieldType.required">*</span>
+            </span>
 
-        <md-icon ng-if="$ctrl.fieldType.hint"
-          class="field__title-icon hippo-hint-icon"
-          md-font-icon="mdi-information-outline">
-            <md-tooltip>
-              {{ $ctrl.fieldType.hint }}
-            </md-tooltip>
-        </md-icon>
-    </h5>
+            <md-icon ng-if="$ctrl.fieldType.hint"
+              class="field__title-icon hippo-hint-icon"
+              md-font-icon="mdi-information-outline"
+              md-colors="$ctrl.isEmpty() ? { color: 'grey' } : {}">
+                <md-tooltip>
+                  {{ $ctrl.fieldType.hint }}
+                </md-tooltip>
+            </md-icon>
+          </div>
+        </h5>
+        <div class="field__title-buttons" layout layout-nowrap>
+          <md-menu ng-if="$ctrl.fieldType.multiple">
+            <md-button class="md-icon-button qa-button-add" ng-sortable-handle ng-click="$mdMenu.open($event)">
+              <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'ADD_VALUE' | translate }}</md-tooltip>
+              <md-icon md-font-icon="mdi-plus-circle-outline"></md-icon>
+            </md-button>
+            <md-menu-content>
+              <md-menu-item ng-repeat="choice in $ctrl.choices track by $index">
+                <md-button ng-click="$ctrl.onAdd(choice.id)" class="qa-menu-add">
+                  {{ choice.displayName }}
+                </md-button>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
+        </div>
+      </div>
+    </div>
 
-    <div class="collapse-element" ng-sortable-area>
-      <div ng-repeat="fieldValue in $ctrl.fieldValues track by $index">
-        <compound-field
-          ng-if="$ctrl.fieldType.choices[fieldValue.chosenId].type === 'COMPOUND'"
-          name="$ctrl.getFieldName($index)"
-          field-type="$ctrl.fieldType.choices[fieldValue.chosenId]"
-          field-values="[fieldValue.chosenValue]"
-          dragging="$ctrl.dragging === $index ? 0 : false"
-          ng-focus="$ctrl.onFocus()"
-          ng-blur="$ctrl.onBlur()">
-          <compound-field-buttons>
-            <div class="field__secondary-buttons" layout layout-nowrap>
+    <div class="collapse-element">
+      <div ng-if="!$ctrl.isEmpty()" ng-sortable-area>
+        <div ng-repeat="fieldValue in $ctrl.fieldValues track by $index" ng-init="$placement = $index">
+          <compound-field
+            ng-if="$ctrl.fieldType.choices[fieldValue.chosenId].type === 'COMPOUND'"
+            name="$ctrl.getFieldName($index)"
+            field-type="$ctrl.fieldType.choices[fieldValue.chosenId]"
+            field-values="[fieldValue.chosenValue]"
+            dragging="$ctrl.dragging === $index ? 0 : false"
+            ng-focus="$ctrl.onFocus()"
+            ng-blur="$ctrl.onBlur()">
+            <compound-field-buttons layout layout-nowrap>
+              <div class="field__secondary-buttons" layout layout-nowrap>
+                <md-menu ng-if="$ctrl.isDraggable()">
+                  <md-button class="md-icon-button qa-button-reorder" ng-sortable-handle ng-click="$mdMenu.open($event)">
+                    <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'DRAG_VALUE' | translate }}</md-tooltip>
+                    <md-icon md-font-icon="mdi-reorder-horizontal"></md-icon>
+                  </md-button>
+                  <md-menu-content>
+                    <md-menu-item>
+                      <md-button ng-click="$ctrl.onMove($index, 0)" ng-disabled="$first" class="qa-menu-move-top">
+                        <md-icon md-font-icon="mdi-arrow-collapse-up" md-menu-align-target></md-icon>
+                        {{ ::'MOVE_TO_TOP' | translate }}
+                      </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                      <md-button ng-click="$ctrl.onMove($index, $index - 1)" ng-disabled="$first" class="qa-menu-move-up">
+                        <md-icon md-font-icon="mdi-arrow-up" md-menu-align-target></md-icon>
+                        {{ ::'MOVE_UP' | translate }}
+                      </md-button>
+                    </md-menu-item>
+                    <md-menu-divider></md-menu-divider>
+                    <md-menu-item>
+                      <md-button ng-click="$ctrl.onMove($index, $index + 1)" ng-disabled="$last" class="qa-menu-move-down">
+                        <md-icon md-font-icon="mdi-arrow-down"></md-icon>
+                        {{ ::'MOVE_DOWN' | translate }}
+                      </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                      <md-button ng-click="$ctrl.onMove($index, $ctrl.fieldValues.length - 1)" ng-disabled="$last" class="qa-menu-move-bottom">
+                        <md-icon md-font-icon="mdi-arrow-collapse-down"></md-icon>
+                        {{ ::'MOVE_TO_BOTTOM' | translate }}
+                      </md-button>
+                    </md-menu-item>
+                  </md-menu-content>
+                </md-menu>
+              </div>
+              <md-menu ng-if="$ctrl.fieldType.multiple">
+                <md-button class="md-icon-button qa-button-add" ng-sortable-handle ng-click="$mdMenu.open($event)">
+                  <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'ADD_VALUE' | translate }}</md-tooltip>
+                  <md-icon md-font-icon="mdi-plus-circle-outline"></md-icon>
+                </md-button>
+                <md-menu-content>
+                  <md-menu-item ng-repeat="choice in $ctrl.choices track by $index">
+                    <md-button ng-click="$ctrl.onAdd(choice.id, $placement + 1)" class="qa-menu-add">
+                      {{ choice.displayName }}
+                    </md-button>
+                  </md-menu-item>
+                </md-menu-content>
+              </md-menu>
+            </compound-field-buttons>
+          </compound-field>
+
+          <primitive-field
+            ng-if="$ctrl.fieldType.choices[fieldValue.chosenId].type !== 'COMPOUND'"
+            name="$ctrl.getFieldName($index)"
+            field-type="$ctrl.fieldType.choices[fieldValue.chosenId]"
+            field-values="[fieldValue.chosenValue]"
+            dragging="$ctrl.dragging === $index ? 0 : false"
+            on-field-focus="$ctrl.onFocus()"
+            on-field-blur="$ctrl.onBlur()">
+            <primitive-field-buttons layout layout-nowrap>
               <md-menu ng-if="$ctrl.isDraggable()">
                 <md-button class="md-icon-button qa-button-reorder" ng-sortable-handle ng-click="$mdMenu.open($event)">
                   <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'DRAG_VALUE' | translate }}</md-tooltip>
@@ -91,54 +177,22 @@
                   </md-menu-item>
                 </md-menu-content>
               </md-menu>
-            </div>
-          </compound-field-buttons>
-        </compound-field>
-
-        <primitive-field
-          ng-if="$ctrl.fieldType.choices[fieldValue.chosenId].type !== 'COMPOUND'"
-          name="$ctrl.getFieldName($index)"
-          field-type="$ctrl.fieldType.choices[fieldValue.chosenId]"
-          field-values="[fieldValue.chosenValue]"
-          dragging="$ctrl.dragging === $index ? 0 : false"
-          on-field-focus="$ctrl.onFocus()"
-          on-field-blur="$ctrl.onBlur()">
-          <primitive-field-buttons>
-            <md-menu ng-if="$ctrl.isDraggable()">
-              <md-button class="md-icon-button qa-button-reorder" ng-sortable-handle ng-click="$mdMenu.open($event)">
-                <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'DRAG_VALUE' | translate }}</md-tooltip>
-                <md-icon md-font-icon="mdi-reorder-horizontal"></md-icon>
-              </md-button>
-              <md-menu-content>
-                <md-menu-item>
-                  <md-button ng-click="$ctrl.onMove($index, 0)" ng-disabled="$first" class="qa-menu-move-top">
-                    <md-icon md-font-icon="mdi-arrow-collapse-up" md-menu-align-target></md-icon>
-                    {{ ::'MOVE_TO_TOP' | translate }}
-                  </md-button>
-                </md-menu-item>
-                <md-menu-item>
-                  <md-button ng-click="$ctrl.onMove($index, $index - 1)" ng-disabled="$first" class="qa-menu-move-up">
-                    <md-icon md-font-icon="mdi-arrow-up" md-menu-align-target></md-icon>
-                    {{ ::'MOVE_UP' | translate }}
-                  </md-button>
-                </md-menu-item>
-                <md-menu-divider></md-menu-divider>
-                <md-menu-item>
-                  <md-button ng-click="$ctrl.onMove($index, $index + 1)" ng-disabled="$last" class="qa-menu-move-down">
-                    <md-icon md-font-icon="mdi-arrow-down"></md-icon>
-                    {{ ::'MOVE_DOWN' | translate }}
-                  </md-button>
-                </md-menu-item>
-                <md-menu-item>
-                  <md-button ng-click="$ctrl.onMove($index, $ctrl.fieldValues.length - 1)" ng-disabled="$last" class="qa-menu-move-bottom">
-                    <md-icon md-font-icon="mdi-arrow-collapse-down"></md-icon>
-                    {{ ::'MOVE_TO_BOTTOM' | translate }}
-                  </md-button>
-                </md-menu-item>
-              </md-menu-content>
-            </md-menu>
-          </compound-field-buttons>
-        </primitive-field>
+              <md-menu ng-if="$ctrl.fieldType.multiple">
+                <md-button class="md-icon-button qa-button-add" ng-sortable-handle ng-click="$mdMenu.open($event)">
+                  <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'ADD_VALUE' | translate }}</md-tooltip>
+                  <md-icon md-font-icon="mdi-plus-circle-outline"></md-icon>
+                </md-button>
+                <md-menu-content>
+                  <md-menu-item ng-repeat="choice in $ctrl.choices track by $index">
+                    <md-button ng-click="$ctrl.onAdd(choice.id, $placement + 1)" class="qa-menu-add">
+                      {{ choice.displayName }}
+                    </md-button>
+                  </md-menu-item>
+                </md-menu-content>
+              </md-menu>
+            </compound-field-buttons>
+          </primitive-field>
+        </div>
       </div>
     </div>
 </div>

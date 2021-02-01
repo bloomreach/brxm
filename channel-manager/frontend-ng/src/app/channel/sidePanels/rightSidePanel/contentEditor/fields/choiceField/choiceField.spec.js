@@ -33,10 +33,12 @@ describe('ChoiceField', () => {
       choice1: {
         id: 'choice1',
         fields: [],
+        type: 'PRIMITIVE',
       },
       choice2: {
         id: 'choice2',
         fields: [],
+        type: 'COMPOUND',
       },
     },
   };
@@ -202,6 +204,39 @@ describe('ChoiceField', () => {
       spyOn(FieldService, 'reorder').and.returnValue($q.reject());
 
       $ctrl.onMove(1, 2);
+      $scope.$digest();
+
+      expect($ctrl.fieldValues).toEqual([
+        jasmine.objectContaining({ chosenId: 'choice2' }),
+        jasmine.objectContaining({ chosenId: 'choice1' }),
+        jasmine.objectContaining({ chosenId: 'choice2' }),
+      ]);
+      expect($ctrl.form.$setDirty).not.toHaveBeenCalled();
+      expect(FeedbackService.showError).toHaveBeenCalled();
+    });
+  });
+
+  describe('onAdd', () => {
+    it('should add a value', () => {
+      spyOn(FieldService, 'add').and.returnValue({ choice1: [{ value: 'something' }] });
+
+      $ctrl.onAdd('choice1', 1);
+      $scope.$digest();
+
+      expect(FieldService.add).toHaveBeenCalledWith({ name: 'test-name[2]/choice1' });
+      expect($ctrl.fieldValues).toEqual([
+        jasmine.objectContaining({ chosenId: 'choice2' }),
+        jasmine.objectContaining({ chosenId: 'choice1', chosenValue: { value: 'something' } }),
+        jasmine.objectContaining({ chosenId: 'choice1' }),
+        jasmine.objectContaining({ chosenId: 'choice2' }),
+      ]);
+      expect($ctrl.form.$setDirty).toHaveBeenCalled();
+    });
+
+    it('should handle an error', () => {
+      spyOn(FieldService, 'add').and.returnValue($q.reject());
+
+      $ctrl.onAdd('choice1', 1);
       $scope.$digest();
 
       expect($ctrl.fieldValues).toEqual([
