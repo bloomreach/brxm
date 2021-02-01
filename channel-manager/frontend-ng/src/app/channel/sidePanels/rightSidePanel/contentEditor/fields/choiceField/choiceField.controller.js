@@ -58,6 +58,12 @@ class ChoiceFieldCtrl {
     });
   }
 
+  $onChanges({ fieldType }) {
+    if (fieldType) {
+      this.choices = Object.entries(this.fieldType.choices).map(([id, { displayName }]) => ({ id, displayName }));
+    }
+  }
+
   getFieldName(index) {
     return index > 0 ? `${this.name}[${index + 1}]` : `${this.name}`;
   }
@@ -74,6 +80,10 @@ class ChoiceFieldCtrl {
 
   isDraggable() {
     return this.fieldType.multiple && this.fieldType.orderable && this.fieldValues && this.fieldValues.length > 1;
+  }
+
+  isEmpty() {
+    return !this.fieldValues || !this.fieldValues.length;
   }
 
   onDrag({
@@ -131,7 +141,7 @@ class ChoiceFieldCtrl {
     this.fieldValues.splice(newIndex, 0, this.fieldValues.splice(oldIndex, 1)[0]);
   }
 
-  _focus(index) {
+  _focus(index, reset = false) {
     this.$timeout(() => {
       const { id } = this.fieldType.choices[this.fieldValues[index].chosenId];
       const name = `${this.getFieldName(index)}/${id}`;
@@ -141,11 +151,32 @@ class ChoiceFieldCtrl {
         return;
       }
 
+      if (reset) {
+        this.form[field].$setUntouched();
+      }
+
       const element = this.form[field].$$element;
 
       element[0].focus();
       this.$timeout(() => element[0].scrollIntoView(), 500);
     });
+  }
+
+  async onAdd(chosenId, index = 0) {
+    try {
+      const fields = await this.FieldService.add({ name: `${this.getFieldName(index)}/${chosenId}` });
+      const chosenValue = this.fieldType.choices[chosenId].type === 'COMPOUND' ? { fields } : fields[chosenId][0];
+
+      if (!this.fieldValues) {
+        this.fieldValues = [];
+      }
+
+      this.fieldValues.splice(index, 0, { chosenId, chosenValue });
+      this.form.$setDirty();
+      this._focus(index, true);
+    } catch (error) {
+      this.FeedbackService.showError('ERROR_FIELD_ADD');
+    }
   }
 }
 
