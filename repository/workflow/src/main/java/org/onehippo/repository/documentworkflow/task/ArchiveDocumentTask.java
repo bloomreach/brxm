@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2013-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -48,28 +49,12 @@ public class ArchiveDocumentTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(ArchiveDocumentTask.class);
+    private static final Logger log = LoggerFactory.getLogger(ArchiveDocumentTask.class);
 
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
         DocumentHandle dh = getDocumentHandle();
-        DocumentVariant draft;
-        DocumentVariant unpublished;
-        try {
-            draft = dh.getDocuments().get(HippoStdNodeType.DRAFT);
-            unpublished = dh.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
-            if (draft != null && unpublished !=null) {
-                deleteDocument(draft);
-            }
-
-            DocumentVariant published = dh.getDocuments().get(HippoStdNodeType.PUBLISHED);
-            if (published != null) {
-                deleteDocument(published);
-            }
-        } catch (RepositoryException e) {
-            throw new WorkflowException(e.getMessage(), e);
-        }
 
         final Node handle = dh.getHandle();
         if (handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
@@ -83,20 +68,33 @@ public class ArchiveDocumentTask extends AbstractDocumentTask {
             handle.removeMixin(NT_HIPPO_VERSION_INFO);
         }
 
-
         try {
-           DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core"
-                   , unpublished != null ? unpublished: draft);
-            if (draft != null && unpublished == null) {
-                defaultWorkflow.delete();
-            } else {
-                defaultWorkflow.archive();
+            final Map<String, DocumentVariant> documents = dh.getDocuments();
+            final DocumentVariant draft = documents.get(HippoStdNodeType.DRAFT);
+            final DocumentVariant unpublished = documents.get(HippoStdNodeType.UNPUBLISHED);
+            final DocumentVariant published = documents.get(HippoStdNodeType.PUBLISHED);
+            if (published != null) {
+                deleteDocument(published);
             }
-        } catch (MappingException e) {
-            log.warn("Cannot archive document: no default workflow", e);
+            if (unpublished != null) {
+                if (draft != null) {
+                    deleteDocument(draft);
+                }
+                getDefaultWorkflow(unpublished).archive();
+            } else if (draft != null) {
+                getDefaultWorkflow(draft).delete();
+            }
+        } catch (MappingException mappingException) {
+            log.warn("Cannot archive document: no default workflow", mappingException);
+        } catch (RepositoryException e) {
+            throw new WorkflowException(e.getMessage(), e);
         }
 
         return null;
+    }
+
+    private DefaultWorkflow getDefaultWorkflow(final DocumentVariant variant) throws WorkflowException, RepositoryException {
+        return (DefaultWorkflow) getWorkflowContext().getWorkflow("core", variant);
     }
 
     protected void deleteDocument(Document document) throws RepositoryException {
