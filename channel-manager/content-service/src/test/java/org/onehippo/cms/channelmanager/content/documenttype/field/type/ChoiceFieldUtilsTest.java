@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.Collections;
@@ -234,6 +233,7 @@ public class ChoiceFieldUtilsTest {
         expect(choice.getEffectiveType()).andReturn("String").anyTimes();
         expect(choice.isProperty()).andReturn(false);
         expect(choice.isMultiple()).andReturn(false);
+        expect(choice.isOrdered()).andReturn(false);
         expect(choice.getValidators()).andReturn(Collections.emptyList());
         expect(ContentTypeContext.getContentType("choiceType")).andReturn(Optional.of(compound));
         expect(ContentTypeContext.getContentType("String")).andReturn(Optional.empty());
@@ -510,7 +510,7 @@ public class ChoiceFieldUtilsTest {
         final ContentType compound = createMock(ContentType.class);
         final RichTextFieldType richTextField = PowerMock.createMockAndExpectNew(RichTextFieldType.class);
         final FieldTypeContext richTextFieldContext = PowerMock.createMockAndExpectNew(FieldTypeContext.class,
-                "hippostd:html", "hippostd:html", "hippostd:html", false, false, Collections.emptyList(), childContext, null);
+                "hippostd:html", "hippostd:html", "hippostd:html", false, false, false, Collections.emptyList(), childContext, null);
         final FieldsInformation fieldsInfo = FieldsInformation.allSupported();
 
         PowerMock.mockStaticPartial(ContentTypeContext.class, "createFromParent");
