@@ -101,16 +101,6 @@ public class ContentResource {
                 userContext -> documentService.obtainEditableDocument(id, getBranchId(servletRequest), userContext));
     }
 
-    @POST
-    @Path("documents/{documentId}/editable/{fieldPath:.*}")
-    public Response addCompoundField(@PathParam("documentId") final String documentId,
-                                     @PathParam("fieldPath") final String fieldPath,
-                                     @Context final HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Status.OK,
-                userContext -> documentService.addCompoundField(documentId, getBranchId(servletRequest),
-                                                                new FieldPath(fieldPath), userContext));
-    }
-
     @PATCH
     @Path("documents/{documentId}/editable/{fieldPath:.*}")
     public Response orderCompoundField(@PathParam("documentId") final String id,
@@ -162,6 +152,17 @@ public class ContentResource {
             documentService.removeCompoundField(id, getBranchId(servletRequest), new FieldPath(fieldPath), userContext);
             return null;
         });
+    }
+
+    @POST
+    @Path("documents/{documentId}/editable/{fieldPath:.*}/{type}")
+    public Response addChoiceField(@PathParam("documentId") final String documentId,
+                                   @PathParam("fieldPath") final String fieldPath,
+                                   @PathParam("type") final String type,
+                                   @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK,
+                userContext -> documentService.addCompoundField(documentId, getBranchId(servletRequest),
+                        new FieldPath(fieldPath), type, userContext));
     }
 
     @GET
