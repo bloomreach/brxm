@@ -17,6 +17,7 @@ package org.onehippo.cms.channelmanager.content.document;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -566,6 +567,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     public Map<String, List<FieldValue>> addCompoundField(final String uuid,
                                      final String branchId,
                                      final FieldPath fieldPath,
+                                     final String type,
                                      final UserContext userContext) {
         if (fieldPath.isEmpty()) {
             log.warn("Can not add compound field if fieldPath is empty");
@@ -577,7 +579,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final String documentPath = getDocumentPath(draft);
         final DocumentType documentType = getDocumentType(handle, userContext);
 
-        compoundService.addCompoundField(documentPath, fieldPath, documentType.getFields());
+        compoundService.addCompoundField(documentPath, fieldPath, documentType.getFields(), type);
 
         final Document document = assembleDocument(uuid, handle, draft, documentType);
         FieldTypeUtils.readFieldValues(draft, documentType.getFields(), document.getFields());
@@ -631,11 +633,22 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         final int fieldIndex = path.getFirstSegmentIndex();
-        final Map<String, List<FieldValue>> firstSegmentFields = fieldValues.get(fieldIndex - 1).getFields();
+        final FieldValue value = fieldValues.get(fieldIndex - 1);
         final FieldPath remaining = path.getRemainingSegments();
-        return remaining.isEmpty()
-                ? firstSegmentFields
-                : findFieldValues(remaining, firstSegmentFields);
+
+        if (!remaining.isEmpty()) {
+            return findFieldValues(remaining, value.getFields());
+        }
+
+        if (StringUtils.isNotEmpty(value.getChosenId())) {
+            final FieldValue chosenValue = value.getChosenValue();
+            if (chosenValue.getFields() == null) {
+                return Collections.singletonMap(value.getChosenId(), Collections.singletonList(chosenValue));
+            }
+            return chosenValue.getFields();
+        }
+
+        return value.getFields();
     }
 
     private static String getDocumentPath(final Node draft) {
