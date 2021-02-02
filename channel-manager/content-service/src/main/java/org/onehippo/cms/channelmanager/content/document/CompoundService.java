@@ -22,7 +22,8 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType
 
 public interface CompoundService {
 
-    void addCompoundField(final String documentPath, final FieldPath fieldPath, final List<FieldType> fields);
+    void addCompoundField(final String documentPath, final FieldPath fieldPath, final List<FieldType> fields,
+                          final String type);
 
     void reorderCompoundField(String documentPath, FieldPath fieldPath, int order);
 

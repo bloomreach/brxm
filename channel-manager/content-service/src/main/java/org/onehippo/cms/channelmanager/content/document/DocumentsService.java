@@ -168,6 +168,7 @@ public interface DocumentsService {
      * @param uuid          UUID of the document (handle)
      * @param branchId      Id of the requested document branch
      * @param fieldPath     Path to the new compound field in the document
+     * @param type          The type of the new compound field
      * @param userContext   Properties of the user that executes the request
      *
      * @return JSON-serializable representation of the new compound field.
@@ -175,7 +176,7 @@ public interface DocumentsService {
      * @throws ErrorWithPayloadException If adding a compound field to the document failed
      */
     Map<String, List<FieldValue>> addCompoundField(final String uuid, final String branchId, final FieldPath fieldPath,
-                                                   final UserContext userContext);
+                                                   final String type, final UserContext userContext);
 
     /**
      * Reorder the specified compound field.
@@ -203,4 +204,5 @@ public interface DocumentsService {
      */
     void removeCompoundField(final String uuid, final String branchId, final FieldPath fieldPath,
                              final UserContext userContext);
+
 }
