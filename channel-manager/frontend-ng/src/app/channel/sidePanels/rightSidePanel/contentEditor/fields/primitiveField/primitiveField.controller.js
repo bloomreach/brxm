@@ -26,6 +26,7 @@ class PrimitiveFieldCtrl {
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
 
     this.ngSortable = {
+      animation: 300,
       chosenClass: 'field--dragged',
       forceFallback: true,
       fallbackClass: 'field--ghost',
