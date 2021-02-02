@@ -153,7 +153,7 @@ public class CompoundServiceImplTest {
         replayAll();
 
         try {
-            compoundService.addCompoundField("/document", new FieldPath("field"), singletonList(fieldType), "type");
+            compoundService.addCompoundField("/document", new FieldPath("field"), singletonList(fieldType), "ns:type");
             fail();
         } catch (final InternalServerErrorException e) {
             assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR, "fieldType", "not-compound-or-choice");
@@ -162,7 +162,22 @@ public class CompoundServiceImplTest {
     }
 
     @Test
+    public void addCompoundFieldShouldThrowIfMaxValuesIsNotRespected() throws Exception {
+        mockDocument("document", "field", 1);
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
+        replayAll();
+
+        try {
+            compoundService.addCompoundField("/document", new FieldPath("field"), singletonList(fieldType), "ns:type");
+        } catch (final InternalServerErrorException e) {
+            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR, "cardinality", "max-values");
+        }
+        verifyAll();
+    }
+
+    @Test
     public void addCompoundFieldShouldThrowIfPrototypeNamespaceIsNotFound() throws Exception {
+        mockDocument("document", "field", 0);
         final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
         final Workspace workspace = createMock(Workspace.class);
         expect(session.getWorkspace()).andReturn(workspace);
@@ -182,6 +197,7 @@ public class CompoundServiceImplTest {
 
     @Test
     public void addCompoundFieldShouldThrowIfPrototypeIsNotFound() throws Exception {
+        mockDocument("document", "field", 0);
         final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
         final Workspace workspace = createMock(Workspace.class);
         expect(session.getWorkspace()).andReturn(workspace);
@@ -202,6 +218,7 @@ public class CompoundServiceImplTest {
 
     @Test
     public void addCompoundFieldShouldCopyPrototypeToDocument() throws Exception {
+        mockDocument("document", "field", 0);
         final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
 
         final Node prototypeNode = createMock(Node.class);
@@ -242,6 +259,8 @@ public class CompoundServiceImplTest {
 
     @Test
     public void addCompoundFieldShouldOrderPrototype() throws Exception {
+        final Node documentNode = mockDocument("document", "field", 0);
+        final Node compoundNode = mockField("compound", documentNode);
         final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
 
         final Node prototypeNode = createMock(Node.class);
@@ -265,8 +284,6 @@ public class CompoundServiceImplTest {
         expect(it.nextNode()).andReturn(prototypeNode);
         expect(prototypeNode.isNodeType(JcrConstants.NT_UNSTRUCTURED)).andReturn(false);
 
-        final Node documentNode = createMock(Node.class);
-        final Node compoundNode = mockField("compound", documentNode);
         expect(JcrUtils.copy(session, "/prototype", "/document/field")).andReturn(compoundNode);
 
         documentNode.orderBefore(eq("compound[1]"), eq("field[2]"));
@@ -458,6 +475,17 @@ public class CompoundServiceImplTest {
 
         verifyAll();
     }
+
+    private Node mockDocument(final String documentName, final String fieldName, final long children) throws Exception {
+        final Node documentNode = createMock(Node.class);
+        expect(session.getNode("/" + documentName)).andReturn(documentNode);
+
+        final NodeIterator it = createMock(NodeIterator.class);
+        expect(it.getSize()).andReturn(children);
+        expect(documentNode.getNodes(fieldName)).andReturn(it);
+        return documentNode;
+    }
+
 
     private void mockDocumentAndField(final String documentName, final String fieldName) throws Exception {
         final Node documentNode = createMock(Node.class);
