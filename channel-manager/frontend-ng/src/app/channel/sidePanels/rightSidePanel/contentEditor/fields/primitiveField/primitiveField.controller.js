@@ -15,11 +15,13 @@
  */
 
 class PrimitiveFieldCtrl {
-  constructor($rootScope, $scope, FieldService, SharedSpaceToolbarService) {
+  constructor($element, $rootScope, $scope, $timeout, FieldService, SharedSpaceToolbarService) {
     'ngInject';
 
+    this.$element = $element;
     this.$rootScope = $rootScope;
     this.$scope = $scope;
+    this.$timeout = $timeout;
     this.FieldService = FieldService;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
 
@@ -203,6 +205,8 @@ class PrimitiveFieldCtrl {
 
     if (this.fieldValues.length) {
       this.form[this.getFieldName(Math.max(index - 1, 0))].$$element[0].focus();
+    } else {
+      this._focusAddButton();
     }
   }
 
@@ -210,9 +214,11 @@ class PrimitiveFieldCtrl {
     this.fieldValues.push({ value: '' });
     this.form.$setDirty();
 
-    setTimeout(() => {
-      this.form[this.getFieldName(this.fieldValues.length - 1)].$$element[0].focus();
-    });
+    this.$timeout(() => this.form[this.getFieldName(this.fieldValues.length - 1)].$$element[0].focus());
+  }
+
+  _focusAddButton() {
+    this.$timeout(() => this.$element.find('.field__button-add button').focus());
   }
 }
 
