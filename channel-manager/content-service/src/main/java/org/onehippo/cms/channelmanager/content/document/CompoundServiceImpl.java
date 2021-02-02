@@ -29,6 +29,7 @@ import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -40,6 +41,8 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROTOTYPES;
 import static org.hippoecm.repository.api.HippoNodeType.NAMESPACES_PATH;
 import static org.onehippo.cms.channelmanager.content.document.util.FieldPath.SEPARATOR;
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type.CHOICE;
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type.COMPOUND;
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason.DOES_NOT_EXIST;
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason.SERVER_ERROR;
 
@@ -54,16 +57,23 @@ public class CompoundServiceImpl implements CompoundService {
     }
 
     @Override
-    public void addCompoundField(final String documentPath, final FieldPath fieldPath, final List<FieldType> fields) {
-        final String compoundPath = documentPath + SEPARATOR + fieldPath;
-        final String prototypePath = getPrototypePath(fieldPath, fields);
-        try {
-            addCompound(prototypePath, compoundPath);
-            session.save();
-        } catch (final RepositoryException e) {
-            log.warn("Failed to copy prototype '{}' to document '{}'", prototypePath, compoundPath, e);
-            throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
+    public void addCompoundField(final String documentPath, final FieldPath fieldPath, final List<FieldType> fields,
+                                 final String type) {
+
+        final FieldType fieldType = getFieldType(fieldPath, fields);
+        if (fieldType.getType() == COMPOUND && !fieldType.getJcrType().equals(type)) {
+            log.warn("The field '{}' does not support subfields of type '{}'", fieldPath, type);
+            throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "type", "not-supported"));
         }
+
+        if (fieldType.getType() == CHOICE && !((ChoiceFieldType)fieldType).getChoices().containsKey(type)) {
+            log.warn("The field '{}' does not support subfields of type '{}'", fieldPath, type);
+            throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "type", "not-supported"));
+        }
+
+        final String prototypePath = getPrototypePath(type);
+        final String targetPath = documentPath + SEPARATOR + fieldPath;
+        addPrototype(prototypePath, targetPath);
     }
 
     @Override
@@ -101,13 +111,10 @@ public class CompoundServiceImpl implements CompoundService {
     }
 
     @Override
-    public void removeCompoundField(final String documentPath, final FieldPath fieldPath, final List<FieldType> fields) {
-        final FieldType fieldType = findFieldType(fieldPath, fields);
-        if (fieldType == null) {
-            log.warn("Failed to find field with path '{}'", fieldPath);
-            throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "fieldType", fieldPath.toString()));
-        }
+    public void removeCompoundField(final String documentPath, final FieldPath fieldPath,
+                                    final List<FieldType> fields) {
 
+        final FieldType fieldType = getFieldType(fieldPath, fields);
         final String compoundPath = documentPath + SEPARATOR + fieldPath;
         try {
             final String compoundName = fieldPath.getLastSegmentName();
@@ -131,33 +138,19 @@ public class CompoundServiceImpl implements CompoundService {
         }
     }
 
-    private String getPrototypePath(final FieldPath fieldPath, final List<FieldType> fields) {
-        final FieldType fieldType = findFieldType(fieldPath, fields);
-        if (fieldType == null) {
-            log.warn("Failed to find field with path '{}'", fieldPath);
-            throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "fieldType", fieldPath.toString()));
-        }
-
-        final Node prototypeNode = findPrototype(fieldType.getJcrType());
+    private String getPrototypePath(final String jcrType) {
+        final Node prototypeNode = findPrototype(jcrType);
         if (prototypeNode == null) {
-            log.warn("Failed to find prototype node for field of type '{}'", fieldType.getJcrType());
-            throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "prototype", fieldType.getJcrType()));
+            log.warn("Failed to find prototype node for field of type '{}'", jcrType);
+            throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "prototype", jcrType));
         }
 
         try {
             return prototypeNode.getPath();
         } catch (final RepositoryException e) {
-            log.error("An error occurred while retrieving the prototype path for type '{}'", fieldType, e);
+            log.error("An error occurred while retrieving the prototype path for type '{}'", jcrType, e);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
         }
-    }
-
-    private void addCompound(final String prototypePath, final String compoundPath) throws RepositoryException {
-        final Node compound = JcrUtils.copy(session, prototypePath, stripSuffix(compoundPath));
-
-        final String srcPath = compound.getName() + (compound.getIndex() > 1 ? "[" + compound.getIndex() + "]" : "");
-        final String destPath = StringUtils.substringAfterLast(compoundPath, SEPARATOR);
-        compound.getParent().orderBefore(srcPath, destPath);
     }
 
     private Node findPrototype(final String type) {
@@ -213,7 +206,41 @@ public class CompoundServiceImpl implements CompoundService {
         return nsReg.getURI(prefix);
 }
 
-    private FieldType findFieldType(final FieldPath fieldPath, final List<FieldType> fields) {
+    private void addPrototype(final String prototypePath, final String targetPath) {
+        try {
+            final Node fieldNode = JcrUtils.copy(session, prototypePath, stripSuffix(targetPath));
+            final String srcPath = fieldNode.getName() + "[" + fieldNode.getIndex() + "]";
+            final String destPath = StringUtils.substringAfterLast(targetPath, SEPARATOR);
+            fieldNode.getParent().orderBefore(srcPath, destPath);
+
+            session.save();
+        } catch (final RepositoryException e) {
+            log.warn("Failed to copy prototype '{}' to document '{}'", prototypePath, targetPath, e);
+            throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
+        }
+    }
+
+    private static FieldType getFieldType(final FieldPath fieldPath, final List<FieldType> fields) {
+        final FieldType fieldType = findFieldType(fieldPath, fields);
+        if (fieldType == null) {
+            log.warn("Failed to find field with path '{}'", fieldPath);
+            throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "fieldType", fieldPath.toString()));
+        }
+
+        if (!fieldType.isMultiple()) {
+            log.warn("The field '{}' does not support multiple values", fieldPath);
+            throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "fieldType", "not-multiple"));
+        }
+
+        if (fieldType.getType() != COMPOUND && fieldType.getType() != CHOICE) {
+            log.warn("The field '{}' is not a compound or a choice field", fieldPath);
+            throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "fieldType", "not-compound-or-choice"));
+        }
+
+        return fieldType;
+    }
+
+    private static FieldType findFieldType(final FieldPath fieldPath, final List<FieldType> fields) {
         final FieldType fieldType = fields.stream()
                 .filter(field -> fieldPath.startsWith(field.getId()))
                 .findFirst()
@@ -228,7 +255,7 @@ public class CompoundServiceImpl implements CompoundService {
             return null;
         }
 
-        return findFieldType(remaining, ((CompoundFieldType)fieldType).getFields());
+        return findFieldType(remaining, ((CompoundFieldType) fieldType).getFields());
     }
 
     private static String stripSuffix(final String path) {
