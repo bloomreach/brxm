@@ -607,9 +607,9 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     @Override
     public void removeCompoundField(final String uuid,
-                               final String branchId,
-                               final FieldPath fieldPath,
-                               final UserContext userContext) {
+                                    final String branchId,
+                                    final FieldPath fieldPath,
+                                    final UserContext userContext) {
         if (fieldPath.isEmpty()) {
             log.warn("Can not remove compound field if fieldPath is empty");
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));

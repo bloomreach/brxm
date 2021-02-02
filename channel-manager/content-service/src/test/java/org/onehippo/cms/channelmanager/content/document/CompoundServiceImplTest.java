@@ -34,7 +34,6 @@ import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
@@ -79,64 +78,68 @@ public class CompoundServiceImplTest {
         PowerMock.mockStatic(JcrUtils.class);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void addCompoundFieldShouldThrowIfFieldTypesIsEmpty() {
-        compoundService.addCompoundField("/document", new FieldPath("field"), emptyList(), "type");
+        try {
+            compoundService.addCompoundField("/document", new FieldPath("non-existing-field"), emptyList(), "ns:type");
+            fail();
+        } catch (final NotFoundException e) {
+            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST, "fieldType", "non-existing-field");
+        }
     }
 
     @Test
     public void addCompoundFieldShouldThrowIfFieldIsNotFound() {
-        final FieldType fieldType = new StringFieldType();
-        fieldType.setId("field-b");
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
+        replayAll();
 
         try {
-            compoundService.addCompoundField("/document", new FieldPath("field-a"), singletonList(fieldType), "type");
+            compoundService.addCompoundField("/document", new FieldPath("non-existing-field"), singletonList(fieldType), "ns:type");
             fail();
         } catch (final NotFoundException e) {
-            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST, "fieldType", "field-a");
+            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST, "fieldType", "non-existing-field");
         }
+        verifyAll();
     }
 
     @Test
     public void addCompoundFieldShouldThrowIfNestedFieldIsNotContainedByCompoundField() {
-        final FieldType fieldType = new StringFieldType();
-        fieldType.setId("parent");
+        final FieldType fieldType = mockFieldType("parent", "ns:type", 0, 1, true, BOOLEAN);
+        replayAll();
 
         try {
-            compoundService.addCompoundField("/document", new FieldPath("parent/child"), singletonList(fieldType), "type");
+            compoundService.addCompoundField("/document", new FieldPath("parent/field"), singletonList(fieldType), "ns:type");
             fail();
         } catch (final NotFoundException e) {
-            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST, "fieldType", "parent/child");
+            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST, "fieldType", "parent/field");
         }
+        verifyAll();
     }
 
     @Test
     public void addCompoundFieldShouldThrowIfNestedFieldIsNotFound() {
-        final StringFieldType nestedFieldType = new StringFieldType();
-        nestedFieldType.setId("child-a");
-
-        final CompoundFieldType compoundFieldType = new CompoundFieldType();
-        compoundFieldType.setId("parent");
-        compoundFieldType.getFields().add(nestedFieldType);
+        final FieldType fieldType = mockFieldType("field-a", "ns:type", 0, 1, true, COMPOUND);
+        final CompoundFieldType parentFieldType = new CompoundFieldType();
+        parentFieldType.setId("parent");
+        parentFieldType.getFields().add(fieldType);
+        replayAll();
 
         try {
-            compoundService.addCompoundField("/document", new FieldPath("parent/child-b"), singletonList(compoundFieldType), "type");
+            compoundService.addCompoundField("/document", new FieldPath("parent/field-b"), singletonList(parentFieldType), "ns:type");
             fail();
         } catch (final NotFoundException e) {
-            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST, "fieldType", "parent/child-b");
+            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST, "fieldType", "parent/field-b");
         }
+        verifyAll();
     }
 
     @Test
     public void addCompoundFieldShouldThrowIfFieldIsNotMultiple() {
-        final FieldType fieldType = createMock(FieldType.class);
-        expect(fieldType.getId()).andReturn("field-a");
-        expect(fieldType.isMultiple()).andReturn(false);
-
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, false, COMPOUND);
         replayAll();
 
         try {
-            compoundService.addCompoundField("/document", new FieldPath("field-a"), singletonList(fieldType), "type");
+            compoundService.addCompoundField("/document", new FieldPath("field"), singletonList(fieldType), "ns:type");
             fail();
         } catch (final InternalServerErrorException e) {
             assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR, "fieldType", "not-multiple");
@@ -146,15 +149,11 @@ public class CompoundServiceImplTest {
 
     @Test
     public void addCompoundFieldShouldThrowIfFieldIsNotCompoundOrChoice() {
-        final FieldType fieldType = createMock(FieldType.class);
-        expect(fieldType.getId()).andReturn("field-a");
-        expect(fieldType.getType()).andReturn(BOOLEAN).anyTimes();
-        expect(fieldType.isMultiple()).andReturn(true);
-
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, BOOLEAN);
         replayAll();
 
         try {
-            compoundService.addCompoundField("/document", new FieldPath("field-a"), singletonList(fieldType), "type");
+            compoundService.addCompoundField("/document", new FieldPath("field"), singletonList(fieldType), "type");
             fail();
         } catch (final InternalServerErrorException e) {
             assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR, "fieldType", "not-compound-or-choice");
@@ -164,22 +163,16 @@ public class CompoundServiceImplTest {
 
     @Test
     public void addCompoundFieldShouldThrowIfPrototypeNamespaceIsNotFound() throws Exception {
-        final FieldType fieldType = createMock(FieldType.class);
-        expect(fieldType.getId()).andReturn("field-a");
-        expect(fieldType.getJcrType()).andReturn("ns:type");
-        expect(fieldType.getType()).andReturn(COMPOUND).anyTimes();
-        expect(fieldType.isMultiple()).andReturn(true);
-
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
         final Workspace workspace = createMock(Workspace.class);
         expect(session.getWorkspace()).andReturn(workspace);
         final NamespaceRegistry nsRegistry = createMock(NamespaceRegistry.class);
         expect(workspace.getNamespaceRegistry()).andReturn(nsRegistry);
         expect(nsRegistry.getURI("ns")).andThrow(new NamespaceException());
-
         replayAll();
 
         try {
-            compoundService.addCompoundField("/document", new FieldPath("field-a"), singletonList(fieldType), "ns:type");
+            compoundService.addCompoundField("/document", new FieldPath("field"), singletonList(fieldType), "ns:type");
             fail();
         } catch (final NotFoundException e) {
             assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST, "prototype", "ns:type");
@@ -189,23 +182,17 @@ public class CompoundServiceImplTest {
 
     @Test
     public void addCompoundFieldShouldThrowIfPrototypeIsNotFound() throws Exception {
-        final FieldType fieldType = createMock(FieldType.class);
-        expect(fieldType.getId()).andReturn("field-a");
-        expect(fieldType.getJcrType()).andReturn("ns:type").anyTimes();
-        expect(fieldType.isMultiple()).andReturn(true);
-        expect(fieldType.getType()).andReturn(COMPOUND).anyTimes();
-
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
         final Workspace workspace = createMock(Workspace.class);
         expect(session.getWorkspace()).andReturn(workspace);
         final NamespaceRegistry nsRegistry = createMock(NamespaceRegistry.class);
         expect(workspace.getNamespaceRegistry()).andReturn(nsRegistry);
         expect(nsRegistry.getURI("ns")).andReturn("http://www.onehippo.org/test/nt/1.0");
         expect(session.itemExists("/hippo:namespaces/ns/type/hipposysedit:prototypes")).andReturn(false);
-
         replayAll();
 
         try {
-            compoundService.addCompoundField("/document", new FieldPath("field-a"), singletonList(fieldType), "ns:type");
+            compoundService.addCompoundField("/document", new FieldPath("field"), singletonList(fieldType), "ns:type");
             fail();
         } catch (final NotFoundException e) {
             assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST, "prototype", "ns:type");
@@ -215,11 +202,7 @@ public class CompoundServiceImplTest {
 
     @Test
     public void addCompoundFieldShouldCopyPrototypeToDocument() throws Exception {
-        final FieldType fieldType = createMock(FieldType.class);
-        expect(fieldType.getId()).andReturn("field-a");
-        expect(fieldType.getJcrType()).andReturn("ns:type").anyTimes();
-        expect(fieldType.isMultiple()).andReturn(true);
-        expect(fieldType.getType()).andReturn(COMPOUND).anyTimes();
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
 
         final Node prototypeNode = createMock(Node.class);
         expect(prototypeNode.getPath()).andReturn("/prototype");
@@ -243,31 +226,23 @@ public class CompoundServiceImplTest {
         expect(prototypeNode.isNodeType(JcrConstants.NT_UNSTRUCTURED)).andReturn(false);
 
         final Node documentNode = createMock(Node.class);
-        final Node compoundNode = createMock(Node.class);
-        expect(compoundNode.getName()).andReturn("compound");
-        expect(compoundNode.getIndex()).andReturn(1).anyTimes();
-        expect(compoundNode.getParent()).andReturn(documentNode);
-        expect(JcrUtils.copy(session, "/prototype", "/document/field-a")).andReturn(compoundNode);
+        final Node compoundNode = mockField("compound", documentNode);
+        expect(JcrUtils.copy(session, "/prototype", "/document/field")).andReturn(compoundNode);
 
-        documentNode.orderBefore(eq("compound[1]"), eq("field-a"));
+        documentNode.orderBefore(eq("compound[1]"), eq("field"));
         expectLastCall();
 
         session.save();
         expectLastCall();
-
         replayAll();
 
-        compoundService.addCompoundField("/document", new FieldPath("field-a"), singletonList(fieldType), "ns:type");
+        compoundService.addCompoundField("/document", new FieldPath("field"), singletonList(fieldType), "ns:type");
         verifyAll();
     }
 
     @Test
     public void addCompoundFieldShouldOrderPrototype() throws Exception {
-        final FieldType fieldType = createMock(FieldType.class);
-        expect(fieldType.getId()).andReturn("field-a");
-        expect(fieldType.getJcrType()).andReturn("ns:type").anyTimes();
-        expect(fieldType.isMultiple()).andReturn(true);
-        expect(fieldType.getType()).andReturn(COMPOUND).anyTimes();
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
 
         final Node prototypeNode = createMock(Node.class);
         expect(prototypeNode.getPath()).andReturn("/prototype");
@@ -291,32 +266,26 @@ public class CompoundServiceImplTest {
         expect(prototypeNode.isNodeType(JcrConstants.NT_UNSTRUCTURED)).andReturn(false);
 
         final Node documentNode = createMock(Node.class);
-        final Node compoundNode = createMock(Node.class);
-        expect(compoundNode.getName()).andReturn("compound");
-        expect(compoundNode.getIndex()).andReturn(1).anyTimes();
-        expect(compoundNode.getParent()).andReturn(documentNode);
-        expect(JcrUtils.copy(session, "/prototype", "/document/field-a")).andReturn(compoundNode);
+        final Node compoundNode = mockField("compound", documentNode);
+        expect(JcrUtils.copy(session, "/prototype", "/document/field")).andReturn(compoundNode);
 
-        documentNode.orderBefore(eq("compound[1]"), eq("field-a[2]"));
+        documentNode.orderBefore(eq("compound[1]"), eq("field[2]"));
         expectLastCall();
 
         session.save();
         expectLastCall();
-
         replayAll();
 
-        compoundService.addCompoundField("/document", new FieldPath("field-a[2]"), singletonList(fieldType), "ns:type");
+        compoundService.addCompoundField("/document", new FieldPath("field[2]"), singletonList(fieldType), "ns:type");
         verifyAll();
     }
 
     @Test
     public void reorderCompoundFieldShouldThrowIfNewPositionIsOutOfBounds() throws Exception {
-        final MockNode root = MockNode.root();
-        final MockNode documents = root.addNode("documents", "nt:unstructured");
-        final MockNode document = documents.addNode("document", "nt:unstructured");
-        final MockNode field = document.addNode("field", "nt:unstructured");
-        expect(session.getNode("/documents/document/field")).andReturn(field);
-
+        final MockNode documentsNode = MockNode.root().addNode("documents", "nt:unstructured");
+        final MockNode documentNode = documentsNode.addNode("document", "nt:unstructured");
+        final MockNode fieldNode = documentNode.addNode("field", "nt:unstructured");
+        expect(session.getNode("/documents/document/field")).andReturn(fieldNode);
         replayAll();
 
         try {
@@ -331,23 +300,22 @@ public class CompoundServiceImplTest {
 
     @Test
     public void reorderCompoundFieldShouldMoveUp() throws Exception {
-        final Node document = createMock(Node.class);
-        final Node field = createMock(Node.class);
+        final Node documentNode = createMock(Node.class);
+        final Node fieldNode = createMock(Node.class);
 
-        expect(session.getNode("/documents/document/field[2]")).andReturn(field);
-        expect(field.getParent()).andReturn(document);
-        expect(field.getIndex()).andReturn(2);
+        expect(session.getNode("/documents/document/field[2]")).andReturn(fieldNode);
+        expect(fieldNode.getParent()).andReturn(documentNode);
+        expect(fieldNode.getIndex()).andReturn(2);
 
         final NodeIterator it = createMock(NodeIterator.class);
-        expect(document.getNodes("field")).andReturn(it);
+        expect(documentNode.getNodes("field")).andReturn(it);
         expect(it.getSize()).andReturn(2L);
 
-        document.orderBefore(eq("field[2]"), eq("field[1]"));
+        documentNode.orderBefore(eq("field[2]"), eq("field[1]"));
         expectLastCall();
 
         session.save();
         expectLastCall();
-
         replayAll();
 
         compoundService.reorderCompoundField("/documents", new FieldPath("document/field[2]"), 1);
@@ -357,23 +325,22 @@ public class CompoundServiceImplTest {
 
     @Test
     public void reorderCompoundFieldShouldMoveDown() throws Exception {
-        final Node document = createMock(Node.class);
-        final Node field = createMock(Node.class);
+        final Node documentNode = createMock(Node.class);
+        final Node fieldNode = createMock(Node.class);
 
-        expect(session.getNode("/documents/document/field[1]")).andReturn(field);
-        expect(field.getParent()).andReturn(document);
-        expect(field.getIndex()).andReturn(1);
+        expect(session.getNode("/documents/document/field[1]")).andReturn(fieldNode);
+        expect(fieldNode.getParent()).andReturn(documentNode);
+        expect(fieldNode.getIndex()).andReturn(1);
 
         final NodeIterator it = createMock(NodeIterator.class);
-        expect(document.getNodes("field")).andReturn(it);
+        expect(documentNode.getNodes("field")).andReturn(it);
         expect(it.getSize()).andReturn(3L);
 
-        document.orderBefore(eq("field[1]"), eq("field[3]"));
+        documentNode.orderBefore(eq("field[1]"), eq("field[3]"));
         expectLastCall();
 
         session.save();
         expectLastCall();
-
         replayAll();
 
         compoundService.reorderCompoundField("/documents", new FieldPath("document/field[1]"), 2);
@@ -383,22 +350,21 @@ public class CompoundServiceImplTest {
 
     @Test
     public void reorderCompoundFieldShouldMoveToLastPosition() throws Exception {
-        final Node document = createMock(Node.class);
-        final Node field = createMock(Node.class);
+        final Node documentNode = createMock(Node.class);
+        final Node fieldNode = createMock(Node.class);
 
-        expect(session.getNode("/documents/document/field[1]")).andReturn(field);
-        expect(field.getParent()).andReturn(document);
+        expect(session.getNode("/documents/document/field[1]")).andReturn(fieldNode);
+        expect(fieldNode.getParent()).andReturn(documentNode);
 
         final NodeIterator it = createMock(NodeIterator.class);
-        expect(document.getNodes("field")).andReturn(it);
+        expect(documentNode.getNodes("field")).andReturn(it);
         expect(it.getSize()).andReturn(2L);
 
-        document.orderBefore(eq("field[1]"), eq(null));
+        documentNode.orderBefore(eq("field[1]"), eq(null));
         expectLastCall();
 
         session.save();
         expectLastCall();
-
         replayAll();
 
         compoundService.reorderCompoundField("/documents", new FieldPath("document/field[1]"), 2);
@@ -411,23 +377,20 @@ public class CompoundServiceImplTest {
         replayAll();
 
         try {
-            compoundService.removeCompoundField("/document", new FieldPath("field"), emptyList());
+            compoundService.removeCompoundField("/document", new FieldPath("non-existing-field"), emptyList());
         } catch (final NotFoundException e) {
-            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST, "fieldType", "field");
+            assertErrorStatusAndReason(e, Status.NOT_FOUND, Reason.DOES_NOT_EXIST, "fieldType", "non-existing-field");
         }
         verifyAll();
     }
 
     @Test
     public void removeCompoundFieldShouldThrowIfFieldIsNotMultiple() {
-        final FieldType fieldType = createMock(FieldType.class);
-        expect(fieldType.getId()).andReturn("field-a");
-        expect(fieldType.isMultiple()).andReturn(false);
-
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, false, COMPOUND);
         replayAll();
 
         try {
-            compoundService.removeCompoundField("/document", new FieldPath("field-a"), singletonList(fieldType));
+            compoundService.removeCompoundField("/document", new FieldPath("field"), singletonList(fieldType));
             fail();
         } catch (final InternalServerErrorException e) {
             assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR, "fieldType", "not-multiple");
@@ -437,15 +400,11 @@ public class CompoundServiceImplTest {
 
     @Test
     public void removeCompoundFieldShouldThrowIfFieldIsNotCompoundOrChoice() {
-        final FieldType fieldType = createMock(FieldType.class);
-        expect(fieldType.getId()).andReturn("field-a");
-        expect(fieldType.getType()).andReturn(BOOLEAN).anyTimes();
-        expect(fieldType.isMultiple()).andReturn(true);
-
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, BOOLEAN);
         replayAll();
 
         try {
-            compoundService.removeCompoundField("/document", new FieldPath("field-a"), singletonList(fieldType));
+            compoundService.removeCompoundField("/document", new FieldPath("field"), singletonList(fieldType));
             fail();
         } catch (final InternalServerErrorException e) {
             assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR, "fieldType", "not-compound-or-choice");
@@ -455,24 +414,11 @@ public class CompoundServiceImplTest {
 
     @Test
     public void removeCompoundFieldShouldThrowIfFieldNodeDoesNotExist() throws Exception {
-        final Node compoundNode = createMock(Node.class);
-        final Node parentNode = createMock(Node.class);
-        expect(compoundNode.getParent()).andReturn(parentNode);
-        expect(session.getNode("/document/field")).andReturn(compoundNode);
-        final NodeIterator it = createMock( NodeIterator.class);
-        expect(it.getSize()).andReturn(1L);
-        expect(parentNode.getNodes("field")).andReturn(it);
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
+        mockDocumentAndField("document", "field");
 
         session.removeItem("/document/field");
         expectLastCall().andThrow(new PathNotFoundException());
-
-        final FieldType fieldType = createMock(FieldType.class);
-        expect(fieldType.getId()).andReturn("field");
-        expect(fieldType.getJcrType()).andReturn("ns:type").anyTimes();
-        expect(fieldType.getType()).andReturn(COMPOUND).anyTimes();
-        expect(fieldType.isMultiple()).andReturn(true);
-        expect(fieldType.getMinValues()).andReturn(0);
-
         replayAll();
 
         try {
@@ -485,21 +431,8 @@ public class CompoundServiceImplTest {
 
     @Test
     public void removeCompoundFieldShouldThrowIfMinValuesIsNotRespected() throws Exception {
-        final Node compoundNode = createMock(Node.class);
-        final Node parentNode = createMock(Node.class);
-        expect(compoundNode.getParent()).andReturn(parentNode);
-        expect(session.getNode("/document/field")).andReturn(compoundNode);
-        final NodeIterator it = createMock( NodeIterator.class);
-        expect(it.getSize()).andReturn(1L);
-        expect(parentNode.getNodes("field")).andReturn(it);
-
-        final FieldType fieldType = createMock(FieldType.class);
-        expect(fieldType.getId()).andReturn("field");
-        expect(fieldType.getJcrType()).andReturn("ns:type").anyTimes();
-        expect(fieldType.getType()).andReturn(COMPOUND).anyTimes();
-        expect(fieldType.isMultiple()).andReturn(true);
-        expect(fieldType.getMinValues()).andReturn(1).anyTimes();
-
+        final FieldType fieldType = mockFieldType("field", "ns:type", 1, 1, true, COMPOUND);
+        mockDocumentAndField("document", "field");
         replayAll();
 
         try {
@@ -512,30 +445,49 @@ public class CompoundServiceImplTest {
 
     @Test
     public void removeCompoundFieldShouldDeleteFieldNode() throws Exception {
-        final Node compoundNode = createMock(Node.class);
-        final Node parentNode = createMock(Node.class);
-        expect(compoundNode.getParent()).andReturn(parentNode);
-        expect(session.getNode("/document/field")).andReturn(compoundNode);
-        final NodeIterator it = createMock( NodeIterator.class);
-        expect(it.getSize()).andReturn(1L);
-        expect(parentNode.getNodes("field")).andReturn(it);
-
-        final FieldType fieldType = createMock(FieldType.class);
-        expect(fieldType.getId()).andReturn("field");
-        expect(fieldType.getJcrType()).andReturn("ns:type").anyTimes();
-        expect(fieldType.getType()).andReturn(COMPOUND).anyTimes();
-        expect(fieldType.isMultiple()).andReturn(true);
-        expect(fieldType.getMinValues()).andReturn(0).anyTimes();
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
+        mockDocumentAndField("document", "field");
 
         session.removeItem("/document/field");
         expectLastCall();
         session.save();
         expectLastCall();
-
         replayAll();
 
         compoundService.removeCompoundField("/document", new FieldPath("field"), singletonList(fieldType));
 
         verifyAll();
     }
+
+    private void mockDocumentAndField(final String documentName, final String fieldName) throws Exception {
+        final Node documentNode = createMock(Node.class);
+        final NodeIterator it = createMock(NodeIterator.class);
+        expect(it.getSize()).andReturn(1L);
+        expect(documentNode.getNodes(fieldName)).andReturn(it);
+
+        final Node fieldNode = createMock(Node.class);
+        expect(fieldNode.getParent()).andReturn(documentNode);
+        expect(session.getNode("/" + documentName + "/" + fieldName)).andReturn(fieldNode);
+    }
+
+    private static Node mockField(final String fieldName, final Node parent) throws Exception {
+        final Node compoundNode = createMock(Node.class);
+        expect(compoundNode.getName()).andReturn(fieldName);
+        expect(compoundNode.getIndex()).andReturn(1).anyTimes();
+        expect(compoundNode.getParent()).andReturn(parent);
+        return compoundNode;
+    }
+
+    private static FieldType mockFieldType(final String id, final String jcrType, final int min, final int max,
+                                           final boolean multiple, final FieldType.Type type) {
+        final FieldType fieldType = createMock(FieldType.class);
+        expect(fieldType.getId()).andReturn(id);
+        expect(fieldType.getType()).andReturn(type).anyTimes();
+        expect(fieldType.getJcrType()).andReturn(jcrType).anyTimes();
+        expect(fieldType.getMinValues()).andReturn(min).anyTimes();
+        expect(fieldType.getMaxValues()).andReturn(max).anyTimes();
+        expect(fieldType.isMultiple()).andReturn(multiple).anyTimes();
+        return fieldType;
+    }
+
 }
