@@ -71,9 +71,25 @@ public class CompoundServiceImpl implements CompoundService {
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "type", "not-supported"));
         }
 
+        final String compoundPath = documentPath + SEPARATOR + fieldPath;
+        try {
+            final String parentPath = StringUtils.substringBeforeLast(compoundPath, SEPARATOR);
+            final Node parent = session.getNode(parentPath);
+            final long numberOfCompounds = parent.getNodes(fieldPath.getLastSegmentName()).getSize();
+
+            if (numberOfCompounds == fieldType.getMaxValues()) {
+                log.warn("Cannot add compound field '{}', the maximum amount of fields allowed is {}", fieldPath,
+                        fieldType.getMaxValues());
+                throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "cardinality", "max-values"));
+            }
+        } catch (final RepositoryException e) {
+            log.warn("An error occurred while checking the cardinality of field '{}'", fieldPath, e);
+            throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
+        }
+
         final String prototypePath = getPrototypePath(type);
         final String targetPath = documentPath + SEPARATOR + fieldPath;
-        addPrototype(prototypePath, targetPath);
+        copyPrototype(prototypePath, targetPath);
     }
 
     @Override
@@ -104,7 +120,7 @@ public class CompoundServiceImpl implements CompoundService {
             }
 
             session.save();
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.error("Failed to re-order compound field '{}' to position '{}'", absCompoundPath, index, e);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
         }
@@ -206,7 +222,7 @@ public class CompoundServiceImpl implements CompoundService {
         return nsReg.getURI(prefix);
 }
 
-    private void addPrototype(final String prototypePath, final String targetPath) {
+    private void copyPrototype(final String prototypePath, final String targetPath) {
         try {
             final Node fieldNode = JcrUtils.copy(session, prototypePath, stripSuffix(targetPath));
             final String srcPath = fieldNode.getName() + "[" + fieldNode.getIndex() + "]";
