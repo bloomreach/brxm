@@ -17,6 +17,7 @@
 describe('PrimitiveField', () => {
   let $componentController;
   let $ctrl;
+  let $element;
   let $rootScope;
   let $q;
   let FieldService;
@@ -48,8 +49,8 @@ describe('PrimitiveField', () => {
       { value: 'Value 3' },
     ];
 
-    $ctrl = $componentController('primitiveField', {
-    }, {
+    $element = angular.element('<div>');
+    $ctrl = $componentController('primitiveField', { $element }, {
       fieldType,
       fieldValues,
       name: 'test-name',
@@ -71,7 +72,7 @@ describe('PrimitiveField', () => {
     expect($ctrl.getFieldName(1)).toBe('test-name/field:type[2]');
     expect($ctrl.getFieldName(2)).toBe('test-name/field:type[3]');
 
-    const stubbed = $componentController('primitiveField', { }, {
+    const stubbed = $componentController('primitiveField', { $element }, {
       fieldType,
       fieldValues,
     });
@@ -117,8 +118,7 @@ describe('PrimitiveField', () => {
   });
 
   it('returns null as form error object for a field without any values', () => {
-    $ctrl = $componentController('primitiveField', {
-    }, {
+    $ctrl = $componentController('primitiveField', { $element }, {
       fieldType,
       fieldValues: [],
       name: 'test-name',
