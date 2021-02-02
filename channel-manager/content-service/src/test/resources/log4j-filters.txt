@@ -17,6 +17,7 @@
 ^Value of hint action \'.+\' is expected to be boolean but it was \'.+\'
 An error occurred while looking up the prototype node for type 'ns:type'
 Cancel request received but no pending request found for 'uuid'.
+Cannot add compound field 'field', the maximum amount of fields allowed is 1
 Cannot change the URL name of document
 Cannot create validation context
 Cannot delete compound field 'field', the minimum amount of required fields is 1
