@@ -49,10 +49,9 @@ Failed to dispose of editable instance
 Failed to erase document 'uuid'
 Failed to execute 'add' with category 'new-folder', type 'hippostd:folder' and relPath 'test'
 Failed to execute template query 'new-document'
-Failed to find field with path 'field'
-Failed to find field with path 'field-a'
-Failed to find field with path 'parent/child'
-Failed to find field with path 'parent/child-b'
+Failed to find field with path 'non-existing-field'
+Failed to find field with path 'parent/field'
+Failed to find field with path 'parent/field-b'
 Failed to find prototype node for field of type 'ns:type'
 Failed to find nodeType node for content type '/bla'
 Failed to find validator 'unknown', ignoring it
@@ -121,6 +120,6 @@ Property 'name' cannot be blank or null
 Property 'rootPath' cannot be blank or null
 Property 'slug' cannot be blank or null
 Property 'urlName' cannot be blank or null
-The field 'field-a' does not support multiple values
-The field 'field-a' is not a compound or a choice field
+The field 'field' does not support multiple values
+The field 'field' is not a compound or a choice field
 User 'admin' failed to re-obtain ownership of document
