@@ -99,7 +99,7 @@
     <jaxrs.version>2.1.1</jaxrs.version>
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
     <jackson2.version>2.10.5</jackson2.version>
-    <jackson2-databind.version>2.10.5</jackson2-databind.version>
+    <jackson2-databind.version>2.10.5.1</jackson2-databind.version>
     <spring.version>4.3.29.RELEASE</spring.version>
     <spring-security.version>4.2.18.RELEASE</spring-security.version>
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
