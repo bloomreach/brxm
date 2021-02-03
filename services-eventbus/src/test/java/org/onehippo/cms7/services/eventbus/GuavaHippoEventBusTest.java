@@ -51,7 +51,7 @@ public class GuavaHippoEventBusTest {
         HippoEventListenerRegistry.get().register(listener);
         eventBus.post(new Object());
 
-        listener.latch.await(10, TimeUnit.MILLISECONDS);
+        listener.latch.await(250, TimeUnit.MILLISECONDS);
 
         assertTrue(listener.fired);
 
@@ -60,7 +60,7 @@ public class GuavaHippoEventBusTest {
         HippoEventListenerRegistry.get().unregister(listener);
         eventBus.post(new Object());
 
-        listener.latch.await(10, TimeUnit.MILLISECONDS);
+        listener.latch.await(250, TimeUnit.MILLISECONDS);
         assertFalse(listener.fired);
     }
 
@@ -74,8 +74,8 @@ public class GuavaHippoEventBusTest {
         HippoEventListenerRegistry.get().register(listener2);
         eventBus.post(new Object());
 
-        assertTrue(listener.latch.await(10, TimeUnit.MILLISECONDS));
-        assertTrue(listener2.latch.await(10, TimeUnit.MILLISECONDS));
+        assertTrue(listener.latch.await(250, TimeUnit.MILLISECONDS));
+        assertTrue(listener2.latch.await(250, TimeUnit.MILLISECONDS));
 
         // verify both work
         assertTrue(listener.fired);
@@ -89,8 +89,8 @@ public class GuavaHippoEventBusTest {
         HippoEventListenerRegistry.get().unregister(listener);
         eventBus.post(new Object());
 
-        assertFalse(listener.latch.await(10, TimeUnit.MILLISECONDS));
-        assertTrue(listener2.latch.await(10, TimeUnit.MILLISECONDS));
+        assertFalse(listener.latch.await(250, TimeUnit.MILLISECONDS));
+        assertTrue(listener2.latch.await(250, TimeUnit.MILLISECONDS));
 
         // verify the unregistered one didn't fire, but the other did
         assertFalse(listener.fired);
