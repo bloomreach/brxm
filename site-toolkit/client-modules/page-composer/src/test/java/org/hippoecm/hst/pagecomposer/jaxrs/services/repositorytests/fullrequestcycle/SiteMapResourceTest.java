@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.Utilities;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
@@ -89,7 +90,7 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
         try {
             final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final List<String> responsePages = getResponseSiteMapPages(admin, mountId, cmsUser);
+            final List<String> responsePages = getResponseSiteMapPages(admin, mountId, cmsUser,"name");
 
             final Mount mount = manager.getVirtualHosts().getMountByIdentifier(mountId);
 
@@ -128,7 +129,8 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
     }
 
     @NotNull
-    private List<String> getResponseSiteMapPages(final Session admin, final String mountId, final Credentials cmsUser) throws RepositoryException, IOException, ServletException {
+    private List<String> getResponseSiteMapPages(final Session admin, final String mountId, final Credentials cmsUser,
+                                                 final String field) throws RepositoryException, IOException, ServletException {
         final String siteMapId = getNodeId(admin, "/hst:hst/hst:configurations/unittestproject/hst:sitemap");
 
 
@@ -144,7 +146,7 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
         final Map<String, Object> data = (Map<String, Object>) o.getData();
         final List<Map<String, Object>> pages = (List<Map<String, Object>>) data.get("pages");
 
-        return pages.stream().map(page -> (String) page.get("name")).collect(Collectors.toList());
+        return pages.stream().map(page -> (String) page.get(field)).collect(Collectors.toList());
     }
 
 
@@ -199,7 +201,7 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
 
             final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
-            final List<String> responsePages = getResponseSiteMapPages(admin, mountId, ADMIN_CREDENTIALS);
+            final List<String> responsePages = getResponseSiteMapPages(admin, mountId, ADMIN_CREDENTIALS,"name");
 
             final Mount mount = manager.getVirtualHosts().getMountByIdentifier(mountId);
 
@@ -233,5 +235,85 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
             admin.logout();
         }
     }
+
+
+    /**
+     * When there is an _index_ sitemap item mapping to an xpage document, instead of the name of the xpage doc
+     * (typically 'index') we show the name of the parent sitemap item
+     */
+    @Test
+    public void index_sitemap_item_below_explicit_item_mapping_to_xpage_document_results_in_name_of_parent_sitemap_item() throws Exception {
+        final Session admin = createSession(ADMIN_CREDENTIALS);
+
+        try {
+
+            admin.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
+
+            String[] content = new String[] {
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap", "hst:sitemap",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/foo", "hst:sitemapitem",
+                    "hst:relativecontentpath" , "experiences",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/foo/_index_", "hst:sitemapitem",
+                    "hst:relativecontentpath", "${parent}/expPage1",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/foo/_default_", "hst:sitemapitem",
+                    "hst:relativecontentpath", "${parent}/${1}"
+            };
+
+            RepositoryTestCase.build(content, admin);
+
+            admin.save();
+
+            final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            final List<String> responsePages = getResponseSiteMapPages(admin, mountId, ADMIN_CREDENTIALS, "renderPathInfo");
+
+            assertThat(responsePages)
+                    .as("expPage1 will be represented by _index_ through explicit 'experiences' sitemap item, other xpage doc by _default_")
+                    .containsExactly("/foo", "/foo/expPage-with-static-components", "/foo/expPage2");
+
+        } finally {
+            admin.logout();
+        }
+    }
+
+    /**
+     * When there is an _index_ sitemap item mapping to an xpage document, instead of the name of the xpage doc
+     * (typically 'index') we show the name of the parent folder since this is the logical name in the sitemap
+     */
+    @Test
+    public void index_sitemap_item_below_wildcard_item_mapping_to_xpage_document_results_in_name_of_parent_folder() throws Exception {
+        final Session admin = createSession(ADMIN_CREDENTIALS);
+
+        try {
+
+            admin.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
+
+            String[] content = new String[] {
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap", "hst:sitemap",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/_default_", "hst:sitemapitem",
+                    "hst:relativecontentpath" , "${1}",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/_default_/_index_", "hst:sitemapitem",
+                    "hst:relativecontentpath", "${parent}/expPage1",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/_default_/_default_", "hst:sitemapitem",
+                    "hst:relativecontentpath", "${parent}/${2}"
+            };
+
+            RepositoryTestCase.build(content, admin);
+
+            admin.save();
+
+            final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            final List<String> responsePages = getResponseSiteMapPages(admin, mountId, ADMIN_CREDENTIALS, "renderPathInfo");
+
+            assertThat(responsePages)
+                    .as("expPage1 will be represented by _index_ through explicit 'experiences' sitemap item, other xpage doc by _default_")
+                    .containsExactly("/experiences", "/experiences/expPage-with-static-components", "/experiences/expPage2");
+
+        } finally {
+            admin.logout();
+        }
+    }
+
 
 }
