@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.linking;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -124,4 +125,10 @@ public interface HstLink {
      * @param notFound true whether this HstLink is actually a notFound link
      */
     void setNotFound(boolean notFound);
+
+    /**
+     * @return {@code true} if this {@link HstLink} was the result of a document/folder being
+     * matched to an {@link HstNodeTypes#INDEX} sitemap item
+     */
+    boolean representsIndex();
 }
