@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.hst.platform.linking;
 
 import java.io.Serializable;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 /**
@@ -37,4 +38,10 @@ public interface ResolvedLocationMapTreeItem extends Serializable {
      * of a document
      */
     boolean representsDocument();
+
+    /**
+     * @return {@code true} if this {@link ResolvedLocationMapTreeItem} was the result of a document/folder being
+     * matched to an {@link HstNodeTypes#INDEX} sitemap item
+     */
+    boolean representsIndex();
 }

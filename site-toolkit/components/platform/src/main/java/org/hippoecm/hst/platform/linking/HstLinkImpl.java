@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -97,6 +97,8 @@ public class HstLinkImpl implements HstLink {
         UNKNOWN
     }
 
+    boolean representsIndex;
+
     public HstLinkImpl(String path, Mount mount) {
         this(path, mount, null, Type.UNKNOWN, true);
     }
@@ -111,6 +113,9 @@ public class HstLinkImpl implements HstLink {
             contentType = ContentType.DOCUMENT;
         } else {
             contentType = ContentType.FOLDER;
+        }
+        if (resolvedLocationMapTreeItem.representsIndex()) {
+            representsIndex = true;
         }
     }
 
@@ -159,6 +164,11 @@ public class HstLinkImpl implements HstLink {
 
     public Mount getMount() {
         return mount;
+    }
+
+    @Override
+    public boolean representsIndex() {
+        return representsIndex;
     }
 
     @Override
