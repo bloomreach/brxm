@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.onehippo.taxonomy.util;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,5 +51,11 @@ public class TaxonomyUtilTest {
         assertEquals(TaxonomyUtil.toLocale("en-GB-0011"), enGB0011);
         Locale enGBHIP11 = new Locale("en", "GB", "HIP11");
         assertEquals(TaxonomyUtil.toLocale("en-GB-HIP11"), enGBHIP11);
+    }
+
+    @Test
+    public void getLocalesList_filterPrototypeLocale() {
+        final List<Locale> localesList = TaxonomyUtil.getLocalesList(new String[]{"document-type-locale"});
+        assertEquals(Collections.emptyList(), localesList);
     }
 }

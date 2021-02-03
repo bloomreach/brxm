@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.LocaleUtils;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 public class TaxonomyUtil {
 
     private static final Logger log = LoggerFactory.getLogger(TaxonomyUtil.class);
+    public static final String PROTOTYPE_LOCALE = "document-type-locale";
 
     /**
      * Builds a list of Locales from Strings.
@@ -38,7 +40,14 @@ public class TaxonomyUtil {
         if (localeStrings == null) {
             return Collections.emptyList();
         }
-        return Arrays.stream(localeStrings).map(TaxonomyUtil::toLocale).collect(Collectors.toList());
+        return Arrays.stream(localeStrings)
+                .map(TaxonomyUtil::toLocale)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    private static boolean isPrototypeLocale(final String localeString) {
+        return PROTOTYPE_LOCALE.equals(localeString);
     }
 
     /**
@@ -48,7 +57,7 @@ public class TaxonomyUtil {
      * @return null if localeString was null or not representing a valid Locale, or the requested Locale
      */
     public static Locale toLocale(final String localeString) {
-        if (localeString == null) {
+        if (localeString == null || isPrototypeLocale(localeString)) {
             return null;
         }
         try {
