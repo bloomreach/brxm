@@ -160,7 +160,7 @@ export default class CompoundFieldCtrl {
 
   async onAdd(index = 0) {
     try {
-      const fields = await this.FieldService.add({ name: this.getFieldName(index) });
+      const fields = await this.FieldService.add({ name: `${this.getFieldName(index)}/${this.fieldType.jcrType}` });
 
       if (!this.fieldValues) {
         this.fieldValues = [];
