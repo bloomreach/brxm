@@ -648,6 +648,10 @@ public class DocumentsServiceImpl implements DocumentsService {
             return chosenValue.getFields();
         }
 
+        if (value.getFields() == null) {
+            return Collections.singletonMap(fieldName, Collections.singletonList(value));
+        }
+
         return value.getFields();
     }
 
