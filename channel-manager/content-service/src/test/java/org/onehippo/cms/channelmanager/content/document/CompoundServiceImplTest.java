@@ -148,20 +148,6 @@ public class CompoundServiceImplTest {
     }
 
     @Test
-    public void addCompoundFieldShouldThrowIfFieldIsNotCompoundOrChoice() {
-        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, BOOLEAN);
-        replayAll();
-
-        try {
-            compoundService.addCompoundField("/document", new FieldPath("field"), singletonList(fieldType), "ns:type");
-            fail();
-        } catch (final InternalServerErrorException e) {
-            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR, "fieldType", "not-compound-or-choice");
-        }
-        verifyAll();
-    }
-
-    @Test
     public void addCompoundFieldShouldThrowIfMaxValuesIsNotRespected() throws Exception {
         mockDocument("document", "field", 1);
         final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
@@ -411,20 +397,6 @@ public class CompoundServiceImplTest {
             fail();
         } catch (final InternalServerErrorException e) {
             assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR, "fieldType", "not-multiple");
-        }
-        verifyAll();
-    }
-
-    @Test
-    public void removeCompoundFieldShouldThrowIfFieldIsNotCompoundOrChoice() {
-        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, BOOLEAN);
-        replayAll();
-
-        try {
-            compoundService.removeCompoundField("/document", new FieldPath("field"), singletonList(fieldType));
-            fail();
-        } catch (final InternalServerErrorException e) {
-            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR, "fieldType", "not-compound-or-choice");
         }
         verifyAll();
     }
