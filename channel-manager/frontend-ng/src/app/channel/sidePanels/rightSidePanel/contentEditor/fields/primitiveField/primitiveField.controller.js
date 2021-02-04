@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
+const COMPOUND_TYPES = ['hippogallerypicker:imagelink', 'hippo:mirror', 'hippostd:html'];
+
 class PrimitiveFieldCtrl {
-  constructor($element, $rootScope, $scope, $timeout, FieldService, SharedSpaceToolbarService) {
+  constructor($element, $rootScope, $scope, $timeout, FeedbackService, FieldService, SharedSpaceToolbarService) {
     'ngInject';
 
     this.$element = $element;
     this.$rootScope = $rootScope;
     this.$scope = $scope;
     this.$timeout = $timeout;
+    this.FeedbackService = FeedbackService;
     this.FieldService = FieldService;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
 
@@ -205,22 +208,45 @@ class PrimitiveFieldCtrl {
   }
 
   async onRemove(index) {
-    this.fieldValues.splice(index, 1);
-    await this._saveField();
-    this.form.$setDirty();
+    try {
+      if (COMPOUND_TYPES.includes(this.fieldType.jcrType)) {
+        await this.FieldService.remove({ name: this.getFieldName(index) });
+      }
 
-    if (this.fieldValues.length) {
-      this.form[this.getFieldName(Math.max(index - 1, 0))].$$element[0].focus();
-    } else {
-      this._focusAddButton();
+      this.fieldValues.splice(index, 1);
+      await this._saveField();
+      this.form.$setDirty();
+
+      if (this.fieldValues.length) {
+        this.form[this.getFieldName(Math.max(index - 1, 0))].$$element[0].focus();
+      } else {
+        this._focusAddButton();
+      }
+    } catch (error) {
+      this.FeedbackService.showError('ERROR_FIELD_REMOVE');
     }
   }
 
-  onAdd() {
-    this.fieldValues.push({ value: '' });
-    this.form.$setDirty();
+  async onAdd() {
+    try {
+      const index = this.fieldValues ? this.fieldValues.length : 0;
+      let value = { value: '' };
+      if (COMPOUND_TYPES.includes(this.fieldType.jcrType)) {
+        ({ [this.fieldType.id]: [value] } = await this.FieldService.add({
+          name: `${this.getFieldName(index)}/${this.fieldType.jcrType}`,
+        }));
+      }
 
-    this.$timeout(() => this.form[this.getFieldName(this.fieldValues.length - 1)].$$element[0].focus());
+      if (!this.fieldValues) {
+        this.fieldValues = [];
+      }
+
+      this.fieldValues.push(value);
+      this.form.$setDirty();
+      this.$timeout(() => this.form[this.getFieldName(this.fieldValues.length - 1)].$$element[0].focus());
+    } catch (error) {
+      this.FeedbackService.showError('ERROR_FIELD_ADD');
+    }
   }
 
   _focusAddButton() {
