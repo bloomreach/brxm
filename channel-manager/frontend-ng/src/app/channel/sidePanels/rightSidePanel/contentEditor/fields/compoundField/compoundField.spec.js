@@ -24,7 +24,7 @@ describe('CompoundField', () => {
   let FeedbackService;
   let FieldService;
 
-  const fieldType = { id: 'something' };
+  const fieldType = { id: 'something', jcrType: 'jcrType' };
   const fieldValues = [];
 
   beforeEach(() => {
@@ -225,7 +225,7 @@ describe('CompoundField', () => {
       $ctrl.onAdd(1);
       $scope.$digest();
 
-      expect(FieldService.add).toHaveBeenCalledWith({ name: 'test-name/something[2]' });
+      expect(FieldService.add).toHaveBeenCalledWith({ name: 'test-name/something[2]/jcrType' });
       expect($ctrl.fieldValues).toEqual(['a', { fields: 'd' }, 'b', 'c']);
       expect($ctrl.form.$setDirty).toHaveBeenCalled();
     });
