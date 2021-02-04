@@ -248,11 +248,6 @@ public class CompoundServiceImpl implements CompoundService {
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "fieldType", "not-multiple"));
         }
 
-        if (fieldType.getType() != COMPOUND && fieldType.getType() != CHOICE) {
-            log.warn("The field '{}' is not a compound or a choice field", fieldPath);
-            throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "fieldType", "not-compound-or-choice"));
-        }
-
         return fieldType;
     }
 
