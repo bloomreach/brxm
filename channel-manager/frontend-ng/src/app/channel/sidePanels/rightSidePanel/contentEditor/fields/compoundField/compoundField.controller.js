@@ -59,8 +59,7 @@ export default class CompoundFieldCtrl {
   }
 
   getFieldName(index) {
-    const fieldName = this.name ? `${this.name}/${this.fieldType.id}` : this.fieldType.id;
-    return index > 0 ? `${fieldName}[${index + 1}]` : fieldName;
+    return `${this.name}${index > 0 ? `[${index + 1}]` : ''}`;
   }
 
   onFocus() {
