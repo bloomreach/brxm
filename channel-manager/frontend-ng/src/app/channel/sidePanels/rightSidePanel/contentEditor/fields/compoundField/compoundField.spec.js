@@ -24,7 +24,7 @@ describe('CompoundField', () => {
   let FeedbackService;
   let FieldService;
 
-  const fieldType = { id: 'something', jcrType: 'jcrType' };
+  const fieldType = { jcrType: 'jcrType' };
   const fieldValues = [];
 
   beforeEach(() => {
@@ -71,18 +71,10 @@ describe('CompoundField', () => {
   });
 
   describe('getFieldName', () => {
-    it('should compose a name for the nested field', () => {
-      expect($ctrl.getFieldName(0)).toBe('test-name/something');
-      expect($ctrl.getFieldName(1)).toBe('test-name/something[2]');
-      expect($ctrl.getFieldName(2)).toBe('test-name/something[3]');
-    });
-
-    it('should compose a name for the top level compound', () => {
-      $ctrl.name = undefined;
-
-      expect($ctrl.getFieldName(0)).toBe('something');
-      expect($ctrl.getFieldName(1)).toBe('something[2]');
-      expect($ctrl.getFieldName(2)).toBe('something[3]');
+    it('should compose a name for the multiple field', () => {
+      expect($ctrl.getFieldName(0)).toBe('test-name');
+      expect($ctrl.getFieldName(1)).toBe('test-name[2]');
+      expect($ctrl.getFieldName(2)).toBe('test-name[3]');
     });
   });
 
@@ -167,7 +159,7 @@ describe('CompoundField', () => {
       $ctrl.onDrop({ oldIndex: 1, newIndex: 2 });
       $scope.$digest();
 
-      expect(FieldService.reorder).toHaveBeenCalledWith({ name: 'test-name/something[2]', order: 3 });
+      expect(FieldService.reorder).toHaveBeenCalledWith({ name: 'test-name[2]', order: 3 });
       expect($ctrl.fieldValues).toEqual(['a', 'c', 'b', 'd']);
       expect($ctrl.form.$setDirty).toHaveBeenCalled();
       expect(onDrop).toHaveBeenCalled();
@@ -197,7 +189,7 @@ describe('CompoundField', () => {
       $ctrl.onMove(1, 3);
       $scope.$digest();
 
-      expect(FieldService.reorder).toHaveBeenCalledWith({ name: 'test-name/something[2]', order: 4 });
+      expect(FieldService.reorder).toHaveBeenCalledWith({ name: 'test-name[2]', order: 4 });
       expect($ctrl.fieldValues).toEqual(['a', 'c', 'd', 'b']);
       expect($ctrl.form.$setDirty).toHaveBeenCalled();
     });
@@ -225,7 +217,7 @@ describe('CompoundField', () => {
       $ctrl.onAdd(1);
       $scope.$digest();
 
-      expect(FieldService.add).toHaveBeenCalledWith({ name: 'test-name/something[2]/jcrType' });
+      expect(FieldService.add).toHaveBeenCalledWith({ name: 'test-name[2]/jcrType' });
       expect($ctrl.fieldValues).toEqual(['a', { fields: 'd' }, 'b', 'c']);
       expect($ctrl.form.$setDirty).toHaveBeenCalled();
     });
@@ -253,7 +245,7 @@ describe('CompoundField', () => {
       $ctrl.onRemove(1);
       $scope.$digest();
 
-      expect(FieldService.remove).toHaveBeenCalledWith({ name: 'test-name/something[2]' });
+      expect(FieldService.remove).toHaveBeenCalledWith({ name: 'test-name[2]' });
       expect($ctrl.fieldValues).toEqual(['a', 'c']);
       expect($ctrl.form.$setDirty).toHaveBeenCalled();
     });

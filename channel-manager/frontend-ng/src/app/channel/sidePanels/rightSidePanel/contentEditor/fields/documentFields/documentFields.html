@@ -15,7 +15,7 @@
   -->
 <div class="field-wrapper" ng-repeat="fieldType in $ctrl.fieldTypes track by $ctrl.getFieldTypeHash(fieldType)">
   <compound-field ng-if="$ctrl.isCompound(fieldType)"
-                  name="$ctrl.name"
+                  name="$ctrl.getFieldName(fieldType)"
                   field-type="fieldType"
                   field-values="$ctrl.fieldValues[fieldType.id]"
                   ng-focus="$ctrl.onFieldFocus()"
@@ -31,7 +31,7 @@
   </choice-field>
 
   <primitive-field ng-if="$ctrl.isPrimitive(fieldType)"
-                   name="$ctrl.name"
+                   name="$ctrl.getFieldName(fieldType)"
                    field-type="fieldType"
                    field-values="$ctrl.fieldValues[fieldType.id]"
                    locale="$ctrl.locale"

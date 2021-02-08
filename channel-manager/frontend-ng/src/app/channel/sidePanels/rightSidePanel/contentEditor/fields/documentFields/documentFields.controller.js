@@ -24,9 +24,8 @@ class DocumentFieldsCtrl {
     this.onFieldBlur = this.onFieldBlur || angular.noop;
   }
 
-  getFieldName(fieldType, index) {
-    const fieldName = this.name ? `${this.name}/${fieldType.id}` : fieldType.id;
-    return index > 0 ? `${fieldName}[${index + 1}]` : fieldName;
+  getFieldName(fieldType) {
+    return `${this.name ? `${this.name}/` : ''}${fieldType.id}`;
   }
 
   getFieldTypeHash(fieldType) {
