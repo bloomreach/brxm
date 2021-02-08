@@ -42,7 +42,7 @@ describe('PrimitiveField', () => {
     onFieldFocus = jasmine.createSpy('onFieldFocus');
     onFieldBlur = jasmine.createSpy('onFieldBlur');
 
-    fieldType = { id: 'field:type' };
+    fieldType = {};
     fieldValues = [
       { value: 'Value 1' },
       { value: 'Value 2' },
@@ -68,17 +68,9 @@ describe('PrimitiveField', () => {
   });
 
   it('helps composing unique form field names', () => {
-    expect($ctrl.getFieldName(0)).toBe('test-name/field:type');
-    expect($ctrl.getFieldName(1)).toBe('test-name/field:type[2]');
-    expect($ctrl.getFieldName(2)).toBe('test-name/field:type[3]');
-
-    const stubbed = $componentController('primitiveField', { $element }, {
-      fieldType,
-      fieldValues,
-    });
-    expect(stubbed.getFieldName(0)).toBe('field:type');
-    expect(stubbed.getFieldName(1)).toBe('field:type[2]');
-    expect(stubbed.getFieldName(2)).toBe('field:type[3]');
+    expect($ctrl.getFieldName(0)).toBe('test-name');
+    expect($ctrl.getFieldName(1)).toBe('test-name[2]');
+    expect($ctrl.getFieldName(2)).toBe('test-name[3]');
   });
 
   it('returns the form error object if a single field is invalid', () => {
@@ -86,7 +78,7 @@ describe('PrimitiveField', () => {
       required: true,
     };
     $ctrl.form = {
-      'test-name/field:type': {
+      'test-name': {
         $error: error,
       },
     };
@@ -95,12 +87,12 @@ describe('PrimitiveField', () => {
 
   it('returns the combined form error object if multiple fields are invalid', () => {
     $ctrl.form = {
-      'test-name/field:type': {
+      'test-name': {
         $error: {
           required: true,
         },
       },
-      'test-name/field:type[2]': {
+      'test-name[2]': {
         $error: {
           maxlength: true,
         },
@@ -129,7 +121,7 @@ describe('PrimitiveField', () => {
 
   it('knowns whether a single field is valid', () => {
     $ctrl.form = {
-      'test-name/field:type': {
+      'test-name': {
         $invalid: false,
       },
     };
@@ -138,7 +130,7 @@ describe('PrimitiveField', () => {
 
   it('knowns whether a single field is invalid', () => {
     $ctrl.form = {
-      'test-name/field:type': {
+      'test-name': {
         $invalid: true,
         $touched: true,
       },
@@ -148,11 +140,11 @@ describe('PrimitiveField', () => {
 
   it('knowns whether a multiple field is valid', () => {
     $ctrl.form = {
-      'test-name/field:type': {
+      'test-name': {
         $invalid: false,
         $touched: true,
       },
-      'test-name/field:type[2]': {
+      'test-name[2]': {
         $invalid: true,
         $touched: false,
       },
@@ -162,11 +154,11 @@ describe('PrimitiveField', () => {
 
   it('knowns whether a multiple field is invalid', () => {
     $ctrl.form = {
-      'test-name/field:type': {
+      'test-name': {
         $invalid: false,
         $touched: false,
       },
-      'test-name/field:type[2]': {
+      'test-name[2]': {
         $invalid: true,
         $touched: true,
       },
@@ -234,7 +226,7 @@ describe('PrimitiveField', () => {
     $rootScope.$digest();
 
     expect(FieldService.save).toHaveBeenCalledWith({
-      name: 'test-name/field:type',
+      name: 'test-name',
       values: [
         { value: 'Value 2' },
         { value: 'Value 3' },
@@ -251,7 +243,7 @@ describe('PrimitiveField', () => {
     $rootScope.$digest();
 
     expect(FieldService.save).toHaveBeenCalledWith({
-      name: 'test-name/field:type',
+      name: 'test-name',
       values: [
         { value: 'Value 1' },
         { value: 'Value 3' },
@@ -282,13 +274,13 @@ describe('PrimitiveField', () => {
         $setValidity() {},
         $setTouched() {},
       };
-      $ctrl.form = { 'test-name/field:type': field };
+      $ctrl.form = { 'test-name': field };
     });
 
     it('starts a save timer when the value changed', () => {
       $ctrl.valueChanged();
       expect(FieldService.save)
-        .toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues, throttle: true });
+        .toHaveBeenCalledWith({ name: 'test-name', values: fieldValues, throttle: true });
     });
 
     it('sets server errors when the auto-saved value contains errorInfo objects', () => {
@@ -307,7 +299,7 @@ describe('PrimitiveField', () => {
       $rootScope.$digest();
 
       expect(FieldService.save)
-        .toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues, throttle: true });
+        .toHaveBeenCalledWith({ name: 'test-name', values: fieldValues, throttle: true });
       expect(field.$setTouched).toHaveBeenCalled();
       expect(field.$setValidity).toHaveBeenCalledWith('server', false);
       expect($ctrl.firstServerError).toBe('First error');
@@ -324,7 +316,7 @@ describe('PrimitiveField', () => {
       $rootScope.$digest();
 
       expect(FieldService.save)
-        .toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues, throttle: true });
+        .toHaveBeenCalledWith({ name: 'test-name', values: fieldValues, throttle: true });
       expect(field.$setValidity).toHaveBeenCalledWith('server', true);
       expect($ctrl.firstServerError).toBeUndefined();
     });
@@ -352,7 +344,7 @@ describe('PrimitiveField', () => {
     $ctrl.blurPrimitive();
     $rootScope.$digest();
 
-    expect(FieldService.save).toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues });
+    expect(FieldService.save).toHaveBeenCalledWith({ name: 'test-name', values: fieldValues });
     expect($ctrl.fieldValues).toEqual(expectedFieldValues);
   });
 

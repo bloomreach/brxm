@@ -113,8 +113,6 @@ describe('DocumentFields', () => {
   it('generates names for root-level fields', () => {
     expect($ctrl.getFieldName(stringField)).toEqual('ns:string');
     expect($ctrl.getFieldName(multipleStringField)).toEqual('ns:multiplestring');
-    expect($ctrl.getFieldName(multipleStringField, 0)).toEqual('ns:multiplestring');
-    expect($ctrl.getFieldName(multipleStringField, 1)).toEqual('ns:multiplestring[2]');
     expect($ctrl.getFieldName(compoundField)).toEqual('ns:compound');
   });
 

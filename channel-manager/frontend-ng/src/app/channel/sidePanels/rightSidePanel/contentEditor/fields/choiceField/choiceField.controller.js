@@ -65,7 +65,11 @@ class ChoiceFieldCtrl {
   }
 
   getFieldName(index) {
-    return index > 0 ? `${this.name}[${index + 1}]` : `${this.name}`;
+    return `${this.name}${index > 0 ? `[${index + 1}]` : ''}`;
+  }
+
+  getPrimitiveFieldName(index) {
+    return `${this.getFieldName(index)}/${this.fieldType.choices[this.fieldValues[index].chosenId].id}`;
   }
 
   onFocus() {
@@ -147,8 +151,7 @@ class ChoiceFieldCtrl {
 
   _focus(index, reset = false) {
     this.$timeout(() => {
-      const { id } = this.fieldType.choices[this.fieldValues[index].chosenId];
-      const name = `${this.getFieldName(index)}/${id}`;
+      const name = this.getFieldName(index);
       const field = Object.keys(this.form).find(key => key.startsWith(name));
 
       if (!field) {
