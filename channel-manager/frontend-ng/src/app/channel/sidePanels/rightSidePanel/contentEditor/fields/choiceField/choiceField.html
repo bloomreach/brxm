@@ -141,7 +141,7 @@
 
           <primitive-field
             ng-if="$ctrl.fieldType.choices[fieldValue.chosenId].type !== 'COMPOUND'"
-            name="$ctrl.getFieldName($index)"
+            name="$ctrl.getPrimitiveFieldName($index)"
             field-type="$ctrl.fieldType.choices[fieldValue.chosenId]"
             field-values="[fieldValue.chosenValue]"
             dragging="$ctrl.dragging === $index ? 0 : false"
@@ -198,7 +198,7 @@
                   </md-menu-item>
                 </md-menu-content>
               </md-menu>
-            </compound-field-buttons>
+            </primitive-field-buttons>
           </primitive-field>
         </div>
       </div>
