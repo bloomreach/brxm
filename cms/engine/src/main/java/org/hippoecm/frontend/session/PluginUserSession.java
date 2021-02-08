@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.session;
 
+import static org.hippoecm.frontend.PluginApplication.PLUGIN_APPLICATION_VALUE_CMS;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -62,15 +64,17 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.event.HippoEventConstants;
+import org.onehippo.cms7.event.HippoSecurityEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.frontend.PluginApplication.PLUGIN_APPLICATION_VALUE_CMS;
 
 /**
  * A Wicket {@link org.apache.wicket.Session} that maintains a reference to a JCR {@link javax.jcr.Session}.  It is
@@ -87,6 +91,7 @@ public class PluginUserSession extends UserSession {
     public static final String HST_REQUEST_CONTEXT_ATTR_JCR_SESSION = PluginUserSession.class.getName() + ".sessionObject";
 
     private IModel<Session> jcrSessionModel;
+    private String remoteAddress;
     private transient Session fallbackSession;
     private boolean skipFallbackSessionLogout;
     private final IModel<ClassLoader> classLoader;
@@ -110,7 +115,7 @@ public class PluginUserSession extends UserSession {
 
     public PluginUserSession(Request request) {
         super(request);
-
+       this.remoteAddress = ((ServletWebRequest) RequestCycle.get().getRequest()).getContainerRequest().getRemoteAddr();
         classLoader = new LoadableDetachableModel<ClassLoader>() {
             private static final long serialVersionUID = 1L;
 
@@ -346,6 +351,9 @@ public class PluginUserSession extends UserSession {
             jcrSession.logout();
             throw e;
         }
+        if(credentials != null) {
+            logHippoEvent( credentials.getUsername(), "login successful" );
+             }
 
         IModel<Session> oldModel = jcrSessionModel;
         jcrSessionModel = sessionModel;
@@ -399,6 +407,32 @@ public class PluginUserSession extends UserSession {
     private String getApplicationUserRole(final String applicationName) {
         return "xm."+applicationName+".user";
     }
+    
+    public void logHippoEvent( final String user, final String message) throws LoginException {
+        final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+        
+
+        if (eventBus != null) {
+            Task logEventTask = null;
+
+            try {
+                if (HDC.isStarted()) {
+                    logEventTask = HDC.getCurrentTask().startSubtask("pluginUserSession.logHippoEvent");
+                }
+
+                final String action = "login";
+                final HippoEvent event = new HippoSecurityEvent("cms").success(true).action(action)
+                        .category(HippoEventConstants.CATEGORY_SECURITY).user(user).set("remoteAddress", getRemoteAddr())
+                        .message(message);
+                event.sealEvent();
+                eventBus.post(event);
+            } finally {
+                if (logEventTask != null) {
+                    logEventTask.stop();
+                }
+            }
+        }
+    } 
 
     public void logout() {
         Task logoutTask = null;
@@ -652,4 +686,7 @@ public class PluginUserSession extends UserSession {
     public String getUserName() {
         return (String)getHttpSession().getAttribute("hippo:username");
     }
+    public String getRemoteAddr() {
+		return remoteAddress;
+	}
 }
