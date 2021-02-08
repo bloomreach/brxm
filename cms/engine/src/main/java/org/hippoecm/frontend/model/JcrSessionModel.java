@@ -139,7 +139,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
                 session.logout();
                 return null;
             }
-            logHippoEvent(true, credentials.getUsername(), "login successful", true);
+            logHippoEvent(true, credentials.getUsername(), "authenticated", false);
         } catch (LoginException e) {
             logHippoEvent(true, credentials.getUsername(), "invalid credentials", false);
             lastThrownLoginException = e;
