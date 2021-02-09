@@ -1,5 +1,5 @@
 <!--
-  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ export default class BrPage extends Vue {
   /**
    * The brXM and Vue.js components mapping.
    */
-  @Prop() mapping!: Record<string, Vue.Component>;
+  @Prop() mapping!: Record<keyof any, Vue.Component>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   /**
    * The pre-initialized page instance or prefetched page model.
