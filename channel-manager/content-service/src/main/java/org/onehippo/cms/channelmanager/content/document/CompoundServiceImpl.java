@@ -16,6 +16,7 @@
 package org.onehippo.cms.channelmanager.content.document;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
@@ -262,11 +263,25 @@ public class CompoundServiceImpl implements CompoundService {
             return fieldType;
         }
 
-        if (!(fieldType instanceof CompoundFieldType)) {
-            return null;
+        if (fieldType instanceof CompoundFieldType) {
+            return findFieldType(remaining, ((CompoundFieldType) fieldType).getFields());
         }
 
-        return findFieldType(remaining, ((CompoundFieldType) fieldType).getFields());
+        if (fieldType instanceof ChoiceFieldType) {
+            // We arrive here if we are traversing into a nested choice-field. This means that *if* we want to add
+            // a child node, the chosen field has to be a compound.
+            // Since we don't know which choice-field to traverse into, we try them all and return the first that
+            // returns a hit.
+            final ChoiceFieldType choiceFieldType = (ChoiceFieldType) fieldType;
+            return choiceFieldType.getChoices().values().stream()
+                    .filter(type -> type.getType().equals(COMPOUND))
+                    .map(type -> findFieldType(remaining, ((CompoundFieldType)type).getFields()))
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        return null;
     }
 
     private static String stripSuffix(final String path) {

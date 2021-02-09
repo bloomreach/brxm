@@ -625,34 +625,27 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     private static Map<String, List<FieldValue>> findFieldValues(final FieldPath path,
                                                                  final Map<String, List<FieldValue>> fields) {
-        final String fieldName = path.getFirstSegmentName();
+        String fieldName = path.getFirstSegmentName();
         final List<FieldValue> fieldValues = fields.get(fieldName);
 
         if (fieldValues == null) {
             throw new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST, "field", fieldName));
         }
 
-        final int fieldIndex = path.getFirstSegmentIndex();
-        final FieldValue value = fieldValues.get(fieldIndex - 1);
+        FieldValue fieldValue = fieldValues.get(path.getFirstSegmentIndex() - 1);
+        if (StringUtils.isNotEmpty(fieldValue.getChosenId())) {
+            fieldName = fieldValue.getChosenId();
+            fieldValue = fieldValue.getChosenValue();
+        }
+
         final FieldPath remaining = path.getRemainingSegments();
-
         if (!remaining.isEmpty()) {
-            return findFieldValues(remaining, value.getFields());
+            return findFieldValues(remaining, fieldValue.getFields());
         }
 
-        if (StringUtils.isNotEmpty(value.getChosenId())) {
-            final FieldValue chosenValue = value.getChosenValue();
-            if (chosenValue.getFields() == null) {
-                return Collections.singletonMap(value.getChosenId(), Collections.singletonList(chosenValue));
-            }
-            return chosenValue.getFields();
-        }
-
-        if (value.getFields() == null) {
-            return Collections.singletonMap(fieldName, Collections.singletonList(value));
-        }
-
-        return value.getFields();
+        return fieldValue.getFields() != null
+                ? fieldValue.getFields()
+                : Collections.singletonMap(fieldName, Collections.singletonList(fieldValue));
     }
 
     private static String getDocumentPath(final Node draft) {
