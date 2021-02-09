@@ -141,6 +141,7 @@ Constant | Description
 `TYPE_CONTAINER_NO_MARKUP` | A container without surrounding markup.
 `TYPE_CONTAINER_ORDERED_LIST` | An ordered list container.
 `TYPE_CONTAINER_UNORDERED_LIST` | An unordered list container.
+`TYPE_CONTAINER_ITEM_UNDEFINED` | A container item without mapping.
 `TYPE_LINK_EXTERNAL` | Link to a page outside the current application.
 `TYPE_LINK_INTERNAL` | Link to a page inside the current application.
 `TYPE_LINK_RESOURCE` | Link to a CMS resource.
