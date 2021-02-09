@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import {
   Type,
   ViewContainerRef,
 } from '@angular/core';
-import { ContainerItem } from '@bloomreach/spa-sdk';
+import { ContainerItem, TYPE_CONTAINER_BOX, TYPE_CONTAINER_ITEM_UNDEFINED } from '@bloomreach/spa-sdk';
 import {
   BrContainerItemUndefinedComponent,
 } from './br-container-item-undefined/br-container-item-undefined.component';
@@ -78,6 +78,6 @@ implements OnChanges, OnDestroy {
       return this.page.mapping[type];
     }
 
-    return BrContainerItemUndefinedComponent;
+    return this.page.mapping[TYPE_CONTAINER_ITEM_UNDEFINED as any] ?? BrContainerItemUndefinedComponent;
   }
 }
