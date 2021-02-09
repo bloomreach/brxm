@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import { mocked } from 'ts-jest/utils';
 import { Component, Input, NgModule } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
-import { ContainerItem } from '@bloomreach/spa-sdk';
+import { ContainerItem, TYPE_CONTAINER_ITEM_UNDEFINED } from '@bloomreach/spa-sdk';
 import {
   BrContainerItemUndefinedComponent,
 } from './br-container-item-undefined/br-container-item-undefined.component';
@@ -100,6 +100,15 @@ describe('BrNodeContainerItemDirective', () => {
     });
 
     it('should render undefined container item', () => {
+      mocked(containerItem.getType).mockReturnValueOnce('undefined');
+      component.containerItem = { ...containerItem };
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement).toMatchSnapshot();
+    });
+
+    it('should override undefined container item', () => {
+      page.mapping[TYPE_CONTAINER_ITEM_UNDEFINED as any] = ContainerItemTestComponent;
       mocked(containerItem.getType).mockReturnValueOnce('undefined');
       component.containerItem = { ...containerItem };
       fixture.detectChanges();
