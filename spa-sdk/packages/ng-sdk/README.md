@@ -182,6 +182,18 @@ It requires to pass the `mapping` property that maps the component type with its
   }
   ```
 
+- By default, container items that are not mapped will be rendered as a warning text. There is an option to override the fallback.
+  ```typescript
+  import { TYPE_CONTAINER_ITEM_UNDEFINED } from '@bloomreach/spa-sdk';
+  import { FallbackComponent } from './fallback/fallback.component';
+
+  export class AppComponent {
+    mapping = {
+      [TYPE_CONTAINER_ITEM_UNDEFINED]: FallbackComponent,
+    };
+  }
+  ```
+
 ### Inline Mapping
 There is also another way to render a component.
 In case you need to show a static component or a component from the abstract page, you can use inline component mapping.
