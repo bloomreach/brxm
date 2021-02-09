@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ export {
   TYPE_COMPONENT_CONTAINER as TYPE_COMPONENT_CONTAINER_09,
   TYPE_COMPONENT_CONTAINER_ITEM as TYPE_COMPONENT_CONTAINER_ITEM_09,
 } from './component09';
-export { ContainerItem } from './container-item';
+export { ContainerItem, TYPE_CONTAINER_ITEM_UNDEFINED } from './container-item';
 export {
   Container,
   TYPE_CONTAINER_BOX,
