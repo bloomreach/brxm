@@ -109,7 +109,10 @@
     }
 
     const subappAPI = await getSubappConnection(iframe);
-    return subappAPI.navigate({ path }, triggeredBy);
+
+    if (subappAPI.navigate) {
+      return subappAPI.navigate({ path }, triggeredBy);
+    }
   }
 
   async function navigateToPerspective(appPath, pathElements, triggeredBy) {
