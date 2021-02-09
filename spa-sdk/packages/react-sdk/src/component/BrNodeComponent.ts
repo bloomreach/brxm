@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,21 +23,16 @@ export class BrNodeComponent<T extends Component> extends React.Component<BrProp
   static contextType = BrMappingContext;
   context!: React.ContextType<typeof BrMappingContext>;
 
-  protected getMapping(): string | undefined {
-    return this.props.component.getName();
-  }
-
-  protected fallback() {
-    return this.props.children;
+  protected getMapping(): React.ComponentType<BrProps> | undefined {
+    return this.context[this.props.component.getName()] as React.ComponentType<BrProps>;
   }
 
   render() {
     const mapping = this.getMapping();
-    const component = mapping && this.context[mapping];
-    if (!component) {
-      return this.fallback();
+    if (!mapping) {
+      return this.props.children;
     }
 
-    return React.createElement(component, this.props);
+    return React.createElement(mapping, this.props);
   }
 }
