@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import {
   Container,
   TYPE_CONTAINER_INLINE,
@@ -23,20 +22,23 @@ import {
   TYPE_CONTAINER_UNORDERED_LIST,
 } from '@bloomreach/spa-sdk';
 import { BrNodeComponent } from './BrNodeComponent';
+import { BrProps } from './BrProps';
 import { BrContainerBox, BrContainerInline, BrContainerNoMarkup, BrContainerOrderedList, BrContainerUnorderedList } from '../cms';
 
 export class BrNodeContainer extends BrNodeComponent<Container> {
-  protected getMapping() {
-    return this.props.component.getType();
-  }
+  protected getMapping(): React.ComponentType<BrProps> {
+    const type = this.props.component.getType();
 
-  protected fallback() {
-    switch (this.props.component.getType()) {
-      case TYPE_CONTAINER_INLINE: return <BrContainerInline {...this.props} />;
-      case TYPE_CONTAINER_NO_MARKUP: return <BrContainerNoMarkup {...this.props} />;
-      case TYPE_CONTAINER_ORDERED_LIST: return <BrContainerOrderedList {...this.props} />;
-      case TYPE_CONTAINER_UNORDERED_LIST: return <BrContainerUnorderedList {...this.props} />;
-      default: return <BrContainerBox {...this.props} />;
+    if (type && type in this.context) {
+      return this.context[type] as React.ComponentType<BrProps>;
+    }
+
+    switch (type) {
+      case TYPE_CONTAINER_INLINE: return BrContainerInline;
+      case TYPE_CONTAINER_NO_MARKUP: return BrContainerNoMarkup;
+      case TYPE_CONTAINER_ORDERED_LIST: return BrContainerOrderedList;
+      case TYPE_CONTAINER_UNORDERED_LIST: return BrContainerUnorderedList;
+      default: return BrContainerBox;
     }
   }
 }

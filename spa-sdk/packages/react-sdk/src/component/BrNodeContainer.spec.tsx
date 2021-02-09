@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import {
   Container,
   Page,
@@ -26,6 +26,7 @@ import {
   TYPE_CONTAINER_UNORDERED_LIST,
 } from '@bloomreach/spa-sdk';
 import { BrContainerBox, BrContainerInline, BrContainerNoMarkup, BrContainerOrderedList, BrContainerUnorderedList } from '../cms';
+import { BrNodeComponent } from './BrNodeComponent';
 import { BrNodeContainer } from './BrNodeContainer';
 
 describe('BrNodeContainer', () => {
@@ -39,14 +40,33 @@ describe('BrNodeContainer', () => {
   });
 
   describe('getMapping', () => {
+    beforeEach(() => {
+      // @see https://github.com/airbnb/enzyme/issues/1553
+      /// @ts-ignore
+      BrNodeContainer.contextTypes = { test: () => null };
+      delete (BrNodeComponent as Partial<typeof BrNodeComponent>).contextType;
+    });
+
     it('should use container type for mapping', () => {
       shallow(<BrNodeContainer {...props} />);
 
       expect(props.component.getType).toBeCalled();
     });
-  });
 
-  describe('fallback', () => {
+    it('should render a mapped container', () => {
+      props.component.getType.mockReturnValue('test' as ReturnType<Container['getType']>);
+      const wrapper = mount(
+        <BrNodeContainer {...props}><a/></BrNodeContainer>,
+        {
+          context: {
+            test: ({ children }: React.PropsWithChildren<typeof props>) => <div>{children}</div>,
+          }
+        },
+      );
+
+      expect(wrapper.html()).toBe('<div><a></a></div>');
+    });
+
     it('should render inline container', () => {
       props.component.getType.mockReturnValue(TYPE_CONTAINER_INLINE);
       const wrapper = shallow(<BrNodeContainer {...props}><a/></BrNodeContainer>);
