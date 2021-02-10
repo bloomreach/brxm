@@ -104,7 +104,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     private HintsInspector hintsInspector;
     private BranchingService branchingService;
-    private CompoundService compoundService;
+    private NodeFieldService nodeFieldService;
 
     public void setHintsInspector(final HintsInspector hintsInspector) {
         this.hintsInspector = hintsInspector;
@@ -114,8 +114,8 @@ public class DocumentsServiceImpl implements DocumentsService {
         this.branchingService = branchingService;
     }
 
-    public void setCompoundService(final CompoundService compoundService) {
-        this.compoundService = compoundService;
+    public void setNodeFieldService(final NodeFieldService nodeFieldService) {
+        this.nodeFieldService = nodeFieldService;
     }
 
     @Override
@@ -564,13 +564,13 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Map<String, List<FieldValue>> addCompoundField(final String uuid,
-                                     final String branchId,
-                                     final FieldPath fieldPath,
-                                     final String type,
-                                     final UserContext userContext) {
+    public Map<String, List<FieldValue>> addNodeField(final String uuid,
+                                                      final String branchId,
+                                                      final FieldPath fieldPath,
+                                                      final String type,
+                                                      final UserContext userContext) {
         if (fieldPath.isEmpty()) {
-            log.warn("Can not add compound field if fieldPath is empty");
+            log.warn("Can not add node field if fieldPath is empty");
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
@@ -579,7 +579,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final String documentPath = getDocumentPath(draft);
         final DocumentType documentType = getDocumentType(handle, userContext);
 
-        compoundService.addCompoundField(documentPath, fieldPath, documentType.getFields(), type);
+        nodeFieldService.addNodeField(documentPath, fieldPath, documentType.getFields(), type);
 
         final Document document = assembleDocument(uuid, handle, draft, documentType);
         FieldTypeUtils.readFieldValues(draft, documentType.getFields(), document.getFields());
@@ -588,13 +588,13 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public void reorderCompoundField(final String uuid,
-                                     final String branchId,
-                                     final FieldPath fieldPath,
-                                     final int order,
-                                     final UserContext userContext) {
+    public void reorderNodeField(final String uuid,
+                                 final String branchId,
+                                 final FieldPath fieldPath,
+                                 final int position,
+                                 final UserContext userContext) {
         if (fieldPath.isEmpty()) {
-            log.warn("Can not reorder compound field if fieldPath is empty");
+            log.warn("Can not reorder node field if fieldPath is empty");
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
@@ -602,16 +602,16 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Node draft = getDraft(handle, branchId);
         final String documentPath = getDocumentPath(draft);
 
-        compoundService.reorderCompoundField(documentPath, fieldPath, order);
+        nodeFieldService.reorderNodeField(documentPath, fieldPath, position);
     }
 
     @Override
-    public void removeCompoundField(final String uuid,
-                                    final String branchId,
-                                    final FieldPath fieldPath,
-                                    final UserContext userContext) {
+    public void removeNodeField(final String uuid,
+                                final String branchId,
+                                final FieldPath fieldPath,
+                                final UserContext userContext) {
         if (fieldPath.isEmpty()) {
-            log.warn("Can not remove compound field if fieldPath is empty");
+            log.warn("Can not remove node field if fieldPath is empty");
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
@@ -620,7 +620,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final String documentPath = getDocumentPath(draft);
         final DocumentType documentType = getDocumentType(handle, userContext);
 
-        compoundService.removeCompoundField(documentPath, fieldPath, documentType.getFields());
+        nodeFieldService.removeNodeField(documentPath, fieldPath, documentType.getFields());
     }
 
     private static Map<String, List<FieldValue>> findFieldValues(final FieldPath path,

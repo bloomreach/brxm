@@ -17,10 +17,10 @@
 ^Value of hint action \'.+\' is expected to be boolean but it was \'.+\'
 An error occurred while looking up the prototype node for type 'ns:type'
 Cancel request received but no pending request found for 'uuid'.
-Cannot add compound field 'field', the maximum amount of fields allowed is 1
+Cannot add field 'field', the maximum amount of fields allowed is 1
 Cannot change the URL name of document
 Cannot create validation context
-Cannot delete compound field 'field', the minimum amount of required fields is 1
+Cannot delete field 'field', the minimum amount of required fields is 1
 Cannot determine publication state of document handle
 Cannot load ValidationService from service registry, field validation will be disabled
 Cannot read config of field
@@ -62,7 +62,7 @@ Failed to get validator names for content type '/'
 Failed to load validator
 Failed to obtain draft for user 'bla'.
 Failed to persist changes
-Failed to re-order compound 'document/field', new position '2' is out of bounds
+Failed to re-order field 'document/field', new position '2' is out of bounds
 Failed to read field 'test:id' from 'bla'
 Failed to read IMAGE_LINK 'my:imagelink' from node '/my:imagelink'
 Failed to read name of node 'null'
