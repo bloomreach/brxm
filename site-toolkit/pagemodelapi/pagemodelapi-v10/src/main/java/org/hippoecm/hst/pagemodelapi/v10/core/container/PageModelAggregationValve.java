@@ -230,6 +230,8 @@ public class PageModelAggregationValve extends AggregationValve {
 
         aggregatedPageModel.setDocument(requestContext.getContentBean());
 
+        aggregatedPageModel.putMetadata("product", "brx");
+
         addPreviewFlagToPageModel(aggregatedPageModel, requestContext);
 
         // include api version to _meta section
