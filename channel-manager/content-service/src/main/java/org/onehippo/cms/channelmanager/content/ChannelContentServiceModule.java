@@ -29,8 +29,8 @@ import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.document.CompoundService;
-import org.onehippo.cms.channelmanager.content.document.CompoundServiceImpl;
+import org.onehippo.cms.channelmanager.content.document.NodeFieldService;
+import org.onehippo.cms.channelmanager.content.document.NodeFieldServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.DocumentVersionServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.BranchSelectionServiceImpl;
@@ -118,11 +118,11 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         super.doInitialize(session);
         documentsService.setHintsInspector(createHintsInspector(session));
         documentsService.setBranchingService(createBranchingService(session));
-        documentsService.setCompoundService(createCompoundService(session));
+        documentsService.setNodeFieldService(createNodeFieldService(session));
     }
 
-    private CompoundService createCompoundService(final Session session) {
-        return new CompoundServiceImpl(session);
+    private NodeFieldService createNodeFieldService(final Session session) {
+        return new NodeFieldServiceImpl(session);
     }
 
     private HintsInspector createHintsInspector(final Session session) throws RepositoryException {
