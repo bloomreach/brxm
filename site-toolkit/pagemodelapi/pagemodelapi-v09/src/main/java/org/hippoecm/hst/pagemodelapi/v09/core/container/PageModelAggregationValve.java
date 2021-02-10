@@ -289,6 +289,9 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         aggregatedPageModel.setPageWindowModel(pageWindowModel);
+
+        aggregatedPageModel.putMetadata("product", "brxm");
+
         addPreviewFlagToPageModel(aggregatedPageModel, requestContext);
 
         // include api version to _meta section
