@@ -101,19 +101,6 @@ public class ContentResource {
                 userContext -> documentService.obtainEditableDocument(id, getBranchId(servletRequest), userContext));
     }
 
-    @PATCH
-    @Path("documents/{documentId}/editable/{fieldPath:.*}")
-    public Response orderCompoundField(@PathParam("documentId") final String id,
-                                       @PathParam("fieldPath") final String fieldPath,
-                                       final OrderState order,
-                                       @Context final HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Status.NO_CONTENT, userContext -> {
-            documentService.reorderCompoundField(id, getBranchId(servletRequest), new FieldPath(fieldPath), order.getOrder(),
-                    userContext);
-            return null;
-        });
-    }
-
     @PUT
     @Path("documents/{documentId}/editable")
     public Response updateEditableDocument(@PathParam("documentId") final String id,
@@ -143,26 +130,39 @@ public class ContentResource {
         });
     }
 
-    @DELETE
+    @POST
+    @Path("documents/{documentId}/editable/{fieldPath:.*}/{type}")
+    public Response addNodeField(@PathParam("documentId") final String documentId,
+                                 @PathParam("fieldPath") final String fieldPath,
+                                 @PathParam("type") final String type,
+                                 @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK,
+                userContext -> documentService.addNodeField(documentId, getBranchId(servletRequest),
+                        new FieldPath(fieldPath), type, userContext));
+    }
+
+    @PATCH
     @Path("documents/{documentId}/editable/{fieldPath:.*}")
-    public Response removeCompoundField(@PathParam("documentId") final String id,
-                                        @PathParam("fieldPath") final String fieldPath,
-                                        @Context final HttpServletRequest servletRequest) {
+    public Response orderNodeField(@PathParam("documentId") final String id,
+                                   @PathParam("fieldPath") final String fieldPath,
+                                   final OrderState order,
+                                   @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, userContext -> {
-            documentService.removeCompoundField(id, getBranchId(servletRequest), new FieldPath(fieldPath), userContext);
+            documentService.reorderNodeField(id, getBranchId(servletRequest), new FieldPath(fieldPath), order.getOrder(),
+                    userContext);
             return null;
         });
     }
 
-    @POST
-    @Path("documents/{documentId}/editable/{fieldPath:.*}/{type}")
-    public Response addChoiceField(@PathParam("documentId") final String documentId,
-                                   @PathParam("fieldPath") final String fieldPath,
-                                   @PathParam("type") final String type,
-                                   @Context final HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Status.OK,
-                userContext -> documentService.addCompoundField(documentId, getBranchId(servletRequest),
-                        new FieldPath(fieldPath), type, userContext));
+    @DELETE
+    @Path("documents/{documentId}/editable/{fieldPath:.*}")
+    public Response removeNodeField(@PathParam("documentId") final String id,
+                                    @PathParam("fieldPath") final String fieldPath,
+                                    @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.NO_CONTENT, userContext -> {
+            documentService.removeNodeField(id, getBranchId(servletRequest), new FieldPath(fieldPath), userContext);
+            return null;
+        });
     }
 
     @GET

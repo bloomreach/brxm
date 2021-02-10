@@ -47,39 +47,39 @@ import static org.onehippo.cms.channelmanager.content.documenttype.field.type.Fi
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason.DOES_NOT_EXIST;
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason.SERVER_ERROR;
 
-public class CompoundServiceImpl implements CompoundService {
-    private static final Logger log = LoggerFactory.getLogger(CompoundServiceImpl.class);
+public class NodeFieldServiceImpl implements NodeFieldService {
+    private static final Logger log = LoggerFactory.getLogger(NodeFieldServiceImpl.class);
     public static final String SYSTEM_PREFIX = "system";
 
     private final Session session;
 
-    public CompoundServiceImpl(final Session session) {
+    public NodeFieldServiceImpl(final Session session) {
         this.session = session;
     }
 
     @Override
-    public void addCompoundField(final String documentPath, final FieldPath fieldPath, final List<FieldType> fields,
-                                 final String type) {
+    public void addNodeField(final String documentPath, final FieldPath fieldPath, final List<FieldType> fields,
+                             final String type) {
 
         final FieldType fieldType = getFieldType(fieldPath, fields);
         if (fieldType.getType() == COMPOUND && !fieldType.getJcrType().equals(type)) {
-            log.warn("The field '{}' does not support subfields of type '{}'", fieldPath, type);
+            log.warn("The compound field '{}' does not support subfields of type '{}'", fieldPath, type);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "type", "not-supported"));
         }
 
         if (fieldType.getType() == CHOICE && !((ChoiceFieldType)fieldType).getChoices().containsKey(type)) {
-            log.warn("The field '{}' does not support subfields of type '{}'", fieldPath, type);
+            log.warn("The choice field '{}' does not support subfields of type '{}'", fieldPath, type);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "type", "not-supported"));
         }
 
-        final String compoundPath = documentPath + SEPARATOR + fieldPath;
+        final String nodeFieldPath = documentPath + SEPARATOR + fieldPath;
         try {
-            final String parentPath = StringUtils.substringBeforeLast(compoundPath, SEPARATOR);
+            final String parentPath = StringUtils.substringBeforeLast(nodeFieldPath, SEPARATOR);
             final Node parent = session.getNode(parentPath);
-            final long numberOfCompounds = parent.getNodes(fieldPath.getLastSegmentName()).getSize();
+            final long numberOfFields = parent.getNodes(fieldPath.getLastSegmentName()).getSize();
 
-            if (numberOfCompounds == fieldType.getMaxValues()) {
-                log.warn("Cannot add compound field '{}', the maximum amount of fields allowed is {}", fieldPath,
+            if (numberOfFields == fieldType.getMaxValues()) {
+                log.warn("Cannot add field '{}', the maximum amount of fields allowed is {}", fieldPath,
                         fieldType.getMaxValues());
                 throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "cardinality", "max-values"));
             }
@@ -94,63 +94,62 @@ public class CompoundServiceImpl implements CompoundService {
     }
 
     @Override
-    public void reorderCompoundField(final String documentPath, final FieldPath fieldPath, final int index) {
-        final String absCompoundPath = documentPath + SEPARATOR + fieldPath;
+    public void reorderNodeField(final String documentPath, final FieldPath fieldPath, final int position) {
+        final String nodeFieldPath = documentPath + SEPARATOR + fieldPath;
         try {
-            final Node compoundNode = session.getNode(absCompoundPath);
-            final Node parent = compoundNode.getParent();
+            final Node fieldNode = session.getNode(nodeFieldPath);
+            final Node parentNode = fieldNode.getParent();
+            final String fieldName = fieldPath.getLastSegmentName();
+            final long numberOfFields = parentNode.getNodes(fieldName).getSize();
 
-            final String compoundPath = fieldPath.getLastSegment();
-            final String compoundName = fieldPath.getLastSegmentName();
-            final long numberOfCompounds = parent.getNodes(compoundName).getSize();
-
-            if (index > numberOfCompounds) {
-                log.warn("Failed to re-order compound '{}', new position '{}' is out of bounds", fieldPath, index);
+            if (position > numberOfFields) {
+                log.warn("Failed to re-order field '{}', new position '{}' is out of bounds", fieldPath, position);
                 throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "order", "out-of-bounds"));
             }
 
-            if (numberOfCompounds == index) {
+            final String relativeFieldPath = fieldPath.getLastSegment();
+            if (numberOfFields == position) {
                 // move to last position
-                parent.orderBefore(compoundPath, null);
-            } else if (compoundNode.getIndex() > index) {
+                parentNode.orderBefore(relativeFieldPath, null);
+            } else if (fieldNode.getIndex() > position) {
                 // move field up
-                parent.orderBefore(compoundPath, compoundName + "[" + index + "]");
+                parentNode.orderBefore(relativeFieldPath, fieldName + "[" + position + "]");
             } else {
                 // move field down
-                parent.orderBefore(compoundPath, compoundName + "[" + (index + 1) + "]");
+                parentNode.orderBefore(relativeFieldPath, fieldName + "[" + (position + 1) + "]");
             }
 
             session.save();
         } catch (final RepositoryException e) {
-            log.error("Failed to re-order compound field '{}' to position '{}'", absCompoundPath, index, e);
+            log.error("Failed to re-order field '{}' to position '{}'", nodeFieldPath, position, e);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
         }
     }
 
     @Override
-    public void removeCompoundField(final String documentPath, final FieldPath fieldPath,
-                                    final List<FieldType> fields) {
+    public void removeNodeField(final String documentPath, final FieldPath fieldPath,
+                                final List<FieldType> fields) {
 
         final FieldType fieldType = getFieldType(fieldPath, fields);
-        final String compoundPath = documentPath + SEPARATOR + fieldPath;
+        final String nodeFieldPath = documentPath + SEPARATOR + fieldPath;
         try {
-            final String compoundName = fieldPath.getLastSegmentName();
-            final Node compoundNode = session.getNode(compoundPath);
-            final Node parent = compoundNode.getParent();
-            final long numberOfCompounds = parent.getNodes(compoundName).getSize();
+            final Node fieldNode = session.getNode(nodeFieldPath);
+            final Node parentNode = fieldNode.getParent();
+            final String fieldName = fieldPath.getLastSegmentName();
+            final long numberOfFields = parentNode.getNodes(fieldName).getSize();
 
-            if (numberOfCompounds <= fieldType.getMinValues()) {
-                log.warn("Cannot delete compound field '{}', the minimum amount of required fields is {}", fieldPath,
+            if (numberOfFields <= fieldType.getMinValues()) {
+                log.warn("Cannot delete field '{}', the minimum amount of required fields is {}", fieldPath,
                         fieldType.getMinValues());
                 throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "cardinality", "min-values"));
             }
 
-            session.removeItem(compoundPath);
+            session.removeItem(nodeFieldPath);
             session.save();
         } catch (final PathNotFoundException e) {
-            throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "compound", fieldPath.toString()));
+            throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "field", fieldPath.toString()));
         } catch (final RepositoryException e) {
-            log.warn("Failed to remove compound '{}' from document '{}'", fieldPath, compoundPath, e);
+            log.warn("Failed to remove field '{}' from document '{}'", fieldPath, nodeFieldPath, e);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
         }
     }
