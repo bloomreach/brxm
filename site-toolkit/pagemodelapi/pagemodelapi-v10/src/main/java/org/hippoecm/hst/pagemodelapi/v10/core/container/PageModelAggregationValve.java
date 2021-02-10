@@ -230,7 +230,7 @@ public class PageModelAggregationValve extends AggregationValve {
 
         aggregatedPageModel.setDocument(requestContext.getContentBean());
 
-        aggregatedPageModel.putMetadata("product", "brx");
+        aggregatedPageModel.putMetadata("product", "brxm");
 
         addPreviewFlagToPageModel(aggregatedPageModel, requestContext);
 
