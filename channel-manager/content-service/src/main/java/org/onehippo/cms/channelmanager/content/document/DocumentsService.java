@@ -161,48 +161,48 @@ public interface DocumentsService {
     void deleteDocument(final String uuid, final String branchId, final UserContext userContext);
 
     /**
-     * Add a new compound field. The position of the new field can be managed by passing an index (1-based) in the
+     * Add a new node field. The position of the new field can be managed by passing an index (1-based) in the
      * {@code fieldPath} argument using the square-bracket notation, e.g. field[2]. By default, the new field is
      * inserted at the first position.
      *
      * @param uuid          UUID of the document (handle)
      * @param branchId      Id of the requested document branch
-     * @param fieldPath     Path to the new compound field in the document
-     * @param type          The type of the new compound field
+     * @param fieldPath     Path to the new node field in the document
+     * @param type          The type of the new node field
      * @param userContext   Properties of the user that executes the request
      *
-     * @return JSON-serializable representation of the new compound field.
+     * @return JSON-serializable representation of the new node field.
      *
-     * @throws ErrorWithPayloadException If adding a compound field to the document failed
+     * @throws ErrorWithPayloadException If adding a node field to the document failed
      */
-    Map<String, List<FieldValue>> addCompoundField(final String uuid, final String branchId, final FieldPath fieldPath,
-                                                   final String type, final UserContext userContext);
+    Map<String, List<FieldValue>> addNodeField(final String uuid, final String branchId, final FieldPath fieldPath,
+                                               final String type, final UserContext userContext);
 
     /**
-     * Reorder the specified compound field.
+     * Reorders a node field.
      *
      * @param uuid          UUID of the document (handle)
      * @param branchId      Id of the requested document branch
-     * @param fieldPath     Path to the compound field in the document that should be removed
+     * @param fieldPath     Path to the node field in the document that should be re-ordered
      * @param userContext   Properties of the user that executes the request
-     * @param order         The position to move the field to
+     * @param position      The new position of the field
      *
-     * @throws ErrorWithPayloadException If re-order of the compound field failed
+     * @throws ErrorWithPayloadException If re-order of the node field failed
      */
-    void reorderCompoundField(final String uuid, final String branchId, final FieldPath fieldPath, final int order,
-                              final UserContext userContext);
+    void reorderNodeField(final String uuid, final String branchId, final FieldPath fieldPath, final int position,
+                          final UserContext userContext);
 
     /**
-     * Remove specified compound field from the document.
+     * Remove specified node field from the document.
      *
      * @param uuid          UUID of the document (handle)
      * @param branchId      Id of the requested document branch
-     * @param fieldPath     Path to the compound field in the document that should be removed
+     * @param fieldPath     Path to the node field in the document that should be removed
      * @param userContext   Properties of the user that executes the request
      *
-     * @throws ErrorWithPayloadException If removal of the compound field failed
+     * @throws ErrorWithPayloadException If removal of the node field failed
      */
-    void removeCompoundField(final String uuid, final String branchId, final FieldPath fieldPath,
-                             final UserContext userContext);
+    void removeNodeField(final String uuid, final String branchId, final FieldPath fieldPath,
+                         final UserContext userContext);
 
 }
