@@ -1,5 +1,6 @@
 {
   "meta" : {
+    "product" : "brx",
     "preview" : true,
     "version" : "1.0",
     "branch" : "master"
