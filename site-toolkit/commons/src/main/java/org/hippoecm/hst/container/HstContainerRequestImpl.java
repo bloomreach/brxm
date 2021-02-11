@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.hippoecm.hst.container;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.Enumeration;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
@@ -29,9 +31,12 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
+import static org.hippoecm.hst.util.HstRequestUtils.getRequestServerPort;
 
 /**
  * <p>
@@ -56,6 +61,7 @@ import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
  */
 public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper implements HstContainerRequest {
 
+    private final static Logger log = LoggerFactory.getLogger(HstContainerRequestImpl.class);
     private String pathSuffix;
     private String pathSuffixDelimiter;
     private boolean statelessRequestValidation;
@@ -75,6 +81,56 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
      */
     public HstContainerRequestImpl(final HttpServletRequest request, final String pathSuffixDelimiter) {
         super(request);
+        if (log.isDebugEnabled()) {
+            final StringBuilder builder = new StringBuilder("Original Request {");
+            builder.append("farthestScheme : ").append(getFarthestRequestScheme(request));
+            builder.append(", farthestHost : ").append(getFarthestRequestHost(request));
+            builder.append(", farthestPort : ").append(getRequestServerPort(request));
+            builder.append(", scheme :").append(request.getScheme());
+            builder.append(", host : ").append(request.getRemoteHost());
+            builder.append(", port : ").append(request.getServerPort());
+            builder.append(", contextPath : ").append(request.getContextPath());
+            builder.append(", servletPath : ").append(request.getServletPath());
+            builder.append(", pathInfo : ").append(request.getPathInfo());
+            builder.append(", queryString : ").append(request.getQueryString());
+            builder.append(", headerNames : {");
+            final Enumeration<String> headerNames = request.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                final String headerName = headerNames.nextElement();
+                builder.append(headerName);
+                if (log.isTraceEnabled()) {
+                    builder.append(" = ");
+                    // never log the value of the authorization or cookie header
+                    if ("authorization".equalsIgnoreCase(headerName) || "cookie".equalsIgnoreCase(headerName)) {
+                        builder.append("<< ").append(headerName).append(" >>");
+                    } else {
+                        builder.append(request.getHeader(headerName));
+                    }
+                }
+                builder.append(", ");
+            }
+            builder.append("}");
+            builder.append(", cookieNames : {");
+            if (request.getCookies() != null) {
+                Arrays.stream(request.getCookies()).forEach(cookie ->
+                        {
+                            builder.append(cookie.getName());
+                            if (log.isTraceEnabled()) {
+                                builder.append(" = ");
+                                if ("jsessionid".equalsIgnoreCase(cookie.getName())) {
+                                    builder.append("<< ").append(cookie.getName()).append(" >>");
+                                } else {
+                                    builder.append(cookie.getValue());
+                                }
+                            }
+                            builder.append(", ");
+                        }
+                );
+            }
+            builder.append("}}");
+            log.debug(builder.toString());
+        }
+
         this.pathSuffixDelimiter = pathSuffixDelimiter;
 
         if (pathSuffixDelimiter == null || "".equals(pathSuffixDelimiter)) {
