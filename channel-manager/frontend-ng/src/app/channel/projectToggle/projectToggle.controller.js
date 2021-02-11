@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@
 
 class ProjectToggleController {
   constructor(
+    ChannelService,
     CmsService,
     ProjectService,
   ) {
     'ngInject';
 
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ProjectService = ProjectService;
   }
@@ -35,7 +37,18 @@ class ProjectToggleController {
   }
 
   set selectedProject(selectedProject) {
+    const channelId = this.ChannelService.getBaseId();
+    const { id: projectChannelId = channelId } = selectedProject.channels.find(
+      ({ branchOf }) => branchOf === channelId,
+    ) || {};
+
     this.ProjectService.updateSelectedProject(selectedProject.id)
+      .then(() => this.ChannelService.initializeChannel(
+        projectChannelId,
+        this.ChannelService.channel.contextPath,
+        this.ChannelService.channel.hostGroup,
+        selectedProject.id,
+      ))
       .then(() => this.CmsService.reportUsageStatistic('CMSChannelsProjectSwitch'));
   }
 }
