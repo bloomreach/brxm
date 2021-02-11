@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -343,6 +343,20 @@ describe('ChannelService', () => {
     channelMock.id = 'testId';
     loadChannel();
     expect(ChannelService.getId()).toEqual('testId');
+    expect(ChannelService.getBaseId()).toEqual('testId');
+  });
+
+  it('should return the id of the preview channel', () => {
+    channelMock.id = 'testId-preview';
+    channelMock.preview = true;
+    loadChannel();
+    expect(ChannelService.getBaseId()).toEqual('testId');
+  });
+
+  it('should return the id of the base project channel', () => {
+    channelMock.branchOf = 'testId';
+    loadChannel();
+    expect(ChannelService.getBaseId()).toEqual('testId');
   });
 
   it('should return the name of the current channel', () => {
