@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public class TaxonomyUtil {
 
     private static final Logger log = LoggerFactory.getLogger(TaxonomyUtil.class);
-    public static final String PROTOTYPE_LOCALE = "document-type-locale";
+    static final String PROTOTYPE_LOCALE = "document-type-locale";
 
     /**
      * Builds a list of Locales from Strings.
