@@ -25,7 +25,7 @@ import {
   Type,
   ViewContainerRef,
 } from '@angular/core';
-import { ContainerItem, TYPE_CONTAINER_BOX, TYPE_CONTAINER_ITEM_UNDEFINED } from '@bloomreach/spa-sdk';
+import { ContainerItem, TYPE_CONTAINER_ITEM_UNDEFINED } from '@bloomreach/spa-sdk';
 import {
   BrContainerItemUndefinedComponent,
 } from './br-container-item-undefined/br-container-item-undefined.component';
