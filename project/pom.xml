@@ -137,7 +137,7 @@
     <maven.plugin.flatten.version>1.1.0</maven.plugin.flatten.version>
     <maven.plugin.exec.version>3.0.0</maven.plugin.exec.version>
     <maven.plugin.failsafe.version>3.0.0-M5</maven.plugin.failsafe.version>
-    <maven.plugin.frontend.version>1.10.0</maven.plugin.frontend.version>
+    <maven.plugin.frontend.version>1.11.0</maven.plugin.frontend.version>
     <maven.plugin.install.version>2.5.2</maven.plugin.install.version>
     <maven.plugin.jar.version>3.2.0</maven.plugin.jar.version>
     <maven.plugin.jacoco.version>0.8.5</maven.plugin.jacoco.version>
