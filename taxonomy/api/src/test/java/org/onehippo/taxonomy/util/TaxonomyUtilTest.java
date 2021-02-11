@@ -36,6 +36,8 @@ public class TaxonomyUtilTest {
     @Test
     public void toLocaleTest () {
         assertNull(TaxonomyUtil.toLocale(null));
+        assertNull(TaxonomyUtil.toLocale(TaxonomyUtil.PROTOTYPE_LOCALE));
+
         assertEquals(TaxonomyUtil.toLocale("en_GB"), Locale.UK);
         assertEquals(TaxonomyUtil.toLocale("en-GB"), Locale.UK);
 
@@ -55,7 +57,7 @@ public class TaxonomyUtilTest {
 
     @Test
     public void getLocalesList_filterPrototypeLocale() {
-        final List<Locale> localesList = TaxonomyUtil.getLocalesList(new String[]{"document-type-locale"});
+        final List<Locale> localesList = TaxonomyUtil.getLocalesList(new String[]{TaxonomyUtil.PROTOTYPE_LOCALE});
         assertEquals(Collections.emptyList(), localesList);
     }
 }
