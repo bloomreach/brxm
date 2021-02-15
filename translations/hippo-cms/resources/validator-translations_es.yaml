@@ -7,6 +7,7 @@ definitions:
         required#hippo-resource: Actualizar un recurso
         non-empty: Introducir un valor
         required: Insertar un valor
+        url: Introduzca una URL válida
         escaped: 'No utilizar estos caracteres: < > & '' "'
         required#String: Insertar texto
         resource-required: Cargar un archivo
