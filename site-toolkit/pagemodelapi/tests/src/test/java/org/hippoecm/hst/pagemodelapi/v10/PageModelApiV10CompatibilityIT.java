@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.hippoecm.hst.component.support.bean.dynamic.MenuDynamicComponent;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
 import org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider;
+import org.hippoecm.hst.pagemodelapi.v10.core.container.PageModelAggregationValve;
 import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.platform.configuration.hosting.MountService;
 import org.json.JSONException;
@@ -743,6 +744,106 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             assertFalse("Field 'futurePastItems' does not contain expected value", futurePastItems);
         } finally {
             catalogItemNode.setProperty("hst:valuetype", valueBefore);
+            session.save();
+            session.logout();
+        }
+    }
+
+    @Test
+    public void test_hidden_component() throws Exception {
+        {
+            String actual = getActualJson("/spa/resourceapi", "1.0");
+            final JsonNode root = mapper.readTree(actual);
+            // assert the component 'hidden' field is missing if not hidden
+            final JsonNode paramsInfo = root.path("page").path("uid1").path("meta").path("hidden");
+            assertTrue(paramsInfo.isEmpty());
+        }
+
+        final Session session = createSession("admin", "admin");
+        final Node headerComponentNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:components/header");
+
+        String[] paramNamesBefore = JcrUtils.getMultipleStringProperty(headerComponentNode, "hst:parameternames", null);
+        String[] paramValuesBefore = JcrUtils.getMultipleStringProperty(headerComponentNode, "hst:parametervalues", null);
+
+
+        try {
+            // mark the component to be hidden
+            headerComponentNode.setProperty("hst:parameternames", new String[]{PageModelAggregationValve.HIDE_PARAMETER_NAME});
+            headerComponentNode.setProperty("hst:parametervalues", new String[]{"true"});
+            session.save();
+            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:components/header");
+            DeterministicJsonPointerFactory.reset();
+
+            {
+                String actual = getActualJson("/spa/resourceapi", "1.0");
+                final JsonNode root = mapper.readTree(actual);
+                // assert the component is hidden
+                final JsonNode paramsInfo = root.path("page").path("uid1").path("meta").path("hidden");
+                assertTrue(paramsInfo.asBoolean());
+            }
+            // mark the component to be hidden but now through ON instead of 'true'
+            headerComponentNode.setProperty("hst:parametervalues", new String[]{"ON"});
+            session.save();
+            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:components/header");
+            DeterministicJsonPointerFactory.reset();
+
+            {
+                String actual = getActualJson("/spa/resourceapi", "1.0");
+                final JsonNode root = mapper.readTree(actual);
+                // assert the component is hidden
+                final JsonNode paramsInfo = root.path("page").path("uid1").path("meta").path("hidden");
+                assertTrue(paramsInfo.asBoolean());
+            }
+            // mark the component to be NOT hidden but now through OFF
+            headerComponentNode.setProperty("hst:parametervalues", new String[]{"OFF"});
+            session.save();
+            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:components/header");
+            DeterministicJsonPointerFactory.reset();
+
+            {
+                String actual = getActualJson("/spa/resourceapi", "1.0");
+                final JsonNode root = mapper.readTree(actual);
+                // assert the component is hidden
+                final JsonNode paramsInfo = root.path("page").path("uid1").path("meta").path("hidden");
+                assertFalse(paramsInfo.asBoolean());
+            }
+            // mark the component to be NOT hidden but now through "LOREM"...some falsy value
+            headerComponentNode.setProperty("hst:parametervalues", new String[]{"LOREM"});
+            session.save();
+            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:components/header");
+            DeterministicJsonPointerFactory.reset();
+
+            {
+                String actual = getActualJson("/spa/resourceapi", "1.0");
+                final JsonNode root = mapper.readTree(actual);
+                // assert the component is hidden
+                final JsonNode paramsInfo = root.path("page").path("uid1").path("meta").path("hidden");
+                assertFalse(paramsInfo.asBoolean());
+            }
+            // mark the component to be NOT hidden but now through ""...some falsy value
+            headerComponentNode.setProperty("hst:parametervalues", new String[]{""});
+            session.save();
+            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:components/header");
+            DeterministicJsonPointerFactory.reset();
+
+            {
+                String actual = getActualJson("/spa/resourceapi", "1.0");
+                final JsonNode root = mapper.readTree(actual);
+                // assert the component is hidden
+                final JsonNode paramsInfo = root.path("page").path("uid1").path("meta").path("hidden");
+                assertFalse(paramsInfo.asBoolean());
+            }
+        } finally {
+            if (paramNamesBefore == null) {
+                headerComponentNode.getProperty("hst:parameternames").remove();
+            } else {
+                headerComponentNode.setProperty("hst:parameternames", paramNamesBefore);
+            }
+            if (paramValuesBefore == null) {
+                headerComponentNode.getProperty("hst:parametervalues").remove();
+            } else {
+                headerComponentNode.setProperty("hst:parametervalues", paramValuesBefore);
+            }
             session.save();
             session.logout();
         }
