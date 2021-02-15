@@ -78,11 +78,8 @@ final class ChannelContextFactory implements ComponentManagerAware {
         final Optional<Channel> channelOptional = channelService.getChannelByMountId(actionContext.getMountId(),
                 actionContext.getHostGroup());
         if (!channelOptional.isPresent()) {
-        	
-        	log.warn("The mount id {} belongs to the wrong Host group {}", actionContext.getMountId(), actionContext.getHostGroup());
-        	return channelContext;
+            return channelContext;
         }
-        log.info("Setting channel {}", channelOptional.get());
 
         final Channel channel = channelOptional.get();
         final Session session = contextService.getRequestContext().getSession();
