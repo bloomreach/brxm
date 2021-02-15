@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -118,6 +119,13 @@ public class PageModelAggregationValve extends AggregationValve {
      * Maximum content reference level request parameter name.
      */
     private static final String MAX_CONTENT_REFERENCE_LEVEL_PARAM_NAME = "_maxreflevel";
+
+    /**
+     * field to indicate whether the component is hidden or not
+     */
+    private static final String COMPONENT_HIDDEN = "hidden";
+
+    public static final String HIDE_PARAMETER_NAME = "com.onehippo.cms7.targeting.TargetingParameterUtil.hide";
 
     /**
      * Jackson ObjectMapper instance for JSON (de)serialization.
@@ -468,6 +476,26 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         model.putMetadata(PARAMETERS_METADATA, paramsNode);
+
+        final Boolean hidden = isHidden(compConfig);
+        if (hidden != null) {
+            model.putMetadata(COMPONENT_HIDDEN, hidden);
+        }
+    }
+
+    /**
+     * @return if null is returned, it means the field does not have to be included
+     */
+    private Boolean isHidden(final ComponentConfiguration compConfig) {
+        final ResolvedSiteMapItem resolvedSiteMapItem = RequestContextProvider.get().getResolvedSiteMapItem();
+        final Map<String, String> parameters = compConfig.getParameters(resolvedSiteMapItem);
+
+        // we use ConvertUtils because a checkbox from Ext might also be stored as 'ON'
+        String hideParamValue = parameters.get(HIDE_PARAMETER_NAME);
+        if (hideParamValue == null) {
+            return null;
+        }
+        return (Boolean) ConvertUtils.convert(hideParamValue, Boolean.class);
     }
 
     private void addPreviewFlagToPageModel(final AggregatedPageModel aggregatedPageModel, final HstRequestContext requestContext) {

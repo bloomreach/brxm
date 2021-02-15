@@ -38,6 +38,7 @@ import org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider;
 import org.hippoecm.hst.pagemodelapi.v10.core.container.PageModelAggregationValve;
 import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.platform.configuration.hosting.MountService;
+import org.hippoecm.repository.util.JcrUtils;
 import org.json.JSONException;
 import org.junit.After;
 import org.junit.Assert;
