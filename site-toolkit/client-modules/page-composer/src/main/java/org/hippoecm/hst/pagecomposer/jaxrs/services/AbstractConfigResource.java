@@ -234,7 +234,6 @@ public class AbstractConfigResource {
         final ResponseRepresentation<Map<?, ?>> entity = ResponseRepresentation.<Map<?, ?>>builder()
                 .setSuccess(false)
                 .setMessage(e.toString())
-                .setErrorCode("400")
                 .build();
 
         return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
