@@ -7,6 +7,7 @@ definitions:
         required#hippo-resource: Télécharger une ressource
         non-empty: Saisissez une valeur
         required: Insérer une valeur
+        url: Saisir une URL valable
         escaped: 'N''utilisez pas les caractères : <> & '' '''''
         required#String: Insérer un texte
         resource-required: Télécharger un fichier
