@@ -7,6 +7,7 @@ definitions:
         required#hippo-resource: Resource uploaden
         non-empty: Voer een waarde in
         required: Waarde invoeren
+        url: Voer een geldige URL in
         escaped: 'De volgende tekens zijn niet toegestaan: < > & '' "'
         required#String: Tekst invoeren
         resource-required: Upload een bestand
