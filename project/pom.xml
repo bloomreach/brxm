@@ -114,6 +114,7 @@
     <npm.version>6.14.11</npm.version>
     <httpclient.version>4.5.13</httpclient.version>
     <httpcore.version>4.4.10</httpcore.version>
+    <jetty.version>9.4.35.v20201120</jetty.version>
 
     <!-- test dependencies -->
     <restassured.version>4.1.2</restassured.version>
@@ -593,7 +594,14 @@
         <artifactId>javax.ws.rs-api</artifactId>
         <version>${jaxrs.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-bom</artifactId>
+        <version>${jetty.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
 
+      </dependency>
       <!-- test dependencies -->
       <dependency>
         <groupId>io.rest-assured</groupId>
