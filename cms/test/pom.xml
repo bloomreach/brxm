@@ -96,7 +96,7 @@
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty</artifactId>
-      <version>${jetty.version}</version>
+      <version>${mortbay-jetty.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
