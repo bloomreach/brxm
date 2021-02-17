@@ -101,6 +101,7 @@
     },
     "ud993b0a1585944febf4b017cda163364" : {
       "type" : "document",
+      "contentType" : "pagemodelapitest:dynamiccontent",
       "links" : {
         "site" : {
           "href" : "/genericdetail/dynamiccontent",
@@ -111,13 +112,13 @@
       "data" : {
         "name" : "dynamiccontent",
         "displayName" : "DynamicContent",
-        "multipleLongTypeField" : [ 50, 60 ],
-        "singleValueMultipleLongTypeField" : [ 50 ],
-        "multipleValueSingleLongTypeField" : 50,
-        "multipleDateTypeField" : [ 1553472000000, 1553558400000 ],
-        "singleValueMultipleDateTypeField" : [ 1553472000000 ],
-        "multipleValueSingleDateTypeField" : 1553472000000,
-        "longTypeField2" : 100,
+        "singleValueMultipleBooleanTypeField" : [ false ],
+        "dateTypeField" : 1553472000000,
+        "longTypeField" : 50,
+        "richTextEditorCompoundType" : {
+          "contentType" : "hippostd:html",
+          "value" : "richtexteditorcontent"
+        },
         "mirrorCompoundType" : null,
         "resourceCompoundType" : {
           "name" : "pagemodelapitest:resourceCompoundType",
@@ -134,31 +135,35 @@
           }
         },
         "standardCompoundType" : {
+          "contentType" : "pagemodelapitest:dynamiccompound",
           "name" : "pagemodelapitest:standardCompoundType",
           "displayName" : "pagemodelapitest:standardCompoundType",
+          "stringTypeField" : "alexanderkade",
           "dynamicinnercompound" : {
+            "contentType" : "pagemodelapitest:dynamicinnercompound",
             "name" : "pagemodelapitest:dynamicinnercompound",
             "displayName" : "pagemodelapitest:dynamicinnercompound",
             "stringTypeField" : "http://test.com"
           },
           "richTextEditorCompoundType" : {
+            "contentType" : "hippostd:html",
             "value" : "contentOfHtmlFiledInCompoundTypeClass"
-          },
-          "stringTypeField" : "alexanderkade"
+          }
         },
-        "longTypeField" : 50,
-        "dateTypeField" : 1553472000000,
+        "multipleValueSingleBooleanTypeField" : false,
         "booleanTypeField" : false,
         "multipleBooleanTypeField" : [ false, true ],
-        "singleValueMultipleBooleanTypeField" : [ false ],
-        "multipleValueSingleBooleanTypeField" : false,
         "doubleTypeField" : 100.0,
         "multipleDoubleTypeField" : [ 100.0, 120.0 ],
         "singleValueMultipleDoubleTypeField" : [ 100.0 ],
         "multipleValueSingleDoubleTypeField" : 100.0,
-        "richTextEditorCompoundType" : {
-          "value" : "richtexteditorcontent"
-        },
+        "multipleLongTypeField" : [ 50, 60 ],
+        "singleValueMultipleLongTypeField" : [ 50 ],
+        "multipleValueSingleLongTypeField" : 50,
+        "multipleDateTypeField" : [ 1553472000000, 1553558400000 ],
+        "singleValueMultipleDateTypeField" : [ 1553472000000 ],
+        "multipleValueSingleDateTypeField" : 1553472000000,
+        "longTypeField2" : 100,
         "localeString" : "en",
         "id" : "d993b0a1-5859-44fe-bf4b-017cda163364"
       }
@@ -597,8 +602,7 @@
         "paramsInfo" : {
           "path" : "banners/banner100"
         },
-        "params" : {
-        }
+        "params" : { }
       },
       "name" : "banner-old-style",
       "type" : "container-item",
@@ -616,8 +620,7 @@
         "paramsInfo" : {
           "path" : "banners/banner101"
         },
-        "params" : {
-        }
+        "params" : { }
       },
       "name" : "banner-old-style-2",
       "type" : "container-item",
@@ -635,11 +638,11 @@
         "paramsInfo" : {
           "path" : "banners/banner102"
         },
-        "params" : {
-        }
+        "params" : { }
       },
       "name" : "banner-new-style",
       "type" : "container-item",
+      "ctype" : "banner",
       "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     },
     "uid10" : {
@@ -660,6 +663,7 @@
       },
       "name" : "banner-new-style-2",
       "type" : "container-item",
+      "ctype" : "banner",
       "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     }
   }
