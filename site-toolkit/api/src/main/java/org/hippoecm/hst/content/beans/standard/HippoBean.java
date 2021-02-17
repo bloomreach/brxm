@@ -19,17 +19,22 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.annotations.PageModelIgnore;
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterAware;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectConverterAware, Comparable<HippoBean> {
 
+    Logger log = LoggerFactory.getLogger(HippoBean.class);
+
     /**
-     * This returns the backing jcr node for this bean. 
-     * 
+     * This returns the backing jcr node for this bean.
+     *
      * @return the backing jcr node for this bean. <code>null</code> if the bean is detached
      */
     @PageModelIgnore
@@ -40,7 +45,7 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
 
     /**
      * This returns the node name of the backing jcr node for this bean
-     * 
+     *
      * @return the node name of the backing jcr node. This method never returns <code>null</code>
      */
     String getName();
@@ -53,6 +58,19 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * or the node name of the backing jcr node if no such proeprty exists
      */
     String getDisplayName();
+
+    /**
+     * @return the primary nodetype name of the backing JCR Node and {@code null} if no backing jcr node is found
+     */
+    default String getContentType() {
+        try {
+            final Node jcrNode = getValueProvider() == null ? null : getValueProvider().getJcrNode();
+            return jcrNode == null ? null : jcrNode.getPrimaryNodeType().getName();
+        } catch (RepositoryException e) {
+            log.error("Exception while trying to get primary node type name", e);
+            return null;
+        }
+    }
 
     /**
      * This returns the absolute path of the backing jcr node for this bean, for example /documents/content/myprojec/news/article
