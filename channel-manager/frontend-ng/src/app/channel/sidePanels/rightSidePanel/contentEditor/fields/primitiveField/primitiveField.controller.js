@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,48 @@
  * limitations under the License.
  */
 
+const COMPOUND_TYPES = ['hippogallerypicker:imagelink', 'hippo:mirror', 'hippostd:html'];
+
 class PrimitiveFieldCtrl {
-  constructor($scope, FieldService, SharedSpaceToolbarService) {
+  constructor($element, $rootScope, $scope, $timeout, FeedbackService, FieldService, SharedSpaceToolbarService) {
     'ngInject';
 
+    this.$element = $element;
+    this.$rootScope = $rootScope;
     this.$scope = $scope;
+    this.$timeout = $timeout;
+    this.FeedbackService = FeedbackService;
     this.FieldService = FieldService;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
+
+    this.ngSortable = {
+      animation: 300,
+      chosenClass: 'field--dragged',
+      disabled: true,
+      forceFallback: true,
+      fallbackClass: 'field--ghost',
+      handle: '[ng-sortable-handle]',
+      onStart: this.onDrag.bind(this),
+      onEnd: this.onDrop.bind(this),
+    };
   }
 
-  $onChanges(changes) {
-    if (changes.fieldValues) {
-      this._onFieldValuesChanged(changes.fieldValues.currentValue);
+  $onInit() {
+    if (!this.fieldValues) {
+      this.fieldValues = [];
     }
+
+    this.$scope.$watch(() => this.fieldValues, () => {
+      if (!this.fieldValues) {
+        this.fieldValues = [];
+      } else {
+        this._onFieldValuesChanged(this.fieldValues);
+      }
+    });
+
+    this.$scope.$watch(() => !this.isDraggable(), (disabled) => {
+      this.ngSortable.disabled = disabled;
+    });
   }
 
   _onFieldValuesChanged(fieldValues) {
@@ -51,8 +80,7 @@ class PrimitiveFieldCtrl {
   }
 
   getFieldName(index) {
-    const fieldName = this.name ? `${this.name}/${this.fieldType.id}` : this.fieldType.id;
-    return index > 0 ? `${fieldName}[${index + 1}]` : fieldName;
+    return `${this.name}${index > 0 ? `[${index + 1}]` : ''}`;
   }
 
   getFieldError() {
@@ -148,6 +176,80 @@ class PrimitiveFieldCtrl {
     if (errorsChanged) {
       this._onFieldValuesChanged(this.fieldValues);
     }
+  }
+
+  isDraggable() {
+    return this.fieldType.multiple && this.fieldType.orderable && this.fieldValues.length > 1;
+  }
+
+  isRemovable() {
+    return this.fieldType.multiple && (!this.fieldType.required || this.fieldValues.length > 1);
+  }
+
+  // eslint-disable-next-line consistent-return
+  async onMove(oldIndex, newIndex) {
+    const [value] = this.fieldValues.splice(oldIndex, 1);
+    this.fieldValues.splice(newIndex, 0, value);
+    await this._saveField();
+    this.form.$setDirty();
+    this.form[this.getFieldName(newIndex)].$$element[0].focus();
+  }
+
+  onDrag({ oldIndex }) {
+    this.dragging = oldIndex;
+  }
+
+  async onDrop({ newIndex }) {
+    delete this.dragging;
+    await this._saveField();
+    this.form.$setDirty();
+    this.form[this.getFieldName(newIndex)].$$element[0].focus();
+  }
+
+  async onRemove(index) {
+    try {
+      if (COMPOUND_TYPES.includes(this.fieldType.jcrType)) {
+        await this.FieldService.remove({ name: this.getFieldName(index) });
+      }
+
+      this.fieldValues.splice(index, 1);
+      await this._saveField();
+      this.form.$setDirty();
+
+      if (this.fieldValues.length) {
+        this.form[this.getFieldName(Math.max(index - 1, 0))].$$element[0].focus();
+      } else {
+        this._focusAddButton();
+      }
+    } catch (error) {
+      this.FeedbackService.showError('ERROR_FIELD_REMOVE');
+    }
+  }
+
+  async onAdd() {
+    try {
+      const index = this.fieldValues ? this.fieldValues.length : 0;
+      let value = { value: '' };
+      if (COMPOUND_TYPES.includes(this.fieldType.jcrType)) {
+        ({ [this.fieldType.id]: [value] } = await this.FieldService.add({
+          name: `${this.getFieldName(index)}/${this.fieldType.jcrType}`,
+        }));
+      }
+
+      if (!this.fieldValues) {
+        this.fieldValues = [];
+      }
+
+      this.fieldValues.push(value);
+      this.form.$setDirty();
+      this.$timeout(() => this.form[this.getFieldName(this.fieldValues.length - 1)].$$element[0].focus());
+    } catch (error) {
+      this.FeedbackService.showError('ERROR_FIELD_ADD');
+    }
+  }
+
+  _focusAddButton() {
+    this.$timeout(() => this.$element.find('.field__button-add button').focus());
   }
 }
 

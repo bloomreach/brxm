@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License")
   you may not use this file except in compliance with the License.
@@ -13,35 +13,28 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="field-wrapper"
-     ng-repeat="fieldType in $ctrl.fieldTypes track by $ctrl.getFieldTypeHash(fieldType)"
-     ng-switch="::fieldType.type">
-
-  <compound-field ng-switch-when="COMPOUND"
-                  ng-if="$ctrl.hasValue(fieldType)"
-                  ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id] track by $index"
-                  name="::$ctrl.getFieldName(fieldType, $index)"
-                  field-type="::fieldType"
-                  field-value="fieldValue"
+<div class="field-wrapper" ng-repeat="fieldType in $ctrl.fieldTypes track by $ctrl.getFieldTypeHash(fieldType)">
+  <compound-field ng-if="$ctrl.isCompound(fieldType)"
+                  name="$ctrl.getFieldName(fieldType)"
+                  field-type="fieldType"
+                  field-values="$ctrl.fieldValues[fieldType.id]"
                   ng-focus="$ctrl.onFieldFocus()"
                   ng-blur="$ctrl.onFieldBlur()">
   </compound-field>
 
-  <choice-field ng-switch-when="CHOICE"
-                ng-if="::$ctrl.hasValue(fieldType)"
-                name="::$ctrl.getFieldName(fieldType)"
-                field-type="::fieldType"
+  <choice-field ng-if="$ctrl.isChoice(fieldType)"
+                name="$ctrl.getFieldName(fieldType)"
+                field-type="fieldType"
                 field-values="$ctrl.fieldValues[fieldType.id]"
-                on-field-focus="$ctrl.onFieldFocus()"
-                on-field-blur="$ctrl.onFieldBlur()">
+                ng-focus="$ctrl.onFieldFocus()"
+                ng-blur="$ctrl.onFieldBlur()">
   </choice-field>
 
-  <primitive-field ng-switch-default
-                   ng-if="::$ctrl.hasValue(fieldType)"
-                   name="::$ctrl.name"
-                   field-type="::fieldType"
+  <primitive-field ng-if="$ctrl.isPrimitive(fieldType)"
+                   name="$ctrl.getFieldName(fieldType)"
+                   field-type="fieldType"
                    field-values="$ctrl.fieldValues[fieldType.id]"
-                   locale="::$ctrl.locale"
+                   locale="$ctrl.locale"
                    on-field-focus="$ctrl.onFieldFocus()"
                    on-field-blur="$ctrl.onFieldBlur()">
   </primitive-field>

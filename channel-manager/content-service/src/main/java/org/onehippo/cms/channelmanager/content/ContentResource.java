@@ -26,6 +26,7 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -44,6 +45,7 @@ import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.hippoecm.hst.core.internal.BranchSelectionService;
+import org.onehippo.cms.channelmanager.content.document.model.OrderState;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -124,6 +126,41 @@ public class ContentResource {
     public Response discardEditableDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, userContext -> {
             documentService.discardEditableDocument(id, getBranchId(servletRequest), userContext);
+            return null;
+        });
+    }
+
+    @POST
+    @Path("documents/{documentId}/editable/{fieldPath:.*}/{type}")
+    public Response addNodeField(@PathParam("documentId") final String documentId,
+                                 @PathParam("fieldPath") final String fieldPath,
+                                 @PathParam("type") final String type,
+                                 @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK,
+                userContext -> documentService.addNodeField(documentId, getBranchId(servletRequest),
+                        new FieldPath(fieldPath), type, userContext));
+    }
+
+    @PATCH
+    @Path("documents/{documentId}/editable/{fieldPath:.*}")
+    public Response orderNodeField(@PathParam("documentId") final String id,
+                                   @PathParam("fieldPath") final String fieldPath,
+                                   final OrderState order,
+                                   @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.NO_CONTENT, userContext -> {
+            documentService.reorderNodeField(id, getBranchId(servletRequest), new FieldPath(fieldPath), order.getOrder(),
+                    userContext);
+            return null;
+        });
+    }
+
+    @DELETE
+    @Path("documents/{documentId}/editable/{fieldPath:.*}")
+    public Response removeNodeField(@PathParam("documentId") final String id,
+                                    @PathParam("fieldPath") final String fieldPath,
+                                    @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.NO_CONTENT, userContext -> {
+            documentService.removeNodeField(id, getBranchId(servletRequest), new FieldPath(fieldPath), userContext);
             return null;
         });
     }

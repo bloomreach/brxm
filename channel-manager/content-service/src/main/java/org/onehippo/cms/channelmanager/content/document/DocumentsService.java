@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.document;
 
 import java.util.List;
+import java.util.Map;
 
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
@@ -159,4 +159,50 @@ public interface DocumentsService {
      * @throws ErrorWithPayloadException If deleting the document failed
      */
     void deleteDocument(final String uuid, final String branchId, final UserContext userContext);
+
+    /**
+     * Add a new node field. The position of the new field can be managed by passing an index (1-based) in the
+     * {@code fieldPath} argument using the square-bracket notation, e.g. field[2]. By default, the new field is
+     * inserted at the first position.
+     *
+     * @param uuid          UUID of the document (handle)
+     * @param branchId      Id of the requested document branch
+     * @param fieldPath     Path to the new node field in the document
+     * @param type          The type of the new node field
+     * @param userContext   Properties of the user that executes the request
+     *
+     * @return JSON-serializable representation of the new node field.
+     *
+     * @throws ErrorWithPayloadException If adding a node field to the document failed
+     */
+    Map<String, List<FieldValue>> addNodeField(final String uuid, final String branchId, final FieldPath fieldPath,
+                                               final String type, final UserContext userContext);
+
+    /**
+     * Reorders a node field.
+     *
+     * @param uuid          UUID of the document (handle)
+     * @param branchId      Id of the requested document branch
+     * @param fieldPath     Path to the node field in the document that should be re-ordered
+     * @param userContext   Properties of the user that executes the request
+     * @param position      The new position of the field
+     *
+     * @throws ErrorWithPayloadException If re-order of the node field failed
+     */
+    void reorderNodeField(final String uuid, final String branchId, final FieldPath fieldPath, final int position,
+                          final UserContext userContext);
+
+    /**
+     * Remove specified node field from the document.
+     *
+     * @param uuid          UUID of the document (handle)
+     * @param branchId      Id of the requested document branch
+     * @param fieldPath     Path to the node field in the document that should be removed
+     * @param userContext   Properties of the user that executes the request
+     *
+     * @throws ErrorWithPayloadException If removal of the node field failed
+     */
+    void removeNodeField(final String uuid, final String branchId, final FieldPath fieldPath,
+                         final UserContext userContext);
+
 }

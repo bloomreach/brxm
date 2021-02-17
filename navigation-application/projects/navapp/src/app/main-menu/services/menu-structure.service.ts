@@ -240,6 +240,7 @@ export class MenuStructureService {
         new MenuItemLink('setup/user-management/merchandising-user/user-management',
           this.translate('MENU_ITEM_SETUP_USER_MANAGEMENT_MERCHANDISING_USER_USER_MANAGEMENT')),
         new MenuItemLink('xm-usermanagement', this.translate('MENU_ITEM_XM_USER_MANAGEMENT')),
+        new MenuItemLink('xm-api-token-management', this.translate('MENU_ITEM_XM_API_TOKEN_MANAGEMENT')),
         new MenuItemLink('xm-form-data', this.translate('MENU_ITEM_XM_FORM_DATA')),
 
         new MenuItemContainer(this.translate('MENU_ITEM_XM_SYSTEM'), [
