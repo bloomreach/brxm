@@ -1,5 +1,5 @@
 #
-#  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+#  Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
 #
 #  Licensed under the Apache License, Version 2.0 (the  "License");
 #  you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
 #
 
 ^Value of hint action \'.+\' is expected to be boolean but it was \'.+\'
+An error occurred while looking up the prototype node for type 'ns:type'
 Cancel request received but no pending request found for 'uuid'.
+Cannot add field 'field', the maximum amount of fields allowed is 1
 Cannot change the URL name of document
 Cannot create validation context
+Cannot delete field 'field', the minimum amount of required fields is 1
 Cannot determine publication state of document handle
 Cannot load ValidationService from service registry, field validation will be disabled
 Cannot read config of field
@@ -47,6 +50,10 @@ Failed to dispose of editable instance
 Failed to erase document 'uuid'
 Failed to execute 'add' with category 'new-folder', type 'hippostd:folder' and relPath 'test'
 Failed to execute template query 'new-document'
+Failed to find field with path 'non-existing-field'
+Failed to find field with path 'parent/field'
+Failed to find field with path 'parent/field-b'
+Failed to find prototype node for field of type 'ns:type'
 Failed to find nodeType node for content type '/bla'
 Failed to find validator 'unknown', ignoring it
 Failed to get folder '/test'
@@ -55,6 +62,7 @@ Failed to get validator names for content type '/'
 Failed to load validator
 Failed to obtain draft for user 'bla'.
 Failed to persist changes
+Failed to re-order field 'document/field', new position '2' is out of bounds
 Failed to read field 'test:id' from 'bla'
 Failed to read IMAGE_LINK 'my:imagelink' from node '/my:imagelink'
 Failed to read name of node 'null'
@@ -113,4 +121,6 @@ Property 'name' cannot be blank or null
 Property 'rootPath' cannot be blank or null
 Property 'slug' cannot be blank or null
 Property 'urlName' cannot be blank or null
+The field 'field' does not support multiple values
+The field 'field' is not a compound or a choice field
 User 'admin' failed to re-obtain ownership of document

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,11 @@ document-fields {
     vertical-align: baseline;
     width: 18px;
   }
+
+  &.collapsed {
+    padding-right: 0;
+    padding-top: 0;
+  }
 }
 
 primitive-field,
@@ -52,7 +57,7 @@ compound-field,
 choice-field {
   display: block;
 
-  > .field {
+  .field {
     padding-left: $form-dense-distance;
   }
 }
@@ -82,12 +87,53 @@ compound-field {
     border-color: map-get($red, 500);
   }
 
+  &--multiple {
+    .md-errors-spacer {
+      min-height: 0;
+    }
+  }
+
+  &--ghost {
+    display: none !important;
+  }
+
+  &--dragged,
+  &--dragged * {
+    cursor: grabbing !important;
+  }
+
+  &--dragged {
+    .md-input-focused,
+    .md-input-has-placeholder,
+    .md-input-has-value {
+      label:not(.md-no-float) {
+        display: none;
+      }
+    }
+
+    compound-field > & {
+      margin-right: -$form-dense-distance;
+      padding-right: $form-dense-distance;
+    }
+  }
+
   &__title {
-    margin-bottom: $form-dense-distance;
     margin-left: -6px;
 
     h5 {
       margin-bottom: 0;
+      position: relative;
+    }
+
+    .collapse-toggle {
+      & > * {
+        padding: 8px 8px 8px 0;
+      }
+
+      &:focus > * {
+        background: map-get($grey, 100);
+        border-radius: 4px;
+      }
     }
 
     &--focused,
@@ -98,6 +144,71 @@ compound-field {
     &--invalid,
     &--invalid &-icon {
       color: map-get($red, 500);
+    }
+
+    & ~ document-fields {
+      margin-top: $form-dense-distance;
+
+      &.collapsed {
+        margin-top: 0;
+      }
+    }
+  }
+
+  &__title-buttons {
+    margin-right: -8px;
+
+    .md-button.md-icon-button {
+      margin: 0;
+    }
+  }
+
+  &__secondary-buttons {
+    opacity: 0;
+    transition: opacity 1s;
+
+    .field:hover > .field__title &,
+    .field:focus-within > .field__title &,
+    .field--dragged .field__title &,
+    .field--focused > .field__title & {
+      opacity: 1;
+    }
+  }
+
+  &__buttons {
+    margin-right: -8px;
+    margin-top: 12px;
+    max-width: 8px;
+    min-width: 8px;
+    overflow: hidden;
+    transition: max-width 1s;
+
+    md-input-container:hover + &,
+    .field--dragged &,
+    .md-input-focused + &,
+    &:focus-within,
+    &:hover {
+      max-width: 100%;
+    }
+
+    .md-button.md-icon-button {
+      margin: 0;
+    }
+  }
+
+  &__tools {
+    margin-bottom: 16px;
+  }
+
+  &__button-add {
+    text-align: right;
+
+    .md-button.md-icon-button {
+      margin: 0;
+    }
+
+    & > .md-button:last-child {
+      margin-right: -8px;
     }
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@
  */
 
 class DynamicDropdownFieldController {
-  constructor(ContentService) {
+  constructor($element, ContentService) {
     'ngInject';
 
+    this.$element = $element;
     this.ContentService = ContentService;
   }
 
@@ -38,6 +39,22 @@ class DynamicDropdownFieldController {
       this.sortBy,
       this.sortOrder,
     );
+  }
+
+  onBlur($event) {
+    if (this.mdInputContainer) {
+      this.mdInputContainer.setFocused(false);
+    }
+
+    this.$element.triggerHandler($event || 'blur');
+  }
+
+  onFocus($event) {
+    if (this.mdInputContainer) {
+      this.mdInputContainer.setFocused(true);
+    }
+
+    this.$element.triggerHandler($event || 'focus');
   }
 }
 

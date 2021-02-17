@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -215,7 +215,8 @@ Hippo.Translation.Folder.SelectTree = Ext.extend(Ext.ux.tree.TreeGrid, {
                                 return values.t9ns !== undefined;
                             },
                             format: function(v) {
-                                return '<img class="flag-md" src="' + self.images.getImage(v) + '" />';
+                                var url = Ext.util.Format.htmlEncode(self.images.getImage(v));
+                                return '<img class="flag-md" src="' + url + '" />';
                             }
                         }
                 )

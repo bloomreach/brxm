@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { ContainerItem } from '@bloomreach/spa-sdk';
+import { ContainerItem, TYPE_CONTAINER_ITEM_UNDEFINED } from '@bloomreach/spa-sdk';
 import { BrContainerItemUndefined } from '../cms';
 import { BrNodeComponent } from './BrNodeComponent';
 import { BrProps } from './BrProps';
@@ -42,12 +41,15 @@ export class BrNodeContainerItem extends BrNodeComponent<ContainerItem> {
     this.props.component.off('update', this.onUpdate);
   }
 
-  protected getMapping() {
-    return this.props.component.getType();
-  }
+  protected getMapping(): React.ComponentType<BrProps> {
+    const type = this.props.component.getType();
 
-  protected fallback() {
-    return <BrContainerItemUndefined {...this.props} />;
+    if (type && type in this.context) {
+      return this.context[type] as React.ComponentType<BrProps>;
+    }
+
+    return this.context[TYPE_CONTAINER_ITEM_UNDEFINED as any] as React.ComponentType<BrProps>
+      ?? BrContainerItemUndefined;
   }
 
   protected onUpdate() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
 import java.util.Arrays;
@@ -154,6 +153,7 @@ public class FieldTypeContextTest {
         expect(contentTypeItem.getItemType()).andReturn("CalendarDate");
         expect(contentTypeItem.isProperty()).andReturn(true);
         expect(contentTypeItem.isMultiple()).andReturn(false);
+        expect(contentTypeItem.isOrdered()).andReturn(false);
         expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList());
 
         expect(ContentTypeContext.getContentType("Date")).andReturn(Optional.empty());
@@ -166,6 +166,7 @@ public class FieldTypeContextTest {
         assertThat(ftc.getType(), equalTo("CalendarDate"));
         assertThat(ftc.isProperty(), equalTo(true));
         assertThat(ftc.isMultiple(), equalTo(false));
+        assertThat(ftc.isOrderable(), equalTo(false));
         assertThat(ftc.getValidators(), equalTo(Collections.emptyList()));
         assertThat(ftc.getEditorConfigNode(), equalTo(Optional.of(editorFieldConfigNode)));
         assertThat(ftc.getParentContext(), equalTo(context));
@@ -198,6 +199,7 @@ public class FieldTypeContextTest {
         expect(contentTypeItem.getItemType()).andReturn("CalendarDate");
         expect(contentTypeItem.isProperty()).andReturn(true);
         expect(contentTypeItem.isMultiple()).andReturn(false);
+        expect(contentTypeItem.isOrdered()).andReturn(false);
         expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList());
 
         expect(ContentTypeContext.getContentType("Date")).andReturn(Optional.empty());
@@ -210,6 +212,7 @@ public class FieldTypeContextTest {
         assertThat(ftc.getType(), equalTo("CalendarDate"));
         assertThat(ftc.isProperty(), equalTo(true));
         assertThat(ftc.isMultiple(), equalTo(false));
+        assertThat(ftc.isOrderable(), equalTo(false));
         assertThat(ftc.getValidators(), equalTo(Collections.emptyList()));
         assertThat(ftc.getEditorConfigNode(), equalTo(Optional.of(editorFieldConfigNode)));
         assertThat(ftc.getParentContext(), equalTo(context));
@@ -227,7 +230,7 @@ public class FieldTypeContextTest {
         replayAll();
 
         final FieldTypeContext requiredString = new FieldTypeContext("myproject:description", "String", "Html",
-                true, false, legacyValidators, null, null);
+                true, false, false, legacyValidators, null, null);
         assertThat(requiredString.getValidators(), equalTo(newValidators));
         verifyAll();
     }
@@ -243,6 +246,7 @@ public class FieldTypeContextTest {
         expect(contentTypeItem.getItemType()).andReturn("item-type");
         expect(contentTypeItem.isProperty()).andReturn(true);
         expect(contentTypeItem.isMultiple()).andReturn(false);
+        expect(contentTypeItem.isOrdered()).andReturn(false);
         expect(contentTypeItem.getValidators()).andReturn(Collections.singletonList("content-type-item-validator"));
 
         expect(ContentTypeContext.getContentType("effective-type")).andReturn(Optional.of(contentType));
@@ -269,6 +273,7 @@ public class FieldTypeContextTest {
         expect(contentTypeItem.getItemType()).andReturn("item-type");
         expect(contentTypeItem.isProperty()).andReturn(true);
         expect(contentTypeItem.isMultiple()).andReturn(false);
+        expect(contentTypeItem.isOrdered()).andReturn(false);
         expect(contentTypeItem.getValidators()).andReturn(Collections.singletonList("content-type-item-validator"));
 
         expect(ContentTypeContext.getContentType("effective-type")).andReturn(Optional.of(contentType));
@@ -293,6 +298,7 @@ public class FieldTypeContextTest {
         expect(contentTypeItem.getItemType()).andReturn("CalendarDate");
         expect(contentTypeItem.isProperty()).andReturn(true);
         expect(contentTypeItem.isMultiple()).andReturn(false);
+        expect(contentTypeItem.isOrdered()).andReturn(false);
         expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList());
 
         expect(ContentTypeContext.getContentType("Date")).andReturn(Optional.empty());
@@ -322,6 +328,7 @@ public class FieldTypeContextTest {
         expect(contentTypeItem.getItemType()).andReturn("id");
         expect(contentTypeItem.isProperty()).andReturn(true);
         expect(contentTypeItem.isMultiple()).andReturn(false);
+        expect(contentTypeItem.isOrdered()).andReturn(false);
         expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList());
 
         expect(ContentTypeContext.createFromParent("id", parentContext)).andReturn(Optional.of(childContext));
@@ -337,7 +344,7 @@ public class FieldTypeContextTest {
 
     @Test
     public void getBooleanConfig() {
-        final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, null, null, null);
+        final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, false, null, null, null);
         final Optional<Boolean> value = Optional.of(true);
 
         expect(NamespaceUtils.getConfigProperty(context, "test", JcrBooleanReader.get())).andReturn(value);
@@ -349,7 +356,7 @@ public class FieldTypeContextTest {
 
     @Test
     public void getStringConfig() {
-        final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, null, null, null);
+        final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, false, null, null, null);
         final Optional<String> value = Optional.of("value");
 
         expect(NamespaceUtils.getConfigProperty(context, "test", JcrStringReader.get())).andReturn(value);
@@ -361,7 +368,7 @@ public class FieldTypeContextTest {
 
     @Test
     public void getMultipleStringConfig() {
-        final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, null, null, null);
+        final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, false, null, null, null);
         final Optional<String[]> values = Optional.of(new String[]{"a", "b"});
 
         expect(NamespaceUtils.getConfigProperty(context, "test", JcrMultipleStringReader.get())).andReturn(values);

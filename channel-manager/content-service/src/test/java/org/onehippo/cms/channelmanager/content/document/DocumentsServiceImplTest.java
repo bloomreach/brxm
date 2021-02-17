@@ -95,9 +95,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.asserts.Errors.assertErrorStatusAndReason;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
@@ -2490,28 +2489,6 @@ public class DocumentsServiceImplTest {
             fail("No Exception");
         } catch (final ConflictException e) {
             assertErrorStatusAndReason(e, Status.CONFLICT, reason);
-        }
-    }
-
-    private static void assertErrorStatusAndReason(final ErrorWithPayloadException e, final Status status, final Reason reason) {
-        assertErrorStatusAndReason(e, status, reason, null);
-    }
-
-    private static void assertErrorStatusAndReason(final ErrorWithPayloadException e, final Status status, final Reason reason,
-                                            final Map<String, Serializable> params) {
-        assertTrue(e.getPayload() instanceof ErrorInfo);
-
-        final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-        assertThat(e.getStatus(), is(status));
-        assertThat(errorInfo.getReason(), is(reason));
-
-        final Map<String, Serializable> exceptionParams = errorInfo.getParams();
-        if (params == null) {
-            assertNull(exceptionParams);
-        } else {
-            params.forEach((name, value) -> {
-                assertThat(exceptionParams.get(name), is(value));
-            });
         }
     }
 

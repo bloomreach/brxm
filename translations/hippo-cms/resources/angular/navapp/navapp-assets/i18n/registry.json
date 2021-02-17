@@ -690,38 +690,24 @@
       "locales" : null
     },
     "MENU_CONTAINER_DATA_CONNECT" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "MENU_ITEM_SETUP_INTERNAL_ADMIN_BRX_INTEGRATION_CONFIGS" : {
       "status" : "CLEAN",
       "locales" : null
     },
     "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_CONTENT_CATALOGS" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT_PRODUCT_CATALOGS" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "MENU_ITEM_XM_API_TOKEN_MANAGEMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

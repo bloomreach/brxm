@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,7 +58,7 @@ public class StringFieldType extends PropertyFieldType {
         try {
             maxLength = Long.valueOf(maxLengthString);
         } catch (final NumberFormatException e) {
-            log.info("Failed to parser value of String's max length '{}'", maxLengthString, e);
+            log.info("Failed to parse value of String's max length '{}'", maxLengthString, e);
         }
     }
 
