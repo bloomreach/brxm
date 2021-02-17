@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@
     <ehcache-core.version>2.10.6</ehcache-core.version>
     <ehcache-web.version>2.0.4</ehcache-web.version>
 
-    <hippo.jackrabbit.version>2.18.5-h3</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.20.2-h1</hippo.jackrabbit.version>
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
@@ -106,7 +106,7 @@
     <bytebuddy.version>1.10.2</bytebuddy.version>
     <org.skyscreamer.version>1.5.0</org.skyscreamer.version>
     <nimbus-jose-jwt.version>8.4</nimbus-jose-jwt.version>
-
+    <jetbrains.version>18.0.0</jetbrains.version>
   </properties>
 
   <!--
@@ -564,6 +564,12 @@
             <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jetbrains</groupId>
+        <artifactId>annotations</artifactId>
+        <version>${jetbrains.version}</version>
       </dependency>
 
       <!-- Test dependencies -->
