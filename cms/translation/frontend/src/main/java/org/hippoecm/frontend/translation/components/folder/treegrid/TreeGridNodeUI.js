@@ -42,7 +42,7 @@ Ext.ux.tree.TreeGridNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
             buf.push(
                     '<td class="x-treegrid-col ', (c.cls ? c.cls : ''), '">',
                         '<div unselectable="on" class="x-treegrid-text"', (c.align ? ' style="text-align: ' + c.align + ';"' : ''), '>',
-                            Ext.util.Format.htmlEncode(c.tpl ? c.tpl.apply(a) : a[c.dataIndex]),
+                            (c.tpl ? c.tpl.apply(a) : a[c.dataIndex]),
                         '</div>',
                     '</td>'
             );

@@ -182,6 +182,7 @@ public class LocationMapResolver {
             ResolvedLocationMapTreeItemImpl parent;
             if (HstNodeTypes.INDEX.equals(r.getSiteMapItem().getValue()) && (parent = getResolvedParent(r)) != null) {
                 r = parent;
+                parent.setRepresentsIndex(true);
             }
             log.debug("Trying to resolve '{}' took '{}' ms.", path, String.valueOf((System.nanoTime() - start) / 1000000D));
             return r;
@@ -259,6 +260,7 @@ public class LocationMapResolver {
                         if (r != null) {
                             ResolvedLocationMapTreeItemImpl parent;
                             if (HstNodeTypes.INDEX.equals(r.getSiteMapItem().getValue()) && (parent = getResolvedParent(r)) != null) {
+                                parent.setRepresentsIndex(true);
                                 resolvedLocationMapTreeItemList.add(parent);
                             } else {
                                 resolvedLocationMapTreeItemList.add(r);
@@ -290,6 +292,7 @@ public class LocationMapResolver {
                         if (r != null) {
                             ResolvedLocationMapTreeItemImpl parent;
                             if (HstNodeTypes.INDEX.equals(r.getSiteMapItem().getValue()) && (parent = getResolvedParent(r)) != null) {
+                                parent.setRepresentsIndex(true);
                                 resolvedLocationMapTreeItemList.add(parent);
                             } else {
                                 resolvedLocationMapTreeItemList.add(r);
@@ -309,6 +312,7 @@ public class LocationMapResolver {
                     if (r != null) {
                         ResolvedLocationMapTreeItemImpl parent;
                         if (HstNodeTypes.INDEX.equals(r.getSiteMapItem().getValue()) && (parent = getResolvedParent(r)) != null) {
+                            parent.setRepresentsIndex(true);
                             resolvedLocationMapTreeItemList.add(parent);
                         } else {
                             resolvedLocationMapTreeItemList.add(r);

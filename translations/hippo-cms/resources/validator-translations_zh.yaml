@@ -7,6 +7,7 @@ definitions:
         required#hippo-resource: 上传资源
         non-empty: 输入值
         required: 输入值
+        url: 输入有效的 URL
         escaped: 请勿使用以下字符：< > & ' "
         required#String: 输入一些文本
         resource-required: 上传文件

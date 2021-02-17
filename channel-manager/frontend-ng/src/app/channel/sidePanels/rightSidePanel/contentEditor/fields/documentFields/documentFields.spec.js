@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,15 +98,6 @@ describe('DocumentFields', () => {
     expect($ctrl.fieldValues).toBe(testDocument.fields);
   });
 
-  it('recognizes an empty multiple field', () => {
-    expect($ctrl.hasValue(stringField)).toBe(true);
-    expect($ctrl.hasValue(multipleStringField)).toBe(true);
-    expect($ctrl.hasValue(emptyMultipleStringField)).toBe(false);
-
-    testDocument.fields.invalid = 'not an array';
-    expect($ctrl.hasValue({ id: 'invalid' })).toBe(false);
-  });
-
   it('ignores the onFieldFocus and onFieldBlur callbacks when they are not defined', () => {
     expect(() => {
       $ctrl = $componentController('documentFields', {}, {
@@ -122,8 +113,6 @@ describe('DocumentFields', () => {
   it('generates names for root-level fields', () => {
     expect($ctrl.getFieldName(stringField)).toEqual('ns:string');
     expect($ctrl.getFieldName(multipleStringField)).toEqual('ns:multiplestring');
-    expect($ctrl.getFieldName(multipleStringField, 0)).toEqual('ns:multiplestring');
-    expect($ctrl.getFieldName(multipleStringField, 1)).toEqual('ns:multiplestring[2]');
     expect($ctrl.getFieldName(compoundField)).toEqual('ns:compound');
   });
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.document.util;
 
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+
+import static org.apache.commons.lang.StringUtils.substringAfterLast;
+import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
 /**
  * Represents the path to field value in a document. It consists of a hierarchy of segments that are unique per level.
@@ -26,7 +28,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class FieldPath {
 
-    private static final String SEPARATOR = "/";
+    public static final String SEPARATOR = "/";
     private static final Pattern NUMBERED_SUFFIX = Pattern.compile("^\\[\\d\\]$");
 
     private final String firstSegment;
@@ -94,10 +96,57 @@ public class FieldPath {
     }
 
     /**
+     * @return the first segment of this field path without a numbered suffix.
+     */
+    public String getFirstSegmentName() {
+        return hasSuffix(firstSegment) ? stripSuffix(firstSegment) : firstSegment;
+    }
+
+    /**
+     * @return the JCR index of the first segment of this field path, defaults to 1.
+     */
+    public int getFirstSegmentIndex() {
+        if (!hasSuffix(firstSegment)) {
+            return 1;
+        }
+
+        final String indexAsString = substringBeforeLast(substringAfterLast(firstSegment, "["), "]");
+        return Integer.parseInt(indexAsString);
+    }
+
+    /**
      * @return the field path consisting of all segments except the first one.
      */
     public FieldPath getRemainingSegments() {
         return new FieldPath(remainingSegments);
+    }
+
+    public String getLastSegment() {
+        if (remainingSegments == null) {
+            return firstSegment;
+        }
+
+        if (!StringUtils.contains(remainingSegments, SEPARATOR)) {
+            return remainingSegments;
+        }
+
+        return StringUtils.substringAfterLast(remainingSegments, SEPARATOR);
+    }
+
+    /**
+     * @return the last segment of this field path without a numbered suffix.
+     */
+    public String getLastSegmentName() {
+        final String lastSegment = getLastSegment();
+        return hasSuffix(lastSegment) ? stripSuffix(lastSegment) : lastSegment;
+    }
+
+    private static String stripSuffix(final String path) {
+        return StringUtils.substringBeforeLast(path, "[");
+    }
+
+    private static boolean hasSuffix(final String path) {
+        return path.endsWith("]");
     }
 
     @Override

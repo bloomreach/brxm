@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.document;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +104,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     private HintsInspector hintsInspector;
     private BranchingService branchingService;
-
+    private NodeFieldService nodeFieldService;
 
     public void setHintsInspector(final HintsInspector hintsInspector) {
         this.hintsInspector = hintsInspector;
@@ -112,6 +112,10 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     public void setBranchingService(final BranchingService branchingService) {
         this.branchingService = branchingService;
+    }
+
+    public void setNodeFieldService(final NodeFieldService nodeFieldService) {
+        this.nodeFieldService = nodeFieldService;
     }
 
     @Override
@@ -151,7 +155,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                 }
             }
 
-            throw new NotFoundException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST));
+            throw new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST));
 
         } catch (WorkflowException e) {
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
@@ -369,7 +373,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final Map<String, Serializable> hints = HintsUtils.getHints(workflow, branchId);
         if (!hintsInspector.canDisposeEditableDocument(branchId, hints)) {
-            throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED));
+            throw new ForbiddenException(new ErrorInfo(Reason.ALREADY_DELETED));
         }
 
         try {
@@ -559,6 +563,115 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
+    @Override
+    public Map<String, List<FieldValue>> addNodeField(final String uuid,
+                                                      final String branchId,
+                                                      final FieldPath fieldPath,
+                                                      final String type,
+                                                      final UserContext userContext) {
+        if (fieldPath.isEmpty()) {
+            log.warn("Can not add node field if fieldPath is empty");
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+        }
+
+        final Node handle = getHandle(uuid, userContext.getSession());
+        final Node draft = getDraft(handle, branchId);
+        final String documentPath = getDocumentPath(draft);
+        final DocumentType documentType = getDocumentType(handle, userContext);
+
+        nodeFieldService.addNodeField(documentPath, fieldPath, documentType.getFields(), type);
+
+        final Document document = assembleDocument(uuid, handle, draft, documentType);
+        FieldTypeUtils.readFieldValues(draft, documentType.getFields(), document.getFields());
+
+        return findFieldValues(fieldPath, document.getFields());
+    }
+
+    @Override
+    public void reorderNodeField(final String uuid,
+                                 final String branchId,
+                                 final FieldPath fieldPath,
+                                 final int position,
+                                 final UserContext userContext) {
+        if (fieldPath.isEmpty()) {
+            log.warn("Can not reorder node field if fieldPath is empty");
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+        }
+
+        final Node handle = getHandle(uuid, userContext.getSession());
+        final Node draft = getDraft(handle, branchId);
+        final String documentPath = getDocumentPath(draft);
+
+        nodeFieldService.reorderNodeField(documentPath, fieldPath, position);
+    }
+
+    @Override
+    public void removeNodeField(final String uuid,
+                                final String branchId,
+                                final FieldPath fieldPath,
+                                final UserContext userContext) {
+        if (fieldPath.isEmpty()) {
+            log.warn("Can not remove node field if fieldPath is empty");
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+        }
+
+        final Node handle = getHandle(uuid, userContext.getSession());
+        final Node draft = getDraft(handle, branchId);
+        final String documentPath = getDocumentPath(draft);
+        final DocumentType documentType = getDocumentType(handle, userContext);
+
+        nodeFieldService.removeNodeField(documentPath, fieldPath, documentType.getFields());
+    }
+
+    private static Map<String, List<FieldValue>> findFieldValues(final FieldPath path,
+                                                                 final Map<String, List<FieldValue>> fields) {
+        String fieldName = path.getFirstSegmentName();
+        final List<FieldValue> fieldValues = fields.get(fieldName);
+
+        if (fieldValues == null) {
+            throw new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST, "field", fieldName));
+        }
+
+        FieldValue fieldValue = fieldValues.get(path.getFirstSegmentIndex() - 1);
+        if (StringUtils.isNotEmpty(fieldValue.getChosenId())) {
+            fieldName = fieldValue.getChosenId();
+            fieldValue = fieldValue.getChosenValue();
+        }
+
+        final FieldPath remaining = path.getRemainingSegments();
+        if (!remaining.isEmpty()) {
+            return findFieldValues(remaining, fieldValue.getFields());
+        }
+
+        return fieldValue.getFields() != null
+                ? fieldValue.getFields()
+                : Collections.singletonMap(fieldName, Collections.singletonList(fieldValue));
+    }
+
+    private static String getDocumentPath(final Node draft) {
+        try {
+            return draft.getPath();
+        } catch (RepositoryException e) {
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
+        }
+    }
+
+    private static Node getDraft(final Node handle, final String branchId) {
+        final BranchHandle branchHandle;
+        try {
+            branchHandle = new BranchHandleImpl(branchId, handle);
+        } catch (WorkflowException e) {
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
+        }
+
+        final Node draft = branchHandle.getDraft();
+        if (draft == null) {
+            throw new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST));
+        }
+
+        return draft;
+    }
+
     private static void archiveDocument(final String uuid, final DocumentWorkflow documentWorkflow) {
         try {
             log.info("Archiving document '{}'", uuid);
@@ -654,7 +767,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     private ErrorInfo errorInfoFromHintsOrNoHolder(String branchId, Map<String, Serializable> hints, Session session) {
         return hintsInspector.determineEditingFailure(branchId, hints, session)
-                .orElseGet(() -> new ErrorInfo(ErrorInfo.Reason.NO_HOLDER));
+                .orElseGet(() -> new ErrorInfo(Reason.NO_HOLDER));
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ public class TaxonomyPickerDialog extends Dialog<Classification> {
         setOkEnabled(false);
         setOutputMarkupId(true);
         setTitleKey("taxonomy-picker");
-        setSize(DialogConstants.SMALL_RELATIVE);
+        setSize(DialogConstants.MEDIUM_RELATIVE);
 
         viewType = config.getString(CONFIG_TYPE, TREE);
         if (PALETTE.equals(viewType)) {
