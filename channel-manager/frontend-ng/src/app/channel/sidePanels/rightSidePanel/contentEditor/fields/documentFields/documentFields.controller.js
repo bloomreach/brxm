@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,18 +24,24 @@ class DocumentFieldsCtrl {
     this.onFieldBlur = this.onFieldBlur || angular.noop;
   }
 
-  getFieldName(fieldType, index) {
-    const fieldName = this.name ? `${this.name}/${fieldType.id}` : fieldType.id;
-    return index > 0 ? `${fieldName}[${index + 1}]` : fieldName;
+  getFieldName(fieldType) {
+    return `${this.name ? `${this.name}/` : ''}${fieldType.id}`;
   }
 
   getFieldTypeHash(fieldType) {
     return `${fieldType.id}:${fieldType.validators}`;
   }
 
-  hasValue(field) {
-    const values = this.fieldValues[field.id];
-    return angular.isArray(values) && values.length > 0;
+  isCompound({ type }) {
+    return type === 'COMPOUND';
+  }
+
+  isChoice({ type }) {
+    return type === 'CHOICE';
+  }
+
+  isPrimitive(type) {
+    return !this.isCompound(type) && !this.isChoice(type);
   }
 }
 

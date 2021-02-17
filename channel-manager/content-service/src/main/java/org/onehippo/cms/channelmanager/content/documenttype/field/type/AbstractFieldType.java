@@ -29,10 +29,10 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
-import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
-import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtils;
 import org.onehippo.cms.services.validation.api.ValueContext;
 import org.onehippo.repository.l10n.ResourceBundle;
 
@@ -56,6 +56,7 @@ public abstract class AbstractFieldType implements BaseFieldType {
     private boolean hasUnsupportedValidator;
     private String jcrType;
     private String effectiveType;
+    private boolean orderable;
 
     @JsonIgnore
     private int minValues = 1;
@@ -64,7 +65,6 @@ public abstract class AbstractFieldType implements BaseFieldType {
     @JsonIgnore
     private boolean isMultiple;
 
-    // private boolean orderable; // future improvement
     // private boolean readOnly;  // future improvement
 
     private final Set<String> validatorNames = new LinkedHashSet<>();
@@ -163,8 +163,19 @@ public abstract class AbstractFieldType implements BaseFieldType {
         this.hasUnsupportedValidator = hasUnsupportedValidator;
     }
 
-    final String getJcrType() {
+    @Override
+    public final String getJcrType() {
         return jcrType;
+    }
+
+    @Override
+    public boolean isOrderable() {
+        return orderable;
+    }
+
+    @Override
+    public void setOrderable(final boolean orderable) {
+        this.orderable = orderable;
     }
 
     final void setJcrType(final String jcrType) {
@@ -212,13 +223,13 @@ public abstract class AbstractFieldType implements BaseFieldType {
         }
 
         setMultiple(fieldContext.isMultiple());
+        setOrderable(fieldContext.isOrderable());
 
         jcrType = fieldContext.getJcrType();
         effectiveType = fieldContext.getType();
 
         return FieldsInformation.allSupported();
     }
-
 
     private int loadMaxValues(final FieldTypeContext fieldContext) {
         return fieldContext.getStringConfig(PROPERTY_MAX_ITEMS)

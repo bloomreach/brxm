@@ -696,12 +696,16 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 log.warn("ItemStateException while indexing descendants of a hippo:document for "
                         + "node with UUID: " + state.getNodeId().toString(), e);
             } catch (ItemNotFoundException e) {
+                // this can easily happen on cluster nodes being updated via the journal table, certainly in case there
+                // is workflow on a document which saves, commits and then obtains and editable instance right after
+                // each other: then all the draft (descendant) nodes get saved, then copied to unpublished, and then
+                // during obtain instance the draft descendant nodes get replaced again
                 final String message = "Unable to add index fields for child states of " + state.getId() + " because an item could not be found. " +
                         "Probably because it was removed again.";
                 if (log.isDebugEnabled()) {
-                    log.warn(message, e);
+                    log.info(message, e);
                 } else {
-                    log.warn(message + " (full stack trace on debug level)");
+                    log.info(message + " (full stack trace on debug level)");
                 }
             } catch (RepositoryException e) {
                 log.warn("RepositoryException while indexing descendants of a hippo:document for "

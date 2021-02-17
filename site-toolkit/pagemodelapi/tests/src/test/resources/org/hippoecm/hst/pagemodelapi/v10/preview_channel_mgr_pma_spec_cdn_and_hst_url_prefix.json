@@ -1,5 +1,6 @@
 {
   "meta" : {
+    "product" : "brxm",
     "preview" : true,
     "version" : "1.0",
     "branch" : "master"

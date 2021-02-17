@@ -58,7 +58,7 @@
     <mail.version>1.4.7</mail.version>
     <slf4j.version>1.7.30</slf4j.version>
     <log4j2.version>2.13.3</log4j2.version>
-    <guava.version>27.0-jre</guava.version>
+    <guava.version>30.1-jre</guava.version>
 
     <!-- Apache Commons -->
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
@@ -110,9 +110,9 @@
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.5.14</groovy.version>
     <freemarker.version>2.3.28</freemarker.version>
-    <nodejs.version>v12.16.1</nodejs.version>
-    <npm.version>6.13.4</npm.version>
-    <httpclient.version>4.5.6</httpclient.version>
+    <nodejs.version>v12.20.2</nodejs.version>
+    <npm.version>6.14.11</npm.version>
+    <httpclient.version>4.5.13</httpclient.version>
     <httpcore.version>4.4.10</httpcore.version>
 
     <!-- test dependencies -->
@@ -138,7 +138,7 @@
     <maven.plugin.flatten.version>1.1.0</maven.plugin.flatten.version>
     <maven.plugin.exec.version>3.0.0</maven.plugin.exec.version>
     <maven.plugin.failsafe.version>3.0.0-M5</maven.plugin.failsafe.version>
-    <maven.plugin.frontend.version>1.10.0</maven.plugin.frontend.version>
+    <maven.plugin.frontend.version>1.11.0</maven.plugin.frontend.version>
     <maven.plugin.install.version>2.5.2</maven.plugin.install.version>
     <maven.plugin.jar.version>3.2.0</maven.plugin.jar.version>
     <maven.plugin.jacoco.version>0.8.5</maven.plugin.jacoco.version>

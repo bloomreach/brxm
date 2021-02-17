@@ -1,5 +1,5 @@
 <!--
-  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2018-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@
   name="{{ ::$ctrl.name }}"
   aria-label="{{::$ctrl.fieldType.displayName}}"
   ng-required="::$ctrl.fieldType.required"
-  ng-focus="$ctrl.onFieldFocus()"
-  ng-blur="$ctrl.onFieldBlur()"
+  ng-focus="$ctrl.onFocus($event)"
+  ng-blur="$ctrl.onBlur($event)"
 >
 </md-datepicker>
 
@@ -37,8 +37,8 @@
     aria-label="{ ::'HOURS' | translate }}"
     ng-attr-maxlength="2"
     ng-disabled="$ctrl.disabled"
-    ng-focus="$ctrl.onFieldFocus()"
-    ng-blur="$ctrl.onFieldBlur()"
+    ng-focus="$ctrl.onFocus($event)"
+    ng-blur="$ctrl.onBlur($event)"
   >
 </md-input-container>
 
@@ -55,8 +55,8 @@
     aria-label="{ ::'MINUTES' | translate }}"
     ng-attr-maxlength="2"
     ng-disabled="$ctrl.disabled"
-    ng-focus="$ctrl.onFieldFocus();$ctrl.dateValue.focusMinutes()"
-    ng-blur="$ctrl.onFieldBlur();$ctrl.dateValue.blurMinutes()"
+    ng-focus="$ctrl.onFocus($event);$ctrl.dateValue.focusMinutes()"
+    ng-blur="$ctrl.onBlur($event);$ctrl.dateValue.blurMinutes()"
     ng-pattern="/^[0-5]?[0-9]$/"
   >
 </md-input-container>
@@ -67,8 +67,8 @@
   aria-label="{{ ::$ctrl.fieldType.type === 'DATE_ONLY' ? 'SET_TO_TODAY' : 'SET_TO_NOW' | translate }}"
   ng-click="$ctrl.setToNow()"
   ng-disabled="$ctrl.disabled"
-  ng-focus="$ctrl.onFieldFocus()"
-  ng-blur="$ctrl.onFieldBlur()"
+  ng-focus="$ctrl.onFocus($event)"
+  ng-blur="$ctrl.onBlur($event)"
   title="{{ ::$ctrl.fieldType.type === 'DATE_ONLY' ? 'SET_TO_TODAY' : 'SET_TO_NOW' | translate }}"
 >
   <md-icon md-font-icon="mdi-sync"></md-icon>

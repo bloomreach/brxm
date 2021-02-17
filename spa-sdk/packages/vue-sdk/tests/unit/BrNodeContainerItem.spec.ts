@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import { Wrapper, shallowMount } from '@vue/test-utils';
 import { Component, Prop, Provide, Vue } from 'vue-property-decorator';
-import { ContainerItem, Page } from '@bloomreach/spa-sdk';
+import { ContainerItem, Page, TYPE_CONTAINER_ITEM_UNDEFINED } from '@bloomreach/spa-sdk';
 import BrNodeContainerItem from '@/BrNodeContainerItem.vue';
 
 @Component({ template: '<div />' })
@@ -84,6 +84,17 @@ describe('BrNodeContainerItem', () => {
     });
 
     it('should render an undefined container item', async () => {
+      component.getType.mockReturnValue('undefined');
+
+      const wrapper = shallowMountComponent();
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.html()).toMatchSnapshot();
+    });
+
+    it('should override undefined container item', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mapping[TYPE_CONTAINER_ITEM_UNDEFINED as any] = SomeContainerItem;
       component.getType.mockReturnValue('undefined');
 
       const wrapper = shallowMountComponent();

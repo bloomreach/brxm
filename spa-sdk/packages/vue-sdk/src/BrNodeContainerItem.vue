@@ -1,5 +1,5 @@
 <!--
-  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -22,11 +22,18 @@
     :page="page"
   />
 
+  <component
+    v-else-if="TYPE_CONTAINER_ITEM_UNDEFINED in mapping"
+    :is="mapping[TYPE_CONTAINER_ITEM_UNDEFINED]"
+    :component="component"
+    :page="page"
+  />
+
   <br-container-item-undefined v-else :component="component" :page="page" />
 </template>
 
 <script lang="ts">
-import { ContainerItem, Page } from '@bloomreach/spa-sdk';
+import { ContainerItem, Page, TYPE_CONTAINER_ITEM_UNDEFINED } from '@bloomreach/spa-sdk';
 import { Component, Inject, Vue, Watch } from 'vue-property-decorator';
 import BrContainerItemUndefined from './BrContainerItemUndefined.vue';
 
@@ -43,6 +50,9 @@ import BrContainerItemUndefined from './BrContainerItemUndefined.vue';
       return this.page$();
     },
   },
+  data: () => ({
+    TYPE_CONTAINER_ITEM_UNDEFINED,
+  }),
 })
 export default class BrNodeContainerItem extends Vue {
   @Inject() private component$!: () => ContainerItem;

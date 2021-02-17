@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.List;
@@ -59,6 +58,8 @@ public interface FieldType {
 
     Type getType();
 
+    String getJcrType();
+
     String getDisplayName();
 
     void setDisplayName(final String displayName);
@@ -78,6 +79,10 @@ public interface FieldType {
     boolean isMultiple();
 
     void setMultiple(final boolean isMultiple);
+
+    boolean isOrderable();
+
+    void setOrderable(final boolean orderable);
 
     /**
      * Represents the "required" validator, which indicates that a field must have content. What exactly that

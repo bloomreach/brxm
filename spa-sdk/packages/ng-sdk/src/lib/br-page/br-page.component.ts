@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
   /**
    * The brXM and Angular components mapping.
    */
-  @Input() mapping: Record<string, Type<BrProps>> = {};
+  @Input() mapping: Record<keyof any, Type<BrProps>> = {};
 
   /**
    * The pre-initialized page instance or prefetched page model.

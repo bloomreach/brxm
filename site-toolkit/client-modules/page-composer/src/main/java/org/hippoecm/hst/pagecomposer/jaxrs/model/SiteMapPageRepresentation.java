@@ -82,7 +82,19 @@ public class SiteMapPageRepresentation {
     public SiteMapPageRepresentation represent(final HstLink hstLink, final Node handleNode) throws RepositoryException {
         id = handleNode.getIdentifier();
         parentId = handleNode.getParent().getIdentifier();
-        name = handleNode.getName();
+
+        if (hstLink.representsIndex()) {
+            // the hstLink was the result of a document matching the _index_ sitemap item : as a result, it will be
+            // accessed via the 'parent url'. Instead of typically having 'index' as name in the sitemap, use the
+            // parent name to get the logical sitemap name in the CM
+            if (hstLink.getHstSiteMapItem().isWildCard()) {
+                name = handleNode.getParent().getName();
+            } else {
+                name = hstLink.getHstSiteMapItem().getValue();
+            }
+        } else {
+            name = handleNode.getName();
+        }
 
         pageTitle = ((HippoNode)handleNode).getDisplayName();
         // from the pathInfo, remove the 'Mount path part' just like SiteMapPageRepresentation for a sitemap item above

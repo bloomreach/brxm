@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,27 @@ describe('projectToggle component', () => {
   let $rootScope;
   let ProjectService;
   let CmsService;
+  let ChannelService;
 
   const projectMock = {
     name: 'testProject',
     id: 1,
+    channels: [],
   };
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
+
+    ChannelService = jasmine.createSpyObj('ChannelService', [
+      'initializeChannel',
+      'getBaseId',
+    ]);
+
+    ChannelService.channel = {
+      id: 'channel-id',
+      contextPath: 'something',
+      hostGroup: 'something',
+    };
 
     inject((
       $componentController,
@@ -40,7 +53,7 @@ describe('projectToggle component', () => {
       _ProjectService_,
       _CmsService_,
     ) => {
-      $ctrl = $componentController('projectToggle', {});
+      $ctrl = $componentController('projectToggle', { ChannelService });
       $q = _$q_;
       $rootScope = _$rootScope_;
       ProjectService = _ProjectService_;
@@ -75,11 +88,26 @@ describe('projectToggle component', () => {
     });
 
     it('should update selected project on project service with the selected project id', () => {
-      const projectMock2 = { id: 'test' };
+      const projectMock2 = {
+        id: 'test',
+        channels: [
+          {
+            id: 'channel-id-test',
+            branchOf: 'channel-id',
+          },
+        ],
+      };
+      ChannelService.getBaseId.and.returnValue('channel-id');
       ProjectService.updateSelectedProject.and.returnValue($q.resolve());
       $ctrl.selectedProject = projectMock2;
       $rootScope.$digest();
 
+      expect(ChannelService.initializeChannel).toHaveBeenCalledWith(
+        'channel-id-test',
+        jasmine.anything(),
+        jasmine.anything(),
+        'test',
+      );
       expect(ProjectService.updateSelectedProject).toHaveBeenCalledWith(projectMock2.id);
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsProjectSwitch');
     });
