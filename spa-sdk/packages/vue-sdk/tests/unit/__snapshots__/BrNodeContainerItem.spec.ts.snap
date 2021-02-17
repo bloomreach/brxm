@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`BrNodeContainerItem render should override undefined container item 1`] = `<somecontaineritem-stub component="[object Object]" page="[object Object]"></somecontaineritem-stub>`;
+
 exports[`BrNodeContainerItem render should render a mapped container item 1`] = `<somecontaineritem-stub component="[object Object]" page="[object Object]"></somecontaineritem-stub>`;
 
 exports[`BrNodeContainerItem render should render an undefined container item 1`] = `<br-container-item-undefined-stub component="[object Object]" page="[object Object]"></br-container-item-undefined-stub>`;

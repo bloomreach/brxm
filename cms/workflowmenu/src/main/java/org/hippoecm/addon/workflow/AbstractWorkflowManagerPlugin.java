@@ -60,19 +60,19 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
 
+    private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(AbstractWorkflowManagerPlugin.class);
 
     public static final String OBSERVATION_KEY = "workflow.observation";
     public static final String CATEGORIES_KEY = "workflow.categories";
     public static final String VERSION_CATEGORIES_KEY = "workflow.version.categories";
-    public static final String XPAGE_CATEGORIES_KEY = "workflow.xpage.categories";
     public static final String MENU_ORDER_KEY = "workflow.menuorder";
 
     private Set<NodeObserver> observers;
     private PluginController plugins;
     private String[] categories;
     private String[] versionCategories;
-    private String[] xpageCategories;
     private String[] menuOrder;
     protected AbstractView view;
 
@@ -104,12 +104,6 @@ public abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
             versionCategories = config.getStringArray(VERSION_CATEGORIES_KEY);
         } else {
             versionCategories = categories;
-        }
-
-        if (config.get(XPAGE_CATEGORIES_KEY) != null) {
-            xpageCategories = config.getStringArray(XPAGE_CATEGORIES_KEY);
-        } else {
-            xpageCategories = categories;
         }
 
         IServiceReference serviceReference = context.getReference(this);
@@ -179,7 +173,7 @@ public abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
         final CategoriesService service = Optional
                 .ofNullable(HippoServiceRegistry.getService(CategoriesService.class))
                 .orElse(new CategoriesServiceImpl());
-        return service.getCategories(node, getPluginContext(), categories, versionCategories, xpageCategories);
+        return service.getCategories(node, getPluginContext(), this.categories, versionCategories);
     }
 
     private void stopObservation() {

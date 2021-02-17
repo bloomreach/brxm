@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,14 +40,6 @@ describe('BrNodeComponent', () => {
     });
   });
 
-  describe('fallback', () => {
-    it('should render children on a fallback', () => {
-      const wrapper = shallow(<BrNodeComponent {...props}><b/></BrNodeComponent>);
-
-      expect(wrapper.equals(<b/>)).toBe(true);
-    });
-  });
-
   describe('render', () => {
     beforeEach(() => {
       // @see https://github.com/airbnb/enzyme/issues/1553
@@ -68,6 +60,12 @@ describe('BrNodeComponent', () => {
       const wrapper = mount(<BrNodeComponent {...props}><b/></BrNodeComponent>, { context });
 
       expect(wrapper.html()).toBe('<a><b></b></a>');
+    });
+
+    it('should render children on a fallback', () => {
+      const wrapper = shallow(<BrNodeComponent {...props}><b/></BrNodeComponent>);
+
+      expect(wrapper.equals(<b/>)).toBe(true);
     });
   });
 });

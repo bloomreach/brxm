@@ -1,6 +1,7 @@
 {
   "id":"c1",
   "_meta":{
+    "product" : "brxm",
     "preview":true,
     "version":"0.9",
     "branch":"master"

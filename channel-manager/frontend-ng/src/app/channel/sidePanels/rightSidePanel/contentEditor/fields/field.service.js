@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,6 +145,22 @@ class FieldService {
 
   _isThrottled(documentId, name) {
     return this.throttled[documentId] && this.throttled[documentId][name];
+  }
+
+  reorder({
+    documentId = this.getDocumentId(),
+    name,
+    order,
+  }) {
+    return this.ContentService.reorderField(documentId, name, order);
+  }
+
+  add({ documentId = this.getDocumentId(), name }) {
+    return this.ContentService.addField(documentId, name);
+  }
+
+  remove({ documentId = this.getDocumentId(), name }) {
+    return this.ContentService.removeField(documentId, name);
   }
 }
 

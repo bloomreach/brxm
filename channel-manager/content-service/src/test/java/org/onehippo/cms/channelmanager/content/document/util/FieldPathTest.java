@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.channelmanager.content.document.util;
 
 import org.junit.Before;
@@ -22,8 +21,8 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
 
 public class FieldPathTest {
 
@@ -32,6 +31,7 @@ public class FieldPathTest {
     private FieldPath one2;
     private FieldPath oneTwo;
     private FieldPath one2Two;
+    private FieldPath one2Two2;
     private FieldPath oneTwoThree;
     private FieldPath two;
     private FieldPath nul;
@@ -47,6 +47,7 @@ public class FieldPathTest {
         one2 = new FieldPath("one[2]");
         oneTwo = new FieldPath("one/two");
         one2Two = new FieldPath("one[2]/two");
+        one2Two2 = new FieldPath("one[2]/two[2]");
         oneTwoThree = new FieldPath("one/two/three");
         two = new FieldPath("two");
         twoThree = new FieldPath("two/three");
@@ -111,6 +112,26 @@ public class FieldPathTest {
     }
 
     @Test
+    public void getFirstSegmentName() {
+        assertThat(one.getFirstSegmentName(), is("one"));
+        assertThat(oneTwo.getFirstSegmentName(), is("one"));
+        assertThat(oneTwoThree.getFirstSegmentName(), is("one"));
+        assertThat(blank.getFirstSegmentName(), is(" "));
+        assertThat(one2.getFirstSegmentName(), is("one"));
+        assertThat(one2Two.getFirstSegmentName(), is("one"));
+    }
+
+    @Test
+    public void getFirstSegmentIndex() {
+        assertThat(one.getFirstSegmentIndex(), is(1));
+        assertThat(oneTwo.getFirstSegmentIndex(), is(1));
+        assertThat(oneTwoThree.getFirstSegmentIndex(), is(1));
+        assertThat(blank.getFirstSegmentIndex(), is(1));
+        assertThat(one2.getFirstSegmentIndex(), is(2));
+        assertThat(one2Two.getFirstSegmentIndex(), is(2));
+    }
+
+    @Test
     public void getRemainingSegments() {
         assertThat(one.getRemainingSegments(), equalTo(empty));
         assertThat(one2.getRemainingSegments(), equalTo(empty));
@@ -120,6 +141,30 @@ public class FieldPathTest {
         assertThat(empty.getRemainingSegments(), equalTo(empty));
         assertThat(blank.getRemainingSegments(), equalTo(empty));
         assertThat(nul.getRemainingSegments(), equalTo(empty));
+    }
+
+    @Test
+    public void getLastSegment() {
+        assertThat(one.getLastSegment(), is("one"));
+        assertThat(oneTwo.getLastSegment(), is("two"));
+        assertThat(oneTwoThree.getLastSegment(), is("three"));
+        assertThat(empty.getLastSegment(), is(nullValue()));
+        assertThat(blank.getLastSegment(), is(" "));
+        assertThat(nul.getLastSegment(), is(nullValue()));
+        assertThat(one2.getLastSegment(), is("one[2]"));
+        assertThat(one2Two.getLastSegment(), is("two"));
+        assertThat(one2Two2.getLastSegment(), is("two[2]"));
+    }
+
+    @Test
+    public void getLastSegmentName() {
+        assertThat(one.getLastSegmentName(), is("one"));
+        assertThat(oneTwo.getLastSegmentName(), is("two"));
+        assertThat(oneTwoThree.getLastSegmentName(), is("three"));
+        assertThat(blank.getLastSegmentName(), is(" "));
+        assertThat(one2.getLastSegmentName(), is("one"));
+        assertThat(one2Two.getLastSegmentName(), is("two"));
+        assertThat(one2Two2.getLastSegmentName(), is("two"));
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ public class MockHstLink implements HstLink {
     private Mount mount;
     private HstSiteMapItem hstSiteMapItem;
     private String subPath;
+    private boolean representsIndex;
 
     public MockHstLink() {
         this(null);
@@ -91,6 +92,15 @@ public class MockHstLink implements HstLink {
     
     public void setSubPath(String subPath) {
         this.subPath = subPath;
+    }
+
+    @Override
+    public boolean representsIndex() {
+        return representsIndex;
+    }
+
+    public void setRepresentsIndex(final boolean representsIndex) {
+        this.representsIndex = representsIndex;
     }
 
     public String toUrlForm(HstRequestContext requestContext, boolean fullyQualified) {

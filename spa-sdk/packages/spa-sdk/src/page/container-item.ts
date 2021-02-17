@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,11 @@ import { Logger } from '../logger';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { PageModel } from './page';
 import { resolve } from './reference';
+
+/**
+ * A container item without mapping.
+ */
+export const TYPE_CONTAINER_ITEM_UNDEFINED: symbol = Symbol.for('ContainerItemUndefined');
 
 const PARAMETER_HIDDEN = 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide';
 

@@ -47,6 +47,7 @@ public class MockFieldTypeContext {
         private String jcrType = DEFAULT_JCR_TYPE;
         private String type = "Text";
         private boolean isMultiple = false;
+        private boolean isOrderable = false;
         private String hint;
         private String displayName;
         private List<String> validators = Collections.emptyList();
@@ -91,6 +92,11 @@ public class MockFieldTypeContext {
 
         public Builder multiple(final boolean isMultiple) {
             this.isMultiple = isMultiple;
+            return this;
+        }
+
+        public Builder orderable(final boolean isOrderable) {
+            this.isOrderable = isOrderable;
             return this;
         }
 
@@ -143,6 +149,7 @@ public class MockFieldTypeContext {
             expect(fieldContext.getJcrType()).andReturn(jcrType);
             expect(fieldContext.getType()).andReturn(type);
             expect(fieldContext.isMultiple()).andReturn(isMultiple).anyTimes();
+            expect(fieldContext.isOrderable()).andReturn(isOrderable).anyTimes();
 
             if (isMultiple) {
                 final Optional<String> maxItemsOptional = maxValues != null

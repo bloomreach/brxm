@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -297,6 +297,7 @@ export {
   TYPE_CONTAINER_NO_MARKUP,
   TYPE_CONTAINER_ORDERED_LIST,
   TYPE_CONTAINER_UNORDERED_LIST,
+  TYPE_CONTAINER_ITEM_UNDEFINED,
   TYPE_LINK_EXTERNAL,
   TYPE_LINK_INTERNAL,
   TYPE_LINK_RESOURCE,

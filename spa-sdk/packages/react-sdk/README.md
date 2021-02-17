@@ -17,6 +17,7 @@ Bloomreach Experience Manager (brXM) is an open and flexible CMS designed for de
 - [Hooks API](https://reactjs.org/docs/hooks-intro.html) support;
 - [Next.js](https://nextjs.org/) support;
 - [React Router](https://reacttraining.com/react-router/) and [Next Routes](https://github.com/fridays/next-routes) support;
+- [React Native](https://reactnative.dev/) support;
 - [Enzyme](https://airbnb.io/enzyme/) and [Jest](https://jestjs.io/) support.
 
 ## Get Started
@@ -108,6 +109,14 @@ It requires to pass the `mapping` property that maps the component type with its
   import Menu from './components/Menu';
 
   return <BrPage mapping={{ menu: Menu }} />;
+  ```
+
+- By default, container items that are not mapped will be rendered as a warning text. There is an option to override the fallback.
+  ```jsx
+  import { TYPE_CONTAINER_ITEM_UNDEFINED } from '@bloomreach/spa-sdk';
+  import Fallback from './components/Fallback';
+
+  return <BrPage mapping={{ [TYPE_CONTAINER_ITEM_UNDEFINED]: Fallback }} />;
   ```
 
 ### Inline Mapping
@@ -232,6 +241,72 @@ export default function Menu() {
         />
       </div>
     );
+  }
+  ```
+
+### React Native
+The SDK is fully compatible with [React Native](https://reactnative.dev/) framework, but there are some of the best practices.
+
+- It is impossible to use `<div>` elements in React Native, and it is recommended to use the `hst.nomarkup` container type in the backend configuration.
+
+- If there is a need to support other container types, those types should be overridden explicitly in the mapping. The default implementation is using HTML entities as described in the [documentation](https://documentation.bloomreach.com/library/concepts/template-composer/channel-editor-containers.html).
+  ```jsx
+  import React from 'react';
+  import { View } from 'react-native';
+  import { TYPE_CONTAINER_BOX } from '@bloomreach/spa-sdk';
+
+  function MyBoxContainer() {
+    return (
+      <View>
+        {React.Children.map(props.children, child => (
+          <View>
+            {child}
+          </View>
+        ))}
+      </View>
+    );
+  }
+
+  export default function App() {
+    return <BrPage mapping={{ [TYPE_CONTAINER_BOX]: MyBoxContainer }} />;
+  }
+  ```
+
+- The fallback mapping should be overridden to prevent errors on production when a new component type pops up on the backend since the default implementation is returning a plain text node.
+  ```jsx
+  import React from 'react';
+  import { Text } from 'react-native';
+  import { TYPE_CONTAINER_ITEM_UNDEFINED } from '@bloomreach/spa-sdk';
+
+  function Fallback({ component, page }) {
+    return page.isPreview() && <Text>Component "{component.getType()}" is not defined.</Text>;
+  }
+
+  export default function App() {
+    return <BrPage mapping={{ [TYPE_CONTAINER_ITEM_UNDEFINED]: Fallback }} />;
+  }
+  ```
+
+- For integration with [the Relevance Module](https://documentation.bloomreach.com/14/library/enterprise/enterprise-features/targeting/targeting.html), the visitor identifier storing and passing should be handled on the application side. There is the `visitor` option in the [configuration](#configuration) that enables a setup without using cookies.
+
+  ```jsx
+  import React, { useEffect, useMemo, useRef } from 'react';
+  import { read, write } from './storage';
+
+  export default function App() {
+    const ref = useRef(null);
+    const configuration = {
+      /* ... */
+      visitor: read('visitor'),
+    };
+
+    const visitor = ref.current
+      && ref.current.state.page
+      && ref.current.state.page.getVisitor();
+
+    useEffect(() => void visitor && write('visitor', visitor), [visitor && visitor.id]);
+
+    return <BrPage ref={ref} configuration={configuration} />;
   }
   ```
 

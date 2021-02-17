@@ -63,6 +63,7 @@
     "angular": "1.8.0",
     "angular-animate": "1.8.0",
     "angular-aria": "1.8.0",
+    "angular-legacy-sortablejs-maintained": "^0.6.2",
     "angular-local-storage": "0.7.1",
     "angular-material": "1.1.21",
     "angular-messages": "1.8.0",
@@ -79,6 +80,7 @@
     "open-sans-fontface": "github:FontFaceKit/open-sans#59493162b016dae6ef0d06693ccf3c93c1e96091",
     "penpal": "4.1.1",
     "rxjs": "6.6.2",
+    "sortablejs": "^1.13.0",
     "throttle-debounce": "2.1.0"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 {
   "id":"h1",
   "_meta":{
+    "product" : "brxm",
     "version":"0.9",
     "branch":"master"
   },
