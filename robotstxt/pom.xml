@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2009-2021 Hippo B.V. (http://www.onehippo.com)
 
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Robots.txt Generator</notice.project.name>
-    <hippo.jackrabbit.version>2.18.5-h2</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.20.2-h1</hippo.jackrabbit.version>
     <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
 
