@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -75,7 +75,8 @@
     <notice.project.name>Hippo Repository</notice.project.name>
     <javadoc.base.version>13.1</javadoc.base.version>
 
-    <hippo.jackrabbit.version>2.18.5-h2</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.20.2-h1</hippo.jackrabbit.version>
+    <oak.jackrabbit.version>1.34.0</oak.jackrabbit.version>
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.services.version>${hippo.release.version}</hippo.services.version>
@@ -112,6 +113,7 @@
     <oracle.version>12.2.0.1</oracle.version>
     <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
     <assertj.version>3.8.0</assertj.version>
+    <jetbrains.version>18.0.0</jetbrains.version>
   </properties>
 
   <build>
@@ -421,8 +423,8 @@
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-api</artifactId>
-        <version>${hippo.jackrabbit.version}</version>
+        <artifactId>oak-jackrabbit-api</artifactId>
+        <version>${oak.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
@@ -591,6 +593,12 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-text</artifactId>
         <version>${commons-text.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains</groupId>
+        <artifactId>annotations</artifactId>
+        <version>${jetbrains.version}</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
