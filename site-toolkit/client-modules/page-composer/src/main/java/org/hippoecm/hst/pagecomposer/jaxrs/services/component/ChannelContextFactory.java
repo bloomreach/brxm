@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2021 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,16 +75,17 @@ final class ChannelContextFactory implements ComponentManagerAware {
                 .setCrossChannelPageCopySupported(crossChannelPageCopySupported)
                 .setHasPrototypes(!hasPrototypes(contextService));
 
+        final Session session = contextService.getRequestContext().getSession();
         final Optional<Channel> channelOptional = channelService.getChannelByMountId(actionContext.getMountId(),
                 actionContext.getHostGroup());
         if (!channelOptional.isPresent()) {
-        	log.warn("The mount id {} belongs to the wrong Host group {}", actionContext.getMountId(), actionContext.getHostGroup());
+        	log.warn("Mount {} is not part of host group {}, the channel is now not editable. Please adjust the configuration.",
+                    getNodePath(actionContext.getMountId(), session), actionContext.getHostGroup());
         	return channelContext;
         }
-        log.info("Setting channel {}", channelOptional.get());
 
         final Channel channel = channelOptional.get();
-        final Session session = contextService.getRequestContext().getSession();
+        log.info("Setting channel to context: {}", channel);
         return channelContext
                 .setChannel(channel)
                 .setDeletable(channelService.canChannelBeDeleted(channel) && channelService.isMaster(channel))
@@ -94,6 +95,15 @@ final class ChannelContextFactory implements ComponentManagerAware {
                 .setXPageTemplateQueries(
                         getXPageTemplateQueries(channel, channel.getContentRoot(), session))
                 .setConfigurationLocked(channel.isConfigurationLocked());
+    }
+
+    private String getNodePath(final String nodeId, final Session session) {
+        try {
+            final Node node = session.getNodeByIdentifier(nodeId);
+            return node.getPath();
+        } catch (RepositoryException ignore) {
+            return nodeId;
+        }
     }
 
     /**
