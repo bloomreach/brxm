@@ -19,6 +19,9 @@
     <requiredProperty key="projectName">
       <defaultValue>My Project</defaultValue>
     </requiredProperty>
+    <requiredProperty key="gitignore">
+      <defaultValue>.gitignore</defaultValue>
+    </requiredProperty>
   </requiredProperties>
   <fileSets>
     <fileSet filtered="false" encoding="UTF-8">
@@ -346,6 +349,12 @@
         <include>**/*.*</include>
         <include>Dockerfile</include>
         <include>DockerfileDev</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory></directory>
+      <includes>
+        <include>__gitignore__</include>
       </includes>
     </fileSet>
   </fileSets>
