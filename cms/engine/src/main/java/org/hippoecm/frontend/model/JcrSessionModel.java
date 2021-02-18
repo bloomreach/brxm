@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,17 +27,20 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
+
 import org.hippoecm.frontend.Main;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.event.HippoEventConstants;
 import org.onehippo.cms7.event.HippoSecurityEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,7 +142,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
                 session.logout();
                 return null;
             }
-            logHippoEvent(true, credentials.getUsername(), "authenticated", false);
+            logHippoEvent(true, credentials.getUsername(), "authenticated ok", true);
         } catch (LoginException e) {
             logHippoEvent(true, credentials.getUsername(), "invalid credentials", false);
             lastThrownLoginException = e;
@@ -177,7 +180,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
         return repository.getRepository().login(credentials.getJcrCredentials());
     }
 
-    private void logHippoEvent(final boolean login, final String user, final String message, boolean success) {
+    private void logHippoEvent(final boolean authenticate, final String user, final String message, boolean success) {
         final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
 
         if (eventBus != null) {
@@ -188,9 +191,9 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
                     logEventTask = HDC.getCurrentTask().startSubtask("JcrSessionModel.logHippoEvent");
                 }
 
-                final String action = login ? "login" : "logout";
-                final HippoEvent event = new HippoSecurityEvent("cms").success(success).action(action)
-                        .category(HippoEventConstants.CATEGORY_SECURITY).user(user).set("remoteAddress", getRemoteAddr())
+                final String action = authenticate ? "authenticate" : "logout";
+                final HippoEvent event = new HippoSecurityEvent("cms").success(success).system(authenticate)
+                        .action(action).category(HippoEventConstants.CATEGORY_SECURITY).user(user).set("remoteAddress", getRemoteAddr())
                         .message(message);
                 event.sealEvent();
                 eventBus.post(event);
