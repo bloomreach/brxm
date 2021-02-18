@@ -47,7 +47,6 @@
     <maven.archetype.plugin.version>2.4</maven.archetype.plugin.version>
     <maven.antrun.plugin.version>1.8</maven.antrun.plugin.version>
     <maven.dependency.plugin.version>3.1.1</maven.dependency.plugin.version>
-    <maven.resources.plugin.version>2.7</maven.resources.plugin.version>
 
     <!-- ant and junit versions are aligned with the versions which maven-antrun-plugin uses -->
     <ant.version>1.9.4</ant.version>
@@ -237,7 +236,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>${maven.resources.plugin.version}</version>
           <executions>
             <execution>
               <!-- copy the Getting Started app to target/gettingstarted in the install phase -->
@@ -254,6 +252,7 @@
                   </resource>
                 </resources>
                 <includeEmptyDirs>true</includeEmptyDirs>
+
               </configuration>
             </execution>
           </executions>
