@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -84,12 +84,10 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("serial")
 public class TemplateBuilder implements IDetachable, IObservable {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateBuilder.class);
-
-    /** Suffix to append to duplicated field names or paths */
-    private static final char SUFFIX_WHEN_DUPLICATE = '_';
 
     class BuilderFieldDescriptor implements IFieldDescriptor, IDetachable {
 
@@ -406,7 +404,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 // Check duplicate paths
                 if (!"*".equals(field.getPath())) {
                     if (field.getPath().equals(descriptor.getPath())) {
-                        newDescriptorPath = descriptor.getPath() + SUFFIX_WHEN_DUPLICATE;
+                        newDescriptorPath = determineDuplicateName(descriptor.getPath());
                         descriptor.setPath(newDescriptorPath);
                         checkAgainAgainstAllFields = true;
                     }
@@ -418,7 +416,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 // Check duplicate names
                 if (field.getName() != null && field.getName().equals(descriptor.getName())) {
                     if (descriptor instanceof JavaFieldDescriptor) {
-                        newDescriptorName = descriptor.getName() + SUFFIX_WHEN_DUPLICATE;
+                        newDescriptorName = determineDuplicateName(descriptor.getName());
                         ((JavaFieldDescriptor) descriptor).setName(newDescriptorName);
                         checkAgainAgainstAllFields = true;
                     } else {
@@ -441,6 +439,34 @@ public class TemplateBuilder implements IDetachable, IObservable {
             typeDescriptor.addField(descriptor);
             processFieldAdded(descriptor);
             updatePrototype();
+        }
+
+        /**
+         * Determine the name if the name is already used by a field.
+         * If the name is duplicate, then add a numeric value to the end
+         * which is incremental for every duplicated name.
+         */
+        private String determineDuplicateName(String name) {
+
+            final StringBuilder suffix = new StringBuilder();
+            String nameWithoutIncrementalSuffix = "";
+            // find the numeric suffixes of the previous duplicated names 
+            for (char c : new StringBuilder(name).reverse().toString().toCharArray()) {
+                final String character = Character.toString(c);
+                if (!StringUtils.isNumeric(character)) {
+                    nameWithoutIncrementalSuffix = name.substring(0, name.lastIndexOf(c) + 1);
+                    break;
+                }
+                suffix.append(character);
+            }
+
+            // return with suffix 1 if this is the first duplicated name
+            if (StringUtils.isEmpty(suffix.toString())) {
+                return nameWithoutIncrementalSuffix + "1";
+            }
+
+            final int incrementalSuffix = Integer.valueOf(suffix.reverse().toString()) + 1;
+            return nameWithoutIncrementalSuffix + String.valueOf(incrementalSuffix);
         }
 
         @Override

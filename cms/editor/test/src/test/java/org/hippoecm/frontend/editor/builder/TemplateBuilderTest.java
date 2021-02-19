@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -63,10 +64,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+@SuppressWarnings("serial")
 public class TemplateBuilderTest extends EditorTestCase {
 
-    private static class ExtPtModel implements IModel {
+    private static class ExtPtModel implements IModel<Object> {
 
         public Object getObject() {
             return "${cluster.id}.field";
@@ -79,7 +82,7 @@ public class TemplateBuilderTest extends EditorTestCase {
         }
     }
 
-    private static class PluginSelectModel  extends Model {
+    private static class PluginSelectModel  extends Model<String> {
 
     }
 
@@ -468,4 +471,28 @@ public class TemplateBuilderTest extends EditorTestCase {
         tester.clickLink("root:extension.form:template:preview:view:1:item:head:remove");
     }
 
+    @Test
+    public void test_duplicated_name_is_updated_incrementally() throws Exception {
+        final TemplateBuilder builder = new TemplateBuilder("test:new", false, context, new ExtPtModel(), new PluginSelectModel());
+
+        // initialize type descriptor and template
+        final ITypeDescriptor type = builder.getTypeDescriptor();
+        session.save();
+        home.processEvents();
+
+        type.addField(new JavaFieldDescriptor("test", new JcrTypeStore().load("Boolean")));
+
+        final IFieldDescriptor booleanField = type.getField("boolean");
+        assertEquals("test:boolean", booleanField.getPath());
+
+        IntStream.rangeClosed(1, 15).forEach(counter -> {
+            try {
+                type.addField(new JavaFieldDescriptor("test", new JcrTypeStore().load("Boolean")));
+                final IFieldDescriptor duplicatedField = type.getField("boolean" + counter);
+                assertEquals("test:boolean" + counter, duplicatedField.getPath());
+            } catch (Exception e) {
+                fail(String.format("Test is failed due to the exception -> %s", e.getMessage()));
+            }
+        });
+    }
 }
