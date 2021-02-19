@@ -106,7 +106,6 @@
     <swagger-jaxrs.version>1.5.15</swagger-jaxrs.version>
 
     <bytebuddy.version>1.9.10</bytebuddy.version>
-    <jetbrains.version>18.0.0</jetbrains.version>
   </properties>
 
   <!--
@@ -553,12 +552,6 @@
             <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jetbrains</groupId>
-        <artifactId>annotations</artifactId>
-        <version>${jetbrains.version}</version>
       </dependency>
 
       <!-- Test dependencies -->

@@ -87,7 +87,6 @@
     <javadoc.base.version>13.1</javadoc.base.version>
 
     <hippo.jackrabbit.version>2.20.2-h1</hippo.jackrabbit.version>
-    <oak.jackrabbit.version>1.34.0</oak.jackrabbit.version>
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.utilities.version>${hippo.release.version}</hippo.utilities.version>
     <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
@@ -132,8 +131,6 @@
     <hippo.ckeditor.version>4.12.1-h1</hippo.ckeditor.version>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
-
-    <jetbrains.version>18.0.0</jetbrains.version>
   </properties>
 
   <build>
@@ -274,8 +271,8 @@
 
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>oak-jackrabbit-api</artifactId>
-        <version>${oak.jackrabbit.version}</version>
+        <artifactId>jackrabbit-api</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
         <scope>provided</scope>
       </dependency>
 
@@ -422,12 +419,6 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-testutils</artifactId>
         <version>${hippo.repository.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jetbrains</groupId>
-        <artifactId>annotations</artifactId>
-        <version>${jetbrains.version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
