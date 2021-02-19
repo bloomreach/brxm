@@ -69,7 +69,7 @@
 
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>oak-jackrabbit-api</artifactId>
+      <artifactId>jackrabbit-api</artifactId>
       <scope>provided</scope>
     </dependency>
 
