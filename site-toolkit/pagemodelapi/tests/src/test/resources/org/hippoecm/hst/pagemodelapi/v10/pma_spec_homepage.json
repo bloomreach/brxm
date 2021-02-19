@@ -656,7 +656,7 @@
             }
           }
         },
-        "contentType" : "hippogallery:assetset",
+        "contentType" : "hippogallery:exampleAssetSet",
         "localeString" : null,
         "id" : "5e56d406-b302-445e-9f80-e624ba053bc4"
       }
