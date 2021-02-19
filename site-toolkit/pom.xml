@@ -106,7 +106,6 @@
     <bytebuddy.version>1.10.2</bytebuddy.version>
     <org.skyscreamer.version>1.5.0</org.skyscreamer.version>
     <nimbus-jose-jwt.version>8.4</nimbus-jose-jwt.version>
-    <jetbrains.version>18.0.0</jetbrains.version>
   </properties>
 
   <!--
@@ -564,12 +563,6 @@
             <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jetbrains</groupId>
-        <artifactId>annotations</artifactId>
-        <version>${jetbrains.version}</version>
       </dependency>
 
       <!-- Test dependencies -->
