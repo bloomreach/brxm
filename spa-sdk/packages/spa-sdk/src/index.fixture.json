@@ -124,9 +124,6 @@
         "paramsInfo": {
           "document": "banners/banner1"
         },
-        "params": {
-          "com.onehippo.cms7.targeting.TargetingParameterUtil.hide": "off"
-        },
         "beginNodeSpan": [
           {
             "type": "comment",
@@ -158,11 +155,9 @@
         }
       },
       "meta": {
+        "hidden": true,
         "paramsInfo": {
           "document": "banners/banner2"
-        },
-        "params": {
-          "com.onehippo.cms7.targeting.TargetingParameterUtil.hide": "on"
         },
         "beginNodeSpan": [
           {
