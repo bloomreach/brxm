@@ -85,12 +85,16 @@ public class CustomSecurityProviderTest extends RepositoryTestCase {
             server.login(credentials);
             assertThat(interceptor.messages().collect(Collectors.toList()))
                     .contains(format("Sync user '%s'", TEST_USER_ID));
+            assertThat(interceptor.messages().collect(Collectors.toList()))
+                    .doesNotContain(format("Sync for user '%s' already done", TEST_USER_ID));
         }
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(AbstractSecurityProvider.class).build()) {
             server.login(credentials);
             assertThat(interceptor.messages().collect(Collectors.toList()))
                     .contains(format("Sync for user '%s' already done", TEST_USER_ID));
+            assertThat(interceptor.messages().collect(Collectors.toList()))
+                    .doesNotContain(format("Sync user '%s'", TEST_USER_ID));
         }
 
         // new credentials object triggers new sync
