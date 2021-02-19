@@ -98,12 +98,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.jetbrains</groupId>
-      <artifactId>annotations</artifactId>
-      <scope>test</scope>
-    </dependency>
-
     <!-- Hst test dependencies -->
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
