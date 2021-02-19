@@ -35,9 +35,6 @@
 
   <properties>
     <hippo.jackrabbit.version>2.20.2-h1</hippo.jackrabbit.version>
-    <!-- Since jackrabbit-api is now a downstream project of apache oak project,
-         jackrabbit-api dependency will use oak.jackrabbit project version -->
-    <oak.jackrabbit.version>1.34.0</oak.jackrabbit.version>
 
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
     <hippo.addon-channel-manager.version>${hippo.release.version}</hippo.addon-channel-manager.version>
@@ -98,8 +95,8 @@
       <!-- JR dependencies -->
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>oak-jackrabbit-api</artifactId>
-        <version>${oak.jackrabbit.version}</version>
+        <artifactId>jackrabbit-api</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
