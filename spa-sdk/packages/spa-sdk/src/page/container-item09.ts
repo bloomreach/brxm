@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,6 @@ import { Logger } from '../logger';
 import { MetaCollectionFactory } from './meta-collection-factory';
 import { PageModel } from './page09';
 import { UrlBuilderService, UrlBuilder } from '../url';
-
-const PARAMETER_HIDDEN = 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide';
 
 /**
  * Model of a container item.
@@ -82,7 +80,7 @@ export class ContainerItemImpl
   }
 
   isHidden() {
-    return this.model._meta.params?.[PARAMETER_HIDDEN] === 'on';
+    return !!this.model._meta.hidden;
   }
 
   getParameters<T>(): T {
