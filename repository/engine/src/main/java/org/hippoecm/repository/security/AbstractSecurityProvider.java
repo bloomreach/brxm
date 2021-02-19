@@ -67,6 +67,7 @@ public abstract class AbstractSecurityProvider implements SecurityProvider {
     public void synchronizeOnLogin(SimpleCredentials creds) throws RepositoryException {
         if (TRUE.equals(creds.getAttribute(SYNCED_ATTR_NAME))) {
             log.info("Sync for user '{}' already done", creds.getUserID());
+            return;
         }
         log.info("Sync user '{}'", creds.getUserID());
         // The sync blocks are synchronized because the underlying
