@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2021 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -132,7 +132,7 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
 
     /**
      * Constructor
-     * 
+     *
      * @param classLoaderModel read-only IModel that returns a ClassLoader
      * @param plugin
      */
@@ -149,7 +149,7 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
         transitions = new LinkedList<LayoutTransition>();
 
         // Get layout description.  Use the variant description if it is available.
-        // Otherwise, fall back to the default. 
+        // Otherwise, fall back to the default.
         ClassLoader cl = clModel.getObject();
         InputStream stream = null;
         if (cl != null) {
@@ -169,6 +169,8 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             dbf.setNamespaceAware(true);
             dbf.setValidating(false);
 
@@ -259,7 +261,7 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
 
     /**
      * Determine the name by use of properties files.  The lookup procedure uses the
-     * variant properties file, if available, falling back to the no-variant 
+     * variant properties file, if available, falling back to the no-variant
      * <code>location + ".properties"</code> file.  The key that is used is the name
      * of the layout (i.e. the last part of its location path), initially tried with
      * the variant appended and falling back to the using the name itself as key if

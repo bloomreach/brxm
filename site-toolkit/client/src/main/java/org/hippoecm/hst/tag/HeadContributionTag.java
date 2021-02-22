@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -99,6 +99,8 @@ public class HeadContributionTag extends BodyTagSupport {
 
                     DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
                     dbfac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                    dbfac.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                    dbfac.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
                     DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
                     if (StringUtils.isNotBlank(xmlText)) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ public class ContentExportDialog extends Dialog<Node> {
 
     public ContentExportDialog(final IModelReference<Node> modelReference) {
         setSize(DialogConstants.LARGE);
-        
+
         final IModel<Node> nodeModel = modelReference.getModel();
         setModel(nodeModel);
 
@@ -92,6 +92,8 @@ public class ContentExportDialog extends Dialog<Node> {
                 try {
                     SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
                     stf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                    stf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                    stf.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
                     TransformerHandler handler = stf.newTransformerHandler();
                     StringWriter exportWriter = new StringWriter();
                     Transformer transformer = handler.getTransformer();
@@ -127,7 +129,7 @@ public class ContentExportDialog extends Dialog<Node> {
         }
         return new Model<>("XML export " + path);
     }
-    
+
     public boolean isSkipBinary() {
         return skipBinary;
     }

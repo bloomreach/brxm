@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,11 +39,11 @@ import org.xml.sax.InputSource;
 public class SetWrapperElementTag extends BodyTagSupport {
 
     static Logger logger = LoggerFactory.getLogger(SetWrapperElementTag.class);
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     protected Element element;
-    
+
     public int doEndTag() throws JspException {
         try {
             // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
@@ -69,6 +69,9 @@ public class SetWrapperElementTag extends BodyTagSupport {
 
                     DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
                     dbfac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                    dbfac.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                    dbfac.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
                     DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
                     Document doc = docBuilder.parse(new InputSource(new StringReader(xmlText)));
                     element = doc.getDocumentElement();
@@ -95,9 +98,9 @@ public class SetWrapperElementTag extends BodyTagSupport {
     public void setElement(Element element) {
         this.element = element;
     }
-    
+
     public Element getElement() {
         return this.element;
     }
-    
+
 }
