@@ -146,7 +146,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         // this works since ServletRequest#getParameterMap returns an unmodifiable Map which wraps a LinkedHashMap
         String actual = getActualJson("/spa/resourceapi", "1.0", "b=c&a=d&e=f&i=j&g=h");
         InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_ordered_query_params.json");
-        System.out.println(actual);
+
         assertions(actual, expected);
     }
 
