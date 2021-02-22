@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,6 +56,8 @@ public class JunitReportWriter {
             @SuppressWarnings("squid:S4435")
             final TransformerFactory factory = TransformerFactory.newInstance();
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             if (!factory.getFeature(SAXTransformerFactory.FEATURE)){
                 throw new IOException("Factory does not support " + SAXTransformerFactory.FEATURE);
             }
