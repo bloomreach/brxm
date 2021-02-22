@@ -1,12 +1,12 @@
 /**
- * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2012-2021 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *         http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -147,9 +147,11 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
     public Element createElement(String tagName) {
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder;
-        
+
         try {
             dbfac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            dbfac.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            dbfac.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             docBuilder = dbfac.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
             return doc.createElement(tagName);
@@ -161,9 +163,11 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
     public Comment createComment(String comment) {
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder;
-        
+
         try {
             dbfac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            dbfac.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            dbfac.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             docBuilder = dbfac.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
             return doc.createComment(comment);
@@ -328,7 +332,7 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
 
         /**
          * Constructs a new pair with the specified key and given value.
-         * 
+         *
          * @param key
          *            the key for the entry, may be null
          * @param value
@@ -340,13 +344,13 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
 
         /**
          * Constructs a new pair with the specified key and given value.
-         * 
+         *
          * @param key
          *            the key for the entry, may be null
          * @param value
          *            the value for the entry, may be null
          * @param compareByKeyOnly
-         *            flag if equals() depends on key only 
+         *            flag if equals() depends on key only
          */
         public MockKeyValue(final K key, final V value, final boolean compareByKeyOnly) {
             this.key = key;
@@ -356,7 +360,7 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
 
         /**
          * Constructs a new pair from the specified <code>KeyValue</code>.
-         * 
+         *
          * @param pair
          *            the pair to copy, must not be null
          * @throws NullPointerException
@@ -368,11 +372,11 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
 
         /**
          * Constructs a new pair from the specified <code>KeyValue</code>.
-         * 
+         *
          * @param pair
          *            the pair to copy, must not be null
          * @param compareByKeyOnly
-         *            flag if equals() depends on key only 
+         *            flag if equals() depends on key only
          * @throws NullPointerException
          *             if the entry is null
          */
@@ -382,7 +386,7 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
 
         /**
          * Constructs a new pair from the specified <code>Map.Entry</code>.
-         * 
+         *
          * @param entry
          *            the entry to copy, must not be null
          * @throws NullPointerException
@@ -394,11 +398,11 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
 
         /**
          * Constructs a new pair from the specified <code>Map.Entry</code>.
-         * 
+         *
          * @param entry
          *            the entry to copy, must not be null
          * @param compareByKeyOnly
-         *            flag if equals() depends on key only 
+         *            flag if equals() depends on key only
          * @throws NullPointerException
          *             if the entry is null
          */
@@ -408,7 +412,7 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
 
         /**
          * Gets the key from the pair.
-         * 
+         *
          * @return the key
          */
         public K getKey() {
@@ -417,7 +421,7 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
 
         /**
          * Gets the value from the pair.
-         * 
+         *
          * @return the value
          */
         public V getValue() {
@@ -427,7 +431,7 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
         // -----------------------------------------------------------------------
         /**
          * Sets the key.
-         * 
+         *
          * @param key
          *            the new key
          * @return the old key
@@ -447,7 +451,7 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
 
         /**
          * Sets the value.
-         * 
+         *
          * @return the old value of the value
          * @param value
          *            the new value
@@ -470,7 +474,7 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
          * Compares this <code>KeyValue</code> with another <code>KeyValue</code>.
          * <p> Returns true if the compared object is also a <code>DefaultKeyValue</code>,
          * and its key and value are equal to this object's key and value.
-         * 
+         *
          * @param obj
          *            the object to compare to
          * @return true if equal key and value
@@ -497,7 +501,7 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
 
         /**
          * Gets a hashCode compatible with the equals method.
-         * 
+         *
          * @return a suitable hash code
          */
         public int hashCode() {
