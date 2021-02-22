@@ -1,7 +1,7 @@
 {
   "id":"c1",
   "_meta":{
-    "product" : "brxm",
+    "product":"brxm",
     "version":"0.9",
     "branch":"master"
   },
@@ -45,8 +45,8 @@
               "hst:repobased":true
             },
             "name":"News",
-            "expanded" : false,
-            "selected" : false,
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -67,8 +67,8 @@
               "hst:referencesitemapitem":"contact"
             },
             "name":"Contact",
-            "expanded" : false,
-            "selected" : false,
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -89,8 +89,8 @@
               "hst:referencesitemapitem":"contact-spring"
             },
             "name":"Contact-Spring",
-            "expanded" : false,
-            "selected" : false,
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -111,8 +111,8 @@
               "hst:referencesitemapitem":"contact-dispatch"
             },
             "name":"Contact-Dispatch",
-            "expanded" : false,
-            "selected" : false,
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -133,8 +133,8 @@
               "hst:referencesitemapitem":"contact-springmvc"
             },
             "name":"Contact-SpringMVC",
-            "expanded" : false,
-            "selected" : false,
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -155,8 +155,8 @@
               "hst:referencesitemapitem":"search"
             },
             "name":"Search",
-            "expanded" : false,
-            "selected" : false,
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -177,8 +177,8 @@
               "hst:referencesitemapitem":"uniquelinks"
             },
             "name":"UniqueLinks",
-            "expanded" : false,
-            "selected" : false,
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -225,6 +225,8 @@
                   "hst:repobased":true
                 },
                 "name":"News",
+                "expanded":false,
+                "selected":false,
                 "childMenuItems":[
 
                 ],
@@ -245,6 +247,8 @@
                   "hst:referencesitemapitem":"contact"
                 },
                 "name":"Contact",
+                "expanded":false,
+                "selected":false,
                 "childMenuItems":[
 
                 ],
@@ -265,6 +269,8 @@
                   "hst:referencesitemapitem":"contact-spring"
                 },
                 "name":"Contact-Spring",
+                "expanded":false,
+                "selected":false,
                 "childMenuItems":[
 
                 ],
@@ -285,6 +291,8 @@
                   "hst:referencesitemapitem":"contact-dispatch"
                 },
                 "name":"Contact-Dispatch",
+                "expanded":false,
+                "selected":false,
                 "childMenuItems":[
 
                 ],
@@ -305,6 +313,8 @@
                   "hst:referencesitemapitem":"contact-springmvc"
                 },
                 "name":"Contact-SpringMVC",
+                "expanded":false,
+                "selected":false,
                 "childMenuItems":[
 
                 ],
@@ -325,6 +335,8 @@
                   "hst:referencesitemapitem":"search"
                 },
                 "name":"Search",
+                "expanded":false,
+                "selected":false,
                 "childMenuItems":[
 
                 ],
@@ -345,6 +357,8 @@
                   "hst:referencesitemapitem":"uniquelinks"
                 },
                 "name":"UniqueLinks",
+                "expanded":false,
+                "selected":false,
                 "childMenuItems":[
 
                 ],
@@ -363,7 +377,7 @@
         }
       },
       "notFoundLink":{
-        "type" : "unknown"
+        "type":"unknown"
       },
       "menu":{
         "name":"main",
@@ -377,6 +391,8 @@
               "hst:repobased":true
             },
             "name":"News",
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -397,6 +413,8 @@
               "hst:referencesitemapitem":"contact"
             },
             "name":"Contact",
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -417,6 +435,8 @@
               "hst:referencesitemapitem":"contact-spring"
             },
             "name":"Contact-Spring",
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -437,6 +457,8 @@
               "hst:referencesitemapitem":"contact-dispatch"
             },
             "name":"Contact-Dispatch",
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -457,6 +479,8 @@
               "hst:referencesitemapitem":"contact-springmvc"
             },
             "name":"Contact-SpringMVC",
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -477,6 +501,8 @@
               "hst:referencesitemapitem":"search"
             },
             "name":"Search",
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -497,6 +523,8 @@
               "hst:referencesitemapitem":"uniquelinks"
             },
             "name":"UniqueLinks",
+            "expanded":false,
+            "selected":false,
             "childMenuItems":[
 
             ],
@@ -609,6 +637,7 @@
                 "name":"banner-new-style",
                 "componentClass":"org.hippoecm.hst.test.BannerComponent",
                 "type":"CONTAINER_ITEM_COMPONENT",
+                "ctype":"banner",
                 "_meta":{
                   "paramsInfo":{
                     "path":"banners/banner102"
@@ -632,6 +661,7 @@
                 "name":"banner-new-style-2",
                 "componentClass":"org.hippoecm.hst.test.BannerComponent",
                 "type":"CONTAINER_ITEM_COMPONENT",
+                "ctype":"banner",
                 "_meta":{
                   "paramsInfo":{
                     "path":"/some/default"
@@ -746,7 +776,23 @@
       "date":1249891507580,
       "title":"This is the homepage",
       "body":{
+        "contentType":"hippostd:html",
         "value":"This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
+      },
+      "newsDocument":{
+        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+      },
+      "folderBean":{
+        "$ref":"/content/ucbcbcbcb5fa848a8b03b4524373d992a"
+      },
+      "imageSetBean":{
+        "$ref":"/content/udb02dde500984488a72c2a4fc6d51beb"
+      },
+      "assetBean":{
+        "$ref":"/content/u5e56d406b302445e9f80e624ba053bc4"
+      },
+      "selfBean":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
       },
       "selfInstance":{
         "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
@@ -765,22 +811,8 @@
           "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
         }
       ],
-      "newsDocument":{
-        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-      },
-      "folderBean":{
-        "$ref":"/content/ucbcbcbcb5fa848a8b03b4524373d992a"
-      },
-      "imageSetBean":{
-        "$ref":"/content/udb02dde500984488a72c2a4fc6d51beb"
-      },
-      "assetBean":{
-        "$ref":"/content/u5e56d406b302445e9f80e624ba053bc4"
-      },
-      "selfBean":{
-        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
-      },
       "localeString":"en_US",
+      "contentType":"unittestproject:textpage",
       "bar":{
         "name":"bar",
         "text":"Bar Text"
@@ -807,12 +839,14 @@
       "date":1239782707580,
       "title":"News Item 1",
       "body":{
+        "contentType":"hippostd:html",
         "value":"My news item 1 content"
       },
       "textDocument":{
         "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
       },
-      "localeString":null
+      "localeString":null,
+      "contentType":"unittestproject:newspage"
     },
     "ucbcbcbcb5fa848a8b03b4524373d992a":{
       "id":"cbcbcbcb-5fa8-48a8-b03b-4524373d992a",
@@ -827,8 +861,9 @@
       },
       "name":"common",
       "displayName":"common",
+      "localeString":"en_US",
       "documentSize":1,
-      "localeString":"en_US"
+      "contentType":"hippostd:folder"
     },
     "udb02dde500984488a72c2a4fc6d51beb":{
       "id":"db02dde5-0098-4488-a72c-2a4fc6d51beb",
@@ -849,8 +884,9 @@
         "width":-1,
         "height":-1,
         "lastModified":1236880917884,
-        "mimeType":"image/jpeg",
         "filename":"picture_thumbnail.jpeg",
+        "mimeType":"image/jpeg",
+        "contentType":"hippogallery:image",
         "size":1490,
         "_links":{
           "site":{
@@ -865,8 +901,9 @@
         "width":-1,
         "height":-1,
         "lastModified":1236880917884,
-        "mimeType":"image/jpeg",
         "filename":"picture_original.jpeg",
+        "mimeType":"image/jpeg",
+        "contentType":"hippogallery:image",
         "size":168981,
         "_links":{
           "site":{
@@ -876,6 +913,7 @@
         }
       },
       "fileName":null,
+      "contentType":"hippogallery:imageset",
       "localeString":null
     },
     "u5e56d406b302445e9f80e624ba053bc4":{
@@ -894,8 +932,9 @@
         "name":"hippogallery:asset",
         "displayName":"hippogallery:asset",
         "lastModified":1581065746713,
-        "mimeType":"application/pdf",
         "filename":null,
+        "mimeType":"application/pdf",
+        "contentType":"hippo:resource",
         "size":17381,
         "_links":{
           "site":{
@@ -904,6 +943,7 @@
           }
         }
       },
+      "contentType":"hippogallery:exampleAssetSet",
       "localeString":null
     }
   }
