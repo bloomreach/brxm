@@ -227,16 +227,12 @@ public class AbstractConfigResource {
 
     protected Response logAndReturnServerError(Exception e) {
         if (log.isDebugEnabled()) {
-            log.warn(e.toString(), e);
+            log.warn(e.getMessage(), e);
         } else {
-            log.warn(e.toString(), e);
+            log.warn(e.toString());
         }
-        final ResponseRepresentation<Map<?, ?>> entity = ResponseRepresentation.<Map<?, ?>>builder()
-                .setSuccess(false)
-                .setMessage(e.toString())
-                .build();
-
-        return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
+		return  error(e.getMessage());
+       
     }
 
     protected Response logAndReturnClientError(ClientException e) {
