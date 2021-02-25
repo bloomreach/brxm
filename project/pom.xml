@@ -19,7 +19,7 @@
 
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms7-project</artifactId>
-  <version>12.6.15-SNAPSHOT</version>
+  <version>12.6.16-SNAPSHOT</version>
 
   <name>Hippo CMS Project POM</name>
   <description>Hippo CMS Project POM</description>
@@ -33,7 +33,7 @@
   </organization>
 
   <properties>
-    <hippo.release.version>12.6.15-SNAPSHOT</hippo.release.version>
+    <hippo.release.version>12.6.16-SNAPSHOT</hippo.release.version>
 
     <!-- use UTF-8 encoding for filtered file copy and test reports -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
