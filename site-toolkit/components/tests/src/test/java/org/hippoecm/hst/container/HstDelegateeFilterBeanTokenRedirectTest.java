@@ -24,6 +24,7 @@ import javax.jcr.SimpleCredentials;
 import org.apache.commons.lang3.StringUtils;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.mock.core.request.MockCmsSessionContext;
 import org.hippoecm.hst.platform.security.NimbusJwtTokenServiceImpl;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -49,6 +50,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
     private MockCmsSessionContext cmsSessionContext;
     private NimbusJwtTokenServiceImpl jwtTokenService;
     private Mount mount;
+    private VirtualHost virtualHost;
 
     @Before
     public void setUp() {
@@ -68,15 +70,19 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
         jwtTokenService = new NimbusJwtTokenServiceImpl();
         jwtTokenService.init();
 
+        virtualHost = EasyMock.createNiceMock(VirtualHost.class);
+        expect(virtualHost.getHostName()).andStubReturn("localhost");
+
         mount = EasyMock.createNiceMock(Mount.class);
 
+        expect(mount.getVirtualHost()).andStubReturn(virtualHost);
         expect(mount.getPageModelApi()).andStubReturn("resourceapi");
         expect(mount.isContextPathInUrl()).andStubReturn(true);
         expect(mount.getContextPath()).andStubReturn("/site");
         expect(mount.getScheme()).andStubReturn("http");
         expect(mount.getMountPath()).andStubReturn("");
 
-        replay(mount);
+        replay(mount, virtualHost);
     }
 
 
@@ -122,6 +128,7 @@ public class HstDelegateeFilterBeanTokenRedirectTest {
         request.setRequestURI("/site/submount");
 
         reset(mount);
+        expect(mount.getVirtualHost()).andStubReturn(virtualHost);
         expect(mount.getPageModelApi()).andStubReturn("resourceapi");
         expect(mount.isContextPathInUrl()).andStubReturn(true);
         expect(mount.getContextPath()).andStubReturn("/site");
