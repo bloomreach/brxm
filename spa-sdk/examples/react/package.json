@@ -1,10 +1,10 @@
 {
   "name": "@bloomreach/example-react",
   "description": "Example React SPA for Bloomreach Experience",
-  "version": "14.5.1",
+  "version": "14.6.0",
   "private": true,
   "dependencies": {
-    "@bloomreach/react-sdk": "^14.5.1",
+    "@bloomreach/react-sdk": "^14.6.0",
     "axios": "^0.21",
     "react": "^16.14",
     "react-dom": "^16.14",
