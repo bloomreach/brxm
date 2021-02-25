@@ -1,7 +1,7 @@
 {
   "name": "@bloomreach/example-angular",
   "description": "Example Angular SPA for Bloomreach Experience",
-  "version": "14.5.1",
+  "version": "14.6.0",
   "private": true,
   "scripts": {
     "ng": "ng",
@@ -23,7 +23,7 @@
     "@angular/platform-browser-dynamic": "^11.0",
     "@angular/platform-server": "^11.0",
     "@angular/router": "^11.0",
-    "@bloomreach/ng-sdk": "^14.5.1",
+    "@bloomreach/ng-sdk": "^14.6.0",
     "@nguniversal/express-engine": "^11.0",
     "express": "^4.17",
     "rxjs": "^6.6",
