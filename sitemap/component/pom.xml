@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-plugin-sitemap</artifactId>
-    <version>13.4.8-SNAPSHOT</version>
+    <version>13.4.8</version>
   </parent>
   <name>Hippo Plugin Sitemap Component</name>
   <description>Hippo Plugin Sitemap Component</description>
