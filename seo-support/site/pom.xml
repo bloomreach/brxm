@@ -20,7 +20,7 @@
   <parent>
     <artifactId>hippo-plugin-seo-support-root</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>12.6.15-SNAPSHOT</version>
+    <version>12.6.15</version>
   </parent>
 
   <name>Hippo Plugin SEO Support Site</name>

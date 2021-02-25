@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>12.6.15-SNAPSHOT</version>
+    <version>12.6.15</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -28,7 +28,7 @@
 
   <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
   <name>Hippo Plugin Resourcebundle Editor</name>
-  <version>12.6.15-SNAPSHOT</version>
+  <version>12.6.15</version>
 
   <properties>
     <hippo.cms.version>${hippo.release.version}</hippo.cms.version>

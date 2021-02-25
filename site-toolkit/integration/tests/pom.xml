@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>toolkit-integration</artifactId>
-    <version>12.6.15-SNAPSHOT</version>
+    <version>12.6.15</version>
   </parent>
 
   <name>Hippo Site Toolkit Integration Tests</name>

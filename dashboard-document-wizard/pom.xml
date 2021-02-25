@@ -20,12 +20,12 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>12.6.15-SNAPSHOT</version>
+    <version>12.6.15</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <artifactId>hippo-plugin-dashboard-document-wizard</artifactId>
-  <version>12.6.15-SNAPSHOT</version>
+  <version>12.6.15</version>
   <packaging>jar</packaging>
 
   <inceptionYear>2010</inceptionYear>
