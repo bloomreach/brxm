@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>hst</artifactId>
-    <version>12.6.15-SNAPSHOT</version>
+    <version>12.6.16-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit REST Models</name>

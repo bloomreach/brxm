@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>12.6.15-SNAPSHOT</version>
+    <version>12.6.16-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -29,7 +29,7 @@
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-sitemap</artifactId>
   <packaging>pom</packaging>
-  <version>12.6.15-SNAPSHOT</version>
+  <version>12.6.16-SNAPSHOT</version>
 
   <inceptionYear>2009</inceptionYear>
 
