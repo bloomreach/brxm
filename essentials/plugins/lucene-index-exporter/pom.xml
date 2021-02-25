@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-essentials-plugins</artifactId>
-    <version>12.6.15-SNAPSHOT</version>
+    <version>12.6.16-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-essentials-plugin-lucene-index-exporter</artifactId>
