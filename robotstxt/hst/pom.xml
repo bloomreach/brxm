@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-plugin-robotstxt</artifactId>
-    <version>13.4.8-SNAPSHOT</version>
+    <version>13.4.9-SNAPSHOT</version>
   </parent>
   <name>Hippo Plugin Robots.txt HST Client</name>
   <description>Robots.txt HST Client</description>
