@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>components</artifactId>
-    <version>13.4.8-SNAPSHOT</version>
+    <version>13.4.9-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit JCR Session Pool Component</name>
