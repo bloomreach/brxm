@@ -46,7 +46,7 @@
     <mat-select class="qa-goal-select"
                 [(value)]="selectedGoalId"
                 [disabled]="disabled">
-      <mat-option><i>{{ 'CLEAR_SELECTION' | translate }}</i></mat-option>
+      <mat-option><i>{{ 'NONE_OPTION' | translate }}</i></mat-option>
       <mat-option *ngFor="let goal of goals"
                   class="{{ 'qa-goal-select-option-' + goal.id }}"
                   [value]="goal.id">
