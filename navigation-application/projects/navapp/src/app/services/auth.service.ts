@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,6 +80,15 @@ export class AuthService {
     } catch (error) {
       this.logout('SilentLoginFailed');
     }
+  }
+
+  async activeLogout(): Promise<void> {
+    const beforeLogoutAppPromises = this.clientAppService.apps
+      .filter(app => !!app.api.beforeLogout)
+      .map(app => app.api.beforeLogout());
+    await Promise.all(beforeLogoutAppPromises).then(
+      () => this.logout('UserLoggedOut'),
+    );
   }
 
   async logout(loginMessageKey: string): Promise<void> {
