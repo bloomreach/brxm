@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -173,9 +173,28 @@
       return { apiVersion };
     },
 
+    beforeLogout: async () => {
+      // Skip beforeLogout during initalNavigation to speed up
+      // perceived loading time as during initialNavigation there will be
+      // no app that could want to cancel navigation
+      if (isInitialNavigation) {
+        isInitialNavigation = false;
+        return true;
+      }
+
+      const beforeLogoutPromises = Array
+        .from(subappConnectionMap.values())
+        .map(async (subappConnection) => {
+          const subappAPI = await subappConnection;
+          return subappAPI.beforeLogout ? subappAPI.beforeLogout() : Promise.resolve(true);
+        });
+
+      return Promise.all(beforeLogoutPromises);
+    },
+
     beforeNavigation: async () => {
       // Skip beforeNavigation during initalNavigation to speed up
-      // percieved loading time as during initialNavigation there will be
+      // perceived loading time as during initialNavigation there will be
       // no app that could want to cancel navigation
       if (isInitialNavigation) {
         isInitialNavigation = false;
