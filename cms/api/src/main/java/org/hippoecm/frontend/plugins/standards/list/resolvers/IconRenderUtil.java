@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.hippoecm.frontend.plugins.standards.icon.BrowserStyle;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -64,15 +65,15 @@ public class IconRenderUtil {
                 Node parent = canonical.getParent();
                 if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
                     if (!canonical.isSame(node)) {
-                        return HippoIcon.fromSprite(id, Icon.FILE_TEXT, size);
+                        return HippoIcon.fromSprite(id, getDocumentIcon(canonical), size);
                     } else {
-                        return getIconForNodeType(id, node.getPrimaryNodeType(), Icon.FILE_TEXT, size);
+                        return getIconForNodeType(id, node.getPrimaryNodeType(), getDocumentIcon(parent), size);
                     }
                 }
             } else {
                 Node parent = node.getParent();
                 if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    return getIconForNodeType(id, node.getPrimaryNodeType(), Icon.FILE_TEXT, size);
+                    return getIconForNodeType(id, node.getPrimaryNodeType(), getDocumentIcon(parent), size);
                 }
             }
         }
@@ -81,13 +82,21 @@ public class IconRenderUtil {
         if (type.equals(HippoNodeType.NT_TEMPLATETYPE)) {
             return HippoIcon.fromSprite(id, Icon.FILE_TEXT, size);
         }
-        return HippoIcon.fromSprite(id, Icon.FOLDER, size);
+        return HippoIcon.fromSprite(id, getFolderIcon(node), size);
+    }
+
+    private static final Icon getFolderIcon(Node folder) throws RepositoryException {
+        return folder.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER) ? Icon.XPAGE_FOLDER : Icon.FOLDER;
+    }
+
+    private static final Icon getDocumentIcon(Node document) throws RepositoryException {
+        return document.isNodeType("hst:xpagemixin") ? Icon.XPAGE_DOCUMENT : Icon.FILE_TEXT;
     }
 
     private static HippoIcon getIconForHandle(final String id, final Node node, final IconSize size) throws RepositoryException {
         if (node.hasNode(node.getName())) {
             Node child = node.getNode(node.getName());
-            return getIconForNodeType(id, child.getPrimaryNodeType(), Icon.FILE_TEXT, size);
+            return getIconForNodeType(id, child.getPrimaryNodeType(), getDocumentIcon(child), size);
         }
         return HippoIcon.fromSprite(id, Icon.FILE_TEXT, size);
     }
