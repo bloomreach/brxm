@@ -19,7 +19,7 @@
     {{ 'EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED' | translate:{ variantName: selectedVariant?.name } }}
   </em-experiment-info-bar>
   <em-experiment-info-bar *ngIf="!againstDefault">
-    {{ 'EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED' | translate:{ variantName: selectedVariant?.name } }}
+    {{ 'EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED' | translate:{ variantName: getOriginalVariant(selectedVariant)?.name } }}
   </em-experiment-info-bar>
 </ng-container>
 
