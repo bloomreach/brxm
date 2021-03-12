@@ -89,6 +89,10 @@ export class ExperimentStartFormComponent implements OnChanges {
     });
   }
 
+  getOriginalVariant(groupedVariant: GroupedVariant): Variant | undefined {
+    return this.variants.find(v => v.id === groupedVariant.id);
+  }
+
   private reset(): void {
     this.selectedVariant = this.defaultGroupedVariant;
     this.selectedGoalId = undefined;
