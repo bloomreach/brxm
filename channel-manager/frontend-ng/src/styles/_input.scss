@@ -64,6 +64,9 @@
       }
 
       &.md-input-invalid {
+        & > path-link > #{$input},
+        & > path-link > #{$textarea},
+        & > path-link > #{$select},
         & > #{$input},
         & > #{$textarea},
         & > #{$select} {
