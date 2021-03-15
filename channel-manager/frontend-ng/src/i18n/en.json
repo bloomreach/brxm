@@ -165,6 +165,7 @@
   "EXPERIMENT_COMPLETION_ERROR": "An error happaned while attempting to complete the experiment",
   "EXPERIMENT_GOAL": "Goal",
   "EXPERIMENT_INFO_PUBLISH_TO_START": "Publish the channel to start the experiment",
+  "EXPERIMENT_INFO_START_CREATE_VARIANTS": "Create a variant to be able to run an experiment",
   "EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED": "Select a goal and save to create an experiment for '{{ variantName }}' against 'Default'",
   "EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED": "Select a goal and save to create an experiment involving all variants for '{{ variantName }}'",
   "EXPERIMENT_LABEL_COMPLETED": "Experiment completed",
