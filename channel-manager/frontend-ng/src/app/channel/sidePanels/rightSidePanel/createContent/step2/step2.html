@@ -61,18 +61,19 @@
     <div class="md-toolbar-tools">
       <span flex></span>
 
+      <md-button class="qa-keep-draft"
+
+                 md-no-ink
+                 ng-if="$ctrl.isKeepDraftShown()"
+                 ng-click="$ctrl.keepDraft()">
+        {{ ::'KEEP_DRAFT' | translate }}
+      </md-button>
+      
       <md-button class="qa-save"
                  ng-click="$ctrl.save()"
                  ng-disabled="!$ctrl.isSaveAllowed()"
                  ng-if="$ctrl.allMandatoryFieldsShown()">
         {{ ::'SAVE' | translate }}
-      </md-button>
-
-      <md-button class="qa-keep-draft"
-                 md-no-ink
-                 ng-if="$ctrl.isKeepDraftShown()"
-                 ng-click="$ctrl.keepDraft()">
-        {{ ::'KEEP_DRAFT' | translate }}
       </md-button>
 
       <md-button class="qa-continue"
