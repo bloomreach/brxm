@@ -14,6 +14,12 @@
   limitations under the License.
   -->
 
+<ng-container *ngIf="variants?.length === 1">
+  <em-experiment-info-bar>
+    {{ 'EXPERIMENT_INFO_START_CREATE_VARIANTS' | translate }}
+  </em-experiment-info-bar>
+</ng-container>
+
 <ng-container *ngIf="selectedVariant">
   <em-experiment-info-bar *ngIf="againstDefault">
     {{ 'EXPERIMENT_INFO_START_AGAINST_DEFAULT_GOAL_REQUIRED' | translate:{ variantName: selectedVariant?.name } }}
