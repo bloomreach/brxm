@@ -39,8 +39,6 @@ $custom-typography: mat-typography-config(
 }
 
 .mat-stroked-button {
-  padding: 0 12px !important;
-
   &.cdk-keyboard-focused {
     box-shadow: 0 0 0 2px $bloomreach-blue-darker;
   }
