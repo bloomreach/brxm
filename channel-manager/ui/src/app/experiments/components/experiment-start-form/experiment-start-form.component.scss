@@ -35,9 +35,8 @@
   }
 }
 
-.actions {
-  padding: $br-size-m $br-size;
-  text-align: right;
+.mat-toolbar {
+  justify-content: flex-end;
 }
 
 .save-button {
