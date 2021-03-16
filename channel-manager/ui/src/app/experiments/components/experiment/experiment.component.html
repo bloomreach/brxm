@@ -16,7 +16,7 @@
 
 <div *ngIf="experiment; else startExperimentForm"
      class="experiment">
-  <em-experiment-info [experiment]="experiment"></em-experiment-info>
+  <em-experiment-info [isXPageComponent]="isXPageComponent" [experiment]="experiment"></em-experiment-info>
 
   <div *ngIf="isExperimentRunningOrCompleted(experiment)"
        class="experiment-status-wrapper">
