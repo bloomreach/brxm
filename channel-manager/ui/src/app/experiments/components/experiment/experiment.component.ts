@@ -34,6 +34,7 @@ import { SelectedVariantIdAndGoalId } from '../experiment-start-form/experiment-
 export class ExperimentComponent implements OnInit {
   private readonly component = this.componentEditorService.getComponent();
   private readonly componentId = this.component.getId();
+  readonly isXPageComponent = this.component.isXPageComponent();
   readonly availableVariants$ = this.variantsService.getVariants(this.componentId);
   readonly availableGoals$ = this.experimentsService
   .getGoals()

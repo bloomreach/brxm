@@ -132,6 +132,7 @@ describe('ExperimentComponent', () => {
 
   const mockComponent = {
     getId: () => 'mockComponentId',
+    isXPageComponent: () => false,
   };
 
   beforeEach(() => {
