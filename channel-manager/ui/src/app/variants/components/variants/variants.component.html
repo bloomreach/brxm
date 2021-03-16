@@ -50,11 +50,13 @@
     </button>
   </div>
 
-  <div class="qa-variant-default-message variant-default-message" *ngIf="isDefaultVariant()">
+  <div class="qa-variant-default-message variant-default-message"
+       *ngIf="isDefaultVariant()">
     <span>{{ (variants.length === 1 ? 'VARIANT_EXPRESSIONS_DEFAULT_ONLY' : 'VARIANT_EXPRESSIONS_DEFAULT') | translate }}</span>
   </div>
 
-  <div class="qa-variant-expressions variant-expressions" *ngIf="!isDefaultVariant()">
+  <div class="qa-variant-expressions variant-expressions"
+       *ngIf="!isDefaultVariant() && expressionsVisible">
     <div class="variant-expressions-list">
       <div class="variant-expressions-list-label">
         {{ 'VARIANT_EXPRESSIONS' | translate }}
@@ -103,5 +105,15 @@
         {{ 'CHARACTERISTIC' | translate }}
       </button>
     </div>
+  </div>
+
+  <div class="qa-variant-expressions-toggle variant-expressions-toggle"
+       *ngIf="!isDefaultVariant()"
+       [class.open]="expressionsVisible">
+    <button mat-icon-button
+            class="qa-variant-expressions-toggle-button"
+            (click)="expressionsVisible = !expressionsVisible">
+      <mat-icon svgIcon="chevron-right"></mat-icon>
+    </button>
   </div>
 </div>

@@ -101,6 +101,8 @@ describe('VariantsComponent', () => {
     field2: 'value2',
   };
 
+  let mockExpressionsVisible = true;
+
   beforeEach(() => {
     const componentEditorServiceMock = {
       getComponent: () => mockComponent,
@@ -112,6 +114,8 @@ describe('VariantsComponent', () => {
       addVariant: () => Promise.resolve(),
       getVariants: () => Promise.resolve(mockVariants),
       defaultVariantId: mockDefaultVariantId,
+      getExpressionsVisible: jest.fn(() => mockExpressionsVisible),
+      setExpressionsVisible: jest.fn(value => mockExpressionsVisible = value),
     };
     const stateServiceMock = {
       params: {
@@ -220,6 +224,53 @@ describe('VariantsComponent', () => {
 
       fixture.detectChanges();
 
+      expect(componentEl).toMatchSnapshot();
+    });
+  });
+
+  describe('collapsing of variant expressions', () => {
+    async function setNonDefaultVariant(): Promise<void> {
+      stateService.params.variantId = mockVariants[1].id;
+      await component.ngOnInit();
+      fixture.detectChanges();
+    }
+
+    function clickCollapseButton(): void {
+      const button = componentEl.querySelector<HTMLButtonElement>('.qa-variant-expressions-toggle-button');
+      button?.click();
+      fixture.detectChanges();
+    }
+
+    it('should not show expressions for default variant', () => {
+      expect(component.isDefaultVariant()).toBe(true);
+      expect(componentEl).toMatchSnapshot();
+    });
+
+    it('should show expressions for non-default variant', async () => {
+      await setNonDefaultVariant();
+      expect(component.isDefaultVariant()).toBe(false);
+      expect(componentEl).toMatchSnapshot();
+    });
+
+    it('should hide expressions for non-default variant if toggle is clicked', async () => {
+      await setNonDefaultVariant();
+      expect(component.isDefaultVariant()).toBe(false);
+
+      clickCollapseButton();
+
+      expect(component.expressionsVisible).toBe(false);
+      expect(componentEl).toMatchSnapshot();
+    });
+
+    it('should show expressions for non-default variant if toggle is clicked again', async () => {
+      await setNonDefaultVariant();
+      expect(component.isDefaultVariant()).toBe(false);
+      component.expressionsVisible = false;
+      fixture.detectChanges();
+
+      clickCollapseButton();
+
+      expect(component.expressionsVisible).toBe(true);
       expect(componentEl).toMatchSnapshot();
     });
   });

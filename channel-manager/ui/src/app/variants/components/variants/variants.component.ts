@@ -72,6 +72,14 @@ export class VariantsComponent implements OnInit, OnDestroy {
     this.onResetCurrentVariantUnsubscribe();
   }
 
+  get expressionsVisible(): boolean {
+    return this.variantsService.getExpressionsVisible();
+  }
+
+  set expressionsVisible(value: boolean) {
+    this.variantsService.setExpressionsVisible(value);
+  }
+
   async addVariant(): Promise<void> {
     const formData = this.componentEditorService.propertiesAsFormData();
     const { persona, characteristics } = this.variantsService.extractExpressions(this.variantSelect.value);
