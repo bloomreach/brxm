@@ -27,6 +27,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -42,13 +43,14 @@ import { registerSvgIcons } from './register-svg-icons';
     MatIconModule,
     MatInputModule,
     MatListModule,
+    MatMenuModule,
     MatProgressBarModule,
     MatRippleModule,
     MatSelectModule,
     MatSnackBarModule,
+    MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
-    MatMenuModule,
   ],
 })
 export class MaterialModule {

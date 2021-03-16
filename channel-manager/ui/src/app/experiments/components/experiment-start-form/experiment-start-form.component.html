@@ -64,7 +64,7 @@
 
 <mat-divider></mat-divider>
 
-<div class="actions">
+<mat-toolbar>
   <button mat-stroked-button
           [disabled]="isDiscardButtonDisabled || disabled"
           (click)="onDiscard()"
@@ -78,4 +78,4 @@
           class="save-button qa-save">
     {{ 'SAVE' | translate }}
   </button>
-</div>
+</mat-toolbar>
