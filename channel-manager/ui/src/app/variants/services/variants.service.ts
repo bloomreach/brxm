@@ -28,10 +28,19 @@ const DEFAULT_VARIANT_ID = 'hippo-default';
 })
 export class VariantsService {
   readonly defaultVariantId = DEFAULT_VARIANT_ID;
+  private expressionsVisible = true;
 
   constructor(
     @Inject(NG1_TARGETING_SERVICE) private readonly targetingService: Ng1TargetingService,
   ) {}
+
+  getExpressionsVisible(): boolean {
+    return this.expressionsVisible;
+  }
+
+  setExpressionsVisible(value: boolean): void {
+    this.expressionsVisible = value;
+  }
 
   async getVariants(componentId: string): Promise<Variant[]> {
     const response = await this.targetingService.getVariants(componentId);

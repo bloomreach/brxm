@@ -22,6 +22,7 @@
   display: block;
   background: map-get($grey, 200);
   padding: $spacing-full;
+  padding-bottom: 0;
 
   @include mat-elevation(3);
 
@@ -117,5 +118,20 @@
     .mat-button-disabled mat-icon {
       color: inherit;
     }
+  }
+
+  &-toggle {
+    display: grid;
+    place-items: center;
+
+    .mat-icon {
+      transform: rotate(90deg);
+    }
+
+    &.open {
+      .mat-icon {
+        transform: rotate(-90deg);
+      }
+    } 
   }
 }
