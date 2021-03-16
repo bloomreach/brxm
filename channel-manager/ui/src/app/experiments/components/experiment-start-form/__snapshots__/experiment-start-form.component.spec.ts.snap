@@ -8,6 +8,7 @@ exports[`ExperimentStartFormComponent if a goal is selected should be shown 1`] 
   
   
   
+  
   <em-experiment-info-bar>
      EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED 
   </em-experiment-info-bar>
@@ -261,9 +262,7 @@ exports[`ExperimentStartFormComponent if a goal is selected should be shown 1`] 
     class="mat-divider mat-divider-horizontal"
     role="separator"
   />
-  <div
-    class="actions"
-  >
+  <mat-toolbar>
     <button
       class="qa-discard mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable"
       mat-stroked-button=""
@@ -299,7 +298,7 @@ exports[`ExperimentStartFormComponent if a goal is selected should be shown 1`] 
         class="mat-button-focus-overlay"
       />
     </button>
-  </div>
+  </mat-toolbar>
 </div>
 `;
 
@@ -307,6 +306,7 @@ exports[`ExperimentStartFormComponent should be shown 1`] = `
 <div
   id="root0"
 >
+  
   
   
   
@@ -556,9 +556,7 @@ exports[`ExperimentStartFormComponent should be shown 1`] = `
     class="mat-divider mat-divider-horizontal"
     role="separator"
   />
-  <div
-    class="actions"
-  >
+  <mat-toolbar>
     <button
       class="qa-discard mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable mat-button-disabled"
       disabled="true"
@@ -596,7 +594,7 @@ exports[`ExperimentStartFormComponent should be shown 1`] = `
         class="mat-button-focus-overlay"
       />
     </button>
-  </div>
+  </mat-toolbar>
 </div>
 `;
 
@@ -608,6 +606,7 @@ exports[`ExperimentStartFormComponent should be shown in the disabled mode 1`] =
   
   
   
+  
   <em-experiment-info-bar>
      EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED 
   </em-experiment-info-bar>
@@ -857,9 +856,7 @@ exports[`ExperimentStartFormComponent should be shown in the disabled mode 1`] =
     class="mat-divider mat-divider-horizontal"
     role="separator"
   />
-  <div
-    class="actions"
-  >
+  <mat-toolbar>
     <button
       class="qa-discard mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable mat-button-disabled"
       disabled="true"
@@ -897,7 +894,7 @@ exports[`ExperimentStartFormComponent should be shown in the disabled mode 1`] =
         class="mat-button-focus-overlay"
       />
     </button>
-  </div>
+  </mat-toolbar>
 </div>
 `;
 
@@ -909,6 +906,7 @@ exports[`ExperimentStartFormComponent should be shown in the enabled mode 1`] = 
   
   
   
+  
   <em-experiment-info-bar>
      EXPERIMENT_INFO_START_ALL_VARIANTS_GOAL_REQUIRED 
   </em-experiment-info-bar>
@@ -1158,9 +1156,7 @@ exports[`ExperimentStartFormComponent should be shown in the enabled mode 1`] = 
     class="mat-divider mat-divider-horizontal"
     role="separator"
   />
-  <div
-    class="actions"
-  >
+  <mat-toolbar>
     <button
       class="qa-discard mat-focus-indicator mat-stroked-button mat-button-base _mat-animation-noopable mat-button-disabled"
       disabled="true"
@@ -1198,6 +1194,6 @@ exports[`ExperimentStartFormComponent should be shown in the enabled mode 1`] = 
         class="mat-button-focus-overlay"
       />
     </button>
-  </div>
+  </mat-toolbar>
 </div>
 `;
