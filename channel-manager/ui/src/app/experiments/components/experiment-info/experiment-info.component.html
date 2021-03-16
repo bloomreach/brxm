@@ -15,11 +15,11 @@
   -->
 
 <em-experiment-info-bar *ngIf="isExperimentCreated">
-  {{ 'EXPERIMENT_INFO_PUBLISH_TO_START' | translate }}
+  {{ 'EXPERIMENT_INFO_PUBLISH_TO_START' | translate: publishType }}
 </em-experiment-info-bar>
 <em-experiment-info-bar *ngIf="isExperimentCompleted">
-  {{ 'EXPERIMENT_LABEL_COMPLETED' | translate }}.
-  {{ 'EXPERIMENT_PUBLISH_TO_FINISH' | translate }}
+  {{ 'EXPERIMENT_LABEL_COMPLETED' | translate: publishType }}.
+  {{ 'EXPERIMENT_PUBLISH_TO_FINISH' | translate: publishType }}
 </em-experiment-info-bar>
 
 <mat-list role="list" class="small-list">
