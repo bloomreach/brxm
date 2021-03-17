@@ -34,7 +34,7 @@
   <inceptionYear>2011</inceptionYear>
 
   <properties>
-    <hippo.jackrabbit.version>2.20.2-h1</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.20.2-h2</hippo.jackrabbit.version>
 
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
     <hippo.addon-channel-manager.version>${hippo.release.version}</hippo.addon-channel-manager.version>
