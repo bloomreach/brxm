@@ -35,7 +35,7 @@
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Robots.txt Generator</notice.project.name>
-    <hippo.jackrabbit.version>2.20.2-h1</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.20.2-h2</hippo.jackrabbit.version>
     <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
 
