@@ -27,7 +27,7 @@ class ChannelService {
     CatalogService,
     CmsService,
     ConfigService,
-    NavappCommunication,
+    NavappService,
     FeedbackService,
     HstService,
     PathService,
@@ -46,7 +46,7 @@ class ChannelService {
     this.CatalogService = CatalogService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
-    this.NavappCommunication = NavappCommunication;
+    this.NavappService = NavappService;
     this.FeedbackService = FeedbackService;
     this.HstService = HstService;
     this.PathService = PathService;
@@ -58,13 +58,9 @@ class ChannelService {
     this.isToolbarDisplayed = true;
     this.channel = {};
 
-    const parentOrigin = window.location.origin;
-    const methods = {
-      navigate: async (location, triggeredBy) => this.navigate(location, triggeredBy),
-      beforeNavigation: async () => this._beforeNavigation(),
-      beforeLogout: async () => this._beforeLogout(),
-    };
-    this.parentApiPromise = this.NavappCommunication.connectToParent({ parentOrigin, methods });
+    this.NavappService.subscribe('navigate', (location, triggeredBy) => this.navigate(location, triggeredBy));
+    this.NavappService.subscribe('beforeNavigation', () => this._beforeNavigation());
+    this.NavappService.subscribe('beforeLogout', () => this.this._beforeLogout());
   }
 
   /**
@@ -353,7 +349,7 @@ class ChannelService {
     this.isToolbarDisplayed = state;
   }
 
-  navigate(location) {
+  async navigate(location) {
     if (location.path === '') {
       return this.$state.go('hippo-cm')
         .then(() => {
@@ -367,7 +363,7 @@ class ChannelService {
 
   updateNavLocation() {
     const location = this._getLocation();
-    return this.parentApiPromise.then(api => api.updateNavLocation(location));
+    return this.NavappService.updateNavLocation(location);
   }
 
   _getLocation() {
