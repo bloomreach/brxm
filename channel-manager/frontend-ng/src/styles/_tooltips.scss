@@ -20,3 +20,16 @@
   white-space: initial;
   width: auto;
 }
+
+// mimic the newer style of mat tooltips
+.md-panel.md-tooltip.mat-tooltip {
+  font-size: 10px;
+  height: auto;
+  line-height: 10px;
+  padding: 12px 8px;
+
+  &.md-show {
+    background-color: #707070;
+    opacity: 1;
+  }
+}
