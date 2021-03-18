@@ -92,7 +92,7 @@ class PageMenuService extends MenuService {
       .addDivider({
         isVisible: () => isVisible('copy') || isVisible('move') || isVisible('delete'),
       })
-      .addAction('new', {
+      .addAction('new', { //@TODO, figure out a way to add tooltip
         isEnabled: () => isEnabled('new'),
         isVisible: () => isVisible('new'),
         onClick: () => this.showSubPage('page-new'),
