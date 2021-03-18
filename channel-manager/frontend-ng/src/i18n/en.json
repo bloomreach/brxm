@@ -52,6 +52,8 @@
   "CREATE_DOCUMENT_LOCKED": "Cannot create document (component is locked)",
   "CREATE_NEW_CONTENT": "Create new content",
   "CREATE_NEW_DOCUMENT_TYPE": "Create new {{documentType}}",
+  "CREATE_PAGE_TOOLTIP": "Create a page (with versioning) that can be published individually",
+  "CREATE_PAGE_TOOLTIP_HST": "Create a page (without versioning) that is published as part of the channel",
   "CREATE_XPAGE": "New page",
   "DEFAULT_PROPERTY_GROUP_LABEL": "Property group",
   "DELETE": "Delete",
