@@ -126,8 +126,8 @@ class NavappService {
 
   async _resolveChildApiCall(api, ...args) {
     if (!this._apiSubscriptions.has(api)) {
-      this.$log.info(`Called ${api} on Experience Manager childApi but it does not have any subscribed actions`);
-      return Promise.resolve();
+      // resolve with true in case that beforeNavigation was called
+      return Promise.resolve(true);
     }
 
     const subscriptions = this._apiSubscriptions.get(api);
