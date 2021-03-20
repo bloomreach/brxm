@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
+
 <div flex layout="column" class="create-content-step2">
   <md-toolbar class="editable-title-toolbar" ng-if="$ctrl.getDocument()">
     <div class="md-toolbar-tools">
@@ -40,7 +41,7 @@
   <form name="$ctrl.form"
         class="form-dense-layout"
         layout="column"
-        flex         
+        flex
         tabindex="-1">
     <md-subheader ng-if="!$ctrl.allMandatoryFieldsShown()"
                   class="md-no-sticky"
@@ -56,27 +57,27 @@
                     loading="$ctrl.loading">
     </content-editor>
   </form>
-  
+
   <md-toolbar>
     <div class="md-toolbar-tools">
       <span flex></span>
 
       <md-button class="qa-keep-draft"
-
+                 ng-class="{'md-accent' : !$ctrl.isXPage()}"
                  md-no-ink
                  ng-if="$ctrl.isKeepDraftShown()"
                  ng-click="$ctrl.keepDraft()">
         {{ ::'KEEP_DRAFT' | translate }}
       </md-button>
-      
-      <md-button class="qa-save"
+
+      <md-button class="qa-save md-accent"
                  ng-click="$ctrl.save()"
                  ng-disabled="!$ctrl.isSaveAllowed()"
                  ng-if="$ctrl.allMandatoryFieldsShown()">
         {{ ::'SAVE' | translate }}
       </md-button>
 
-      <md-button class="qa-continue"
+      <md-button class="qa-continue md-accent"
                  ng-click="$ctrl.switchEditor()"
                  ng-if="!$ctrl.allMandatoryFieldsShown()">
         {{ 'CONTINUE' | translate }}
