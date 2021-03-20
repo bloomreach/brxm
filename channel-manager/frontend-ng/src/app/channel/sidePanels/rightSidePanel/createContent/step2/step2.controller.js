@@ -176,6 +176,10 @@ class Step2Controller {
     return !this.Step2Service.isXPage() && this.ContentEditor.isKeepDraftAllowed();
   }
 
+  isXPage() {
+    return this.Step2Service.isXPage();
+  }
+
   keepDraft() {
     const stopLoading = this.startLoading();
 
