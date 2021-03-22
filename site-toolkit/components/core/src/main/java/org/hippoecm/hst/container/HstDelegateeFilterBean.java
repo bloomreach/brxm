@@ -99,7 +99,7 @@ import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPE
 import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_URL_PROPERTY_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDERING_HOST;
-import static org.hippoecm.hst.util.HstRequestUtils.createURLForMountPath;
+import static org.hippoecm.hst.util.HstRequestUtils.createURLForMount;
 import static org.hippoecm.hst.util.HstRequestUtils.createURLWithExplicitSchemeForRequest;
 import static org.hippoecm.hst.util.HstRequestUtils.getClusterNodeAffinityId;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRemoteAddr;
@@ -720,10 +720,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             log.info("Location '{}' already contains PMA endpoint callback, do not inject automatically", location);
             return location;
         }
-        log.info("Inject PMA endpoint callback into location");
 
-        final String currentMountUrl = createURLForMountPath(mount.getScheme(), mount,
-                req);
+        final String currentMountUrl = createURLForMount(mount, req);
 
         // current mount should have a hst:pagemodelapi configured, otherwise we do not know what the PMA callback
         // should be: in that case we throw a IllegalStateException
@@ -733,12 +731,15 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             throw new IllegalStateException("For Mount '{}' a redirect URL is ");
         }
 
+        final String callback;
         // include the PMA URL
         if (location.contains("?")) {
-            return location + "&" + endpointParam + "=" + currentMountUrl + "/" + pageModelApi;
+            callback = location + "&" + endpointParam + "=" + currentMountUrl + "/" + pageModelApi;
         } else {
-            return location + "?" + endpointParam + "=" + currentMountUrl + "/" + pageModelApi;
+            callback = location + "?" + endpointParam + "=" + currentMountUrl + "/" + pageModelApi;
         }
+        log.info("Redirect PMA endpoint callback '%s'", callback);
+        return callback;
     }
 
     private boolean isLocalhostIpPlatformRequest(final HstContainerRequest containerRequest, final String hostName) {
