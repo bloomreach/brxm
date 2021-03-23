@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,9 +108,7 @@
 
     function updateEditorElementWhenFormIsSubmitted(editor) {
         setFormSubmitListener(editor, function() {
-            if (editor.checkDirty()) {
-                editor.updateElement();
-            }
+            editor.updateElement();
         });
     }
 
