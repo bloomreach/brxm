@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2021 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelService;
@@ -140,7 +141,7 @@ final class ChannelContextFactory implements ComponentManagerAware {
     private NodeIterator queryCmXPageFolders(String channelId, String contentRootPath, Session session) throws RepositoryException {
         final String statement = String.format(
                 "/%s//element(*, %s)[@jcr:mixinTypes='%s', @%s='%s', @%s]",
-                contentRootPath, NT_FOLDER, NT_CM_XPAGE_FOLDER, HIPPOSTD_CHANNEL_ID, channelId, HIPPOSTD_FOLDERTYPE);
+                ISO9075.encodePath(contentRootPath), NT_FOLDER, NT_CM_XPAGE_FOLDER, HIPPOSTD_CHANNEL_ID, channelId, HIPPOSTD_FOLDERTYPE);
         log.debug("Query statement for CM XPage folder: {}", statement);
         return session.getWorkspace().getQueryManager()
                 .createQuery(statement, Query.XPATH)
