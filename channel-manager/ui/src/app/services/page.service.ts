@@ -31,7 +31,7 @@ import { XPageStatus } from '../models/xpage-status.enum';
 import { VersionsService } from '../versions/services/versions.service';
 
 import { Ng1PageService, NG1_PAGE_SERVICE } from './ng1/page.ng1.service';
-import { NG1_ROOT_SCOPE } from './ng1/root-scope.service';
+import { NG1_ROOT_SCOPE } from './ng1/root-scope.ng1.service';
 import { ProjectService } from './project.service';
 
 type StatusMatcher = (pageStates: PageStates) => Promise<XPageStatusInfo | undefined> | XPageStatusInfo | undefined;
