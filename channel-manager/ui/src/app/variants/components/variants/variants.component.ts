@@ -20,7 +20,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { Ng1CmsService, NG1_CMS_SERVICE } from '../../../services/ng1/cms.ng1.service';
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
-import { NG1_ROOT_SCOPE } from '../../../services/ng1/root-scope.service';
+import { NG1_ROOT_SCOPE } from '../../../services/ng1/root-scope.ng1.service';
 import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
 import { Persona } from '../../models/persona.model';
 import { Variant, VariantExpression, VariantExpressionType } from '../../models/variant.model';
