@@ -17,7 +17,7 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 
 import { Ng1ContentService, NG1_CONTENT_SERVICE } from '../../services/ng1/content.ng1.service';
-import { NG1_ROOT_SCOPE } from '../../services/ng1/root-scope.service';
+import { NG1_ROOT_SCOPE } from '../../services/ng1/root-scope.ng1.service';
 import { PageStructureService } from '../../services/page-structure.service';
 import { ProjectService } from '../../services/project.service';
 import { Version } from '../models/version.model';
