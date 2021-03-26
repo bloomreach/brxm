@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,14 @@ export class VariantsComponent implements OnInit, OnDestroy {
 
   async ngOnDestroy(): Promise<void> {
     this.onResetCurrentVariantUnsubscribe();
+  }
+
+  get expressionsVisible(): boolean {
+    return this.variantsService.getExpressionsVisible();
+  }
+
+  set expressionsVisible(value: boolean) {
+    this.variantsService.setExpressionsVisible(value);
   }
 
   async addVariant(): Promise<void> {

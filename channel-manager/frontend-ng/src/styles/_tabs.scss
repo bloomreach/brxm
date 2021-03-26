@@ -1,43 +1,52 @@
-// Copyright 2019 Hippo B.V. (http://www.onehippo.com)
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//  http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*!
+ * Copyright 2019-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin tabStyling {
+  color: $bloomreach-gray-60;
+  font-weight: 600;
+  text-transform: initial;
+
+  &:hover,
+  &:focus,
+  &.md-focused {
+    background: $bloomreach-blue-light;
+  }
+
+  &.md-active {
+    color: $bloomreach-blue-primary;
+  }
+
+  .md-ripple-container {
+    color: $bloomreach-blue-light;
+  }
+}
 
 .md-bloomreach-theme {
-  md-tabs {
-    .md-tab {
-      color: $bloomreach-gray-60;
-      font-weight: 600;
-      text-transform: initial;
+  md-tabs .md-tab {
+    @include tabStyling();
+  }
 
-      &:hover,
-      &:focus,
-      &.md-focused {
-        background: $bloomreach-blue-light;
-      }
+  .md-nav-bar .md-button {
+    @include tabStyling();
+  }
 
-      &.md-active {
-        color: $bloomreach-blue-primary;
-      }
-
-      .md-ripple-container {
-        color: $bloomreach-blue-light;
-      }
-    }
-
-    md-ink-bar {
-      background: $bloomreach-blue-primary;
-      color: $bloomreach-blue-primary;
-      height: 3px;
-    }
+  md-ink-bar,
+  md-nav-ink-bar {
+    background: $bloomreach-blue-primary;
+    color: $bloomreach-blue-primary;
+    height: 3px;
   }
 }

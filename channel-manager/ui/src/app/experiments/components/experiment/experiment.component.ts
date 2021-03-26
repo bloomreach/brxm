@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import { SelectedVariantIdAndGoalId } from '../experiment-start-form/experiment-
 export class ExperimentComponent implements OnInit {
   private readonly component = this.componentEditorService.getComponent();
   private readonly componentId = this.component.getId();
+  readonly isXPageComponent = this.component.isXPageComponent();
   readonly availableVariants$ = this.variantsService.getVariants(this.componentId);
   readonly availableGoals$ = this.experimentsService
   .getGoals()
