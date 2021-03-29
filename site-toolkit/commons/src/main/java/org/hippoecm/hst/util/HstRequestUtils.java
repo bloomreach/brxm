@@ -400,6 +400,10 @@ public class HstRequestUtils {
      * @return
      */
     public static int getRequestServerPort(HttpServletRequest request) {
+        return getRequestServerPort(request, request.getScheme());
+    }
+
+    public static int getRequestServerPort(HttpServletRequest request,final String scheme) {
         String requestHost = getFarthestRequestHost(request);
 
         if (requestHost == null) {
@@ -411,7 +415,7 @@ public class HstRequestUtils {
         if (offset != -1) {
             return Integer.parseInt(requestHost.substring(offset + 1));
         } else {
-            return ("https".equals(request.getScheme()) ? 443 : 80);
+            return ("https".equals(scheme) ? 443 : 80);
         }
     }
 
@@ -590,7 +594,7 @@ public class HstRequestUtils {
     public static String createURLForMount(final Mount mount, final HttpServletRequest req) {
         return new StringBuilder(mount.getScheme()).append("://").append(mount.getVirtualHost().getHostName())
                 // do not use mount.getPort() since always 0
-                .append(mount.isPortInUrl() ? ":" + getRequestServerPort(req) : "")
+                .append(mount.isPortInUrl() ? ":" + getRequestServerPort(req, mount.getScheme()) : "")
                 .append(mount.isContextPathInUrl() ? mount.getContextPath() : "").append(mount.getMountPath()).toString();
     }
 
