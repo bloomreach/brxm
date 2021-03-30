@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,6 +96,9 @@ export class AppComponent implements OnInit {
     this.pendo.initialize({
       visitor: {
         id: this.userSettings.email || this.userSettings.userName,
+      },
+      account: {
+        id: this.userSettings.accountId,
       },
     });
   }

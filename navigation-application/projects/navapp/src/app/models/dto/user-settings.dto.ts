@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,4 +38,9 @@ export interface UserSettings {
    * The selected timezone in the login screen.
    */
   timeZone: string;
+
+  /**
+   * The account ID associated with the user.
+   */
+  accountId: string;
 }
