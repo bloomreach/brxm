@@ -58,6 +58,10 @@ export interface ParentConfig {
    * The version is formatted following the semantic versioning specification https://semver.org/
    */
   apiVersion: string;
+  /**
+   * Flag indicating whether usage-statistics is enabled
+   */
+  usageStatisticsEnabled: boolean;
   /** Object containing user settings such as username, language and timezone */
   userSettings: UserSettings;
 }
