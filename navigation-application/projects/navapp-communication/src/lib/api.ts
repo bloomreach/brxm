@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +76,10 @@ export interface UserSettings {
    * See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones from more examples.
    */
   timeZone: string;
+  /**
+   * The account ID associated with the user.
+   */
+  accountId: string;
 }
 
 export interface ChildConfig {
