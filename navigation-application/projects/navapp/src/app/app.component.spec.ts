@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -146,7 +146,7 @@ describe('AppComponent', () => {
       expect(pageTitleManagerServiceMock.init).toHaveBeenCalled();
     });
 
-    it('should initialize pendo and track visitor by email', () => {
+    it('should initialize pendo and track visitor by email and accountId', () => {
       const testEmail = 'asdf@gmail.com';
 
       Object.assign(userSettings, new UserSettingsMock({
@@ -156,6 +156,9 @@ describe('AppComponent', () => {
         visitor: {
           id: testEmail,
         },
+        account: {
+          id: 'testAccount',
+        },
       };
 
       component.ngOnInit();
@@ -163,8 +166,9 @@ describe('AppComponent', () => {
       expect(pendoMock.initialize).toHaveBeenCalledWith(expectedConfig);
     });
 
-    it('should initialize pendo and fall back to track visitor by username', () => {
+    it('should initialize pendo and fall back to track visitor by username and accountId', () => {
       const testName = 'testuser';
+
       Object.assign(userSettings, new UserSettingsMock({
         email: null,
         userName: testName,
@@ -172,6 +176,9 @@ describe('AppComponent', () => {
       const expectedConfig = {
         visitor: {
           id: testName,
+        },
+        account: {
+          id: 'testAccount',
         },
       };
 
