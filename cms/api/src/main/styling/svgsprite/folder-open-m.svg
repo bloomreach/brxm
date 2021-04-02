@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-  <g>
-   <path fill="currentColor" d="M15.455,9.34l-2.447,3.648C12.534,13.568,11.631,14,10.885,14H1.858C0.838,14,0,13.162,0,12.143V3.857 C0,2.838,0.838,2,1.858,2h3.33c1.021,0,1.858,0.838,1.858,1.857V4h4.127c1.019,0,1.779,0.84,1.779,1.859L13,7h1.335 c0.564,0,1.128,0.25,1.377,0.782c0.083,0.174,0.124,0.365,0.124,0.564C15.836,8.709,15.68,9.059,15.455,9.34z M12,7.016V5.828 c0-0.439-0.39-0.859-0.828-0.859L6.785,4.984c-0.439,0-0.8-0.279-0.8-0.718L5.953,3.78c0-0.439-0.356-0.795-0.796-0.795 l-3.36-0.016C1.356,2.969,1,3.325,1,3.764l-0.016,7.49l2.201-3.248c0.481-0.59,1.341-0.991,2.096-0.991H12z M14.335,8H5.309 c-0.44,0-1.021,0.329-1.302,0.668l-2.439,3.648c-0.074,0.1-0.149,0.209-0.149,0.332C1.418,12.881,1.817,13,2,13l8.842,0.053 c0.438,0,1.062-0.387,1.344-0.736l2.439-3.648c0.075-0.09,0.149-0.199,0.149-0.322C14.774,8.114,14.517,8,14.335,8z"/>
- </g>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g  stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path fill="currentColor" d="M14,3.5 L8,3.5 L6.5,2 L2,2 C1.175,2 0.5075,2.675 0.5075,3.5 L0.5,12.5 C0.5,13.325 1.175,14 2,14 L14,14 C14.825,14 15.5,13.325 15.5,12.5 L15.5,5 C15.5,4.175 14.825,3.5 14,3.5 Z M14,12.5 L2,12.5 L2,5 L14,5 L14,12.5 Z"/>
+    </g>
 </svg>

@@ -15,6 +15,8 @@
   limitations under the License.
 -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="16" height="16" viewBox="0 0 24 24">
-  <path d="M10.78 12.05L13.81 11.79L15 9L16.19 11.79L19.22 12.05L16.92 14.04L17.61 17L15 15.47L12.39 17L13.08 14.04L10.78 12.05M22 8V18C22 19.11 21.11 20 20 20H4C2.9 20 2 19.11 2 18V6C2 4.89 2.9 4 4 4H10L12 6H20C21.11 6 22 6.9 22 8M20 8H4V18H20V8Z"/>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g stroke-width="1" fill="none" fill-rule="evenodd">
+    <path fill="currentColor" d="M14,3.5 L8,3.5 L6.5,2 L2,2 C1.175,2 0.5075,2.675 0.5075,3.5 L0.5,12.5 C0.5,13.325 1.175,14 2,14 L14,14 C14.825,14 15.5,13.325 15.5,12.5 L15.5,5 C15.5,4.175 14.825,3.5 14,3.5 Z M14,12.5 L2,12.5 L2,5 L14,5 L14,12.5 Z M13,6.5 L13,11 L6,11 L6,6.5 L13,6.5 Z M8,7.5 L7,7.5 L7,10 L8,10 L8,7.5 Z M12,9 L9,9 L9,10 L12,10 L12,9 Z M12,7.5 L9,7.5 L9,8 L12,8 L12,7.5 Z"/>
+  </g>
 </svg>
