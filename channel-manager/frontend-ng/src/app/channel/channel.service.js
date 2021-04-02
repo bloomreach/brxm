@@ -62,6 +62,7 @@ class ChannelService {
     const methods = {
       navigate: async (location, triggeredBy) => this.navigate(location, triggeredBy),
       beforeNavigation: async () => this._beforeNavigation(),
+      beforeLogout: async () => this._beforeLogout(),
     };
     this.parentApiPromise = this.NavappCommunication.connectToParent({ parentOrigin, methods });
   }
@@ -147,6 +148,11 @@ class ChannelService {
   _beforeNavigation() {
     return this.RightSidePanelService.close()
       .then(() => true, () => false);
+  }
+
+  _beforeLogout() {
+    return this.RightSidePanelService.close()
+      .then(() => null);
   }
 
   clearChannel() {
