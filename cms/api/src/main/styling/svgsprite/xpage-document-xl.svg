@@ -15,11 +15,8 @@
   limitations under the License.
 -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="16px" height="16px" viewBox="0 0 26 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g  transform="translate(1.000000, 1.000000)">
-            <path d="M21,4 C21.5,4 22,4.5 22,5 L22,19 L22,19 C22,19.5 21.5,20 21,20 L3,20 L3,20 C2.5,20 2,19.5 2,19 L2,5 C2,4.5 2.5,4 3,4 L21,4 L21,4 Z M4,6 L4,18 L7,18 L7,6 L4,6 Z M20,11.5 L8,11.5 L8,18 L20,18 L20,11.5 Z M8,10.5 L20,10.5 L20,6 L8,6 L8,10.5 Z"  fill="#000000" fill-rule="nonzero"></path>
-            <rect  x="0" y="0" width="16" height="16"></rect>
-        </g>
-    </g>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <path fill="currentColor" d="M30.5,6.5 C31.5740741,6.5 32.5,7.45238095 32.5,8.5 L32.5,27.5 L32.5,27.5 C32.5,28.547619 31.5,29.5 30.5,29.5 L5.5,29.5 L5.5,29.5 C4.42592593,29.5 3.5,28.547619 3.5,27.5 L3.5,8.5 C3.5,7.45238095 4.42592593,6.5 5.5,6.5 L30.5,6.5 L30.5,6.5 Z M5.5,8.5 L5.5,27.5 L10.5,27.5 L10.3888889,8.5 L5.5,8.5 Z M30.499,17.5 L12,17.5 L12,27.5 L30.5,27.5 L30.499,17.5 Z M12,16 L30.499,16 L30.5,8.5 L12,8.5 L12,16 Z"/>
+  </g>
 </svg>
