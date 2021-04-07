@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,8 @@ public class HintsBuilder {
     public static String ACTION_RENAME = "rename";
     public static String ACTION_COPY = "copy";
     public static String ACTION_SAVE_UNPUBLISHED = "saveUnpublished";
-
+    public static String ACTION_CAMPAIGN = "campaign";
+    public static String ACTION_REMOVE_CAMPAIGN = "removeCampaign";
 
     private TreeMap<String, Serializable> info = new TreeMap<>();
     private TreeMap<String, Boolean> actions = new TreeMap<>();
@@ -231,6 +232,15 @@ public class HintsBuilder {
 
     public HintsBuilder branch(final boolean branchable) {
         actions.put(ACTION_BRANCH, branchable);
+        return this;
+    }
+
+    public HintsBuilder campaign(final boolean canCamapaign) {
+        actions.put(ACTION_CAMPAIGN, canCamapaign);
+        return this;
+    }
+    public HintsBuilder removeCampaign(final boolean canRemoveCampaign) {
+        actions.put(ACTION_REMOVE_CAMPAIGN, canRemoveCampaign);
         return this;
     }
 

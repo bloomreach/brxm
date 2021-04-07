@@ -966,6 +966,38 @@
 
     </state>
 
+    <state id="campaigning">
+      <onentry>
+        <!-- for privilege hippo:editor the action for setting a campaign is always supported, even if someone is
+               editing the document, as long as there is an unpublished -->
+        <hippo:action action="campaign" enabledExpr="!!unpublished and workflowContext.isGranted(unpublished, 'hippo:editor')"/>
+      </onentry>
+      <state id="no-campaign">
+        <transition target="can-campaign" cond="!!unpublished and workflowContext.isGranted(unpublished, 'hippo:editor')"/>
+      </state>
+      <state id="can-campaign">
+        <transition event="campaign">
+          <hippo:campaign frozenNodeId="_event.data?.frozenNodeId"  from="_event.data?.fromDate" to="_event.data?.toDate"/>
+        </transition>
+      </state>
+    </state>
+
+    <state id="removeCampaign">
+      <onentry>
+        <!-- for privilege hippo:editor the action for removing a campaign is always supported, even if someone is
+               editing the document, as long as there is an unpublished -->
+        <hippo:action action="removeCampaign" enabledExpr="!!unpublished and workflowContext.isGranted(unpublished, 'hippo:editor')"/>
+      </onentry>
+      <state id="no-remove-campaign">
+        <transition target="can-remove-campaign" cond="!!unpublished and workflowContext.isGranted(unpublished, 'hippo:editor')"/>
+      </state>
+      <state id="can-remove-campaign">
+        <transition event="removeCampaign">
+          <hippo:campaign frozenNodeId="_event.data?.frozenNodeId"/>
+        </transition>
+      </state>
+    </state>
+
     <!-- the composite terminate state is used to manage termination and related/similar workflow operations like
          move and rename -->
     <state id="terminate">
