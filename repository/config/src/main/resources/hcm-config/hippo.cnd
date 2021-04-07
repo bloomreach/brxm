@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2018 Hippo
+ * Copyright 2007-2021 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,9 @@
 [hippo:versionInfo] mixin
 - hippo:versionHistory (string)
 - hippo:branches (string) multiple
+- hippo:branchTypes (string) multiple
+// versionsMeta will be a json string being able to contain all kind of data
+- hippo:versionsMeta (string)
 
 [hippo:branchInfo]  mixin
  - hippo:branchId (string) mandatory
