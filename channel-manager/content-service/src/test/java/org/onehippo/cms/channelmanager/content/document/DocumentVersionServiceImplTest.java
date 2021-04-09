@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2021 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 import org.easymock.EasyMockRunner;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +37,9 @@ import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentVersionInfo;
 import org.onehippo.cms.channelmanager.content.document.model.Version;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.repository.documentworkflow.version.Campaign;
+import org.onehippo.repository.documentworkflow.version.JcrVersionsMetaUtils;
+import org.onehippo.repository.documentworkflow.version.VersionLabel;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockSession;
 import org.onehippo.repository.mock.MockVersion;
@@ -46,6 +50,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -95,7 +100,7 @@ public class DocumentVersionServiceImplTest {
     @Test
     public void workspace_only_master() {
 
-        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext);
+        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false);
         assertThat(versionInfo.isRestoreEnabled(), is(true));
         final List<Version> versions = versionInfo.getVersions();
 
@@ -109,7 +114,7 @@ public class DocumentVersionServiceImplTest {
 
     @Test(expected = BadRequestException.class)
     public void non_existing_branch() {
-        sut.getVersionInfo(mockPreview.getIdentifier(), "non-existing", userContext).getVersions();
+        sut.getVersionInfo(mockPreview.getIdentifier(), "non-existing", userContext, false).getVersions();
     }
 
     @Test
@@ -124,7 +129,7 @@ public class DocumentVersionServiceImplTest {
         final Calendar newDate = Calendar.getInstance();
         mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
 
-        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext);
+        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false);
         assertThat(versionInfo.isRestoreEnabled(), is(true));
         final List<Version> versions = versionInfo.getVersions();
 
@@ -157,13 +162,13 @@ public class DocumentVersionServiceImplTest {
         final Calendar newDate = Calendar.getInstance();
         mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
 
-        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext);
+        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false);
         assertThat(versionInfo.isRestoreEnabled(), is(false));
         final List<Version> masterVersions = versionInfo.getVersions();
 
         assertThat(masterVersions.size(), is(0));
 
-        final DocumentVersionInfo branchVersionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), "mybranch", userContext);
+        final DocumentVersionInfo branchVersionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), "mybranch", userContext, false);
         assertThat(branchVersionInfo.isRestoreEnabled(), is(true));
         final List<Version> branchVersions = branchVersionInfo.getVersions();
 
@@ -197,13 +202,13 @@ public class DocumentVersionServiceImplTest {
         final Calendar newDate = Calendar.getInstance();
         mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
 
-        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext);
+        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false);
         assertThat(versionInfo.isRestoreEnabled(), is(true));
         final List<Version> masterVersions = versionInfo.getVersions();
 
         assertThat(masterVersions.size(), is(1));
 
-        final List<Version> branchVersions = sut.getVersionInfo(mockHandle.getIdentifier(), "mybranch", userContext).getVersions();
+        final List<Version> branchVersions = sut.getVersionInfo(mockHandle.getIdentifier(), "mybranch", userContext, false).getVersions();
 
         assertThat(branchVersions.size(), is(1));
 
@@ -241,7 +246,7 @@ public class DocumentVersionServiceImplTest {
         // reset the first one, overriding a version node created property...works for versioned mock nodes
         firstCheckin.setCreated(Calendar.getInstance());
 
-        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext);
+        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false);
         assertThat(versionInfo.isRestoreEnabled(), is(true));
         final List<Version> masterVersions = versionInfo.getVersions();
 
@@ -262,29 +267,107 @@ public class DocumentVersionServiceImplTest {
     }
 
     @Test
+    public void versions_filtered_by_having_a_campaign() throws Exception {
+        MockVersion version = versionManager.checkin(mockPreview.getPath());
+        versionManager.checkout(mockPreview.getPath());
+
+        final Calendar newDate = Calendar.getInstance();
+        mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
+
+        {
+            final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, true);
+            assertThat(versionInfo.isRestoreEnabled(), is(false));
+            final List<Version> versions = versionInfo.getVersions();
+
+            // no campaigns set
+            assertThat(versions.size(), is(0));
+        }
+
+
+        Calendar from = new Calendar.Builder().setDate(2019, 1, 2).build();
+        Calendar to = new Calendar.Builder().setDate(2021, 1, 2).build();
+
+        // set a campaign for the version
+        JcrVersionsMetaUtils.setCampaign(mockHandle, new Campaign(version.getFrozenNode().getIdentifier(), from, to));
+
+        {
+            final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, true);
+            assertThat(versionInfo.isRestoreEnabled(), is(true));
+            final List<Version> versions = versionInfo.getVersions();
+
+            // 1 campaigns set
+            assertThat(versions.size(), is(1));
+            assertEquals(versions.get(0).getCampaign(), new Campaign(version.getFrozenNode().getIdentifier(), from, to));
+
+        }
+    }
+
+    @Test
+    public void versions_with_label() throws Exception {
+        MockVersion version = versionManager.checkin(mockPreview.getPath());
+        versionManager.checkout(mockPreview.getPath());
+
+        final Calendar newDate = Calendar.getInstance();
+        mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
+
+
+        // set a campaign for the version and a label
+        JcrVersionsMetaUtils.setVersionLabel(mockHandle, new VersionLabel(version.getFrozenNode().getIdentifier(), "My Label"));
+
+        {
+            // only fetch campaign versions
+            final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false);
+            final List<Version> versions = versionInfo.getVersions();
+
+            // 1 campaigns set
+            assertThat(versions.size(), is(2));
+            assertEquals(versions.get(1).getLabel(), "My Label");
+        }
+
+        // Now also with a campaign
+        Calendar from = new Calendar.Builder().setDate(2019, 1, 2).build();
+        Calendar to = new Calendar.Builder().setDate(2021, 1, 2).build();
+
+        // set a campaign for the version
+        JcrVersionsMetaUtils.setCampaign(mockHandle, new Campaign(version.getFrozenNode().getIdentifier(), from, to));
+
+        {
+            // only fetch campaign versions
+            final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, true);
+
+            final List<Version> versions = versionInfo.getVersions();
+
+            // 1 campaigns set
+            assertThat(versions.size(), is(1));
+            assertEquals(versions.get(0).getCampaign(), new Campaign(version.getFrozenNode().getIdentifier(), from, to));
+            assertEquals(versions.get(0).getLabel(), "My Label");
+        }
+    }
+
+    @Test
     public void restore_hints() {
 
         mockHints.clear();
-        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).isRestoreEnabled(),
+        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false).isRestoreEnabled(),
                 is(false));
 
         mockHints.put("restoreVersion", true);
-        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).isRestoreEnabled(),
+        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false).isRestoreEnabled(),
                 is(true));
         mockHints.put("restoreVersion", false);
-        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).isRestoreEnabled(),
+        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false).isRestoreEnabled(),
                 is(false));
 
         mockHints.put("restoreVersionToBranch", true);
-        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).isRestoreEnabled(),
+        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false).isRestoreEnabled(),
                 is(true));
         mockHints.put("restoreVersionToBranch", false);
-        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).isRestoreEnabled(),
+        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false).isRestoreEnabled(),
                 is(false));
 
         mockHints.put("restoreVersion", true);
         mockHints.put("restoreVersionToBranch", true);
-        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext).isRestoreEnabled(),
+        assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false).isRestoreEnabled(),
                 is(true));
     }
 }

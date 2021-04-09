@@ -59,6 +59,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static org.easymock.EasyMock.anyBoolean;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -449,8 +450,8 @@ public class ContentResourceTest extends CXFTest {
         final String handleId = "uuid";
         final String branchId = BranchConstants.MASTER_BRANCH_ID;
 
-        expect(documentVersionService.getVersionInfo(eq(handleId), eq(branchId), anyObject()))
-                .andReturn(new DocumentVersionInfo(emptyList(), false, true));
+        expect(documentVersionService.getVersionInfo(eq(handleId), eq(branchId), anyObject(), anyBoolean()))
+                .andReturn(new DocumentVersionInfo(emptyList(), false, true, false, false));
         replayAll();
 
         when()
