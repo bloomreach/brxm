@@ -46,6 +46,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.onehippo.cms.channelmanager.content.document.model.OrderState;
+import org.onehippo.cms.channelmanager.content.document.model.Version;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -181,9 +182,23 @@ public class ContentResource {
     public Response getDocumentVersionInfos(
             @PathParam("handleId") final String handleId,
             @PathParam("branchId") final String branchId,
+            @QueryParam("campaignVersionOnly") final boolean campaignVersionOnly,
             @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                userContext -> documentVersionService.getVersionInfo(handleId, branchId, userContext)
+                userContext -> documentVersionService.getVersionInfo(handleId, branchId, userContext, campaignVersionOnly)
+        );
+    }
+
+    @PUT
+    @Path("workflows/documents/{handleId}/{branchId}/versions/{frozenNodeId}")
+    public Response setCampaign(
+            @PathParam("handleId") final String handleId,
+            @PathParam("branchId") final String branchId,
+            @PathParam("frozenNodeId") final String frozenNodeId,
+            @Context final HttpServletRequest servletRequest,
+            final Version version) {
+        return executeTask(servletRequest, Status.OK,
+                userContext -> documentVersionService.updateVersion(handleId, branchId, frozenNodeId, version, userContext)
         );
     }
 
