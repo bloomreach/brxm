@@ -104,10 +104,13 @@ public abstract class JsonResourceServiceModule extends AbstractReconfigurableDa
         listeners.add(listener);
     }
 
-    static JacksonJsonProvider createJacksonJsonProvider() {
-        return new JacksonJsonProvider(
-                new ObjectMapper()
-                        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                        .disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS));
+    private JacksonJsonProvider createJacksonJsonProvider() {
+        return new JacksonJsonProvider(createObjectMapper());
+    }
+
+    protected ObjectMapper createObjectMapper() {
+       return new ObjectMapper()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
     }
 }
