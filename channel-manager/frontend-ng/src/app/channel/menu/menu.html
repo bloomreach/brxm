@@ -44,6 +44,7 @@
                    aria-label="{{ ::item.translationKey | translate }}"
                    ng-disabled="!item.isEnabled() || !menu.isEnabled()"
                    ng-click="item.onClick()">
+          <md-tooltip ng-if="item.hasTooltip()">{{ item.tooltipTranslationKey | translate }}</md-tooltip>
           {{ ::item.translationKey | translate }}
         </md-button>
       </md-menu-item>
