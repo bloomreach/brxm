@@ -46,7 +46,7 @@ import org.onehippo.cms.channelmanager.content.serialization.CampaignSerializati
 import org.onehippo.cms.channelmanager.content.workflows.WorkflowServiceImpl;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
-import org.onehippo.repository.documentworkflow.version.Campaign;
+import org.onehippo.repository.campaign.Campaign;
 import org.onehippo.repository.jaxrs.api.JsonResourceServiceModule;
 import org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;

@@ -15,7 +15,7 @@
  */
 package org.onehippo.cms.channelmanager.content.serialization;
 
-import org.onehippo.repository.documentworkflow.version.Campaign;
+import org.onehippo.repository.campaign.Campaign;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

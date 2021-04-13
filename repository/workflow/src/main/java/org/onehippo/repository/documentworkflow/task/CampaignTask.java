@@ -25,10 +25,8 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
-import org.onehippo.repository.documentworkflow.version.Campaign;
-import org.onehippo.repository.documentworkflow.version.JcrVersionsMetaUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.repository.campaign.Campaign;
+import org.onehippo.repository.documentworkflow.campaign.JcrVersionsMetaUtils;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.ArrayUtils.add;

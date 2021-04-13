@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.repository.documentworkflow.version;
+package org.onehippo.repository.campaign;
 
 import java.util.HashSet;
 import java.util.Optional;
