@@ -13,28 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.repository.documentworkflow.version;
 
-import java.util.Calendar;
+package org.onehippo.repository.campaign;
+
 import java.util.Objects;
-import java.util.UUID;
 
-public class Campaign {
+public class VersionLabel {
 
     private String uuid;
-    private Calendar from;
-    private Calendar to;
+    private String versionLabel;
 
     // kept for deserialization
-    public Campaign() {
+    public VersionLabel() {
     }
 
-    public Campaign(final String uuid, final Calendar from, final Calendar to) {
-        Objects.requireNonNull(uuid);
-        Objects.requireNonNull(from);
+    public VersionLabel(final String uuid) {
         this.uuid = uuid;
-        this.from = from;
-        this.to = to;
+    }
+
+    public VersionLabel(final String uuid, final String versionLabel) {
+        this.uuid = uuid;
+        this.versionLabel = versionLabel;
     }
 
     public String getUuid() {
@@ -45,40 +44,25 @@ public class Campaign {
         this.uuid = uuid;
     }
 
-    /**
-     * @return the from {@link Calendar} date which is not allowed to be null
-     */
-    public Calendar getFrom() {
-        return from;
+    public String getVersionLabel() {
+        return versionLabel;
     }
 
-    public void setFrom(final Calendar from) {
-        this.from = from;
-    }
-
-    /**
-     * @return the until {@link Calendar} date which IS allowed to be null
-     */
-    public Calendar getTo() {
-        return to;
-    }
-
-    public void setTo(final Calendar to) {
-        this.to = to;
+    public void setVersionLabel(final String versionLabel) {
+        this.versionLabel = versionLabel;
     }
 
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final Campaign campaign = (Campaign) o;
-        return Objects.equals(uuid, campaign.uuid) &&
-                Objects.equals(from, campaign.from) &&
-                Objects.equals(to, campaign.to);
+        final VersionLabel that = (VersionLabel) o;
+        return Objects.equals(uuid, that.uuid) &&
+                Objects.equals(versionLabel, that.versionLabel);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, from, to);
+        return Objects.hash(uuid, versionLabel);
     }
 }
