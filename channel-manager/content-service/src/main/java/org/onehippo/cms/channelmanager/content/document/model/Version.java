@@ -18,7 +18,7 @@ package org.onehippo.cms.channelmanager.content.document.model;
 
 import java.util.Calendar;
 
-import org.onehippo.repository.documentworkflow.version.Campaign;
+import org.onehippo.repository.campaign.Campaign;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;

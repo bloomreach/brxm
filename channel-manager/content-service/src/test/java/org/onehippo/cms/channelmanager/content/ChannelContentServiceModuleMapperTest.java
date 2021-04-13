@@ -26,7 +26,7 @@ import java.util.TimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms.channelmanager.content.document.model.Version;
-import org.onehippo.repository.documentworkflow.version.Campaign;
+import org.onehippo.repository.campaign.Campaign;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
