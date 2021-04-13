@@ -20,6 +20,7 @@
   },
   "config": {
     "dist": "target/classes/angular/hippo-cm/",
+    "host": "localhost",
     "port": 9090
   },
   "scripts": {
