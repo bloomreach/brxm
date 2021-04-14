@@ -47,7 +47,7 @@
       </div>
 
       <div class="actions">
-        <button *ngIf="versionsInfo.createEnabled && unpublishedVariantId === version.jcrUUID && isFirst"
+        <button *ngIf="versionsInfo.createEnabled && isVersionSelected(version.jcrUUID) && isFirst"
                 mat-stroked-button
                 color="primary"
                 [disabled]="actionInProgress"
@@ -57,7 +57,7 @@
           {{ 'VERSION' | translate }}
         </button>
 
-        <button *ngIf="versionsInfo.restoreEnabled && unpublishedVariantId === version.jcrUUID && !isFirst"
+        <button *ngIf="versionsInfo.restoreEnabled && isVersionSelected(version.jcrUUID) && !isFirst"
                 mat-stroked-button
                 color="primary"
                 [disabled]="actionInProgress"
