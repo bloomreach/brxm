@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Pipe, PipeTransform } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
@@ -105,6 +105,9 @@ describe('VersionsInfoComponent', () => {
         { provide: NG1_IFRAME_SERVICE, useValue: iframeServiceMock },
         { provide: NG1_WORKFLOW_SERVICE, useValue: workflowServiceMock },
       ],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA,
+      ],
     });
 
     ng1IframeService = TestBed.inject(NG1_IFRAME_SERVICE);
@@ -123,11 +126,7 @@ describe('VersionsInfoComponent', () => {
     fixture.detectChanges();
   });
 
-  describe('showing versions', () => {
-    it('should show header indicating no versions are available', () => {
-      expect(componentEl).toMatchSnapshot();
-    });
-
+  describe('initial rendering', () => {
     it('should show list of versions', fakeAsync(() => {
       component.ngOnInit();
       tick();
@@ -137,7 +136,7 @@ describe('VersionsInfoComponent', () => {
     }));
   });
 
-  describe('selecting version', () => {
+  describe('selecting a version', () => {
     beforeEach(fakeAsync(() => {
       component.ngOnInit();
       tick();
@@ -163,7 +162,7 @@ describe('VersionsInfoComponent', () => {
       expect(ng1IframeService.load).toHaveBeenCalledWith(`${renderPath}&br_version_uuid=${secondVersionUUID}`);
     });
 
-    it('should show the selected version', () => {
+    it('should indicate the selected version', () => {
       jest.spyOn(ng1IframeService, 'load').mockImplementationOnce(() => {
         component.unpublishedVariantId = secondVersionUUID;
         return Promise.resolve();
@@ -176,108 +175,7 @@ describe('VersionsInfoComponent', () => {
       const versionList = componentEl.querySelector<HTMLElement>('.qa-version-list');
       expect(versionList).toMatchSnapshot();
     });
-  });
 
-  describe('restoring a version', () => {
-    beforeEach(fakeAsync(() => {
-      component.ngOnInit();
-      tick();
-      fixture.detectChanges();
-    }));
-
-    it('should show restore button for other versions when selected', async () => {
-      jest.spyOn(ng1IframeService, 'load').mockImplementationOnce(() => {
-        component.unpublishedVariantId = secondVersionUUID;
-        return Promise.resolve();
-      });
-
-      await component.selectVersion(secondVersionUUID);
-      fixture.detectChanges();
-
-      expect(componentEl).toMatchSnapshot();
-    });
-
-    it('should not show restore button for first version when selected', async () => {
-      jest.spyOn(ng1IframeService, 'load').mockImplementationOnce(() => {
-        component.unpublishedVariantId =  firstVersionUUID;
-        return Promise.resolve();
-      });
-
-      await component.selectVersion(firstVersionUUID);
-      fixture.detectChanges();
-
-      expect(componentEl).toMatchSnapshot();
-    });
-
-    it('should call to restore', async () => {
-      jest.spyOn(ng1IframeService, 'load').mockImplementationOnce(() => {
-        component.unpublishedVariantId = secondVersionUUID;
-        return Promise.resolve();
-      });
-
-      await component.selectVersion(secondVersionUUID);
-      fixture.detectChanges();
-
-      const restoreButton = componentEl.querySelector<HTMLButtonElement>('.qa-restore-version-action');
-      restoreButton?.click();
-
-      expect(ng1WorkflowService.createWorkflowAction).toHaveBeenCalledWith(component.documentId, {}, 'restore', secondVersionUUID);
-    });
-  });
-
-  describe('create version', () => {
-    it('should show version button for first version when selected', async () => {
-      jest.spyOn(ng1IframeService, 'load').mockImplementationOnce(() => {
-        component.unpublishedVariantId = firstVersionUUID;
-        return Promise.resolve();
-      });
-
-      await component.selectVersion(firstVersionUUID);
-      fixture.detectChanges();
-
-      expect(componentEl).toMatchSnapshot();
-    });
-
-    it('should not show version button for other versions when selected', async () => {
-      jest.spyOn(ng1IframeService, 'load').mockImplementationOnce(() => {
-        component.unpublishedVariantId = secondVersionUUID;
-        return Promise.resolve();
-      });
-
-      await component.selectVersion(secondVersionUUID);
-      fixture.detectChanges();
-
-      expect(componentEl).toMatchSnapshot();
-    });
-
-    it('should call to create version', fakeAsync(() => {
-      component.ngOnInit();
-      tick();
-      fixture.detectChanges();
-
-      const newVersionButton = componentEl.querySelector<HTMLButtonElement>(`.qa-new-version-action`);
-      newVersionButton?.click();
-      fixture.detectChanges();
-
-      expect(ng1WorkflowService.createWorkflowAction).toHaveBeenCalledWith(component.documentId, {}, 'version');
-    }));
-  });
-
-  describe('progress indicator', () => {
-    it('should show when action is being performed that takes a while to complete', fakeAsync(() => {
-      component.ngOnInit();
-      tick();
-      fixture.detectChanges();
-
-      component.restoreVersion(secondVersionUUID);
-      fixture.detectChanges();
-
-      const header = componentEl.querySelector<HTMLElement>('.qa-version-list-header');
-      expect(header).toMatchSnapshot();
-    }));
-  });
-
-  describe('onDestroy', () => {
     it('should select the latest version when removing the component from the dom', fakeAsync(() => {
       jest.spyOn(component, 'selectVersion');
 

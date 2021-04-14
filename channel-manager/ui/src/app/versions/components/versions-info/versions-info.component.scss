@@ -18,7 +18,7 @@
 @import "~@bloomreach/frontend-theme/angular-theme";
 @import "variables";
 
-.version {
+::ng-deep .version {
   @include mat-divider-border($theme);
 
   height: 88px;
@@ -39,7 +39,7 @@
   &.selected {
     background-color: map-get($blue, 50);
 
-    .timestamp {
+    p:first-child {
       font-weight: 800;
     }
   }
