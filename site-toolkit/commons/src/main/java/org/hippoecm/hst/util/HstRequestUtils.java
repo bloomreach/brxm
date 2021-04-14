@@ -837,7 +837,7 @@ public class HstRequestUtils {
      *     This method can be used to trigger rendering a versioned document instead of {@code workspaceNode}
      * </p>
      * @param requestContext the request context for the current request
-     * @param node the workspaceNode for which instead we might want to render a frozen node from version history
+     * @param workspaceNode the workspaceNode for which instead we might want to render a frozen node from version history
      *                      in case the request parameter {@link ContainerConstants#BR_VERSION_UUID_REQUEST_PARAMETER}
      *                      contains a UUID from a versioned node for which the workspace node is equal to
      *                      {@code workspaceNode}
@@ -845,7 +845,7 @@ public class HstRequestUtils {
      * @return the uuid of the frozen node to render instead of {@code workspaceNode} or null if just the workspaceNode
      *         should be used
      */
-    public static String getRenderFrozenNodeId(final HstRequestContext requestContext, final Node node,
+    public static String getRenderFrozenNodeId(final HstRequestContext requestContext, final Node workspaceNode,
                                                final String contextBranchId) {
 
         if (!requestContext.isChannelManagerPreviewRequest()) {
@@ -859,11 +859,11 @@ public class HstRequestUtils {
 
         try {
 
-            if (node.getIdentifier().equals(br_version_uuid)) {
+            if (workspaceNode.getIdentifier().equals(br_version_uuid)) {
                 return br_version_uuid;
             }
 
-            final Node frozenNode = node.getSession().getNodeByIdentifier(br_version_uuid);
+            final Node frozenNode = workspaceNode.getSession().getNodeByIdentifier(br_version_uuid);
             if (!frozenNode.isNodeType(JcrConstants.NT_FROZENNODE)) {
                 return null;
             }
@@ -881,7 +881,7 @@ public class HstRequestUtils {
 
             final String workspaceIdentifier = ((Version) version).getContainingHistory().getVersionableIdentifier();
 
-            if (node.getIdentifier().equals(workspaceIdentifier)) {
+            if (workspaceNode.getIdentifier().equals(workspaceIdentifier)) {
                 return br_version_uuid;
             }
 
