@@ -1,354 +1,56 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`VersionsInfoComponent create version should not show version button for other versions when selected 1`] = `
-<div
-  id="root9"
->
-  
-</div>
-`;
-
-exports[`VersionsInfoComponent create version should show version button for first version when selected 1`] = `
-<div
-  id="root8"
->
-  
-</div>
-`;
-
-exports[`VersionsInfoComponent progress indicator should show when action is being performed that takes a while to complete 1`] = `null`;
-
-exports[`VersionsInfoComponent restoring a version should not show restore button for first version when selected 1`] = `
-<div
-  id="root6"
->
-  
-  <div
-    class="mat-typography"
-  >
-    
-    
-    <div
-      class="versions-list qa-version-list"
-    >
-      
-      <div
-        class="qa-version-testId selected"
-        matripple=""
-      >
-        <div
-          class="description"
-        >
-          
-          <p
-            class="timestamp qa-latest-version"
-          >
-             LATEST_VERSION 
-          </p>
-          
-          
-        </div>
-        <div
-          class="actions"
-        >
-          
-          <button
-            class="qa-new-version-action"
-            color="primary"
-            mat-stroked-button=""
-          >
-            <mat-icon
-              aria-hidden="true"
-              class="mat-icon notranslate mat-icon-no-color"
-              role="img"
-              svgicon="plus"
-            >
-              <svg
-                class="fake-testing-svg"
-                fit=""
-                focusable="false"
-                height="100%"
-                preserveAspectRatio="xMidYMid meet"
-                width="100%"
-              />
-            </mat-icon>
-             VERSION 
-          </button>
-          
-        </div>
-      </div>
-      <div
-        class="qa-version-testVariantId"
-        matripple=""
-      >
-        <div
-          class="description"
-        >
-          
-          
-          <p
-            class="timestamp qa-version-timestamp"
-          >
-             1604847780000 
-          </p>
-          
-          <p
-            class="qa-version-username"
-          >
-             testUserName2 
-          </p>
-        </div>
-        <div
-          class="actions"
-        >
-          
-          
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`VersionsInfoComponent restoring a version should show restore button for other versions when selected 1`] = `
-<div
-  id="root5"
->
-  
-  <div
-    class="mat-typography"
-  >
-    
-    
-    <div
-      class="versions-list qa-version-list"
-    >
-      
-      <div
-        class="qa-version-testId"
-        matripple=""
-      >
-        <div
-          class="description"
-        >
-          
-          <p
-            class="timestamp qa-latest-version"
-          >
-             LATEST_VERSION 
-          </p>
-          
-          
-        </div>
-        <div
-          class="actions"
-        >
-          
-          
-        </div>
-      </div>
-      <div
-        class="qa-version-testVariantId selected"
-        matripple=""
-      >
-        <div
-          class="description"
-        >
-          
-          
-          <p
-            class="timestamp qa-version-timestamp"
-          >
-             1604847780000 
-          </p>
-          
-          <p
-            class="qa-version-username"
-          >
-             testUserName2 
-          </p>
-        </div>
-        <div
-          class="actions"
-        >
-          
-          
-          <button
-            class="qa-restore-version-action"
-            color="primary"
-            mat-stroked-button=""
-          >
-             RESTORE 
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`VersionsInfoComponent selecting version should show the selected version 1`] = `
-<div
-  class="versions-list qa-version-list"
->
-  
-  <div
-    class="qa-version-testId"
-    matripple=""
-  >
-    <div
-      class="description"
-    >
-      
-      <p
-        class="timestamp qa-latest-version"
-      >
-         LATEST_VERSION 
-      </p>
-      
-      
-    </div>
-    <div
-      class="actions"
-    >
-      
-      
-    </div>
-  </div>
-  <div
-    class="qa-version-testVariantId selected"
-    matripple=""
-  >
-    <div
-      class="description"
-    >
-      
-      
-      <p
-        class="timestamp qa-version-timestamp"
-      >
-         1604847780000 
-      </p>
-      
-      <p
-        class="qa-version-username"
-      >
-         testUserName2 
-      </p>
-    </div>
-    <div
-      class="actions"
-    >
-      
-      
-      <button
-        class="qa-restore-version-action"
-        color="primary"
-        mat-stroked-button=""
-      >
-         RESTORE 
-      </button>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`VersionsInfoComponent showing versions should show header indicating no versions are available 1`] = `
+exports[`VersionsInfoComponent initial rendering should show list of versions 1`] = `
 <div
   id="root0"
 >
-  
-</div>
-`;
 
-exports[`VersionsInfoComponent showing versions should show list of versions 1`] = `
-<div
-  id="root1"
->
-  
   <div
     class="mat-typography"
   >
-    
-    
     <div
       class="versions-list qa-version-list"
     >
-      
-      <div
+
+
+
+      <em-latest-version
         class="qa-version-testId selected"
-        matripple=""
-      >
-        <div
-          class="description"
-        >
-          
-          <p
-            class="timestamp qa-latest-version"
-          >
-             LATEST_VERSION 
-          </p>
-          
-          
-        </div>
-        <div
-          class="actions"
-        >
-          
-          <button
-            class="qa-new-version-action"
-            color="primary"
-            mat-stroked-button=""
-          >
-            <mat-icon
-              aria-hidden="true"
-              class="mat-icon notranslate mat-icon-no-color"
-              role="img"
-              svgicon="plus"
-            >
-              <svg
-                class="fake-testing-svg"
-                fit=""
-                focusable="false"
-                height="100%"
-                preserveAspectRatio="xMidYMid meet"
-                width="100%"
-              />
-            </mat-icon>
-             VERSION 
-          </button>
-          
-        </div>
-      </div>
-      <div
+      />
+
+
+
+
+
+      <em-version
         class="qa-version-testVariantId"
         matripple=""
-      >
-        <div
-          class="description"
-        >
-          
-          
-          <p
-            class="timestamp qa-version-timestamp"
-          >
-             1604847780000 
-          </p>
-          
-          <p
-            class="qa-version-username"
-          >
-             testUserName2 
-          </p>
-        </div>
-        <div
-          class="actions"
-        >
-          
-          
-        </div>
-      </div>
+      />
+
     </div>
   </div>
+</div>
+`;
+
+exports[`VersionsInfoComponent selecting a version should indicate the selected version 1`] = `
+<div
+  class="versions-list qa-version-list"
+>
+
+
+
+  <em-latest-version
+    class="qa-version-testId"
+  />
+
+
+
+
+
+  <em-version
+    class="qa-version-testVariantId selected"
+    matripple=""
+  />
+
 </div>
 `;
