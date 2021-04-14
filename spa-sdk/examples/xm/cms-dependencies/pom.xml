@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.bloomreach</groupId>
     <artifactId>xm-spa-example</artifactId>
-    <version>14.4.0</version>
+    <version>14.5.0</version>
   </parent>
   <artifactId>xm-spa-example-cms-dependencies</artifactId>
   <packaging>pom</packaging>

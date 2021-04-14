@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-community-translations</artifactId>
-    <version>14.5.0-SNAPSHOT</version>
+    <version>14.5.0</version>
   </parent>
   
   <name>Hippo Plugin Robots.txt Translations</name>

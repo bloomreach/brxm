@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>14.5.0-SNAPSHOT</version>
+    <version>14.5.0</version>
     <relativePath>../release/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Essentials</name>
   <description>Hippo Essentials</description>
   <artifactId>hippo-essentials</artifactId>
-  <version>14.5.0-SNAPSHOT</version>
+  <version>14.5.0</version>
   <packaging>pom</packaging>
 
   <properties>

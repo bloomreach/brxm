@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.5.0-SNAPSHOT</version>
+    <version>14.5.0</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Plugin Poll</name>
   <description>Hippo Plugin Poll</description>
   <artifactId>hippo-plugin-poll</artifactId>
-  <version>14.5.0-SNAPSHOT</version>
+  <version>14.5.0</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
