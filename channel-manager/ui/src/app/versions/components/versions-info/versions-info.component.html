@@ -13,15 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="mat-typography" *ngIf="versionsInfo">
-  <ng-container *ngIf="versionsInfo?.versions.length === 0">
-    <div class="no-versions qa-version-list-header">
-      {{ 'NO_VERSIONS_AVAILABLE' | translate }}
-    </div>
-    <mat-divider></mat-divider>
-  </ng-container>
-
-  <div *ngIf="versionsInfo?.versions.length > 0" class="versions-list qa-version-list">
+<div class="mat-typography"
+     *ngIf="versionsInfo">
+  <div *ngIf="versionsInfo?.versions"
+       class="versions-list qa-version-list">
     <div *ngFor="let version of versionsInfo?.versions; first as isFirst"
          matRipple
          (click)="selectVersion(version.jcrUUID)"
