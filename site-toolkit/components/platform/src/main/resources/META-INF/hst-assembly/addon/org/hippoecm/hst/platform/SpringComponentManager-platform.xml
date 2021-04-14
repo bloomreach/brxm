@@ -49,6 +49,9 @@
   <bean class="org.hippoecm.hst.platform.services.experiencepage.ExperiencePageServiceImpl" init-method="init" destroy-method="destroy">
   </bean>
 
+  <bean id="documentCampaignService" class="org.hippoecm.hst.platform.services.campaign.DocumentCampaignServiceImpl"
+        init-method="init" destroy-method="destroy">
+  </bean>
 
   <bean id="customValueListProviders" class="org.springframework.beans.factory.config.MapFactoryBean">
     <property name="targetMapClass">
