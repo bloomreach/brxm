@@ -31,6 +31,7 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.hippoecm.hst.campaign.DocumentCampaignService;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -45,7 +46,8 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.repository.branch.BranchConstants;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.campaign.Campaign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +59,8 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_COMPOUND;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 import static org.onehippo.repository.util.JcrConstants.JCR_FROZEN_NODE;
 import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 import static org.onehippo.repository.util.JcrConstants.NT_VERSION_HISTORY;
@@ -308,9 +312,10 @@ public class ObjectConverterImpl implements ObjectConverter {
         final String branchId = HstRequestUtils.getBranchIdFromContext(requestContext);
 
         final String renderVersionId = HstRequestUtils.getRenderFrozenNodeId(requestContext, canonicalNode, branchId);
+        final Session session = node.getSession();
         if (renderVersionId != null) {
 
-            final Node renderVersion = node.getSession().getNodeByIdentifier(renderVersionId);
+            final Node renderVersion = session.getNodeByIdentifier(renderVersionId);
             if (!renderVersion.isNodeType(JcrConstants.NT_FROZENNODE)) {
                 log.info("Explicit query param '{}={}' points to workspace jcr node and not a versioned node, just " +
                         "render the workspace node", BR_VERSION_UUID_REQUEST_PARAMETER, renderVersionId);
@@ -325,19 +330,47 @@ public class ObjectConverterImpl implements ObjectConverter {
             return node;
         }
 
-        final String branchIdOfNode = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, BranchConstants.MASTER_BRANCH_ID);
-        if (branchIdOfNode.equals(branchId)) {
-            return node;
-        }
-
-        if (!handle.hasProperty(HIPPO_VERSION_HISTORY_PROPERTY)) {
-            // Without a version history identifier we can't find it in version history
-            return node;
-        }
-
-        // should we serve a versioned history node or just workspace.
         try {
-            final Node versionHistory = node.getSession().getNodeByIdentifier(handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString());
+            final DocumentCampaignService documentCampaignService;
+            if (!requestContext.isChannelManagerPreviewRequest()
+                    && (documentCampaignService = HippoServiceRegistry.getService(DocumentCampaignService.class)) != null) {
+                // only for live website we potentially serve a campaign version of a document based on whether it
+                // has a matching date range in which the campaign version should be rendered
+                // Note although initially the UI only supports active campaigns for the MASTER branch, the BE is
+                // agnostic about this, and works for any branchId : since when running a project campaign, there for
+                // now won't be a 'document campaign', in general when a project campaign runs, never an 'activeCampaign'
+                // for a document will be found (since never set). For performance reasons we could decide to skip this
+                // test when running a project campaign, but the lookup is fairly inexpensive so just always run it
+                final Optional<Campaign> activeCampaign = documentCampaignService.findActiveCampaign(handle, branchId);
+
+                if (activeCampaign.isPresent()) {
+                    log.info("Found frozenNode uuid '{}' to render for '{}'", activeCampaign.get().getUuid(), handle.getPath());
+                    try {
+                        return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(session.getNodeByIdentifier(activeCampaign.get().getUuid()), canonicalNode.getPath(), canonicalNode.getName());
+                    } catch (RepositoryException e) {
+                        // in this case, just continue the code below to see whether there is a branch to be rendered
+                        // instead. This scenario could happen because of truncated version history in JCR or because
+                        // of invalid campaign data on the handle
+                        log.info("Failed to return a frozen node version for active campaign '{}' for handle '{}'. Fallback to serve the " +
+                                "right branch.", activeCampaign.get().getUuid(), handle.getPath());
+                    }
+                }
+            }
+
+            final String branchIdOfNode = getStringProperty(node, HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+            if (branchIdOfNode.equals(branchId)) {
+                return node;
+            }
+
+            // should we serve a versioned history node or just workspace.
+
+
+            if (!handle.hasProperty(HIPPO_VERSION_HISTORY_PROPERTY)) {
+                // Without a version history identifier we can't find it in version history
+                return node;
+            }
+
+            final Node versionHistory = session.getNodeByIdentifier(handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString());
             if (!versionHistory.isNodeType(NT_VERSION_HISTORY)) {
                 log.warn("'{}/@{}' does not point to a node of type '{}' which is not allowed. Correct the handle manually.",
                         handle.getPath(), HIPPO_VERSION_HISTORY_PROPERTY, NT_VERSION_HISTORY);
@@ -348,11 +381,11 @@ public class ObjectConverterImpl implements ObjectConverter {
             Optional<Node> version = getVersionForLabel(versionHistory, branchId, preview);
             if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
                 // lookup master revision in absence of a branch version
-                if (branchIdOfNode.equals(BranchConstants.MASTER_BRANCH_ID)) {
+                if (branchIdOfNode.equals(MASTER_BRANCH_ID)) {
                     // current node is for master, thus return current one
                     return node;
                 }
-                version = getVersionForLabel(versionHistory, BranchConstants.MASTER_BRANCH_ID, preview);
+                version = getVersionForLabel(versionHistory, MASTER_BRANCH_ID, preview);
             }
             if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
                 // return current (published or unpublished) in absence of a branch and master version
