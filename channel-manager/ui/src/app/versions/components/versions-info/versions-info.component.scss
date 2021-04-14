@@ -14,54 +14,9 @@
  * limitations under the License.
  */
 
-@import '~@bloomreach/frontend-theme/angular-theme';
-@import 'mixins';
-@import 'material-theme';
-@import 'variables';
-
-.mat-line {
-  font-size: 14px !important;
-}
-
-.mat-line.version-actions {
-  display: none;
-}
-
-.mat-list-single-selected-option {
-  background-color: map-get($blue, 50);
-
-  .mat-line:first-child {
-    font-weight: bold !important;
-  }
-
-  .version-actions {
-    display: flex;
-    justify-content: flex-end;
-
-    button:not(:first-child) {
-      margin-left: 8px;
-    }
-  }
-}
-
-.mat-subheader {
-  position: relative;
-}
-
-.mat-progress-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
-.no-versions {
-  height: 72px;
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-}
+@import "mixins";
+@import "~@bloomreach/frontend-theme/angular-theme";
+@import "variables";
 
 .version {
   @include mat-divider-border($theme);
@@ -82,7 +37,7 @@
   }
 
   &.selected {
-    background-color: #e7f1f9;
+    background-color: map-get($blue, 50);
 
     .timestamp {
       font-weight: 800;
