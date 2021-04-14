@@ -15,52 +15,32 @@
   -->
 <div class="mat-typography"
      *ngIf="versionsInfo">
-  <div *ngIf="versionsInfo?.versions"
-       class="versions-list qa-version-list">
-    <div *ngFor="let version of versionsInfo?.versions; first as isFirst"
-         matRipple
-         (click)="selectVersion(version.jcrUUID)"
-         [class]="'qa-version-' + version.jcrUUID"
-         [class.selected]="isVersionSelected(version.jcrUUID)"
-         class="version">
+  <div class="versions-list qa-version-list">
+    <ng-container *ngFor="let version of versionsInfo!.versions; first as isFirst">
+      <em-latest-version *ngIf="isFirst"
+                         class="version"
+                         [class]="'qa-version-' + version.jcrUUID"
+                         (click)="selectVersion(version.jcrUUID)"
+                         [class.selected]="isVersionSelected(version.jcrUUID)"
+                         [version]="version"
+                         [isSelected]="isVersionSelected(version.jcrUUID)"
+                         [actionInProgress]="actionInProgress"
+                         [createEnabled]="versionsInfo!.createEnabled"
+                         (createVersion)="createVersion()">
+      </em-latest-version>
 
-      <div class="description">
-        <p *ngIf="isFirst"
-           class="timestamp qa-latest-version">
-          {{ 'LATEST_VERSION' | translate }}
-        </p>
-
-        <p *ngIf="!isFirst"
-           class="timestamp qa-version-timestamp">
-          {{ version.timestamp | moment }}
-        </p>
-
-        <p *ngIf="!isFirst"
-           class="qa-version-username">
-          {{ version.userName || ('SYSTEM' | translate) }}
-        </p>
-      </div>
-
-      <div class="actions">
-        <button *ngIf="versionsInfo.createEnabled && isVersionSelected(version.jcrUUID) && isFirst"
-                mat-stroked-button
-                color="primary"
-                [disabled]="actionInProgress"
-                class="qa-new-version-action"
-                (click)="createVersion()">
-          <mat-icon svgIcon="plus"></mat-icon>
-          {{ 'VERSION' | translate }}
-        </button>
-
-        <button *ngIf="versionsInfo.restoreEnabled && isVersionSelected(version.jcrUUID) && !isFirst"
-                mat-stroked-button
-                color="primary"
-                [disabled]="actionInProgress"
-                class="qa-restore-version-action"
-                (click)="restoreVersion(version.jcrUUID)">
-          {{ 'RESTORE' | translate }}
-        </button>
-      </div>
-    </div>
+      <em-version *ngIf="!isFirst"
+                  matRipple
+                  class="version"
+                  [class]="'qa-version-' + version.jcrUUID"
+                  (click)="selectVersion(version.jcrUUID)"
+                  [class.selected]="isVersionSelected(version.jcrUUID)"
+                  [version]="version"
+                  [isSelected]="isVersionSelected(version.jcrUUID)"
+                  [actionInProgress]="actionInProgress"
+                  [restoreEnabled]="versionsInfo!.restoreEnabled"
+                  (restoreVersion)="restoreVersion($event)">
+      </em-version>
+    </ng-container>
   </div>
 </div>

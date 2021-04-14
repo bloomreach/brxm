@@ -21,11 +21,15 @@ import { createCustomElement } from '@angular/elements';
 import { SharedModule } from '../shared/shared.module';
 import { TranslationsModule } from '../translations/translations.module';
 
+import { LatestVersionComponent } from './components/latest-version/latest-version.component';
+import { VersionComponent } from './components/version/version.component';
 import { VersionsInfoComponent } from './components/versions-info/versions-info.component';
 
 @NgModule({
   declarations: [
     VersionsInfoComponent,
+    VersionComponent,
+    LatestVersionComponent,
   ],
   imports: [
     CommonModule,
