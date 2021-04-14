@@ -15,6 +15,7 @@
  */
 
 export interface Version {
+  branchId: string;
   jcrUUID: string;
   timestamp: number;
   userName: string;
