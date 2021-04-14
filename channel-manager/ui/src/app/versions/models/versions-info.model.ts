@@ -20,4 +20,6 @@ export interface VersionsInfo {
   versions: Version[];
   restoreEnabled: boolean;
   createEnabled: boolean;
+  campaignEnabled: boolean;
+  labelEnabled: boolean;
 }
