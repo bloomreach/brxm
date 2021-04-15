@@ -14,20 +14,23 @@
   limitations under the License.
   -->
 
-<md-dialog>
+<md-dialog class="md-bloomreach-theme new-dialog reject-prompt">
+  <h3 mat-dialog-title>{{ 'REJECT_CHANNEL_TITLE' | translate:$ctrl.translationData }}</h3>
+
   <md-dialog-content class="md-dialog-content">
     <form name="messageForm"
           layout="column">
-      <h2>{{ 'REJECT_CHANNEL_TITLE' | translate:$ctrl.translationData }}</h2>
-
       <p>{{ 'REJECT_CHANNEL_TEXT' | translate }}</p>
 
-      <md-input-container>
+      <md-input-container class="no-margin">
         <label for="message">{{ 'REJECT_CHANNEL_PLACEHOLDER' | translate }}</label>
-        <textarea id="message"
+        <textarea matInput
+                  matTextareaAutosize="true"
+                  id="message"
                   required
                   name="message"
-                  ng-model="message">
+                  ng-model="message"
+                  md-autofocus>
         </textarea>
       </md-input-container>
     </form>
@@ -35,7 +38,7 @@
   <md-dialog-actions>
     <md-button class="qa-cancel" ng-click="$ctrl.cancel()">{{ 'CANCEL' | translate }}</md-button>
     <md-button ng-disabled="messageForm.$invalid"
-               class="qa-ok" ng-click="$ctrl.close(message)">
+                class="qa-ok md-primary" ng-click="$ctrl.close(message)">
       {{ 'OK' | translate }}
     </md-button>
   </md-dialog-actions>
