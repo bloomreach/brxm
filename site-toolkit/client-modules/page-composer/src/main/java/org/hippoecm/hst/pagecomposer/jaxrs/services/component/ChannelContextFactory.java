@@ -76,14 +76,17 @@ final class ChannelContextFactory implements ComponentManagerAware {
                 .setCrossChannelPageCopySupported(crossChannelPageCopySupported)
                 .setHasPrototypes(!hasPrototypes(contextService));
 
+        final Session session = contextService.getRequestContext().getSession();
         final Optional<Channel> channelOptional = channelService.getChannelByMountId(actionContext.getMountId(),
                 actionContext.getHostGroup());
         if (!channelOptional.isPresent()) {
-            return channelContext;
+        	log.warn("Mount {} is not part of host group {}, the channel is now not editable. Please adjust the configuration.",
+                    getNodePath(actionContext.getMountId(), session), actionContext.getHostGroup());
+        	return channelContext;
         }
 
         final Channel channel = channelOptional.get();
-        final Session session = contextService.getRequestContext().getSession();
+        log.info("Setting channel to context: {}", channel);
         return channelContext
                 .setChannel(channel)
                 .setDeletable(channelService.canChannelBeDeleted(channel) && channelService.isMaster(channel))
@@ -93,6 +96,15 @@ final class ChannelContextFactory implements ComponentManagerAware {
                 .setXPageTemplateQueries(
                         getXPageTemplateQueries(channel, channel.getContentRoot(), session))
                 .setConfigurationLocked(channel.isConfigurationLocked());
+    }
+
+    private String getNodePath(final String nodeId, final Session session) {
+        try {
+            final Node node = session.getNodeByIdentifier(nodeId);
+            return node.getPath();
+        } catch (RepositoryException ignore) {
+            return nodeId;
+        }
     }
 
     /**
