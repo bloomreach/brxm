@@ -15,7 +15,7 @@
  */
 
 import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatListModule } from '@angular/material/list';
@@ -23,9 +23,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1.service';
-import { NG1_CONTENT_SERVICE } from '../../../services/ng1/content.ng1.service';
 import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
-import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
+import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
+import { NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
+import { VersionsService } from '../../../versions/services/versions.service';
 import { VersionsInfo } from '../../models/versions-info.model';
 
 import { VersionsInfoComponent } from './versions-info.component';
@@ -43,7 +44,7 @@ describe('VersionsInfoComponent', () => {
   let fixture: ComponentFixture<VersionsInfoComponent>;
   let ng1IframeService: Ng1IframeService;
   let ng1ChannelService: Ng1ChannelService;
-  let ng1WorkflowService: Ng1WorkflowService;
+  let versionsService: VersionsService;
 
   const date = Date.parse('11/08/2020 16:03');
   const path = '/some/test/path';
@@ -69,10 +70,6 @@ describe('VersionsInfoComponent', () => {
   } as VersionsInfo;
 
   beforeEach(() => {
-    const contentServiceMock = {
-      getDocumentVersionsInfo: jest.fn(() => Promise.resolve(mockVersionsInfo)),
-    };
-
     const channelServiceMock = {
       makeRenderPath: () => path,
       getHomePageRenderPathInfo: () => homePageRenderPath,
@@ -85,6 +82,17 @@ describe('VersionsInfoComponent', () => {
 
     const workflowServiceMock = {
       createWorkflowAction: jest.fn(() => { }),
+    };
+
+    const versionsServiceMock = {
+      getVersionsInfo: () => Promise.resolve(mockVersionsInfo),
+      isCurrentVersion: jest.fn((id: string) => id === firstVersionUUID),
+    };
+
+    const uiRouterGlobalsMock = {
+      params: {
+        documentId: 'testDocumentId',
+      },
     };
 
     TestBed.configureTestingModule({
@@ -100,10 +108,11 @@ describe('VersionsInfoComponent', () => {
         TranslateModule.forRoot(),
       ],
       providers: [
-        { provide: NG1_CONTENT_SERVICE, useValue: contentServiceMock },
-        { provide: NG1_CHANNEL_SERVICE, useValue: channelServiceMock },
         { provide: NG1_IFRAME_SERVICE, useValue: iframeServiceMock },
+        { provide: NG1_CHANNEL_SERVICE, useValue: channelServiceMock },
         { provide: NG1_WORKFLOW_SERVICE, useValue: workflowServiceMock },
+        { provide: NG1_UI_ROUTER_GLOBALS, useValue: uiRouterGlobalsMock },
+        { provide: VersionsService, useValue: versionsServiceMock },
       ],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA,
@@ -112,37 +121,24 @@ describe('VersionsInfoComponent', () => {
 
     ng1IframeService = TestBed.inject(NG1_IFRAME_SERVICE);
     ng1ChannelService = TestBed.inject(NG1_CHANNEL_SERVICE);
-    ng1WorkflowService = TestBed.inject(NG1_WORKFLOW_SERVICE);
+    versionsService = TestBed.inject(VersionsService);
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(VersionsInfoComponent);
     component = fixture.componentInstance;
     componentEl = fixture.nativeElement;
-
-    component.documentId = 'testDocumentId';
-    component.branchId = 'projectId';
-    component.unpublishedVariantId = 'testId';
+    component.ngOnInit();
     fixture.detectChanges();
   });
 
   describe('initial rendering', () => {
-    it('should show list of versions', fakeAsync(() => {
-      component.ngOnInit();
-      tick();
-      fixture.detectChanges();
-
+    it('should show list of versions', () => {
       expect(componentEl).toMatchSnapshot();
-    }));
+    });
   });
 
   describe('selecting a version', () => {
-    beforeEach(fakeAsync(() => {
-      component.ngOnInit();
-      tick();
-      fixture.detectChanges();
-    }));
-
     it('should add the version param to the url and load that url', () => {
       jest.spyOn(ng1IframeService, 'load');
 
@@ -162,11 +158,8 @@ describe('VersionsInfoComponent', () => {
       expect(ng1IframeService.load).toHaveBeenCalledWith(`${renderPath}&br_version_uuid=${secondVersionUUID}`);
     });
 
-    it('should indicate the selected version', () => {
-      jest.spyOn(ng1IframeService, 'load').mockImplementationOnce(() => {
-        component.unpublishedVariantId = secondVersionUUID;
-        return Promise.resolve();
-      });
+    fit('should indicate the selected version', () => {
+      jest.spyOn(versionsService, 'isCurrentVersion').mockImplementation(id => id === secondVersionUUID);
 
       const versionItem = componentEl.querySelector<HTMLElement>(`.qa-version-${secondVersionUUID}`);
       versionItem?.click();
@@ -176,15 +169,13 @@ describe('VersionsInfoComponent', () => {
       expect(versionList).toMatchSnapshot();
     });
 
-    it('should select the latest version when removing the component from the dom', fakeAsync(() => {
+    it('should select the latest version when removing the component from the dom', () => {
       jest.spyOn(component, 'selectVersion');
 
       component.ngOnInit();
-      tick();
-      component.unpublishedVariantId = secondVersionUUID;
       component.ngOnDestroy();
 
       expect(component.selectVersion).toHaveBeenCalledWith(firstVersionUUID);
-    }));
+    });
   });
 });

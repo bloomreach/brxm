@@ -13,34 +13,32 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="mat-typography"
+<div class="mat-typography versions-list qa-version-list"
      *ngIf="versionsInfo">
-  <div class="versions-list qa-version-list">
-    <ng-container *ngFor="let version of versionsInfo!.versions; first as isFirst">
-      <em-latest-version *ngIf="isFirst"
-                         class="version"
-                         [class]="'qa-version-' + version.jcrUUID"
-                         (click)="selectVersion(version.jcrUUID)"
-                         [class.selected]="isVersionSelected(version.jcrUUID)"
-                         [version]="version"
-                         [isSelected]="isVersionSelected(version.jcrUUID)"
-                         [actionInProgress]="actionInProgress"
-                         [createEnabled]="versionsInfo!.createEnabled"
-                         (createVersion)="createVersion()">
-      </em-latest-version>
+  <ng-container *ngFor="let version of versionsInfo!.versions; first as isFirst">
+    <em-latest-version *ngIf="isFirst"
+                       class="version"
+                       [class]="'qa-version-' + version.jcrUUID"
+                       (click)="selectVersion(version.jcrUUID)"
+                       [class.selected]="isVersionSelected(version.jcrUUID)"
+                       [version]="version"
+                       [isSelected]="isVersionSelected(version.jcrUUID)"
+                       [actionInProgress]="actionInProgress"
+                       [createEnabled]="versionsInfo!.createEnabled"
+                       (createVersion)="createVersion()">
+    </em-latest-version>
 
-      <em-version *ngIf="!isFirst"
-                  matRipple
-                  class="version"
-                  [class]="'qa-version-' + version.jcrUUID"
-                  (click)="selectVersion(version.jcrUUID)"
-                  [class.selected]="isVersionSelected(version.jcrUUID)"
-                  [version]="version"
-                  [isSelected]="isVersionSelected(version.jcrUUID)"
-                  [actionInProgress]="actionInProgress"
-                  [restoreEnabled]="versionsInfo!.restoreEnabled"
-                  (restoreVersion)="restoreVersion($event)">
-      </em-version>
-    </ng-container>
-  </div>
+    <em-version *ngIf="!isFirst"
+                matRipple
+                class="version"
+                [class]="'qa-version-' + version.jcrUUID"
+                (click)="selectVersion(version.jcrUUID)"
+                [class.selected]="isVersionSelected(version.jcrUUID)"
+                [version]="version"
+                [isSelected]="isVersionSelected(version.jcrUUID)"
+                [actionInProgress]="actionInProgress"
+                [restoreEnabled]="versionsInfo!.restoreEnabled"
+                (restoreVersion)="restoreVersion($event)">
+    </em-version>
+  </ng-container>
 </div>

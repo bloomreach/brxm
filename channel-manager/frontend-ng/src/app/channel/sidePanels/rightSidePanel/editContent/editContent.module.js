@@ -22,7 +22,6 @@ import editContentMainComponent from './editContentMain/editContentMain.componen
 import editContentService from './editContent.service';
 import editContentToolsComponent from './editContentTools/editContentTools.component';
 import editPageUnavailableComponent from './editPageUnavailable/editPageUnavailable.component';
-import versionsInfoWrapperComponent from './versionsInfoWrapper/versionsInfoWrapper.component';
 
 const editContentModule = angular
   .module('hippo-cm.channel.rightSidePanel.editContentModule', [])
@@ -33,7 +32,6 @@ const editContentModule = angular
   .component('editContentIcon', editContentIconComponent)
   .component('editContentMain', editContentMainComponent)
   .component('editContentTools', editContentToolsComponent)
-  .component('editPageUnavailable', editPageUnavailableComponent)
-  .component('versionsInfoWrapper', versionsInfoWrapperComponent);
+  .component('editPageUnavailable', editPageUnavailableComponent);
 
 export default editContentModule.name;
