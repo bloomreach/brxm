@@ -1,6 +1,6 @@
 {
   "name": "@bloomreach/navapp",
-  "version": "1.4.0-3",
+  "version": "1.4.0-6",
   "scripts": {
     "ng": "ng",
     "start": "ng serve navapp --public-host http://127.0.0.1:4200",
@@ -33,7 +33,7 @@
     "@angular/platform-browser-dynamic": "8.2.14",
     "@angular/router": "8.2.14",
     "@bloomreach/frontend-theme": "1.0.0-6",
-    "@bloomreach/navapp-communication": "2.0.0-3",
+    "@bloomreach/navapp-communication": "2.0.0-4",
     "@ngx-translate/core": "11.0.1",
     "@ngx-translate/http-loader": "4.0.0",
     "core-js": "3.4.5",

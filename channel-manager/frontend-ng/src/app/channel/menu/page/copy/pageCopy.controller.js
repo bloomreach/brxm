@@ -79,7 +79,7 @@ class PageCopyCtrl {
   copy() {
     const headers = {
       siteMapItemUUId: this.item.id,
-      targetName: this.lastPathInfoElement,
+      targetName: encodeURIComponent(this.lastPathInfoElement),
     };
     if (this.channel) {
       headers.mountId = this.channel.mountId;

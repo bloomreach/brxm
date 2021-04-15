@@ -68,6 +68,7 @@ implements OnChanges, OnDestroy {
 
   private onUpdate(): void {
     this.changeDetectorRef.markForCheck();
+    this.ngOnChanges({});
     this.page.state.getValue()?.sync();
   }
 
