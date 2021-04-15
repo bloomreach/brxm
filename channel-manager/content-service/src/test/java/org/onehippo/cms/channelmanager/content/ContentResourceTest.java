@@ -451,7 +451,7 @@ public class ContentResourceTest extends CXFTest {
         final String branchId = BranchConstants.MASTER_BRANCH_ID;
 
         expect(documentVersionService.getVersionInfo(eq(handleId), eq(branchId), anyObject(), anyBoolean()))
-                .andReturn(new DocumentVersionInfo(emptyList(), false, true, false, false));
+                .andReturn(new DocumentVersionInfo(emptyList(), false, true, false, false, true));
         replayAll();
 
         when()
