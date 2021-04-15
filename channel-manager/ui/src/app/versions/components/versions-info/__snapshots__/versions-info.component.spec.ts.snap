@@ -6,28 +6,24 @@ exports[`VersionsInfoComponent initial rendering should show list of versions 1`
 >
 
   <div
-    class="mat-typography"
+    class="mat-typography versions-list qa-version-list"
   >
-    <div
-      class="versions-list qa-version-list"
-    >
 
 
 
-      <em-latest-version
-        class="qa-version-testId selected"
-      />
+    <em-latest-version
+      class="qa-version-testId selected"
+    />
 
 
 
 
 
-      <em-version
-        class="qa-version-testVariantId"
-        matripple=""
-      />
+    <em-version
+      class="qa-version-testVariantId"
+      matripple=""
+    />
 
-    </div>
   </div>
 </div>
 `;
