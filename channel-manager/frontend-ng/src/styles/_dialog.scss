@@ -53,4 +53,38 @@ md-dialog.md-bloomreach-theme {
     border-top: $dialog-footer-border-top;
     min-height: $dialog-footer-height + 1;
   }
+
+  &.new-dialog {
+    h3 {
+      background-color: $bloomreach-gray-5;
+      border-bottom: 1px solid $bloomreach-gray-12;
+      font-size: $font-medium;
+      font-weight: 600;
+      height: $toolbar-round-button-size;
+      line-height: $toolbar-round-button-size;
+      margin: 0;
+      padding: 0 $new-dialog-gutter;
+    }
+
+    textarea {
+      height: 200px !important;
+      margin: 0;
+      padding: $new-dialog-gutter;
+    }
+
+    p {
+      margin: 0 0 $new-dialog-gutter 0;
+    }
+
+    &.reject-prompt {
+      .md-dialog-content {
+        padding: $new-dialog-gutter;
+      }
+
+      // not needed for reject-prompt as it's not used and it messes up the style
+      md-input-container .md-errors-spacer {
+        display: none;
+      }
+    }
+  }
 }
