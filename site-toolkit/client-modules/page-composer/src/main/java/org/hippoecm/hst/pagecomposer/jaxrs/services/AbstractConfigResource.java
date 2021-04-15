@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -227,11 +227,11 @@ public class AbstractConfigResource {
 
     protected Response logAndReturnServerError(Exception e) {
         if (log.isDebugEnabled()) {
-            log.warn(e.toString(), e);
+            log.warn(e.getMessage(), e);
         } else {
-            log.warn(e.toString(), e);
+            log.warn(e.toString());
         }
-        return error(e.getMessage());
+		return  error(e.getMessage());
     }
 
     protected Response logAndReturnClientError(ClientException e) {
