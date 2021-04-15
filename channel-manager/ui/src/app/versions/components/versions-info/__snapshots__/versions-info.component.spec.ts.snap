@@ -34,7 +34,7 @@ exports[`VersionsInfoComponent initial rendering should show list of versions 1`
 
 exports[`VersionsInfoComponent selecting a version should indicate the selected version 1`] = `
 <div
-  class="versions-list qa-version-list"
+  class="mat-typography versions-list qa-version-list"
 >
 
 
