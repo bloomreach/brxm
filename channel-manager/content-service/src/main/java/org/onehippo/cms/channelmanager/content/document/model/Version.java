@@ -30,21 +30,26 @@ public class Version {
     private final Calendar timestamp;
     private final String userName;
     private final String jcrUUID;
+    // if true, this version corresponds to the 'published variant' below the handle
+    private boolean published;
     private final String branchId;
     private String label;
     private Campaign campaign;
+    private boolean active;
 
     @JsonCreator
     public Version(
             @JsonProperty("timestamp") Calendar timestamp,
             @JsonProperty("userName") String userName,
             @JsonProperty("jcrUUID") String jcrUUID,
+            @JsonProperty("published") boolean published,
             @JsonProperty("branchId") String branchId,
             @JsonProperty("label") String label,
             @JsonProperty("campaign") Campaign campaign) {
         this.timestamp = timestamp;
         this.userName = userName;
         this.jcrUUID = jcrUUID;
+        this.published = published;
         this.branchId = branchId;
         this.label = label;
         this.campaign = campaign;
@@ -62,6 +67,14 @@ public class Version {
         return jcrUUID;
     }
 
+    public boolean isPublished() {
+        return published;
+    }
+
+    public void setPublished(final boolean published) {
+        this.published = published;
+    }
+
     public String getBranchId() {
         return branchId;
     }
@@ -72,5 +85,13 @@ public class Version {
 
     public Campaign getCampaign() {
         return campaign;
+    }
+
+    public void setActive(final boolean active) {
+        this.active = active;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 }

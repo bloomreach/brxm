@@ -63,7 +63,7 @@ public class ChannelContentServiceModuleMapperTest {
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         assertThat(jsonStringRepresentation, is(df.format(Date.from(timestamp.toInstant()))));
 
-        Version version = new Version(timestamp, "admin", "uuid-123", "foo", "My Label",
+        Version version = new Version(timestamp, "admin", "uuid-123", true, "foo", "My Label",
                 new Campaign("uuid-123", timestamp, timestamp));
 
         String serializedVersion = objectMapper.writeValueAsString(version);
@@ -85,7 +85,7 @@ public class ChannelContentServiceModuleMapperTest {
                 deserVersion.getCampaign().getUuid());
 
         // null label and null campaign should not be present in the serialization string
-        version = new Version(timestamp, "admin", "uuid-123", "foo", null, null);
+        version = new Version(timestamp, "admin", "uuid-123", true, "foo", null, null);
         serializedVersion = objectMapper.writeValueAsString(version);
 
         assertFalse(serializedVersion.contains("campaign"));
