@@ -72,10 +72,10 @@ describe('PageService', () => {
 
     const versionsServiceMock = {
       getVersions: jest.fn().mockResolvedValue([
-        { jcrUUID: '1', timestamp: 123, userName: 'user1' },
-        { jcrUUID: '2', timestamp: 1234, userName: 'user2' },
+        { jcrUUID: '1', timestamp: 123, userName: 'user1', branchId: 'master' },
+        { jcrUUID: '2', timestamp: 1234, userName: 'user2', branchId: 'master' },
       ]),
-      isCurrentVersion: jest.fn(v => v.jcrUUID === '1'),
+      isCurrentVersion: jest.fn(jcrUUID => jcrUUID === '1'),
     };
 
     TestBed.configureTestingModule({
@@ -432,6 +432,7 @@ describe('PageService', () => {
         undefined,
         {
           jcrUUID: '2',
+          branchId: 'master',
           timestamp: 1234,
           userName: 'user2',
        },
@@ -465,6 +466,7 @@ describe('PageService', () => {
         undefined,
         {
           jcrUUID: '2',
+          branchId: 'master',
           timestamp: 1234,
           userName: 'user2',
         },
@@ -496,7 +498,7 @@ describe('PageService', () => {
       }
 
       if (expectedStatusName.startsWith('PreviousVersion')) {
-        mocked(versionsService.isCurrentVersion).mockImplementation(v => v.jcrUUID === '2');
+        mocked(versionsService.isCurrentVersion).mockImplementation(jcrUUID => jcrUUID === '2');
       }
 
       const actual = await service.getPageStatusInfo();

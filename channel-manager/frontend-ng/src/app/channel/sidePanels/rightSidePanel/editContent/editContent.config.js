@@ -95,7 +95,7 @@ function config($stateProvider) {
     component: 'editContentMain',
   }).state({
     name: 'hippo-cm.channel.edit-page.versions',
-    component: 'versionsInfoWrapper',
+    template: '<em-versions-info></em-versions-info>',
   });
 }
 

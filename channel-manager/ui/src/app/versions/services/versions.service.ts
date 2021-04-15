@@ -21,6 +21,7 @@ import { NG1_ROOT_SCOPE } from '../../services/ng1/root-scope.ng1.service';
 import { PageStructureService } from '../../services/page-structure.service';
 import { ProjectService } from '../../services/project.service';
 import { Version } from '../models/version.model';
+import { VersionsInfo } from '../models/versions-info.model';
 
 @Injectable({
   providedIn: 'root',
@@ -45,6 +46,11 @@ export class VersionsService {
     });
   }
 
+  async getVersionsInfo(documentId: string): Promise<VersionsInfo> {
+    const branchId = this.projectService.getSelectedProjectId();
+    return this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId);
+  }
+
   async getVersions(documentId: string): Promise<Version[]> {
     const branchId = this.projectService.getSelectedProjectId();
 
@@ -53,7 +59,7 @@ export class VersionsService {
     return versions;
   }
 
-  isCurrentVersion(version: Version): boolean {
-    return version.jcrUUID === this.unpublishedVariantId;
+  isCurrentVersion(versionUUID: string): boolean {
+    return versionUUID === this.unpublishedVariantId;
   }
 }
