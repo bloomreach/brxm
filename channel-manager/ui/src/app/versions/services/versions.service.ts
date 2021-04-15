@@ -15,6 +15,7 @@
  */
 
 import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { ReplaySubject } from 'rxjs';
 
 import { Ng1ContentService, NG1_CONTENT_SERVICE } from '../../services/ng1/content.ng1.service';
 import { NG1_ROOT_SCOPE } from '../../services/ng1/root-scope.ng1.service';
@@ -28,6 +29,9 @@ import { VersionsInfo } from '../models/versions-info.model';
 })
 export class VersionsService {
   private unpublishedVariantId: string | undefined = undefined;
+
+  private readonly versionsInfo = new ReplaySubject<VersionsInfo>(1);
+  readonly versionsInfo$ = this.versionsInfo.asObservable();
 
   constructor(
     @Inject(NG1_ROOT_SCOPE) private readonly $rootScope: ng.IRootScopeService,
@@ -46,9 +50,10 @@ export class VersionsService {
     });
   }
 
-  async getVersionsInfo(documentId: string): Promise<VersionsInfo> {
+  async getVersionsInfo(documentId: string): Promise<void> {
     const branchId = this.projectService.getSelectedProjectId();
-    return this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId);
+    const versionsInfo = await this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId);
+    this.versionsInfo.next(versionsInfo);
   }
 
   async getVersions(documentId: string): Promise<Version[]> {

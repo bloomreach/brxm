@@ -14,34 +14,43 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Inject, Input, OnInit, Output } from '@angular/core';
+import { UIRouterGlobals } from '@uirouter/core';
 
+import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
+import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
 import { Version } from '../../models/version.model';
+import { VersionsInfo } from '../../models/versions-info.model';
+import { VersionsService } from '../../services/versions.service';
 
 @Component({
   selector: 'em-latest-version',
   templateUrl: './latest-version.component.html',
   styleUrls: ['./latest-version.component.scss'],
 })
-export class LatestVersionComponent implements OnInit {
+export class LatestVersionComponent {
   @Input()
-  version?: Version;
+  version!: Version;
 
   @Input()
-  isSelected?: boolean;
+  versionsInfo!: VersionsInfo;
 
   @Input()
-  createEnabled?: boolean;
-
-  @Input()
-  actionInProgress?: boolean;
+  isSelected!: boolean;
 
   @Output()
-  createVersion = new EventEmitter<void>();
+  getVersionsInfo = new EventEmitter<void>();
 
-  constructor() { }
+  private readonly documentId = this.ng1UiRouterGlobals.params.documentId;
 
-  ngOnInit(): void {
+  constructor(
+    @Inject(NG1_WORKFLOW_SERVICE) private readonly ng1WorkflowService: Ng1WorkflowService,
+    @Inject(NG1_UI_ROUTER_GLOBALS) private readonly ng1UiRouterGlobals: UIRouterGlobals,
+    private readonly versionsService: VersionsService,
+  ) { }
+
+  async createVersion(): Promise<void> {
+    await this.ng1WorkflowService.createWorkflowAction(this.documentId, {}, 'version');
+    this.versionsService.getVersionsInfo(this.ng1UiRouterGlobals.params.documentId);
   }
-
 }

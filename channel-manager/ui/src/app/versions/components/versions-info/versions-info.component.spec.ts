@@ -14,29 +14,22 @@
  * limitations under the License.
  */
 
-import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
 
 import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1.service';
 import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
-import { NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
 import { VersionsService } from '../../../versions/services/versions.service';
 import { VersionsInfo } from '../../models/versions-info.model';
 
 import { VersionsInfoComponent } from './versions-info.component';
-
-@Pipe({name: 'moment'})
-export class MomentMockPipe implements PipeTransform {
-  transform(value: number | string | Date, format?: string): string {
-    return `${value}`;
-  }
-}
 
 describe('VersionsInfoComponent', () => {
   let component: VersionsInfoComponent;
@@ -80,12 +73,9 @@ describe('VersionsInfoComponent', () => {
       load: jest.fn(() => Promise.resolve()),
     };
 
-    const workflowServiceMock = {
-      createWorkflowAction: jest.fn(() => { }),
-    };
-
     const versionsServiceMock = {
-      getVersionsInfo: () => Promise.resolve(mockVersionsInfo),
+      versionsInfo$: of(mockVersionsInfo),
+      getVersionsInfo: jest.fn(),
       isCurrentVersion: jest.fn((id: string) => id === firstVersionUUID),
     };
 
@@ -98,7 +88,6 @@ describe('VersionsInfoComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         VersionsInfoComponent,
-        MomentMockPipe,
       ],
       imports: [
         MatListModule,
@@ -110,7 +99,6 @@ describe('VersionsInfoComponent', () => {
       providers: [
         { provide: NG1_IFRAME_SERVICE, useValue: iframeServiceMock },
         { provide: NG1_CHANNEL_SERVICE, useValue: channelServiceMock },
-        { provide: NG1_WORKFLOW_SERVICE, useValue: workflowServiceMock },
         { provide: NG1_UI_ROUTER_GLOBALS, useValue: uiRouterGlobalsMock },
         { provide: VersionsService, useValue: versionsServiceMock },
       ],
@@ -158,7 +146,7 @@ describe('VersionsInfoComponent', () => {
       expect(ng1IframeService.load).toHaveBeenCalledWith(`${renderPath}&br_version_uuid=${secondVersionUUID}`);
     });
 
-    fit('should indicate the selected version', () => {
+    it('should indicate the selected version', () => {
       jest.spyOn(versionsService, 'isCurrentVersion').mockImplementation(id => id === secondVersionUUID);
 
       const versionItem = componentEl.querySelector<HTMLElement>(`.qa-version-${secondVersionUUID}`);

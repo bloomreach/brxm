@@ -21,11 +21,9 @@
                        [class]="'qa-version-' + version.jcrUUID"
                        (click)="selectVersion(version.jcrUUID)"
                        [class.selected]="isVersionSelected(version.jcrUUID)"
-                       [version]="version"
                        [isSelected]="isVersionSelected(version.jcrUUID)"
-                       [actionInProgress]="actionInProgress"
-                       [createEnabled]="versionsInfo!.createEnabled"
-                       (createVersion)="createVersion()">
+                       [version]="version"
+                       [versionsInfo]="versionsInfo">
     </em-latest-version>
 
     <em-version *ngIf="!isFirst"
@@ -34,11 +32,10 @@
                 [class]="'qa-version-' + version.jcrUUID"
                 (click)="selectVersion(version.jcrUUID)"
                 [class.selected]="isVersionSelected(version.jcrUUID)"
-                [version]="version"
                 [isSelected]="isVersionSelected(version.jcrUUID)"
-                [actionInProgress]="actionInProgress"
-                [restoreEnabled]="versionsInfo!.restoreEnabled"
-                (restoreVersion)="restoreVersion($event)">
+                [renderPath]="getRenderPath()"
+                [version]="version"
+                [versionsInfo]="versionsInfo">
     </em-version>
   </ng-container>
 </div>
