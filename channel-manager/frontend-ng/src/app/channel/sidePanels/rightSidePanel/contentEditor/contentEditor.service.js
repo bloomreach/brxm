@@ -164,9 +164,9 @@ class ContentEditorService {
     CmsService,
     ContentService,
     DialogService,
+    DocumentWorkflowService,
     FeedbackService,
     FieldService,
-    WorkflowService,
   ) {
     'ngInject';
 
@@ -177,9 +177,9 @@ class ContentEditorService {
     this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.DialogService = DialogService;
+    this.DocumentWorkflowService = DocumentWorkflowService;
     this.FeedbackService = FeedbackService;
     this.FieldService = FieldService;
-    this.WorkflowService = WorkflowService;
   }
 
   _setDocumentId(id) {
@@ -541,57 +541,14 @@ class ContentEditorService {
       });
   }
 
-  confirmPublication() {
-    const params = { documentName: this.document.displayName };
-    const textContent = this.$translate.instant(this._confirmPublicationTextKey(), params);
-    const ok = this.$translate.instant(this._confirmPublicationOkKey());
-    const cancel = this.$translate.instant('CANCEL');
-
-    const confirm = this.DialogService.confirm()
-      .textContent(textContent)
-      .ok(ok)
-      .cancel(cancel);
-
-    return this.DialogService.show(confirm)
-      .catch(() => {
-        this._reportPublishCancelAction();
-
-        return this.$q.reject();
-      });
-  }
-
-  _reportPublishCancelAction() {
-    const eventName = this.canPublish ? 'VisualEditingLightboxCancel' : 'VisualEditingLightboxRequestPubCancel';
-    this.CmsService.reportUsageStatistic(eventName);
-  }
-
-  _confirmPublicationTextKey() {
-    if (this.canPublish) {
-      return this.documentDirty
-        ? 'CONFIRM_PUBLISH_DIRTY_DOCUMENT' : 'CONFIRM_PUBLISH_DOCUMENT';
-    }
-
-    return this.documentDirty
-      ? 'CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT' : 'CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT';
-  }
-
-  _confirmPublicationOkKey() {
-    if (this.canPublish) {
-      return this.isDocumentDirty() ? 'SAVE_AND_PUBLISH' : 'PUBLISH';
-    }
-
-    return this.isDocumentDirty() ? 'SAVE_AND_REQUEST_PUBLICATION' : 'REQUEST_PUBLICATION';
-  }
-
   publish() {
-    const workflowAction = this.canPublish ? 'publish' : 'requestPublication';
     const notificationKey = this.canPublish ? 'NOTIFICATION_DOCUMENT_PUBLISHED' : 'NOTIFICATION_PUBLICATION_REQUESTED';
     const errorKey = this.canPublish ? 'ERROR_PUBLISH_DOCUMENT_FAILED' : 'ERROR_REQUEST_PUBLICATION_FAILED';
     const messageParams = { documentName: this.document.displayName };
 
     return this.ContentService
       .discardChanges(this.documentId)
-      .then(() => this.WorkflowService.createWorkflowAction(this.documentId, workflowAction)
+      .then(() => this._publish()
         .then(() => this.FeedbackService.showNotification(notificationKey, messageParams))
         .then(() => this._reportPublishAction())
         .finally(() => this.ContentService.getEditableDocument(this.documentId)
@@ -620,13 +577,19 @@ class ContentEditorService {
       });
   }
 
+  _publish() {
+    return this.canPublish
+      ? this.DocumentWorkflowService.publish(this.documentId)
+      : this.DocumentWorkflowService.requestPublication(this.documentId);
+  }
+
   _reportPublishAction() {
     const eventName = this.canPublish ? 'VisualEditingLightboxPublish' : 'VisualEditingLightboxRequestPub';
     this.CmsService.reportUsageStatistic(eventName);
   }
 
   cancelRequestPublication() {
-    return this.WorkflowService.createWorkflowAction(this.documentId, 'cancelRequest')
+    return this.DocumentWorkflowService.cancelRequest(this.documentId)
       .catch(() => {
         this.FeedbackService.showError('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', {
           documentName: this.error && this.error.messageParams && this.error.messageParams.displayName,

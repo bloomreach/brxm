@@ -20,14 +20,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.5.0-SNAPSHOT</version>
+    <version>14.6.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo CMS l10n Tooling Project</name>
   <groupId>org.onehippo.cms.l10n</groupId>
   <artifactId>hippo-cms-l10n-tooling-project</artifactId>
-  <version>14.5.0-SNAPSHOT</version>
+  <version>14.6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>

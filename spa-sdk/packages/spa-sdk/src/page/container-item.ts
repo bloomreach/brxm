@@ -36,10 +36,7 @@ import { resolve } from './reference';
  */
 export const TYPE_CONTAINER_ITEM_UNDEFINED: symbol = Symbol.for('ContainerItemUndefined');
 
-const PARAMETER_HIDDEN = 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide';
-
 interface ContainerItemParameters {
-  [PARAMETER_HIDDEN]?: 'on' | 'off';
   [parameter: string]: string | undefined;
 }
 
@@ -47,6 +44,7 @@ interface ContainerItemParameters {
  * Meta-data of a container item.
  */
 export interface ContainerItemMeta extends ComponentMeta {
+  hidden?: boolean;
   params?: ContainerItemParameters;
   paramsInfo?: ComponentMeta['params'];
 }
@@ -139,7 +137,7 @@ export class ContainerItemImpl
   }
 
   isHidden() {
-    return this.model.meta.params?.[PARAMETER_HIDDEN] === 'on';
+    return !!this.model.meta.hidden;
   }
 
   getParameters<T>(): T {

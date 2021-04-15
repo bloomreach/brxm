@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-plugin-dashboard-document-wizard-root</artifactId>
-    <version>14.5.0-SNAPSHOT</version>
+    <version>14.6.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-plugin-dashboard-document-wizard-essentials-demo-feature</artifactId>

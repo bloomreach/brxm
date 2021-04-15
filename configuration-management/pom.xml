@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.5.0-SNAPSHOT</version>
+    <version>14.6.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -31,7 +31,7 @@
 
   <groupId>org.onehippo.cms</groupId>
   <artifactId>hippo-configuration-management</artifactId>
-  <version>14.5.0-SNAPSHOT</version>
+  <version>14.6.0-SNAPSHOT</version>
   
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
@@ -39,7 +39,7 @@
 
     <hippo.testutils.version>${hippo.release.version}</hippo.testutils.version>
     <hippo.services.version>${hippo.release.version}</hippo.services.version>
-    <hippo.jackrabbit.version>2.18.5-h3</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.20.2-h2</hippo.jackrabbit.version>
     <hippo.utilities.version>${hippo.release.version}</hippo.utilities.version>
     <snakeyaml.version>1.26</snakeyaml.version>
     <commons-lang3.version>3.8.1</commons-lang3.version>

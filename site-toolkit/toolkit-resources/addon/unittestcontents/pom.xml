@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst.toolkit-resources</groupId>
     <artifactId>addon</artifactId>
-    <version>14.5.0-SNAPSHOT</version>
+    <version>14.6.0-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Addon Resources to the Repository for Unit Tests</name>
