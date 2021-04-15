@@ -25,10 +25,8 @@ import { Version } from '../models/version.model';
 @Injectable({
   providedIn: 'root',
 })
-export class VersionsService implements OnDestroy {
+export class VersionsService {
   private unpublishedVariantId: string | undefined = undefined;
-  private readonly onPageChangeUnsubscribe: () => void;
-  private readonly onPageCheckChangesUnsubscribe: () => void;
 
   constructor(
     @Inject(NG1_ROOT_SCOPE) private readonly $rootScope: ng.IRootScopeService,
@@ -38,17 +36,13 @@ export class VersionsService implements OnDestroy {
   ) {
     this.unpublishedVariantId = this.pageStructureService.getUnpublishedVariantId();
 
-    this.onPageChangeUnsubscribe = this.$rootScope.$on('page:change', () => {
+    this.$rootScope.$on('page:change', () => {
       this.unpublishedVariantId = this.pageStructureService.getUnpublishedVariantId();
     });
-    this.onPageCheckChangesUnsubscribe = this.$rootScope.$on('page:check-changes', () => {
-      this.unpublishedVariantId = this.pageStructureService.getUnpublishedVariantId();
-    });
-  }
 
-  ngOnDestroy(): void {
-    this.onPageChangeUnsubscribe();
-    this.onPageCheckChangesUnsubscribe();
+    this.$rootScope.$on('page:check-changes', () => {
+      this.unpublishedVariantId = this.pageStructureService.getUnpublishedVariantId();
+    });
   }
 
   async getVersions(documentId: string): Promise<Version[]> {
