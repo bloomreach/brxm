@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,8 +28,11 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.platform.configuration.components.HstComponentsConfigurationService;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.junit.After;
@@ -44,6 +47,7 @@ import static org.junit.Assert.assertTrue;
 public class HstComponentsConfigurationModelsIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
+    private InternalHstModel hstModel;
     private Session session;
 
     @Override
@@ -51,6 +55,8 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
     public void setUp() throws Exception {
         super.setUp();
         hstManager = getComponent(HstManager.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        hstModel = (InternalHstModel) provider.getHstModel();
         this.session = createSession();
         createHstConfigBackup(session);
     }
@@ -91,6 +97,10 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         // since unittestproject contains its own 'hst:prototypepages' node, we first move this node away (otherwise
         // instance won't be shared)
         removePagePrototypeFromConfig(session);
+        // wait for the jcr events to really have been all processed
+        Thread.sleep(100);
+        // make sure model is fully reloaded the first time
+        hstModel.invalidate();
 
         ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
         ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
@@ -163,6 +173,11 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
     @Test
     public void testReloadOnlyChangedHstComponentsConfigurations() throws Exception {
         removePagePrototypeFromConfig(session);
+
+        // wait for the jcr events to really have been all processed
+        Thread.sleep(100);
+        // make sure model is fully reloaded the first time
+        hstModel.invalidate();
 
         final ResolvedMount mountBefore1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/");
         final ResolvedMount mountBefore2 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/");

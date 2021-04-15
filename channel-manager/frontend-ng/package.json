@@ -20,6 +20,7 @@
   },
   "config": {
     "dist": "target/classes/angular/hippo-cm/",
+    "host": "localhost",
     "port": 9090
   },
   "scripts": {
@@ -55,7 +56,7 @@
   "dependencies": {
     "@bloomreach/dragula": "3.7.2-br.3",
     "@bloomreach/frontend-theme": "1.0.0-8",
-    "@bloomreach/navapp-communication": "2.0.0-1",
+    "@bloomreach/navapp-communication": "2.0.0-4-ENT-2354",
     "@mdi/font": "5.8.55",
     "@uirouter/angularjs": "1.0.25",
     "@uirouter/sticky-states": "1.5.1",

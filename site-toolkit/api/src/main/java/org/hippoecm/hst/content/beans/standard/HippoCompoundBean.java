@@ -32,4 +32,6 @@ public interface HippoCompoundBean extends HippoBean {
     default String getRepresentationId() {
         return getIdentifier();
     }
+
+
 }

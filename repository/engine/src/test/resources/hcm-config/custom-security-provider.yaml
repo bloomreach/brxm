@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:security/custom-security-provider:
+      jcr:primaryType: hipposys:securityprovider
+      hipposys:classname: com.bloomreach.xm.repository.security.CustomSecurityProviderTest$CustomSecurityProvider
+    /hippo:configuration/hippo:users/custom-security-provider-user:
+      jcr:primaryType: hipposys:user
+      hipposys:securityprovider: custom-security-provider
+      hipposys:userroles: [a, b]

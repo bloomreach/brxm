@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.5.0-SNAPSHOT</version>
+    <version>14.6.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
-  <version>14.5.0-SNAPSHOT</version>
+  <version>14.6.0-SNAPSHOT</version>
 
   <inceptionYear>2007</inceptionYear>
 
@@ -83,7 +83,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.jackrabbit.version>2.18.5-h3</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.20.2-h2</hippo.jackrabbit.version>
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.utilities.version>${hippo.release.version}</hippo.utilities.version>
     <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
@@ -123,7 +123,6 @@
     <hippo.ckeditor.version>4.14.0-h1</hippo.ckeditor.version>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
-
   </properties>
 
   <build>
@@ -433,7 +432,6 @@
         <artifactId>hippo-repository-mockutils</artifactId>
         <version>${hippo.repository.version}</version>
       </dependency>
-
     </dependencies>
   </dependencyManagement>
 

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ describe('ExperimentStartFormComponent', () => {
 
   beforeEach(async () => {
     const variantsServiceMock = {
-      groupVariants: jest.fn(() => [{ id: 'variant-a', name: 'Variant (2 variants)', numberOfVariants: 2 }]),
+      groupVariants: jest.fn(() => [{ id: 'variant-1', name: 'Variant (2 variants)', numberOfVariants: 2 }]),
     };
 
     fixture = TestBed.configureTestingModule({
@@ -130,6 +130,12 @@ describe('ExperimentStartFormComponent', () => {
     expect(component.selectedVariant).toBe(component.groupedVariants[0]);
   });
 
+  it('should return the original variant', () => {
+    const firstOriginalVariant = component.variants[0];
+
+    expect(component.getOriginalVariant(component.groupedVariants[0])).toEqual(firstOriginalVariant);
+  });
+
   describe('if a goal is selected', () => {
     beforeEach(() => {
       component.selectedGoalId = 'goal-1';
@@ -149,7 +155,7 @@ describe('ExperimentStartFormComponent', () => {
       component.onSave();
 
       expect(result).toEqual({
-        variantId: 'variant-a',
+        variantId: 'variant-1',
         goalId: 'goal-1',
       });
     });

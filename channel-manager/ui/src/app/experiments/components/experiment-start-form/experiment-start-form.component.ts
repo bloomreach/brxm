@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
@@ -87,6 +87,10 @@ export class ExperimentStartFormComponent implements OnChanges {
       variantId: this.selectedVariant.id,
       goalId: this.selectedGoalId,
     });
+  }
+
+  getOriginalVariant(groupedVariant: GroupedVariant): Variant | undefined {
+    return this.variants.find(v => v.id === groupedVariant.id);
   }
 
   private reset(): void {

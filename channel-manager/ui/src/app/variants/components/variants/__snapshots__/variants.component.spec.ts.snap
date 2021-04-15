@@ -1,5 +1,942 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`VariantsComponent collapsing of variant expressions should hide expressions for non-default variant if toggle is clicked 1`] = `
+<div
+  id="root8"
+>
+  <div
+    class="mat-typography"
+  >
+    <div
+      class="variant-select"
+    >
+      <mat-form-field
+        appearance="outline"
+        class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label ng-untouched ng-pristine ng-valid mat-form-field-should-float"
+      >
+        <div
+          class="mat-form-field-wrapper"
+        >
+          <div
+            class="mat-form-field-flex"
+          >
+            
+            
+            <div
+              class="mat-form-field-outline"
+            >
+              <div
+                class="mat-form-field-outline-start"
+              />
+              <div
+                class="mat-form-field-outline-gap"
+              />
+              <div
+                class="mat-form-field-outline-end"
+              />
+            </div>
+            <div
+              class="mat-form-field-outline mat-form-field-outline-thick"
+            >
+              <div
+                class="mat-form-field-outline-start"
+              />
+              <div
+                class="mat-form-field-outline-gap"
+              />
+              <div
+                class="mat-form-field-outline-end"
+              />
+            </div>
+            
+            <div
+              class="mat-form-field-infix"
+            >
+              <mat-select
+                aria-disabled="false"
+                aria-invalid="false"
+                aria-multiselectable="false"
+                aria-required="false"
+                class="qa-variant-select mat-select ng-untouched ng-pristine ng-valid"
+                role="listbox"
+                tabindex="0"
+              >
+                <div
+                  aria-hidden="true"
+                  cdk-overlay-origin=""
+                  class="mat-select-trigger"
+                >
+                  <div
+                    class="mat-select-value"
+                  >
+                    
+                    
+                    <span
+                      class="mat-select-value-text"
+                    >
+                      
+                      <span>
+                        Dutch
+                      </span>
+                      
+                    </span>
+                  </div>
+                  <div
+                    class="mat-select-arrow-wrapper"
+                  >
+                    <div
+                      class="mat-select-arrow"
+                    />
+                  </div>
+                </div>
+                
+              </mat-select>
+              <span
+                class="mat-form-field-label-wrapper"
+              >
+                
+                <label
+                  class="mat-form-field-label"
+                >
+                  
+                  
+                  <mat-label
+                    class="qa-variant-select-label"
+                  >
+                     VARIANT 
+                  </mat-label>
+                  
+                  
+                </label>
+              </span>
+            </div>
+            
+          </div>
+          
+          <div
+            class="mat-form-field-subscript-wrapper"
+          >
+            
+            
+            <div
+              class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+              style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+            >
+              
+              <div
+                class="mat-form-field-hint-spacer"
+              />
+            </div>
+          </div>
+        </div>
+      </mat-form-field>
+      <button
+        aria-describedby="cdk-describedby-message-33"
+        cdk-describedby-host=""
+        class="qa-variant-copy mat-tooltip-trigger"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="copy"
+        >
+          copy
+        </mat-icon>
+      </button>
+      <button
+        aria-describedby="cdk-describedby-message-34"
+        cdk-describedby-host=""
+        class="qa-variant-delete mat-tooltip-trigger"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="trash"
+        >
+          trash
+        </mat-icon>
+      </button>
+    </div>
+    
+    
+    
+    <div
+      class="qa-variant-expressions-toggle variant-expressions-toggle"
+    >
+      <button
+        class="qa-variant-expressions-toggle-button"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="chevron-right"
+        >
+          chevron-right
+        </mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`VariantsComponent collapsing of variant expressions should not show expressions for default variant 1`] = `
+<div
+  id="root6"
+>
+  <div
+    class="mat-typography"
+  >
+    <div
+      class="variant-select"
+    >
+      <mat-form-field
+        appearance="outline"
+        class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label mat-form-field-hide-placeholder ng-untouched ng-pristine ng-valid"
+      >
+        <div
+          class="mat-form-field-wrapper"
+        >
+          <div
+            class="mat-form-field-flex"
+          >
+            
+            
+            <div
+              class="mat-form-field-outline"
+            >
+              <div
+                class="mat-form-field-outline-start"
+              />
+              <div
+                class="mat-form-field-outline-gap"
+              />
+              <div
+                class="mat-form-field-outline-end"
+              />
+            </div>
+            <div
+              class="mat-form-field-outline mat-form-field-outline-thick"
+            >
+              <div
+                class="mat-form-field-outline-start"
+              />
+              <div
+                class="mat-form-field-outline-gap"
+              />
+              <div
+                class="mat-form-field-outline-end"
+              />
+            </div>
+            
+            <div
+              class="mat-form-field-infix"
+            >
+              <mat-select
+                aria-disabled="false"
+                aria-invalid="false"
+                aria-multiselectable="false"
+                aria-required="false"
+                class="qa-variant-select mat-select mat-select-empty ng-untouched ng-pristine ng-valid"
+                role="listbox"
+                tabindex="0"
+              >
+                <div
+                  aria-hidden="true"
+                  cdk-overlay-origin=""
+                  class="mat-select-trigger"
+                >
+                  <div
+                    class="mat-select-value"
+                  >
+                    
+                    <span
+                      class="mat-select-placeholder"
+                    >
+                       
+                    </span>
+                    
+                  </div>
+                  <div
+                    class="mat-select-arrow-wrapper"
+                  >
+                    <div
+                      class="mat-select-arrow"
+                    />
+                  </div>
+                </div>
+                
+              </mat-select>
+              <span
+                class="mat-form-field-label-wrapper"
+              >
+                
+                <label
+                  class="mat-form-field-label mat-empty mat-form-field-empty"
+                >
+                  
+                  
+                  <mat-label
+                    class="qa-variant-select-label"
+                  >
+                     VARIANT 
+                  </mat-label>
+                  
+                  
+                </label>
+              </span>
+            </div>
+            
+          </div>
+          
+          <div
+            class="mat-form-field-subscript-wrapper"
+          >
+            
+            
+            <div
+              class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+              style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+            >
+              
+              <div
+                class="mat-form-field-hint-spacer"
+              />
+            </div>
+          </div>
+        </div>
+      </mat-form-field>
+      <button
+        aria-describedby="cdk-describedby-message-24"
+        cdk-describedby-host=""
+        class="qa-variant-copy mat-tooltip-trigger"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="copy"
+        >
+          copy
+        </mat-icon>
+      </button>
+      <button
+        aria-describedby="cdk-describedby-message-25"
+        cdk-describedby-host=""
+        class="qa-variant-delete mat-tooltip-trigger"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="trash"
+        >
+          trash
+        </mat-icon>
+      </button>
+    </div>
+    
+    
+    <div
+      class="qa-variant-expressions variant-expressions"
+    >
+      <div
+        class="variant-expressions-list"
+      >
+        <div
+          class="variant-expressions-list-label"
+        >
+           VARIANT_EXPRESSIONS 
+        </div>
+        
+        
+      </div>
+      <div
+        class="variant-expressions-actions"
+      >
+        <button
+          aria-describedby="cdk-describedby-message-26"
+          cdk-describedby-host=""
+          class="qa-variant-expressions-add-segment mat-tooltip-trigger"
+          mat-stroked-button=""
+        >
+          <mat-icon
+            svgicon="plus"
+          >
+            plus
+          </mat-icon>
+           SEGMENT 
+        </button>
+        <button
+          aria-describedby="cdk-describedby-message-27"
+          cdk-describedby-host=""
+          class="qa-variant-expressions-add-characteristic mat-tooltip-trigger"
+          mat-stroked-button=""
+        >
+          <mat-icon
+            svgicon="plus"
+          >
+            plus
+          </mat-icon>
+           CHARACTERISTIC 
+        </button>
+      </div>
+    </div>
+    
+    <div
+      class="qa-variant-expressions-toggle variant-expressions-toggle open"
+    >
+      <button
+        class="qa-variant-expressions-toggle-button"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="chevron-right"
+        >
+          chevron-right
+        </mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`VariantsComponent collapsing of variant expressions should show expressions for non-default variant 1`] = `
+<div
+  id="root7"
+>
+  <div
+    class="mat-typography"
+  >
+    <div
+      class="variant-select"
+    >
+      <mat-form-field
+        appearance="outline"
+        class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label mat-form-field-hide-placeholder ng-untouched ng-pristine ng-valid"
+      >
+        <div
+          class="mat-form-field-wrapper"
+        >
+          <div
+            class="mat-form-field-flex"
+          >
+            
+            
+            <div
+              class="mat-form-field-outline"
+            >
+              <div
+                class="mat-form-field-outline-start"
+              />
+              <div
+                class="mat-form-field-outline-gap"
+              />
+              <div
+                class="mat-form-field-outline-end"
+              />
+            </div>
+            <div
+              class="mat-form-field-outline mat-form-field-outline-thick"
+            >
+              <div
+                class="mat-form-field-outline-start"
+              />
+              <div
+                class="mat-form-field-outline-gap"
+              />
+              <div
+                class="mat-form-field-outline-end"
+              />
+            </div>
+            
+            <div
+              class="mat-form-field-infix"
+            >
+              <mat-select
+                aria-disabled="false"
+                aria-invalid="false"
+                aria-multiselectable="false"
+                aria-required="false"
+                class="qa-variant-select mat-select mat-select-empty ng-untouched ng-pristine ng-valid"
+                role="listbox"
+                tabindex="0"
+              >
+                <div
+                  aria-hidden="true"
+                  cdk-overlay-origin=""
+                  class="mat-select-trigger"
+                >
+                  <div
+                    class="mat-select-value"
+                  >
+                    
+                    <span
+                      class="mat-select-placeholder"
+                    >
+                       
+                    </span>
+                    
+                  </div>
+                  <div
+                    class="mat-select-arrow-wrapper"
+                  >
+                    <div
+                      class="mat-select-arrow"
+                    />
+                  </div>
+                </div>
+                
+              </mat-select>
+              <span
+                class="mat-form-field-label-wrapper"
+              >
+                
+                <label
+                  class="mat-form-field-label mat-empty mat-form-field-empty"
+                >
+                  
+                  
+                  <mat-label
+                    class="qa-variant-select-label"
+                  >
+                     VARIANT 
+                  </mat-label>
+                  
+                  
+                </label>
+              </span>
+            </div>
+            
+          </div>
+          
+          <div
+            class="mat-form-field-subscript-wrapper"
+          >
+            
+            
+            <div
+              class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+              style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+            >
+              
+              <div
+                class="mat-form-field-hint-spacer"
+              />
+            </div>
+          </div>
+        </div>
+      </mat-form-field>
+      <button
+        aria-describedby="cdk-describedby-message-28"
+        cdk-describedby-host=""
+        class="qa-variant-copy mat-tooltip-trigger"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="copy"
+        >
+          copy
+        </mat-icon>
+      </button>
+      <button
+        aria-describedby="cdk-describedby-message-29"
+        cdk-describedby-host=""
+        class="qa-variant-delete mat-tooltip-trigger"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="trash"
+        >
+          trash
+        </mat-icon>
+      </button>
+    </div>
+    
+    
+    <div
+      class="qa-variant-expressions variant-expressions"
+    >
+      <div
+        class="variant-expressions-list"
+      >
+        <div
+          class="variant-expressions-list-label"
+        >
+           VARIANT_EXPRESSIONS 
+        </div>
+        
+        
+        <div
+          class="variant-expressions-list-item"
+        >
+          <span>
+             EXPRESSION_SEGMENT EXPRESSION_AND 
+          </span>
+          <button
+            aria-describedby="cdk-describedby-message-32"
+            cdk-describedby-host=""
+            class="qa-variant-expressions-delete mat-tooltip-trigger"
+            mat-icon-button=""
+          >
+            <mat-icon
+              svgicon="close"
+            >
+              close
+            </mat-icon>
+          </button>
+        </div>
+        <div
+          class="variant-expressions-list-item"
+        >
+          <span>
+             EXPRESSION_TARGET_GROUP_COUNTRY EXPRESSION_AND 
+          </span>
+          <button
+            aria-describedby="cdk-describedby-message-32"
+            cdk-describedby-host=""
+            class="qa-variant-expressions-delete mat-tooltip-trigger"
+            mat-icon-button=""
+          >
+            <mat-icon
+              svgicon="close"
+            >
+              close
+            </mat-icon>
+          </button>
+        </div>
+        <div
+          class="variant-expressions-list-item"
+        >
+          <span>
+             EXPRESSION_TARGET_GROUP_CONTINENT  
+          </span>
+          <button
+            aria-describedby="cdk-describedby-message-32"
+            cdk-describedby-host=""
+            class="qa-variant-expressions-delete mat-tooltip-trigger"
+            mat-icon-button=""
+          >
+            <mat-icon
+              svgicon="close"
+            >
+              close
+            </mat-icon>
+          </button>
+        </div>
+      </div>
+      <div
+        class="variant-expressions-actions"
+      >
+        <button
+          aria-describedby="cdk-describedby-message-30"
+          cdk-describedby-host=""
+          class="qa-variant-expressions-add-segment mat-tooltip-trigger"
+          disabled=""
+          mat-stroked-button=""
+        >
+          <mat-icon
+            svgicon="plus"
+          >
+            plus
+          </mat-icon>
+           SEGMENT 
+        </button>
+        <button
+          aria-describedby="cdk-describedby-message-31"
+          cdk-describedby-host=""
+          class="qa-variant-expressions-add-characteristic mat-tooltip-trigger"
+          mat-stroked-button=""
+        >
+          <mat-icon
+            svgicon="plus"
+          >
+            plus
+          </mat-icon>
+           CHARACTERISTIC 
+        </button>
+      </div>
+    </div>
+    
+    <div
+      class="qa-variant-expressions-toggle variant-expressions-toggle open"
+    >
+      <button
+        class="qa-variant-expressions-toggle-button"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="chevron-right"
+        >
+          chevron-right
+        </mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`VariantsComponent collapsing of variant expressions should show expressions for non-default variant if toggle is clicked again 1`] = `
+<div
+  id="root9"
+>
+  <div
+    class="mat-typography"
+  >
+    <div
+      class="variant-select"
+    >
+      <mat-form-field
+        appearance="outline"
+        class="mat-form-field mat-primary mat-form-field-type-mat-select mat-form-field-appearance-outline mat-form-field-can-float mat-form-field-has-label ng-untouched ng-pristine ng-valid mat-form-field-should-float"
+      >
+        <div
+          class="mat-form-field-wrapper"
+        >
+          <div
+            class="mat-form-field-flex"
+          >
+            
+            
+            <div
+              class="mat-form-field-outline"
+            >
+              <div
+                class="mat-form-field-outline-start"
+              />
+              <div
+                class="mat-form-field-outline-gap"
+              />
+              <div
+                class="mat-form-field-outline-end"
+              />
+            </div>
+            <div
+              class="mat-form-field-outline mat-form-field-outline-thick"
+            >
+              <div
+                class="mat-form-field-outline-start"
+              />
+              <div
+                class="mat-form-field-outline-gap"
+              />
+              <div
+                class="mat-form-field-outline-end"
+              />
+            </div>
+            
+            <div
+              class="mat-form-field-infix"
+            >
+              <mat-select
+                aria-disabled="false"
+                aria-invalid="false"
+                aria-multiselectable="false"
+                aria-required="false"
+                class="qa-variant-select mat-select ng-untouched ng-pristine ng-valid"
+                role="listbox"
+                tabindex="0"
+              >
+                <div
+                  aria-hidden="true"
+                  cdk-overlay-origin=""
+                  class="mat-select-trigger"
+                >
+                  <div
+                    class="mat-select-value"
+                  >
+                    
+                    
+                    <span
+                      class="mat-select-value-text"
+                    >
+                      
+                      <span>
+                        Dutch
+                      </span>
+                      
+                    </span>
+                  </div>
+                  <div
+                    class="mat-select-arrow-wrapper"
+                  >
+                    <div
+                      class="mat-select-arrow"
+                    />
+                  </div>
+                </div>
+                
+              </mat-select>
+              <span
+                class="mat-form-field-label-wrapper"
+              >
+                
+                <label
+                  class="mat-form-field-label"
+                >
+                  
+                  
+                  <mat-label
+                    class="qa-variant-select-label"
+                  >
+                     VARIANT 
+                  </mat-label>
+                  
+                  
+                </label>
+              </span>
+            </div>
+            
+          </div>
+          
+          <div
+            class="mat-form-field-subscript-wrapper"
+          >
+            
+            
+            <div
+              class="mat-form-field-hint-wrapper ng-trigger ng-trigger-transitionMessages"
+              style="opacity:1;transform:translateY(0%);0:opacity;1:transform;"
+            >
+              
+              <div
+                class="mat-form-field-hint-spacer"
+              />
+            </div>
+          </div>
+        </div>
+      </mat-form-field>
+      <button
+        aria-describedby="cdk-describedby-message-38"
+        cdk-describedby-host=""
+        class="qa-variant-copy mat-tooltip-trigger"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="copy"
+        >
+          copy
+        </mat-icon>
+      </button>
+      <button
+        aria-describedby="cdk-describedby-message-39"
+        cdk-describedby-host=""
+        class="qa-variant-delete mat-tooltip-trigger"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="trash"
+        >
+          trash
+        </mat-icon>
+      </button>
+    </div>
+    
+    
+    <div
+      class="qa-variant-expressions variant-expressions"
+    >
+      <div
+        class="variant-expressions-list"
+      >
+        <div
+          class="variant-expressions-list-label"
+        >
+           VARIANT_EXPRESSIONS 
+        </div>
+        
+        
+        <div
+          class="variant-expressions-list-item"
+        >
+          <span>
+             EXPRESSION_SEGMENT EXPRESSION_AND 
+          </span>
+          <button
+            class="qa-variant-expressions-delete mat-tooltip-trigger"
+            mat-icon-button=""
+          >
+            <mat-icon
+              svgicon="close"
+            >
+              close
+            </mat-icon>
+          </button>
+        </div>
+        <div
+          class="variant-expressions-list-item"
+        >
+          <span>
+             EXPRESSION_TARGET_GROUP_COUNTRY EXPRESSION_AND 
+          </span>
+          <button
+            class="qa-variant-expressions-delete mat-tooltip-trigger"
+            mat-icon-button=""
+          >
+            <mat-icon
+              svgicon="close"
+            >
+              close
+            </mat-icon>
+          </button>
+        </div>
+        <div
+          class="variant-expressions-list-item"
+        >
+          <span>
+             EXPRESSION_TARGET_GROUP_CONTINENT  
+          </span>
+          <button
+            class="qa-variant-expressions-delete mat-tooltip-trigger"
+            mat-icon-button=""
+          >
+            <mat-icon
+              svgicon="close"
+            >
+              close
+            </mat-icon>
+          </button>
+        </div>
+      </div>
+      <div
+        class="variant-expressions-actions"
+      >
+        <button
+          class="qa-variant-expressions-add-segment mat-tooltip-trigger"
+          disabled=""
+          mat-stroked-button=""
+        >
+          <mat-icon
+            svgicon="plus"
+          >
+            plus
+          </mat-icon>
+           SEGMENT 
+        </button>
+        <button
+          class="qa-variant-expressions-add-characteristic mat-tooltip-trigger"
+          mat-stroked-button=""
+        >
+          <mat-icon
+            svgicon="plus"
+          >
+            plus
+          </mat-icon>
+           CHARACTERISTIC 
+        </button>
+      </div>
+    </div>
+    
+    <div
+      class="qa-variant-expressions-toggle variant-expressions-toggle open"
+    >
+      <button
+        class="qa-variant-expressions-toggle-button"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="chevron-right"
+        >
+          chevron-right
+        </mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`VariantsComponent should create 1`] = `
 <div
   id="root0"
@@ -198,6 +1135,21 @@ exports[`VariantsComponent should create 1`] = `
         </button>
       </div>
     </div>
+    
+    <div
+      class="qa-variant-expressions-toggle variant-expressions-toggle open"
+    >
+      <button
+        class="qa-variant-expressions-toggle-button"
+        mat-icon-button=""
+      >
+        <mat-icon
+          svgicon="chevron-right"
+        >
+          chevron-right
+        </mat-icon>
+      </button>
+    </div>
   </div>
 </div>
 `;
@@ -363,6 +1315,7 @@ exports[`VariantsComponent when the component editor is readonly should disable 
         VARIANT_EXPRESSIONS_DEFAULT
       </span>
     </div>
+    
     
   </div>
 </div>
