@@ -21,7 +21,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TimeZone;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.jcr.RepositoryException;
@@ -118,7 +120,6 @@ public class DocumentVersionServiceImplTest {
 
     @Test
     public void master_with_version_in_history() throws Exception {
-
 
         // make sure version node has a different creation time
         Thread.sleep(1);
@@ -257,6 +258,10 @@ public class DocumentVersionServiceImplTest {
 
         assertTrue(masterVersions.get(0).getTimestamp().getTimeInMillis() == mockNodeLastModified.getTimeInMillis());
 
+        assertOrderedByDate(masterVersions, version -> version.getTimestamp());
+    }
+
+    private void assertOrderedByDate(final List<Version> masterVersions, final Function<Version, Calendar> getDate) {
         Version prev = null;
         // the newest versions must be on top (except potentially the first one since that is the workspace version
         for (Version version : masterVersions.stream().skip(1).collect(Collectors.toList())) {
@@ -264,7 +269,7 @@ public class DocumentVersionServiceImplTest {
                 prev = version;
                 continue;
             }
-            assertTrue(prev.getTimestamp().getTimeInMillis() >= version.getTimestamp().getTimeInMillis());
+            assertTrue(getDate.apply(prev).getTimeInMillis() >= getDate.apply(version).getTimeInMillis());
             prev = version;
         }
     }
@@ -378,5 +383,78 @@ public class DocumentVersionServiceImplTest {
         mockHints.put("restoreVersionToBranch", true);
         assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false).isRestoreEnabled(),
                 is(true));
+    }
+
+    @Test
+    public void maximum_of_100_versions_returned_order_by_date() throws Exception {
+        // make sure version node has a different creation time
+        for (int i = 0; i < 100; i++) {
+            Thread.sleep(1);
+            versionManager.checkin(mockPreview.getPath());
+            versionManager.checkout(mockPreview.getPath());
+        }
+
+
+        final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false);
+        final List<Version> versions = versionInfo.getVersions();
+
+        assertEquals(100, versions.size());
+
+        assertOrderedByDate(versions, version -> version.getTimestamp());
+
+        final Version version98 = versions.get(98);
+        final Version version99 = versions.get(99);
+
+        // add one
+        Thread.sleep(1);
+        versionManager.checkin(mockPreview.getPath());
+        versionManager.checkout(mockPreview.getPath());
+
+        final DocumentVersionInfo versionInfo2 = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false);
+        final List<Version> versions2 = versionInfo2.getVersions();
+
+        assertEquals(100, versions2.size());
+
+        assertOrderedByDate(versions2, version -> version.getTimestamp());
+
+        assertFalse("Expected version 99 to have dropped off", versions2.stream().anyMatch(version -> version.getJcrUUID().equals(version99.getJcrUUID())));
+
+        assertEquals("Expected version 98 to have moved to position 99",
+                version98.getJcrUUID(), versions2.get(99).getJcrUUID());
+
+    }
+
+    @Test
+    public void maximum_of_100_campaign_versions_returned_order_by_START_date() throws Exception {
+        // make sure version node has a different creation time
+        final Random random = new Random();
+        for (int i = 0; i < 200; i++) {
+            Thread.sleep(1);
+
+            // add a non-campaign version
+            versionManager.checkin(mockPreview.getPath());
+            versionManager.checkout(mockPreview.getPath());
+
+            // add campaign version
+            MockVersion version = versionManager.checkin(mockPreview.getPath());
+
+            versionManager.checkout(mockPreview.getPath());
+            // random from and to date
+            final Calendar from = new Calendar.Builder().setTimeZone(TimeZone.getTimeZone("UTC")).setDate(2019, random.nextInt(12) + 1, random.nextInt(27)).build();
+            final Calendar to = new Calendar.Builder().setTimeZone(TimeZone.getTimeZone("UTC")).setDate(2021, random.nextInt(12) + 1, random.nextInt(27)).build();
+
+            // set a campaign for the version
+            JcrVersionsMetaUtils.setCampaign(mockHandle, new Campaign(version.getFrozenNode().getIdentifier(), from, to));
+        }
+
+        // only get campaign versions, there are 200 created, but we only expect the first 100 sorted on date
+        final DocumentVersionInfo versions = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, true);
+
+        assertEquals(100, versions.getVersions().size());
+
+        // all 100 items are campaigns
+        assertTrue(versions.getVersions().stream().anyMatch(version -> version.getCampaign() != null));
+
+        assertOrderedByDate(versions.getVersions(), version -> version.getCampaign().getFrom());
     }
 }
