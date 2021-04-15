@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.jcr.RepositoryException;
@@ -99,7 +100,7 @@ public class DocumentVersionServiceImplTest {
     public void workspace_only_master() {
 
         final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false);
-        assertThat(versionInfo.isRestoreEnabled(), is(true));
+        assertThat("When there are no versions, restore should be disabled", versionInfo.isRestoreEnabled(), is(false));
         final List<Version> versions = versionInfo.getVersions();
 
         assertThat("Expected workspace version to be present", versions.size(), is(1));
@@ -201,13 +202,17 @@ public class DocumentVersionServiceImplTest {
         mockPreview.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, newDate);
 
         final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false);
-        assertThat(versionInfo.isRestoreEnabled(), is(true));
+        // for master there is only the published variant
+        assertThat(versionInfo.isRestoreEnabled(), is(false));
         final List<Version> masterVersions = versionInfo.getVersions();
 
         assertThat(masterVersions.size(), is(1));
 
-        final List<Version> branchVersions = sut.getVersionInfo(mockHandle.getIdentifier(), "mybranch", userContext, false).getVersions();
+        final DocumentVersionInfo myBranchDocumentVersionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), "mybranch", userContext, false);
+        final List<Version> branchVersions = myBranchDocumentVersionInfo.getVersions();
 
+        // my branch has a version
+        assertThat(myBranchDocumentVersionInfo.isRestoreEnabled(), is(true));
         assertThat(branchVersions.size(), is(1));
 
         assertThat(masterVersions.get(0).getTimestamp().getTimeInMillis(), is(newDate.getTimeInMillis()));
@@ -281,9 +286,12 @@ public class DocumentVersionServiceImplTest {
             assertThat(versions.size(), is(0));
         }
 
+        // on purpose, we use different timezone as input: this is to show that the final 'versions' contain UTC time
+        final Calendar from = new Calendar.Builder().setTimeZone(TimeZone.getTimeZone("GMT")).setDate(2019, 1, 2).build();
+        final Calendar to = new Calendar.Builder().setTimeZone(TimeZone.getTimeZone("GMT")).setDate(2021, 1, 2).build();
 
-        Calendar from = new Calendar.Builder().setDate(2019, 1, 2).build();
-        Calendar to = new Calendar.Builder().setDate(2021, 1, 2).build();
+        final Calendar fromCompare = new Calendar.Builder().setTimeZone(TimeZone.getTimeZone("UTC")).setDate(2019, 1, 2).build();
+        final Calendar toCompare = new Calendar.Builder().setTimeZone(TimeZone.getTimeZone("UTC")).setDate(2021, 1, 2).build();
 
         // set a campaign for the version
         JcrVersionsMetaUtils.setCampaign(mockHandle, new Campaign(version.getFrozenNode().getIdentifier(), from, to));
@@ -295,13 +303,13 @@ public class DocumentVersionServiceImplTest {
 
             // 1 campaigns set
             assertThat(versions.size(), is(1));
-            assertEquals(versions.get(0).getCampaign(), new Campaign(version.getFrozenNode().getIdentifier(), from, to));
+            assertEquals(versions.get(0).getCampaign(), new Campaign(version.getFrozenNode().getIdentifier(), fromCompare, toCompare));
 
         }
     }
 
     @Test
-    public void versions_with_label() throws Exception {
+    public void campaign_versions_with_label() throws Exception {
         MockVersion version = versionManager.checkin(mockPreview.getPath());
         versionManager.checkout(mockPreview.getPath());
 
@@ -323,8 +331,8 @@ public class DocumentVersionServiceImplTest {
         }
 
         // Now also with a campaign
-        Calendar from = new Calendar.Builder().setDate(2019, 1, 2).build();
-        Calendar to = new Calendar.Builder().setDate(2021, 1, 2).build();
+        Calendar from = new Calendar.Builder().setTimeZone(TimeZone.getTimeZone("UTC")).setDate(2019, 1, 2).build();
+        Calendar to = new Calendar.Builder().setTimeZone(TimeZone.getTimeZone("UTC")).setDate(2021, 1, 2).build();
 
         // set a campaign for the version
         JcrVersionsMetaUtils.setCampaign(mockHandle, new Campaign(version.getFrozenNode().getIdentifier(), from, to));
@@ -343,7 +351,10 @@ public class DocumentVersionServiceImplTest {
     }
 
     @Test
-    public void restore_hints() {
+    public void restore_hints() throws RepositoryException {
+
+        // add a version otherwise restore is always disabled
+        versionManager.checkin(mockPreview.getPath());
 
         mockHints.clear();
         assertThat(sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false).isRestoreEnabled(),
