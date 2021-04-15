@@ -29,6 +29,7 @@ public class DocumentVersionInfo {
     private boolean createEnabled;
     private boolean campaignEnabled;
     private boolean labelEnabled;
+    private boolean isLive;
 
     @JsonCreator
     public DocumentVersionInfo(
@@ -36,7 +37,8 @@ public class DocumentVersionInfo {
             @JsonProperty("restoreEnabled") boolean restoreEnabled,
             @JsonProperty("createEnabled") boolean createEnabled,
             @JsonProperty("labelEnabled") boolean labelEnabled,
-            @JsonProperty("campaignEnabled") boolean campaignEnabled
+            @JsonProperty("campaignEnabled") boolean campaignEnabled,
+            @JsonProperty("isLive") boolean isLive
 
     ) {
         Objects.requireNonNull(versions);
@@ -45,6 +47,7 @@ public class DocumentVersionInfo {
         this.createEnabled = createEnabled;
         this.labelEnabled = labelEnabled;
         this.campaignEnabled = campaignEnabled;
+        this.isLive = isLive;
     }
 
     public List<Version> getVersions() {
@@ -65,5 +68,9 @@ public class DocumentVersionInfo {
 
     public boolean isLabelEnabled() {
         return labelEnabled;
+    }
+
+    public boolean isLive() {
+        return isLive;
     }
 }
