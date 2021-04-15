@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -64,6 +65,7 @@ import org.hippoecm.hst.pagemodelapi.v09.core.model.ChannelInfoModel;
 import org.hippoecm.hst.pagemodelapi.v09.core.model.ChannelModel;
 import org.hippoecm.hst.pagemodelapi.v09.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v09.core.model.IdentifiableLinkableMetadataBaseModel;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ParametersInfoUtils;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
@@ -118,6 +120,13 @@ public class PageModelAggregationValve extends AggregationValve {
      * Maximum content reference level request parameter name.
      */
     private static final String MAX_CONTENT_REFERENCE_LEVEL_PARAM_NAME = "_maxreflevel";
+
+    /**
+     * field to indicate whether the component is hidden or not
+     */
+    private static final String COMPONENT_HIDDEN = "hidden";
+
+    public static final String HIDE_PARAMETER_NAME = "com.onehippo.cms7.targeting.TargetingParameterUtil.hide";
 
     /**
      * Jackson ObjectMapper instance for JSON (de)serialization.
@@ -468,6 +477,41 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         model.putMetadata(PARAMETERS_METADATA, paramsNode);
+
+        final Boolean hidden = isHidden(window);
+        if (hidden != null) {
+            model.putMetadata(COMPONENT_HIDDEN, hidden);
+        }
+    }
+
+    /**
+     * @return if null is returned, it means the field does not have to be included
+     */
+    private Boolean isHidden(final HstComponentWindow window) {
+
+        final ComponentConfiguration compConfig = window.getComponent().getComponentConfiguration();
+        final HstRequestContext requestContext = RequestContextProvider.get();
+
+        // in case the request is a 'component rendering request' for the CM with method POST, take the 'hide' parameter
+        // from the request if present, otherwise fall back to the stored one on the sitemap item config
+        if (HstRequestUtils.isComponentRenderingPreviewRequest(requestContext)
+                && window.getReferenceNamespace().equals(requestContext.getBaseURL().getComponentRenderingWindowReferenceNamespace())) {
+            // POST parameters in case of component rendering preview request are namespace less
+            final String hide = requestContext.getServletRequest().getParameter(HIDE_PARAMETER_NAME);
+            if (hide != null) {
+                return ((Boolean) ConvertUtils.convert(hide, Boolean.class)).booleanValue();
+            }
+        }
+
+        final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+        final Map<String, String> parameters = compConfig.getParameters(resolvedSiteMapItem);
+
+        // we use ConvertUtils because a checkbox from Ext might also be stored as 'ON'
+        String hideParamValue = parameters.get(HIDE_PARAMETER_NAME);
+        if (hideParamValue == null) {
+            return null;
+        }
+        return (Boolean) ConvertUtils.convert(hideParamValue, Boolean.class);
     }
 
     private void addPreviewFlagToPageModel(final AggregatedPageModel aggregatedPageModel, final HstRequestContext requestContext) {

@@ -400,6 +400,10 @@ public class HstRequestUtils {
      * @return
      */
     public static int getRequestServerPort(HttpServletRequest request) {
+        return getRequestServerPort(request, request.getScheme());
+    }
+
+    public static int getRequestServerPort(HttpServletRequest request,final String scheme) {
         String requestHost = getFarthestRequestHost(request);
 
         if (requestHost == null) {
@@ -411,7 +415,7 @@ public class HstRequestUtils {
         if (offset != -1) {
             return Integer.parseInt(requestHost.substring(offset + 1));
         } else {
-            return ("https".equals(request.getScheme()) ? 443 : 80);
+            return ("https".equals(scheme) ? 443 : 80);
         }
     }
 
@@ -583,18 +587,15 @@ public class HstRequestUtils {
     }
 
     /**
-     * Creates a fully qualified URL with the same scheme and host as the client used, and pathInfo equal to the
+     * Creates a fully qualified URL for the scheme, host, port, and pathInfo for the
      * matched mount : note that this pathInfo for the matched mount does not include the _cmsinternal for preview matched
      * mounts
      */
-    public static String createURLForMountPath(final String scheme, final Mount mount, final HttpServletRequest request) {
-        String contextPath = "";
-        if (mount.isContextPathInUrl()) {
-            contextPath = mount.getContextPath();
-        }
-        return new StringBuilder(scheme).append("://").append(HstRequestUtils.getFarthestRequestHost(request, false))
-                .append(contextPath).append(mount.getMountPath()).toString();
-
+    public static String createURLForMount(final Mount mount, final HttpServletRequest req) {
+        return new StringBuilder(mount.getScheme()).append("://").append(mount.getVirtualHost().getHostName())
+                // do not use mount.getPort() since always 0
+                .append(mount.isPortInUrl() ? ":" + getRequestServerPort(req, mount.getScheme()) : "")
+                .append(mount.isContextPathInUrl() ? mount.getContextPath() : "").append(mount.getMountPath()).toString();
     }
 
     /**

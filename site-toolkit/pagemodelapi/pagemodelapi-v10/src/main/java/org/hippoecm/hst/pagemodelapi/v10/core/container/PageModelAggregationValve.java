@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2020 Bloomreach
+ *  Copyright 2018-2021 Bloomreach
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -88,6 +89,11 @@ public class PageModelAggregationValve extends AggregationValve {
     private static Logger log = LoggerFactory.getLogger(PageModelAggregationValve.class);
 
     /**
+     * field to indicate whether the component is hidden or not
+     */
+    private static final String COMPONENT_HIDDEN = "hidden";
+
+    /**
      * Page or component parameter metadata name.
      */
     private static final String PARAMETERS_METADATA = "params";
@@ -126,7 +132,7 @@ public class PageModelAggregationValve extends AggregationValve {
      * Custom metadata decorators.
      */
     private final List<MetadataDecorator> metadataDecorators = new ArrayList<>();
-    private final static String HIDE_PARAMETER_NAME = "com.onehippo.cms7.targeting.TargetingParameterUtil.hide";
+    public static final String HIDE_PARAMETER_NAME = "com.onehippo.cms7.targeting.TargetingParameterUtil.hide";
 
     private int defaultMaxContentReferenceLevel;
 
@@ -395,6 +401,11 @@ public class PageModelAggregationValve extends AggregationValve {
         final Object paramsInfo = ParametersInfoUtils.createParametersInfo(window.getComponent(), compConfig, hstRequest,
                 new PageModelApiParameterValueConvertor(jsonPointerFactory, metadataDecorators));
 
+        final Boolean hidden = isHidden(window);
+        if (hidden != null) {
+            model.putMetadata(COMPONENT_HIDDEN, hidden);
+        }
+
         if (paramsInfo != null) {
             try {
                 model.putMetadata(PARAMETERS_INFO_METADATA, paramsInfo);
@@ -406,11 +417,40 @@ public class PageModelAggregationValve extends AggregationValve {
         model.putMetadata(PARAMETERS_METADATA, getResidualParameters(compConfig));
     }
 
+    /**
+     * @return if null is returned, it means the field does not have to be included
+     */
+    private Boolean isHidden(final HstComponentWindow window) {
+
+        final ComponentConfiguration compConfig = window.getComponent().getComponentConfiguration();
+        final HstRequestContext requestContext = RequestContextProvider.get();
+
+        // in case the request is a 'component rendering request' for the CM with method POST, take the 'hide' parameter
+        // from the request if present, otherwise fall back to the stored one on the sitemap item config
+        if (HstRequestUtils.isComponentRenderingPreviewRequest(requestContext)
+                && window.getReferenceNamespace().equals(requestContext.getBaseURL().getComponentRenderingWindowReferenceNamespace())) {
+            // POST parameters in case of component rendering preview request are namespace less
+            final String hide = requestContext.getServletRequest().getParameter(HIDE_PARAMETER_NAME);
+            if (hide != null) {
+                return ((Boolean) ConvertUtils.convert(hide, Boolean.class)).booleanValue();
+            }
+        }
+
+        final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+        final Map<String, String> parameters = compConfig.getParameters(resolvedSiteMapItem);
+
+        // we use ConvertUtils because a checkbox from Ext might also be stored as 'ON'
+        String hideParamValue = parameters.get(HIDE_PARAMETER_NAME);
+        if (hideParamValue == null) {
+            return null;
+        }
+        return (Boolean) ConvertUtils.convert(hideParamValue, Boolean.class);
+    }
+
     private Map<String, String> getResidualParameters(final ComponentConfiguration compConfig) {
 
         final ResolvedSiteMapItem resolvedSiteMapItem = RequestContextProvider.get().getResolvedSiteMapItem();
-
-        Map<String, String> parameters = compConfig.getParameters(resolvedSiteMapItem);
+        final Map<String, String> parameters = compConfig.getParameters(resolvedSiteMapItem);
 
         String[] variants = getVariants(compConfig);
         List<String> paramsInfoNames = getParamsInfoNames(compConfig);

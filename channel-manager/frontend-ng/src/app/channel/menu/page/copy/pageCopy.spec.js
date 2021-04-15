@@ -341,6 +341,30 @@ describe('PageCopyComponent', () => {
     expect($ctrl.onDone).toHaveBeenCalled();
   });
 
+  it('successfully copies the page if the page element contains non ISO-8859-1 elements', () => {
+    SessionService.isCrossChannelPageCopySupported.and.returnValue(false);
+    $ctrl.$onInit();
+    $rootScope.$digest();
+
+    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
+    $ctrl.lastPathInfoElement = 'a 你 好';
+    [, $ctrl.location] = pageModel.locations;
+    $ctrl.copy();
+
+    const headers = {
+      siteMapItemUUId: 'siteMapItemId',
+      targetName: encodeURIComponent('a 你 好'),
+      targetSiteMapItemUUID: pageModel.locations[1].id,
+    };
+    expect(SiteMapService.copy).toHaveBeenCalledWith('siteMapId', headers);
+    $rootScope.$digest();
+
+    expect(HippoIframeService.load).toHaveBeenCalledWith('/render/path');
+    expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
+    expect(ChannelService.checkChanges).toHaveBeenCalled();
+    expect($ctrl.onDone).toHaveBeenCalled();
+  });
+
   it('successfully copies the page to another channel', () => {
     $ctrl.$onInit();
     $rootScope.$digest();

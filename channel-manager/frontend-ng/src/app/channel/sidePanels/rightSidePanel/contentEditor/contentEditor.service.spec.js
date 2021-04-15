@@ -22,9 +22,9 @@ describe('ContentEditorService', () => {
   let ContentEditor;
   let ContentService;
   let DialogService;
+  let DocumentWorkflowService;
   let FeedbackService;
   let FieldService;
-  let WorkflowService;
   let ChannelService;
 
   let stringField;
@@ -107,7 +107,11 @@ describe('ContentEditorService', () => {
     ]);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError', 'showNotification']);
     FieldService = jasmine.createSpyObj('FieldService', ['setDocumentId']);
-    WorkflowService = jasmine.createSpyObj('WorkflowService', ['createWorkflowAction']);
+    DocumentWorkflowService = jasmine.createSpyObj('DocumentWorkflowService', [
+      'cancelRequest',
+      'publish',
+      'requestPublication',
+    ]);
     ChannelService = jasmine.createSpyObj('ChannelService', ['updateNavLocation']);
 
     angular.mock.module(($provide) => {
@@ -115,7 +119,7 @@ describe('ContentEditorService', () => {
       $provide.value('ChannelService', ChannelService);
       $provide.value('FeedbackService', FeedbackService);
       $provide.value('FieldService', FieldService);
-      $provide.value('WorkflowService', WorkflowService);
+      $provide.value('DocumentWorkflowService', DocumentWorkflowService);
     });
 
     inject((_$q_, _$rootScope_, _$translate_, _CmsService_, _ContentEditor_, _DialogService_, _ChannelService_) => {
@@ -967,118 +971,6 @@ describe('ContentEditorService', () => {
     });
   });
 
-  describe('confirmPublication', () => {
-    let showPromise;
-
-    beforeEach(() => {
-      showPromise = $q.resolve();
-      ContentEditor.document = {
-        displayName: 'Test',
-      };
-      spyOn($translate, 'instant');
-      spyOn(DialogService, 'confirm').and.callThrough();
-      DialogService.show.and.returnValue(showPromise);
-    });
-
-    describe('when a user can publish', () => {
-      beforeEach(() => {
-        ContentEditor.canPublish = true;
-      });
-
-      it('shows a "publish" confirmation dialog', (done) => {
-        ContentEditor.confirmPublication().then(() => {
-          expect(DialogService.confirm).toHaveBeenCalled();
-          expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DOCUMENT', {
-            documentName: 'Test',
-          });
-          expect($translate.instant).toHaveBeenCalledWith('PUBLISH');
-          expect(DialogService.show).toHaveBeenCalled();
-          done();
-        });
-        $rootScope.$digest();
-      });
-
-      it('shows a "save and publish" confirmation dialog', (done) => {
-        ContentEditor.markDocumentDirty();
-        ContentEditor.confirmPublication().then(() => {
-          expect(DialogService.confirm).toHaveBeenCalled();
-          expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DIRTY_DOCUMENT', {
-            documentName: 'Test',
-          });
-          expect($translate.instant).toHaveBeenCalledWith('SAVE_AND_PUBLISH');
-          expect(DialogService.show).toHaveBeenCalled();
-          done();
-        });
-        $rootScope.$digest();
-      });
-
-      it('reports an event when cancel-publish has been clicked', (done) => {
-        DialogService.show.and.returnValue($q.reject());
-
-        ContentEditor.confirmPublication().catch(() => {
-          expect(DialogService.confirm).toHaveBeenCalled();
-          expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DOCUMENT', {
-            documentName: 'Test',
-          });
-          expect($translate.instant).toHaveBeenCalledWith('PUBLISH');
-          expect(DialogService.show).toHaveBeenCalled();
-          expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingLightboxCancel');
-          done();
-        });
-        $rootScope.$digest();
-      });
-    });
-
-    describe('when a user can request publication', () => {
-      beforeEach(() => {
-        ContentEditor.canRequestPublication = true;
-      });
-
-      it('shows a "request publication" confirmation dialog', (done) => {
-        ContentEditor.confirmPublication().then(() => {
-          expect(DialogService.confirm).toHaveBeenCalled();
-          expect($translate.instant).toHaveBeenCalledWith('CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT', {
-            documentName: 'Test',
-          });
-          expect($translate.instant).toHaveBeenCalledWith('REQUEST_PUBLICATION');
-          expect(DialogService.show).toHaveBeenCalled();
-          done();
-        });
-        $rootScope.$digest();
-      });
-
-      it('shows a "save and request publication" confirmation dialog', (done) => {
-        ContentEditor.markDocumentDirty();
-        ContentEditor.confirmPublication().then(() => {
-          expect(DialogService.confirm).toHaveBeenCalled();
-          expect($translate.instant).toHaveBeenCalledWith('CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT', {
-            documentName: 'Test',
-          });
-          expect($translate.instant).toHaveBeenCalledWith('SAVE_AND_REQUEST_PUBLICATION');
-          expect(DialogService.show).toHaveBeenCalled();
-          done();
-        });
-        $rootScope.$digest();
-      });
-
-      it('reports an event when cancel-publication-request has been clicked', (done) => {
-        DialogService.show.and.returnValue($q.reject());
-
-        ContentEditor.confirmPublication().catch(() => {
-          expect(DialogService.confirm).toHaveBeenCalled();
-          expect($translate.instant).toHaveBeenCalledWith('CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT', {
-            documentName: 'Test',
-          });
-          expect($translate.instant).toHaveBeenCalledWith('REQUEST_PUBLICATION');
-          expect(DialogService.show).toHaveBeenCalled();
-          expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingLightboxRequestPubCancel');
-          done();
-        });
-        $rootScope.$digest();
-      });
-    });
-  });
-
   describe('publish', () => {
     const errorObject = {
       data: {
@@ -1094,7 +986,7 @@ describe('ContentEditorService', () => {
         displayName: 'Test',
       };
       ContentService.discardChanges.and.returnValue($q.resolve());
-      WorkflowService.createWorkflowAction.and.returnValue($q.resolve());
+      DocumentWorkflowService.publish.and.returnValue($q.resolve());
     });
 
     describe('when a user can publish', () => {
@@ -1114,14 +1006,14 @@ describe('ContentEditorService', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(WorkflowService.createWorkflowAction).not.toHaveBeenCalled();
+        expect(DocumentWorkflowService.publish).not.toHaveBeenCalled();
       });
 
       it('executes the publish document workflow action', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(WorkflowService.createWorkflowAction).toHaveBeenCalledWith('test', 'publish');
+        expect(DocumentWorkflowService.publish).toHaveBeenCalledWith('test');
       });
 
       it('notifies the user of a successful publication action', () => {
@@ -1141,7 +1033,7 @@ describe('ContentEditorService', () => {
       });
 
       it('displays an error if publication fails', () => {
-        WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+        DocumentWorkflowService.publish.and.returnValue($q.reject(errorObject));
 
         ContentEditor.publish();
         $rootScope.$digest();
@@ -1161,7 +1053,7 @@ describe('ContentEditorService', () => {
       });
 
       it('gets an editable document again if publication fails', () => {
-        WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+        DocumentWorkflowService.publish.and.returnValue($q.reject(errorObject));
 
         ContentEditor.publish();
         $rootScope.$digest();
@@ -1190,7 +1082,7 @@ describe('ContentEditorService', () => {
       });
 
       it('rejects when publication fails', (done) => {
-        WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+        DocumentWorkflowService.publish.and.returnValue($q.reject(errorObject));
         ContentEditor.publish().catch(done);
         $rootScope.$digest();
       });
@@ -1220,6 +1112,7 @@ describe('ContentEditorService', () => {
 
         ContentEditor.canRequestPublication = true;
         ContentService.getEditableDocument.and.returnValue($q.reject(expectedDocumentError));
+        DocumentWorkflowService.requestPublication.and.returnValue($q.resolve());
       });
 
       it('discards the document', () => {
@@ -1233,14 +1126,14 @@ describe('ContentEditorService', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(WorkflowService.createWorkflowAction).not.toHaveBeenCalled();
+        expect(DocumentWorkflowService.requestPublication).not.toHaveBeenCalled();
       });
 
       it('executes the requestPublication document workflow action', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(WorkflowService.createWorkflowAction).toHaveBeenCalledWith('test', 'requestPublication');
+        expect(DocumentWorkflowService.requestPublication).toHaveBeenCalledWith('test');
       });
 
       it('notifies the user of a successful publication request', () => {
@@ -1260,7 +1153,7 @@ describe('ContentEditorService', () => {
       });
 
       it('displays an error if publication request fails', () => {
-        WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+        DocumentWorkflowService.requestPublication.and.returnValue($q.reject(errorObject));
 
         ContentEditor.publish();
         $rootScope.$digest();
@@ -1292,7 +1185,7 @@ describe('ContentEditorService', () => {
       });
 
       it('rejects when publication request fails', (done) => {
-        WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+        DocumentWorkflowService.requestPublication.and.returnValue($q.reject(errorObject));
         ContentEditor.publish().catch(done);
         $rootScope.$digest();
       });
@@ -1325,17 +1218,18 @@ describe('ContentEditorService', () => {
         CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
         ContentService.getEditableDocument.and.returnValue($q.reject(expectedDocumentError));
         ContentEditor.open('test');
+        DocumentWorkflowService.cancelRequest.and.returnValue($q.resolve());
         $rootScope.$digest();
       });
 
       it('executes a cancelRequest workflow call', () => {
         ContentEditor.cancelRequestPublication();
 
-        expect(WorkflowService.createWorkflowAction).toHaveBeenCalledWith('test', 'cancelRequest');
+        expect(DocumentWorkflowService.cancelRequest).toHaveBeenCalledWith('test');
       });
 
       it('shows an error and rejects if cancelRequest workflow call fails', (done) => {
-        WorkflowService.createWorkflowAction.and.returnValue($q.reject());
+        DocumentWorkflowService.cancelRequest.and.returnValue($q.reject());
         ContentEditor.cancelRequestPublication().catch(done);
         $rootScope.$digest();
 
@@ -1345,7 +1239,7 @@ describe('ContentEditorService', () => {
       });
 
       it('(re)loads the document and document type after a successful workflow call', () => {
-        WorkflowService.createWorkflowAction.and.returnValue($q.resolve());
+        DocumentWorkflowService.cancelRequest.and.returnValue($q.resolve());
 
         CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
         ContentService.getEditableDocument.and.returnValue($q.resolve(testDocument));

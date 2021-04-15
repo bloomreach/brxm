@@ -33,6 +33,7 @@ public interface HippoStdPubWfNodeType {
 
     String REJECTED = "rejected";
     String PUBLISH = "publish";
+    String PUBLISH_BRANCH = "publishbranch";
     String DEPUBLISH = "depublish";
     String SCHEDPUBLISH = "scheduledpublish";
     String SCHEDDEPUBLISH = "scheduleddepublish";
