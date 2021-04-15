@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { ChangeDetectorRef, Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { UIRouterGlobals } from '@uirouter/core';
 
 import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1.service';
-import { Ng1ContentService, NG1_CONTENT_SERVICE } from '../../../services/ng1/content.ng1.service';
 import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
+import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
 import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
 import { VersionsInfo } from '../../models/versions-info.model';
+import { VersionsService } from '../../services/versions.service';
 
 @Component({
   selector: 'em-versions-info',
@@ -28,48 +30,34 @@ import { VersionsInfo } from '../../models/versions-info.model';
   styleUrls: ['versions-info.component.scss'],
 })
 export class VersionsInfoComponent implements OnInit, OnDestroy {
-  @Input()
-  documentId!: string;
-
-  @Input()
-  branchId!: string;
-
-  @Input()
-  unpublishedVariantId!: string;
-
+  private readonly documentId = this.ng1UiRouterGlobals.params.documentId;
   versionsInfo?: VersionsInfo;
-
   actionInProgress = false;
 
   constructor(
-    @Inject(NG1_CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
     @Inject(NG1_IFRAME_SERVICE) private readonly ng1IframeService: Ng1IframeService,
     @Inject(NG1_CHANNEL_SERVICE) private readonly ng1ChannelService: Ng1ChannelService,
     @Inject(NG1_WORKFLOW_SERVICE) private readonly ng1WorkflowService: Ng1WorkflowService,
-    private readonly changeDetector: ChangeDetectorRef,
+    @Inject(NG1_UI_ROUTER_GLOBALS) private readonly ng1UiRouterGlobals: UIRouterGlobals,
+    private readonly versionsService: VersionsService,
   ) { }
 
   ngOnInit(): void {
-    setTimeout(() => {
-      // Angular Element inputs are not yet initialized onInit
-      this.getVersionsInfo();
-    });
+    this.getVersionsInfo();
   }
 
   ngOnDestroy(): void {
     const latestVersion = this.versionsInfo?.versions[0];
     const id = latestVersion?.jcrUUID;
 
-    if (id && id !== this.unpublishedVariantId) {
+    if (id && !this.isVersionSelected(id)) {
       this.selectVersion(id);
     }
   }
 
   async getVersionsInfo(): Promise<void> {
     this.actionInProgress = true;
-    this.versionsInfo = await this.ng1ContentService.getDocumentVersionsInfo(this.documentId, this.branchId);
-
-    this.changeDetector.markForCheck();
+    this.versionsInfo = await this.versionsService.getVersionsInfo(this.documentId);
     this.actionInProgress = false;
   }
 
@@ -99,7 +87,7 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
   }
 
   isVersionSelected(versionUUID: string): boolean {
-    return this.unpublishedVariantId === versionUUID;
+    return this.versionsService.isCurrentVersion(versionUUID);
   }
 
   private getRenderPath(): string {
