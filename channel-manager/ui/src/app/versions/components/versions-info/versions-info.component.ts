@@ -16,11 +16,12 @@
 
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { UIRouterGlobals } from '@uirouter/core';
+import { Subject } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
 
 import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1.service';
 import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
-import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
 import { VersionsInfo } from '../../models/versions-info.model';
 import { VersionsService } from '../../services/versions.service';
 
@@ -31,34 +32,35 @@ import { VersionsService } from '../../services/versions.service';
 })
 export class VersionsInfoComponent implements OnInit, OnDestroy {
   private readonly documentId = this.ng1UiRouterGlobals.params.documentId;
+  private readonly unsubscribe = new Subject();
+
   versionsInfo?: VersionsInfo;
-  actionInProgress = false;
 
   constructor(
     @Inject(NG1_IFRAME_SERVICE) private readonly ng1IframeService: Ng1IframeService,
     @Inject(NG1_CHANNEL_SERVICE) private readonly ng1ChannelService: Ng1ChannelService,
-    @Inject(NG1_WORKFLOW_SERVICE) private readonly ng1WorkflowService: Ng1WorkflowService,
     @Inject(NG1_UI_ROUTER_GLOBALS) private readonly ng1UiRouterGlobals: UIRouterGlobals,
     private readonly versionsService: VersionsService,
   ) { }
 
   ngOnInit(): void {
-    this.getVersionsInfo();
+    this.versionsService.getVersionsInfo(this.documentId);
+    this.versionsService.versionsInfo$
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(versionsInfo => {
+        this.versionsInfo = versionsInfo;
+      });
   }
 
   ngOnDestroy(): void {
-    const latestVersion = this.versionsInfo?.versions[0];
-    const id = latestVersion?.jcrUUID;
+    const latestVersionId = this.versionsInfo?.versions[0]?.jcrUUID;
 
-    if (id && !this.isVersionSelected(id)) {
-      this.selectVersion(id);
+    if (latestVersionId) {
+      this.selectVersion(latestVersionId);
     }
-  }
 
-  async getVersionsInfo(): Promise<void> {
-    this.actionInProgress = true;
-    this.versionsInfo = await this.versionsService.getVersionsInfo(this.documentId);
-    this.actionInProgress = false;
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   async selectVersion(versionUUID: string): Promise<void> {
@@ -66,31 +68,15 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.actionInProgress = true;
     const newPath = this.createVersionPath(versionUUID);
     await this.ng1IframeService.load(newPath);
-    this.actionInProgress = false;
-  }
-
-  async createVersion(): Promise<void> {
-    this.actionInProgress = true;
-    await this.ng1WorkflowService.createWorkflowAction(this.documentId, {}, 'version');
-    await this.getVersionsInfo();
-  }
-
-  async restoreVersion(versionUUID: string): Promise<void> {
-    this.actionInProgress = true;
-    await this.ng1WorkflowService.createWorkflowAction(this.documentId, {}, 'restore', versionUUID);
-    const renderPath = this.getRenderPath();
-    await this.ng1IframeService.load(renderPath);
-    await this.getVersionsInfo();
   }
 
   isVersionSelected(versionUUID: string): boolean {
     return this.versionsService.isCurrentVersion(versionUUID);
   }
 
-  private getRenderPath(): string {
+  getRenderPath(): string {
     const currentPath = this.ng1IframeService.getCurrentRenderPathInfo();
     const homePageRenderPath = this.ng1ChannelService.getHomePageRenderPathInfo();
     return this.ng1ChannelService.makeRenderPath(currentPath.replace(homePageRenderPath, ''));
