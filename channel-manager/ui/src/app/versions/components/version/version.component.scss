@@ -21,26 +21,42 @@
 :host {
   @include mat-divider-border($theme);
 
-  align-items: center;
   cursor: pointer;
   display: flex;
-  height: 88px;
-  justify-content: space-between;
-  padding: 0 16px;
+  flex-direction: column;
+  height: 72px;
+  box-sizing: border-box;
+  padding: $spacing-half $spacing-full;
 
   &:hover {
     @include mat-hover-background($theme);
   }
+}
 
-  p {
-    margin: 0;
+:host.selected {
+  background-color: map-get($blue, 50);
+
+  .description {
+    font-weight: 800;
   }
+}
 
-  &.selected {
-    background-color: map-get($blue, 50);
+.description {
+  flex-shrink: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-    p:first-child {
-      font-weight: 800;
-    }
+.actions {
+  flex: auto 0 0;
+  padding-left: $spacing-full;
+
+  button:not(:first-of-type) {
+    margin-left: $spacing-half;
   }
+}
+
+.info {
+  display: flex;
 }
