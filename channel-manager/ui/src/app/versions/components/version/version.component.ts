@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, HostBinding, Inject, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Inject, Input, OnChanges, Output } from '@angular/core';
 import { UIRouterGlobals } from '@uirouter/core';
 
 import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
@@ -29,7 +29,7 @@ import { VersionsService } from '../../services/versions.service';
   templateUrl: './version.component.html',
   styleUrls: ['./version.component.scss'],
 })
-export class VersionComponent {
+export class VersionComponent implements OnChanges {
   @Input()
   version!: Version;
 
@@ -48,12 +48,18 @@ export class VersionComponent {
   @Output()
   actionInProgressChange = new EventEmitter<boolean>();
 
+  isScheduleFormVisible = false;
+
   constructor(
     @Inject(NG1_IFRAME_SERVICE) private readonly ng1IframeService: Ng1IframeService,
     @Inject(NG1_WORKFLOW_SERVICE) private readonly ng1WorkflowService: Ng1WorkflowService,
     @Inject(NG1_UI_ROUTER_GLOBALS) private readonly ng1UiRouterGlobals: UIRouterGlobals,
     private readonly versionsService: VersionsService,
   ) { }
+
+  ngOnChanges(): void {
+    this.isScheduleFormVisible = false;
+  }
 
   async restoreVersion(versionUUID: string): Promise<void> {
     this.actionInProgressChange.emit(true);
