@@ -14,41 +14,6 @@
  * limitations under the License.
  */
 
-@import "mixins";
-@import "~@bloomreach/frontend-theme/angular-theme";
-@import "variables";
-
 :host {
   overflow: auto;
-}
-
-::ng-deep .version {
-  @include mat-divider-border($theme);
-
-  align-items: center;
-  cursor: pointer;
-  display: flex;
-  height: 88px;
-  justify-content: space-between;
-  padding: 0 16px;
-
-  &:first-of-type {
-    height: 72px;
-  }
-
-  &:hover {
-    @include mat-hover-background($theme);
-  }
-
-  &.selected {
-    background-color: map-get($blue, 50);
-
-    p:first-child {
-      font-weight: 800;
-    }
-  }
-
-  p {
-    margin: 0;
-  }
 }
