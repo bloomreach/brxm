@@ -6,13 +6,13 @@ exports[`VersionsInfoComponent initial rendering should show list of versions 1`
 >
 
   <div
-    class="mat-typography versions-list qa-version-list"
+    class="mat-typography qa-version-list"
   >
 
 
 
     <em-latest-version
-      class="qa-version-testId selected"
+      class="qa-version-testId"
     />
 
 
@@ -25,28 +25,5 @@ exports[`VersionsInfoComponent initial rendering should show list of versions 1`
     />
 
   </div>
-</div>
-`;
-
-exports[`VersionsInfoComponent selecting a version should indicate the selected version 1`] = `
-<div
-  class="mat-typography versions-list qa-version-list"
->
-
-
-
-  <em-latest-version
-    class="qa-version-testId"
-  />
-
-
-
-
-
-  <em-version
-    class="qa-version-testVariantId selected"
-    matripple=""
-  />
-
 </div>
 `;

@@ -43,6 +43,11 @@ export class VersionComponent {
   @Input()
   renderPath!: string;
 
+  @Input()
+  actionInProgress!: boolean;
+  @Output()
+  actionInProgressChange = new EventEmitter<boolean>();
+
   constructor(
     @Inject(NG1_IFRAME_SERVICE) private readonly ng1IframeService: Ng1IframeService,
     @Inject(NG1_WORKFLOW_SERVICE) private readonly ng1WorkflowService: Ng1WorkflowService,
@@ -51,9 +56,11 @@ export class VersionComponent {
   ) { }
 
   async restoreVersion(versionUUID: string): Promise<void> {
+    this.actionInProgressChange.emit(true);
     const documentId = this.ng1UiRouterGlobals.params.documentId;
     await this.ng1WorkflowService.createWorkflowAction(documentId, {}, 'restore', versionUUID);
     await this.ng1IframeService.load(this.renderPath);
     await this.versionsService.getVersionsInfo(documentId);
+    this.actionInProgressChange.emit(false);
   }
 }

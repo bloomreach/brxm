@@ -36,6 +36,8 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
 
   versionsInfo?: VersionsInfo;
 
+  actionInProgress = false;
+
   constructor(
     @Inject(NG1_IFRAME_SERVICE) private readonly ng1IframeService: Ng1IframeService,
     @Inject(NG1_CHANNEL_SERVICE) private readonly ng1ChannelService: Ng1ChannelService,
@@ -64,12 +66,14 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
   }
 
   async selectVersion(versionUUID: string): Promise<void> {
+    this.actionInProgress = true;
     if (this.isVersionSelected(versionUUID)) {
       return;
     }
 
     const newPath = this.createVersionPath(versionUUID);
     await this.ng1IframeService.load(newPath);
+    this.actionInProgress = false;
   }
 
   isVersionSelected(versionUUID: string): boolean {
