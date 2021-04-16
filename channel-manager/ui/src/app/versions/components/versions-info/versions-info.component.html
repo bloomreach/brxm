@@ -21,7 +21,8 @@
                        (click)="selectVersion(version.jcrUUID)"
                        [isSelected]="isVersionSelected(version.jcrUUID)"
                        [version]="version"
-                       [versionsInfo]="versionsInfo">
+                       [versionsInfo]="versionsInfo"
+                       [(actionInProgress)]="actionInProgress">
     </em-latest-version>
 
     <em-version *ngIf="!isFirst"
@@ -31,7 +32,8 @@
                 [isSelected]="isVersionSelected(version.jcrUUID)"
                 [renderPath]="getRenderPath()"
                 [version]="version"
-                [versionsInfo]="versionsInfo">
+                [versionsInfo]="versionsInfo"
+                [(actionInProgress)]="actionInProgress">
     </em-version>
   </ng-container>
 </div>
