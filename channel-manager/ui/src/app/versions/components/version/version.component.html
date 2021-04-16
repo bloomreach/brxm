@@ -14,23 +14,39 @@
   limitations under the License.
   -->
 
-<div class="description">
-  <p class="qa-version-timestamp">
-    {{ version?.timestamp | moment }}
-  </p>
+<div class="info">
+  <div class="description">
+    <span class="qa-version-timestamp">
+      {{ version?.timestamp | moment }}
+    </span>
+    <span> - </span>
+    <span class="qa-version-username">
+      {{ version?.userName || ('SYSTEM' | translate) }}
+    </span>
+  </div>
 
-  <p class="qa-version-username">
-    {{ version?.userName || ('SYSTEM' | translate) }}
-  </p>
+  <div class="actions"
+       *ngIf="isSelected && !isScheduleFormVisible">
+    <button *ngIf="versionsInfo.campaignEnabled"
+            mat-stroked-button
+            color="primary"
+            class="qa-schedule-version-action"
+            [disabled]="actionInProgress"
+            (click)="isScheduleFormVisible = true; $event.stopPropagation()">
+      <mat-icon svgIcon="calendar-clock"></mat-icon>
+    </button>
+
+    <button *ngIf="versionsInfo.restoreEnabled"
+            mat-stroked-button
+            color="primary"
+            class="qa-restore-version-action"
+            [disabled]="actionInProgress"
+            (click)="restoreVersion(version?.jcrUUID); $event.stopPropagation()">
+      {{ 'RESTORE' | translate }}
+    </button>
+  </div>
 </div>
 
-<div class="actions" *ngIf="isSelected">
-  <button *ngIf="versionsInfo.restoreEnabled"
-          mat-stroked-button
-          color="primary"
-          class="qa-restore-version-action"
-          [disabled]="actionInProgress"
-          (click)="restoreVersion(version?.jcrUUID)">
-    {{ 'RESTORE' | translate }}
-  </button>
-</div>
+<em-schedule-form *ngIf="isSelected && isScheduleFormVisible"
+                  (cancelForm)="isScheduleFormVisible = false">
+</em-schedule-form>
