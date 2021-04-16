@@ -35,6 +35,7 @@ export class LatestVersionComponent {
   @Input()
   versionsInfo!: VersionsInfo;
 
+  @HostBinding('class.selected')
   @Input()
   isSelected!: boolean;
 
