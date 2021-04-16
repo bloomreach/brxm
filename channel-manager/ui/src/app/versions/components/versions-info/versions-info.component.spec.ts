@@ -146,17 +146,6 @@ describe('VersionsInfoComponent', () => {
       expect(ng1IframeService.load).toHaveBeenCalledWith(`${renderPath}&br_version_uuid=${secondVersionUUID}`);
     });
 
-    it('should indicate the selected version', () => {
-      jest.spyOn(versionsService, 'isCurrentVersion').mockImplementation(id => id === secondVersionUUID);
-
-      const versionItem = componentEl.querySelector<HTMLElement>(`.qa-version-${secondVersionUUID}`);
-      versionItem?.click();
-      fixture.detectChanges();
-
-      const versionList = componentEl.querySelector<HTMLElement>('.qa-version-list');
-      expect(versionList).toMatchSnapshot();
-    });
-
     it('should select the latest version when removing the component from the dom', () => {
       jest.spyOn(component, 'selectVersion');
 

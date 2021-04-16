@@ -42,6 +42,11 @@ export class LatestVersionComponent {
   @Output()
   getVersionsInfo = new EventEmitter<void>();
 
+  @Input()
+  actionInProgress!: boolean;
+  @Output()
+  actionInProgressChange = new EventEmitter<boolean>();
+
   private readonly documentId = this.ng1UiRouterGlobals.params.documentId;
 
   constructor(
@@ -51,7 +56,9 @@ export class LatestVersionComponent {
   ) { }
 
   async createVersion(): Promise<void> {
+    this.actionInProgressChange.emit(true);
     await this.ng1WorkflowService.createWorkflowAction(this.documentId, {}, 'version');
     this.versionsService.getVersionsInfo(this.ng1UiRouterGlobals.params.documentId);
+    this.actionInProgressChange.emit(false);
   }
 }
