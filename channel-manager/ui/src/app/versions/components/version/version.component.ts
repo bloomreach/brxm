@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Inject, Input, OnInit, Output } from '@angular/core';
 import { UIRouterGlobals } from '@uirouter/core';
 
 import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1service';
@@ -36,6 +36,7 @@ export class VersionComponent {
   @Input()
   versionsInfo!: VersionsInfo;
 
+  @HostBinding('class.selected')
   @Input()
   isSelected!: boolean;
 

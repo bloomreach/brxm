@@ -13,14 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="mat-typography versions-list qa-version-list"
+<div class="mat-typography qa-version-list"
      *ngIf="versionsInfo">
   <ng-container *ngFor="let version of versionsInfo!.versions; first as isFirst">
     <em-latest-version *ngIf="isFirst"
-                       class="version"
                        [class]="'qa-version-' + version.jcrUUID"
                        (click)="selectVersion(version.jcrUUID)"
-                       [class.selected]="isVersionSelected(version.jcrUUID)"
                        [isSelected]="isVersionSelected(version.jcrUUID)"
                        [version]="version"
                        [versionsInfo]="versionsInfo">
@@ -28,10 +26,8 @@
 
     <em-version *ngIf="!isFirst"
                 matRipple
-                class="version"
                 [class]="'qa-version-' + version.jcrUUID"
                 (click)="selectVersion(version.jcrUUID)"
-                [class.selected]="isVersionSelected(version.jcrUUID)"
                 [isSelected]="isVersionSelected(version.jcrUUID)"
                 [renderPath]="getRenderPath()"
                 [version]="version"
