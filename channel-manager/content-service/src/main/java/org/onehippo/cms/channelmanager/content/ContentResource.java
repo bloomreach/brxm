@@ -15,12 +15,10 @@
  */
 package org.onehippo.cms.channelmanager.content;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Optional;
 import java.util.TimeZone;
-import java.util.function.Function;
 
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -256,12 +254,25 @@ public class ContentResource {
     }
 
     @POST
-    @Path("workflows/documents/{documentId}/{action}")
-    public Response executeDocumentWorkflowAction(@PathParam("documentId") final String documentId,
+    @Path("workflows/documents/{handleId}/version")
+    public Response createVersion(@PathParam("handleId") final String handleId,
+                                  @Context final HttpServletRequest servletRequest,
+                                  final Version version) {
+
+        return executeTask(servletRequest, Status.NO_CONTENT, userContext -> {
+            workflowService.executeDocumentWorkflowAction(handleId, "version", userContext.getSession(),
+                    getBranchId(servletRequest), Optional.of(version));
+            return null;
+        });
+    }
+
+    @POST
+    @Path("workflows/documents/{handleId}/{action}")
+    public Response executeDocumentWorkflowAction(@PathParam("handleId") final String handleId,
                                                   @PathParam("action") final String action,
                                                   @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, userContext -> {
-            workflowService.executeDocumentWorkflowAction(documentId, action, userContext.getSession(),
+            workflowService.executeDocumentWorkflowAction(handleId, action, userContext.getSession(),
                     getBranchId(servletRequest));
             return null;
         });
