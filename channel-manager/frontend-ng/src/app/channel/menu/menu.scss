@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@import 'variables';
+
 .dropdown-menu-content.md-menu-bar-menu.md-dense .md-indent {
   > md-icon {
     left: 16px;
@@ -22,6 +24,7 @@
   }
 
   > .md-button {
+    font-size: $font-normal !important;
     padding-left: 56px;
   }
 }
