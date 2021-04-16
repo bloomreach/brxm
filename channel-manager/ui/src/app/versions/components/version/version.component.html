@@ -24,11 +24,12 @@
   </p>
 </div>
 
-<div class="actions">
-  <button *ngIf="versionsInfo.restoreEnabled && isSelected"
+<div class="actions" *ngIf="isSelected">
+  <button *ngIf="versionsInfo.restoreEnabled"
           mat-stroked-button
           color="primary"
           class="qa-restore-version-action"
+          [disabled]="actionInProgress"
           (click)="restoreVersion(version?.jcrUUID)">
     {{ 'RESTORE' | translate }}
   </button>

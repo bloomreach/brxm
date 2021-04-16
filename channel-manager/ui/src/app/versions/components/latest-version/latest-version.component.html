@@ -20,11 +20,12 @@
   </p>
 </div>
 
-<div class="actions">
-  <button *ngIf="versionsInfo.createEnabled && isSelected"
+<div class="actions" *ngIf="isSelected">
+  <button *ngIf="versionsInfo.createEnabled"
           mat-stroked-button
           color="primary"
           class="qa-new-version-action"
+          [disabled]="actionInProgress"
           (click)="createVersion()">
     <mat-icon svgIcon="plus"></mat-icon>
     {{ 'VERSION' | translate }}
