@@ -14,3 +14,33 @@
  * limitations under the License.
  */
 
+@import "mixins";
+@import "~@bloomreach/frontend-theme/angular-theme";
+@import "variables";
+
+:host {
+  @include mat-divider-border($theme);
+
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  height: 88px;
+  justify-content: space-between;
+  padding: 0 16px;
+
+  &:hover {
+    @include mat-hover-background($theme);
+  }
+
+  p {
+    margin: 0;
+  }
+
+  &.selected {
+    background-color: map-get($blue, 50);
+
+    p:first-child {
+      font-weight: 800;
+    }
+  }
+}
