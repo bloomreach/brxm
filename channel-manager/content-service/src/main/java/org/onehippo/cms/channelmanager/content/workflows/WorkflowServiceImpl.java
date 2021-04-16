@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,18 @@ package org.onehippo.cms.channelmanager.content.workflows;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.version.Version;
 
 import org.apache.jackrabbit.JcrConstants;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
+import org.onehippo.cms.channelmanager.content.document.model.Version;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.HintsUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
@@ -55,6 +57,12 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     public void executeDocumentWorkflowAction(final String uuid, final String action, final Session session,
                                               final String branchId) throws ErrorWithPayloadException {
+        executeDocumentWorkflowAction(uuid, action, session, branchId, Optional.empty());
+    }
+
+    @Override
+    public void executeDocumentWorkflowAction(final String uuid, final String action, final Session session, final String branchId,
+                                              final Optional<Version> version) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
         final Map<String, Serializable> hints = HintsUtils.getHints(documentWorkflow, branchId);
@@ -65,17 +73,21 @@ public class WorkflowServiceImpl implements WorkflowService {
                 log.info("Workflow request action '{}' is not available for document '{}'", action, uuid);
                 throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ACTION_NOT_AVAILABLE));
             }
-            executeDocumentWorkflowAction(uuid, branchId, getIdentifier(requestNode), documentWorkflow, action);
+            executeDocumentWorkflowAction(uuid, branchId, getIdentifier(requestNode), documentWorkflow, action, version);
         } else {
             if (!EditingUtils.isActionAvailable(action, hints)) {
                 log.info("Workflow action '{}' is not available for document '{}'", action, uuid);
                 throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ACTION_NOT_AVAILABLE));
             }
-            executeDocumentWorkflowAction(uuid, branchId, null, documentWorkflow, action);
+            executeDocumentWorkflowAction(uuid, branchId, null, documentWorkflow, action, version);
         }
     }
 
-    private static void executeDocumentWorkflowAction(final String uuid, final String branchId, final String requestIdentifier, final DocumentWorkflow documentWorkflow, final String action) throws ErrorWithPayloadException {
+    private static void executeDocumentWorkflowAction(final String uuid, final String branchId,
+                                                      final String requestIdentifier,
+                                                      final DocumentWorkflow documentWorkflow,
+                                                      final String action,
+                                                      final Optional<Version> version) throws ErrorWithPayloadException {
         try {
             switch (action) {
                 case "publish":
@@ -91,7 +103,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                     break;
 
                 case "version":
-                    version(branchId, documentWorkflow);
+                    version(branchId, documentWorkflow, version);
                     break;
                 default:
                     log.warn("Document workflow action '{}' is not implemented", action);
@@ -119,7 +131,7 @@ public class WorkflowServiceImpl implements WorkflowService {
      *     We can improve this in release/saas or 15.0 by introducing 'documentWorkflow.version(branchId)'
      * </p>
      */
-    private static void version(final String branchId, final DocumentWorkflow documentWorkflow) throws WorkflowException, RemoteException, RepositoryException {
+    private static void version(final String branchId, final DocumentWorkflow documentWorkflow, final Optional<Version> version) throws WorkflowException, RemoteException, RepositoryException {
         if (!documentWorkflow.listBranches().contains(branchId)) {
             throw new ForbiddenException(new ErrorInfo(Reason.BRANCH_DOES_NOT_EXIST));
         }
@@ -130,7 +142,21 @@ public class WorkflowServiceImpl implements WorkflowService {
         if (Boolean.TRUE.equals(documentWorkflow.hints(branchId).get("checkoutBranch"))) {
             documentWorkflow.checkoutBranch(branchId);
         }
-        documentWorkflow.version();
+        final Document jcrVersion = documentWorkflow.version();
+        version.ifPresent(v -> {
+            try {
+                final String frozenNodeId = ((javax.jcr.version.Version) jcrVersion.getNode(documentWorkflow.getWorkflowContext().getInternalWorkflowSession())).getFrozenNode().getIdentifier();
+                if (v.getCampaign() != null) {
+                    documentWorkflow.campaign(frozenNodeId, branchId, v.getCampaign().getFrom(), v.getCampaign().getTo());
+                }
+                if (v.getLabel() != null) {
+                    documentWorkflow.labelVersion(frozenNodeId, v.getLabel());
+                }
+            } catch (Exception e) {
+                log.warn("Unexpected error when setting campaign or label.", e);
+                throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+            }
+        });
     }
 
     /**
@@ -229,7 +255,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
             }
 
-            final Version version = (Version) frozenNode.getParent();
+            final javax.jcr.version.Version version = (javax.jcr.version.Version) frozenNode.getParent();
             final String unpublishedWorkspaceVariantUUID = version.getContainingHistory().getVersionableIdentifier();
             // if session cannot read the workspace node, just a ItemNotFoundException is caught below
             final Node unpublishedWorkspaceVariant = session.getNodeByIdentifier(unpublishedWorkspaceVariantUUID);
