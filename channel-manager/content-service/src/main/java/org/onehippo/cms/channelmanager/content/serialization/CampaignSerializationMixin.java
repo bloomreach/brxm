@@ -18,10 +18,14 @@ package org.onehippo.cms.channelmanager.content.serialization;
 import org.onehippo.repository.campaign.Campaign;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
  * The uuid from the campaign does not require to be serialized for the 'Versions' rest endpoint
  */
+@JsonInclude(NON_NULL)
 public class CampaignSerializationMixin extends Campaign {
 
     @JsonIgnore
@@ -29,4 +33,5 @@ public class CampaignSerializationMixin extends Campaign {
     public String getUuid() {
         return super.getUuid();
     }
+
 }
