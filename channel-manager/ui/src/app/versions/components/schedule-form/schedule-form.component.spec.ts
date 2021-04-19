@@ -14,7 +14,17 @@
  * limitations under the License.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
+import { NgxMomentDateModule, NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular-material-components/moment-adapter';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TranslateModule } from '@ngx-translate/core';
+
+import { Version } from '../../models/version.model';
 
 import { ScheduleFormComponent } from './schedule-form.component';
 
@@ -22,9 +32,49 @@ describe('ScheduleFormComponent', () => {
   let component: ScheduleFormComponent;
   let fixture: ComponentFixture<ScheduleFormComponent>;
 
-  beforeEach(async(() => {
+  const firstVersionUUID = 'testId';
+  const date = Date.parse('11/08/2020 16:03');
+  const mockVersion = {
+    label: 'versionName',
+    jcrUUID: firstVersionUUID,
+    branchId: 'master',
+    userName: 'testUserName',
+    timestamp: date,
+  } as Version;
+
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ScheduleFormComponent ],
+      imports: [
+        MatFormFieldModule,
+        MatInputModule,
+        MatDatepickerModule,
+        NgxMatDatetimePickerModule,
+        NgxMomentDateModule,
+        BrowserAnimationsModule,
+        ReactiveFormsModule,
+        TranslateModule.forRoot(),
+      ],
+      providers: [
+        {
+          provide: NGX_MAT_DATE_FORMATS,
+          useValue: {
+            parse: {
+              dateInput: ['LT'],
+            },
+            display: {
+              dateInput: 'LLL',
+              dateA11yLabel: 'LLL',
+              monthYearLabel: 'MMM YYYY',
+              monthYearA11yLabel: 'MMMM YYYY',
+            },
+          },
+        },
+        {
+          provide: NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS,
+          useValue: { strict: true, useUtc: true },
+        }],
+      ]
     })
     .compileComponents();
   }));
@@ -32,6 +82,7 @@ describe('ScheduleFormComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ScheduleFormComponent);
     component = fixture.componentInstance;
+    component.version = mockVersion;
     fixture.detectChanges();
   });
 
