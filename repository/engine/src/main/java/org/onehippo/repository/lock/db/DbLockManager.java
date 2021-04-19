@@ -320,7 +320,7 @@ public class DbLockManager extends AbstractLockManager {
 
                 if (changed == 0) {
                     log.debug("Either there is already a row entry for key '{}' which is not free OR the entry is not yet " +
-                            "present. Trying to add it now. If that fails, another cluster already contains the lock");
+                            "present. Trying to add it now. If that fails, another cluster already contains the lock", key);
                     try (final PreparedStatement createStatement = connection.prepareStatement(getCreateStatement())) {
                         createStatement.setString(1, key);
                         createStatement.setString(2, clusterNodeId);
