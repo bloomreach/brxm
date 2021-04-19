@@ -271,11 +271,11 @@ export class PageService implements OnDestroy {
 
     if (!pageVersions ||
       pageVersions.length === 0 ||
-      this.versionsService.isCurrentVersion(pageVersions[0].jcrUUID)) {
+      this.versionsService.isVersionFromPage(pageVersions[0].jcrUUID)) {
       return;
     }
 
-    const currentVersion = pageVersions.find(v => this.versionsService.isCurrentVersion(v.jcrUUID));
+    const currentVersion = pageVersions.find(v => this.versionsService.isVersionFromPage(v.jcrUUID));
 
     return new XPageStatusInfo(
       XPageStatus.PreviousVersion,
