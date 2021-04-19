@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
+import { NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentModule, NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular-material-components/moment-adapter';
 import { CdkColumnDef } from '@angular/cdk/table';
 import { NgModule } from '@angular/core';
@@ -57,12 +57,11 @@ import { registerSvgIcons } from './register-svg-icons';
     MatTreeModule,
     MatDatepickerModule,
     NgxMatDatetimePickerModule,
-    NgxMatTimepickerModule,
     NgxMatMomentModule,
   ],
   providers: [
     CdkColumnDef,
-     {
+    {
       provide: NGX_MAT_DATE_FORMATS,
       useValue: {
         parse: {
@@ -79,7 +78,8 @@ import { registerSvgIcons } from './register-svg-icons';
     {
       provide: NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS,
       useValue: { strict: true, useUtc: true },
-    } ],
+    },
+  ],
 })
 export class MaterialModule {
   constructor(private readonly iconRegistry: MatIconRegistry, private readonly domSanitizer: DomSanitizer) {

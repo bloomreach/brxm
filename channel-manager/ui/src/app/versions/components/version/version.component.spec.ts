@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Pipe, PipeTransform } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
@@ -45,11 +45,11 @@ describe('VersionComponent', () => {
   let versionsService: VersionsService;
   let ng1WorkflowService: Ng1WorkflowService;
 
-  const date = Date.parse('11/08/2020 16:03');
   const path = '/some/test/path';
   const renderPath = `${path}?withParam=test`;
   const documentId = 'testDocumentId';
   const firstVersionUUID = 'testId';
+  const date = Date.parse('11/08/2020 16:03');
   const mockVersion = {
     jcrUUID: firstVersionUUID,
     branchId: 'master',
@@ -95,11 +95,14 @@ describe('VersionComponent', () => {
         TranslateModule.forRoot(),
       ],
       providers: [
-       { provide: NG1_IFRAME_SERVICE, useValue: iframeServiceMock },
-       { provide: NG1_WORKFLOW_SERVICE, useValue: workflowServiceMock },
-       { provide: NG1_UI_ROUTER_GLOBALS, useValue: uiRouterGlobalsMock },
-       { provide: VersionsService, useValue: versionsServiceMock },
-       ],
+        { provide: NG1_IFRAME_SERVICE, useValue: iframeServiceMock },
+        { provide: NG1_WORKFLOW_SERVICE, useValue: workflowServiceMock },
+        { provide: NG1_UI_ROUTER_GLOBALS, useValue: uiRouterGlobalsMock },
+        { provide: VersionsService, useValue: versionsServiceMock },
+      ],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA,
+      ],
     })
       .compileComponents();
 
