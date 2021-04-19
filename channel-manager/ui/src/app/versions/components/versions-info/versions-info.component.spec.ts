@@ -76,7 +76,7 @@ describe('VersionsInfoComponent', () => {
     const versionsServiceMock = {
       versionsInfo$: of(mockVersionsInfo),
       getVersionsInfo: jest.fn(),
-      isCurrentVersion: jest.fn((id: string) => id === firstVersionUUID),
+      isVersionFromPage: jest.fn((id: string) => id === firstVersionUUID),
     };
 
     const uiRouterGlobalsMock = {

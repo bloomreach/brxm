@@ -77,7 +77,7 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
   }
 
   isVersionSelected(versionUUID: string): boolean {
-    return this.versionsService.isCurrentVersion(versionUUID);
+    return this.versionsService.isVersionFromPage(versionUUID);
   }
 
   getRenderPath(): string {
