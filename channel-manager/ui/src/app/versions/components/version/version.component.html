@@ -48,5 +48,6 @@
 </div>
 
 <em-schedule-form *ngIf="isSelected && isScheduleFormVisible"
+                  [version]="version"
                   (cancelForm)="isScheduleFormVisible = false">
 </em-schedule-form>

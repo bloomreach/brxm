@@ -13,6 +13,7 @@ exports[`VersionsInfoComponent initial rendering should show list of versions 1`
     
     <em-latest-version
       class="qa-version-testId"
+      matripple=""
     />
     
     

@@ -14,7 +14,50 @@
   limitations under the License.
   -->
 
-<button mat-stroked-button
-        (click)="cancelForm.emit(); $event.stopPropagation()">
-  Cancel
-</button>
+<form [formGroup]="scheduleForm"
+      (ngSubmit)="scheduleCampaign()"
+      (click)="$event.stopPropagation()">
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'VERSION_NAME' | translate }}</mat-label>
+    <input matInput
+           required
+           class="qa-version-label"
+           formControlName="label">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'START_DATE_TIME' | translate }}</mat-label>
+    <input matInput
+           formControlName="fromDateTime"
+           [ngxMatDatetimePicker]="fromPicker">
+    <mat-datepicker-toggle matSuffix
+                           [for]="fromPicker">
+    </mat-datepicker-toggle>
+    <ngx-mat-datetime-picker #fromPicker></ngx-mat-datetime-picker>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'END_DATE_TIME' | translate }}</mat-label>
+    <input matInput
+           formControlName="toDateTime"
+           [ngxMatDatetimePicker]="toPicker">
+    <mat-datepicker-toggle matSuffix
+                           [for]="toPicker">
+    </mat-datepicker-toggle>
+    <ngx-mat-datetime-picker #toPicker></ngx-mat-datetime-picker>
+  </mat-form-field>
+
+  <div class="form-actions">
+    <button mat-stroked-button
+            type="button"
+            (click)="$event.stopPropagation(); cancelForm.emit()">
+      {{ 'CANCEL' | translate }}
+    </button>
+
+    <button mat-stroked-button
+            type="submit"
+            color="primary">
+      {{ 'SCHEDULE' | translate }}
+    </button>
+  </div>
+</form>

@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import moment from 'moment';
+import { Subject } from 'rxjs';
+
+import { DateService } from '../../../services/date.service';
+import { Version } from '../../models/version.model';
 
 @Component({
   selector: 'em-schedule-form',
@@ -25,9 +31,44 @@ export class ScheduleFormComponent implements OnInit {
   @Output()
   cancelForm = new EventEmitter<void>();
 
-  constructor() { }
+  @Input()
+  version!: Version;
+
+  scheduleForm = this.fb.group({
+    label: ['', Validators.required],
+    fromDateTime: ['', Validators.required],
+    toDateTime: [''],
+  });
+
+  currentDate?: Date;
+
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly dateService: DateService,
+  ) { }
 
   ngOnInit(): void {
+    this.currentDate = this.dateService.getCurrentDate();
+
+    this.scheduleForm.patchValue({
+      label: this.version.label,
+      from: {
+        fromDateTime: moment(this.version.campaign?.from ?? this.currentDate),
+        toDateTime: this.version.campaign?.to ?? moment(this.version.campaign?.to),
+      },
+    });
   }
 
+  async scheduleCampaign(): Promise<void> {
+    const formValues = this.scheduleForm.value;
+    const from = formValues.fromDateTime.utc().format();
+    const to = formValues.toDateTime.utc().format();
+    const label = formValues.label;
+
+    console.log({
+      label,
+      from,
+      to,
+    });
+  }
 }
