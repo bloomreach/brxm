@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
+import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
+import { NgxMatMomentModule, NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular-material-components/moment-adapter';
+import { CdkColumnDef } from '@angular/cdk/table';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -51,12 +55,34 @@ import { registerSvgIcons } from './register-svg-icons';
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
+    MatDatepickerModule,
+    NgxMatDatetimePickerModule,
+    NgxMatTimepickerModule,
+    NgxMatMomentModule,
   ],
+  providers: [
+    CdkColumnDef,
+     {
+      provide: NGX_MAT_DATE_FORMATS,
+      useValue: {
+        parse: {
+          dateInput: ['LT'],
+        },
+        display: {
+          dateInput: 'LLL',
+          dateA11yLabel: 'LLL',
+          monthYearLabel: 'MMM YYYY',
+          monthYearA11yLabel: 'MMMM YYYY',
+        },
+      },
+    },
+    {
+      provide: NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS,
+      useValue: { strict: true, useUtc: true },
+    } ],
 })
 export class MaterialModule {
   constructor(private readonly iconRegistry: MatIconRegistry, private readonly domSanitizer: DomSanitizer) {
-    this.iconRegistry.registerFontClassAlias('materialdesignicons', 'mdi');
-    this.iconRegistry.setDefaultFontSetClass('mdi');
     this.registerCustomIcons();
   }
 
