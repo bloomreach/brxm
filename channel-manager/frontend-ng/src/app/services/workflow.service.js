@@ -23,10 +23,10 @@ class WorkflowService {
     this.baseUrl = PathService.concatPaths(ConfigService.getCmsContextPath(), '/ws/content/workflows/documents');
   }
 
-  createWorkflowAction(documentId, ...pathElements) {
+  createWorkflowAction(documentId, body = {}, ...pathElements) {
     const url = encodeURI(`${this.baseUrl}/${documentId}/${pathElements.join('/')}`);
     return this.$http
-      .post(url)
+      .post(url, body)
       .then((response) => {
         this.$rootScope.$emit('page:check-changes');
         return response.data;
