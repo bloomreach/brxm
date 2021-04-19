@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-import { CampaignInfo } from './campaign-info.model';
-
-export interface Version {
-  label?: string;
-  branchId: string;
-  jcrUUID: string;
-  timestamp: number;
-  userName: string;
-  campaign?: CampaignInfo;
+export interface CampaignInfo {
+  from: Date;
+  to?: Date;
 }
