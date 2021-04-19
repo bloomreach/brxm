@@ -28,8 +28,6 @@ import { VersionsInfo } from '../models/versions-info.model';
   providedIn: 'root',
 })
 export class VersionsService {
-  private unpublishedVariantId: string | undefined = undefined;
-
   private readonly versionsInfo = new ReplaySubject<VersionsInfo>(1);
   readonly versionsInfo$ = this.versionsInfo.asObservable();
 
@@ -38,17 +36,7 @@ export class VersionsService {
     @Inject(NG1_CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
     private readonly pageStructureService: PageStructureService,
     private readonly projectService: ProjectService,
-  ) {
-    this.unpublishedVariantId = this.pageStructureService.getUnpublishedVariantId();
-
-    this.$rootScope.$on('page:change', () => {
-      this.unpublishedVariantId = this.pageStructureService.getUnpublishedVariantId();
-    });
-
-    this.$rootScope.$on('page:check-changes', () => {
-      this.unpublishedVariantId = this.pageStructureService.getUnpublishedVariantId();
-    });
-  }
+  ) { }
 
   async getVersionsInfo(documentId: string): Promise<void> {
     const branchId = this.projectService.getSelectedProjectId();
@@ -64,7 +52,7 @@ export class VersionsService {
     return versions;
   }
 
-  isCurrentVersion(versionUUID: string): boolean {
-    return versionUUID === this.unpublishedVariantId;
+  isVersionFromPage(versionUUID: string): boolean {
+    return versionUUID === this.pageStructureService.getUnpublishedVariantId();
   }
 }
