@@ -221,7 +221,7 @@ describe('VersionsInfoComponent', () => {
       const restoreButton = componentEl.querySelector<HTMLButtonElement>('.qa-restore-version-action');
       restoreButton?.click();
 
-      expect(ng1WorkflowService.createWorkflowAction).toHaveBeenCalledWith(component.documentId, 'restore', secondVersionUUID);
+      expect(ng1WorkflowService.createWorkflowAction).toHaveBeenCalledWith(component.documentId, {}, 'restore', secondVersionUUID);
     });
   });
 
@@ -259,7 +259,7 @@ describe('VersionsInfoComponent', () => {
       newVersionButton?.click();
       fixture.detectChanges();
 
-      expect(ng1WorkflowService.createWorkflowAction).toHaveBeenCalledWith(component.documentId, 'version');
+      expect(ng1WorkflowService.createWorkflowAction).toHaveBeenCalledWith(component.documentId, {}, 'version');
     }));
   });
 
