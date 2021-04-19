@@ -86,13 +86,13 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
 
   async createVersion(): Promise<void> {
     this.actionInProgress = true;
-    await this.ng1WorkflowService.createWorkflowAction(this.documentId, 'version');
+    await this.ng1WorkflowService.createWorkflowAction(this.documentId, {}, 'version');
     await this.getVersionsInfo();
   }
 
   async restoreVersion(versionUUID: string): Promise<void> {
     this.actionInProgress = true;
-    await this.ng1WorkflowService.createWorkflowAction(this.documentId, 'restore', versionUUID);
+    await this.ng1WorkflowService.createWorkflowAction(this.documentId, {}, 'restore', versionUUID);
     const renderPath = this.getRenderPath();
     await this.ng1IframeService.load(renderPath);
     await this.getVersionsInfo();
