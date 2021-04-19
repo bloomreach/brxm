@@ -17,7 +17,7 @@
 import { Component, EventEmitter, HostBinding, Inject, Input, OnInit, Output } from '@angular/core';
 import { UIRouterGlobals } from '@uirouter/core';
 
-import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1service';
+import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
 import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
 import { Version } from '../../models/version.model';
