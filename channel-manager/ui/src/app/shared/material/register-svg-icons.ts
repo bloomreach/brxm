@@ -34,6 +34,8 @@ import homeOutline from '!!raw-loader!./icons/home-outline.svg';
 import lockOutline from '!!raw-loader!./icons/lock-outline.svg';
 import minusCircleOutline from '!!raw-loader!./icons/minus-circle-outline.svg';
 import plus from '!!raw-loader!./icons/plus.svg';
+import sync from '!!raw-loader!./icons/sync.svg';
+import tablet from '!!raw-loader!./icons/tablet.svg';
 import trash from '!!raw-loader!./icons/trash.svg';
 import web from '!!raw-loader!./icons/web.svg';
 import xpage from '!!raw-loader!./icons/xpage.svg';
@@ -67,4 +69,5 @@ export function registerSvgIcons(iconRegistry: MatIconRegistry, donSanitizer: Do
   registerIcon('web', web);
   registerIcon('xpage', xpage);
   registerIcon('chevron-right', chevronRight);
+  registerIcon('sync', sync);
 }
