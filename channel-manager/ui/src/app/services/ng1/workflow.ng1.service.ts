@@ -17,7 +17,7 @@
 import { InjectionToken } from '@angular/core';
 
 export interface Ng1WorkflowService {
-  createWorkflowAction<T>(documentId: string, ...pathElements: string[]): Promise<T>;
+  createWorkflowAction<T>(documentId: string, body: object, ...pathElements: string[]): Promise<T>;
 }
 
 export const NG1_WORKFLOW_SERVICE = new InjectionToken<Ng1WorkflowService>('NG1_WORKFLOW_SERVICE');
