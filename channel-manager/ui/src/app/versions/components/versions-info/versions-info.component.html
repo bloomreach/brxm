@@ -17,6 +17,8 @@
      *ngIf="versionsInfo">
   <ng-container *ngFor="let version of versionsInfo!.versions; first as isFirst">
     <em-latest-version *ngIf="isFirst"
+                       matRipple
+                       [matRippleDisabled]="isVersionSelected(version.jcrUUID)"
                        [class]="'qa-version-' + version.jcrUUID"
                        (click)="selectVersion(version.jcrUUID)"
                        [isSelected]="isVersionSelected(version.jcrUUID)"
@@ -27,6 +29,7 @@
 
     <em-version *ngIf="!isFirst"
                 matRipple
+                [matRippleDisabled]="isVersionSelected(version.jcrUUID)"
                 [class]="'qa-version-' + version.jcrUUID"
                 (click)="selectVersion(version.jcrUUID)"
                 [isSelected]="isVersionSelected(version.jcrUUID)"
