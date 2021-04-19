@@ -13,3 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+@import 'variables';
+
+:host {
+  padding-top: $spacing-half;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    margin-left: $spacing-half;
+  }
+}
