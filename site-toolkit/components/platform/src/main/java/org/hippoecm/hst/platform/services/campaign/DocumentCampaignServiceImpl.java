@@ -66,9 +66,10 @@ public class DocumentCampaignServiceImpl implements DocumentCampaignService {
             // find whether there is an active campaign for the current branch, and if so, serve that version
             return versionsMeta.getCampaigns().stream()
                     .filter(campaign ->
-                            // only campaigns which date range matches current time
+                            // only campaigns which date range matches current time. 'from' field can be null which means
+                            // no end-date
                             campaign.getFrom().getTimeInMillis() < currentEpochMillis
-                                    && campaign.getTo().getTimeInMillis() > currentEpochMillis
+                                    && (campaign.getTo() == null || campaign.getTo().getTimeInMillis() > currentEpochMillis)
                     ).filter(campaign ->
                             // only those versions which match the branchId
                             {
@@ -87,10 +88,8 @@ public class DocumentCampaignServiceImpl implements DocumentCampaignService {
                                 }
                             }
                     ).reduce((campaign, campaign2) -> {
-                        // return shortest campaign if multiple match
-                        final long duration1 = campaign.getTo().getTimeInMillis() - campaign.getFrom().getTimeInMillis();
-                        final long duration2 = campaign2.getTo().getTimeInMillis() - campaign2.getFrom().getTimeInMillis();
-                        return duration1 < duration2 ? campaign : campaign2;
+                        // return the campaign which started most recently
+                        return campaign.getFrom().getTimeInMillis() > campaign2.getFrom().getTimeInMillis() ? campaign : campaign2;
                     });
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {

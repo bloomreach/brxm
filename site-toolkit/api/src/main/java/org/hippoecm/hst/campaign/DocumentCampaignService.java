@@ -27,9 +27,9 @@ public interface DocumentCampaignService {
      * <p>
      *     Given the {@code handle} and the {@code branchId} returns a {@link Campaign} if the version for the
      *     {@link Campaign} is active. The implementation of this service decides based on which criteria there is an
-     *     active campaign or not for the {@code handle} document. A typical heuristic would be to fina a campaign
+     *     active campaign or not for the {@code handle} document. A typical heuristic would be to find a campaign
      *     version which has a from-to date which matches the current server time. If multiple campaign version match,
-     *     a heuristic can be to return the shortest living campaign as being the most relevant. In general an
+     *     a heuristic can be to return the campaign with the most recent start date. In general an
      *     implementation also requires that the possibly used version matches the {@code branchId}
      * </p>
      * @param handle the document for which an attempt is made to find the active campaign
