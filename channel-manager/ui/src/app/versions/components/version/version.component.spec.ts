@@ -15,12 +15,12 @@
  */
 
 import { Pipe, PipeTransform } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1service';
+import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
 import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
 import { Version } from '../../models/version.model';
@@ -65,7 +65,7 @@ describe('VersionComponent', () => {
     campaignEnabled: true,
   } as VersionsInfo;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     const iframeServiceMock = {
       load: jest.fn(() => Promise.resolve()),
     };
