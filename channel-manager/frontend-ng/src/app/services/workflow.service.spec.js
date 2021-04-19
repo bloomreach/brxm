@@ -47,14 +47,14 @@ describe('WorkflowService', () => {
   it('creates a new workflow action', () => {
     $httpBackend.expectPOST('/test/ws/content/workflows/documents/documentId/workflowActionId').respond(200);
 
-    WorkflowService.createWorkflowAction('documentId', 'workflowActionId');
+    WorkflowService.createWorkflowAction('documentId', {}, 'workflowActionId');
     $httpBackend.flush();
   });
 
   it('encodes the documentId and workflowActionId arguments', () => {
     $httpBackend.expectPOST('/test/ws/content/workflows/documents/document%20Id/workflow%20Action%20Id').respond(200);
 
-    WorkflowService.createWorkflowAction('document Id', 'workflow Action Id');
+    WorkflowService.createWorkflowAction('document Id', {}, 'workflow Action Id');
     $httpBackend.flush();
   });
 
@@ -63,7 +63,7 @@ describe('WorkflowService', () => {
     $rootScope.$on('page:check-changes', listener);
     $httpBackend.expectPOST('/test/ws/content/workflows/documents/documentId/workflowActionId').respond(200);
 
-    WorkflowService.createWorkflowAction('documentId', 'workflowActionId');
+    WorkflowService.createWorkflowAction('documentId', {}, 'workflowActionId');
     $httpBackend.flush();
 
     expect(listener).toHaveBeenCalled();
