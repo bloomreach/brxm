@@ -24,7 +24,9 @@ import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
 import { Version } from '../../models/version.model';
+import { VersionsService } from '../../services/versions.service';
 
 import { ScheduleFormComponent } from './schedule-form.component';
 
@@ -43,6 +45,17 @@ describe('ScheduleFormComponent', () => {
   } as Version;
 
   beforeEach(waitForAsync(() => {
+    const uiRouterGlobalsMock = {
+      params: {
+        documentId: 'testDocumentId',
+      },
+    };
+
+    const versionsServiceMock = {
+      updateVersion: jest.fn(),
+      getVersionsInfo: () => Promise.resolve(),
+    };
+
     TestBed.configureTestingModule({
       declarations: [ ScheduleFormComponent ],
       imports: [
@@ -73,8 +86,10 @@ describe('ScheduleFormComponent', () => {
         {
           provide: NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS,
           useValue: { strict: true, useUtc: true },
-        }],
-      ]
+        },
+        { provide: NG1_UI_ROUTER_GLOBALS, useValue: uiRouterGlobalsMock },
+        { provide: VersionsService, useValue: versionsServiceMock },
+      ],
     })
     .compileComponents();
   }));
