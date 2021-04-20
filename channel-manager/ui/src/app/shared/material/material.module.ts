@@ -77,7 +77,7 @@ import { registerSvgIcons } from './register-svg-icons';
     },
     {
       provide: NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS,
-      useValue: { strict: true, useUtc: true },
+      useValue: { strict: true },
     },
   ],
 })
