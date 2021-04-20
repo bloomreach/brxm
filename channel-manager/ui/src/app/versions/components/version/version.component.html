@@ -16,13 +16,34 @@
 
 <div class="info">
   <div class="description">
-    <span class="qa-version-timestamp">
-      {{ version?.timestamp | moment }}
-    </span>
-    <span> - </span>
-    <span class="qa-version-username">
-      {{ version?.userName || ('SYSTEM' | translate) }}
-    </span>
+    <p class="truncate first-line">
+      <span class="qa-version-timestamp">
+        {{ version?.timestamp | moment }}
+      </span>
+      <span> - </span>
+      <span class="qa-version-username">
+        {{ version?.userName || ('SYSTEM' | translate) }}
+      </span>
+    </p>
+
+    <p class="truncate"
+       *ngIf="version.label && !isScheduleFormVisible">
+      <i>
+        {{ version?.label }}
+      </i>
+    </p>
+
+    <p class="truncate mat-caption"
+       *ngIf="version.campaign && !isScheduleFormVisible">
+      {{ version.campaign!.from | moment }}
+
+      <ng-container *ngIf="version.campaign!.to">
+        <span> - </span>
+        <span>
+          {{ version.campaign!.to | moment }}
+        </span>
+      </ng-container>
+    </p>
   </div>
 
   <div class="actions"
@@ -30,10 +51,10 @@
     <button *ngIf="versionsInfo.campaignEnabled"
             mat-stroked-button
             color="primary"
-            class="qa-schedule-version-action"
+            class="schedule-version-action qa-schedule-version-action"
             [disabled]="actionInProgress"
             (click)="isScheduleFormVisible = true; $event.stopPropagation()">
-      <mat-icon svgIcon="calendar-clock"></mat-icon>
+      <mat-icon>schedule</mat-icon>
     </button>
 
     <button *ngIf="versionsInfo.restoreEnabled"

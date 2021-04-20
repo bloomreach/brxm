@@ -36,13 +36,21 @@
 :host.selected {
   background-color: map-get($blue, 50);
 
-  .description {
+  p:first-of-type {
     font-weight: 800;
   }
 }
 
+.info {
+  display: flex;
+}
+
 .description {
   flex-shrink: 1;
+  overflow: hidden;
+}
+
+.truncate {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -52,11 +60,17 @@
   flex: auto 0 0;
   padding-left: $spacing-full;
 
+  .schedule-version-action {
+    min-width: auto;
+    padding-left: $spacing-half;
+    padding-right: $spacing-half;
+  }
+
   button:not(:first-of-type) {
     margin-left: $spacing-half;
   }
 }
 
-.info {
-  display: flex;
+p {
+  margin-bottom: 0.3em;
 }
