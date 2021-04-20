@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { UIRouterGlobals } from '@uirouter/core';
 import moment from 'moment';
-import { Subject } from 'rxjs';
 
 import { DateService } from '../../../services/date.service';
-import { Version } from '../../models/version.model';
+import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
+import { Version, VersionUpdateBody } from '../../models/version.model';
+import { VersionsService } from '../../services/versions.service';
 
 @Component({
   selector: 'em-schedule-form',
@@ -43,6 +45,8 @@ export class ScheduleFormComponent implements OnInit {
   currentDate?: Date;
 
   constructor(
+    @Inject(NG1_UI_ROUTER_GLOBALS) private readonly uiRouterGlobals: UIRouterGlobals,
+    private readonly versionsService: VersionsService,
     private readonly fb: FormBuilder,
     private readonly dateService: DateService,
   ) { }
@@ -52,23 +56,32 @@ export class ScheduleFormComponent implements OnInit {
 
     this.scheduleForm.patchValue({
       label: this.version.label,
-      from: {
-        fromDateTime: moment(this.version.campaign?.from ?? this.currentDate),
-        toDateTime: this.version.campaign?.to ?? moment(this.version.campaign?.to),
-      },
+      fromDateTime: moment(this.version.campaign?.from ?? this.currentDate),
+      toDateTime: this.version.campaign?.to && moment(this.version.campaign?.to),
     });
   }
 
   async scheduleCampaign(): Promise<void> {
+    const { documentId } = this.uiRouterGlobals.params;
     const formValues = this.scheduleForm.value;
-    const from = formValues.fromDateTime.utc().format();
-    const to = formValues.toDateTime.utc().format();
-    const label = formValues.label;
+    const body: VersionUpdateBody = {
+      label: formValues.label,
+    };
 
-    console.log({
-      label,
-      from,
-      to,
-    });
+    const from = formValues.fromDateTime.utc().format();
+    const to = formValues.toDateTime?.utc().format() || null;
+
+    if (from) {
+      body.campaign = {
+        from,
+      };
+
+      if (to) {
+        body.campaign.to = to;
+      }
+    }
+
+    await this.versionsService.updateVersion(documentId, this.version.jcrUUID, body);
+    await this.versionsService.getVersionsInfo(documentId);
   }
 }
