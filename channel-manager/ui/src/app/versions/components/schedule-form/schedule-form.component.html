@@ -14,7 +14,8 @@
   limitations under the License.
   -->
 
-<form [formGroup]="scheduleForm"
+<form class="schedule-form qa-schedule-form"
+      [formGroup]="scheduleForm"
       (ngSubmit)="scheduleCampaign()"
       (click)="$event.stopPropagation()">
   <mat-form-field appearance="outline">
@@ -28,33 +29,63 @@
   <mat-form-field appearance="outline">
     <mat-label>{{ 'START_DATE_TIME' | translate }}</mat-label>
     <input matInput
+           class="qa-schedule-from-date-time"
            formControlName="fromDateTime"
            [ngxMatDatetimePicker]="fromPicker">
     <mat-datepicker-toggle matSuffix
                            [for]="fromPicker">
     </mat-datepicker-toggle>
-    <ngx-mat-datetime-picker #fromPicker></ngx-mat-datetime-picker>
+    <ngx-mat-datetime-picker #fromPicker
+                             color="primary">
+      <ng-template>
+        {{ 'OK' | translate }}
+      </ng-template>
+    </ngx-mat-datetime-picker>
+
+    <button matSuffix
+            type="button"
+            class="qa-schedule-reset-from-date-time"
+            mat-icon-button
+            (click)="resetFromDate()">
+      <mat-icon>sync</mat-icon>
+    </button>
   </mat-form-field>
 
   <mat-form-field appearance="outline">
     <mat-label>{{ 'END_DATE_TIME' | translate }}</mat-label>
     <input matInput
+           class="qa-schedule-to-date-time"
            formControlName="toDateTime"
            [ngxMatDatetimePicker]="toPicker">
     <mat-datepicker-toggle matSuffix
                            [for]="toPicker">
     </mat-datepicker-toggle>
-    <ngx-mat-datetime-picker #toPicker></ngx-mat-datetime-picker>
+    <ngx-mat-datetime-picker #toPicker
+                             color="primary">
+      <ng-template>
+        {{ 'OK' | translate }}
+      </ng-template>
+    </ngx-mat-datetime-picker>
+
+    <button matSuffix
+            type="button"
+            class="qa-schedule-reset-to-date-time"
+            mat-icon-button
+            (click)="resetToDate()">
+      <mat-icon>sync</mat-icon>
+    </button>
   </mat-form-field>
 
   <div class="form-actions">
     <button mat-stroked-button
             type="button"
+            class="qa-schedule-cancel"
             (click)="$event.stopPropagation(); cancelForm.emit()">
       {{ 'CANCEL' | translate }}
     </button>
 
     <button mat-stroked-button
+            class="qa-schedule-submit"
             type="submit"
             color="primary">
       {{ 'SCHEDULE' | translate }}
