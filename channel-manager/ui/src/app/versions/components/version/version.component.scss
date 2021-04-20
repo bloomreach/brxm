@@ -50,6 +50,19 @@
   overflow: hidden;
 }
 
+.schedule-info {
+  display: flex;
+  align-items: center;
+
+  .mat-icon {
+    font-size: inherit !important;
+    height: 12px !important;
+    width: 12px !important;
+    padding-top: 1px;
+    padding-right: 3px;
+  }
+}
+
 .truncate {
   white-space: nowrap;
   overflow: hidden;
