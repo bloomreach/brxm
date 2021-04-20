@@ -33,9 +33,10 @@
       </i>
     </p>
 
-    <p class="truncate mat-caption"
+    <p class="schedule-info truncate mat-caption"
        *ngIf="version.campaign && !isScheduleFormVisible">
-      {{ version.campaign!.from | moment }}
+      <mat-icon>schedule</mat-icon>
+      <span>{{ version.campaign!.from | moment }}</span>
 
       <ng-container *ngIf="version.campaign!.to">
         <span> - </span>
