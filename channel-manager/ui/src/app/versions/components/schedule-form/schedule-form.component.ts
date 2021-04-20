@@ -18,6 +18,7 @@ import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular
 import { FormBuilder, Validators } from '@angular/forms';
 import { UIRouterGlobals } from '@uirouter/core';
 import moment from 'moment';
+import { Subject } from 'rxjs';
 
 import { DateService } from '../../../services/date.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
@@ -30,6 +31,8 @@ import { VersionsService } from '../../services/versions.service';
   styleUrls: ['./schedule-form.component.scss'],
 })
 export class ScheduleFormComponent implements OnInit {
+  private readonly unsubscribe = new Subject();
+
   @Output()
   cancelForm = new EventEmitter<void>();
 
@@ -42,7 +45,12 @@ export class ScheduleFormComponent implements OnInit {
     toDateTime: [''],
   });
 
-  currentDate?: Date;
+  currentDateTime?: Date;
+  minFromDateTime?: Date;
+  maxFromDateTime?: Date;
+  originalFromDateTime?: moment.Moment;
+  minToDateTime?: Date;
+  originalToDateTime?: moment.Moment;
 
   constructor(
     @Inject(NG1_UI_ROUTER_GLOBALS) private readonly uiRouterGlobals: UIRouterGlobals,
@@ -52,12 +60,26 @@ export class ScheduleFormComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.currentDate = this.dateService.getCurrentDate();
+    this.currentDateTime = this.dateService.getCurrentDate();
+    this.originalFromDateTime = moment(this.version.campaign?.from ?? this.currentDateTime);
+    this.originalToDateTime = this.version.campaign?.to && moment(this.version.campaign?.to);
 
     this.scheduleForm.patchValue({
       label: this.version.label,
-      fromDateTime: moment(this.version.campaign?.from ?? this.currentDate),
-      toDateTime: this.version.campaign?.to && moment(this.version.campaign?.to),
+      fromDateTime: this.originalFromDateTime,
+      toDateTime: this.originalToDateTime,
+    });
+  }
+
+  resetFromDate(): void {
+    this.scheduleForm.patchValue({
+      fromDateTime: this.originalFromDateTime,
+    });
+  }
+
+  resetToDate(): void {
+    this.scheduleForm.patchValue({
+      toDateTime: this.originalToDateTime,
     });
   }
 
