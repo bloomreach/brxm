@@ -16,8 +16,11 @@
 
 import { InjectionToken } from '@angular/core';
 
+import { VersionUpdateBody } from '../../versions/models/version.model';
+
 export interface Ng1WorkflowService {
   createWorkflowAction<T>(documentId: string, body: object, ...pathElements: string[]): Promise<T>;
+  updateWorkflowAction<T>(documentId: string, body: VersionUpdateBody, ...pathElements: string[]): Promise<T>;
 }
 
 export const NG1_WORKFLOW_SERVICE = new InjectionToken<Ng1WorkflowService>('NG1_WORKFLOW_SERVICE');

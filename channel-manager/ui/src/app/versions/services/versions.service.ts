@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 
 import { Ng1ContentService, NG1_CONTENT_SERVICE } from '../../services/ng1/content.ng1.service';
-import { NG1_ROOT_SCOPE } from '../../services/ng1/root-scope.ng1.service';
+import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../services/ng1/workflow.ng1.service';
 import { PageStructureService } from '../../services/page-structure.service';
 import { ProjectService } from '../../services/project.service';
-import { Version } from '../models/version.model';
+import { Version, VersionUpdateBody } from '../models/version.model';
 import { VersionsInfo } from '../models/versions-info.model';
 
 @Injectable({
@@ -32,8 +32,8 @@ export class VersionsService {
   readonly versionsInfo$ = this.versionsInfo.asObservable();
 
   constructor(
-    @Inject(NG1_ROOT_SCOPE) private readonly $rootScope: ng.IRootScopeService,
     @Inject(NG1_CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
+    @Inject(NG1_WORKFLOW_SERVICE) private readonly workflowService: Ng1WorkflowService,
     private readonly pageStructureService: PageStructureService,
     private readonly projectService: ProjectService,
   ) { }
@@ -50,6 +50,11 @@ export class VersionsService {
     const { versions } = await this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId);
 
     return versions;
+  }
+
+  async updateVersion(documentId: string, versionUUID: string, body: VersionUpdateBody): Promise<void> {
+    const branchId = this.projectService.getSelectedProjectId();
+    return this.workflowService.updateWorkflowAction(documentId, body, branchId, 'versions', versionUUID);
   }
 
   isVersionFromPage(versionUUID: string): boolean {

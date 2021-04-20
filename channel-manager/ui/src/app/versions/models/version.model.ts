@@ -24,3 +24,8 @@ export interface Version {
   userName: string;
   campaign?: CampaignInfo;
 }
+
+export interface VersionUpdateBody {
+  label?: string;
+  campaign?: CampaignInfo;
+}
