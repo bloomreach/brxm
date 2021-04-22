@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -206,7 +206,7 @@ export class PageService implements OnDestroy {
         return XPageStatus.NotPartOfProject;
       }
 
-      switch (project.state) {
+      switch (projectState) {
         case ProjectState.InReview:
           switch (pageAcceptanceState) {
             case AcceptanceState.InReview: return XPageStatus.ProjectInReview;
@@ -220,8 +220,6 @@ export class PageService implements OnDestroy {
         case ProjectState.Approved: return XPageStatus.ProjectPageApproved;
         case ProjectState.Running: return XPageStatus.ProjectRunning;
       }
-
-      return XPageStatus.ProjectRunning;
     };
 
     const pageStatus = getPageStatus(project.state, xPageState.acceptanceState);
