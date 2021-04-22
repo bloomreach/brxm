@@ -17,9 +17,9 @@
 import { Component, EventEmitter, HostBinding, Inject, Input, OnChanges, Output } from '@angular/core';
 import { UIRouterGlobals } from '@uirouter/core';
 
+import { DocumentWorkflowService } from '../../../services/document-workflow.service';
 import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
-import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
 import { Version } from '../../models/version.model';
 import { VersionsInfo } from '../../models/versions-info.model';
 import { VersionsService } from '../../services/versions.service';
@@ -52,8 +52,8 @@ export class VersionComponent implements OnChanges {
 
   constructor(
     @Inject(NG1_IFRAME_SERVICE) private readonly ng1IframeService: Ng1IframeService,
-    @Inject(NG1_WORKFLOW_SERVICE) private readonly ng1WorkflowService: Ng1WorkflowService,
     @Inject(NG1_UI_ROUTER_GLOBALS) private readonly ng1UiRouterGlobals: UIRouterGlobals,
+    private readonly documentWorkflowService: DocumentWorkflowService,
     private readonly versionsService: VersionsService,
   ) { }
 
@@ -64,7 +64,7 @@ export class VersionComponent implements OnChanges {
   async restoreVersion(versionUUID: string): Promise<void> {
     this.actionInProgressChange.emit(true);
     const documentId = this.ng1UiRouterGlobals.params.documentId;
-    await this.ng1WorkflowService.createWorkflowAction(documentId, {}, 'restore', versionUUID);
+    await this.documentWorkflowService.postAction(documentId, ['restore', versionUUID]);
     await this.ng1IframeService.load(this.renderPath);
     await this.versionsService.getVersionsInfo(documentId);
     this.actionInProgressChange.emit(false);
