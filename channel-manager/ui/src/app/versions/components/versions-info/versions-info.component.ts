@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import { takeUntil, tap } from 'rxjs/operators';
 import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1.service';
 import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
+import { NotificationService } from '../../../services/notification.service';
 import { VersionsInfo } from '../../models/versions-info.model';
 import { VersionsService } from '../../services/versions.service';
 
@@ -43,6 +44,7 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
     @Inject(NG1_CHANNEL_SERVICE) private readonly ng1ChannelService: Ng1ChannelService,
     @Inject(NG1_UI_ROUTER_GLOBALS) private readonly ng1UiRouterGlobals: UIRouterGlobals,
     private readonly versionsService: VersionsService,
+    private readonly notificationService: NotificationService,
   ) { }
 
   ngOnInit(): void {
@@ -66,14 +68,19 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
   }
 
   async selectVersion(versionUUID: string): Promise<void> {
-    this.actionInProgress = true;
     if (this.isVersionSelected(versionUUID)) {
       return;
     }
 
-    const newPath = this.createVersionPath(versionUUID);
-    await this.ng1IframeService.load(newPath);
-    this.actionInProgress = false;
+    try {
+      this.actionInProgress = true;
+      const newPath = this.createVersionPath(versionUUID);
+      await this.ng1IframeService.load(newPath);
+    } catch (error) {
+      this.notificationService.showErrorNotification('VERSION_SELECTION_ERROR');
+    } finally {
+      this.actionInProgress = false;
+    }
   }
 
   isVersionSelected(versionUUID: string): boolean {
