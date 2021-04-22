@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@ import { VersionsInfoComponent } from './components/versions-info/versions-info.
 
 @NgModule({
   declarations: [
-    VersionsInfoComponent,
-    VersionComponent,
     LatestVersionComponent,
+    VersionComponent,
+    VersionsInfoComponent,
   ],
   imports: [
     CommonModule,
