@@ -20,9 +20,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
+import { DocumentWorkflowService } from '../../../services/document-workflow.service';
+import { NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
-import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
 import { Version } from '../../models/version.model';
 import { VersionsInfo } from '../../models/versions-info.model';
 import { VersionsService } from '../../services/versions.service';
@@ -40,10 +40,6 @@ describe('VersionComponent', () => {
   let component: VersionComponent;
   let fixture: ComponentFixture<VersionComponent>;
   let componentEl: HTMLElement;
-
-  let ng1IframeService: Ng1IframeService;
-  let versionsService: VersionsService;
-  let ng1WorkflowService: Ng1WorkflowService;
 
   const path = '/some/test/path';
   const renderPath = `${path}?withParam=test`;
@@ -70,7 +66,7 @@ describe('VersionComponent', () => {
       load: jest.fn(() => Promise.resolve()),
     };
 
-    const workflowServiceMock = {
+    const documentWorkflowServiceMock = {
       createWorkflowAction: jest.fn(() => Promise.resolve()),
     };
 
@@ -96,7 +92,7 @@ describe('VersionComponent', () => {
       ],
       providers: [
         { provide: NG1_IFRAME_SERVICE, useValue: iframeServiceMock },
-        { provide: NG1_WORKFLOW_SERVICE, useValue: workflowServiceMock },
+        { provide: DocumentWorkflowService, useValue: documentWorkflowServiceMock },
         { provide: NG1_UI_ROUTER_GLOBALS, useValue: uiRouterGlobalsMock },
         { provide: VersionsService, useValue: versionsServiceMock },
       ],
@@ -105,10 +101,6 @@ describe('VersionComponent', () => {
       ],
     })
       .compileComponents();
-
-    ng1WorkflowService = TestBed.inject(NG1_WORKFLOW_SERVICE);
-    ng1IframeService = TestBed.inject(NG1_IFRAME_SERVICE);
-    versionsService = TestBed.inject(VersionsService);
   }));
 
   beforeEach(() => {
