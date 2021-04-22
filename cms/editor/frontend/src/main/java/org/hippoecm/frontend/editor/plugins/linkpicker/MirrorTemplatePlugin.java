@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -206,34 +206,42 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
     private String getMirrorPath() {
         final Node node = MirrorTemplatePlugin.this.getModelObject();
+        String path = "";
+        String docBase = "";
         try {
             if (node != null && node.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
-                return getPath(node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
+                path = node.getPath();
+                docBase = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+
+                return getPath(docBase);
             }
         } catch (final ValueFormatException e) {
-            log.warn("Invalid value format for docbase " + e.getMessage());
-            log.debug("Invalid value format for docbase ", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Invalid value format for docbase {} at path {}", docBase, path, e);
+            }
+            else {
+                log.warn("Invalid value format for docbase {} at path {}", docBase, path);
+            }
         } catch (final PathNotFoundException e) {
-            log.warn("Docbase not found " + e.getMessage());
-            log.debug("Docbase not found ", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Path not found for docbase {} at path {}", docBase, path, e);
+            }
+            else {
+                log.info("Path not found for docbase {} at path {}", docBase, path);
+            }
         } catch (final ItemNotFoundException e) {
-            log.info("Docbase " + e.getMessage() + " could not be dereferenced");
+            log.info("Item could not be dereferenced for docbase {} at {}", docBase, path);
         } catch (final RepositoryException e) {
-            log.error("Invalid docbase " + e.getMessage(), e);
+            log.error("Invalid docbase '{}' at path '{}'", docBase, path, e);
         }
         return StringUtils.EMPTY;
     }
 
-    private String getPath(final String docBaseUuid) {
-        String path = StringUtils.EMPTY;
-        try {
-            if (StringUtils.isNotEmpty(docBaseUuid) && !docBaseUuid.equals(JcrConstants.ROOT_NODE_ID)) {
-                path = getJcrSession().getNodeByIdentifier(docBaseUuid).getPath();
-            }
-        } catch (final RepositoryException e) {
-            log.error("Invalid docbase: '{}'", docBaseUuid, e);
+    private String getPath(final String docBaseUuid) throws RepositoryException {
+        if (StringUtils.isNotEmpty(docBaseUuid) && !docBaseUuid.equals(JcrConstants.ROOT_NODE_ID)) {
+            return getJcrSession().getNodeByIdentifier(docBaseUuid).getPath();
         }
-        return path;
+        return StringUtils.EMPTY;
     }
 
     private Session getJcrSession() throws RepositoryException {
