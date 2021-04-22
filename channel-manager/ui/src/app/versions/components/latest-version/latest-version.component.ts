@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, HostBinding, Inject, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Inject, Input, Output } from '@angular/core';
 import { UIRouterGlobals } from '@uirouter/core';
 
+import { DocumentWorkflowService } from '../../../services/document-workflow.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
-import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
 import { Version } from '../../models/version.model';
 import { VersionsInfo } from '../../models/versions-info.model';
 import { VersionsService } from '../../services/versions.service';
@@ -50,14 +50,14 @@ export class LatestVersionComponent {
   private readonly documentId = this.ng1UiRouterGlobals.params.documentId;
 
   constructor(
-    @Inject(NG1_WORKFLOW_SERVICE) private readonly ng1WorkflowService: Ng1WorkflowService,
     @Inject(NG1_UI_ROUTER_GLOBALS) private readonly ng1UiRouterGlobals: UIRouterGlobals,
     private readonly versionsService: VersionsService,
+    private readonly documentWorkflowService: DocumentWorkflowService,
   ) { }
 
   async createVersion(): Promise<void> {
     this.actionInProgressChange.emit(true);
-    await this.ng1WorkflowService.createWorkflowAction(this.documentId, {}, 'version');
+    await this.documentWorkflowService.postAction(this.documentId, ['version']);
     this.versionsService.getVersionsInfo(this.ng1UiRouterGlobals.params.documentId);
     this.actionInProgressChange.emit(false);
   }

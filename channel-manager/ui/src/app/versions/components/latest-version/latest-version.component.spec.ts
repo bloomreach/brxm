@@ -19,8 +19,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { DocumentWorkflowService } from '../../../services/document-workflow.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
-import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
 import { Version } from '../../models/version.model';
 import { VersionsInfo } from '../../models/versions-info.model';
 import { VersionsService } from '../../services/versions.service';
@@ -31,9 +31,6 @@ describe('LatestVersionComponent', () => {
   let component: LatestVersionComponent;
   let fixture: ComponentFixture<LatestVersionComponent>;
   let componentEl: HTMLElement;
-
-  let ng1WorkflowService: Ng1WorkflowService;
-  let versionsService: VersionsService;
 
   const date = Date.parse('11/08/2020 16:03');
   const documentId = 'testDocumentId';
@@ -54,7 +51,7 @@ describe('LatestVersionComponent', () => {
   } as VersionsInfo;
 
   beforeEach(async(() => {
-    const workflowServiceMock = {
+    const documentWorkflowServiceMock = {
       createWorkflowAction: jest.fn(() => { }),
     };
 
@@ -78,15 +75,12 @@ describe('LatestVersionComponent', () => {
         TranslateModule.forRoot(),
       ],
       providers: [
-       { provide: NG1_WORKFLOW_SERVICE, useValue: workflowServiceMock },
-       { provide: NG1_UI_ROUTER_GLOBALS, useValue: uiRouterGlobalsMock },
-       { provide: VersionsService, useValue: versionsServiceMock },
-       ],
+        { provide: DocumentWorkflowService, useValue: documentWorkflowServiceMock },
+        { provide: NG1_UI_ROUTER_GLOBALS, useValue: uiRouterGlobalsMock },
+        { provide: VersionsService, useValue: versionsServiceMock },
+      ],
     })
       .compileComponents();
-
-    ng1WorkflowService = TestBed.inject(NG1_WORKFLOW_SERVICE);
-    versionsService = TestBed.inject(VersionsService);
   }));
 
   beforeEach(() => {
