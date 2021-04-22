@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,14 @@ import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslateModule } from '@ngx-translate/core';
+import { StateParams, UIRouterGlobals } from '@uirouter/core';
 import { of } from 'rxjs';
 
+import { IframeService } from '../../../channels/services/iframe.service';
 import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1.service';
 import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
+import { NotificationService } from '../../../services/notification.service';
 import { VersionsService } from '../../../versions/services/versions.service';
 import { VersionsInfo } from '../../models/versions-info.model';
 
@@ -38,6 +41,7 @@ describe('VersionsInfoComponent', () => {
   let ng1IframeService: Ng1IframeService;
   let ng1ChannelService: Ng1ChannelService;
   let versionsService: VersionsService;
+  let notificationService: NotificationService;
 
   const date = Date.parse('11/08/2020 16:03');
   const path = '/some/test/path';
@@ -63,17 +67,17 @@ describe('VersionsInfoComponent', () => {
   } as VersionsInfo;
 
   beforeEach(() => {
-    const channelServiceMock = {
+    const channelServiceMock: Partial<Ng1ChannelService> = {
       makeRenderPath: () => path,
       getHomePageRenderPathInfo: () => homePageRenderPath,
     };
 
-    const iframeServiceMock = {
+    const iframeServiceMock: Partial<Ng1IframeService> = {
       getCurrentRenderPathInfo: () => path,
       load: jest.fn(() => Promise.resolve()),
     };
 
-    const versionsServiceMock = {
+    const versionsServiceMock: Partial<VersionsService> = {
       versionsInfo$: of(mockVersionsInfo),
       getVersionsInfo: jest.fn(),
       isVersionFromPage: jest.fn((id: string) => id === firstVersionUUID),
@@ -83,6 +87,10 @@ describe('VersionsInfoComponent', () => {
       params: {
         documentId: 'testDocumentId',
       },
+    };
+
+    const notificationServiceMock: Partial<NotificationService> = {
+      showErrorNotification: jest.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -101,6 +109,7 @@ describe('VersionsInfoComponent', () => {
         { provide: NG1_CHANNEL_SERVICE, useValue: channelServiceMock },
         { provide: NG1_UI_ROUTER_GLOBALS, useValue: uiRouterGlobalsMock },
         { provide: VersionsService, useValue: versionsServiceMock },
+        { provide: NotificationService, useValue: notificationServiceMock },
       ],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA,
@@ -110,6 +119,7 @@ describe('VersionsInfoComponent', () => {
     ng1IframeService = TestBed.inject(NG1_IFRAME_SERVICE);
     ng1ChannelService = TestBed.inject(NG1_CHANNEL_SERVICE);
     versionsService = TestBed.inject(VersionsService);
+    notificationService = TestBed.inject(NotificationService);
   });
 
   beforeEach(() => {
@@ -153,6 +163,16 @@ describe('VersionsInfoComponent', () => {
       component.ngOnDestroy();
 
       expect(component.selectVersion).toHaveBeenCalledWith(firstVersionUUID);
+    });
+
+    it('should display error if load is rejected', () => {
+      jest.spyOn(ng1IframeService, 'load').mockImplementationOnce(() => Promise.reject());
+
+      const versionItem = componentEl.querySelector<HTMLElement>(`.qa-version-${secondVersionUUID}`);
+      versionItem?.click();
+
+      expect(notificationService.showErrorNotification).toHaveBeenCalledWith('VERSION_SELECTION_ERROR');
+      expect(component.actionInProgress).toBe(false);
     });
   });
 });
