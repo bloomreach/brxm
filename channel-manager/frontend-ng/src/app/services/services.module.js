@@ -39,7 +39,6 @@ import SessionService from './session.service';
 import SiteMapItemService from './siteMapItem.service';
 import SiteMapService from './siteMap.service';
 import SiteMenuService from './siteMenu.service';
-import WorkflowService from './workflow.service';
 
 const servicesModule = angular
   .module('hippo-cm.services', [])
@@ -65,7 +64,6 @@ const servicesModule = angular
   .service('SessionService', SessionService)
   .service('SiteMapItemService', SiteMapItemService)
   .service('SiteMapService', SiteMapService)
-  .service('SiteMenuService', SiteMenuService)
-  .service('WorkflowService', WorkflowService);
+  .service('SiteMenuService', SiteMenuService);
 
 export default servicesModule.name;

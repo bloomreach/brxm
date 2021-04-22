@@ -17,8 +17,8 @@
 import { Inject, Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 
+import { DocumentWorkflowService } from '../../services/document-workflow.service';
 import { Ng1ContentService, NG1_CONTENT_SERVICE } from '../../services/ng1/content.ng1.service';
-import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../services/ng1/workflow.ng1.service';
 import { PageStructureService } from '../../services/page-structure.service';
 import { ProjectService } from '../../services/project.service';
 import { Version, VersionUpdateBody } from '../models/version.model';
@@ -33,9 +33,9 @@ export class VersionsService {
 
   constructor(
     @Inject(NG1_CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
-    @Inject(NG1_WORKFLOW_SERVICE) private readonly workflowService: Ng1WorkflowService,
     private readonly pageStructureService: PageStructureService,
     private readonly projectService: ProjectService,
+    private readonly documentWorkflowService: DocumentWorkflowService,
   ) { }
 
   async getVersionsInfo(documentId: string): Promise<void> {
@@ -54,7 +54,7 @@ export class VersionsService {
 
   async updateVersion(documentId: string, versionUUID: string, body: VersionUpdateBody): Promise<void> {
     const branchId = this.projectService.getSelectedProjectId();
-    return this.workflowService.updateWorkflowAction(documentId, body, branchId, 'versions', versionUUID);
+    return this.documentWorkflowService.putAction(documentId, [branchId, 'versions', versionUUID], body);
   }
 
   isVersionFromPage(versionUUID: string): boolean {

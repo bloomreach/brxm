@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import { NG1_SITE_MAP_SERVICE } from './site-map.ng1.service';
 import { NG1_STATE_SERVICE } from './state.ng1.service';
 import { NG1_TARGETING_SERVICE } from './targeting.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from './ui-router-globals.ng1.service';
-import { NG1_WORKFLOW_SERVICE } from './workflow.ng1.service';
 
 @NgModule({
   providers: [
@@ -47,14 +46,7 @@ import { NG1_WORKFLOW_SERVICE } from './workflow.ng1.service';
     { provide: NG1_UI_ROUTER_GLOBALS, useValue: window.angular.element(document.body).injector().get('$uiRouterGlobals') },
     { provide: NG1_CMS_SERVICE, useValue: window.angular.element(document.body).injector().get('CmsService') },
     { provide: NG1_SITE_MAP_SERVICE, useValue: window.angular.element(document.body).injector().get('SiteMapService') },
-    { provide: NG1_STATE_SERVICE, useValue: window.angular.element(document.body).injector().get('$state') },
     { provide: NG1_TARGETING_SERVICE, useValue: window.angular.element(document.body).injector().get('TargetingService') },
-    { provide: NG1_WORKFLOW_SERVICE, useValue: window.angular.element(document.body).injector().get('WorkflowService') },
-    { provide: NG1_ROOT_SCOPE, useValue: window.angular.element(document.body).injector().get('$rootScope') },
-    { provide: NG1_COMPONENT_EDITOR_SERVICE, useValue: window.angular.element(document.body).injector().get('ComponentEditor') },
-    { provide: NG1_STATE_SERVICE, useValue: window.angular.element(document.body).injector().get('$state') },
-    { provide: NG1_CMS_SERVICE, useValue: window.angular.element(document.body).injector().get('CmsService') },
-    { provide: NG1_SITE_MAP_SERVICE, useValue: window.angular.element(document.body).injector().get('SiteMapService') },
   ],
 })
 export class Ng1ServicesModule {
