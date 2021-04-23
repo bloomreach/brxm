@@ -216,23 +216,18 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
                 return getPath(docBase);
             }
         } catch (final ValueFormatException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Invalid value format for docbase {} at path {}", docBase, path, e);
-            }
-            else {
-                log.warn("Invalid value format for docbase {} at path {}", docBase, path);
-            }
+            log.warn("Invalid value format for docbase {} at path {}", docBase, path);
         } catch (final PathNotFoundException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Path not found for docbase {} at path {}", docBase, path, e);
-            }
-            else {
-                log.info("Path not found for docbase {} at path {}", docBase, path);
-            }
+            log.info("Path not found for docbase {} at path {}", docBase, path);
         } catch (final ItemNotFoundException e) {
             log.info("Item could not be dereferenced for docbase {} at {}", docBase, path);
         } catch (final RepositoryException e) {
-            log.error("Invalid docbase '{}' at path '{}'", docBase, path, e);
+            if (e.getCause() instanceof IllegalArgumentException) {
+                log.warn("Invalid value for docbase {} at path {}", docBase, path);
+            }
+            else {
+                log.error("Invalid docbase '{}' at path '{}'", docBase, path, e);
+            }
         }
         return StringUtils.EMPTY;
     }
